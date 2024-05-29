@@ -1,23 +1,26 @@
 package legend.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.zip.CRC32;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.system.MemoryUtil.memSlice;
 
 public final class IoHelper {
   private IoHelper() { }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static boolean getPackedFlag(final int[] array, final int packed) {
     return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;
@@ -85,6 +88,34 @@ public final class IoHelper {
     } catch(final Throwable ignored) { }
 
     return defaultValue;
+  }
+
+  public static List<String[]> loadCsvFile(final Path file) throws IOException, CsvException {
+    return loadCsv(Files.newInputStream(file));
+  }
+
+  public static List<String[]> loadCsv(final InputStream input) throws IOException, CsvException {
+    try(final CSVReader reader = new CSVReader(new InputStreamReader(input))) {
+      return reader.readAll();
+    }
+  }
+
+  public static byte[] intsToBytes(final int[] ints) {
+    final ByteBuffer buffer = ByteBuffer.allocate(ints.length * 0x4).order(ByteOrder.LITTLE_ENDIAN);
+    buffer.asIntBuffer().put(ints);
+    return buffer.array();
+  }
+
+  private static final CRC32 crc32 = new CRC32();
+
+  public static int crc32(final Path file) throws IOException {
+    return crc32(Files.readAllBytes(file));
+  }
+
+  public static int crc32(final byte[] data) {
+    crc32.reset();
+    crc32.update(data);
+    return (int)crc32.getValue();
   }
 
   public static void write(final ByteBuffer stream, final boolean value) {

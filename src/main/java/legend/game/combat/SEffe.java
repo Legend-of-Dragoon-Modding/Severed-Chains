@@ -8,9 +8,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommand;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
-import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -24,6 +22,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
@@ -39,7 +38,6 @@ import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
-import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectAttachment;
@@ -106,6 +104,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
+import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -121,14 +120,12 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
-import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
-import static legend.game.Scus94491BpeSegment.renderDivineDragoonAdditionPressIris;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -139,7 +136,6 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -159,17 +155,18 @@ import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Battle.buttonPressHudMetrics_800faaa0;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public final class SEffe {
   private SEffe() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
   private static final Marker EFFECTS = MarkerManager.getMarker("EFFECTS");
 
   private static final GsF_LIGHT defaultLight_800c6ddc = new GsF_LIGHT(1.0f, 1.0f, 1.0f);
@@ -187,12 +184,12 @@ public final class SEffe {
 
   /** Four sets of color values used for addition overlay borders; only last actually used */
   public static final int[] additionBorderColours_800fb7f0 = {0x70, 0xc0, 0x75, 0xc0, 0xa8, 0x70, 0x70, 0xb5, 0xc0, 0x48, 0x60, 0xff};
-  private static final int[][] daddyHudEyeTranslucencyModes_800fb7fc = {{3, 0}, {1, 1}, {1, 1}, {0, 0}};
-  private static final int[][] daddyHudMeterOffsets_800fb804 = {{49, 32}, {46, 49}, {38, 56}, {35, 60}, {31, 60}};
-  private static final int[][] daddyHudMeterUvs_800fb818 = {{128, 112}, {128, 80}, {128, 96}, {216, 8}, {216, 16}};
-  private static final int[][] daddyHudMeterDimensions_800fb82c = {{24, 32}, {16, 16}, {16, 16}, {8, 8}, {8, 8}};
-  private static final int[] daddyHudFrameClutOffsets_800fb840 = {0x50, 0x51, 0x52, 0x53, 0x54, 0x51, 0x55, 0x56, 0x52, 0x57, 0, 0};
-  private static final int[] daddyHudEyeClutOffsets_800fb84c = {0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x59, 0x5d, 0x5e, 0x5a, 0x5f, 0, 0, 0, 1, 0, 0};
+  public static final int[][] daddyHudEyeTranslucencyModes_800fb7fc = {{3, 0}, {1, 1}, {1, 1}, {0, 0}};
+  public static final int[][] daddyHudMeterOffsets_800fb804 = {{49, 32}, {46, 49}, {38, 56}, {35, 60}, {31, 60}};
+  public static final int[][] daddyHudMeterUvs_800fb818 = {{128, 112}, {128, 80}, {128, 96}, {216, 8}, {216, 16}};
+  public static final int[][] daddyHudMeterDimensions_800fb82c = {{24, 32}, {16, 16}, {16, 16}, {8, 8}, {8, 8}};
+  public static final int[] daddyHudFrameClutOffsets_800fb840 = {0x50, 0x51, 0x52, 0x53, 0x54, 0x51, 0x55, 0x56, 0x52, 0x57, 0, 0};
+  public static final int[] daddyHudEyeClutOffsets_800fb84c = {0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x59, 0x5d, 0x5e, 0x5a, 0x5f, 0, 0, 0, 1, 0, 0};
 
   private static final Vector3f _800fb8d0 = new Vector3f(1.0f, 0.0f, 0.0f);
 
@@ -261,15 +258,15 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_80109358}</li>
-   *   <li>{@link SEffe#FUN_80109358}</li>
+   *   <li>{@link SEffe#renderScreenDistortionWaveEffect}</li>
+   *   <li>{@link SEffe#renderScreenDistortionWaveEffect}</li>
    *   <li>{@link SEffe#renderScreenDistortionBlurEffect}</li>
    * </ol>
    */
   private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] screenDistortionEffectRenderers_80119fd4 = new BiConsumer[3];
   static {
-    screenDistortionEffectRenderers_80119fd4[0] = SEffe::FUN_80109358;
-    screenDistortionEffectRenderers_80119fd4[1] = SEffe::FUN_80109358;
+    screenDistortionEffectRenderers_80119fd4[0] = SEffe::renderScreenDistortionWaveEffect;
+    screenDistortionEffectRenderers_80119fd4[1] = SEffe::renderScreenDistortionWaveEffect;
     screenDistortionEffectRenderers_80119fd4[2] = SEffe::renderScreenDistortionBlurEffect;
   }
   /**
@@ -288,13 +285,13 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_8010b594}</li>
+   *   <li>{@link SEffe#renderImagoInstantDeathCapture}</li>
    *   <li>{@link SEffe#renderScreenCapture}</li>
    * </ol>
    */
   private static final TriConsumer<EffectManagerData6c<EffectManagerParams.VoidType>, ScreenCaptureEffect1c, MV>[] screenCaptureRenderers_80119fec = new TriConsumer[2];
   static {
-    screenCaptureRenderers_80119fec[0] = SEffe::FUN_8010b594;
+    screenCaptureRenderers_80119fec[0] = SEffe::renderImagoInstantDeathCapture;
     screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
   }
 
@@ -314,8 +311,8 @@ public final class SEffe {
   private static final int[] kongolDaddyHitSuccessWindows_80119f98 = {4, 3, 2, 0, 0, 0, 0};
   private static int daddySpinnerBrightnessFactor_80119fb4;
 
-  private static final int[] perfectDaddyGlyphUs_80119fbc = {232, 208, 40, 48, 208, 56, 64, 240};
-  private static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
+  public static final int[] perfectDaddyGlyphUs_80119fbc = {232, 208, 40, 48, 208, 56, 64, 240};
+  public static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
 
   /**
    * <ol start="0">
@@ -459,11 +456,6 @@ public final class SEffe {
     translation.set(transformMatrix.transfer);
   }
 
-  @Method(0x800d3f98L)
-  public static void FUN_800d3f98(final short x, final short y, final int a2, final short a3, final int brightness) {
-    renderButtonPressHudTexturedRect(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, a3, Translucency.B_PLUS_F, brightness, 0x1000);
-  }
-
   /** used renderCtmd */
   @Method(0x800de3f4L)
   public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
@@ -487,6 +479,11 @@ public final class SEffe {
     if((effectParams.flags_00 & 0x400_0000) == 0) {
       sp0x10.rotationXYZ(effectParams.rot_10);
       sp0x10.scaleLocal(effectParams.scale_16);
+
+      // Transform override is already in screenspace so we need to un-transform it
+      if(RenderEngine.legacyMode == 0) {
+        sp0x10.mul(worldToScreenMatrix_800c3548.invert(new Matrix3f()));
+      }
     }
 
     //LAB_800de4a8
@@ -508,10 +505,17 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    RENDERER.queueModel(obj, sp0x10)
+    final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
-      .backgroundColour(GTE.backgroundColour);
+      .backgroundColour(GTE.backgroundColour)
+      .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+      .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+      .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+    if(objTable.vdf != null) {
+      model.vdf(objTable.vdf);
+    }
 
     //LAB_800de528
   }
@@ -618,97 +622,26 @@ public final class SEffe {
 
     if(z >= 40) {
       //LAB_800e7610
-      GTE.setTransforms(finalTransform);
-
-      GTE.setVertex(0, spriteEffect.x_04 * 64, spriteEffect.y_06 * 64, 0);
-      GTE.setVertex(1, (spriteEffect.x_04 + spriteEffect.w_08) * 64, spriteEffect.y_06 * 64, 0);
-      GTE.setVertex(2, spriteEffect.x_04 * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
-      GTE.perspectiveTransformTriangle();
-      final float sx0 = GTE.getScreenX(0);
-      final float sy0 = GTE.getScreenY(0);
-      final float sx1 = GTE.getScreenX(1);
-      final float sy1 = GTE.getScreenY(1);
-      final float sx2 = GTE.getScreenX(2);
-      final float sy2 = GTE.getScreenY(2);
-
-      GTE.perspectiveTransform((spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
-      final float sx3 = GTE.getScreenX(2);
-      final float sy3 = GTE.getScreenY(2);
-
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      final QuadBuilder builder = new QuadBuilder("Sprite")
         .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
         .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
-        .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
-        .pos(0, sx0, sy0)
-        .pos(1, sx1, sy1)
-        .pos(2, sx2, sy2)
-        .pos(3, sx3, sy3)
-        .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
-        .uv(1, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f)
-        .uv(2, spriteEffect.u_0e, spriteEffect.v_0f + spriteEffect.h_0a)
-        .uv(3, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f + spriteEffect.h_0a);
+        .rgb(spriteEffect.r_14 / 255.0f, spriteEffect.g_15 / 255.0f, spriteEffect.b_16 / 255.0f)
+        .pos(spriteEffect.x_04 * 64.0f, spriteEffect.y_06 * 64.0f, 0.0f)
+        .posSize(spriteEffect.w_08 * 64.0f, spriteEffect.h_0a * 64.0f)
+        .uv(spriteEffect.u_0e, spriteEffect.v_0f)
+        .uvSize(spriteEffect.w_08, spriteEffect.h_0a);
 
       if((spriteEffect.flags_00 >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
+        builder.translucency(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
       }
 
-      GPU.queueCommand(z / 4.0f, cmd);
+      final Obj obj = builder.build();
+      obj.delete(); // Mark for deletion after this frame
+
+      RENDERER.queueModel(obj, transformMatrix)
+        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
     }
     //LAB_800e7930
-  }
-
-  /**
-   * Renderer for some kind of effect sprites like those in HUD DEFF.
-   * Used for example for sprite effect overlays on red glow in Death Dimension.
-   */
-  @Method(0x800e7944L)
-  public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final Vector3f translation, final int zMod) {
-    if(spriteEffect.flags_00 >= 0) { // No errors
-      final Vector3f finalTranslation = new Vector3f();
-      translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
-      finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
-
-      final float x0 = MathHelper.safeDiv(finalTranslation.x * projectionPlaneDistance_1f8003f8, finalTranslation.z);
-      final float y0 = MathHelper.safeDiv(finalTranslation.y * projectionPlaneDistance_1f8003f8, finalTranslation.z);
-
-      // zMod needs to be ignored in z check or poly positions will overflow at low z values
-      float z = zMod + finalTranslation.z / 4.0f;
-      if(finalTranslation.z / 4.0f >= 40 && z >= 40) {
-        if(z > 0x3ff8) {
-          z = 0x3ff8;
-        }
-
-        //LAB_800e7a38
-        final float zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8 * 0x1000 / 4.0f, finalTranslation.z / 4.0f);
-        final float x1 = spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
-        final float x2 = x1 + spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
-        final float y1 = spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8;
-        final float y2 = y1 + spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8;
-        final float sin = MathHelper.sin(spriteEffect.angle_20);
-        final float cos = MathHelper.cos(spriteEffect.angle_20);
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
-          .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
-          .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
-          .pos(0, x0 + x1 * cos - y1 * sin, y0 + x1 * sin + y1 * cos)
-          .pos(1, x0 + x2 * cos - y1 * sin, y0 + x2 * sin + y1 * cos)
-          .pos(2, x0 + x1 * cos - y2 * sin, y0 + x1 * sin + y2 * cos)
-          .pos(3, x0 + x2 * cos - y2 * sin, y0 + x2 * sin + y2 * cos)
-          .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
-          .uv(1, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.v_0f)
-          .uv(2, spriteEffect.u_0e, spriteEffect.h_0a + spriteEffect.v_0f - 1)
-          .uv(3, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.h_0a + spriteEffect.v_0f - 1);
-
-        if((spriteEffect.flags_00 & 0x4000_0000) != 0) {
-          cmd.translucent(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
-        }
-
-        GPU.queueCommand(z / 4.0f, cmd);
-      }
-    }
-
-    //LAB_800e7d8c
   }
 
   @Method(0x800e7dbcL)
@@ -863,11 +796,6 @@ public final class SEffe {
     //LAB_800e8fb8
   }
 
-  @Method(0x800e7ea4L)
-  public static void renderGenericSpriteAtZOffset0(final GenericSpriteEffect24 spriteEffect, final Vector3f translation) {
-    FUN_800e7944(spriteEffect, translation, 0);
-  }
-
   /** Considers all parents */
   @Method(0x800e8594L)
   public static void calculateEffectTransforms(final MV transformMatrix, final EffectManagerData6c<?> manager) {
@@ -964,7 +892,8 @@ public final class SEffe {
         FUN_800e75ac(spriteEffect, transformMatrix);
       } else {
         //LAB_800e9574
-        FUN_800e7944(spriteEffect, transformMatrix.transfer, managerInner.z_22);
+        spriteEffect.render(transformMatrix.transfer, managerInner.z_22);
+        spriteEffect.delete();
       }
     }
     //LAB_800e9580
@@ -1035,8 +964,8 @@ public final class SEffe {
     //LAB_800ec370
     shadow.zOffset_a0 = model.zOffset_a0 + 16;
     shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
-    shadow.coord2_14.coord.rotationXYZ(shadow.coord2_14.transforms.rotate);
-    shadow.coord2_14.coord.scaleLocal(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.coord.scaling(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.coord.rotateXYZ(shadow.coord2_14.transforms.rotate);
     shadow.coord2_14.flg = 0;
 
     final GsCOORDINATE2 coord2 = shadow.modelParts_00[0].coord2_04;
@@ -1051,7 +980,6 @@ public final class SEffe {
 
     RENDERER
       .queueModel(shadow.modelParts_00[0].obj, lw)
-      .depthOffset(-0.0001f)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -1311,19 +1239,20 @@ public final class SEffe {
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
-  public static void renderSegmentGradient(final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .translucent(translucency)
-      .pos(0, xy[0].x, xy[0].y)
-      .pos(1, xy[1].x, xy[1].y)
-      .pos(2, xy[2].x, xy[2].y)
-      .pos(3, xy[3].x, xy[3].y)
-      .monochrome(0, 0)
-      .rgb(1, colour2.x >>> 8, colour2.y >>> 8, colour2.z >>> 8)
-      .monochrome(2, 0)
-      .rgb(3, colour1.x >>> 8, colour1.y >>> 8, colour1.z >>> 8);
-
-    GPU.queueCommand((a3 + a4) / 4.0f, cmd);
+  public static void renderSegmentGradient(final PolyBuilder builder, final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
+    builder
+      .addVertex(xy[0].x, xy[0].y, a3 + a4)
+      .monochrome(0.0f)
+      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
+      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .monochrome(0.0f)
+      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
+      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .monochrome(0.0f)
+      .addVertex(xy[3].x, xy[3].y, a3 + a4)
+      .rgb((colour1.x >>> 8) / 255.0f, (colour1.y >>> 8) / 255.0f, (colour1.z >>> 8) / 255.0f);
   }
 
   /**
@@ -1363,6 +1292,11 @@ public final class SEffe {
     final Vector2f refOuterOriginA = new Vector2f();
     final Vector2f lastSegmentRef = new Vector2f();
     final Vector2f refOuterOriginB = new Vector2f();
+
+    final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
+
+    final PolyBuilder builder = new PolyBuilder("Electricity effect type 0", GL_TRIANGLES)
+      .translucency(translucency);
 
     //LAB_80103200
     //LAB_8010322c
@@ -1413,8 +1347,6 @@ public final class SEffe {
             zMod = 0xffe - manager.params_10.z_22;
           }
 
-          final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 3);
-
           //LAB_80103574
           //LAB_80103594
           for(int segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28 - 1; segmentNum++) {
@@ -1447,16 +1379,13 @@ public final class SEffe {
               }
 
               //LAB_80103834
-              final GpuCommandPoly cmd = new GpuCommandPoly(3)
-                .translucent(translucency)
-                .pos(0, baseX0, baseY0)
-                .pos(1, centerLineOriginX, centerLineOriginY)
-                .pos(2, baseX2, baseY2)
-                .monochrome(0, baseColour >>> 9)
-                .monochrome(1, baseColour >>> 8)
-                .monochrome(2, baseColour >>> 9);
-
-              GPU.queueCommand((manager.params_10.z_22 + zMod) / 4.0f, cmd);
+              builder
+                .addVertex(baseX0, baseY0, manager.params_10.z_22 + zMod)
+                .monochrome((baseColour >>> 9) / 255.0f)
+                .addVertex(centerLineOriginX, centerLineOriginY, manager.params_10.z_22 + zMod)
+                .monochrome((baseColour >>> 8) / 255.0f)
+                .addVertex(baseX2, baseY2, manager.params_10.z_22 + zMod)
+                .monochrome((baseColour >>> 9) / 255.0f);
             }
 
             //LAB_80103994
@@ -1465,23 +1394,23 @@ public final class SEffe {
 
             vertexArray[0].set(outerEndpointXa, outerEndpointYa);
             vertexArray[2].set(refOuterOriginA);
-            renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
             vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
             vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
             vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-            renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             vertexArray[0].set(outerEndpointXb, outerEndpointYb);
             vertexArray[2].set(refOuterOriginB);
-            renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
             vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
             vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
             vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-            renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             refOuterOriginA.set(outerEndpointXa, outerEndpointYa);
             refOuterOriginB.set(outerEndpointXb, outerEndpointYb);
@@ -1493,6 +1422,14 @@ public final class SEffe {
           //LAB_80103ca0
         }
       }
+    }
+
+    if(builder.count() != 0) {
+      final Obj obj = builder.build();
+      obj.delete();
+
+      electricEffect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+      RENDERER.queueOrthoModel(obj, electricEffect.transforms);
     }
   }
 
@@ -1529,6 +1466,11 @@ public final class SEffe {
       electricEffect.frameNum_2a = electricEffect.frameNum_2a + 1 & 0x1f;
       final boolean effectShouldRender = (manager.params_10.shouldRenderFrameBits_24 >> electricEffect.frameNum_2a & 0x1) == 0;
 
+      final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
+
+      final PolyBuilder builder = new PolyBuilder("Lightning effect type 1", GL_TRIANGLES)
+        .translucency(translucency);
+
       //LAB_80103f18
       //LAB_80103f44
       for(int i = 0; i < electricEffect.boltCount_00; i++) {
@@ -1558,19 +1500,17 @@ public final class SEffe {
         }
 
         //LAB_801040d0
-        final float boltLengthX = segmentArray[segmentNum - 1].x_00 - segmentArray[0].x_00;
-        final float boltLengthY = segmentArray[segmentNum - 1].y_04 - segmentArray[0].y_04;
-        final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
-        final float sin = MathHelper.sin(angle);
-        final float cos = MathHelper.cosFromSin(sin, angle);
-        float currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager.params_10.scale_16.x;
-        float outerOriginXa = segmentArray[0].x_00 + cos * currentSegmentScale;
-        float outerOriginYa = segmentArray[0].y_04 + sin * currentSegmentScale;
-        float outerOriginXb = segmentArray[0].x_00 - cos * currentSegmentScale;
-        float outerOriginYb = segmentArray[0].y_04 - sin * currentSegmentScale;
-
         if(effectShouldRender) {
-          final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 3);
+          final float boltLengthX = segmentArray[segmentNum - 1].x_00 - segmentArray[0].x_00;
+          final float boltLengthY = segmentArray[segmentNum - 1].y_04 - segmentArray[0].y_04;
+          final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
+          final float sin = MathHelper.sin(angle);
+          final float cos = MathHelper.cosFromSin(sin, angle);
+          float currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager.params_10.scale_16.x;
+          float outerOriginXa = segmentArray[0].x_00 + cos * currentSegmentScale;
+          float outerOriginYa = segmentArray[0].y_04 + sin * currentSegmentScale;
+          float outerOriginXb = segmentArray[0].x_00 - cos * currentSegmentScale;
+          float outerOriginYb = segmentArray[0].y_04 - sin * currentSegmentScale;
 
           final float z = manager.params_10.z_22 + bolt.sz3_0c;
           if(z >= 0xa0) {
@@ -1606,25 +1546,25 @@ public final class SEffe {
                 vertexArray[0].y = outerEndpointYa;
                 vertexArray[2].x = outerOriginXa;
                 vertexArray[2].y = outerOriginYa;
-                renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
                 vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
                 vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
                 vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-                renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 vertexArray[0].x = outerEndpointXb;
                 vertexArray[0].y = outerEndpointYb;
                 vertexArray[2].x = outerOriginXb;
                 vertexArray[2].y = outerOriginYb;
-                renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
                 vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
                 vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
                 vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-                renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 outerOriginXa = outerEndpointXa;
                 outerOriginYa = outerEndpointYa;
@@ -1656,18 +1596,18 @@ public final class SEffe {
                   vertexArray[1].x = centerLineEndpointX + 1;
                   vertexArray[2].x = centerLineOriginX - currentSegmentScale;
                   vertexArray[3].x = centerLineOriginX + 1;
-                  renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
                   vertexArray[0].x = centerLineEndpointX - nextSegmentQuarterScale;
                   vertexArray[2].x = centerLineOriginX - currentSegmentQuarterScale;
-                  renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
                   vertexArray[0].x = centerLineEndpointX + nextSegmentScale;
                   vertexArray[1].x = centerLineEndpointX;
                   vertexArray[2].x = centerLineOriginX + currentSegmentScale;
                   vertexArray[3].x = centerLineOriginX;
-                  renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
                   vertexArray[0].x = centerLineEndpointX + nextSegmentQuarterScale;
                   vertexArray[2].x = centerLineOriginX + currentSegmentQuarterScale;
-                  renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                   centerLineOriginX = centerLineEndpointX;
                   centerLineOriginY = centerLineEndpointY;
@@ -1679,9 +1619,15 @@ public final class SEffe {
           }
         }
       }
-      //LAB_8010490c
+
+      if(effectShouldRender) {
+        final Obj obj = builder.build();
+        obj.delete();
+
+        electricEffect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+        RENDERER.queueOrthoModel(obj, electricEffect.transforms);
+      }
     }
-    //LAB_8010491c
   }
 
   @Method(0x801049d4L)
@@ -1919,7 +1865,10 @@ public final class SEffe {
     Arrays.setAll(sp0x18, n -> new Vector2f());
 
     //LAB_8010575c
-    final Translucency translucency = Translucency.of(data._10 >>> 28 & 3);
+    final Translucency translucency = Translucency.of(data._10 >>> 28 & 0x3);
+
+    final PolyBuilder builder = new PolyBuilder("Thunder arrow effect", GL_TRIANGLES)
+      .translucency(translucency);
 
     for(int s7 = 0; s7 < data.count_00; s7++) {
       //LAB_8010577c
@@ -1935,20 +1884,26 @@ public final class SEffe {
         sp0x18[2].y = s4_1.y_02;
         sp0x18[3].x = s4_1.x_00 + 1.0f;
         sp0x18[3].y = s4_1.y_02;
-        renderSegmentGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].x = s4_2.x_00 - s4_2.size_1c / 3.0f;
         sp0x18[2].x = s4_1.x_00 - s4_1.size_1c / 3.0f;
-        renderSegmentGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].x = s4_2.x_00 + s4_2.size_1c;
         sp0x18[1].x = s4_2.x_00;
         sp0x18[2].x = s4_1.x_00 + s4_1.size_1c;
         sp0x18[3].x = s4_1.x_00;
-        renderSegmentGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].x = s4_2.x_00 + s4_2.size_1c / 3.0f;
         sp0x18[2].x = s4_1.x_00 + s4_1.size_1c / 3.0f;
-        renderSegmentGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
       }
     }
+
+    final Obj obj = builder.build();
+    obj.delete();
+
+    data.transforms.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+    RENDERER.queueOrthoModel(obj, data.transforms);
 
     //LAB_801059c8
   }
@@ -2073,13 +2028,7 @@ public final class SEffe {
   }
 
   public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
-    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0[type];
-
-    if(metrics.hudElementType_00 == 0) {
-      renderButtonPressHudTexturedRect(x, y, metrics.u_01, metrics.v_02, metrics.wOrRightU_03, metrics.hOrBottomV_04, metrics.clutOffset_05, translucency, brightness, 0x1000);
-    } else {
-      renderButtonPressHudElement(x, y, metrics.u_01, metrics.v_02, metrics.wOrRightU_03, metrics.hOrBottomV_04, metrics.clutOffset_05, translucency, brightness, 0x1000, 0x1000);
-    }
+    battleUiParts.queueButton(type, x, y, translucency, brightness, 1.0f, 1.0f);
   }
 
   /**
@@ -2281,7 +2230,7 @@ public final class SEffe {
 
         effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
         effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
-        final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(RENDERER.centredQuadBPlusF, effect.transforms);
+        final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms);
 
         if(completionState == 1) {  // Success
           model.monochrome(1.0f);
@@ -2318,7 +2267,7 @@ public final class SEffe {
       .scaling(10.0f, borderSize, 1.0f)
       .rotateLocalZ(angle);
 
-    RENDERER.queueOrthoOverlayModel(effect.reticleBorderShadow, effect.transforms)
+    RENDERER.queueOrthoModel(effect.reticleBorderShadow, effect.transforms)
       .monochrome(colour / 255.0f);
   }
 
@@ -2337,13 +2286,13 @@ public final class SEffe {
           .rotateZ(borderOverlay.angleModifier_02);
         effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
 
-        final RenderEngine.QueuedModel model;
+        final RenderEngine.QueuedModel<?> model;
 
         // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
         if((borderOverlay.sideEffects_0d == 0 || borderOverlay.sideEffects_0d == -1) && currentHitCompletionState >= 0) {
-          model = RENDERER.queueOrthoOverlayModel(RENDERER.lineBox, effect.transforms);
+          model = RENDERER.queueOrthoModel(RENDERER.lineBox, effect.transforms);
         } else {
-          model = RENDERER.queueOrthoOverlayModel(RENDERER.lineBoxBPlusF, effect.transforms);
+          model = RENDERER.queueOrthoModel(RENDERER.lineBoxBPlusF, effect.transforms);
         }
 
         if(hitArray[hitNum].isCounter_1c && borderNum != 16) {
@@ -2759,19 +2708,7 @@ public final class SEffe {
     if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {
       final int brightness = daddy.buttonPressGlowBrightnessFactor_11 * 0x40 - 1;
       renderButtonPressHudElement1(20, x1 - 4, y1 - 4, Translucency.B_PLUS_F, 128);
-      renderButtonPressHudElement(
-        (short)x1 - 2,
-        (short)y1 - 5,
-        232,
-        120,
-        255,
-        143,
-        0xc,
-        Translucency.B_PLUS_F,
-        brightness,
-        daddy.buttonPressGlowBrightnessFactor_11 * 256 + 6404,
-        daddy.buttonPressGlowBrightnessFactor_11 * 256 + 4096
-      );
+      battleUiParts.queueDaddyButtonGlow(x1, y1, brightness, (daddy.buttonPressGlowBrightnessFactor_11 * 256 + 0x1904) / (float)0x1000, (daddy.buttonPressGlowBrightnessFactor_11 * 256 + 0x1000) / (float)0x1000);
     }
 
     //LAB_80107bf0
@@ -2801,22 +2738,16 @@ public final class SEffe {
 
   @Method(0x80107dc4L)
   public static void renderDragoonAdditionHud_(final DragoonAdditionScriptData1c daddy, final int transModesIndex, final int angle) {
-    int brightness = (daddySpinnerBrightnessFactor_80119fb4 + 1) * 0x40;
-
-    final int y = daddyHudOffsetY_8011a020 + (rsin(angle) * 17 >> 12) + 24;
-
-    final int x;
+    final int starY = daddyHudOffsetY_8011a020 + (rsin(angle) * 17 >> 12) + 24;
+    final int starX;
     if(daddyHudSpinnerStepCountsPointer_8011a028[daddy.stepCountIndex_06] >= 2) {
-      x = daddyHudOffsetX_8011a01c + (rcos(angle) * 17 >> 12) + 28;
+      starX = daddyHudOffsetX_8011a01c + (rcos(angle) * 17 >> 12) + 28;
     } else {
-      x = daddyHudOffsetX_8011a01c + 28;
+      starX = daddyHudOffsetX_8011a01c + 28;
     }
 
     //LAB_80108048
-    // Spinner star
-    renderButtonPressHudTexturedRect(x, y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, brightness, 0x1000);
-
-    brightness = 0x80;
+    int brightness = 0x80;
 
     //LAB_801080ac
     for(int i = 0; i < 5; i++) {
@@ -2825,126 +2756,32 @@ public final class SEffe {
       }
 
       //LAB_801080cc
-      // Meter
-      renderButtonPressHudTexturedRect(
-        daddyHudOffsetX_8011a01c + daddyHudMeterOffsets_800fb804[i][0],
-        daddyHudOffsetY_8011a020 + daddyHudMeterOffsets_800fb804[i][1],
-        daddyHudMeterUvs_800fb818[i][0],
-        daddyHudMeterUvs_800fb818[i][1],
-        daddyHudMeterDimensions_800fb82c[i][0],
-        daddyHudMeterDimensions_800fb82c[i][1],
-        53 + i,
-        Translucency.B_PLUS_F,
-        brightness,
-        0x1000
-      );
+      battleUiParts.queueDaddyMeter(i, daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020, 0x35 + i, Translucency.B_PLUS_F, brightness);
     }
 
     // Button press textures
     renderDragoonAdditionButtonPressTextures(daddy);
 
-    brightness = 0x80;
-
     //LAB_801081a8
     for(int i = 0; i < daddy.countEyeFlashTicks_0d; i++) {
-      // Eye flash
-      renderButtonPressHudTexturedRect(
-        daddyHudOffsetX_8011a01c + 18,
-        daddyHudOffsetY_8011a020 + 16,
-        224,
-        208,
-        31,
-        31,
-        daddyHudEyeClutOffsets_800fb84c[daddy.charId_18],
-        Translucency.B_PLUS_F,
-        brightness,
-        0x1000
-      );
+      battleUiParts.queueDaddyEyeFlash(daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020, daddyHudEyeClutOffsets_800fb84c[daddy.charId_18], Translucency.B_PLUS_F, 0x80);
 
       if(daddy.charId_18 == 9) {
-        renderDivineDragoonAdditionPressIris(
-          daddyHudOffsetX_8011a01c + 23,
-          daddyHudOffsetY_8011a020 + 21,
-          232,
-          120,
-          23,
-          23,
-          12,
-          Translucency.B_PLUS_F,
-          brightness,
-          0x800,
-          0x1800
-        );
+        battleUiParts.queueDaddyDivineIris(daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020);
       }
       //LAB_80108250
     }
 
     //LAB_80108268
     // Daddy spinner
-    // Arrow/ tick mark
-    renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c + 32,
-      daddyHudOffsetY_8011a020 -  4,
-      152,
-      208,
-      8,
-      24,
-      50,
-      Translucency.HALF_B_PLUS_HALF_F,
-      brightness,
-      0x1000
-    );
-    // Dark eye overlay
-    renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c + 18,
-      daddyHudOffsetY_8011a020 + 16,
-      224,
-      208,
-      31,
-      31,
-      daddyHudEyeClutOffsets_800fb84c[daddy.charId_18],
-      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc[transModesIndex][0]),
-      brightness,
-      0x1000
-    );
-    // Flat center overlay
-    renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c + 17,
-      daddyHudOffsetY_8011a020 + 14,
-      112,
-      200,
-      40,
-      40,
-      52,
-      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc[transModesIndex][1]),
-      brightness,
-      0x1000
-    );
-    // Frame top portion
-    renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c,
-      daddyHudOffsetY_8011a020, 160,
-      192,
-      64,
-      48,
-      daddyHudFrameClutOffsets_800fb840[daddy.charId_18],
-      null,
-      brightness,
-      0x1000
-    );
-    // Frame bottom portion
-    renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c +  8,
-      daddyHudOffsetY_8011a020 + 48,
-      200,
-      80,
-      42,
-      8,
-      daddyHudFrameClutOffsets_800fb840[daddy.charId_18],
-      null,
-      brightness,
-      0x1000
-    );
+    battleUiParts.queueDaddyFrame(daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020, daddyHudFrameClutOffsets_800fb840[daddy.charId_18], null, 0x80);
+    battleUiParts.queueDaddyFlatCenter(daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020, 0x34, Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc[transModesIndex][1]), 0x80);
+    battleUiParts.queueDaddyDarkEye(daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020, daddyHudEyeClutOffsets_800fb84c[daddy.charId_18], Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc[transModesIndex][0]), 0x80);
+    battleUiParts.queueDaddyArrow(daddyHudOffsetX_8011a01c, daddyHudOffsetY_8011a020, 0x32, Translucency.HALF_B_PLUS_HALF_F, 0x80);
+
+    // Spinner star
+    battleUiParts.queueDaddyStar(starX, starY, 0x33, Translucency.B_PLUS_F, (daddySpinnerBrightnessFactor_80119fb4 + 1) * 0x40);
+
     daddySpinnerBrightnessFactor_80119fb4 = 1 - daddySpinnerBrightnessFactor_80119fb4;
   }
 
@@ -3144,9 +2981,6 @@ public final class SEffe {
     for(int i = 7; i >= 0; i--) {
       int brightness = 0x80;
 
-      final int u = perfectDaddyGlyphUs_80119fbc[i];
-      final int v = perfectDaddyGlyphVs_80119fc4[i];
-
       final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
 
       final int renderStage = glyph.renderStage_00;
@@ -3163,18 +2997,7 @@ public final class SEffe {
         //LAB_80108ac4
         for(int j = 0; j < 4; j++) {
           brightness -= 0x20;
-          renderButtonPressHudTexturedRect(
-            glyph.currentXPosition_02 + j * 6,
-            daddyHudOffsetY_8011a020 + 16,
-            u,
-            v,
-            8,
-            16,
-            41,
-            Translucency.B_PLUS_F,
-            brightness,
-            0x1000
-          );
+          battleUiParts.queueDaddyPerfect(i, glyph.currentXPosition_02 + j * 6, daddyHudOffsetY_8011a020 + 16, brightness);
         }
       } else if(renderStage == 1) {
         //LAB_80108b58
@@ -3198,32 +3021,10 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      renderButtonPressHudTexturedRect(
-        glyph.currentXPosition_02,
-        daddyHudOffsetY_8011a020 + 16,
-        u,
-        v,
-        8,
-        16,
-        41,
-        Translucency.B_PLUS_F,
-        brightness,
-        0x1000
-      );
+      battleUiParts.queueDaddyPerfect(i, glyph.currentXPosition_02, daddyHudOffsetY_8011a020 + 16, brightness);
 
       if((glyph.currentStaticRenderTick_01 & 0x1) != 0) {
-        renderButtonPressHudTexturedRect(
-          glyph.currentXPosition_02,
-          daddyHudOffsetY_8011a020 + 16,
-          u,
-          v,
-          8,
-          16,
-          41,
-          Translucency.B_PLUS_F,
-          brightness,
-          0x1000
-        );
+        battleUiParts.queueDaddyPerfect(i, glyph.currentXPosition_02, daddyHudOffsetY_8011a020 + 16, brightness);
       }
       //LAB_80108cb0
     }
@@ -3279,16 +3080,31 @@ public final class SEffe {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
 
+    if(effect.obj == null) {
+      effect.obj = new PolyBuilder("Rain effect", GL_TRIANGLE_STRIP)
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .monochrome(0.0f)
+        .addVertex(1.0f, 0.0f, 0.0f)
+        .monochrome(0.0f)
+        .addVertex(0.0f, 1.0f, 0.0f)
+        .monochrome(1.0f)
+        .addVertex(1.0f, 1.0f, 0.0f)
+        .monochrome(1.0f)
+        .build();
+    }
+
     //LAB_80108e84
     for(int i = 0; i < effect.count_00; i++) {
-      if(Math.abs(Math.abs(rainArray[i].y0_04 + rainArray[i].x0_02) - Math.abs(rainArray[i].y1_08 + rainArray[i].x1_06)) <= 180) {
-        GPU.queueCommand(30, new GpuCommandLine()
-          .translucent(Translucency.of(data.params_10.flags_00 >>> 28 & 3))
-          .monochrome(0, 0)
-          .rgb(1, data.params_10.colour_1c.x, data.params_10.colour_1c.y, data.params_10.colour_1c.z)
-          .pos(0, rainArray[i].x1_06 - 256, rainArray[i].y1_08 - 128)
-          .pos(1, rainArray[i].x0_02 - 256, rainArray[i].y0_04 - 128)
-        );
+      if(Math.abs(Math.abs(rainArray[i].pos0_02.y + rainArray[i].pos0_02.x) - Math.abs(rainArray[i].pos1_06.y + rainArray[i].pos1_06.x)) <= 180) {
+        final float offsetX = GPU.getOffsetX() - 256;
+        final float offsetY = GPU.getOffsetY() - 128;
+        rainArray[i].pos0_02.add(offsetX, offsetY);
+        rainArray[i].pos1_06.add(offsetX, offsetY);
+        RENDERER.queueLine(effect.obj, effect.transforms, 120.0f, rainArray[i].pos1_06, rainArray[i].pos0_02)
+          .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
+          .colour(data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f);
+        rainArray[i].pos0_02.sub(offsetX, offsetY);
+        rainArray[i].pos1_06.sub(offsetX, offsetY);
       }
       //LAB_80108f6c
     }
@@ -3302,14 +3118,23 @@ public final class SEffe {
 
     //LAB_80109038
     for(int i = 0; i < effect.count_00; i++) {
-      final int endpointShiftX = (int)(MathHelper.sin(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].angleModifier_0a);
-      final int endpointShiftY = (int)(MathHelper.cos(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].angleModifier_0a);
-      rainArray[i].x1_06 = rainArray[i].x0_02;
-      rainArray[i].y1_08 = rainArray[i].y0_04;
-      rainArray[i].x0_02 = rainArray[i].x0_02 + endpointShiftX & 0x1ff;
-      rainArray[i].y0_04 = rainArray[i].y0_04 + endpointShiftY & 0xff;
+      final int endpointShiftX = (int)(MathHelper.sin(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].speed_0a);
+      final int endpointShiftY = (int)(MathHelper.cos(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].speed_0a);
+      rainArray[i].pos1_06.x = rainArray[i].pos0_02.x;
+      rainArray[i].pos1_06.y = rainArray[i].pos0_02.y;
+      rainArray[i].pos0_02.x = (rainArray[i].pos0_02.x + endpointShiftX) % 512;
+      rainArray[i].pos0_02.y = (rainArray[i].pos0_02.y + endpointShiftY) % 256;
     }
     //LAB_80109110
+  }
+
+  public static void deallocateRainEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+    final RainEffect08 effect = (RainEffect08)data.effect_44;
+
+    if(effect.obj != null) {
+      effect.obj.delete();
+      effect.obj = null;
+    }
   }
 
   @ScriptDescription("Allocates a rain effect")
@@ -3323,7 +3148,7 @@ public final class SEffe {
       script.scriptState_04,
       SEffe::tickRainEffect,
       SEffe::renderRainEffect,
-      null,
+      SEffe::deallocateRainEffect,
       new RainEffect08(count)
     );
 
@@ -3335,9 +3160,9 @@ public final class SEffe {
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
     for(int i = 0; i < count; i++) {
       rainArray[i]._00 = 1;
-      rainArray[i].x0_02 = (short)seed_800fa754.nextInt(513);
-      rainArray[i].y0_04 = (short)seed_800fa754.nextInt(257);
-      rainArray[i].angleModifier_0a = seed_800fa754.nextFloat(MathHelper.PI * 1.5f) + MathHelper.PI / 2.0f;
+      rainArray[i].pos0_02.x = (short)seed_800fa754.nextInt(513);
+      rainArray[i].pos0_02.y = (short)seed_800fa754.nextInt(257);
+      rainArray[i].speed_0a = seed_800fa754.nextFloat(0.75f) + 0.25f;
     }
 
     //LAB_80109328
@@ -3345,67 +3170,118 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /** Used in burning wave, psych bomb */
   @Method(0x80109358L)
-  public static void FUN_80109358(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
+  public static void renderScreenDistortionWaveEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
 
     // Dunno why these actually need to be truncated instead of fractions, but it breaks the effect otherwise
-    final float sp30 = (int)(data.params_10.scale_16.x * 0x1000) >> 8;
-    final float sp2c = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
-    final float sp38 = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
+    final float multiplierX = (int)(data.params_10.scale_16.x * 0x1000) >> 8;
+    final float multiplierHeight = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
+    final float rowLimit = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
+
+    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final float fullWidth;
+    if(widescreen) {
+      fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    } else {
+      fullWidth = displayWidth_1f8003e0;
+    }
+
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    final float inverseScreenHeight = 1.0f / 240.0f;
+
+    final PolyBuilder builder = new PolyBuilder("Wave effect", GL_TRIANGLES)
+      .bpp(Bpp.BITS_24)
+      .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3));
 
     //LAB_801093f0
-    for(int s3 = 1; s3 >= -1; s3 -= 2) {
-      final float angle = sp48.angle_00;
-      float angle1 = angle;
-      float angle2 = angle;
-      float s5 = s3 == 1 ? 0.0f : -1.0f;
-      int sp40 = s3 == 1 ? 120 : 119;
+    // whichHalf: 1 = bottom, -1 = top
+    for(int whichHalf = 1; whichHalf >= -1; whichHalf -= 2) {
+      float angle1 = effect.angle_00;
+      float angle2 = effect.angle_00;
+      float rowOffset = whichHalf == 1 ? 0.0f : -1.0f;
+      int v = whichHalf == 1 ? 120 : 119;
 
       //LAB_80109430
       //LAB_8010944c
-      while(s3 == -1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
-        float s2 = MathHelper.sin(angle1) * sp2c + 1.0f + sp2c;
+      while(whichHalf == -1 && rowOffset > -rowLimit || whichHalf == 1 && rowOffset < rowLimit) {
+        float height = (MathHelper.sin(angle1) + 1.0f) * multiplierHeight + 1.0f;
 
-        if((int)s2 == 0.0f) {
-          s2 = 1.0f;
+        if((int)height == 0.0f) {
+          height = 1.0f;
         }
 
         //LAB_8010949c
         //LAB_801094b8
-        for(int s6 = 0; s6 < (int)s2; s6++) {
-          final int x = (int)(MathHelper.sin(angle2) * sp30);
-          final int y = (int)(s5 + s6 * s3);
+        for(int row = 0; row < (int)height; row++) {
+          final int x = (int)(MathHelper.sin(angle2) * multiplierX);
+          final int y = (int)(row * whichHalf + rowOffset);
 
-          GPU.queueCommand(30, new GpuCommandQuad()
-            .bpp(Bpp.BITS_15)
-            .translucent(Translucency.of(data.params_10.flags_00 >>> 28 & 3))
-            .rgb(data.params_10.colour_1c)
-            .pos(-160 - x, y, 320, 1)
-            .uv(0, sp40)
-            .texture(GPU.getDisplayBuffer())
-          );
+          addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f);
 
-          angle2 += s3 * 0.05f;
+          angle2 += whichHalf * 0.05f;
         }
 
         //LAB_80109678
-        angle1 += s2 * 0.05f;
-        sp40 += s3;
-        s5 += s2 * s3;
+        angle1 += height * 0.05f;
+        v += whichHalf;
+        rowOffset += height * whichHalf;
       }
     }
+
+    effect.transforms.scaling(fullWidth, 1.0f, 1.0f);
+    effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+
+    final Obj obj = builder.build();
+    obj.delete();
+    RENDERER.queueOrthoModel(obj, effect.transforms)
+      .texture(RENDERER.getLastFrame());
+  }
+
+  private static void addLineToEffect(final PolyBuilder builder, final float x, final float y, final float v, final float r, final float g, final float b) {
+    builder
+      .addVertex(0.0f, y, 0.0f)
+      .uv(x / 320.0f, v)
+      .rgb(r, g, b)
+      .addVertex(1.0f, y, 0.0f)
+      .uv(x / 320.0f + 1.0f, v)
+      .rgb(r, g, b)
+      .addVertex(0.0f, y + 1.0f, 0.0f)
+      .uv(x / 320.0f, v - 1.0f / 240.0f)
+      .rgb(r, g, b)
+      .addVertex(1.0f, y, 0.0f)
+      .uv(x / 320.0f + 1.0f, v)
+      .rgb(r, g, b)
+      .addVertex(0.0f, y + 1.0f, 0.0f)
+      .uv(x / 320.0f, v - 1.0f / 240.0f)
+      .rgb(r, g, b)
+      .addVertex(1.0f, y + 1.0f, 0.0f)
+      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f)
+      .rgb(r, g, b);
   }
 
   @Method(0x801097e0L)
   public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .bpp(Bpp.BITS_15)
-      .translucent(Translucency.of(data.params_10.flags_00 >>> 28 & 3))
-      .rgb(data.params_10.colour_1c)
-      .pos(-160, -120, 320, 240)
-      .texture(GPU.getDisplayBuffer())
-    );
+    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
+
+    // Make sure effect fills the whole screen
+    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final float fullWidth;
+    if(widescreen) {
+      fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    } else {
+      fullWidth = displayWidth_1f8003e0;
+    }
+
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    effect.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
+    effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, effect.transforms)
+      .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
+      .colour(data.params_10.colour_1c.x / 128.0f, data.params_10.colour_1c.y / 128.0f, data.params_10.colour_1c.z / 128.0f)
+      .texture(RENDERER.getLastFrame());
   }
 
   @Method(0x80109a4cL)
@@ -3444,31 +3320,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80109b44L)
-  public static void applyVertexDifferenceAnimation(final ScriptState<VertexDifferenceAnimation18> state, final VertexDifferenceAnimation18 animation) {
-    animation.ticksRemaining_00--;
-
-    if(animation.ticksRemaining_00 < 0) {
-      state.deallocateWithChildren();
-      return;
-    }
-
-    //LAB_80109b7c
-    //LAB_80109b90
-    for(int i = 0; i < animation.vertexCount_08; i++) {
-      final Vector3f source = animation.sourceVertices_0c[i];
-      final Vector3f current = animation.currentState_10[i];
-      final Vector3f previous = animation.previousState_14[i];
-      previous.add(current);
-      current.x += current.x * animation.embiggener_04;
-      current.y += current.y * animation.embiggener_04;
-      current.z += current.z * animation.embiggener_04;
-      source.set(previous);
-    }
-
-    //LAB_80109ce0
-  }
-
   /** Kubila demon frog, Lloyd's cape, Selebus' strapple and zambo hands, Grand Jewel heal, etc. */
   @ScriptDescription("Allocates a vertex difference animation for an effect")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
@@ -3477,7 +3328,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "How much to grow each frame")
   @Method(0x80109d30L)
   public static FlowControl scriptAllocateVertexDifferenceAnimation(final RunningScript<?> script) {
-    final int ticksRemaining = script.params_20[2].get();
+    final int ticks = script.params_20[2].get();
     final float embiggener = script.params_20[3].get() / (float)0x100;
 
     final EffectManagerData6c<?> sourceState = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -3486,37 +3337,39 @@ public final class SEffe {
     final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState("Vertex difference animation source %d (%s), diff %d (%s)".formatted(sourceState.myScriptState_0e.index, sourceState.name, diffState.myScriptState_0e.index, diffState.name), new VertexDifferenceAnimation18());
 
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::applyVertexDifferenceAnimation);
+    state.setTicker(VertexDifferenceAnimation18::applyVertexDifferenceAnimation);
     final DeffTmdRenderer14 source = (DeffTmdRenderer14)sourceState.effect_44;
     final DeffTmdRenderer14 diff = (DeffTmdRenderer14)diffState.effect_44;
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
-    animation.ticksRemaining_00 = ticksRemaining;
+    animation.tmd = sourceModel;
+    animation.tmd.vdf = sourceModel.vert_top_00;
+    animation.ticksRemaining_00 = ticks;
     animation.embiggener_04 = embiggener;
     animation.vertexCount_08 = sourceModel.n_vert_04;
     animation.sourceVertices_0c = sourceModel.vert_top_00;
-    animation.currentState_10 = new Vector3f[sourceModel.n_vert_04];
-    animation.previousState_14 = new Vector3f[sourceModel.n_vert_04];
-    Arrays.setAll(animation.currentState_10, i -> new Vector3f());
-    Arrays.setAll(animation.previousState_14, i -> new Vector3f());
+    animation.step_10 = new Vector3f[sourceModel.n_vert_04];
+    animation.current_14 = new Vector3f[sourceModel.n_vert_04];
+    Arrays.setAll(animation.step_10, i -> new Vector3f());
+    Arrays.setAll(animation.current_14, i -> new Vector3f());
     // Set unused static _8011a030 to 1
 
     //LAB_80109e78
     for(int i = 0; i < sourceModel.n_vert_04; i++) {
       final Vector3f sourceVertex = sourceModel.vert_top_00[i];
-      animation.previousState_14[i].set(sourceVertex);
+      animation.current_14[i].set(sourceVertex);
     }
 
     //LAB_80109ecc
     //LAB_80109ee4
     for(int i = 0; i < animation.vertexCount_08; i++) {
-      final Vector3f diffVertex = diffModel.vert_top_00[i];
-      final Vector3f previous = animation.previousState_14[i];
-      final Vector3f current = animation.currentState_10[i];
-      current.x = (diffVertex.x - previous.x) / ticksRemaining;
-      current.y = (diffVertex.y - previous.y) / ticksRemaining;
-      current.z = (diffVertex.z - previous.z) / ticksRemaining;
+      final Vector3f dest = diffModel.vert_top_00[i];
+      final Vector3f src = animation.current_14[i];
+      final Vector3f step = animation.step_10[i];
+      step.x = (dest.x - src.x) / ticks;
+      step.y = (dest.y - src.y) / ticks;
+      step.z = (dest.z - src.z) / ticks;
     }
 
     //LAB_80109f90
@@ -3900,10 +3753,8 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** TODO This is the second screen capture function, usage currently unknown */
   @Method(0x8010b594L)
-  public static void FUN_8010b594(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
-    int v1;
+  public static void renderImagoInstantDeathCapture(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
     int a0;
     int a1;
 
@@ -3949,13 +3800,13 @@ public final class SEffe {
             vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
             vert1.y = a0 * effect.screenspaceH_14 / 2.0f;
             vert2.y = vert1.y;
-            a0 = (i >> 1) * 64;
-            v1 = (i & 0x1) * 32;
+            final int u = (i >> 1) * 64;
+            final int v = (i & 0x1) * 32;
 
             cmd
-              .uv(0, a0, v1 + effect.captureW_04 / 4 - 1)
-              .uv(1, v1, a0 + effect.captureH_08 / 2 - 1)
-              .uv(2, v1 + effect.captureW_04 / 4 - 1, a0 + effect.captureH_08 / 2 - 1);
+              .uv(0, u, v + effect.captureW_04 / 4 - 1)
+              .uv(1, v, u + effect.captureH_08 / 2 - 1)
+              .uv(2, v + effect.captureW_04 / 4 - 1, u + effect.captureH_08 / 2 - 1);
           } else {
             //LAB_8010b8c8
             a0 = i & 0x3;
@@ -3964,15 +3815,15 @@ public final class SEffe {
             vert2.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
             a0 = i >> 2;
             vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
-            v1 = (i & 1) * 32;
-            a0 = (i >> 1) * 64;
             vert2.y = a0 * effect.screenspaceH_14 / 2.0f;
             vert1.y = vert2.y;
+            final int u = (i & 1) * 32;
+            final int v = (i >> 1) * 64;
 
             cmd
-              .uv(0, v1, a0)
-              .uv(1, v1, a0 + effect.captureH_08 / 2 - 1)
-              .uv(2, v1 + effect.captureW_04 / 4 - 1, a0 + effect.captureH_08 / 2 - 1);
+              .uv(0, u, v)
+              .uv(1, u, v + effect.captureH_08 / 2 - 1)
+              .uv(2, u + effect.captureW_04 / 4 - 1, v + effect.captureH_08 / 2 - 1);
           }
 
           //LAB_8010b9a4
@@ -4493,18 +4344,7 @@ public final class SEffe {
   @Method(0x8010d5b4L)
   public static void renderWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
-    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-
-    spriteEffect.flags_00 = manager.params_10.flags_00;
-    spriteEffect.x_04 = (short)(-effect.width_0a / 2);
-    spriteEffect.y_06 = (short)(-effect.height_0c / 2);
-    spriteEffect.w_08 = effect.width_0a;
-    spriteEffect.h_0a = effect.height_0c;
-    spriteEffect.tpage_0c = (effect.v_08 & 0x100) >>> 4 | (effect.u_06 & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (effect.u_06 & 0x3f) * 4;
-    spriteEffect.v_0f = effect.v_08;
-    spriteEffect.clutX_10 = effect.clut_0e << 4 & 0x3ff;
-    spriteEffect.clutY_12 = effect.clut_0e >>> 6 & 0x1ff;
+    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(manager.params_10.flags_00, -effect.width_0a / 2, -effect.height_0c / 2, effect.width_0a, effect.height_0c, (effect.v_08 & 0x100) >>> 4 | (effect.u_06 & 0x3ff) >>> 6, effect.clut_0e << 4 & 0x3ff, effect.clut_0e >>> 6 & 0x1ff, (effect.u_06 & 0x3f) * 4, effect.v_08);
 
     final Vector3f translation = new Vector3f();
 
@@ -4529,7 +4369,8 @@ public final class SEffe {
         spriteEffect.scaleY_1e = manager.params_10.scale_16.y;
         spriteEffect.angle_20 = feather.spriteAngle_6e;
         translation.set(feather.translation_08).add(manager.params_10.trans_04);
-        renderGenericSpriteAtZOffset0(spriteEffect, translation);
+        spriteEffect.render(translation);
+        spriteEffect.delete();
       }
     }
   }
@@ -4695,7 +4536,7 @@ public final class SEffe {
         zOffset_1f8003e8 = 0;
         tmdGp0Tpage_1f8003ec = 2;
 
-        renderDobj2(dobj2);
+        Renderer.renderDobj2(dobj2, false, 0);
       }
     }
 
@@ -4714,9 +4555,9 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "StarChildrenMeteorEffect10",
       script.scriptState_04,
-      SEffe::tickStarChildrenMeteorEffect,
-      SEffe::renderStarChildrenMeteorEffect,
-      null,
+      StarChildrenMeteorEffect10::tickStarChildrenMeteorEffect,
+      StarChildrenMeteorEffect10::renderStarChildrenMeteorEffect,
+      StarChildrenMeteorEffect10::destructor,
       new StarChildrenMeteorEffect10(meteorCount)
     );
 
@@ -4759,87 +4600,6 @@ public final class SEffe {
     //LAB_8010e2b0
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8010e2fcL)
-  public static void renderStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
-    final int flags = manager.params_10.flags_00;
-    final int tpage = (meteorEffect.metrics_04.v_02 & 0x100) >>> 4 | (meteorEffect.metrics_04.u_00 & 0x3ff) >>> 6;
-    final int vramX = (tpage & 0b1111) * 64;
-    final int vramY = (tpage & 0b10000) != 0 ? 256 : 0;
-    final int leftU = (meteorEffect.metrics_04.u_00 & 0x3f) * 4;
-    final int rightU = leftU + meteorEffect.metrics_04.w_04;
-    final int bottomV = meteorEffect.metrics_04.v_02;
-    final int topV = bottomV + meteorEffect.metrics_04.h_05;
-    final int clutX = meteorEffect.metrics_04.clut_06 << 4 & 0x3ff;
-    final int clutY = meteorEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
-    final int r = manager.params_10.colour_1c.x;
-    final int g = manager.params_10.colour_1c.y;
-    final int b = manager.params_10.colour_1c.z;
-    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
-
-    //LAB_8010e414
-    for(int i = 0; i < meteorEffect.count_00; i++) {
-      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-
-      final int w = (int)(meteor.scaleW_0c * meteorEffect.metrics_04.w_04);
-      final int h = (int)(meteor.scaleH_0e * meteorEffect.metrics_04.h_05);
-      final int x = meteor.centerOffsetX_02 - w / 2;
-      final int y = meteor.centerOffsetY_04 - h / 2;
-
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .clut(clutX, clutY)
-        .vramPos(vramX, vramY)
-        .rgb(r, g, b)
-        .pos(0, x, y)
-        .pos(1, x + w, y)
-        .pos(2, x, y + h)
-        .pos(3, x + w, y + h)
-        .uv(0, leftU, bottomV)
-        .uv(1, rightU, bottomV)
-        .uv(2, leftU, topV)
-        .uv(3, rightU, topV);
-
-      if((flags >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of(flags >>> 28 & 0b11));
-      }
-
-      GPU.queueCommand(30, cmd);
-      //LAB_8010e678
-    }
-    //LAB_8010e694
-  }
-
-  @Method(0x8010e6b0L)
-  public static void tickStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
-
-    //LAB_8010e6ec
-    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
-    for(int i = 0; i < meteorEffect.count_00; i++) {
-      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.centerOffsetX_02 += (short)(MathHelper.sin(manager.params_10.rot_10.x) * 32 * manager.params_10.scale_16.x * meteor.scale_0a);
-      meteor.centerOffsetY_04 += (short)(MathHelper.cos(manager.params_10.rot_10.x) * 32 * manager.params_10.scale_16.x * meteor.scale_0a);
-
-      if(meteor.scale_0a * 120 + 50 < meteor.centerOffsetY_04) {
-        meteor.centerOffsetY_04 = -120;
-        meteor.centerOffsetX_02 = rand() % 321 - 160;
-      }
-
-      //LAB_8010e828
-      final int centerOffsetX = meteor.centerOffsetX_02;
-      if(centerOffsetX > 160) {
-        meteor.centerOffsetX_02 = -160;
-        //LAB_8010e848
-      } else if(centerOffsetX < -160) {
-        //LAB_8010e854
-        meteor.centerOffsetX_02 = 160;
-      }
-      //LAB_8010e860
-    }
-    //LAB_8010e87c
   }
 
   @ScriptDescription("Allocates a Moon Light stars effect")
@@ -4911,18 +4671,7 @@ public final class SEffe {
   @Method(0x8010ec08L)
   public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
-
-    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-    spriteEffect.flags_00 = manager.params_10.flags_00;
-    spriteEffect.x_04 = (short)(-starEffect.metrics_04.w_04 / 2);
-    spriteEffect.y_06 = (short)(-starEffect.metrics_04.h_05 / 2);
-    spriteEffect.w_08 = starEffect.metrics_04.w_04;
-    spriteEffect.h_0a = starEffect.metrics_04.h_05;
-    spriteEffect.tpage_0c = (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (starEffect.metrics_04.u_00 & 0x3f) << 2;
-    spriteEffect.v_0f = starEffect.metrics_04.v_02;
-    spriteEffect.clutX_10 = starEffect.metrics_04.clut_06 << 4 & 0x3ff;
-    spriteEffect.clutY_12 = starEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
+    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(manager.params_10.flags_00, -starEffect.metrics_04.w_04 / 2, -starEffect.metrics_04.h_05 / 2, starEffect.metrics_04.w_04, starEffect.metrics_04.h_05, (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6, starEffect.metrics_04.clut_06 << 4 & 0x3ff, starEffect.metrics_04.clut_06 >>> 6 & 0x1ff, (starEffect.metrics_04.u_00 & 0x3f) << 2, starEffect.metrics_04.v_02);
 
     final Vector3f translation = new Vector3f();
 
@@ -4942,7 +4691,8 @@ public final class SEffe {
       spriteEffect.scaleY_1e = manager.params_10.scale_16.y;
       spriteEffect.angle_20 = manager.params_10.rot_10.x;
       translation.set(manager.params_10.trans_04).add(star.translation_04);
-      renderGenericSpriteAtZOffset0(spriteEffect, translation);
+      spriteEffect.render(translation);
+      spriteEffect.delete();
     }
 
     //LAB_8010edac
@@ -6053,8 +5803,8 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "The first battle object script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex2", description = "The second battle object script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X angle (12-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y angle (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z angle (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y angle (12-bit fixed-point)")
   @Method(0x80112900L)
   public static FlowControl scriptGetRelativeAngleBetweenBobjs(final RunningScript<?> script) {
     final Vector3f rot = new Vector3f();
@@ -8219,10 +7969,17 @@ public final class SEffe {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        RENDERER.queueModel(deffEffect.obj, sp0x10)
+        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(deffEffect.obj, sp0x10)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour);
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+        if(deffEffect.tmd_08.vdf != null) {
+          model.vdf(deffEffect.tmd_08.vdf);
+        }
       } else {
         //LAB_80118370
         renderTmdSpriteEffect(deffEffect.tmd_08, deffEffect.obj, data.params_10, sp0x10);

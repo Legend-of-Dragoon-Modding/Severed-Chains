@@ -1,6 +1,7 @@
 package legend.game.combat.ui;
 
 import legend.core.gpu.Bpp;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -24,7 +25,8 @@ public class UiBox {
 
   private final Obj hudBackgroundObj;
   private final Obj hudBackgroundButDarkerObj;
-  private final Obj[] hudBackgroundBorders = new Obj[8];
+  private Obj hudBackgroundBorders;
+  private final MV transforms = new MV();
 
   public UiBox(final String name, final int x, final int y, final int width, final int height) {
     this(name, x, y, width, height, 1.0f, 1.0f, 1.0f);
@@ -43,7 +45,7 @@ public class UiBox {
       .rgb(1, r, g, b)
       .rgb(2, r, g, b)
       .monochrome(3, 0.0f)
-      .pos(x, y, 124.0f)
+      .pos(x, y, 0.0f)
       .size(width, height)
       .build();
 
@@ -51,7 +53,7 @@ public class UiBox {
     this.hudBackgroundButDarkerObj = new QuadBuilder(name + " Background Darkening Overlay")
       .translucency(Translucency.HALF_B_PLUS_HALF_F)
       .monochrome(0, 0.0f)
-      .pos(x, y, 124.0f)
+      .pos(x, y, 0.0f)
       .size(width, height)
       .build();
 
@@ -73,6 +75,9 @@ public class UiBox {
     ys[2] = y1;
     xs[3] = x1 - 1;
     ys[3] = y1;
+
+    final QuadBuilder builder = new QuadBuilder("Battle UI Border")
+      .bpp(Bpp.BITS_4);
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
@@ -101,19 +106,18 @@ public class UiBox {
         rightU = leftU + borderMetrics.w_0c;
       }
 
-      if(this.hudBackgroundBorders[i] == null) {
-        this.hudBackgroundBorders[i] = new QuadBuilder("Battle UI Border " + i)
-          .bpp(Bpp.BITS_4)
-          .clut(720, 497)
-          .vramPos(704, 256)
-          .monochrome(0.5f)
-          .uv(leftU, topV)
-          .pos(leftX, topY, 124.0f)
-          .posSize(rightX - leftX, bottomY - topY)
-          .uvSize(rightU - leftU, bottomV - topV)
-          .build();
-      }
+      builder
+        .add()
+        .clut(720, 497)
+        .vramPos(704, 256)
+        .monochrome(0.5f)
+        .uv(leftU, topV)
+        .pos(leftX, topY, 0.0f)
+        .posSize(rightX - leftX, bottomY - topY)
+        .uvSize(rightU - leftU, bottomV - topV);
     }
+
+    this.hudBackgroundBorders = builder.build();
   }
 
   public void render() {
@@ -125,21 +129,21 @@ public class UiBox {
   }
 
   public void render(final float r, final float g, final float b) {
-    RENDERER.queueOrthoOverlayModel(this.hudBackgroundButDarkerObj);
-    RENDERER.queueOrthoOverlayModel(this.hudBackgroundObj)
+    this.transforms.transfer.set(0.0f, 0.0f, 125.0f);
+
+    RENDERER.queueOrthoModel(this.hudBackgroundButDarkerObj, this.transforms);
+    RENDERER.queueOrthoModel(this.hudBackgroundObj, this.transforms)
       .colour(r, g, b);
 
-    for(int i = 0; i < this.hudBackgroundBorders.length; i++) {
-      RENDERER.queueOrthoOverlayModel(this.hudBackgroundBorders[i]);
+    for(int i = 0; i < 8; i++) {
+      RENDERER.queueOrthoModel(this.hudBackgroundBorders, this.transforms)
+        .vertices(i * 4, 4);
     }
   }
 
   public void delete() {
     this.hudBackgroundObj.delete();
     this.hudBackgroundButDarkerObj.delete();
-
-    for(final Obj border : this.hudBackgroundBorders) {
-      border.delete();
-    }
+    this.hudBackgroundBorders.delete();
   }
 }

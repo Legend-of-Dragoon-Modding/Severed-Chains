@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gte.MV;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
@@ -8,9 +9,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
-import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
-import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.submap.SobjPos14;
@@ -114,17 +113,11 @@ public final class Scus94491BpeSegment_800b {
 
   public static int _800bd0f0;
 
-  public static SequenceData124 currentSequenceData_800bd0f8;
-
-  public static int musicFileIndex_800bd0fc;
   /** .8 */
   public static int sssqTempoScale_800bd100;
-  public static int sssqTempo_800bd104;
-  public static int sequenceVolume_800bd108;
 
   public static final Queue<QueuedSound28> queuedSounds_800bd110 = new LinkedList<>();
-  /** NOTE: this used to be an array, but only the 6th element was used */
-  public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
+  public static BackgroundMusic victoryMusic;
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
   public static int _800bd710;

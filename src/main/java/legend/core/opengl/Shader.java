@@ -54,16 +54,33 @@ import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
 public class Shader<Options extends ShaderOptions<Options>> {
   private static final Logger LOGGER = LogManager.getLogger(Shader.class.getName());
 
-  private final Supplier<Options> options;
-  private final int shader;
+  private final Path vert;
+  private final Path frag;
+  private final Function<Shader<Options>, Supplier<Options>> optionsSupplier;
+  private Supplier<Options> options;
+  private int shader = -1;
 
   public Shader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    final int vsh = this.compileShader(vert, GL_VERTEX_SHADER);
-    final int fsh = this.compileShader(frag, GL_FRAGMENT_SHADER);
+    this.vert = vert;
+    this.frag = frag;
+    this.optionsSupplier = options;
+    this.reload();
+  }
+
+  public void reload() throws IOException {
+    final int vsh = this.compileShader(this.vert, GL_VERTEX_SHADER);
+    final int fsh = this.compileShader(this.frag, GL_FRAGMENT_SHADER);
+
+    // Delete the old shader after loading the parts of the new one so
+    // that we can keep using the old one if the new one fails to load
+    if(this.shader != -1) {
+      this.delete();
+    }
+
     this.shader = this.linkProgram(vsh, fsh);
     glDeleteShader(vsh);
     glDeleteShader(fsh);
-    this.options = options.apply(this);
+    this.options = this.optionsSupplier.apply(this);
   }
 
   private int compileShader(final Path file, final int type) throws IOException {
@@ -111,6 +128,7 @@ public class Shader<Options extends ShaderOptions<Options>> {
 
   public void delete() {
     glDeleteProgram(this.shader);
+    this.shader = -1;
   }
 
   private class Uniform {
@@ -130,7 +148,7 @@ public class Shader<Options extends ShaderOptions<Options>> {
     public static final int TRANSFORM2 = 1;
     public static final int LIGHTING = 2;
     public static final int PROJECTION_INFO = 3;
-    public static final int TMD_INFO = 4;
+    public static final int VDF = 4;
 
     private final int id;
 

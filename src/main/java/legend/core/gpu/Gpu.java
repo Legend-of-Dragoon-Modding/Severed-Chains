@@ -39,7 +39,7 @@ import static org.lwjgl.opengl.GL30C.GL_R32UI;
 import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
 
 public class Gpu {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
 
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
@@ -61,7 +61,7 @@ public class Gpu {
   private Shader<SimpleShaderOptions> vramShader;
   private SimpleShaderOptions vramShaderOptions;
   private Shader.UniformBuffer transforms2Uniform;
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
   private final Matrix4f identity = new Matrix4f();
 
   private Texture displayTexture;
@@ -163,7 +163,7 @@ public class Gpu {
         avg += this.fps[i];
       }
 
-      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(avg / fpsLimit, fpsLimit, RENDERER.window().getHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
     }
   }
 
@@ -211,9 +211,8 @@ public class Gpu {
       this.displayChanged = false;
     }
 
-    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
-
     if(RenderEngine.legacyMode == 1) {
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
       this.drawDisplay();
     } else if(RenderEngine.legacyMode == 2) {
       this.drawVram();

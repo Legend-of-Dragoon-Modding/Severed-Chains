@@ -20,7 +20,7 @@ import static legend.core.GameEngine.REGISTRIES;
 public final class ConfigStorage {
   private ConfigStorage() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ConfigStorage.class);
 
   public static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation location, final Path file) {
     LOGGER.info("Loading config %s from %s", location, file);

@@ -8,7 +8,6 @@ import org.joml.Vector3f;
 
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.getModelObjectTranslation;
-import static legend.game.combat.SEffe.renderGenericSpriteAtZOffset0;
 
 public class MonsterDeathEffect34 implements Effect {
   /** short; Indicates highest part index to turn off. Parts at index <= value are "destroyed" */
@@ -49,7 +48,7 @@ public class MonsterDeathEffect34 implements Effect {
         this.sprite_0c.angle_20 = obj.angleModifier_0c;
         this.sprite_0c.scaleX_1c = manager.params_10.scale_16.x + obj.scaleModifier_04;
         this.sprite_0c.scaleY_1e = manager.params_10.scale_16.y + obj.scaleModifier_04;
-        renderGenericSpriteAtZOffset0(this.sprite_0c, obj.translation_14);
+        this.sprite_0c.render(obj.translation_14);
       }
       //LAB_800d3174
     }
@@ -107,6 +106,10 @@ public class MonsterDeathEffect34 implements Effect {
       }
     }
     //LAB_800d346c
+  }
+
+  public void destructor(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+    this.sprite_0c.delete();
   }
 
   @Method(0x800d0094L)

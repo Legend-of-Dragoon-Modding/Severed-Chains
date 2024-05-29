@@ -1,8 +1,10 @@
 package legend.core.opengl;
 
+import legend.core.gpu.Bpp;
 import legend.game.types.Translucency;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.MathHelper.makeClut;
+import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOURED_FLAG;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
@@ -15,6 +17,8 @@ import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class LegacyTextBuilder {
+  private static final int CHAR_COUNT = 0x100;
+
   private final String name;
 
   public LegacyTextBuilder(final String name) {
@@ -25,16 +29,14 @@ public class LegacyTextBuilder {
     vertices[offset++] = x;
     vertices[offset++] = y;
     vertices[offset++] = 0.0f;
+    vertices[offset++] = 0.0f; // Vertex index, only used for VDF
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
-    vertices[offset++] = u;
-    vertices[offset++] = v;
-    vertices[offset++] = 832.0f; // tpx
-    vertices[offset++] = 256.0f; // tpy
-    vertices[offset++] = 832.0f; // clx
-    vertices[offset++] = 480.0f; // cly
-    vertices[offset++] = 0.0f; // bpp
+    vertices[offset++] = u / 256.0f;
+    vertices[offset++] = v / 256.0f;
+    vertices[offset++] = makeTpage(832, 256, Bpp.BITS_24, null);
+    vertices[offset++] = makeClut(832, 480);
     vertices[offset++] = 1.0f; // r
     vertices[offset++] = 1.0f; // g
     vertices[offset++] = 1.0f; // b
@@ -45,11 +47,11 @@ public class LegacyTextBuilder {
 
   private int setVertices(int offset, final float[] vertices, final int chr) {
     final int u = (chr & 0xf) * 16;
-    final int v = chr / 16 * 12;
+    final int v = chr / 16 * 16;
     offset = this.setVertex(offset, vertices, 0.0f,  0.0f, u, v);
-    offset = this.setVertex(offset, vertices, 0.0f, 12.0f, u, v + 12.0f);
+    offset = this.setVertex(offset, vertices, 0.0f, 16.0f, u, v + 16.0f);
     offset = this.setVertex(offset, vertices, 8.0f,  0.0f, u + 8.0f, v);
-    offset = this.setVertex(offset, vertices, 8.0f, 12.0f, u + 8.0f, v + 12.0f);
+    offset = this.setVertex(offset, vertices, 8.0f, 16.0f, u + 8.0f, v + 16.0f);
     return offset;
   }
 
@@ -57,22 +59,22 @@ public class LegacyTextBuilder {
     // x y z nx ny nz u v tpx tpy clx cly bpp r g b m flags
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
-    final float[] vertices = new float[0x56 * 4 * vertexSize];
+    final float[] vertices = new float[CHAR_COUNT * 4 * vertexSize];
     int offset = 0;
-    for(int chr = 0; chr < 0x56; chr++) {
+    for(int chr = 0; chr < CHAR_COUNT; chr++) {
       offset = this.setVertices(offset, vertices, chr);
     }
 
-    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, 0x56 * 4);
+    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, CHAR_COUNT * 4);
 
-    mesh.attribute(0, 0L, 3, vertexSize);
+    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
     int meshIndex = 1;
-    int meshOffset = 3;
+    int meshOffset = POS_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
     meshIndex++;
@@ -90,10 +92,6 @@ public class LegacyTextBuilder {
     meshIndex++;
     meshOffset += CLUT_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
-
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;
     meshOffset += COLOUR_SIZE;
@@ -102,6 +100,6 @@ public class LegacyTextBuilder {
 
     final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
     meshes[0] = mesh;
-    return new MeshObj(this.name, meshes);
+    return new MeshObj(this.name, meshes, true);
   }
 }

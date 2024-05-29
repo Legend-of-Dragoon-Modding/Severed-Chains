@@ -5,7 +5,6 @@ import legend.core.MathHelper;
 import legend.core.Random;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -111,10 +110,9 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
-import legend.game.types.LodString;
+import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.Keyframe0c;
 import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -148,6 +146,8 @@ import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
+import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
+import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
@@ -159,7 +159,6 @@ import static legend.game.Scus94491BpeSegment.loadEncounterSoundsAndMusic;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -257,7 +256,7 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 
 public class Battle extends EngineState {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
 
@@ -274,7 +273,6 @@ public class Battle extends EngineState {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link #loadStageAndControllerScripts}</li>
-   *   <li>{@link #uploadBattleStageToGpu}</li>
    *   <li>{@link #initializeViewportAndCamera}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -309,7 +307,6 @@ public class Battle extends EngineState {
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::waitForFilesToLoad,
     this::loadStageAndControllerScripts,
-    this::uploadBattleStageToGpu,
     this::initializeViewportAndCamera,
     Scus94491BpeSegment::nextLoadingStage,
     Scus94491BpeSegment::waitForFilesToLoad,
@@ -408,15 +405,14 @@ public class Battle extends EngineState {
     Arrays.setAll(this.dragoonSpells_800c6960, i -> new DragoonSpells09());
   }
 
-  public final LodString[] currentEnemyNames_800c69d0 = new LodString[9];
+  public final String[] currentEnemyNames_800c69d0 = new String[9];
 
   public Element dragoonSpaceElement_800c6b64;
 
   public final int[] monsterBents_800c6b78 = new int[9];
   private int monsterCount_800c6b9c;
 
-  /** Uhh, contains the monsters that Melbu summons during his fight...? */
-  public final LodString[] melbuMonsterNames_800c6ba8 = new LodString[3];
+  public final String[] melbuMonsterNames_800c6ba8 = new String[3];
 
   public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
 
@@ -683,17 +679,17 @@ public class Battle extends EngineState {
 
     functions[352] = this::scriptSetModelPartVisibility;
     functions[353] = this::scriptCopyVram;
-    functions[354] = this::FUN_800cd468;
-    functions[355] = this::FUN_800cd4b0;
-    functions[356] = this::FUN_800cd4f0;
+    functions[354] = this::scriptLoadGlobalAsset;
+    functions[355] = this::scriptWaitGlobalAssetAllocation;
+    functions[356] = this::scriptDeallocateGlobalAsset;
     functions[357] = this::scriptAddCombatant;
     functions[358] = this::scriptDeallocateAndRemoveCombatant;
     functions[359] = this::FUN_800cda78;
     functions[360] = this::scriptAllocateBent;
-    functions[361] = this::FUN_800cd740;
+    functions[361] = this::scriptLoadModelToCombatantFromGlobalAssets;
     functions[362] = this::FUN_800cd7a8;
-    functions[363] = this::FUN_800cd810;
-    functions[364] = this::FUN_800cd8a4;
+    functions[363] = this::scriptLoadAnimToCombatantFromGlobalAssetsOrDeallocate;
+    functions[364] = this::scriptLoadTextureToCombatantFromGlobalAssets;
     functions[365] = this::scriptGetBentNobj;
     functions[366] = this::scriptDeallocateCombatant;
     functions[367] = this::scriptStopRenderingStage;
@@ -809,7 +805,7 @@ public class Battle extends EngineState {
     functions[570] = SEffe::scriptAddRotationScalerAttachmentTowardsPointTicks;
     functions[571] = SEffe::scriptAddRotationScalerAttachmentTowardsPointDistance;
     functions[572] = SEffe::FUN_80115600; // no-op
-    functions[573] = this::FUN_800e9f68;
+    functions[573] = this::scriptAllocateClonedModelEffect;
     functions[574] = SEffe::scriptLoadEffectModelAnimation;
     functions[575] = SEffe::scriptAddScaleScalerAttachment;
     functions[576] = SEffe::scriptAddScaleScalerMultiplicativeAttachmentTicks;
@@ -1212,20 +1208,6 @@ public class Battle extends EngineState {
     pregameLoadingStage_800bb10c++;
   }
 
-  public void uploadBattleStageToGpu() {
-    if(this.stageHasModel_800c66b8) {
-      final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
-
-      for(int i = 0; i < stage.dobj2s_00.length; i++) {
-        if(stage.tmd_5d0.objTable[i] != null) {
-          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
-        }
-      }
-
-      pregameLoadingStage_800bb10c++;
-    }
-  }
-
   @Method(0x800c76a0L)
   public void initializeViewportAndCamera() {
     if((battleFlags_800bc960 & 0x3) == 0x3) {
@@ -1250,7 +1232,7 @@ public class Battle extends EngineState {
     startFadeEffect(4, 30);
 
     battleFlags_800bc960 |= 0x20;
-    battleState_8006e398.stageProgression_eec = 0;
+    battleState_8006e398.battlePhase_eec = 0;
 
     this.clearCombatants();
     this.clearCurrentDisplayableItems();
@@ -1351,14 +1333,14 @@ public class Battle extends EngineState {
       battleState_8006e398.addPlayer(state);
     }
 
-    this.FUN_800ef28c();
+    this.initPlayerBattleEntityStats();
 
     pregameLoadingStage_800bb10c++;
   }
 
   @Method(0x800c791cL)
   public void loadEncounterAssets() {
-    this.loadEnemyTextures(2625 + encounterId_800bb0f8);
+    this.loadEnemyTextures();
 
     //LAB_800fc030
     for(int i = 0; i < this.combatantCount_800c66a0; i++) {
@@ -1399,9 +1381,20 @@ public class Battle extends EngineState {
 
   /** Pulled from S_ITEM */
   @Method(0x800fc3c0L)
-  public void loadEnemyTextures(final int fileIndex) {
-    // Example file: 2856
-    loadDrgnDir(0, fileIndex, this::enemyTexturesLoadedCallback);
+  public void loadEnemyTextures() {
+    for(int i = 0; i < this.combatantCount_800c66a0; i++) {
+      final CombatantStruct1a8 a0 = this.getCombatant(i);
+
+      if(a0.charSlot_19c >= 0) {
+        continue;
+      }
+
+      final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+
+      if(Unpacker.exists("monsters/%d/textures/combat".formatted(enemyIndex))) {
+        loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> this.loadCombatantTim(a0, files));
+      }
+    }
   }
 
   /** Pulled from S_ITEM */
@@ -1635,11 +1628,15 @@ public class Battle extends EngineState {
       this.updateGameStateAndDeallocateMenu();
       this.setStageHasNoModel();
 
-      for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
-        if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
-          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
-          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
+      if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 != null) {
+        for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
+          if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
+            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
+            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
+          }
         }
+
+        battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 = null;
       }
 
       if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
@@ -1794,17 +1791,17 @@ public class Battle extends EngineState {
       final int x2 = x0 + mcq.screenWidth_14;
       int y = this.mcqOffsetY_800c6778 - MathHelper.radToPsxDeg(MathHelper.floorMod(this.camera_800c67f0.calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8 - 8.0f);
-      RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, 60000.0f);
+      RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
         .monochrome(this.mcqColour_800fa6dc / 128.0f);
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, orderingTableSize_1f8003c8 - 8.0f);
-      RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, 60000.0f);
+      RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
         .monochrome(this.mcqColour_800fa6dc / 128.0f);
 
       if(x2 <= centreScreenX_1f8003dc * 2) {
-        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, orderingTableSize_1f8003c8 - 8.0f);
-        RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, 60000.0f);
+        RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
           .monochrome(this.mcqColour_800fa6dc / 128.0f);
       }
 
@@ -1839,12 +1836,12 @@ public class Battle extends EngineState {
     }
 
     loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(0).hasVirtualSize()) {
-        this.loadStageMcq(new McqHeader(files.get(0)));
+      if(files.get(1).hasVirtualSize()) {
+        this.loadStageMcq(new McqHeader(files.get(1)));
       }
 
-      if(files.get(1).size() != 0) {
-        this.loadStageTim(files.get(1));
+      if(files.get(2).size() != 0) {
+        this.loadStageTim(files.get(2));
       }
     });
 
@@ -2016,7 +2013,7 @@ public class Battle extends EngineState {
     //LAB_800c9238
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] != null && combatant.assets_14[i]._09 != 0) {
-        this.FUN_800c9c7c(combatant, i);
+        this.deallocateCombatantAnimation(combatant, i);
       }
 
       //LAB_800c9254
@@ -2178,7 +2175,7 @@ public class Battle extends EngineState {
         for(int animIndex = 0; animIndex < 32; animIndex++) {
           if(files.get(32 + animIndex).hasVirtualSize()) {
             if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
-              this.FUN_800c9c7c(combatant, animIndex);
+              this.deallocateCombatantAnimation(combatant, animIndex);
             }
 
             //LAB_800c9974
@@ -2195,7 +2192,7 @@ public class Battle extends EngineState {
       for(int animIndex = 0; animIndex < 32; animIndex++) {
         if(files.get(animIndex).hasVirtualSize()) {
           if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
-            this.FUN_800c9c7c(combatant, animIndex);
+            this.deallocateCombatantAnimation(combatant, animIndex);
           }
 
           //LAB_800c9a18
@@ -2222,7 +2219,7 @@ public class Battle extends EngineState {
     CombatantAsset0c s3 = combatant.assets_14[animIndex];
 
     if(s3 != null) {
-      this.FUN_800c9c7c(combatant, animIndex);
+      this.deallocateCombatantAnimation(combatant, animIndex);
     }
 
     //LAB_800c9b28
@@ -2288,7 +2285,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c9c7cL)
-  public void FUN_800c9c7c(final CombatantStruct1a8 combatant, final int animIndex) {
+  public void deallocateCombatantAnimation(final CombatantStruct1a8 combatant, final int animIndex) {
     final CombatantAsset0c asset = combatant.assets_14[animIndex];
 
     if(asset != null) {
@@ -2319,9 +2316,9 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c9db8L)
-  public void FUN_800c9db8(final CombatantStruct1a8 combatant, final int animIndex, final int a2) {
-    this.FUN_800c9c7c(combatant, animIndex);
-    this.FUN_800c9a80(null, 3, a2, combatant, animIndex);
+  public void loadAnimationIntoCombatant(final CombatantStruct1a8 combatant, final int animIndex, final int assetIndex) {
+    this.deallocateCombatantAnimation(combatant, animIndex);
+    this.FUN_800c9a80(null, 3, assetIndex, combatant, animIndex);
   }
 
   @Method(0x800c9e10L)
@@ -2421,7 +2418,7 @@ public class Battle extends EngineState {
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] instanceof CombatantAsset0c.AnimType && combatant.assets_14[i].type_0a == 2 || combatant.assets_14[i] instanceof CombatantAsset0c.TimType) {
         //LAB_800ca4c0
-        this.FUN_800c9c7c(combatant, i);
+        this.deallocateCombatantAnimation(combatant, i);
       }
 
       //LAB_800ca4cc
@@ -2458,6 +2455,10 @@ public class Battle extends EngineState {
 
   @Method(0x800ca75cL)
   public void loadCombatantTim(@Nullable final CombatantStruct1a8 combatant, final FileData timFile) {
+    if(timFile.size() == 0) {
+      return;
+    }
+
     final int vramSlot;
 
     if(combatant != null) {
@@ -3235,6 +3236,10 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
+    if(this.hud.spellAndItemMenu_800c6b60.menuType_0a == 2) {
+      return FlowControl.PAUSE_AND_REWIND;
+    }
+
     final int displayableIconsBitset = script.params_20[0].get();
 
     if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || (script.scriptState_04.storage_44[7] & 0x1000) != 0) {
@@ -3580,28 +3585,28 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with loading files")
+  @ScriptDescription("Loads a global asset")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "drgnIndex", description = "The DRGN#.BIN index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "index", description = "The output battleState_8006e398._580 array index")
   @Method(0x800cd468L)
-  public FlowControl FUN_800cd468(final RunningScript<?> script) {
+  public FlowControl scriptLoadGlobalAsset(final RunningScript<?> script) {
     script.params_20[2].set(battleState_8006e398.loadGlobalAsset(script.params_20[0].get(), script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with loading files, may wait until the file is loaded")
+  @ScriptDescription("Waits until global asset is allocated")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
   @Method(0x800cd4b0L)
-  public FlowControl FUN_800cd4b0(final RunningScript<?> script) {
+  public FlowControl scriptWaitGlobalAssetAllocation(final RunningScript<?> script) {
     final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
     return v0.state_04 == 1 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with loading files, may clear the file entry")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
+  @ScriptDescription("Deallocates a global asset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd4f0L)
-  public FlowControl FUN_800cd4f0(final RunningScript<?> script) {
+  public FlowControl scriptDeallocateGlobalAsset(final RunningScript<?> script) {
     battleState_8006e398.deallocateGlobalAsset(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
@@ -3649,11 +3654,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to combatants")
+  @ScriptDescription("Sets global asset index of a model for combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd740L)
-  public FlowControl FUN_800cd740(final RunningScript<?> script) {
+  public FlowControl scriptLoadModelToCombatantFromGlobalAssets(final RunningScript<?> script) {
     final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
 
     if(v0.state_04 == 1) {
@@ -3685,36 +3690,36 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to combatants")
+  @ScriptDescription("Loads animation from global assets into combatant assets or deallocates an animation from combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animIndex", description = "Combatant's assets_14 index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd810L)
-  public FlowControl FUN_800cd810(final RunningScript<?> script) {
-    final int s0 = script.params_20[2].get();
+  public FlowControl scriptLoadAnimToCombatantFromGlobalAssetsOrDeallocate(final RunningScript<?> script) {
+    final int assetIndex = script.params_20[2].get();
 
-    if(s0 >= 0) {
+    if(assetIndex >= 0) {
       //LAB_800cd85c
-      final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(s0);
+      final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(assetIndex);
 
       if(v0.state_04 == 1) {
         return FlowControl.PAUSE_AND_REWIND;
       }
 
-      this.FUN_800c9db8(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get(), s0);
+      this.loadAnimationIntoCombatant(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get(), assetIndex);
     } else {
-      this.FUN_800c9c7c(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get());
+      this.deallocateCombatantAnimation(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get());
     }
 
     //LAB_800cd890
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to combatant textures")
+  @ScriptDescription("Loads a texture from global assets to combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd8a4L)
-  public FlowControl FUN_800cd8a4(final RunningScript<?> script) {
+  public FlowControl scriptLoadTextureToCombatantFromGlobalAssets(final RunningScript<?> script) {
     final BattleAsset08 a1 = battleState_8006e398.getGlobalAsset(script.params_20[1].get());
 
     if(a1.state_04 == 1) {
@@ -3935,22 +3940,24 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Generates a random number using the Mersenne Twister algorithm")
+  @ScriptDescription("Generates a random number")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The random number")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "min", description = "The minimum value (inclusive)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "max", description = "The maximum value (exclusive)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "max", description = "The maximum value (inclusive)")
   @Method(0x800cee50L)
   public FlowControl scriptRand(final RunningScript<?> script) {
     final int min = script.params_20[1].get();
     final int max = script.params_20[2].get();
+    final int range = max - min;
 
-    // Yes, scripts do this
-    if(min == max) {
-      script.params_20[0].set(min);
+    final int rand;
+    if(range >= 0) {
+      rand = seed_800fa754.nextInt(range + 1) + min;
     } else {
-      script.params_20[0].set(seed_800fa754.nextInt(min, max));
+      rand = -seed_800fa754.nextInt(-range + 1) + min;
     }
 
+    script.params_20[0].set(rand);
     return FlowControl.CONTINUE;
   }
 
@@ -3972,11 +3979,15 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency", description = "The translucency mode")
   @Method(0x800cef00L)
   public FlowControl scriptRenderColouredQuad(final RunningScript<?> script) {
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .translucent(Translucency.of(script.params_20[3].get() + 1))
-      .rgb(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())
-      .pos(-160, -120, 320, 280)
-    );
+    // Make sure effect fills the whole screen
+    final float fullWidth = java.lang.Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
+    fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+
+    //LAB_800139c4
+    RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.of(script.params_20[3].get() + 1)), fullScreenEffect_800bb140.transforms)
+      .colour(script.params_20[0].get() / 255.0f, script.params_20[1].get() / 255.0f, script.params_20[2].get() / 255.0f);
 
     return FlowControl.CONTINUE;
   }
@@ -4140,7 +4151,7 @@ public class Battle extends EngineState {
       script.scriptState_04,
       null,
       effect::renderProjectileHitEffect,
-      null,
+      effect::deallocate,
       effect
     );
 
@@ -4179,7 +4190,7 @@ public class Battle extends EngineState {
       script.scriptState_04,
       null,
       effect::renderAdditionSparks,
-      null,
+      effect::deallocate,
       effect
     );
 
@@ -4308,7 +4319,7 @@ public class Battle extends EngineState {
       script.scriptState_04,
       deathEffect::monsterDeathEffectTicker,
       deathEffect::monsterDeathEffectRenderer,
-      null,
+      deathEffect::destructor,
       deathEffect
     );
 
@@ -4372,7 +4383,7 @@ public class Battle extends EngineState {
 
       //LAB_800d3e5c
       //LAB_800d3e7c
-      additionStruct.addition_02 = addition;
+      additionStruct.additionId_02 = addition;
       additionStruct.length_08 = additionName.length();
       additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = additionStruct::renderAdditionNameChar;
@@ -4420,14 +4431,14 @@ public class Battle extends EngineState {
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> s1.tickSpTextEffect(s, this._800faa94));
 
-      s1._08 = s2;
-      s1._1c = this._800faa90 << 8;
+      s1.value_08 = s2;
+      s1.destX_1c = this._800faa90 << 8;
 
       if(s3 == 1) {
         this._800faa92 = 0;
         this._800faa94 = s3;
         s1._01 = 0;
-        s1._1c = 0xffff6e00;
+        s1.destX_1c = 0xffff6e00;
         this._800faa90 = -146;
       } else {
         //LAB_800d4470
@@ -4436,15 +4447,15 @@ public class Battle extends EngineState {
       }
 
       //LAB_800d448c
-      s1._2c = (s1._1c - s1._0c) / 14;
+      s1.stepX_2c = (s1.destX_1c - s1.x_0c) / 14;
 
       //LAB_800d44dc
       for(int i = 0; i < 8; i++) {
-        s1.charArray_3c[i]._00 = s1._0c;
-        s1.charArray_3c[i]._04 = s1._10;
+        s1.charArray_3c[i].x_00 = s1.x_0c;
+        s1.charArray_3c[i].y_04 = s1.y_10;
       }
 
-      final int strLen = String.valueOf(s1._08).length();
+      final int strLen = String.valueOf(s1.value_08).length();
 
       final int v1;
       if(s1._01 == 0) {
@@ -4454,7 +4465,7 @@ public class Battle extends EngineState {
       }
 
       //LAB_800d453c
-      this._800faa90 = (s1._1c >> 8) + v1 * 8 - 3;
+      this._800faa90 = (s1.destX_1c >> 8) + v1 * 8 - 3;
     }
 
     script.params_20[1].set(0);
@@ -4464,26 +4475,26 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Allocates an addition name effect manager")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalSp", description = "The amount of SP gained from this addition")
   @Method(0x800d4580L)
   public FlowControl scriptAllocateAdditionNameEffect(final RunningScript<?> script) {
-    final int s2 = script.params_20[0].get();
-    if(s2 != -1) {
+    final int totalSp = script.params_20[0].get();
+    if(totalSp != -1) {
       final AdditionNameTextEffect1c s0 = new AdditionNameTextEffect1c();
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", s0);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> s0.tickAdditionNameEffect(s, this._800faa9d));
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       s0.positionMovement_0c = 40;
-      s0.renderer_14 = s0::renderAdditionNameEffect;
+      s0.renderer_14 = s0::renderAdditionSpGain;
       s0.length_08 = 1;
-      s0._10 = s2;
+      s0.totalSp_10 = totalSp;
       final AdditionCharEffectData0c struct = s0.ptr_18[0];
       struct.scrolling_00 = 1;
       struct.dupes_02 = 8;
       struct.position_04 = -160;
       struct.offsetY_06 = 96;
-      struct.offsetX_08 = 144 - (String.valueOf(s2).length() + 4) * 8;
+      struct.offsetX_08 = 144 - (String.valueOf(totalSp).length() + 4) * 8;
       struct.offsetY_0a = 96;
     }
 
@@ -4573,7 +4584,23 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800dac70(script.params_20[0].get(), x, y, z, SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class));
+    // Three Executioners instakill sends a bad param for scriptIndex (0xa0), but this param isn't used for the camera function they're calling so we can just pass null
+    // File 5316/1[addr 0x4078]
+    // Parameters:
+    //   Op param: 0x21
+    //   0: script[0x1021] 0x0
+    //   1: script[0x1023] 0xffe8e600
+    //   2: script[0x1025] 0xfff76300
+    //   3: script[0x1026] 0x0
+    //   4: script[0x1027] 0xa0
+    final BattleObject bobj;
+    if(script.params_20[4].get() < 72) {
+      bobj = SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class);
+    } else {
+      bobj = null;
+    }
+
+    this.camera_800c67f0.FUN_800dac70(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
@@ -4596,7 +4623,23 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class));
+    // Three Executioners instakill sends a bad param for scriptIndex (0xc8), but this param isn't used for the camera function they're calling so we can just pass null
+    // File 5316/1[addr 0x4078]
+    // Parameters:
+    //   Op param: 0x22
+    //   0: script[0x1029] 0x0
+    //   1: script[0x102b] 0xfff59900
+    //   2: script[0x102d] 0xfff8f300
+    //   3: script[0x102e] 0x0
+    //   4: script[0x102f] 0xc8
+    final BattleObject bobj;
+    if(script.params_20[4].get() < 72) {
+      bobj = SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class);
+    } else {
+      bobj = null;
+    }
+
+    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
@@ -4655,8 +4698,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ, 8-bit fixed-point")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ, 8-bit fixed-point")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db688L)
@@ -4664,14 +4707,18 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float initialStepZ = script.params_20[4].get() / (float)0x100;
+    float finalStepZ = script.params_20[5].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      initialStepZ = MathHelper.psxDegToRad(initialStepZ);
+      finalStepZ = MathHelper.psxDegToRad(finalStepZ);
     }
 
-    this.camera_800c67f0.FUN_800db714(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800db714(script.params_20[0].get(), x, y, z, initialStepZ, finalStepZ, script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4680,8 +4727,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ, 8-bit fixed-point")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ, 8-bit fixed-point")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db79cL)
@@ -4689,14 +4736,18 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float initialStepZ = script.params_20[4].get() / (float)0x100;
+    float finalStepZ = script.params_20[5].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      initialStepZ = MathHelper.psxDegToRad(initialStepZ);
+      finalStepZ = MathHelper.psxDegToRad(finalStepZ);
     }
 
-    this.camera_800c67f0.FUN_800db828(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800db828(script.params_20[0].get(), x, y, z, initialStepZ, finalStepZ, script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4715,14 +4766,16 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float stepZ = script.params_20[6].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4741,14 +4794,16 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float stepZ = script.params_20[6].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4964,21 +5019,21 @@ public class Battle extends EngineState {
 
   @Method(0x800e4674L)
   public Vector3f FUN_800e4674(final Vector3f out, final Vector3f rotation) {
-    return out.set(0.0f, 0.0f, 1.0f).mul(new Matrix3f().rotationZYX(rotation.z, rotation.y, rotation.z));
+    return out.set(0.0f, 0.0f, 1.0f).mul(new Matrix3f().rotationZYX(rotation.z, rotation.y, rotation.x));
   }
 
   @Method(0x800e46c8L)
   public void resetLights() {
     final BattleLightStruct64 v1 = this._800c6930;
-    v1.colour_00.set(0x800, 0x800, 0x800);
+    v1.colour_00.set(0.5f, 0.5f, 0.5f);
 
     final BttlLightStruct84 a0 = this.lights_800c692c[0];
     a0.light_00.direction_00.set(0.0f, 1.0f, 0.0f);
     a0.light_00.r_0c = 0.5f;
     a0.light_00.g_0d = 0.5f;
     a0.light_00.b_0e = 0.5f;
-    a0._10._00 = 0;
-    a0._4c._00 = 0;
+    a0._10.typeAndFlags_00 = 0;
+    a0._4c.typeAndFlags_00 = 0;
 
     //LAB_800e4720
     this.lights_800c692c[1].clear();
@@ -4996,7 +5051,7 @@ public class Battle extends EngineState {
   public void setLightDirection(final int lightIndex, final float x, final float y, final float z) {
     final BttlLightStruct84 light = this.lights_800c692c[lightIndex];
     light.light_00.direction_00.set(x, y, z);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
   }
 
   @ScriptDescription("Sets the battle light direction")
@@ -5030,7 +5085,7 @@ public class Battle extends EngineState {
     this.FUN_800e4674(rotation, new Vector3f(x, y, z));
     final BttlLightStruct84 light = this.lights_800c692c[lightIndex];
     light.light_00.direction_00.set(rotation);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
   }
 
   @ScriptDescription("Unknown, sets the battle light direction using the vector (0, 0, 1) rotated by ZYX")
@@ -5072,7 +5127,7 @@ public class Battle extends EngineState {
     final int index = script.params_20[1].get();
     if(index != -1) {
       //LAB_800e49c0
-      if(index > 0 && index - 1 < 3) {
+      if(index >= 1 && index <= 3) {
         this.FUN_800e45c0(rotation, this.lights_800c692c[index - 1].light_00.direction_00);
       } else {
         //LAB_800e49f4
@@ -5091,7 +5146,7 @@ public class Battle extends EngineState {
     this.FUN_800e4674(direction, rotation);
     final BttlLightStruct84 light = this.lights_800c692c[script.params_20[0].get()];
     light.light_00.direction_00.set(direction);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5108,7 +5163,7 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, this.lights_800c692c[script.params_20[0].get()].light_00.direction_00);
 
     final Vector3f s0;
-    if(s1 - 1 < 3) {
+    if(s1 >= 1 && s1 <= 3) {
       s0 = new Vector3f();
       this.FUN_800e45c0(s0, this.lights_800c692c[s1 - 1].light_00.direction_00);
     } else {
@@ -5130,7 +5185,7 @@ public class Battle extends EngineState {
     light.light_00.r_0c = r;
     light.light_00.g_0d = g;
     light.light_00.b_0e = b;
-    light._4c._00 = 0;
+    light._4c.typeAndFlags_00 = 0;
   }
 
   @ScriptDescription("Sets the battle light colour")
@@ -5194,7 +5249,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e4dfcL)
   public FlowControl FUN_800e4dfc(final RunningScript<?> script) {
-    this.lights_800c692c[script.params_20[0].get()]._10._00 = 0;
+    this.lights_800c692c[script.params_20[0].get()]._10.typeAndFlags_00 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5202,7 +5257,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e4e2cL)
   public FlowControl FUN_800e4e2c(final RunningScript<?> script) {
-    return this.lights_800c692c[script.params_20[0].get()]._10._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    return this.lights_800c692c[script.params_20[0].get()]._10.typeAndFlags_00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown, related to battle lights")
@@ -5210,7 +5265,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out")
   @Method(0x800e4e64L)
   public FlowControl FUN_800e4e64(final RunningScript<?> script) {
-    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._10._00);
+    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._10.typeAndFlags_00);
     return FlowControl.CONTINUE;
   }
 
@@ -5226,17 +5281,17 @@ public class Battle extends EngineState {
     final int ticks = script.params_20[4].get();
     final BttlLightStruct84Sub38 t0 = light._10;
 
-    t0._00 = 0;
-    t0.angleAndColour_04.set(light.light_00.direction_00);
-    t0.vec_28.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
+    t0.typeAndFlags_00 = 0;
+    t0.directionOrColour_04.set(light.light_00.direction_00);
+    t0.directionOrColourDest_28.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
     t0.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
-      t0.vec_10.x = (t0.vec_28.x - t0.angleAndColour_04.x) / ticks;
-      t0.vec_10.y = (t0.vec_28.y - t0.angleAndColour_04.y) / ticks;
-      t0.vec_10.z = (t0.vec_28.z - t0.angleAndColour_04.z) / ticks;
-      t0.vec_1c.zero();
-      t0._00 = 0xa001;
+      t0.directionOrColourSpeed_10.x = (t0.directionOrColourDest_28.x - t0.directionOrColour_04.x) / ticks;
+      t0.directionOrColourSpeed_10.y = (t0.directionOrColourDest_28.y - t0.directionOrColour_04.y) / ticks;
+      t0.directionOrColourSpeed_10.z = (t0.directionOrColourDest_28.z - t0.directionOrColour_04.z) / ticks;
+      t0.directionOrColourAcceleration_1c.zero();
+      t0.typeAndFlags_00 = 0xa001;
     }
 
     //LAB_800e4f98
@@ -5260,19 +5315,19 @@ public class Battle extends EngineState {
     final BttlLightStruct84 light = this.lights_800c692c[script.params_20[0].get()];
     final Vector3f sp0x10 = new Vector3f();
     this.FUN_800e45c0(sp0x10, light.light_00.direction_00);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
 
     final BttlLightStruct84Sub38 a3 = light._10;
-    a3.angleAndColour_04.set(sp0x10);
-    a3.vec_28.set(x, y, z);
+    a3.directionOrColour_04.set(sp0x10);
+    a3.directionOrColourDest_28.set(x, y, z);
     a3.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
-      a3.vec_1c.zero();
-      a3.vec_10.x = (x - a3.angleAndColour_04.x) / ticks;
-      a3.vec_10.y = (y - a3.angleAndColour_04.y) / ticks;
-      a3.vec_10.z = (z - a3.angleAndColour_04.z) / ticks;
-      a3._00 = 0xc001;
+      a3.directionOrColourAcceleration_1c.zero();
+      a3.directionOrColourSpeed_10.x = (x - a3.directionOrColour_04.x) / ticks;
+      a3.directionOrColourSpeed_10.y = (y - a3.directionOrColour_04.y) / ticks;
+      a3.directionOrColourSpeed_10.z = (z - a3.directionOrColour_04.z) / ticks;
+      a3.typeAndFlags_00 = 0xc001;
     }
 
     //LAB_800e50c0
@@ -5300,27 +5355,27 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, this.lights_800c692c[lightIndex].light_00.direction_00);
 
     final BttlLightStruct84Sub38 s0 = this.lights_800c692c[lightIndex]._10;
-    s0._00 = 0;
-    s0.angleAndColour_04.set(sp0x10);
+    s0.typeAndFlags_00 = 0;
+    s0.directionOrColour_04.set(sp0x10);
 
-    if(lightOrBentIndex > 0 && lightOrBentIndex < 4) {
+    if(lightOrBentIndex >= 1 && lightOrBentIndex <= 3) {
       final Vector3f sp0x18 = new Vector3f();
       this.FUN_800e45c0(sp0x18, this.lights_800c692c[lightOrBentIndex - 1].light_00.direction_00);
-      s0.vec_28.set(sp0x18);
+      s0.directionOrColourDest_28.set(sp0x18);
     } else {
       //LAB_800e51e8
       final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[lightOrBentIndex].innerStruct_00;
-      s0.vec_28.set(bent.model_148.coord2_14.transforms.rotate);
+      s0.directionOrColourDest_28.set(bent.model_148.coord2_14.transforms.rotate);
     }
 
     //LAB_800e522c
     s0.ticksRemaining_34 = ticks;
-    s0.vec_28.add(x, y, z);
+    s0.directionOrColourDest_28.add(x, y, z);
 
     if(ticks > 0) {
-      s0._00 = 0xc001;
-      s0.vec_10.set(s0.vec_28).sub(s0.angleAndColour_04).div(ticks);
-      s0.vec_1c.zero();
+      s0.typeAndFlags_00 = 0xc001;
+      s0.directionOrColourSpeed_10.set(s0.directionOrColourDest_28).sub(s0.directionOrColour_04).div(ticks);
+      s0.directionOrColourAcceleration_1c.zero();
     }
 
     //LAB_800e52c8
@@ -5343,10 +5398,10 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
     final BttlLightStruct84Sub38 v1 = light._10;
-    v1._00 = 0x4001;
-    v1.angleAndColour_04.set(sp0x10);
-    v1.vec_10.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
-    v1.vec_1c.set(script.params_20[4].get() / (float)0x1000, script.params_20[5].get() / (float)0x1000, script.params_20[6].get() / (float)0x1000);
+    v1.typeAndFlags_00 = 0x4001;
+    v1.directionOrColour_04.set(sp0x10);
+    v1.directionOrColourSpeed_10.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
+    v1.directionOrColourAcceleration_1c.set(script.params_20[4].get() / (float)0x1000, script.params_20[5].get() / (float)0x1000, script.params_20[6].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
@@ -5362,13 +5417,13 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
     final BttlLightStruct84Sub38 a0_0 = light._10;
-    a0_0._00 = 0x4002;
+    a0_0.typeAndFlags_00 = 0x4002;
     light.scriptIndex_48 = bentIndex;
 
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
-    a0_0.angleAndColour_04.set(sp0x10).sub(bent.model_148.coord2_14.transforms.rotate);
-    a0_0.vec_10.zero();
-    a0_0.vec_1c.zero();
+    a0_0.directionOrColour_04.set(sp0x10).sub(bent.model_148.coord2_14.transforms.rotate);
+    a0_0.directionOrColourSpeed_10.zero();
+    a0_0.directionOrColourAcceleration_1c.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -5376,7 +5431,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e54f8L)
   public FlowControl FUN_800e54f8(final RunningScript<?> script) {
-    this.lights_800c692c[script.params_20[0].get()]._4c._00 = 0;
+    this.lights_800c692c[script.params_20[0].get()]._4c.typeAndFlags_00 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5384,7 +5439,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e5528L)
   public FlowControl FUN_800e5528(final RunningScript<?> script) {
-    return this.lights_800c692c[script.params_20[0].get()]._4c._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    return this.lights_800c692c[script.params_20[0].get()]._4c.typeAndFlags_00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown, related to battle lights")
@@ -5392,7 +5447,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value")
   @Method(0x800e5560L)
   public FlowControl FUN_800e5560(final RunningScript<?> script) {
-    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._4c._00);
+    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._4c.typeAndFlags_00);
     return FlowControl.CONTINUE;
   }
 
@@ -5408,17 +5463,17 @@ public class Battle extends EngineState {
     final int ticks = script.params_20[4].get();
 
     final BttlLightStruct84Sub38 t0 = light._4c;
-    t0._00 = 0;
-    t0.angleAndColour_04.x = light.light_00.r_0c;
-    t0.angleAndColour_04.y = light.light_00.g_0d;
-    t0.angleAndColour_04.z = light.light_00.b_0e;
-    t0.vec_28.set(script.params_20[1].get() / (float)0x80, script.params_20[2].get() / (float)0x80, script.params_20[3].get() / (float)0x80);
+    t0.typeAndFlags_00 = 0;
+    t0.directionOrColour_04.x = light.light_00.r_0c;
+    t0.directionOrColour_04.y = light.light_00.g_0d;
+    t0.directionOrColour_04.z = light.light_00.b_0e;
+    t0.directionOrColourDest_28.set(script.params_20[1].get() / (float)0x80, script.params_20[2].get() / (float)0x80, script.params_20[3].get() / (float)0x80);
     t0.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
-      t0.vec_1c.zero();
-      t0.vec_10.set(t0.vec_28).sub(t0.angleAndColour_04).div(ticks);
-      t0._00 = 0x8001;
+      t0.directionOrColourAcceleration_1c.zero();
+      t0.directionOrColourSpeed_10.set(t0.directionOrColourDest_28).sub(t0.directionOrColour_04).div(ticks);
+      t0.typeAndFlags_00 = 0x8001;
     }
 
     //LAB_800e5694
@@ -5437,13 +5492,13 @@ public class Battle extends EngineState {
   public FlowControl FUN_800e569c(final RunningScript<?> script) {
     final BttlLightStruct84 light = this.lights_800c692c[script.params_20[0].get()];
     final BttlLightStruct84Sub38 v1 = light._4c;
-    v1._00 = 0;
-    v1.angleAndColour_04.set(light.light_00.r_0c, light.light_00.g_0d, light.light_00.b_0e);
-    v1.vec_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    v1.vec_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    v1.typeAndFlags_00 = 0;
+    v1.directionOrColour_04.set(light.light_00.r_0c, light.light_00.g_0d, light.light_00.b_0e);
+    v1.directionOrColourSpeed_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    v1.directionOrColourAcceleration_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
 
     if(v1.ticksRemaining_34 > 0) {
-      v1._00 = 0x1;
+      v1.typeAndFlags_00 = 0x1;
     }
 
     //LAB_800e5760
@@ -5477,24 +5532,24 @@ public class Battle extends EngineState {
       a1.light_00.b_0e = a0.lightColour_0a.z / (float)0x100;
 
       if(a0.x_06 != 0 || a0.y_08 != 0) {
-        a1._10._00 = 0x3;
-        a1._10.angleAndColour_04.set(a1.light_00.direction_00);
-        a1._10.vec_10.set(a0.x_06, a0.y_08, 0);
+        a1._10.typeAndFlags_00 = 0x3;
+        a1._10.directionOrColour_04.set(a1.light_00.direction_00);
+        a1._10.directionOrColourSpeed_10.set(a0.x_06, a0.y_08, 0);
       } else {
         //LAB_800e58cc
-        a1._10._00 = 0;
+        a1._10.typeAndFlags_00 = 0;
       }
 
       //LAB_800e58d0
       if(a0.y_12 != 0) {
-        a1._4c._00 = 0x3;
-        a1._4c.angleAndColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
-        a1._4c.vec_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
-        a1._4c.vec_28.x = a0.x_10;
-        a1._4c.vec_28.y = a0.y_12;
+        a1._4c.typeAndFlags_00 = 0x3;
+        a1._4c.directionOrColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
+        a1._4c.directionOrColourSpeed_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
+        a1._4c.directionOrColourDest_28.x = a0.x_10;
+        a1._4c.directionOrColourDest_28.y = a0.y_12;
       } else {
         //LAB_800e5944
-        a1._4c._00 = 0;
+        a1._4c.typeAndFlags_00 = 0;
       }
 
       //LAB_800e5948
@@ -5560,45 +5615,45 @@ public class Battle extends EngineState {
       final BttlLightStruct84 light = this.lights_800c692c[i];
       final BttlLightStruct84Sub38 a2 = light._10;
 
-      int v1 = a2._00 & 0xff;
-      if(v1 == 1) {
+      int type = a2.typeAndFlags_00 & 0xff;
+      if(type == 1) {
         //LAB_800e5c50
-        a2.vec_10.add(a2.vec_1c);
-        a2.angleAndColour_04.add(a2.vec_10);
+        a2.directionOrColourSpeed_10.add(a2.directionOrColourAcceleration_1c);
+        a2.directionOrColour_04.add(a2.directionOrColourSpeed_10);
 
-        if((a2._00 & 0x8000) != 0) {
+        if((a2.typeAndFlags_00 & 0x8000) != 0) {
           a2.ticksRemaining_34--;
 
           if(a2.ticksRemaining_34 <= 0) {
-            a2._00 = 0;
-            a2.angleAndColour_04.set(a2.vec_28);
+            a2.typeAndFlags_00 = 0;
+            a2.directionOrColour_04.set(a2.directionOrColourDest_28);
           }
         }
 
         //LAB_800e5cf4
-        if((a2._00 & 0x2000) != 0) {
-          light.light_00.direction_00.set(a2.angleAndColour_04);
+        if((a2.typeAndFlags_00 & 0x2000) != 0) {
+          light.light_00.direction_00.set(a2.directionOrColour_04);
           //LAB_800e5d40
-        } else if((a2._00 & 0x4000) != 0) {
+        } else if((a2.typeAndFlags_00 & 0x4000) != 0) {
           final Vector3f sp0x18 = new Vector3f();
-          sp0x18.set(a2.angleAndColour_04);
+          sp0x18.set(a2.directionOrColour_04);
           this.FUN_800e4674(light.light_00.direction_00, sp0x18);
         }
-      } else if(v1 == 2) {
+      } else if(type == 2) {
         //LAB_800e5bf0
         final Vector3f sp0x10 = new Vector3f();
         final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
-        sp0x10.set(bent.model_148.coord2_14.transforms.rotate).add(a2.angleAndColour_04);
+        sp0x10.set(bent.model_148.coord2_14.transforms.rotate).add(a2.directionOrColour_04);
         this.FUN_800e4674(light.light_00.direction_00, sp0x10);
-      } else if(v1 == 3) {
+      } else if(type == 3) {
         //LAB_800e5bdc
         //LAB_800e5d6c
         final Vector3f sp0x18 = new Vector3f();
 
         final int ticks = this.lightTicks_800c6928 & 0xfff;
-        sp0x18.x = a2.angleAndColour_04.x + a2.vec_10.x * ticks;
-        sp0x18.y = a2.angleAndColour_04.y + a2.vec_10.y * ticks;
-        sp0x18.z = a2.angleAndColour_04.z + a2.vec_10.z * ticks;
+        sp0x18.x = a2.directionOrColour_04.x + a2.directionOrColourSpeed_10.x * ticks;
+        sp0x18.y = a2.directionOrColour_04.y + a2.directionOrColourSpeed_10.y * ticks;
+        sp0x18.z = a2.directionOrColour_04.z + a2.directionOrColourSpeed_10.z * ticks;
 
         //LAB_800e5dcc
         this.FUN_800e4674(light.light_00.direction_00, sp0x18);
@@ -5606,33 +5661,33 @@ public class Battle extends EngineState {
 
       //LAB_800e5dd4
       final BttlLightStruct84Sub38 s0 = light._4c;
-      v1 = s0._00 & 0xff;
-      if(v1 == 1) {
+      type = s0.typeAndFlags_00 & 0xff;
+      if(type == 1) {
         //LAB_800e5df4
-        s0.vec_10.add(s0.vec_1c);
-        s0.angleAndColour_04.add(s0.vec_10);
+        s0.directionOrColourSpeed_10.add(s0.directionOrColourAcceleration_1c);
+        s0.directionOrColour_04.add(s0.directionOrColourSpeed_10);
 
-        if((s0._00 & 0x8000) != 0) {
+        if((s0.typeAndFlags_00 & 0x8000) != 0) {
           s0.ticksRemaining_34--;
 
           if(s0.ticksRemaining_34 <= 0) {
-            s0._00 = 0;
-            s0.angleAndColour_04.set(s0.vec_28);
+            s0.typeAndFlags_00 = 0;
+            s0.directionOrColour_04.set(s0.directionOrColourDest_28);
           }
         }
 
         //LAB_800e5e90
-        this.lights_800c692c[i].light_00.r_0c = s0.angleAndColour_04.x;
-        this.lights_800c692c[i].light_00.g_0d = s0.angleAndColour_04.y;
-        this.lights_800c692c[i].light_00.b_0e = s0.angleAndColour_04.z;
-      } else if(v1 == 3) {
+        this.lights_800c692c[i].light_00.r_0c = s0.directionOrColour_04.x;
+        this.lights_800c692c[i].light_00.g_0d = s0.directionOrColour_04.y;
+        this.lights_800c692c[i].light_00.b_0e = s0.directionOrColour_04.z;
+      } else if(type == 3) {
         //LAB_800e5ed0
-        final float theta = MathHelper.cos((this.lightTicks_800c6928 / (float)0x1000 + s0.vec_28.x) % s0.vec_28.y / s0.vec_28.y);
+        final float theta = MathHelper.cos((this.lightTicks_800c6928 / (float)0x1000 + s0.directionOrColourDest_28.x) % s0.directionOrColourDest_28.y / s0.directionOrColourDest_28.y);
         final float ratioA = 1.0f + theta;
         final float ratioB = 1.0f - theta;
-        this.lights_800c692c[i].light_00.r_0c = (s0.angleAndColour_04.x * ratioA + s0.vec_10.x * ratioB) / 2.0f;
-        this.lights_800c692c[i].light_00.g_0d = (s0.angleAndColour_04.y * ratioA + s0.vec_10.y * ratioB) / 2.0f;
-        this.lights_800c692c[i].light_00.b_0e = (s0.angleAndColour_04.z * ratioA + s0.vec_10.z * ratioB) / 2.0f;
+        this.lights_800c692c[i].light_00.r_0c = (s0.directionOrColour_04.x * ratioA + s0.directionOrColourSpeed_10.x * ratioB) / 2.0f;
+        this.lights_800c692c[i].light_00.g_0d = (s0.directionOrColour_04.y * ratioA + s0.directionOrColourSpeed_10.y * ratioB) / 2.0f;
+        this.lights_800c692c[i].light_00.b_0e = (s0.directionOrColour_04.z * ratioA + s0.directionOrColourSpeed_10.z * ratioB) / 2.0f;
       }
 
       //LAB_800e5fb8
@@ -6423,8 +6478,8 @@ public class Battle extends EngineState {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      effect::FUN_800ea3f8,
-      effect::FUN_800ea510,
+      effect::modelEffectTicker,
+      effect::modelEffectRenderer,
       null,
       effect,
       new EffectManagerParams.AnimType()
@@ -6469,8 +6524,8 @@ public class Battle extends EngineState {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      effect::FUN_800ea3f8,
-      effect::FUN_800ea510,
+      effect::modelEffectTicker,
+      effect::modelEffectRenderer,
       null,
       effect,
       new EffectManagerParams.AnimType()
@@ -6494,7 +6549,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e9ae4L)
-  public void FUN_800e9ae4(final Model124 model, final BattleStage a1) {
+  public void copyBattleStageModel(final Model124 model, final BattleStage a1) {
     model.coord2_14.set(a1.coord2_558);
     model.coord2_14.transforms.set(a1.param_5a8);
 
@@ -6536,7 +6591,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e9db4L)
-  public void FUN_800e9db4(final Model124 model1, final Model124 model2) {
+  public void copyModel(final Model124 model1, final Model124 model2) {
     //LAB_800e9dd8
     model1.set(model2);
 
@@ -6550,20 +6605,20 @@ public class Battle extends EngineState {
     }
   }
 
-  @ScriptDescription("Allocates an effect manager for an unknown purpose")
+  @ScriptDescription("Allocates an effect manager for a cloned model")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager's index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cloneId", description = "Battle entity ID or flag 0x700_0000 to clone battle stage model")
   @Method(0x800e9f68L)
-  public FlowControl FUN_800e9f68(final RunningScript<? extends BattleObject> script) {
-    final int s2 = script.params_20[1].get();
+  public FlowControl scriptAllocateClonedModelEffect(final RunningScript<? extends BattleObject> script) {
+    final int id = script.params_20[1].get();
 
     final ModelEffect13c s0 = new ModelEffect13c("Script " + script.scriptState_04.index);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
-      "Unknown (FUN_800e9f68, s2 = 0x%x)".formatted(s2),
+      (id & 0x700_0000) != 0 ? "Cloned battle stage model" : "Cloned bent model %d".formatted(id),
       script.scriptState_04,
-      s0::FUN_800ea3f8,
-      s0::FUN_800ea510,
+      s0::modelEffectTicker,
+      s0::modelEffectRenderer,
       null,
       s0,
       new EffectManagerParams.AnimType()
@@ -6578,11 +6633,11 @@ public class Battle extends EngineState {
     s0.anim_0c = null;
     s0.model_134 = s0.model_10;
 
-    if((s2 & 0xff00_0000) == 0x700_0000) {
-      this.FUN_800e9ae4(s0.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
+    if((id & 0xff00_0000) == 0x700_0000) {
+      this.copyBattleStageModel(s0.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
-      this.FUN_800e9db4(s0.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00).model_148);
+      this.copyModel(s0.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[id].innerStruct_00).model_148);
     }
 
     //LAB_800ea04c
@@ -7268,6 +7323,10 @@ public class Battle extends EngineState {
       final ModelPart10 part = stage.dobj2s_00[i];
 
       if((partBit & stage.flags_5e4) == 0) {
+        if(stage.tmd_5d0.objTable[i] != null && stage.dobj2s_00[i].obj == null) {
+          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
+        }
+
         final MV ls = new MV();
         final MV lw = new MV();
         GsGetLws(part.coord2_04, lw, ls);
@@ -7279,7 +7338,9 @@ public class Battle extends EngineState {
           RENDERER.queueModel(part.obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
+            .backgroundColour(GTE.backgroundColour)
+            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+            .battleColour(this._800c6930.colour_00);
         }
       }
 
@@ -7633,7 +7694,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800ef28cL)
-  public void FUN_800ef28c() {
+  public void initPlayerBattleEntityStats() {
     loadCharacterStats();
     characterStatsLoaded_800be5d0 = true;
 
@@ -8688,6 +8749,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position (centre)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The height")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "The textboxColour index")
   @Method(0x800f9c2cL)
   public FlowControl scriptRenderBattleHudBackground(final RunningScript<?> script) {
     final int colourIndex = script.params_20[4].get();

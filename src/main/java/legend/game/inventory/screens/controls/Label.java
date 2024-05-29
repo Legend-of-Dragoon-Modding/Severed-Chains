@@ -2,7 +2,6 @@ package legend.game.inventory.screens.controls;
 
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
 
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
@@ -11,7 +10,6 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Label extends Control {
   private String text;
-  private LodString lodString;
   private int textWidth;
   private int textHeight;
   private HorizontalAlign horizontalAlign = HorizontalAlign.LEFT;
@@ -52,7 +50,6 @@ public class Label extends Control {
 
   public void setText(final String text) {
     this.text = text;
-    this.lodString = new LodString(text);
     this.textWidth = textWidth(text);
     this.textHeight = textHeight(text);
 
@@ -81,7 +78,7 @@ public class Label extends Control {
 
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderText(this.lodString, x + offsetX, y + offsetY, TextColour.BROWN);
+    renderText(this.text, x + offsetX, y + offsetY, TextColour.BROWN);
     textZ_800bdf00 = oldZ;
   }
 

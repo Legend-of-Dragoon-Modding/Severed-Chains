@@ -66,17 +66,17 @@ public class TextboxText84 {
 
   public TextColour textColour_28 = TextColour.WHITE;
 
-  public int scrollSpeed_2a;
+  public float scrollSpeed_2a;
   /** Adjusts the Y value of the text as the box is scrolling */
-  public int scrollAmount_2c;
+  public float scrollAmount_2c;
 
   public int charIndex_30;
 
   public int charX_34;
   public int charY_36;
 
-  public int _3a;
-  public int _3c;
+  public float _3a;
+//  public int _3c;
   public int _3e;
   public int _40;
 
@@ -102,6 +102,8 @@ public class TextboxText84 {
   public int digitIndex_80;
 
   public final MV transforms = new MV();
+
+  public int waitTicks;
 
   public void delete() {
     this.chars_58 = null;

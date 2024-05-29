@@ -1,5 +1,6 @@
 package legend.core.opengl;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,12 @@ public final class ShaderManager {
   public static Shader.UniformBuffer addUniformBuffer(final String name, final Shader.UniformBuffer uniformBuffer) {
     uniformBuffers.put(name, uniformBuffer);
     return uniformBuffer;
+  }
+
+  public static void reload() throws IOException {
+    for(final Shader<?> shader : shaders.values()) {
+      shader.reload();
+    }
   }
 
   public static void delete() {

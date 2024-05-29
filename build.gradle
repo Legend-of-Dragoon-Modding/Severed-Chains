@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.14'
+  id 'org.openjfx.javafxplugin' version '0.1.0'
   id 'java-library'
   id 'maven-publish'
 }
@@ -17,10 +17,10 @@ if(project.ext.hash == null) {
 group 'legend'
 version project.ext.hash
 
-sourceCompatibility = targetCompatibility = 1.17
+sourceCompatibility = targetCompatibility = 1.21
 compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.3.2"
+project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
@@ -50,11 +50,12 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 
 repositories {
   mavenCentral()
-  mavenLocal()
+//  mavenLocal()
 }
 
 dependencies {
-  api group: 'org.legendofdragoon', name: 'mod-loader', version: '1.0'
+  api group: 'org.legendofdragoon', name: 'mod-loader', version: '2.0.2'
+  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.2.2'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
@@ -66,13 +67,21 @@ dependencies {
   api "org.lwjgl:lwjgl-glfw"
   api "org.lwjgl:lwjgl-nuklear"
   api "org.lwjgl:lwjgl-opengl"
+  api "org.lwjgl:lwjgl-openal"
+  api "org.lwjgl:lwjgl-opus"
   api "org.lwjgl:lwjgl-stb"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
+
+  implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
+  implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.12'
+  implementation group: 'commons-io', name: 'commons-io', version: '2.15.1'
 
   api group: 'com.github.slugify', name: 'slugify', version: '3.0.4'
 
@@ -91,7 +100,7 @@ dependencies {
 }
 
 javafx {
-  version = "18.0.2"
+  version = "21.0.1"
   modules = ['javafx.controls', 'javafx.fxml']
 }
 
@@ -109,23 +118,28 @@ jar {
 
 task sourceJar(type: Jar) {
   from sourceSets.main.allJava
+  archiveClassifier = "sources"
 }
 
 task clearOutput(type: Delete) {
-  delete "${buildDir}/libs/libs"
-  delete "${buildDir}/libs/**"
+  delete layout.buildDirectory.dir("libs/libs")
+  delete layout.buildDirectory.file("libs/**")
 }
 
 task copyLibs(type: Copy) {
   from configurations.compileClasspath + configurations.runtimeClasspath
-  into "${buildDir}/libs/libs"
+  into layout.buildDirectory.dir("libs/libs")
 }
 
 task copySupportFiles(type: Copy) {
-  into "${buildDir}/libs"
+  into layout.buildDirectory.dir("libs")
 
   into("gfx") {
     from 'gfx'
+  }
+
+  into("patches") {
+    from 'patches'
   }
 
   into(".") {
@@ -175,9 +189,7 @@ publishing {
         name = 'LoD Engine'
       }
 
-      artifact sourceJar {
-        classifier "sources"
-      }
+      artifact sourceJar
     }
   }
 }

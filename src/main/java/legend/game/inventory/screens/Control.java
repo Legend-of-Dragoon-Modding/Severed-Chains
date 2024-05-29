@@ -192,7 +192,7 @@ public abstract class Control extends ControlHost {
           // Render the bottom half of a colon, because for some reason that's the easiest way to render a decimal
           struct.heightCut = 4;
           digit = 10;
-          struct.y_44 += 1;
+          struct.y_44++;
         }
         default -> {
           continue;

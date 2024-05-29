@@ -1,6 +1,14 @@
 # Mod metadata
 lod-core.name=Legend of Dragoon (core)
 
+# Config categories
+lod-core.config.category.configure=Configure
+lod-core.config.category.gameplay.label=Gameplay
+lod-core.config.category.graphics.label=Graphics
+lod-core.config.category.audio.label=Audio
+lod-core.config.category.controls.label=Controls
+lod-core.config.category.other.label=Other
+
 # Global config
 lod-core.config.render_scale.label=Render Scale
 lod-core.config.controller.label=Controller
@@ -10,6 +18,17 @@ lod-core.config.controller_deadzone.label=Controller Deadzone
 lod-core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
 lod-core.config.allow_widescreen.label=Allow Widescreen When Possible
 lod-core.config.high_quality_projection.label=Use High Quality Projection When Possible
+lod-core.config.fullscreen.label=Fullscreen
+lod-core.config.resolution.label=Resolution
+lod-core.config.resolution.ORIGINAL=240p (original)
+lod-core.config.resolution._480=480p
+lod-core.config.resolution._720=720p
+lod-core.config.resolution._1080=1080p
+lod-core.config.resolution._4K=4K
+lod-core.config.resolution._8K=8K
+lod-core.config.resolution.NATIVE=Native (window size)
+lod-core.config.audio_device.label=Audio Device
+lod-core.config.music_volume.label=Music Volume
 
 # Campaign config
 lod-core.config.indicator_mode.label=Indicator Mode
@@ -37,6 +56,7 @@ lod-core.config.quick_text.label=Quick Text
 lod-core.config.auto_text.label=Automatic Text Advance
 lod-core.config.save_anywhere.label=Save Anywhere
 lod-core.config.disable_status_effects.label=Disable Status Effects
+lod-core.config.enemy_hp_bars.label=Enemy HP Bars
 
 lod-core.keybind.help=Press DEL when done
 lod-core.keybind.missing_input=Missing required input

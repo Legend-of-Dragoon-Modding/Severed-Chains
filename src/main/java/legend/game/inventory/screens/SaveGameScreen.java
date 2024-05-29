@@ -8,7 +8,6 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
-import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,9 +25,9 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class SaveGameScreen extends MenuScreen {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SaveGameScreen.class);
 
-  private static final LodString Overwrite_save_8011c9e8 = new LodString("Overwrite save?");
+  private static final String Overwrite_save_8011c9e8 = "Overwrite save?";
 
   private final Runnable unload;
 
@@ -63,7 +62,7 @@ public class SaveGameScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText(new LodString("Save Game"), 188, 10, TextColour.BROWN);
+    SItem.renderCentredText("Save Game", 188, 10, TextColour.BROWN);
   }
 
   private void onSelection(@Nullable final SavedGame save) {
@@ -79,7 +78,7 @@ public class SaveGameScreen extends MenuScreen {
   private void onNewSaveResult(final MessageBoxResult result, final String name) {
     if(result == MessageBoxResult.YES) {
       if(SAVES.saveExists(gameState_800babc8.campaignName, name)) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Save name already\nin use"), 0, result1 -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Save name already\nin use", 0, result1 -> { }));
         return;
       }
 
@@ -90,7 +89,7 @@ public class SaveGameScreen extends MenuScreen {
         SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Failed to save game"), 0, r -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
         LOGGER.error("Failed to save game", e);
       }
     }
@@ -105,7 +104,7 @@ public class SaveGameScreen extends MenuScreen {
         SAVES.overwriteSave(save.fileName(), save.saveName(), gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Failed to save game"), 0, r -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
         LOGGER.error("Failed to save game", e);
       }
     }

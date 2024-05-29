@@ -1,9 +1,9 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -15,7 +15,6 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
-import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
@@ -25,7 +24,7 @@ import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
-import legend.game.inventory.screens.OptionsScreen;
+import legend.game.inventory.screens.OptionsCategoryScreen;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
@@ -38,12 +37,10 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
-import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
@@ -86,6 +83,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -98,13 +96,12 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
-import static legend.game.SItem.textLength;
-import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
+import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
@@ -113,13 +110,13 @@ import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.startMenuMusic;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
@@ -138,7 +135,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -189,7 +185,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    unloadEncounterSoundEffects();
+    stopMusicSequence();
   }
 
   @ScriptDescription("Stops and unloads all music and sound sequences")
@@ -202,7 +198,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    unloadEncounterSoundEffects();
+    stopMusicSequence();
     return FlowControl.CONTINUE;
   }
 
@@ -211,20 +207,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002013cL)
   public static FlowControl scriptUnuseCharSoundFile(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
-  }
-
-  @Method(0x800201c8L)
-  public static void unloadEncounterSoundEffects() {
-    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
-
-    if(encounterSoundEffects._00 != 0) {
-      stopMusicSequence(encounterSoundEffects.sequenceData_0c, 1);
-      freeSequence(encounterSoundEffects.sequenceData_0c);
-      encounterSoundEffects.sssq_08 = null;
-      encounterSoundEffects._00 = 0;
-    }
-
-    //LAB_80020220
   }
 
   @ScriptDescription("Stops and unloads the encounter's sound effects")
@@ -242,7 +224,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020308L)
   public static void FUN_80020308() {
-    FUN_8001ae90();
+    stopCurrentMusicSequence();
     stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);
@@ -274,14 +256,28 @@ public final class Scus94491BpeSegment_8002 {
     soundBufferOffset = 0;
 
     final int fileIndex = 1290 + script.params_20[0].get();
+
+    final String path;
+    switch(fileIndex) {
+      case 1290 -> path = "monsters/phases/doel/0";
+      case 1291 -> path = "monsters/phases/doel/1";
+      case 1292 -> path = "monsters/phases/melbu/0";
+      case 1293 -> path = "monsters/phases/melbu/1";
+      case 1294 -> path = "monsters/phases/melbu/4";
+      case 1295 -> path = "monsters/phases/melbu/6";
+      case 1296 -> path = "monsters/phases/zackwell/0";
+      case 1297 -> path = "monsters/phases/zackwell/1";
+      default -> throw new IllegalArgumentException("Unknown battle phase file index " + fileIndex);
+    }
+
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
       file.charId_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
+      if(Unpacker.exists(path + '/' + monsterSlot)) {
         final int finalMonsterSlot = monsterSlot;
-        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d) (replaced)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+        loadDir(path + '/' + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %s) (replaced)".formatted(finalMonsterSlot, path), finalMonsterSlot));
       }
     }
 
@@ -510,29 +506,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020fd0
   }
 
-  @Method(0x80021258L)
-  public static void renderDobj2(final ModelPart10 dobj2) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      //LAB_800212b0
-      Renderer.renderDobj2(dobj2, false, 0);
-      return;
-    }
-
-    if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-      //LAB_800212a0
-      Renderer.renderDobj2(dobj2, true, 0);
-      return;
-    }
-
-    //LAB_8002128c
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      //LAB_800212c0
-      Renderer.renderDobj2(dobj2, false, 0);
-    }
-
-    //LAB_800212c8
-  }
-
   @Method(0x800212d8L)
   public static void applyKeyframe(final Model124 model) {
     //LAB_80021320
@@ -540,10 +513,10 @@ public final class Scus94491BpeSegment_8002 {
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final Transforms params = coord2.transforms;
 
-      params.rotate.set(model.keyframes_90[model.currentKeyframe_94][i].rotate_00);
+      params.quat.set(model.keyframes_90[model.currentKeyframe_94][i].quat);
       params.trans.set(model.keyframes_90[model.currentKeyframe_94][i].translate_06);
 
-      coord2.coord.rotationZYX(params.rotate);
+      coord2.coord.rotation(params.quat);
       coord2.coord.transfer.set(params.trans);
     }
   }
@@ -564,8 +537,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
-    model.coord2_14.coord.rotationXYZ(model.coord2_14.transforms.rotate);
-    model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
+    model.coord2_14.coord.scaling(model.coord2_14.transforms.scale);
+    model.coord2_14.coord.rotateXYZ(model.coord2_14.transforms.rotate);
     model.coord2_14.flg = 0;
   }
 
@@ -660,8 +633,8 @@ public final class Scus94491BpeSegment_8002 {
       dobj2.coord2_04.transforms.scale.set(1.0f, 1.0f, 1.0f);
       dobj2.coord2_04.transforms.trans.set(1.0f, 1.0f, 1.0f);
 
-      dobj2.coord2_04.coord.rotationXYZ(dobj2.coord2_04.transforms.rotate);
-      dobj2.coord2_04.coord.scaleLocal(dobj2.coord2_04.transforms.scale);
+      dobj2.coord2_04.coord.scaling(dobj2.coord2_04.transforms.scale);
+      dobj2.coord2_04.coord.rotateXYZ(dobj2.coord2_04.transforms.rotate);
       dobj2.coord2_04.coord.transfer.set(dobj2.coord2_04.transforms.trans);
     }
 
@@ -816,7 +789,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, CampaignSelectionScreen::new);
       case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
-      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
+      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
       case INIT_CHAR_SWAP_MENU_21 -> {
         loadCharacterStats();
         cacheCharacterSlots();
@@ -1076,7 +1049,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800232dcL)
   public static int takeItem(final int itemSlot) {
     if(itemSlot >= gameState_800babc8.items_2e9.size()) {
-      LOGGER.warn("Tried to take item index %d (out of bounds)".formatted(itemSlot));
+      LOGGER.warn("Tried to take item index %d (out of bounds)", itemSlot);
       return 0xff;
     }
 
@@ -1104,7 +1077,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800233d8L)
   public static int takeEquipment(final int equipmentIndex) {
     if(equipmentIndex >= gameState_800babc8.equipment_1e8.size()) {
-      LOGGER.warn("Tried to take equipment index %d (out of bounds)".formatted(equipmentIndex));
+      LOGGER.warn("Tried to take equipment index %d (out of bounds)", equipmentIndex);
       return 0xff;
     }
 
@@ -1472,22 +1445,16 @@ public final class Scus94491BpeSegment_8002 {
         for(int metricsIndex = 0; metricsIndex < metricses.length; metricsIndex++) {
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
-          final GpuCommandPoly cmd = new GpuCommandPoly(4)
-            .monochrome(0x80);
-
           final float x1;
-          final float x2;
           final float width;
           if(MathHelper.flEq(renderable.widthScale, 1.0f)) {
             if(metrics.widthScale_10 < 0) {
               width = -metrics.width_08;
-              x2 = renderable.x_40 + metrics.x_02 - centreX;
-              x1 = x2 + metrics.width_08;
+              x1 = renderable.x_40 + metrics.x_02 - centreX + metrics.width_08;
             } else {
               //LAB_80023f20
               width = metrics.width_08;
               x1 = renderable.x_40 + metrics.x_02 - centreX;
-              x2 = x1 + metrics.width_08;
             }
           } else {
             //LAB_80023f40
@@ -1498,30 +1465,25 @@ public final class Scus94491BpeSegment_8002 {
             final float scaledWidth = Math.abs(metrics.width_08 * widthScale);
             if(metrics.widthScale_10 < 0) {
               width = -scaledWidth;
-              x2 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
-              x1 = x2 + scaledWidth;
+              x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f + scaledWidth;
             } else {
               //LAB_80023fb4
               width = scaledWidth;
               x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
-              x2 = x1 + scaledWidth;
             }
           }
 
           //LAB_80023fe4
           final float y1;
-          final float y2;
           final float height;
           if(MathHelper.flEq(renderable.heightScale_38, 1.0f)) {
             if(metrics.heightScale_12 < 0) {
               height = -metrics.height_0a;
-              y2 = renderable.y_44 + metrics.y_03 - 120.0f;
-              y1 = y2 + metrics.height_0a;
+              y1 = renderable.y_44 + metrics.y_03 - 120.0f + metrics.height_0a;
             } else {
               //LAB_80024024
               height = metrics.height_0a;
               y1 = renderable.y_44 + metrics.y_03 - 120.0f;
-              y2 = y1 + metrics.height_0a;
             }
           } else {
             //LAB_80024044
@@ -1532,55 +1494,39 @@ public final class Scus94491BpeSegment_8002 {
             final float scaledHeight = Math.abs(metrics.height_0a * heightScale);
             if(metrics.heightScale_12 < 0) {
               height = -scaledHeight;
-              y2 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
-              y1 = y2 + scaledHeight;
+              y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f + scaledHeight;
             } else {
               //LAB_800240b8
               height = scaledHeight;
               y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
-              y2 = y1 + scaledHeight;
             }
           }
 
           //LAB_800240e8
-          cmd.pos(0, x1 + renderable.baseX, y1 + renderable.baseY + renderable.heightCut);
-          cmd.pos(1, x2 + renderable.baseX, y1 + renderable.baseY + renderable.heightCut);
-          cmd.pos(2, x1 + renderable.baseX, y2 + renderable.baseY);
-          cmd.pos(3, x2 + renderable.baseX, y2 + renderable.baseY);
-
           //LAB_80024144
           //LAB_800241b4
-          cmd.uv(0, metrics.u_00, metrics.v_01 + renderable.heightCut);
-          cmd.uv(1, metrics.u_00 + metrics.textureWidth, metrics.v_01 + renderable.heightCut);
-          cmd.uv(2, metrics.u_00, metrics.v_01 + metrics.textureHeight);
-          cmd.uv(3, metrics.u_00 + metrics.textureWidth, metrics.v_01 + metrics.textureHeight);
-
           final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04 & 0x7fff;
-          cmd.clut((clut & 0b111111) * 16, clut >>> 6);
-
-          //LAB_80024214
           final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06 & 0x60 | renderable.tpage_2c : metrics.tpage_06 & 0x7f;
 
-          cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
-          cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
-
-          if((metrics.clut_04 & 0x8000) != 0) {
-            cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
-          }
-
           //LAB_8002424c
-          GPU.queueCommand(renderable.z_3c, cmd);
-
           if(renderable.uiType_20.obj != null) {
             final MV transforms = new MV();
             transforms.scaling(width, height, 1.0f);
-            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
+            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f - Math.lerp(0.0f, 3.9f, (metricsIndex + 1.0f) / metricses.length));
 
-            RENDERER
-              .queueOrthoOverlayModel(renderable.uiType_20.obj, transforms)
+            final RenderEngine.QueuedModel<?> model = RENDERER
+              .queueOrthoModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride((clut & 0b111111) * 16, clut >>> 6);
+
+            if((metrics.clut_04 & 0x8000) != 0) {
+              model.translucency(Translucency.of(tpage >>> 5 & 0b11));
+            }
+
+            if(renderable.heightCut != 0) {
+              model.scissor((int)transforms.transfer.x, (int)(transforms.transfer.y + renderable.heightCut + 4), (int)width, renderable.heightCut);
+            }
           }
         }
       }
@@ -1976,13 +1922,12 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.flags_08 = 0;
     textboxText.z_0c = 13;
     textboxText.textColour_28 = TextColour.WHITE;
-    textboxText.scrollSpeed_2a = 2;
-    textboxText.scrollAmount_2c = 0;
+    textboxText.scrollSpeed_2a = 2.0f / currentEngineState_8004dd04.tickMultiplier();
+    textboxText.scrollAmount_2c = 0.0f;
     textboxText.charIndex_30 = 0;
     textboxText.charX_34 = 0;
     textboxText.charY_36 = 0;
-    textboxText._3a = 0;
-    textboxText._3c = 0;
+    textboxText._3a = 0.0f;
     textboxText._3e = 1;
     textboxText._40 = 0;
     textboxText.pauseTimer_44 = 0;
@@ -2011,6 +1956,8 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.stateAfterTransition_78 = TextboxTextState.UNINITIALIZED_0;
     textboxText.element_7c = 0;
     textboxText.digitIndex_80 = 0;
+
+    textboxText.waitTicks = 0;
   }
 
   @Method(0x80025a04L)
@@ -2167,7 +2114,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoOverlayModel(textboxBackgroundObj, textbox.backgroundTransforms);
+        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms);
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2223,7 +2170,7 @@ public final class Scus94491BpeSegment_8002 {
           .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
       }
 
-      RENDERER.queueOrthoOverlayModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
+      RENDERER.queueOrthoModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -2247,7 +2194,7 @@ public final class Scus94491BpeSegment_8002 {
             case 2 -> {
               textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
               textboxText.flags_08 |= 0x1;
-              textboxText.scrollSpeed_2a = 1;
+              textboxText.scrollSpeed_2a = 1.0f / currentEngineState_8004dd04.tickMultiplier();
               textboxText.charX_34 = 0;
               textboxText.charY_36 = textboxText.lines_1e;
             }
@@ -2255,7 +2202,7 @@ public final class Scus94491BpeSegment_8002 {
             case 3 -> {
               textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
               textboxText.flags_08 |= 0x1;
-              textboxText.scrollSpeed_2a = 1;
+              textboxText.scrollSpeed_2a = 1.0f / currentEngineState_8004dd04.tickMultiplier();
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
               textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
@@ -2293,11 +2240,11 @@ public final class Scus94491BpeSegment_8002 {
           if(textboxText._3a < textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
             //LAB_80026828
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
-            textboxText._3a++;
+            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
             scrollTextboxDown(textboxIndex);
           } else {
             textboxText.flags_08 ^= 0x1;
-            textboxText._3a = 0;
+            textboxText._3a = 0.0f;
             setTextboxArrowPosition(textboxIndex, true);
           }
           //LAB_8002684c
@@ -2395,7 +2342,7 @@ public final class Scus94491BpeSegment_8002 {
               processTextboxLine(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState._15) {
-                textboxText._3a = 0;
+                textboxText._3a = 0.0f;
                 textboxText.flags_08 |= 0x2;
                 break;
               }
@@ -2404,9 +2351,9 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026a8c
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
           } else {
-            textboxText._3a++;
+            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
 
-            if(textboxText._3a >= textboxText.lines_1e + 1) {
+            if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
               textboxText.delete();
               textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
@@ -2424,7 +2371,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.flags_08 ^= 0x1;
           textboxText.charX_34 = 0;
           textboxText.charY_36 = 0;
-          textboxText._3a = 0;
+          textboxText._3a = 0.0f;
 
           if((textboxText.flags_08 & 0x8) != 0) {
             textboxText.state_00 = TextboxTextState._13;
@@ -2492,7 +2439,7 @@ public final class Scus94491BpeSegment_8002 {
               clearTextboxChars(textboxIndex);
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
-              textboxText._3a = 0;
+              textboxText._3a = 0.0f;
               textboxText.state_00 = TextboxTextState._13;
               textboxText.flags_08 ^= 0x1;
             } else if(textboxText._5c == TextboxTextState._15) {
@@ -2539,7 +2486,7 @@ public final class Scus94491BpeSegment_8002 {
           processTextboxLine(textboxIndex);
 
           if(textboxText.state_00 == TextboxTextState._15) {
-            textboxText._3a = 0;
+            textboxText._3a = 0.0f;
             textboxText.flags_08 |= 0x102;
             break;
           }
@@ -2578,21 +2525,21 @@ public final class Scus94491BpeSegment_8002 {
                   //LAB_80026f88
                   if((textboxText.flags_08 & 0x2) != 0) {
                     // TODO not sure about this block of code
-                    if(textboxText._3a == 1) {
+                    if(MathHelper.flEq(textboxText._3a, 1.0f)) {
                       extraLines = 1;
                     } else {
-                      if(textboxText._3a == 0) {
+                      if(MathHelper.flEq(textboxText._3a, 0.0f)) {
                         //LAB_80026fbc
                         extraLines = 2;
                       }
 
                       //LAB_80026fc0
-                      textboxText._3a = 0;
+                      textboxText._3a = 0.0f;
                       textboxText.flags_08 ^= 0x2;
                     }
 
                     //LAB_80026fe8
-                    textboxText._3a--;
+                    textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
                   }
 
                   //LAB_80027014
@@ -2602,7 +2549,7 @@ public final class Scus94491BpeSegment_8002 {
                     textboxText.selectionLine_68 = 0;
                   } else {
                     //LAB_80027044
-                    textboxText.scrollAmount_2c = 12;
+                    textboxText.scrollAmount_2c = 12.0f;
                     rewindTextbox(textboxIndex);
 
                     final LodString str = textboxText.str_24;
@@ -2669,21 +2616,21 @@ public final class Scus94491BpeSegment_8002 {
                     //LAB_80026f88
                     if((textboxText.flags_08 & 0x2) != 0) {
                       // TODO not sure about this block of code
-                      if(textboxText._3a == 1) {
+                      if(MathHelper.flEq(textboxText._3a, 1.0f)) {
                         extraLines = 1;
                       } else {
-                        if(textboxText._3a == 0) {
+                        if(MathHelper.flEq(textboxText._3a, 0.0f)) {
                           //LAB_80026fbc
                           extraLines = 2;
                         }
 
                         //LAB_80026fc0
-                        textboxText._3a = 0;
+                        textboxText._3a = 0.0f;
                         textboxText.flags_08 ^= 0x2;
                       }
 
                       //LAB_80026fe8
-                      textboxText._3a--;
+                      textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
                     }
 
                     //LAB_80027014
@@ -2693,7 +2640,7 @@ public final class Scus94491BpeSegment_8002 {
                       textboxText.selectionLine_68 = 0;
                     } else {
                       //LAB_80027044
-                      textboxText.scrollAmount_2c = 12;
+                      textboxText.scrollAmount_2c = 12.0f;
                       rewindTextbox(textboxIndex);
 
                       final LodString str = textboxText.str_24;
@@ -2733,9 +2680,9 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               textboxText.selectionLine_60 = textboxText_800bdf38[textboxIndex].lines_1e - 1;
               textboxText.state_00 = TextboxTextState._20;
-              textboxText.scrollAmount_2c = 0;
+              textboxText.scrollAmount_2c = 0.0f;
 
-              if(textboxText._3a == 1) {
+              if(textboxText._3a == 1.0f) {
                 textboxText.state_00 = TextboxTextState._18;
                 textboxText.selectionLine_68--;
               }
@@ -2763,12 +2710,12 @@ public final class Scus94491BpeSegment_8002 {
 
       case _20 -> {
         //LAB_8002715c
-        textboxText.scrollAmount_2c += 4 / currentEngineState_8004dd04.tickMultiplier();
+        textboxText.scrollAmount_2c += 4.0f / currentEngineState_8004dd04.tickMultiplier();
 
-        if(textboxText.scrollAmount_2c >= 12) {
+        if(textboxText.scrollAmount_2c >= 12.0f) {
           advanceTextbox(textboxIndex);
           textboxText.flags_08 |= 0x4;
-          textboxText.scrollAmount_2c -= 12;
+          textboxText.scrollAmount_2c -= 12.0f;
           textboxText.charY_36 = textboxText.lines_1e;
         }
 
@@ -2783,15 +2730,15 @@ public final class Scus94491BpeSegment_8002 {
               processTextboxLine(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState._15) {
-                textboxText._3a = 0;
+                textboxText._3a = 0.0f;
                 textboxText.flags_08 |= 0x2;
                 break;
               }
             } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
           } else {
-            textboxText._3a++;
+            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
 
-            if(textboxText._3a >= textboxText.lines_1e + 1) {
+            if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
               textboxText.delete();
               textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
@@ -2806,10 +2753,10 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_800265f4
       case _21 -> {
         //LAB_8002727c
-        textboxText.scrollAmount_2c -= 4 / currentEngineState_8004dd04.tickMultiplier();
-        if(textboxText.scrollAmount_2c <= 0) {
+        textboxText.scrollAmount_2c -= 4.0f / currentEngineState_8004dd04.tickMultiplier();
+        if(textboxText.scrollAmount_2c <= 0.0f) {
           textboxText.charY_36 = 0;
-          textboxText.scrollAmount_2c = 0;
+          textboxText.scrollAmount_2c = 0.0f;
           textboxText.state_00 = TextboxTextState._18;
           textboxText.flags_08 |= 0x4;
         }
@@ -2902,6 +2849,15 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800274f0L)
   public static void processTextboxLine(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+
+    // This code would be really tricky to make work at 60 FPS, but there isn't any harm in just slowing it down
+    if(textboxText.waitTicks != 0) {
+      textboxText.waitTicks--;
+      return;
+    }
+
+    textboxText.waitTicks = currentEngineState_8004dd04.tickMultiplier();
+
     final LodString str = textboxText.str_24;
 
     if((textboxText.flags_08 & TextboxText84.SHOW_VAR) != 0) {
@@ -2909,7 +2865,6 @@ public final class Scus94491BpeSegment_8002 {
       appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, textboxText.digits_46[digitIndex]);
 
       textboxText.charX_34++;
-      textboxText._3c++;
       textboxText.digitIndex_80++;
 
       if(textboxText.charX_34 < textboxText.chars_1c) {
@@ -3135,7 +3090,6 @@ public final class Scus94491BpeSegment_8002 {
           appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, chr);
 
           textboxText.charX_34++;
-          textboxText._3c++;
 
           if(textboxText.charX_34 < textboxText.chars_1c) {
             //LAB_80027d28
@@ -3317,7 +3271,7 @@ public final class Scus94491BpeSegment_8002 {
         int scrollH = 0;
         if((textboxText.flags_08 & 0x1) != 0) {
           if(i >= firstCharInLineIndex && i < lastCharInLineIndex) {
-            final int scroll = textboxText.scrollAmount_2c;
+            final int scroll = Math.round(textboxText.scrollAmount_2c);
             scrollY = -scroll;
             scrollH = scroll;
           }
@@ -3325,7 +3279,7 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_800283c4
           if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
             scrollY = 0;
-            scrollH = 12 - textboxText.scrollAmount_2c;
+            scrollH = 12 - Math.round(textboxText.scrollAmount_2c);
           }
         }
 
@@ -3345,9 +3299,19 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y - scrollH, textboxText.z_0c * 4.0f);
-          RENDERER.queueOrthoOverlayModel(RENDERER.chars, textboxText.transforms)
-            .vertices(chr.char_06 * 4, 4)
+          textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x + 1, GPU.getOffsetY() + (int)y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
+          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
+            .texture(RENDERER.textTexture)
+            .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
+            .monochrome(0.0f)
+            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
+
+          textboxText.transforms.transfer.x--;
+          textboxText.transforms.transfer.y--;
+          textboxText.transforms.transfer.z -= 4.0f;
+          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
+            .texture(RENDERER.textTexture)
+            .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
             .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
         }
@@ -3365,10 +3329,10 @@ public final class Scus94491BpeSegment_8002 {
 
     textboxText.scrollAmount_2c += textboxText.scrollSpeed_2a;
 
-    if(textboxText.scrollAmount_2c >= 12) {
+    if(textboxText.scrollAmount_2c >= 12.0f) {
       advanceTextbox(textboxIndex);
       textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
-      textboxText.scrollAmount_2c = 0;
+      textboxText.scrollAmount_2c = 0.0f;
       textboxText.charY_36--;
     }
 
@@ -3382,10 +3346,10 @@ public final class Scus94491BpeSegment_8002 {
 
       textboxText.scrollAmount_2c += textboxText.scrollSpeed_2a;
 
-      if(textboxText.scrollAmount_2c >= 12) {
+      if(textboxText.scrollAmount_2c >= 12.0f) {
         advanceTextbox(textboxIndex);
         textboxText.flags_08 |= 0x4;
-        textboxText.scrollAmount_2c -= 12;
+        textboxText.scrollAmount_2c -= 12.0f;
         textboxText.charY_36 = textboxText.lines_1e;
       }
     }
@@ -3452,102 +3416,52 @@ public final class Scus94491BpeSegment_8002 {
     final float y = textbox.y_16 + selectionLine * 12 - (textbox.lines_1a - 1) * 6;
 
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
-    textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c);
-    RENDERER.queueOrthoOverlayModel(textboxSelectionObj, textboxSelectionTransforms);
+    textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c * 4.0f);
+    RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms);
   }
 
   private static final MV textTransforms = new MV();
 
   /**
-   * @param trim Positive trims top, negative trims bottom
+   * @param trim Negative trims top, positive trims bottom
    */
   @Method(0x80029300L)
-  public static void renderText(final LodString text, final float x, float y, final TextColour colour, int trim) {
-    final int length = textLength(text);
-
+  public static void renderText(final String text, final float x, float y, final TextColour colour, int trim) {
     trim = MathHelper.clamp(trim, -12, 12);
 
-    if(trim != 0) {
-      LOGGER.warn("Trim not supported yet");
-    }
-
-    int lineIndex = 0;
     int glyphNudge = 0;
 
-    for(int i = 0; i < length; i++) {
-      final int c = text.charAt(i);
+    for(int i = 0; i < text.length(); i++) {
+      final char c = text.charAt(i);
 
-      if(c == 0xa1ff) {
-        lineIndex = 0;
-        glyphNudge = 0;
-        y += 12;
-      } else {
-        if(lineIndex == 0) {
+      if(c != ' ') {
+        if(c == '\n') {
           glyphNudge = 0;
+          y += 12;
+        } else {
+          textTransforms.transfer.set(x + glyphNudge, y, textZ_800bdf00 * 4.0f);
+
+          if(trim < 0) {
+            textTransforms.transfer.y += trim;
+          }
+
+          final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
+            .texture(RENDERER.textTexture)
+            .vertices((c - 33) * 4, 4)
+            .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
+
+          if(trim != 0) {
+            if(trim < 0) {
+              model.scissor(0, (int)y + 12 + trim, displayWidth_1f8003e0, 12 + trim);
+            } else {
+              model.scissor(0, (int)y + 12 - trim, displayWidth_1f8003e0, 12);
+            }
+          }
         }
-
-        if(c == 0x45) { // m
-          glyphNudge -= 1;
-        } else if(c == 0x2) { // .
-          glyphNudge -= 2;
-        } else if(c >= 0x5 && c < 0x7) { // ?, !
-          glyphNudge -= 3;
-        }
-
-        textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00 * 4.0f);
-        RENDERER.queueOrthoOverlayModel(RENDERER.chars, textTransforms)
-          .vertices(c * 4, 4)
-          .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
-
-        glyphNudge += switch(c) {
-          case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 1;
-          case 0x2, 0x8, 0x3e, 0x4c -> 2;
-          case 0xb, 0xc, 0x42 -> 3;
-          case 0x1, 0x3, 0x4, 0x9, 0x16, 0x41, 0x44 -> 4;
-          case 0x6, 0x27 -> 5;
-          default -> 0;
-        };
-
-        lineIndex++;
       }
+
+      glyphNudge += charWidth(c);
     }
-  }
-
-  @Method(0x800297a0L)
-  public static LodString intToStr(int val, final LodString out) {
-    final LodString tmp = new LodString(11);
-
-    //LAB_800297b4
-    for(int i = 0; i < 11; i++) {
-      tmp.charAt(i, 0xa0ff);
-      out.charAt(i, 0xa0ff);
-    }
-
-    int divisor = 1_000_000_000;
-
-    //LAB_8002980c
-    for(int i = 0; i < 10; i++) {
-      tmp.charAt(i, digits_80052b40[val / divisor].charAt(0));
-      val %= divisor;
-      divisor /= 10;
-    }
-
-    //LAB_80029888
-    int a1;
-    for(a1 = 0; a1 < 9; a1++) {
-      if(tmp.charAt(a1) != 0x15) { // 0
-        break;
-      }
-    }
-
-    //LAB_800298b8
-    //LAB_800298c4
-    for(int a2 = 0; a1 < 10 && a2 < 8; a1++, a2++) {
-      out.charAt(a2, tmp.charAt(a1));
-    }
-
-    //LAB_80029914
-    return out;
   }
 
   @Method(0x80029920L)
@@ -3577,7 +3491,7 @@ public final class Scus94491BpeSegment_8002 {
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
         textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c);
-        RENDERER.queueOrthoOverlayModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
+        RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
       }
     }
 
@@ -3932,9 +3846,10 @@ public final class Scus94491BpeSegment_8002 {
     final int nudge = switch(chr) {
       case '?', 'E', 'F', 'L', 'Y', 'Z', 'b', 'c', 'd', 'e', 'g', 'h', 'k', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'y', 'z' -> 1;
       case '.', '/', 'f', 't' -> 2;
-      case '(', ')', 'j' -> 3;
+      case '!', '(', ')', 'j' -> 3;
       case ',', '·', ':', '\'', '1', 'i', 'l' -> 4;
-      case '!', 'I' -> 5;
+      case 'I' -> 5;
+      case '\n' -> 8;
       default -> 0;
     };
 
@@ -4100,11 +4015,7 @@ public final class Scus94491BpeSegment_8002 {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
 
       //LAB_8002c448
-      //TODO don't do this.
-      new Thread(() -> Fmv.playXa(xaArchiveIndex, xaFileIndex)).start();
-//      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
-
-//      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
+      AUDIO_THREAD.loadXa(Unpacker.loadFile("XA/LODXA0%d.XA/%d.opus".formatted(xaArchiveIndex, xaFileIndex)));
       _800bf0cf = 4;
     }
 

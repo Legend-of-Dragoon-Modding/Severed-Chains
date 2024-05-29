@@ -590,9 +590,9 @@ public class Credits extends EngineState {
   @Method(0x800eaf24L)
   private void renderCreditsGradient() {
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
-    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms);
     this.transforms.rotate(MathHelper.PI, 0, 0, 0);
-    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms);
   }
 
   @Method(0x800eb304L)
@@ -657,7 +657,7 @@ public class Credits extends EngineState {
   private void renderQuad(final CreditData1c credit, final float x, final float y) {
     this.transforms.identity();
     this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() +  y, (orderingTableSize_1f8003c8 - 3) * 4.0f);
-    RENDERER.queueOrthoOverlayModel(this.credits, this.transforms)
+    RENDERER.queueOrthoModel(this.credits, this.transforms)
       .vertices(credit.index * 4, 4)
       .colour(credit.colour_00);
   }

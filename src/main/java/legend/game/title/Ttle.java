@@ -2,7 +2,6 @@ package legend.game.title;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
 import legend.core.gpu.VramTextureSingle;
@@ -85,7 +84,7 @@ public class Ttle extends EngineState {
 
   private int _800c6728;
   private int _800c672c;
-  private final int[] menuOptionTransparency = {0, 0, 0};
+  private final int[] menuOptionTransparency = new int[4];
 
   private int fadeOutTimer_800c6754;
 
@@ -104,6 +103,7 @@ public class Ttle extends EngineState {
   private Obj trademarkObj;
   private Obj menuTextObj;
   private Obj copyrightObj;
+  private final MV flashTransforms = new MV();
 
   private VramTexture backgroundTexture;
   private VramTexture[] backgroundPalettes;
@@ -120,9 +120,9 @@ public class Ttle extends EngineState {
   private boolean renderablesLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
-  private final int[] _800ce7f8 = {195, 131, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
-  private final int[] _800ce840 = {76, 211, 140, 128, 128, 96, 0, 144, 80, 0, 176, 72, 0, 208, 72, 128, 0, 112, 128, 32, 88, 128, 64, 48, 173, 64, 48};
-  private final int[] _800ce8ac = {-65, 16, -40, 34, -32, 52, -128, 34, -32, 34, 48, 34, -128, 52, -32, 52, 48, 52};
+  private final int[] menuTextVWidth_800ce7f8 = {195, 131, 128, 80, 0, 64, 112, 39};
+  private final int[] menuTextBlurUvWidth_800ce840 = {76, 211, 140, 128, 128, 96, 0, 144, 80, 129, 96, 54};
+  private final int[] menuTextXy_800ce8ac = {-65, 16, -40, 34, -32, 52, -20, 70};
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
@@ -130,6 +130,11 @@ public class Ttle extends EngineState {
 
   @Override
   public boolean allowsHighQualityProjection() {
+    return false;
+  }
+
+  @Override
+  public boolean allowsWidescreen() {
     return false;
   }
 
@@ -144,6 +149,7 @@ public class Ttle extends EngineState {
       case 5 -> this.waitForSaveSelection();
       case 6 -> this.fadeOutMainMenu();
       case 7 -> this.fadeOutForOptions();
+      case 8 -> this.fadeOutForQuit();
     }
   }
 
@@ -206,46 +212,50 @@ public class Ttle extends EngineState {
 
     this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
     this.backgroundObj = new QuadBuilder("Title Screen Background")
-      .pos(0.0f, 0.0f, 1.0f)
-      .size(384.0f, 424.0f)
+      .pos(0.0f, 0.0f, 60000.0f)
+      .posSize(384.0f, 424.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .build();
 
     this.logoTex = ((VramTextureSingle)this.logoTexture).createOpenglTexture((VramTextureSingle)this.logoPalettes[0]);
     this.logoObj = new QuadBuilder("Title Screen Logo")
-      .pos(8.0f, 40.0f, 1.0f)
-      .size(352.0f, 88.0f)
+      .pos(8.0f, 40.0f, 10000.0f)
+      .posSize(352.0f, 88.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.B_PLUS_F)
       .build();
 
     this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture((VramTextureSingle)this.tmPalettes[0]);
     this.trademarkObj = new QuadBuilder("Title Screen Trademark")
-      .pos(326.0f, 106.0f, 1.0f)
-      .size(16.0f, 8.0f)
+      .pos(326.0f, 106.0f, 99.0f)
+      .posSize(16.0f, 8.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.B_PLUS_F)
       .build();
 
     final QuadBuilder menuTextBuilder = new QuadBuilder("Title Screen Menu Text");
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 4; i++) {
       menuTextBuilder
         .add()
-        .pos(192.0f + this._800ce8ac[i * 2], 120.0f + this._800ce8ac[i * 2 + 1] + 10, 100)
-        .size(this._800ce7f8[i * 2 + 1], 16.0f)
-        .uv(i == 0 ? 79 : 0, this._800ce7f8[i * 2])
+        .pos(192.0f + this.menuTextXy_800ce8ac[i * 2], 115.0f + this.menuTextXy_800ce8ac[i * 2 + 1], 100.0f)
+        .posSize(this.menuTextVWidth_800ce7f8[i * 2 + 1], 16.0f)
+        .uvSize((float)this.menuTextVWidth_800ce7f8[i * 2 + 1] / this.menuTextTexture.rect.w, 16.0f / this.menuTextTexture.rect.h)
+        .uv(i == 0 ? 79.0f / this.menuTextTexture.rect.w : 0, (float)this.menuTextVWidth_800ce7f8[i * 2] / this.menuTextTexture.rect.h)
         .bpp(Bpp.BITS_24)
         .translucency(Translucency.B_PLUS_F);
     }
 
     // Blurred backgrounds
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 4; i++) {
       menuTextBuilder
         .add()
-        .pos(192.0f + this._800ce8ac[i * 2] - 8, 120.0f + this._800ce8ac[i * 2 + 1] + 10 - 8, 100)
-        .posSize(this._800ce840[i * 3 + 2], 31.0f)
-        .uvSize(this._800ce840[i * 3 + 2], 32.0f)
-        .uv(this._800ce840[i * 3], this._800ce840[i * 3 + 1])
+        .pos(192.0f + this.menuTextXy_800ce8ac[i * 2] - 8, 107.0f + this.menuTextXy_800ce8ac[i * 2 + 1], 101.0f)
+        .posSize(this.menuTextBlurUvWidth_800ce840[i * 3 + 2], 31.0f)
+        .uvSize((float)this.menuTextBlurUvWidth_800ce840[i * 3 + 2] / this.menuTextTexture.rect.w, 32.0f / this.menuTextTexture.rect.h)
+        .uv((float)this.menuTextBlurUvWidth_800ce840[i * 3] / this.menuTextTexture.rect.w, (float)this.menuTextBlurUvWidth_800ce840[i * 3 + 1] / this.menuTextTexture.rect.h)
         .bpp(Bpp.BITS_24)
         .translucency(Translucency.B_PLUS_F);
     }
@@ -257,8 +267,9 @@ public class Ttle extends EngineState {
 
     this.copyrightTex = ((VramTextureSingle)this.copyrightTexture).createOpenglTexture((VramTextureSingle)this.copyrightPalettes[0]);
     this.copyrightObj = new QuadBuilder("Title Screen Copyright")
-      .pos(4.0f, 200.0f, 1.0f)
+      .pos(4.0f, 200.0f, 100.0f)
       .size(368.0f, 32.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.B_PLUS_F)
       .build();
@@ -411,6 +422,27 @@ public class Ttle extends EngineState {
     }
   }
 
+  private void fadeOutForQuit() {
+    if(this.fadeOutTimer_800c6754 == 0) {
+      startFadeEffect(1, 15);
+    }
+
+    //LAB_800c7fcc
+    this.fadeOutTimer_800c6754++;
+
+    if(this.fadeOutTimer_800c6754 < 16) {
+      this.renderMenuBackground();
+      this.renderMenuOptions();
+      this.renderMenuLogo();
+      this.renderMenuLogoFire();
+      this.renderCopyright();
+    } else {
+      removeInputHandlers();
+      this.deallocate();
+      RENDERER.window().close();
+    }
+  }
+
   @Method(0x800c7fa0L)
   private void waitForSaveSelection() {
     if(this.fadeOutTimer_800c6754 == 0) {
@@ -550,7 +582,7 @@ public class Ttle extends EngineState {
     }
 
     if(this._800c6728 != 1) {
-      this.menuIdleTime += 2;
+//      this.menuIdleTime += 2;
 
       if(this.menuIdleTime > 1680) {
         this.loadingStage = 6;
@@ -585,7 +617,7 @@ public class Ttle extends EngineState {
 
       if(this.menuLoadingStage == 3) {
         if(this._800c672c < 3) {
-          for(int i = 0; i < 3; i++) {
+          for(int i = 0; i < 4; i++) {
             if(i == 1 && this.hasSavedGames != 1) {
               continue;
             }
@@ -593,7 +625,7 @@ public class Ttle extends EngineState {
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)((this._800ce8ac[i * 2 + 1] + 10) * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)((this.menuTextXy_800ce8ac[i * 2 + 1] - 6) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(this.selectedMenuOption != i) {
@@ -632,7 +664,7 @@ public class Ttle extends EngineState {
         final float scaleY = h / GPU.getDisplayTextureHeight();
 
         if(this._800c672c < 3) {
-          for(int i = 0; i < 3; i++) {
+          for(int i = 0; i < 4; i++) {
             if(i == 1 && this.hasSavedGames != 1) {
               continue;
             }
@@ -640,7 +672,7 @@ public class Ttle extends EngineState {
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)((this._800ce8ac[i * 2 + 1] + 10) * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)((this.menuTextXy_800ce8ac[i * 2 + 1] - 6) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -678,7 +710,7 @@ public class Ttle extends EngineState {
 
         this.selectedMenuOption--;
         if(this.selectedMenuOption < 0) {
-          this.selectedMenuOption = 2;
+          this.selectedMenuOption = 3;
         }
 
         if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
@@ -690,7 +722,7 @@ public class Ttle extends EngineState {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         this.selectedMenuOption++;
-        if(this.selectedMenuOption >= 3) {
+        if(this.selectedMenuOption >= 4) {
           this.selectedMenuOption = 0;
         }
 
@@ -717,7 +749,7 @@ public class Ttle extends EngineState {
     switch(this._800c672c) {
       case 0 -> {
         //LAB_800c86d8
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 4; i++) {
           //LAB_800c86f4
           this.menuOptionTransparency[i] = 0;
         }
@@ -729,7 +761,7 @@ public class Ttle extends EngineState {
       case 1 -> {
         //LAB_800c8740
         //LAB_800c886c
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 4; i++) {
           //LAB_800c875c
           this.menuOptionTransparency[i] += 4;
           if(this.selectedMenuOption == i) {
@@ -750,7 +782,7 @@ public class Ttle extends EngineState {
       case 2 -> {
         //LAB_800c8878
         //LAB_800c89e4
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 4; i++) {
           //LAB_800c8894
           if(this.selectedMenuOption == i) {
             // Fade in selected item
@@ -787,6 +819,9 @@ public class Ttle extends EngineState {
         } else if(this.selectedMenuOption == 2) {
           this._800c6728 = 2;
           this.loadingStage = 7;
+        } else if(this.selectedMenuOption == 3) {
+          this._800c6728 = 2;
+          this.loadingStage = 8;
         }
       }
 
@@ -797,7 +832,7 @@ public class Ttle extends EngineState {
     }
 
     //LAB_800c8a70
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 4; i++) {
       final int colour;
       if(i != 1 || this.hasSavedGames == 1) {
         colour = this.menuOptionTransparency[i];
@@ -807,13 +842,13 @@ public class Ttle extends EngineState {
 
       //LAB_800c8a8c
       RENDERER
-        .queueOrthoUnderlayModel(this.menuTextObj)
+        .queueOrthoModel(this.menuTextObj)
         .monochrome(colour / 128.0f)
         .texture(this.menuTextTex[2])
-        .vertices((i + 3) * 4, 4);
+        .vertices((i + 4) * 4, 4);
 
       RENDERER
-        .queueOrthoUnderlayModel(this.menuTextObj)
+        .queueOrthoModel(this.menuTextObj)
         .monochrome(colour / 128.0f)
         .texture(this.menuTextTex[this.selectedMenuOption == i ? 1 : 0])
         .vertices(i * 4, 4);
@@ -840,7 +875,7 @@ public class Ttle extends EngineState {
     //LAB_800cabcc
     //LAB_800cabe8
     RENDERER
-      .queueOrthoUnderlayModel(this.copyrightObj)
+      .queueOrthoModel(this.copyrightObj)
       .monochrome(this.copyrightFadeInAmount)
       .texture(this.copyrightTex);
   }
@@ -856,12 +891,12 @@ public class Ttle extends EngineState {
     //LAB_800cae2c
     //LAB_800cae48
     RENDERER
-      .queueOrthoUnderlayModel(this.logoObj)
+      .queueOrthoModel(this.logoObj)
       .monochrome(this.logoFadeInAmount)
       .texture(this.logoTex);
 
     RENDERER
-      .queueOrthoUnderlayModel(this.trademarkObj)
+      .queueOrthoModel(this.trademarkObj)
       .monochrome(this.logoFadeInAmount)
       .texture(this.trademarkTex);
   }
@@ -883,9 +918,9 @@ public class Ttle extends EngineState {
     //LAB_800cb0ec
     //LAB_800cb100
     RENDERER
-      .queueOrthoUnderlayModel(this.backgroundObj)
+      .queueOrthoModel(this.backgroundObj)
       .texture(this.backgroundTex)
-      .screenspaceOffset(0.0f, -this.backgroundScrollAmount)
+      .screenspaceOffset(0.0f, this.backgroundScrollAmount)
       .monochrome(this.backgroundFadeInAmount);
 
     //LAB_800cb370
@@ -921,7 +956,7 @@ public class Ttle extends EngineState {
   @Method(0x800cb728L)
   private void renderMenuLogoFire() {
     final Vector3f rotation = new Vector3f(0.0f, -MathHelper.TWO_PI / 2.0f, 0.0f);
-    final Vector3f scale = new Vector3f(0.743f, 1.0f, 1.0f);
+    final Vector3f scale = new Vector3f(0.8544922f, 1.0f, 1.0f);
 
     if(!this.logoFireInitialized) {
       this.logoFireInitialized = true;
@@ -950,7 +985,7 @@ public class Ttle extends EngineState {
 
       RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw)
         .monochrome(this.flameColour / 128.0f)
-        .screenspaceOffset(9.75f, -0.5f)
+        .screenspaceOffset(8.0f, 0.0f)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour);
@@ -987,15 +1022,12 @@ public class Ttle extends EngineState {
     //LAB_800cba90
     final int colour = rsin(this.logoFlashColour) * 160 >> 12;
 
-    // GP0.66 Textured quad, variable size, translucent, blended
-    final GpuCommandQuad cmd = new GpuCommandQuad()
-      .translucent(Translucency.B_PLUS_F)
-      .bpp(Bpp.BITS_15)
-      .monochrome(colour)
-      .pos(-192, -120, 384, 240)
-      .texture(GPU.getDisplayBuffer());
-
-    GPU.queueCommand(5, cmd);
+    this.flashTransforms.transfer.set(0.0f, 0.0f, 30.0f);
+    this.flashTransforms.scaling(368.0f, 240.0f, 1.0f);
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms)
+      .texture(RENDERER.getLastFrame())
+      .translucency(Translucency.B_PLUS_F)
+      .monochrome(colour / 128.0f);
 
     if(this.logoFlashColour == 0x800) {
       this.logoFlashStage = 2;

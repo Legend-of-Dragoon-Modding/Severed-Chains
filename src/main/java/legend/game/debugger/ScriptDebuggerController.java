@@ -14,6 +14,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
@@ -120,6 +121,12 @@ public class ScriptDebuggerController {
         }
       }
     }
+  }
+
+  @FXML
+  public void debugScript(final ActionEvent actionEvent) throws Exception {
+    final ScriptLiveDebugger scriptDebugger = new ScriptLiveDebugger();
+    scriptDebugger.setState(this.scriptSelector.getValue().index).start(new Stage());
   }
 
   public void selectScript(final int index) {

@@ -8,10 +8,11 @@ import legend.game.inventory.screens.controls.Dropdown;
 public class EnumConfigEntry<T extends Enum<T>> extends ConfigEntry<T> {
   private final Class<T> cls;
 
-  public EnumConfigEntry(final Class<T> cls, final T defaultValue, final ConfigStorageLocation storageLocation) {
+  public EnumConfigEntry(final Class<T> cls, final T defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category) {
     super(
       defaultValue,
       storageLocation,
+      category,
       IoHelper::enumToBytes,
       bytes -> IoHelper.enumFromBytes(cls, bytes, defaultValue)
     );

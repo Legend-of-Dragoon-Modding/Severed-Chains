@@ -3,9 +3,11 @@ package legend.core.opengl;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.MathHelper;
+import legend.core.gpu.Bpp;
 import legend.game.types.LodString;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.MathHelper.makeClut;
+import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
@@ -60,10 +62,10 @@ public class TextBuilder {
         this.newLine();
         currentLineWidth = 0;
       } else if(chr != ' ' || currentLineWidth != 0) {
-          this.chars.add(LodString.toLodChar(chr));
-          charWidth = charWidth(chr);
-          this.addToWidth(charWidth);
-          currentLineWidth += charWidth;
+        this.chars.add(LodString.toLodChar(chr));
+        charWidth = charWidth(chr);
+        this.addToWidth(charWidth);
+        currentLineWidth += charWidth;
       }
     }
 
@@ -99,7 +101,7 @@ public class TextBuilder {
   public TextObj build() {
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -147,7 +149,7 @@ public class TextBuilder {
           final int v = this.trim >= 0 ? v1 : v1 - this.trim;
           final int h = this.trim >= 0 ? 12 - this.trim : 12 + this.trim;
 
-          if(i == 0 && this.shadowed) {
+          if(i == 1 && this.shadowed) {
             vertexIndex = this.setVertices(
               vertices, vertexIndex,
               x + charIndex * 8 - glyphNudge + 1.0f, lineIndex * 12 + 1.0f,
@@ -165,12 +167,12 @@ public class TextBuilder {
             );
           }
 
-          indices[indexIndex++] = indicesVertexIndex + 2;
-          indices[indexIndex++] = indicesVertexIndex + 1;
           indices[indexIndex++] = indicesVertexIndex;
           indices[indexIndex++] = indicesVertexIndex + 1;
           indices[indexIndex++] = indicesVertexIndex + 2;
           indices[indexIndex++] = indicesVertexIndex + 3;
+          indices[indexIndex++] = indicesVertexIndex + 2;
+          indices[indexIndex++] = indicesVertexIndex + 1;
           indicesVertexIndex += 4;
 
           glyphNudge += switch(c) {
@@ -189,10 +191,10 @@ public class TextBuilder {
 
     final Mesh mesh = new Mesh(GL_TRIANGLES, vertices, indices);
 
-    mesh.attribute(0, 0L, 3, vertexSize);
+    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
     int meshIndex = 1;
-    int meshOffset = 3;
+    int meshOffset = POS_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
     meshIndex++;
@@ -209,10 +211,6 @@ public class TextBuilder {
     mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
     meshIndex++;
     meshOffset += CLUT_SIZE;
-
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;
@@ -235,16 +233,14 @@ public class TextBuilder {
     vertices[offset++] = x;
     vertices[offset++] = y;
     vertices[offset++] = 0.0f;
+    vertices[offset++] = 0.0f; // Vertex index, only used for VDF
     vertices[offset++] = 0.0f; //
     vertices[offset++] = 0.0f; // normals
     vertices[offset++] = 0.0f; //
     vertices[offset++] = u;
     vertices[offset++] = v;
-    vertices[offset++] = 832; // clx
-    vertices[offset++] = 256; // cly
-    vertices[offset++] = 832; // tpx
-    vertices[offset++] = 480; // tpy
-    vertices[offset++] = 0; // bpp
+    vertices[offset++] = makeTpage(832, 256, Bpp.BITS_4, null);
+    vertices[offset++] = makeClut(832, 480);
     vertices[offset++] = r;
     vertices[offset++] = g;
     vertices[offset++] = b;

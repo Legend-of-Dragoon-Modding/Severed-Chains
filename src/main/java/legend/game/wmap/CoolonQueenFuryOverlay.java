@@ -73,7 +73,7 @@ public class CoolonQueenFuryOverlay {
   public void render(final int mode) {
     final int buttonState = buttonStates[(int)(tickCount_800bb0fc / 2 / (3.0f / vsyncMode_8007a3b8) % 7)];
     final MeshObj button = this.buttonSprites[buttonState];
-    RENDERER.queueOrthoOverlayModel(button);
+    RENDERER.queueOrthoModel(button);
 
     final int iconState;
     final MeshObj icon;
@@ -85,7 +85,7 @@ public class CoolonQueenFuryOverlay {
       icon = this.queenFurySprites[iconState];
     }
 
-    RENDERER.queueOrthoOverlayModel(icon);
+    RENDERER.queueOrthoModel(icon);
   }
 
   public void deallocate() {

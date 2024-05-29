@@ -9,14 +9,16 @@ import java.util.function.Function;
 public class ConfigEntry<T> extends RegistryEntry {
   public final T defaultValue;
   public final ConfigStorageLocation storageLocation;
+  public final ConfigCategory category;
   public final Function<T, byte[]> serializer;
   public final Function<byte[], T> deserializer;
 
   private BiFunction<T, ConfigCollection, Control> editControl;
 
-  public ConfigEntry(final T defaultValue, final ConfigStorageLocation storageLocation, final Function<T, byte[]> serializer, final Function<byte[], T> deserializer) {
+  public ConfigEntry(final T defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category, final Function<T, byte[]> serializer, final Function<byte[], T> deserializer) {
     this.defaultValue = defaultValue;
     this.storageLocation = storageLocation;
+    this.category = category;
     this.serializer = serializer;
     this.deserializer = deserializer;
   }

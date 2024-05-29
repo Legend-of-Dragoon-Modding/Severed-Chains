@@ -7,6 +7,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.input.InputBinding;
 import legend.game.input.InputState;
+import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;
@@ -24,6 +25,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_CONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
@@ -31,6 +33,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
+import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
@@ -63,6 +66,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -115,15 +119,23 @@ public class Window {
 
   private int width;
   private int height;
-  private float scale = 1.0f;
+  private final float scale = 1.0f;
   private boolean hasFocus;
+
+  private final GLFWVidMode vidMode;
 
   private final List<Action> actions = new ArrayList<>();
   private final Action render = this.addAction(new Action(this::tickFrame, 60));
 
   public Window(final String title, final int width, final int height) {
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    this.vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    if(this.vidMode == null) {
+      throw new RuntimeException("Failed to get video mode");
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -134,7 +146,12 @@ public class Window {
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
     }
 
-    this.window = glfwCreateWindow(width, height, title, NULL, NULL);
+    if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
+      glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+      this.window = glfwCreateWindow(this.vidMode.width(), this.vidMode.height(), title, NULL, NULL);
+    } else {
+      this.window = glfwCreateWindow(width, height, title, NULL, NULL);
+    }
 
     if(this.window == NULL) {
       throw new RuntimeException("Failed to create the GLFW window");
@@ -155,27 +172,8 @@ public class Window {
       }
     });
 
-    try(final MemoryStack stack = stackPush()) {
-      final IntBuffer pWidth = stack.mallocInt(1);
-      final IntBuffer pHeight = stack.mallocInt(1);
-
-      glfwGetFramebufferSize(this.window, pWidth, pHeight);
-
-      final GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-      if(vidMode == null) {
-        throw new RuntimeException("Failed to get video mode");
-      }
-
-      glfwSetWindowPos(
-        this.window,
-        (vidMode.width() - pWidth.get(0)) / 2,
-        (vidMode.height() - pHeight.get(0)) / 2
-      );
-    }
-
+    this.centerWindow();
     this.makeContextCurrent();
-
     GL.createCapabilities();
 
     LOGGER.info("OpenGL version: {}", glGetString(GL_VERSION));
@@ -185,6 +183,33 @@ public class Window {
     if("true".equals(System.getenv("opengl_debug"))) {
       GLUtil.setupDebugMessageCallback(System.err);
     }
+  }
+
+  public void centerWindow() {
+    try(final MemoryStack stack = stackPush()) {
+      final IntBuffer pWidth = stack.mallocInt(1);
+      final IntBuffer pHeight = stack.mallocInt(1);
+
+      glfwGetFramebufferSize(this.window, pWidth, pHeight);
+
+      glfwSetWindowPos(
+        this.window,
+        (this.vidMode.width() - pWidth.get(0)) / 2,
+        (this.vidMode.height() - pHeight.get(0)) / 2
+      );
+    }
+  }
+
+  public void makeFullscreen() {
+    glfwSetWindowAttrib(this.window, GLFW_DECORATED, GLFW_FALSE);
+    glfwSetWindowSize(this.window, this.vidMode.width(), this.vidMode.height());
+    this.centerWindow();
+  }
+
+  public void makeWindowed() {
+    glfwSetWindowAttrib(this.window, GLFW_DECORATED, GLFW_TRUE);
+    glfwSetWindowSize(this.window, Config.windowWidth(), Config.windowHeight());
+    this.centerWindow();
   }
 
   public Action addAction(final Action action) {

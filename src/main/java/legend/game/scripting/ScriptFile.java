@@ -5,27 +5,25 @@ import java.nio.ByteOrder;
 
 public class ScriptFile {
   public final String name;
-  private final int[] data;
+  public final byte[] data;
+  private final int[] ops;
 
   public ScriptFile(final String name, final byte[] data) {
-    this(name, new int[data.length / 4]);
-    ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().get(this.data);
-  }
-
-  public ScriptFile(final String name, final int[] data) {
     this.name = name;
     this.data = data;
+    this.ops = new int[data.length / 4];
+    ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().get(this.ops);
   }
 
   public int getEntry(final int index) {
-    return this.data[index] / 4;
+    return this.ops[index] / 4;
   }
 
   public int getOp(final int offset) {
-    return this.data[offset];
+    return this.ops[offset];
   }
 
   public void setOp(final int offset, final int value) {
-    this.data[offset] = value;
+    this.ops[offset] = value;
   }
 }

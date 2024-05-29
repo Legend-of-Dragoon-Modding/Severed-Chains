@@ -198,10 +198,10 @@ public class CombatDebuggerController {
     }
 
     if((combatant.flags_19e & 0x4) == 0) {
-      return ((Battle)currentEngineState_8004dd04).currentEnemyNames_800c69d0[bent.charSlot_276].get();
+      return ((Battle)currentEngineState_8004dd04).currentEnemyNames_800c69d0[bent.charSlot_276];
     }
 
-    return bent.charId_272 == 8 ? "Who?" : BattleHud.playerNames_800fb378[bent.charId_272].get();
+    return bent.charId_272 == 8 ? "Who?" : BattleHud.playerNames_800fb378[bent.charId_272];
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {

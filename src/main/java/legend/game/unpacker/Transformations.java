@@ -5,10 +5,12 @@ import java.util.Queue;
 public class Transformations {
   private final PathNode root;
   private final Queue<PathNode> transformationQueue;
+  private int remaining;
 
   public Transformations(final PathNode root, final Queue<PathNode> transformationQueue) {
     this.root = root;
     this.transformationQueue = transformationQueue;
+    this.remaining = transformationQueue.size();
   }
 
   public PathNode poll() {
@@ -17,9 +19,21 @@ public class Transformations {
     }
   }
 
+  public int getRemaining() {
+    synchronized(this.transformationQueue) {
+      return this.remaining;
+    }
+  }
+
+  public void decrementRemaining() {
+    synchronized(this.transformationQueue) {
+      this.remaining--;
+    }
+  }
+
   public boolean isEmpty() {
     synchronized(this.transformationQueue) {
-      return this.transformationQueue.isEmpty();
+      return this.remaining == 0;
     }
   }
 
@@ -29,6 +43,8 @@ public class Transformations {
 
   public void addNode(final String fullPath, final FileData data) {
     synchronized(this.transformationQueue) {
+      this.remaining++;
+
       final PathNode node = this.insert(fullPath, data);
       this.transformationQueue.add(node);
     }
@@ -40,16 +56,11 @@ public class Transformations {
 
   public PathNode addChild(final PathNode parent, final String pathSegment, final FileData data) {
     synchronized(this.transformationQueue) {
+      this.remaining++;
+
       final PathNode node = this.insert(parent.fullPath + '/' + pathSegment, data);
       this.transformationQueue.add(node);
       return node;
-    }
-  }
-
-  /** File will not be placed into the transformation queue */
-  public void addUntransformableChild(final PathNode parent, final String pathSegment, final FileData data) {
-    synchronized(this.transformationQueue) {
-      this.insert(parent.fullPath + '/' + pathSegment, data);
     }
   }
 

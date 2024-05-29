@@ -13,8 +13,23 @@ public class TextObj extends Obj {
   }
 
   @Override
+  public boolean hasTexture() {
+    return true;
+  }
+
+  @Override
+  public boolean hasTranslucency() {
+    return false;
+  }
+
+  @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
     return !this.deleted && translucency == null;
+  }
+
+  @Override
+  public void render(final int startVertex, final int vertexCount) {
+    this.mesh.draw(startVertex, vertexCount);
   }
 
   @Override
@@ -23,10 +38,7 @@ public class TextObj extends Obj {
   }
 
   @Override
-  public void delete() {
-    if(!this.deleted) {
-      super.delete();
-      this.mesh.delete();
-    }
+  public void performDelete() {
+    this.mesh.delete();
   }
 }

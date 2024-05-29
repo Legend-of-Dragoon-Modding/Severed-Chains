@@ -21,10 +21,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
         cache: gradle
 
@@ -43,20 +43,6 @@ jobs:
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Clean up Windows x64
-      run: 'rm build/libs/launch.bat'
-
-    - name: Build Windows ARM64 with Gradle
-      run: ./gradlew build -Pos=windows -Parch=aarch64
-
-    - name: ZIP Windows ARM64 Build
-      uses: thedoctor0/zip-release@main
-      with:
-        type: 'zip'
-        filename: '../Severed_Chains_Windows_ARM64.zip'
-        directory: 'build/libs'
-        exclusions: '*.zip* *.tar.gz*'
-
-    - name: Clean up Windows ARM64
       run: 'rm build/libs/launch.bat'
 
     - name: Build Steam Deck x64 with Gradle

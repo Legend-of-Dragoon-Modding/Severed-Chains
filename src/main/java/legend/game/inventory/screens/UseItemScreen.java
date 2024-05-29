@@ -6,7 +6,6 @@ import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -38,18 +37,18 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public class UseItemScreen extends MenuScreen {
-  private static final LodString HP_recovered_for_all_8011cfcc = new LodString("HP recovered for all");
-  private static final LodString MP_recovered_for_all_8011cff8 = new LodString("MP recovered for all");
-  private static final LodString Completely_recovered_8011d534 = new LodString("SP recovered for all");
-  private static final LodString Recovered_8011d560 = new LodString("Recovered");
-  private static final LodString HP_8011d57c = new LodString("HP");
-  private static final LodString MP_8011d584 = new LodString("MP");
-  private static final LodString SP_8011d58c = new LodString("SP");
-  private static final LodString Encounter_risk_reduced_8011d594 = new LodString("Encounter risk reduced");
-  private static final LodString Detoxified_8011d5c8 = new LodString("Detoxified");
-  private static final LodString Spirit_recovered_8011d5e0 = new LodString("Spirit recovered");
-  private static final LodString Fear_gone_8011d604 = new LodString("Fear gone");
-  private static final LodString Nothing_happened_8011d618 = new LodString("Nothing happened");
+  private static final String HP_recovered_for_all_8011cfcc = "HP recovered for all";
+  private static final String MP_recovered_for_all_8011cff8 = "MP recovered for all";
+  private static final String Completely_recovered_8011d534 = "SP recovered for all";
+  private static final String Recovered_8011d560 = "Recovered";
+  private static final String HP_8011d57c = "HP";
+  private static final String MP_8011d584 = "MP";
+  private static final String SP_8011d58c = "SP";
+  private static final String Encounter_risk_reduced_8011d594 = "Encounter risk reduced";
+  private static final String Detoxified_8011d5c8 = "Detoxified";
+  private static final String Spirit_recovered_8011d5e0 = "Spirit recovered";
+  private static final String Fear_gone_8011d604 = "Fear gone";
+  private static final String Nothing_happened_8011d618 = "Nothing happened";
 
   private int loadingStage;
   private double scrollAccumulator;
@@ -359,13 +358,13 @@ public class UseItemScreen extends MenuScreen {
     }
   }
 
-  private void FUN_80104254(final LodString baseString, final UseItemResponse response) {
+  private void FUN_80104254(final String baseString, final UseItemResponse response) {
     if(response.value_04 == -2) {
       response.string_08 = Nothing_happened_8011d618;
     } else if(response.value_04 == -1) {
-      response.string_08 = new LodString(baseString.get() + Completely_recovered_8011d534.get());
+      response.string_08 = baseString + Completely_recovered_8011d534;
     } else if(response.value_04 != 0) {
-      response.string_08 = new LodString(response.value_04 + baseString.get() + Recovered_8011d560.get());
+      response.string_08 = response.value_04 + baseString + Recovered_8011d560;
     } else {
       response.string_08 = baseString;
     }

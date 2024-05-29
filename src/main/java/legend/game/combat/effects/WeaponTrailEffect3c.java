@@ -1,9 +1,10 @@
 package legend.game.combat.effects;
 
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
@@ -17,8 +18,10 @@ import org.joml.Vector3i;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class WeaponTrailEffect3c implements Effect {
   private int currentSegmentIndex_00 = -1;
@@ -30,6 +33,8 @@ public class WeaponTrailEffect3c implements Effect {
   private final Model124 parentModel_30;
   private final WeaponTrailEffectSegment2c[] segments_34 = new WeaponTrailEffectSegment2c[65];
   private WeaponTrailEffectSegment2c currentSegment_38;
+
+  private final MV transforms = new MV();
 
   public WeaponTrailEffect3c(final int dobjIndex, final BattleObject parent) {
     Arrays.setAll(this.segments_34, WeaponTrailEffectSegment2c::new);
@@ -125,6 +130,8 @@ public class WeaponTrailEffect3c implements Effect {
       renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v2.x) > renderCoordThreshold || Math.abs(v2.y) > renderCoordThreshold;
 
       //LAB_800cdf94
+      final PolyBuilder builder = new PolyBuilder("Weapon trail", GL_TRIANGLES);
+
       segment = segment.previousSegmentRef_24;
       for(int i = 0; i < this.segmentCount_0e && segment != null; i++) {
         final Vector2f v1 = new Vector2f();
@@ -134,28 +141,25 @@ public class WeaponTrailEffect3c implements Effect {
         transformWorldspaceToScreenspace(segment.endpointCoords_04[1], v3);
         renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v3.x) > renderCoordThreshold || Math.abs(v3.y) > renderCoordThreshold;
 
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .translucent(Translucency.B_PLUS_F)
-          .pos(0, v0.x, v0.y)
-          .pos(1, v1.x, v1.y)
-          .pos(2, v2.x, v2.y)
-          .pos(3, v3.x, v3.y)
-          .monochrome(0, 0)
-          .monochrome(1, 0)
-          .rgb(2, colour.x >>> 8, colour.y >>> 8, colour.z >>> 8);
+        if(!renderCoordThresholdExceeded) {
+          builder
+            .translucency(Translucency.B_PLUS_F)
+            .addVertex(v0.x, v0.y, 0.0f)
+            .monochrome(0.0f)
+            .addVertex(v1.x, v1.y, 0.0f)
+            .monochrome(0.0f)
+            .addVertex(v2.x, v2.y, 0.0f)
+            .rgb((colour.x >>> 8) / 255.0f, (colour.y >>> 8) / 255.0f, (colour.z >>> 8) / 255.0f)
+            .addVertex(v1.x, v1.y, 0.0f)
+            .monochrome(0.0f)
+            .addVertex(v2.x, v2.y, 0.0f)
+            .rgb((colour.x >>> 8) / 255.0f, (colour.y >>> 8) / 255.0f, (colour.z >>> 8) / 255.0f);
 
-        colour.sub(colourStep);
+          colour.sub(colourStep);
 
-        cmd.rgb(3, colour.x >>> 8, colour.y >>> 8, colour.z >>> 8);
-
-        float zFinal = z + data.params_10.z_22;
-        if(zFinal >= 0xa0 && !renderCoordThresholdExceeded) {
-          if(zFinal >= 0xffe) {
-            zFinal = 0xffe;
-          }
-
-          //LAB_800ce138
-          GPU.queueCommand(zFinal / 4.0f, cmd);
+          builder
+            .addVertex(v3.x, v3.y, 0.0f)
+            .rgb((colour.x >>> 8) / 255.0f, (colour.y >>> 8) / 255.0f, (colour.z >>> 8) / 255.0f);
         }
 
         //LAB_800ce14c
@@ -169,6 +173,20 @@ public class WeaponTrailEffect3c implements Effect {
           Math.abs(v0.y) > renderCoordThreshold ||
           Math.abs(v2.x) > renderCoordThreshold ||
           Math.abs(v2.y) > renderCoordThreshold;
+      }
+
+      float zFinal = z + data.params_10.z_22;
+      if(zFinal >= 0xa0) {
+        if(zFinal >= 0xffe) {
+          zFinal = 0xffe;
+        }
+
+        final Obj obj = builder.build();
+        obj.delete(); // mark for deletion at end of frame
+
+        //LAB_800ce138
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), zFinal);
+        RENDERER.queueOrthoModel(obj, this.transforms);
       }
 
       //LAB_800ce1a0

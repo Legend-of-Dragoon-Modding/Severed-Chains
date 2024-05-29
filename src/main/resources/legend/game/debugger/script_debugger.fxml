@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -11,12 +12,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@script_debugger.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.ScriptDebuggerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@script_debugger.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.ScriptDebuggerController">
    <children>
       <Pane prefHeight="52.0" prefWidth="600.0">
          <children>
             <ComboBox fx:id="scriptSelector" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="200.0" />
             <CheckBox fx:id="scriptLog" layoutX="227.0" layoutY="18.0" mnemonicParsing="false" onAction="#scriptLogClick" text="Enable logging" />
+            <Button fx:id="btnDebug" layoutX="534.0" layoutY="13.0" mnemonicParsing="false" onAction="#debugScript" text="Debug" />
          </children>
       </Pane>
       <HBox prefHeight="346.0" prefWidth="600.0">

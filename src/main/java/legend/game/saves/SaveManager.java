@@ -28,7 +28,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public final class SaveManager {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SaveManager.class);
 
   private static final Slugify slug = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").build();
 
@@ -112,6 +112,13 @@ public final class SaveManager {
     try(final Stream<Path> stream = Files.list(this.dir)) {
       return stream
         .filter(Files::isDirectory)
+        .filter(path -> {
+          try(final Stream<Path> children = Files.list(path)) {
+            return children.anyMatch(child -> child.toString().endsWith(".dsav"));
+          } catch(final IOException e) {
+            throw new RuntimeException(e);
+          }
+        })
         .sorted(Comparator.comparingLong((final Path path) -> {
           try(final Stream<Path> children = this.childrenSortedByDate(path)) {
             return children

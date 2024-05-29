@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.gte.MV;
 import org.joml.Vector2f;
 
 public class SavePointRenderData44 {
@@ -18,4 +19,6 @@ public class SavePointRenderData44 {
   public short fadeState_38;
 
   public float z_40;
+
+  public final MV transforms = new MV();
 }

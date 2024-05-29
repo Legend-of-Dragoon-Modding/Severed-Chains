@@ -1,64 +1,62 @@
 package legend.game.combat.effects;
 
+import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 
-import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.asciiTable_800fa788;
-import static legend.game.combat.SEffe.FUN_800d3f98;
 
 public class AdditionNameTextEffect1c {
   /** ushort */
   public int _00;
   /** ushort */
-  public int addition_02;
-  public int _04;
+  public int additionId_02;
+  public int ticks_04;
   public int length_08;
   /** ubyte */
   public int positionMovement_0c;
-  public int _10;
+  public int totalSp_10;
   public TriConsumer<AdditionCharEffectData0c, Integer, Integer> renderer_14;
   public AdditionCharEffectData0c[] ptr_18;
 
   @Method(0x800d37dcL)
-  private void renderAdditionNameChar(final short displayX, final short displayY, final short addition, final short charOffset, final int charAlpha) {
-    int charIdx = 0;
+  private void renderAdditionNameChar(final int x, final int y, final int additionId, final int charOffset, final int brightness) {
+    int charIndex = 0;
 
     //LAB_800d3838
     int chr;
-    do {
-      chr = asciiTable_800fa788[charIdx];
+    while(true) {
+      chr = asciiTable_800fa788[charIndex];
 
-      if(additionNames_800fa8d4[addition].charAt(charOffset) == chr) {
+      if(additionNames_800fa8d4[additionId].charAt(charOffset) == chr) {
         break;
       } else if(chr == 0) {
         //LAB_800d3860
-        charIdx = 0x5b;
+        charIndex = 91;
         break;
       }
 
-      charIdx++;
-    } while(true);
+      charIndex++;
+    }
 
     //LAB_800d3864
-    renderButtonPressHudTexturedRect(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, charAlpha, 0x1000);
+    battleUiParts.queueLetter(charIndex, x, y, 0xa, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
   }
 
   @Method(0x800d3a20L)
-  public void renderAdditionNameChar(final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
-    this.renderAdditionNameChar((short)charStruct.position_04, (short)charStruct.offsetY_06, (short)this.addition_02, (short)charIdx, (int)charAlpha);
+  public void renderAdditionNameChar(final AdditionCharEffectData0c charStruct, final int brightness, final int charIndex) {
+    this.renderAdditionNameChar(charStruct.position_04, charStruct.offsetY_06, this.additionId_02, charIndex, brightness);
   }
 
   @Method(0x800d3a64L)
-  public void renderAdditionNameEffect(final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
-    final String sp0x18 = String.valueOf(this._10);
-
-    long s4;
-    if(this._04 < 25) {
-      s4 = this._04 & 1;
+  public void renderAdditionSpGain(final AdditionCharEffectData0c effect, final int brightness, final int charIndex) {
+    int s4;
+    if(this.ticks_04 < 25) {
+      s4 = this.ticks_04 & 1;
     } else {
       s4 = 0;
     }
@@ -66,19 +64,21 @@ public class AdditionNameTextEffect1c {
     //LAB_800d3ab8
     //LAB_800d3ac4
     for(; s4 >= 0; s4--) {
-      int s1 = a1.position_04;
+      int x = effect.position_04;
+      int sp = this.totalSp_10;
+      final int digitCount = MathHelper.digitCount(sp);
 
       //LAB_800d3ad4
-      for(int i = 0; i < sp0x18.length(); i++) {
-        FUN_800d3f98((short)s1, (short)a1.offsetY_06, sp0x18.charAt(i) - 0x30, (short)41, (int)charAlpha);
-        s1 += 8;
+      for(int i = 0; i < digitCount; i++) {
+        final int digit = sp % 10;
+        battleUiParts.queueBigNumber(digit, x + (digitCount - i - 1) * 8, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+        sp /= 10;
       }
 
+      x += digitCount * 8;
+
       //LAB_800d3b08
-      FUN_800d3f98((short) s1      , (short)a1.offsetY_06, 0x0d, (short)41, (int)charAlpha);
-      FUN_800d3f98((short)(s1 +  8), (short)a1.offsetY_06, 0x0e, (short)41, (int)charAlpha);
-      FUN_800d3f98((short)(s1 + 16), (short)a1.offsetY_06, 0x0f, (short)41, (int)charAlpha);
-      FUN_800d3f98((short)(s1 + 24), (short)a1.offsetY_06, 0x10, (short)41, (int)charAlpha);
+      battleUiParts.queuePoints(x, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
     }
 
     //LAB_800d3b98
@@ -86,7 +86,7 @@ public class AdditionNameTextEffect1c {
 
   @Method(0x800d3bb8L)
   public void tickAdditionNameEffect(final ScriptState<AdditionNameTextEffect1c> state, final int unknown) {
-    this._04++;
+    this.ticks_04++;
 
     if(unknown == 0) {
       state.deallocateWithChildren();
@@ -114,15 +114,15 @@ public class AdditionNameTextEffect1c {
         //LAB_800d3c88
         this.renderer_14.accept(charStruct, 0x80, charIdx);
         int currPosition = charStruct.position_04;
-        int s2 = charStruct.dupes_02 * 0x10;
+        int u = charStruct.dupes_02 * 0x10;
 
         //LAB_800d3cbc
         for(int dupeNum = 0; dupeNum < charStruct.dupes_02 - 1; dupeNum++) {
-          s2 -= 16;
+          u -= 16;
           currPosition -= 10;
           final int origCharPosition = charStruct.position_04;
           charStruct.position_04 = currPosition;
-          this.renderer_14.accept(charStruct, s2 & 0xff, charIdx);
+          this.renderer_14.accept(charStruct, u & 0xff, charIdx);
           charStruct.position_04 = origCharPosition;
         }
       }

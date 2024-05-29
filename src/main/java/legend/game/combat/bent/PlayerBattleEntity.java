@@ -268,11 +268,11 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case _138 -> this._118;
       case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a;
       case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c;
-      case EQUIPMENT_WEAPON_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.WEAPON)); //TODO
-      case EQUIPMENT_HELMET_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.HELMET));
-      case EQUIPMENT_ARMOUR_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ARMOUR));
-      case EQUIPMENT_BOOTS_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.BOOTS));
-      case EQUIPMENT_ACCESSORY_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ACCESSORY));
+      case EQUIPMENT_WEAPON_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId()); //TODO
+      case EQUIPMENT_HELMET_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.HELMET).getRegistryId());
+      case EQUIPMENT_ARMOUR_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
+      case EQUIPMENT_BOOTS_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
+      case EQUIPMENT_ACCESSORY_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
       case SP_MULTIPLIER -> this.spMultiplier_128;
       case SP_PER_PHYSICAL_HIT -> this.spPerPhysicalHit_12a;
       case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c;

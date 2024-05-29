@@ -1,5 +1,7 @@
 package legend.game.submap;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.ModelTextureDumper;
@@ -16,6 +18,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
+import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
@@ -39,15 +42,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static legend.core.Async.allLoaded;
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
+import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -71,7 +78,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -88,7 +94,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class RetailSubmap extends Submap {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSubmap.class);
 
   public final int cut;
   private final NewRootStruct newRoot;
@@ -116,11 +122,11 @@ public class RetailSubmap extends Submap {
     Arrays.setAll(this.envRenderMetrics_800cb710, i -> new EnvironmentRenderingMetrics24());
   }
 
-  private final Vector3f[] _800cbb90 = new Vector3f[32];
+  private final Vector3f[] cutoutWorldToScreenZTransformVectors_800cbb90 = new Vector3f[32];
   {
-    Arrays.setAll(this._800cbb90, i -> new Vector3f());
+    Arrays.setAll(this.cutoutWorldToScreenZTransformVectors_800cbb90, i -> new Vector3f());
   }
-  private final float[] _800cbc90 = new float[32];
+  private final float[] cutoutScreenZs_800cbc90 = new float[32];
 
   private final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
   private int _800cbd30;
@@ -138,7 +144,6 @@ public class RetailSubmap extends Submap {
 
   private final Model124 submapModel_800d4bf8 = new Model124("Submap");
 
-
   private boolean _800f7f0c;
 
   private Tim[] envTextures;
@@ -147,6 +152,7 @@ public class RetailSubmap extends Submap {
   private Obj backgroundObj;
   private final MV backgroundTransforms = new MV();
   private Texture[] foregroundTextures;
+  private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
   public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
     this.cut = cut;
@@ -170,7 +176,7 @@ public class RetailSubmap extends Submap {
 
     drgnBinIndex_800bc058 = drgnIndex.get();
     loadDrgnDir(2, fileIndex.get(), files -> {
-      this.loadBackground("DRGN2%d/%d".formatted(drgnIndex.get(), fileIndex.get()), files);
+      this.loadBackground("DRGN2" + drgnIndex.get() + "/" + fileIndex.get(), files);
       onLoaded.run();
     });
   }
@@ -208,7 +214,7 @@ public class RetailSubmap extends Submap {
 
       loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> allLoaded(assetsCount, 3, () -> assets.addAll(files), prepareSobjsAndComplete));
       loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> allLoaded(assetsCount, 3, () -> scripts.addAll(files), prepareSobjsAndComplete));
-      Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d/textures".formatted(20 + drgnIndex.get(), fileIndex.get() + 1), files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
+      Unpacker.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
 
       // Load 3D overlay
       if(cutFileIndex != 0) {
@@ -261,15 +267,13 @@ public class RetailSubmap extends Submap {
       musicLoaded_800bd782 = false;
       this.startMusic();
     }
-
-    previousSubmapCut_800bda08 = this.cut;
   }
 
   @Override
   public void startMusic() {
     final int musicIndex = this.getSubmapMusicChange();
     if(musicIndex == -1) {
-      FUN_8001ae90();
+      stopCurrentMusicSequence();
       musicLoaded_800bd782 = true;
     } else if(musicIndex == -2) {
       startCurrentMusicSequence();
@@ -357,6 +361,8 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void unload() {
+    previousSubmapCut_800bda08 = this.cut;
+
     if(this.theEnd_800d4bd0 != null) {
       this.theEnd_800d4bd0.deallocate();
       this.theEnd_800d4bd0 = null;
@@ -475,6 +481,14 @@ public class RetailSubmap extends Submap {
       }
     }
 
+    for(int i = 0; i < textures.size(); i++) {
+      if(this.pxls.get(i) == null && textures.get(i) != null) {
+        this.pxls.set(i, this.pxls.get(textures.get(i).realFileIndex()));
+      }
+    }
+
+    this.loadTextureOverrides();
+    this.calculateTextureLocations();
     this.loadTextures();
   }
 
@@ -500,24 +514,46 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
+  public void prepareSobjModel(final SubmapObject210 sobj) {
+    if(this.sobjTextureOverrides.containsKey(sobj.sobjIndex_12e)) {
+      sobj.texture = Texture.create(this.sobjTextureOverrides.get(sobj.sobjIndex_12e));
+      final Tim oldTexture = this.pxls.get(sobj.sobjIndex_12e);
+      TmdObjLoader.fromModel("SobjModel (index " + sobj.sobjIndex_12e + ')', sobj.model_00, oldTexture.getImageRect().w * oldTexture.getBpp().widthDivisor, oldTexture.getImageRect().h);
+    } else {
+      TmdObjLoader.fromModel("SobjModel (index " + sobj.sobjIndex_12e + ')', sobj.model_00);
+    }
+  }
+
+  @Override
   public void restoreAssets() {
     this.loadTextures();
   }
 
-  private void loadTextures() {
+  private void loadTextureOverrides() {
+    this.sobjTextureOverrides.clear();
+    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);
+  }
+
+  private void calculateTextureLocations() {
     this.uvAdjustments.clear();
 
     final boolean[] usedSlots = new boolean[this.pxls.size() * 2];
+    final Set<Tim> visited = new HashSet<>();
 
     outer:
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
+      // sobj 16 uses the submap overlay texture
+      if(pxlIndex == 16) {
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256));
+        continue;
+      }
+
       final Tim tim = this.pxls.get(pxlIndex);
 
-      if(tim != null) {
-        final Rect4i imageRect = tim.getImageRect();
-        final Rect4i clutRect = tim.getClutRect();
+      if(!visited.contains(tim)) {
+        visited.add(tim);
 
-        final int neededSlots = imageRect.w / 16;
+        final int neededSlots = tim.getImageRect().w / 16;
 
         // We increment by neededSlots so that wide textures only land on even slots
         for(int slotIndex = 0; slotIndex < 20; slotIndex += neededSlots) {
@@ -537,15 +573,11 @@ public class RetailSubmap extends Submap {
             final int x = 576 + slotIndex % 12 * 16;
             final int y = 256 + slotIndex / 12 * 128;
 
-            imageRect.x = x;
-            imageRect.y = y;
-            clutRect.x = x;
-            clutRect.y = y + imageRect.h;
-
-            GPU.uploadData15(imageRect, tim.getImageData());
-            GPU.uploadData15(clutRect, tim.getClutData());
-
-            this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+            if(this.sobjTextureOverrides.containsKey(pxlIndex)) {
+              this.uvAdjustments.add(UvAdjustmentMetrics14.PNG);
+            } else {
+              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+            }
 
             final Path path = Path.of("./dump/" + drgnBinIndex_800bc058 + '/' + this.cut + "/model" + pxlIndex + ".png");
             try {
@@ -562,6 +594,31 @@ public class RetailSubmap extends Submap {
         throw new RuntimeException("Failed to find available texture slot for sobj texture " + pxlIndex);
       } else {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
+      }
+    }
+  }
+
+  private void loadTextures() {
+    final Set<Tim> visited = new HashSet<>();
+
+    for(final UvAdjustmentMetrics14 uvAdjustment : this.uvAdjustments) {
+      if(uvAdjustment.index != 0) {
+        final Tim tim = this.pxls.get(uvAdjustment.index - 1);
+
+        if(tim != null && !visited.contains(tim)) {
+          visited.add(tim);
+
+          final Rect4i imageRect = tim.getImageRect();
+          final Rect4i clutRect = tim.getClutRect();
+
+          imageRect.x = uvAdjustment.tpageX;
+          imageRect.y = uvAdjustment.tpageY;
+          clutRect.x = uvAdjustment.clutX;
+          clutRect.y = uvAdjustment.clutY;
+
+          GPU.uploadData15(imageRect, tim.getImageData());
+          GPU.uploadData15(clutRect, tim.getClutData());
+        }
       }
     }
 
@@ -761,7 +818,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Method(0x800e6d9cL)
-  private void calculateSubmapBounds(final EnvironmentStruct[] envs, final int backgroundTextureCount) {
+  private void calculateSubmapBounds(final EnvironmentTextureMetrics24[] envs, final int backgroundTextureCount) {
     int left = 0x7fff;
     int right = -0x8000;
     int top = 0x7fff;
@@ -769,19 +826,19 @@ public class RetailSubmap extends Submap {
 
     //LAB_800e6dc8
     for(int i = 0; i < backgroundTextureCount; i++) {
-      final EnvironmentStruct env = envs[i];
+      final EnvironmentTextureMetrics24 env = envs[i];
 
-      if(env.s_06 == 0x4e) {
-        if(right < env.pos_08.w + env.textureOffsetX_10) {
-          right = env.pos_08.w + env.textureOffsetX_10;
+      if(env.tileType_06 == 0x4e) {
+        if(right < env.vramPos_08.w + env.textureOffsetX_10) {
+          right = env.vramPos_08.w + env.textureOffsetX_10;
         }
 
         if(left > env.textureOffsetX_10) {
           left = env.textureOffsetX_10;
         }
 
-        if(bottom < env.pos_08.h + env.textureOffsetY_12) {
-          bottom = env.pos_08.h + env.textureOffsetY_12;
+        if(bottom < env.vramPos_08.h + env.textureOffsetY_12) {
+          bottom = env.vramPos_08.h + env.textureOffsetY_12;
         }
 
         if(top > env.textureOffsetY_12) {
@@ -809,20 +866,20 @@ public class RetailSubmap extends Submap {
   }
 
   @Method(0x800e6f38L)
-  private void buildBackgroundRenderingPacket(final EnvironmentStruct[] env) {
+  private void buildBackgroundRenderingPacket(final EnvironmentTextureMetrics24[] env) {
     //LAB_800e6f9c
     for(int i = 0; i < this.envTextureCount_800cb584; i++) {
-      final EnvironmentStruct s0 = env[i];
+      final EnvironmentTextureMetrics24 envTexture = env[i];
 
-      int clutY = Math.abs(s0.clutY_22); // Negative means translucent
+      int clutY = Math.abs(envTexture.clutY_22); // Negative means translucent
       if(i < this.envBackgroundTextureCount_800cb57c) { // It's a background texture
         if(clutY < 0x1f0 || clutY >= 0x200) {
           clutY = i + 0x1f0;
         }
       } else { // It's a foreground texture
         //LAB_800e7010
-        this._800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(s0.svec_14);
-        this._800cbc90[i - this.envBackgroundTextureCount_800cb57c] = s0.ui_1c;
+        this.cutoutWorldToScreenZTransformVectors_800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(envTexture.worldToScreenZTransformVector_14);
+        this.cutoutScreenZs_800cbc90[i - this.envBackgroundTextureCount_800cb57c] = envTexture.screenZ;
       }
 
       //LAB_800e7004
@@ -830,38 +887,38 @@ public class RetailSubmap extends Submap {
       final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
 
       float z;
-      if(s0.s_06 == 0x4e) {
+      if(envTexture.tileType_06 == 0x4e) {
         //LAB_800e7148
         z = (0x1 << orderingTableBits_1f8003c0) - 1;
-      } else if(s0.s_06 == 0x4f) {
+      } else if(envTexture.tileType_06 == 0x4f) {
         z = 40;
       } else {
         //LAB_800e7194
         z =
-          worldToScreenMatrix_800c3548.m02 * s0.svec_00.x +
-          worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
-          worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
+          worldToScreenMatrix_800c3548.m02 * envTexture.worldPosition_00.x +
+          worldToScreenMatrix_800c3548.m12 * envTexture.worldPosition_00.y +
+          worldToScreenMatrix_800c3548.m22 * envTexture.worldPosition_00.z;
         z += worldToScreenMatrix_800c3548.transfer.z;
         z /= 1 << 16 - orderingTableBits_1f8003c0;
       }
 
       renderPacket.z_20 = Math.round(z);
-      renderPacket.tpage_04 = s0.tpage_20;
+      renderPacket.tpage_04 = envTexture.tpage_20;
       renderPacket.r_0c = 0x80;
       renderPacket.g_0d = 0x80;
       renderPacket.b_0e = 0x80;
-      renderPacket.u_14 = s0.pos_08.x;
-      renderPacket.v_15 = s0.pos_08.y;
+      renderPacket.u_14 = envTexture.vramPos_08.x;
+      renderPacket.v_15 = envTexture.vramPos_08.y;
       renderPacket.clut_16 = clutY << 6 | 0x30;
-      renderPacket.w_18 = s0.pos_08.w;
-      renderPacket.h_1a = s0.pos_08.h;
+      renderPacket.w_18 = envTexture.vramPos_08.w;
+      renderPacket.h_1a = envTexture.vramPos_08.h;
 
       //LAB_800e70ec
-      renderPacket.offsetX_1c = s0.textureOffsetX_10;
-      renderPacket.offsetY_1e = s0.textureOffsetY_12;
+      renderPacket.offsetX_1c = envTexture.textureOffsetX_10;
+      renderPacket.offsetY_1e = envTexture.textureOffsetY_12;
 
       //LAB_800e7210
-      renderPacket.flags_22 &= 0x3fff;
+      renderPacket.zFlags_22 &= 0x3fff;
     }
 
     //LAB_800e724c
@@ -924,16 +981,29 @@ public class RetailSubmap extends Submap {
 
   @Method(0x800e76b0L)
   public void setEnvForegroundPosition(final int x, final int y, final int index) {
+    final EnvironmentForegroundTextureMetrics foreground = this.envForegroundMetrics_800cb590[index];
+
     if(x == 1024 && y == 1024) {
-      this.envForegroundMetrics_800cb590[index].hidden_08 = true;
+      foreground.hidden_08 = true;
       return;
     }
 
     //LAB_800e76e8
     //LAB_800e76ec
-    this.envForegroundMetrics_800cb590[index].x_00 = x;
-    this.envForegroundMetrics_800cb590[index].y_04 = y;
-    this.envForegroundMetrics_800cb590[index].hidden_08 = false;
+    foreground.startX = foreground.destX;
+    foreground.startY = foreground.destY;
+    foreground.destX = x;
+    foreground.destY = y;
+    foreground.ticksTotal = 3 - vsyncMode_8007a3b8;
+    foreground.ticks = 0;
+
+    if(!foreground.positionWasSet) {
+      foreground.startX = x;
+      foreground.startY = y;
+      foreground.positionWasSet = true;
+    }
+
+    foreground.hidden_08 = false;
   }
 
   @Method(0x800e770cL)
@@ -942,15 +1012,24 @@ public class RetailSubmap extends Submap {
     this.maxSobj_800cbd64 = this.objects.size();
   }
 
+  /**
+   * Mode:
+   * <ul>
+   *   <li>0 - Static overlay depth from struct</li>
+   *   <li>1 - Overlay depth calculated to relative sobj positions</li>
+   *   <li>2 - Scripted static overlay depth (within bounds)</li>
+   *   <li>5 - Doesn't appear to do anything because the values set only used if zFlags are set to 0x4000</li>
+   * </ul>
+   */
   @Method(0x800e7728L)
-  public int FUN_800e7728(final int mode, final int foregroundTextureIndex, int z) {
+  public int setEnvironmentOverlayDepthModeAndZ(final int mode, final int foregroundTextureIndex, int z) {
     final int textureIndex = this.envBackgroundTextureCount_800cb57c + foregroundTextureIndex;
 
     if(mode == 1 && foregroundTextureIndex == -1) {
       //LAB_800e7780
       for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-        this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i].flags_22 &= 0x3fff;
-        this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i].flags_22 |= 0x4000;
+        this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i].zFlags_22 &= 0x3fff;
+        this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i].zFlags_22 |= 0x4000;
       }
 
       //LAB_800e77b4
@@ -964,17 +1043,17 @@ public class RetailSubmap extends Submap {
 
     if(mode == 0) {
       //LAB_800e7860
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0x3fff;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 &= 0x3fff;
     } else if(mode == 1) {
       //LAB_800e77e8
       //LAB_800e7830
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0x3fff;
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 |= 0x4000;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 &= 0x3fff;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 |= 0x4000;
       //LAB_800e7808
     } else if(mode == 2) {
       //LAB_800e788c
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0x3fff;
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 |= 0x8000;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 &= 0x3fff;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 |= 0x8000;
 
       if(z < 40) {
         //LAB_800e78fc
@@ -984,8 +1063,8 @@ public class RetailSubmap extends Submap {
       }
 
       //LAB_800e7900
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0xc000;
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 |= z & 0x3fff;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 &= 0xc000;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 |= z & 0x3fff;
     } else if(mode == 5) {
       this.minSobj_800cbd60 = foregroundTextureIndex;
       this.maxSobj_800cbd64 = z + 1;
@@ -1002,7 +1081,7 @@ public class RetailSubmap extends Submap {
   public void drawEnv(final MV[] sobjMatrices) {
     this.animateAndRenderSubmapModel(this.submapCutMatrix_800d4bb0);
 
-    final float[] sobjZs = new float[sobjMatrices.length];
+    final float[] sobjScreenZs = new float[sobjMatrices.length];
     final float[] envZs = new float[this.envForegroundTextureCount_800cb580];
 
     //LAB_800e79b8
@@ -1012,7 +1091,7 @@ public class RetailSubmap extends Submap {
         .bpp(Bpp.BITS_24)
         .pos(this.backgroundRect.x, this.backgroundRect.y, ((0x1 << orderingTableBits_1f8003c0) - 1) * 4.0f)
         .posSize(this.backgroundRect.w, this.backgroundRect.h)
-        .uvSize(this.backgroundTexture.width, this.backgroundTexture.height)
+        .uvSize(1.0f, 1.0f)
         .build();
     }
 
@@ -1026,7 +1105,7 @@ public class RetailSubmap extends Submap {
     //LAB_800e7a60
     //LAB_800e7a7c
     for(int i = 0; i < sobjMatrices.length; i++) {
-      sobjZs[i] = (worldToScreenMatrix_800c3548.m02 * sobjMatrices[i].transfer.x +
+      sobjScreenZs[i] = (worldToScreenMatrix_800c3548.m02 * sobjMatrices[i].transfer.x +
         worldToScreenMatrix_800c3548.m12 * sobjMatrices[i].transfer.y +
         worldToScreenMatrix_800c3548.m22 * sobjMatrices[i].transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0);
     }
@@ -1036,7 +1115,20 @@ public class RetailSubmap extends Submap {
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
       final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
-      final int flags = (metrics.flags_22 & 0xc000) >> 14;
+      final int flags = (metrics.zFlags_22 & 0xc000) >> 14;
+      /*
+      * Flag ==
+      * 0 - Cutout uses the z value stored in its EnvironmentalRenderingMetrics24 struct.
+      * 1 - The cutouts store information on their intended screen depth and a screen depth transformation vector
+      * for sobj translations. For each sobj, the sobj translation is multiplied by the local WtS z vector of
+      * the current cutout and added to the cutout's screen z to get the z delta value. These values are used
+      * to determine which sobjs are in front of and behind the current cutout. If all sobjs are either in front
+      * or behind, the cutout z is set to a value relative to the sobj with the min/max screen depth. If there
+      * are sobjs both in front and behind, the cutout position is averaged between the ends of the sobj depth
+      * range if either of the range ends fall outside the EnvironmentalRenderingMetrics24 struct's z value
+      * (Observed that sometimes max can end up lower than min?); otherwise, it uses the struct's z value.
+      * 2 - Uses the lower 14 bits of the EnvironmentRenderingMetrics24 zFlags value.
+      */
       if(flags == 0x1) {
         //LAB_800e7bb4
         float minZ = Float.MAX_VALUE;
@@ -1048,23 +1140,23 @@ public class RetailSubmap extends Submap {
 
         //LAB_800e7c0c
         for(int sobjIndex = this.maxSobj_800cbd64 - 1; sobjIndex >= this.minSobj_800cbd60; sobjIndex--) {
-          final float v1_0 = this._800cbc90[i] +
-            this._800cbb90[i].x * sobjMatrices[sobjIndex].transfer.x +
-            this._800cbb90[i].y * sobjMatrices[sobjIndex].transfer.y +
-            this._800cbb90[i].z * sobjMatrices[sobjIndex].transfer.z;
-          final float sobjZ = sobjZs[sobjIndex];
+          final float screenDeltaZ = this.cutoutScreenZs_800cbc90[i] +
+            this.cutoutWorldToScreenZTransformVectors_800cbb90[i].x * sobjMatrices[sobjIndex].transfer.x +
+            this.cutoutWorldToScreenZTransformVectors_800cbb90[i].y * sobjMatrices[sobjIndex].transfer.y +
+            this.cutoutWorldToScreenZTransformVectors_800cbb90[i].z * sobjMatrices[sobjIndex].transfer.z;
+          final float sobjScreenZ = sobjScreenZs[sobjIndex];
 
-          if(sobjZ != 0xfffb) {
-            if(v1_0 < 0) {
+          if(sobjScreenZ != 0xfffb) {
+            if(screenDeltaZ < 0) {
               negativeZCount++;
-              if(minZ > sobjZ) {
-                minZ = sobjZ;
+              if(minZ > sobjScreenZ) {
+                minZ = sobjScreenZ;
               }
             } else {
               //LAB_800e7cac
               positiveZCount++;
-              if(maxZ < sobjZ) {
-                maxZ = sobjZ;
+              if(maxZ < sobjScreenZ) {
+                maxZ = sobjScreenZ;
               }
             }
           }
@@ -1095,7 +1187,7 @@ public class RetailSubmap extends Submap {
 
         //LAB_800e7d80
       } else if(flags == 0x2) {
-        envZs[i] = metrics.flags_22 & 0x3fff;
+        envZs[i] = metrics.zFlags_22 & 0x3fff;
       } else {
         //LAB_800e7d78
         envZs[i] = metrics.z_20;
@@ -1106,7 +1198,9 @@ public class RetailSubmap extends Submap {
     //LAB_800e7de0
     // Render overlays
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-      if(!this.envForegroundMetrics_800cb590[i].hidden_08 && this.foregroundTextures[i] != null) {
+      final EnvironmentForegroundTextureMetrics foreground = this.envForegroundMetrics_800cb590[i];
+
+      if(!foreground.hidden_08 && this.foregroundTextures[i] != null) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
         if(metrics.obj == null) {
@@ -1114,7 +1208,7 @@ public class RetailSubmap extends Submap {
             .bpp(Bpp.BITS_24)
             .pos(this.backgroundRect.x, this.backgroundRect.y, 0.0f)
             .posSize(this.backgroundRect.w, this.backgroundRect.h)
-            .uvSize(this.foregroundTextures[i].width, this.foregroundTextures[i].height)
+            .uvSize(1.0f, 1.0f)
             .build();
         }
 
@@ -1124,14 +1218,30 @@ public class RetailSubmap extends Submap {
           continue;
         }
 
+        final float x;
+        final float y;
+
+        if(foreground.ticks < foreground.ticksTotal) {
+          x = Math.lerp(foreground.startX, foreground.destX, (foreground.ticks + 1.0f) / foreground.ticksTotal);
+          y = Math.lerp(foreground.startY, foreground.destY, (foreground.ticks + 1.0f) / foreground.ticksTotal);
+          foreground.ticks++;
+        } else {
+          x = foreground.destX;
+          y = foreground.destY;
+        }
+
         this.backgroundTransforms.identity();
-        this.backgroundTransforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
+        this.backgroundTransforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x + x, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y + y, z * 4.0f);
         RENDERER
           .queueOrthoModel(metrics.obj, this.backgroundTransforms)
           .texture(this.foregroundTextures[i]);
+
+        // final int oldZ = textZ_800bdf00;
+        // textZ_800bdf00 = 4;
+        // renderCentredText(Integer.toHexString(metrics.zFlags_22), (int)(metrics.offsetX_1c + metrics.w_18 / 2.0f + this.backgroundTransforms.transfer.x), (int)(metrics.offsetY_1e + metrics.h_1a / 2.0f + this.backgroundTransforms.transfer.y), TextColour.WHITE);
+        // textZ_800bdf00 = oldZ;
       }
     }
-
     //LAB_800e7ed0
   }
 
@@ -1224,10 +1334,11 @@ public class RetailSubmap extends Submap {
       GsGetLw(dobj2.coord2_04, lw);
 
       RENDERER.queueModel(dobj2.obj, matrix, lw)
-        .screenspaceOffset(this.screenOffset.x + 8, -this.screenOffset.y)
+        .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
-        .backgroundColour(GTE.backgroundColour);
+        .backgroundColour(GTE.backgroundColour)
+        .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
     }
     //LAB_800eef0c
   }
@@ -1239,7 +1350,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001b408
-    return -1;
+    return AUDIO_THREAD.getSongId();
   }
 
   @Method(0x8001c60cL)
@@ -1310,7 +1421,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(!currentSequenceData_800bd0f8.musicPlaying_028) {
+    if(AUDIO_THREAD.isMusicPlaying()) {
       return -2;
     }
 

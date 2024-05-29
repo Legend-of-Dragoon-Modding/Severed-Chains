@@ -1,7 +1,10 @@
 package legend.game.title;
 
 import legend.core.gpu.Rect4i;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.McqBuilder;
+import legend.core.opengl.Obj;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
@@ -13,9 +16,9 @@ import legend.game.unpacker.Unpacker;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
@@ -29,6 +32,14 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 public class GameOver extends EngineState {
   private int loadingStage;
 
+  private Obj background;
+  private final MV transforms = new MV();
+
+  @Override
+  public boolean allowsWidescreen() {
+    return false;
+  }
+
   @Method(0x800c7558L)
   private void gameOverLoaded(final FileData data) {
     final McqHeader mcq = new McqHeader(data);
@@ -41,7 +52,14 @@ public class GameOver extends EngineState {
 
   @Method(0x800c75b4L)
   private void renderGameOver() {
-    renderMcq(gameOverMcq_800bdc3c, 640, 0, -320, -108, 36, 128);
+    if(this.background == null) {
+      this.background = new McqBuilder("Game over", gameOverMcq_800bdc3c)
+        .vramOffset(640, 0)
+        .build();
+    }
+
+    this.transforms.transfer.set(GPU.getOffsetX() - 320.0f, GPU.getOffsetY() - 120.0f, 144.0f);
+    RENDERER.queueOrthoModel(this.background, this.transforms);
   }
 
   @Override
@@ -91,6 +109,11 @@ public class GameOver extends EngineState {
 
       case 6 -> {
         deallocateRenderables(0xff);
+
+        if(this.background != null) {
+          this.background.delete();
+          this.background = null;
+        }
 
         if(uiFile_800bdc3c != null) {
           uiFile_800bdc3c.delete();

@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.audio.AudioThread;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
@@ -20,6 +21,7 @@ import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -35,6 +37,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
+import legend.game.unpacker.scripts.ScriptPatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -60,6 +63,7 @@ import static legend.game.SItem.meruXpTable_801137cc;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.startSound;
 import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
@@ -72,6 +76,7 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glViewport;
 
 public final class GameEngine {
   private GameEngine() { }
@@ -99,9 +104,11 @@ public final class GameEngine {
   public static final Gte GTE;
   public static final Gpu GPU;
   public static final Spu SPU;
+  public static final AudioThread AUDIO_THREAD;
 
   public static final Thread hardwareThread;
   public static final Thread spuThread;
+  public static final Thread openalThread;
 
   public static boolean legacyUi;
 
@@ -119,11 +126,14 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
+    AUDIO_THREAD = new AudioThread(100, true, 24, 9);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
     spuThread = new Thread(SPU);
     spuThread.setName("SPU");
+    openalThread = new Thread(AUDIO_THREAD);
+    openalThread.setName("OPEN_AL");
   }
 
   private static final Object LOCK = new Object();
@@ -166,7 +176,7 @@ public final class GameEngine {
   private static float screenWidth;
 
   private static Shader.UniformBuffer transforms2;
-  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
   private static final Matrix4f identity = new Matrix4f();
   private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
@@ -212,13 +222,9 @@ public final class GameEngine {
             return;
           }
 
+          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches")).apply();
+
           loadXpTables();
-
-          // Find and load all mods so their global config can be shown in the title screen options menu
-          MOD_ACCESS.findMods();
-          bootMods(MODS.getAllModIds());
-
-          ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
           Scus94491BpeSegment_8002.start();
           loading = false;
@@ -230,6 +236,17 @@ public final class GameEngine {
 
     time = System.nanoTime();
     thread.start();
+
+    // Find and load all mods so their global config can be shown in the title screen options menu
+    MOD_ACCESS.findMods();
+    bootMods(MODS.getAllModIds());
+
+    ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+
+    AUDIO_THREAD.init();
+    AUDIO_THREAD.getSequencer().setVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()));
+
+    SPU.init();
     RENDERER.init();
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     GPU.init();
@@ -396,6 +413,7 @@ public final class GameEngine {
 
     RENDERER.usePs1Gpu = true;
     spuThread.start();
+    openalThread.start();
 
     synchronized(LOCK) {
       Input.init();
@@ -406,6 +424,7 @@ public final class GameEngine {
       }
 
       initTextboxGeometry();
+      battleUiParts.init();
       startSound();
       gameLoop();
       Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
@@ -478,6 +497,7 @@ public final class GameEngine {
 
   private static void renderIntro() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
+    glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 

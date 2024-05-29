@@ -10,7 +10,6 @@ import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
 
 import javax.annotation.Nullable;
@@ -70,7 +69,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Inventory", this::showItemListScreen);
     this.addButton("Goods", this::showGoodsScreen);
     this.addButton("Diiig", this::showDabasScreen);
-    this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen(new LodString("Quit to main menu?"), 2, result -> {
+    this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen("Quit to main menu?", 2, result -> {
       if(result == MessageBoxResult.YES) {
         this.menuEscape();
         whichMenu_800bdc38 = WhichMenu.QUIT;
@@ -225,7 +224,7 @@ public class MainMenuScreen extends MenuScreen {
     this.renderNumber(170, 184, getTimestampPart(gameState_800babc8.timestamp_a0, 2), 2, 0x1);
     renderCentredText(chapterNames_80114248[gameState_800babc8.chapterIndex_98], 94, 24, TextColour.BROWN);
 
-    final LodString name;
+    final String name;
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       name = submapNames_8011c108[submapId_800bd808];
     } else {
@@ -283,7 +282,7 @@ public class MainMenuScreen extends MenuScreen {
 
   private void showOptionsScreen() {
     playSound(2);
-    menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+    menuStack.pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
       menuStack.popScreen();

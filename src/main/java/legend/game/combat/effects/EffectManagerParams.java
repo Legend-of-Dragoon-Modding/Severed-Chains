@@ -343,15 +343,33 @@ public abstract class EffectManagerParams<T extends EffectManagerParams<T>> {
     }
   }
 
+  /** This probably shouldn't have values, but certain generic attacks like Michael's opener set values on a generic effect manager */
   public static class VoidType extends EffectManagerParams<VoidType> {
+    public int _24;
+    public int _28;
+    public int _2c;
+    public int _30;
+
     @Override
     public int get24(final int index) {
-      throw new IllegalArgumentException("Invalid index " + index);
+      return switch(index) {
+        case 0 -> this._24;
+        case 1 -> this._28;
+        case 2 -> this._2c;
+        case 3 -> this._30;
+        default -> throw new IllegalArgumentException("Invalid index " + index);
+      };
     }
 
     @Override
     public void set24(final int index, final int val) {
-      throw new IllegalArgumentException("Invalid index " + index);
+      switch(index) {
+        case 0 -> this._24 = val;
+        case 1 -> this._28 = val;
+        case 2 -> this._2c = val;
+        case 3 -> this._30 = val;
+        default -> throw new IllegalArgumentException("Invalid index " + index);
+      }
     }
   }
 }

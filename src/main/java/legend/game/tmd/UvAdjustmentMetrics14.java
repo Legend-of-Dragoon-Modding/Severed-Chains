@@ -9,6 +9,15 @@ public class UvAdjustmentMetrics14 {
     public void apply(final TmdObjTable1c.Primitive primitive) { }
   };
 
+  public static final UvAdjustmentMetrics14 PNG = new UvAdjustmentMetrics14(0, 0, 0, 0, 0) {
+    @Override
+    public void apply(final TmdObjTable1c.Primitive primitive) {
+      for(final byte[] data : primitive.data()) {
+        MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & 0x60_ffff | 0x180_0000); // 24bpp
+      }
+    }
+  };
+
   public final int index;
 
   public final int clutX;
@@ -40,7 +49,7 @@ public class UvAdjustmentMetrics14 {
 
     this.index = index;
     this.clutMaskOr_00 = clut << 16;
-    this.clutMaskAnd_04 = 0x3c0ffff;
+    this.clutMaskAnd_04 = 0x3c3ffff;
     this.tpageMaskOr_08 = tpage << 16;
     this.tpageMaskAnd_0c = 0xffe0ffff;
     this.uvOffset_10 = uv;

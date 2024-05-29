@@ -22,26 +22,34 @@ public class BattleStateEf4 {
   public final SpecialEffects20[] specialEffect_00 = new SpecialEffects20[10];
 
   public int _180;
-  public int _184;
-  public int _188;
-  public int _18c;
-  public int _190;
-  public int _194;
-  public int _198;
-  public int _19c;
-  public int _1a0;
-  public int _1a4;
-  public int _1a8;
-  public int _1ac;
-  public int _1b0;
-  public int _1b4;
-  public int _1b8;
-  public int _1bc;
-  public int _1c0;
-  public int _1c4;
-  public int _1c8;
-  public int _1cc;
-  public int _1d0;
+  /**
+   * For cutscene DEFFs, combat vars 1 to 10 are used to store combatant indices.
+   * Enemy scripts may use them for battle entities instead
+   */
+  public int combatantBentIndex_184;
+  public int combatantBentIndex_188;
+  public int combatantBentIndex_18c;
+  public int combatantBentIndex_190;
+  public int combatantBentIndex_194;
+  public int combatantBentIndex_198;
+  public int combatantBentIndex_19c;
+  public int combatantBentIndex_1a0;
+  public int combatantBentIndex_1a4;
+  public int combatantBentIndex_1a8;
+  /**
+   * Both cutscene deffs and some enemy scripts use vars 11-20 as script indices
+   * Some enemy scripts use these for other purposes instead
+   */
+  public int scriptIndex_1ac;
+  public int scriptIndex_1b0;
+  public int scriptIndex_1b4;
+  public int scriptIndex_1b8;
+  public int scriptIndex_1bc;
+  public int scriptIndex_1c0;
+  public int scriptIndex_1c4;
+  public int scriptIndex_1c8;
+  public int scriptIndex_1cc;
+  public int scriptIndex_1d0;
   public int _1d4;
   public int _1d8;
   public int _1dc;
@@ -52,6 +60,15 @@ public class BattleStateEf4 {
   public int _1f0;
   public int _1f4;
   public int _1f8;
+
+  /**
+   * For cutscene deffs:
+   * <ul>
+   *   <li>0x0 - Resources not loaded yet</li>
+   *   <li>0x4 - Resources loaded</li>
+   * </ul>
+   * Purpose of usage for enemy scripts is unknown
+   */
   public int _1fc;
   public int _200;
   public int _204;
@@ -324,7 +341,7 @@ public class BattleStateEf4 {
 
   // nodart code no longer uses this
 //  public final Pointer<PartyPermutation08> partyPermutation_ee8;
-  public int stageProgression_eec;
+  public int battlePhase_eec;
   public int _ef0;
 
   private int aliveBentCount_800c669c;

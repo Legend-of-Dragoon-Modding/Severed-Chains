@@ -10,7 +10,6 @@ import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
 import legend.game.saves.ConfigCollection;
-import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
 
 import java.util.ArrayList;
@@ -119,7 +118,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
             config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
             help.hide();
           } else {
-            this.getStack().pushScreen(new MessageBoxScreen(new LodString(I18n.translate("lod-core.keybind.duplicate_input")), 2, result -> {
+            this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod-core.keybind.duplicate_input"), 2, result -> {
               if(result == MessageBoxResult.YES) {
                 for(final ControllerKeybindConfigEntry dupe : dupes) {
                   config.getConfig(dupe).removeAll(keycodes);
@@ -191,7 +190,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         if(CoreMod.KEYBIND_CONFIGS.containsKey(action)) {
           if(this.config.getConfig(CoreMod.KEYBIND_CONFIGS.get(action).get()).isEmpty()) {
             playSound(4);
-            this.getStack().pushScreen(new MessageBoxScreen(new LodString(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input")), 0, result -> { }));
+            this.getStack().pushScreen(new MessageBoxScreen(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input"), 0, result -> { }));
             return InputPropagation.HANDLED;
           }
         }

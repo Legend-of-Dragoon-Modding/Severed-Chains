@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ControllerDatabase {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ControllerDatabase.class);
   private static final Marker CONTROLLER_DB_MARKER = MarkerManager.getMarker("CONTROLLER_DB");
   private static final Marker CONTROLLER_VERBOSE_MARKER = MarkerManager.getMarker("CONTROLLER_VERBOSE");
   private static List<String> databaseEntries = new ArrayList<>();

@@ -28,7 +28,7 @@ A strong knowledge of Java and MIPS assembly is recommended. If you are interest
 5. Gradle should automatically attempt to configure the project and download all dependencies. If it doesn't, expand the gradle tab and click refresh. This process should succeed; resolve any errors if it does not. (lack of command line git can cause issues here)
 6. Run the project
 
-Note: Java 17 is required. It is **strongly** recommended to run with assertions enabled.
+Note: Java 21 is required. It is **strongly** recommended to run with assertions enabled.
 
 ### Controls ###
 

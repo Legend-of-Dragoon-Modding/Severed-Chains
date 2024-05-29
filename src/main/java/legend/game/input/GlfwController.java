@@ -13,7 +13,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
 
 public class GlfwController extends Controller {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GlfwController.class);
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
   private static final Marker CONTROLLER_VERBOSE_MARKER = MarkerManager.getMarker("CONTROLLER_VERBOSE");
 

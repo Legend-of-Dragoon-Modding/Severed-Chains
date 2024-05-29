@@ -1,7 +1,5 @@
 package legend.core.spu;
 
-import it.unimi.dsi.fastutil.bytes.ByteArrayList;
-import it.unimi.dsi.fastutil.bytes.ByteList;
 import it.unimi.dsi.fastutil.shorts.ShortArrayList;
 import it.unimi.dsi.fastutil.shorts.ShortList;
 import legend.core.MathHelper;
@@ -76,8 +74,8 @@ public final class XaAdpcm {
     }
   };
 
-  public static byte[] decode(final byte[] xaadpcm, final byte codingInfo) {
-    final ByteList decoded = new ByteArrayList();
+  public static short[] decode(final byte[] xaadpcm, final byte codingInfo) {
+    final ShortList decoded = new ShortArrayList();
 
     final ShortList l = new ShortArrayList();
     final ShortList r = new ShortArrayList();
@@ -117,22 +115,18 @@ public final class XaAdpcm {
 
     if(isStereo) {
       for(int sample = 0; sample < l.size(); sample++) {
-        decoded.add((byte)l.getShort(sample));
-        decoded.add((byte)(l.getShort(sample) >> 8));
-        decoded.add((byte)r.getShort(sample));
-        decoded.add((byte)(r.getShort(sample) >> 8));
+        decoded.add(l.getShort(sample));
+        decoded.add(r.getShort(sample));
       }
     } else {
       for(int sample = 0; sample < l.size(); sample++) {
         //duplicating because out output expects 44100 Stereo
-        decoded.add((byte)l.getShort(sample));
-        decoded.add((byte)(l.getShort(sample) >> 8));
-        decoded.add((byte)l.getShort(sample));
-        decoded.add((byte)(l.getShort(sample) >> 8));
+        decoded.add(l.getShort(sample));
+        decoded.add(l.getShort(sample));
       }
     }
 
-    return decoded.toByteArray();
+    return decoded.toShortArray();
   }
 
   private static ShortList resampleTo44100Hz(final List<Short> samples, final boolean is18900hz, final int channel) {

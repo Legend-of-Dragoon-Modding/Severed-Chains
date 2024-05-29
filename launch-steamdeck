@@ -1,10 +1,10 @@
 #!/bin/bash
 
-JAVA=./jdk/bin/java
+JAVA=./jdk21/bin/java
 
 if [[ ! -f $JAVA ]]
 then
   LD_PRELOAD=${LD_PRELOAD/_32/_64} konsole --fullscreen -e /bin/bash -c './download-java'
 fi
 
-"$JAVA" -cp "lod-game-@version@.jar:libs/*" legend.game.Main -Xmx2G -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma
+"$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar:libs/*" legend.game.Main -Xmx2G -ea

@@ -1,5 +1,7 @@
 package legend.game.combat.effects;
 
+import org.joml.Vector2f;
+
 public class RaindropEffect0c {
   public final int index;
 
@@ -7,11 +9,9 @@ public class RaindropEffect0c {
   public int _00;
 
   /** All shorts */
-  public int x0_02;
-  public int y0_04;
-  public int x1_06;
-  public int y1_08;
-  public float angleModifier_0a;
+  public final Vector2f pos0_02 = new Vector2f();
+  public final Vector2f pos1_06 = new Vector2f();
+  public float speed_0a;
 
   public RaindropEffect0c(final int index) {
     this.index = index;

@@ -10,7 +10,7 @@ import java.util.Set;
 public final class SubmapPxlTransformer {
   private SubmapPxlTransformer() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SubmapPxlTransformer.class);
 
   public static void transform(final PathNode root, final Transformations transformations, final Set<String> flags) {
     for(int drgnIndex = 1; drgnIndex <= 4; drgnIndex++) {

@@ -66,7 +66,7 @@ public class SaveCard extends Control {
   protected void render(final int x, final int y) {
     if(this.saveData != null) {
       if(this.saveData.isValid()) {
-        final LodString[] locationNames;
+        final String[] locationNames;
         if(this.saveData.locationType() == 1) {
           //LAB_80108b5c
           locationNames = worldMapNames_8011c1ec;

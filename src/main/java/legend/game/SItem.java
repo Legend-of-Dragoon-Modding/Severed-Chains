@@ -42,9 +42,7 @@ import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 import static legend.core.GameEngine.CONFIG;
@@ -87,14 +85,14 @@ public final class SItem {
 
   public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
   public static final MenuStatus08[] menuStatus_800fba7c = {
-    new MenuStatus08(new LodString("Petrify"), TextColour.MIDDLE_BROWN),
-    new MenuStatus08(new LodString("Charmed"), TextColour.MIDDLE_BROWN),
-    new MenuStatus08(new LodString("Confused"), TextColour.MIDDLE_BROWN),
-    new MenuStatus08(new LodString("Fear"), TextColour.PURPLE),
-    new MenuStatus08(new LodString("Stunned"), TextColour.MIDDLE_BROWN),
-    new MenuStatus08(new LodString(""), TextColour.MIDDLE_BROWN),
-    new MenuStatus08(new LodString("Dspirit"), TextColour.CYAN),
-    new MenuStatus08(new LodString("Poison"), TextColour.LIME),
+    new MenuStatus08("Petrify", TextColour.MIDDLE_BROWN),
+    new MenuStatus08("Charmed", TextColour.MIDDLE_BROWN),
+    new MenuStatus08("Confused", TextColour.MIDDLE_BROWN),
+    new MenuStatus08("Fear", TextColour.PURPLE),
+    new MenuStatus08("Stunned", TextColour.MIDDLE_BROWN),
+    new MenuStatus08("", TextColour.MIDDLE_BROWN),
+    new MenuStatus08("Dspirit", TextColour.CYAN),
+    new MenuStatus08("Poison", TextColour.LIME),
   };
 
   /** Note: arrays run into the next array's first element */
@@ -252,16 +250,16 @@ public final class SItem {
   };
   public static final MenuGlyph06 glyph_801142d4 = new MenuGlyph06(0, 202, 24);
 
-  public static final LodString[] chapterNames_80114248 = {
-    new LodString("Ch.1 Serdian War"),
-    new LodString("Ch.2 Platinum Shadow"),
-    new LodString("Ch.3 Fate & Soul"),
-    new LodString("Ch.4 Moon & Fate"),
+  public static final String[] chapterNames_80114248 = {
+    "Ch.1 Serdian War",
+    "Ch.2 Platinum Shadow",
+    "Ch.3 Fate & Soul",
+    "Ch.4 Moon & Fate",
   };
 
-  public static final LodString[] characterNames_801142dc = {
-    new LodString("Dart"), new LodString("Lavitz"), new LodString("Shana"), new LodString("Rose"), new LodString("Haschel"),
-    new LodString("Albert"), new LodString("Meru"), new LodString("Kongol"), new LodString("Miranda"),
+  public static final String[] characterNames_801142dc = {
+    "Dart", "Lavitz", "Shana", "Rose", "Haschel",
+    "Albert", "Meru", "Kongol", "Miranda",
   };
 
   public static final int[] itemPrices_80114310 = {
@@ -317,187 +315,182 @@ public final class SItem {
     new MenuGlyph06(91, 194, 164),
   };
 
-  public static final LodString[] itemDescriptions_80117a10 = {
-    new LodString(" "), new LodString(" "), new LodString("Fire-based attack."), new LodString(" "), new LodString("Confuses Enemy \nwith given\nprobability."),
-    new LodString("Gives 50% more SP."), new LodString(" "), new LodString("Powerful but\nHP decays  \neach turn."), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString("Stuns enemy, with\na given \nprobability."), new LodString("Instantly kills \nenemy with given\nprobability."), new LodString(" "), new LodString("Darkness-based \nattack."),
-    new LodString(" "), new LodString("Stuns enemy, with a\ngiven probability."), new LodString("Instantly kills \nenemy with given\nprobability."), new LodString(" "), new LodString("Frightens enemy \nwith a given\nprobability."),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString("Frightens enemy\nwith a given \nprobability."), new LodString(" "),
-    new LodString(" "), new LodString("Wind-based attack."), new LodString(" "), new LodString("Light-based attack."), new LodString(" "),
-    new LodString("Confuses enemy \nwith a given \nprobability."), new LodString("Poisons enemy\nwith a given \nprobability."), new LodString("Can attack all."), new LodString("Gives 50% more SP."), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString("Stuns enemy, with \na given \nprobability."), new LodString(" "), new LodString("Gives twice as \nmuch SP but not \npowerful."),
-    new LodString(" "), new LodString("Stuns enemy, with\na given \nprobability."), new LodString(" "), new LodString("Thunder-based \nattack."), new LodString("Becomes powerful \ninversely to HP."),
-    new LodString("Instantly kills \nenemy with given\nprobability."), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString("When physically \nattacked SP is \naccumulated."), new LodString("Nullifies damage\ndue to fire-based\nattacks."), new LodString("Nullifies damage\ndue to wind-based\nattacks."), new LodString(" "), new LodString(" "),
-    new LodString("When physically \nattacked SP is \naccumulated."), new LodString("Nullifies damage\ndue to earth-\nbased attacks."), new LodString(" "), new LodString(" "), new LodString("When physically \nattacked SP is \naccumulated."),
-    new LodString("Gives 50% more SP"), new LodString("Nullifies damage\ndue to thunder-\nbased attacks."), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString("When attacked \nphysically, SP is \naccumulated."), new LodString("When attacked \nmagically, SP is \naccumulated."), new LodString("Nullifies damage\ndue to light-\nbased attacks."), new LodString("Nullifies damage\ndue to darkness-\nbased attacks."), new LodString("Nullifies damage\ndue to water-\nbased attack."),
-    new LodString("Avoids \npoison/stun/arm\nblocking."), new LodString("Avoids \npoison/stun/arm\nblocking."), new LodString("Avoids \npoison/stun/arm\nblocking."), new LodString("Revives from \ndeath with a \ngiven probability."), new LodString("Greatly reduces \ndamage from \nphysical attacks."),
-    new LodString(" "), new LodString(" "), new LodString("Increases hit \nrate of physical\nattacks by 10%."), new LodString(" "), new LodString("When magically \nattacked, SP is \naccumulated."),
-    new LodString("When magically \nattacked, SP is \naccumulated."), new LodString("When magically \nattacked, SP is \naccumulated."), new LodString(" "), new LodString(" "), new LodString("Increases hit\nrate of magical\nattacks by 10%."),
-    new LodString("When magically \nattacked, SP is \naccumulated."), new LodString("Avoids instant \ndeath."), new LodString(" "), new LodString("Avoids bewitching,\nconfusion, fear \nand dispiriting."), new LodString("Reduces damage\ndue to magical\nattacks."),
-    new LodString("Raises maximum\nHP 50%."), new LodString("Raises maximum\nMP 50%."), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString("Increases escape\nrate from physical\nattacks by 5 pts."), new LodString(" "), new LodString(" "), new LodString("Increases escape\nrate from magical\nattacks by 5 pts."), new LodString("Increases escape\nrate of magi/physi\nattacks by 5 pts."),
-    new LodString("Gives 20 pts. \nmore agility."), new LodString("Gives 20 pts.\nmore agility."), new LodString(" "), new LodString("Avoids the\nabnormal status\npoison."), new LodString("Avoids the\nabnormal status\ndispiriting."),
-    new LodString("Avoids the\nabnormal status\narm blocking."), new LodString("Avoids the\nabnormal status\nconfusion."), new LodString("Avoids abnormal \nstatus from\nbeing stunned."), new LodString("Avoids the\nabnormal status\nfear."), new LodString("Avoids the \nabnormal status\nbewitchment."),
-    new LodString("Avoids the\nabnormal status\npetrification."), new LodString("Raises physical \nattack ability\nslightly."), new LodString("Raises physical\ndefense power\nslightly."), new LodString("Raises magical\nattacking power."), new LodString("Raises magical\ndefense power."),
-    new LodString("Raises physical\n& magical \nattacking power."), new LodString("Raises physical\n& magical\ndefense power."), new LodString("Raises physical \nattack & defense \npower."), new LodString("Increases escape\nrate from physical\nattack by 20 pts."), new LodString("Increases escape\nrate from magical\nattack by 20 pts."),
-    new LodString("Increases A-AV\nand M-AV by\nby 20 pts."), new LodString("Raises maximum\nHP 50%."), new LodString("Doubles \nmaximum MP."), new LodString("Raises SP 50%."), new LodString("Recovers SP \neach turn."),
-    new LodString("Recovers HP  \neach turn."), new LodString("Recovers MP \neach turn."), new LodString("Increases hit \nrate for attacking\nall by 20%."), new LodString("Avoids instant\ndeath."), new LodString(" "),
-    new LodString("Revives from \ndeath with a \ngiven probability."), new LodString("Increases agility\nby 20 pts."), new LodString(" "), new LodString("Increases agility\nby 20 pts."), new LodString("Reduces damage\nfrom fire-based \nattack by half."),
-    new LodString("Reduces damage\nfrom wind-based\nattack by half."), new LodString("Reduces damage\nfrom light-based\nattack by half."), new LodString("Reduces damage\nfrom darkness-based\nattacks by half."), new LodString("Reduces damage\nfrom water-based\nattack by half."), new LodString("Reduces damage\nfrom thunder-based\nattack by half."),
-    new LodString("Reduces damage\nfrom earth-based\nattack by half."), new LodString(" "), new LodString("When damaged by\nmagic SP is \naccumulated."), new LodString("When damaged by\nmagic MP is \naccumulated."), new LodString("Avoids all\nabnormal status."),
-    new LodString(" "), new LodString("When physically\ndamaged SP is\naccumulated."), new LodString(" "), new LodString("When physically\ndamaged MP is\naccumulated."), new LodString("Reduces damage\nfrom all attacks \nby half."),
-    new LodString("Reduces physical\ndamage by half."), new LodString("Reduces damage\nfrom magic\nby half."), new LodString(" "), new LodString("May slightly\nincrease physical \nattack power."), new LodString("May slightly\nincrease physical\ndefense power."),
-    new LodString(" "), new LodString("Automatic Addition:\nHalf Damage and SP."), new LodString("Makes Addition\ncompletely\nsuccessful."), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "), new LodString(" "), new LodString(" "), new LodString("Detonates and\nattacks all."), new LodString("Thunder-based\nindividual attack\n(multi)."),
-    new LodString("Fire-based\nindividual attack\n(multi)."), new LodString(" "), new LodString("Earth-based\nindividual attack\n(multi)."), new LodString("Water-based\nindividual attack\n(multi)."), new LodString("Wind-based\nindividual attack\n(multi)."),
-    new LodString("Generates one of \nthe attack items."), new LodString("Light-based\nindividual attack\n(multi)."), new LodString("Darkness-based\nindividual attack\n(multi)."), new LodString("Recovers half of\nmaximum value\nof HP."), new LodString("Dissolves\npetrification."),
-    new LodString("Dissolves fear,\nbewitchment, \nconfusion dispirit."), new LodString("Nullifies poison/\nstunning/arm \nblocking."), new LodString("Thunder-based\nattack for all\n(multi)."), new LodString("Earth-based\nattack for all\n(multi)."), new LodString("Fire-based\nattack for all\n(multi)."),
-    new LodString("Light-based\nattack for all\n(multi)."), new LodString("Recovers 100 pts.\nof SP during \ncombat."), new LodString("Confuses minor\nenemies."), new LodString(" "), new LodString("Water-based\nattack for all\n(multi)."),
-    new LodString("Stuns minor\nenemies."), new LodString("Darkness-based\nattack for all\n(multi)."), new LodString("Poisons minor\nenemies."), new LodString("Frightens minor\nenemies."), new LodString(" "),
-    new LodString("Wind-based\nattack for all\n(multi)."), new LodString("Destroys \nminor enemies."), new LodString("Revitalizes and \nrecovers half of\nHP."), new LodString("Reduces risk of\nencounter."), new LodString("Minor enemy only\nattacks one ally\n3 turns (repeat)."),
-    new LodString("Generates a\nrecovery item."), new LodString(" "), new LodString("Nullifies magical\nattack for 3 turns\n(repeat)."), new LodString("Nullifies physical \nattack for 3 turns \n(repeat)."), new LodString("Completely\nrecovers MP."),
-    new LodString("100% sure escape \nfrom minor enemy\n(repeat)."), new LodString("Completely \nrecovers HP."), new LodString("Blocks enemy's\nmove for 3 turns\n(repeat)."), new LodString("Completely \nrecovers HP\nfor all."), new LodString("Completely \nrecovers MP\nfor all."),
-    new LodString("Strength increase\nfor 3 turns\n(repeat)."), new LodString("Becomes weak\nfor 3 turns\n(repeat)."), new LodString("Doubles agility\nfor 3 turns\n(repeat)."), new LodString("Halves agility\nfor 3 turns\n(repeat)."), new LodString(" "),
-    new LodString("Gives subtle\ngood aroma."), new LodString("Unbased\nattack for all\n(multi)."), new LodString("Fire-based\npowerful attack \nfor all."), new LodString("Water-based\npowerful attack\nfor all."), new LodString("Wind-based\npowerful attack\nfor all."),
-    new LodString("Earth-based\npowerful attack\nfor all."), new LodString("Light-based\npowerful attack\nfor all."), new LodString("Darkness-based\npowerful attack\nfor all."), new LodString("Thunder-based\npowerful attack\nfor all."), new LodString("Recover half of\nHP for all."),
-    new LodString("Unbased attack\nfor all (multi) \n(repeat)."), new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
-    new LodString(" "),
+  public static final String[] itemDescriptions_80117a10 = {
+    " ", " ", "Fire-based attack.", " ", "Confuses Enemy \nwith given\nprobability.",
+    "Gives 50% more SP.", " ", "Powerful but\nHP decays  \neach turn.", " ", " ",
+    " ", "Stuns enemy, with\na given \nprobability.", "Instantly kills \nenemy with given\nprobability.", " ", "Darkness-based \nattack.",
+    " ", "Stuns enemy, with a\ngiven probability.", "Instantly kills \nenemy with given\nprobability.", " ", "Frightens enemy \nwith a given\nprobability.",
+    " ", " ", " ", "Frightens enemy\nwith a given \nprobability.", " ",
+    " ", "Wind-based attack.", " ", "Light-based attack.", " ",
+    "Confuses enemy \nwith a given \nprobability.", "Poisons enemy\nwith a given \nprobability.", "Can attack all.", "Gives 50% more SP.", " ",
+    " ", " ", "Stuns enemy, with \na given \nprobability.", " ", "Gives twice as \nmuch SP but not \npowerful.",
+    " ", "Stuns enemy, with\na given \nprobability.", " ", "Thunder-based \nattack.", "Becomes powerful \ninversely to HP.",
+    "Instantly kills \nenemy with given\nprobability.", " ", " ", " ", " ",
+    "When physically \nattacked SP is \naccumulated.", "Nullifies damage\ndue to fire-based\nattacks.", "Nullifies damage\ndue to wind-based\nattacks.", " ", " ",
+    "When physically \nattacked SP is \naccumulated.", "Nullifies damage\ndue to earth-\nbased attacks.", " ", " ", "When physically \nattacked SP is \naccumulated.",
+    "Gives 50% more SP", "Nullifies damage\ndue to thunder-\nbased attacks.", " ", " ", " ",
+    "When attacked \nphysically, SP is \naccumulated.", "When attacked \nmagically, SP is \naccumulated.", "Nullifies damage\ndue to light-\nbased attacks.", "Nullifies damage\ndue to darkness-\nbased attacks.", "Nullifies damage\ndue to water-\nbased attack.",
+    "Avoids \npoison/stun/arm\nblocking.", "Avoids \npoison/stun/arm\nblocking.", "Avoids \npoison/stun/arm\nblocking.", "Revives from \ndeath with a \ngiven probability.", "Greatly reduces \ndamage from \nphysical attacks.",
+    " ", " ", "Increases hit \nrate of physical\nattacks by 10%.", " ", "When magically \nattacked, SP is \naccumulated.",
+    "When magically \nattacked, SP is \naccumulated.", "When magically \nattacked, SP is \naccumulated.", " ", " ", "Increases hit\nrate of magical\nattacks by 10%.",
+    "When magically \nattacked, SP is \naccumulated.", "Avoids instant \ndeath.", " ", "Avoids bewitching,\nconfusion, fear \nand dispiriting.", "Reduces damage\ndue to magical\nattacks.",
+    "Raises maximum\nHP 50%.", "Raises maximum\nMP 50%.", " ", " ", " ",
+    "Increases escape\nrate from physical\nattacks by 5 pts.", " ", " ", "Increases escape\nrate from magical\nattacks by 5 pts.", "Increases escape\nrate of magi/physi\nattacks by 5 pts.",
+    "Gives 20 pts. \nmore agility.", "Gives 20 pts.\nmore agility.", " ", "Avoids the\nabnormal status\npoison.", "Avoids the\nabnormal status\ndispiriting.",
+    "Avoids the\nabnormal status\narm blocking.", "Avoids the\nabnormal status\nconfusion.", "Avoids abnormal \nstatus from\nbeing stunned.", "Avoids the\nabnormal status\nfear.", "Avoids the \nabnormal status\nbewitchment.",
+    "Avoids the\nabnormal status\npetrification.", "Raises physical \nattack ability\nslightly.", "Raises physical\ndefense power\nslightly.", "Raises magical\nattacking power.", "Raises magical\ndefense power.",
+    "Raises physical\n& magical \nattacking power.", "Raises physical\n& magical\ndefense power.", "Raises physical \nattack & defense \npower.", "Increases escape\nrate from physical\nattack by 20 pts.", "Increases escape\nrate from magical\nattack by 20 pts.",
+    "Increases A-AV\nand M-AV by\nby 20 pts.", "Raises maximum\nHP 50%.", "Doubles \nmaximum MP.", "Raises SP 50%.", "Recovers SP \neach turn.",
+    "Recovers HP  \neach turn.", "Recovers MP \neach turn.", "Increases hit \nrate for attacking\nall by 20%.", "Avoids instant\ndeath.", " ",
+    "Revives from \ndeath with a \ngiven probability.", "Increases agility\nby 20 pts.", " ", "Increases agility\nby 20 pts.", "Reduces damage\nfrom fire-based \nattack by half.",
+    "Reduces damage\nfrom wind-based\nattack by half.", "Reduces damage\nfrom light-based\nattack by half.", "Reduces damage\nfrom darkness-based\nattacks by half.", "Reduces damage\nfrom water-based\nattack by half.", "Reduces damage\nfrom thunder-based\nattack by half.",
+    "Reduces damage\nfrom earth-based\nattack by half.", " ", "When damaged by\nmagic SP is \naccumulated.", "When damaged by\nmagic MP is \naccumulated.", "Avoids all\nabnormal status.",
+    " ", "When physically\ndamaged SP is\naccumulated.", " ", "When physically\ndamaged MP is\naccumulated.", "Reduces damage\nfrom all attacks \nby half.",
+    "Reduces physical\ndamage by half.", "Reduces damage\nfrom magic\nby half.", " ", "May slightly\nincrease physical \nattack power.", "May slightly\nincrease physical\ndefense power.",
+    " ", "Automatic Addition:\nHalf Damage and SP.", "Makes Addition\ncompletely\nsuccessful.", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", " ", " ",
+    " ", " ", " ", "Detonates and\nattacks all.", "Thunder-based\nindividual attack\n(multi).",
+    "Fire-based\nindividual attack\n(multi).", " ", "Earth-based\nindividual attack\n(multi).", "Water-based\nindividual attack\n(multi).", "Wind-based\nindividual attack\n(multi).",
+    "Generates one of \nthe attack items.", "Light-based\nindividual attack\n(multi).", "Darkness-based\nindividual attack\n(multi).", "Recovers half of\nmaximum value\nof HP.", "Dissolves\npetrification.",
+    "Dissolves fear,\nbewitchment, \nconfusion dispirit.", "Nullifies poison/\nstunning/arm \nblocking.", "Thunder-based\nattack for all\n(multi).", "Earth-based\nattack for all\n(multi).", "Fire-based\nattack for all\n(multi).",
+    "Light-based\nattack for all\n(multi).", "Recovers 100 pts.\nof SP during \ncombat.", "Confuses minor\nenemies.", " ", "Water-based\nattack for all\n(multi).",
+    "Stuns minor\nenemies.", "Darkness-based\nattack for all\n(multi).", "Poisons minor\nenemies.", "Frightens minor\nenemies.", " ",
+    "Wind-based\nattack for all\n(multi).", "Destroys \nminor enemies.", "Revitalizes and \nrecovers half of\nHP.", "Reduces risk of\nencounter.", "Minor enemy only\nattacks one ally\n3 turns (repeat).",
+    "Generates a\nrecovery item.", " ", "Nullifies magical\nattack for 3 turns\n(repeat).", "Nullifies physical \nattack for 3 turns \n(repeat).", "Completely\nrecovers MP.",
+    "100% sure escape \nfrom minor enemy\n(repeat).", "Completely \nrecovers HP.", "Blocks enemy's\nmove for 3 turns\n(repeat).", "Completely \nrecovers HP\nfor all.", "Completely \nrecovers MP\nfor all.",
+    "Strength increase\nfor 3 turns\n(repeat).", "Becomes weak\nfor 3 turns\n(repeat).", "Doubles agility\nfor 3 turns\n(repeat).", "Halves agility\nfor 3 turns\n(repeat).", " ",
+    "Gives subtle\ngood aroma.", "Unbased\nattack for all\n(multi).", "Fire-based\npowerful attack \nfor all.", "Water-based\npowerful attack\nfor all.", "Wind-based\npowerful attack\nfor all.",
+    "Earth-based\npowerful attack\nfor all.", "Light-based\npowerful attack\nfor all.", "Darkness-based\npowerful attack\nfor all.", "Thunder-based\npowerful attack\nfor all.", "Recover half of\nHP for all.",
+    "Unbased attack\nfor all (multi) \n(repeat).", " ", " ", " ", " ",
+    " ",
   };
 
-  public static final LodString[] itemNames_8011972c = {
-    new LodString("Broad Sword"), new LodString("Bastard Sword"), new LodString("Heat Blade"), new LodString("Falchion"), new LodString("Mind Crush"),
-    new LodString("Fairy Sword"), new LodString("Claymore"), new LodString("Soul Eater"), new LodString("Axe"), new LodString("Tomahawk"),
-    new LodString("Battle Axe"), new LodString("Great Axe"), new LodString("Indora's Axe"), new LodString("Rapier"), new LodString("Shadow Cutter"),
-    new LodString("Dancing Dagger"), new LodString("Flamberge"), new LodString("Gladius"), new LodString("Dragon Buster"), new LodString("Demon Stiletto"),
-    new LodString("Spear"), new LodString("Lance"), new LodString("Glaive"), new LodString("Spear Of Terror"), new LodString("Partisan"),
-    new LodString("Halberd"), new LodString("Twister Glaive"), new LodString("Short Bow"), new LodString("Sparkle Arrow"), new LodString("Long Bow"),
-    new LodString("Bemusing Arrow"), new LodString("Virulent Arrow"), new LodString("Detonate Arrow"), new LodString("Arrow Of Force"), new LodString("Mace"),
-    new LodString("Morning Star"), new LodString("War Hammer"), new LodString("Heavy Mace"), new LodString("Basher"), new LodString("Pretty Hammer"),
-    new LodString("Iron Knuckle"), new LodString("Beast Fang"), new LodString("Diamond Claw"), new LodString("Thunder Fist"), new LodString("Destroyer Mace"),
-    new LodString("Brass Knuckle"), new LodString("Leather Armor"), new LodString("Scale Armor"), new LodString("Chain Mail"), new LodString("Plate Mail"),
-    new LodString("Saint Armor"), new LodString("Red DG Armor"), new LodString("Jade DG Armor"), new LodString("Lion Fur"), new LodString("Breast Plate"),
-    new LodString("Giganto Armor"), new LodString("Gold DG Armor"), new LodString("Disciple Vest"), new LodString("Warrior Dress"), new LodString("Master's Vest"),
-    new LodString("Energy Girdle"), new LodString("Violet DG Armor"), new LodString("Clothes"), new LodString("Leather Jacket"), new LodString("Silver Vest"),
-    new LodString("Sparkle Dress"), new LodString("Robe"), new LodString("Silver DG Armor"), new LodString("Dark DG Armor"), new LodString("Blue DG Armor"),
-    new LodString("Armor of Yore"), new LodString("Satori Vest"), new LodString("Rainbow Dress"), new LodString("Angel Robe"), new LodString("Armor Of Legend"),
-    new LodString(""), new LodString("Bandana"), new LodString("Sallet"), new LodString("Armet"), new LodString("Knight Helm"),
-    new LodString("Giganto Helm"), new LodString("Soul Headband"), new LodString("Felt Hat"), new LodString("Cape"), new LodString("Tiara"),
-    new LodString("Jeweled Crown"), new LodString("Rose's Hair Band"), new LodString(""), new LodString("Phoenix Plume"), new LodString("Legend Casque"),
-    new LodString("Dragon Helm"), new LodString("Magical Hat"), new LodString(""), new LodString("Leather Boots"), new LodString("Iron Kneepiece"),
-    new LodString("Combat Shoes"), new LodString("Leather Shoes"), new LodString("Soft Boots"), new LodString("Stardust Boots"), new LodString("Magical Greaves"),
-    new LodString("Dancer's Shoes"), new LodString("Bandit's Shoes"), new LodString(""), new LodString("Poison Guard"), new LodString("Active Ring"),
-    new LodString("Protector"), new LodString("Panic Guard"), new LodString("Stun Guard"), new LodString("Bravery Amulet"), new LodString("Magic Ego Bell"),
-    new LodString("Destone Amulet"), new LodString("Power Wrist"), new LodString("Knight Shield"), new LodString("Magical Ring"), new LodString("Spiritual Ring"),
-    new LodString("Attack Badge"), new LodString("Guard Badge"), new LodString("Giganto Ring"), new LodString("Elude Cloak"), new LodString("Spirit Cloak"),
-    new LodString("Sage's Cloak"), new LodString("Physical Ring"), new LodString("Amulet"), new LodString("Wargod's Sash"), new LodString("Spirit Ring"),
-    new LodString("Therapy Ring"), new LodString("Mage Ring"), new LodString("Wargod's Amulet"), new LodString("Talisman"), new LodString(""),
-    new LodString("Holy Ankh"), new LodString("Dancer's Ring"), new LodString(""), new LodString("Bandit's Ring"), new LodString("Red-Eye Stone"),
-    new LodString("Jade Stone"), new LodString("Silver Stone"), new LodString("Darkness Stone"), new LodString("Blue Sea Stone"), new LodString("Violet Stone"),
-    new LodString("Golden Stone"), new LodString(""), new LodString("Ruby Ring"), new LodString("Sapphire Pin"), new LodString("Rainbow Earring"),
-    new LodString(""), new LodString("Emerald Earring"), new LodString(""), new LodString("Platinum Collar"), new LodString("Phantom Shield"),
-    new LodString("Dragon Shield"), new LodString("Angel Scarf"), new LodString("Bracelet"), new LodString("Fake Power Wrist"), new LodString("Fake Shield"),
-    new LodString(""), new LodString("Wargod Calling"), new LodString("Ultimate Wargod"), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""), new LodString(""), new LodString(""), new LodString("Detonate Rock"), new LodString("Spark Net"),
-    new LodString("Burn Out"), new LodString(""), new LodString("Pellet"), new LodString("Spear Frost"), new LodString("Spinning Gale"),
-    new LodString("Attack Ball"), new LodString("Trans Light"), new LodString("Dark Mist"), new LodString("Healing Potion"), new LodString("Depetrifier"),
-    new LodString("Mind Purifier"), new LodString("Body Purifier"), new LodString("Thunderbolt"), new LodString("Meteor Fall"), new LodString("Gushing Magma"),
-    new LodString("Dancing Ray"), new LodString("Spirit Potion"), new LodString("Panic Bell"), new LodString(""), new LodString("Fatal Blizzard"),
-    new LodString("Stunning Hammer"), new LodString("Black Rain"), new LodString("Poison Needle"), new LodString("Midnight Terror"), new LodString(""),
-    new LodString("Rave Twister"), new LodString("Total Vanishing"), new LodString("Angel's Prayer"), new LodString("Charm Potion"), new LodString("Pandemonium"),
-    new LodString("Recovery Ball"), new LodString(""), new LodString("Magic Shield"), new LodString("Material Shield"), new LodString("Sun Rhapsody"),
-    new LodString("Smoke Ball"), new LodString("Healing Fog"), new LodString("Magic Sig Stone"), new LodString("Healing Rain"), new LodString("Moon Serenade"),
-    new LodString("Power Up"), new LodString("Power Down"), new LodString("Speed Up"), new LodString("Speed Down"), new LodString(""),
-    new LodString("Sachet"), new LodString("Psyche Bomb"), new LodString("Burning Wave"), new LodString("Frozen Jet"), new LodString("Down Burst"),
-    new LodString("Gravity Grabber"), new LodString("Spectral Flash"), new LodString("Night Raid"), new LodString("Flash Hall"), new LodString("Healing Breeze"),
-    new LodString("Psyche Bomb X"), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
-    new LodString(""),
+  public static final String[] itemNames_8011972c = {
+    "Broad Sword", "Bastard Sword", "Heat Blade", "Falchion", "Mind Crush",
+    "Fairy Sword", "Claymore", "Soul Eater", "Axe", "Tomahawk",
+    "Battle Axe", "Great Axe", "Indora's Axe", "Rapier", "Shadow Cutter",
+    "Dancing Dagger", "Flamberge", "Gladius", "Dragon Buster", "Demon Stiletto",
+    "Spear", "Lance", "Glaive", "Spear Of Terror", "Partisan",
+    "Halberd", "Twister Glaive", "Short Bow", "Sparkle Arrow", "Long Bow",
+    "Bemusing Arrow", "Virulent Arrow", "Detonate Arrow", "Arrow Of Force", "Mace",
+    "Morning Star", "War Hammer", "Heavy Mace", "Basher", "Pretty Hammer",
+    "Iron Knuckle", "Beast Fang", "Diamond Claw", "Thunder Fist", "Destroyer Mace",
+    "Brass Knuckle", "Leather Armor", "Scale Armor", "Chain Mail", "Plate Mail",
+    "Saint Armor", "Red DG Armor", "Jade DG Armor", "Lion Fur", "Breast Plate",
+    "Giganto Armor", "Gold DG Armor", "Disciple Vest", "Warrior Dress", "Master's Vest",
+    "Energy Girdle", "Violet DG Armor", "Clothes", "Leather Jacket", "Silver Vest",
+    "Sparkle Dress", "Robe", "Silver DG Armor", "Dark DG Armor", "Blue DG Armor",
+    "Armor of Yore", "Satori Vest", "Rainbow Dress", "Angel Robe", "Armor Of Legend",
+    "", "Bandana", "Sallet", "Armet", "Knight Helm",
+    "Giganto Helm", "Soul Headband", "Felt Hat", "Cape", "Tiara",
+    "Jeweled Crown", "Rose's Hair Band", "", "Phoenix Plume", "Legend Casque",
+    "Dragon Helm", "Magical Hat", "", "Leather Boots", "Iron Kneepiece",
+    "Combat Shoes", "Leather Shoes", "Soft Boots", "Stardust Boots", "Magical Greaves",
+    "Dancer's Shoes", "Bandit's Shoes", "", "Poison Guard", "Active Ring",
+    "Protector", "Panic Guard", "Stun Guard", "Bravery Amulet", "Magic Ego Bell",
+    "Destone Amulet", "Power Wrist", "Knight Shield", "Magical Ring", "Spiritual Ring",
+    "Attack Badge", "Guard Badge", "Giganto Ring", "Elude Cloak", "Spirit Cloak",
+    "Sage's Cloak", "Physical Ring", "Amulet", "Wargod's Sash", "Spirit Ring",
+    "Therapy Ring", "Mage Ring", "Wargod's Amulet", "Talisman", "",
+    "Holy Ankh", "Dancer's Ring", "", "Bandit's Ring", "Red-Eye Stone",
+    "Jade Stone", "Silver Stone", "Darkness Stone", "Blue Sea Stone", "Violet Stone",
+    "Golden Stone", "", "Ruby Ring", "Sapphire Pin", "Rainbow Earring",
+    "", "Emerald Earring", "", "Platinum Collar", "Phantom Shield",
+    "Dragon Shield", "Angel Scarf", "Bracelet", "Fake Power Wrist", "Fake Shield",
+    "", "Wargod Calling", "Ultimate Wargod", "", "",
+    "", "", "", "", "",
+    "", "", "", "", "",
+    "", "", "", "", "",
+    "", "", "", "", "",
+    "", "", "", "", "",
+    "", "", "", "", "",
+    "", "", "", "Detonate Rock", "Spark Net",
+    "Burn Out", "", "Pellet", "Spear Frost", "Spinning Gale",
+    "Attack Ball", "Trans Light", "Dark Mist", "Healing Potion", "Depetrifier",
+    "Mind Purifier", "Body Purifier", "Thunderbolt", "Meteor Fall", "Gushing Magma",
+    "Dancing Ray", "Spirit Potion", "Panic Bell", "", "Fatal Blizzard",
+    "Stunning Hammer", "Black Rain", "Poison Needle", "Midnight Terror", "",
+    "Rave Twister", "Total Vanishing", "Angel's Prayer", "Charm Potion", "Pandemonium",
+    "Recovery Ball", "", "Magic Shield", "Material Shield", "Sun Rhapsody",
+    "Smoke Ball", "Healing Fog", "Magic Sig Stone", "Healing Rain", "Moon Serenade",
+    "Power Up", "Power Down", "Speed Up", "Speed Down", "",
+    "Sachet", "Psyche Bomb", "Burning Wave", "Frozen Jet", "Down Burst",
+    "Gravity Grabber", "Spectral Flash", "Night Raid", "Flash Hall", "Healing Breeze",
+    "Psyche Bomb X", "", "", "", "",
+    "",
   };
 
-  public static final LodString[] additions_8011a064 = {
-    new LodString("Double Slash"), new LodString("Volcano"), new LodString("Burning Rush"), new LodString("Crush Dance"), new LodString("Madness Hero"),
-    new LodString("Moon Strike"), new LodString("Blazing Dynamo"), new LodString("Dragoon Attack"), new LodString("Harpoon"), new LodString("Spinning Cane"),
-    new LodString("Rod Typhoon"), new LodString("Gust of Wind Dance"), new LodString("Flower Storm"), new LodString("Dragoon Attack"), new LodString("Whip Smack"),
-    new LodString("More & More"), new LodString("Hard Blade"), new LodString("Demon's Dance"), new LodString("Dragoon Attack"), new LodString("Pursuit"),
-    new LodString("Inferno"), new LodString("Bone Crush"), new LodString("Dragoon Attack"), new LodString("Double Smack"), new LodString("Hammer Spin"),
-    new LodString("Cool Boogie"), new LodString("Cat's Cradle"), new LodString("Perky Step"), new LodString("Dragoon Attack"), new LodString("Double Punch"),
-    new LodString("Flurry of Styx"), new LodString("Summon 4 Gods"), new LodString("5 Ring Shattering"), new LodString("Hex Hammer"), new LodString("Omni-Sweep"),
-    new LodString("Dragoon Attack"), new LodString("Harpoon"), new LodString("Spinning Cane"), new LodString("Rod Typhoon"), new LodString("Gust of Wind Dance"),
-    new LodString("Flower Storm"), new LodString("Dragoon Attack"), new LodString("Dragoon Attack"),
+  public static final String[] additions_8011a064 = {
+    "Double Slash", "Volcano", "Burning Rush", "Crush Dance", "Madness Hero",
+    "Moon Strike", "Blazing Dynamo", "Dragoon Attack", "Harpoon", "Spinning Cane",
+    "Rod Typhoon", "Gust of Wind Dance", "Flower Storm", "Dragoon Attack", "Whip Smack",
+    "More & More", "Hard Blade", "Demon's Dance", "Dragoon Attack", "Pursuit",
+    "Inferno", "Bone Crush", "Dragoon Attack", "Double Smack", "Hammer Spin",
+    "Cool Boogie", "Cat's Cradle", "Perky Step", "Dragoon Attack", "Double Punch",
+    "Flurry of Styx", "Summon 4 Gods", "5 Ring Shattering", "Hex Hammer", "Omni-Sweep",
+    "Dragoon Attack", "Harpoon", "Spinning Cane", "Rod Typhoon", "Gust of Wind Dance",
+    "Flower Storm", "Dragoon Attack", "Dragoon Attack",
   };
 
-  public static final LodString[] goodsDescriptions_8011b75c = {
-    new LodString("Dragoon Spirit \nhis father left \nhim. Fire-based."), new LodString("Dragoon Spirit \nfrom Lenus \nWater-based."), new LodString("Dragoon Spirit \nfrom Greham\nWind-based."), new LodString("Dragoon Spirit \nfound in Lohan\nEarth-based."), new LodString("Dragoon Spirit \nfrom Doel\nThunder-based."),
-    new LodString("Dragoon Spirit\nfrom Shirley\nLight-based."), new LodString("Dragoon Spirit \nof mysterious Rose\nDarkness-based."), new LodString("Dragoon Spirit \nof Divine Dragon."), new LodString("Special Edition \nshows tension among\nSandora & Serdio."), new LodString("A mysterious stone \nfrom Dart's Father\nGlows when held."),
-    new LodString("Key to the second \nprison tower where\nShana is held."), new LodString("An axe left in a\nshack in a field.\nIt's well-worn."), new LodString("Good spirit that\npleases the \nman in Bale."), new LodString("Dabas forced him. \nSeems useless, but\nkept as a memento."), new LodString("A bottle acquired\nin Lohan to hold\n\"Life Water\"."),
-    new LodString("Life water from\na monster plant.\nRefreshes power."), new LodString("Fuel to light an\nelevator switch."), new LodString("Yellow Stone \nhidden in the \nBlack Castle."), new LodString("Blue Stone held by\nthe Spell Master \nMagi."), new LodString("Red Stone kept by\nthe janitor of the\nBlack Castle."),
-    new LodString("Letter that tells \nof going alone to \nthe Gehrich Gang."), new LodString("A pass for\nZero Gravity \nValley."), new LodString("Good luck bouquet\nthrown by Kate at\nthe wedding."), new LodString("Key from the \nPhantom Ship \nCaptain."), new LodString("License to use a\nboat in Furni.\nIt's a must."),
-    new LodString("A staff to confine\nDivine Dragon. \nRestrains Dragons."), new LodString("Family treasure \nof Serdio. Has\nenormous power."), new LodString("Family treasure \nof Tiberoa. Taken\naway."), new LodString("Family treasure \nof Mille Seseau.\nHidden by Flamvel."), new LodString("Attacking spell \nprepared by Savan\nof Aglis."),
-    new LodString("Ultimate attack \nspell given by \nSavan for Rose."), new LodString("A certificate of\nlaw production\nin Zenebatos."), new LodString("A certificate of\nlaw enactment\nin Zenebatos."), new LodString("Dragoon Spirit \nIndora gave Kongol\nEarth-based."), new LodString("Dabas' magical\nbag. Items are \nteleported to bag."),
-    new LodString("A mysterious stone \nfrom Martel for\ngetting Stardust."), new LodString("Lavitz's portrait\ndrawn in Bale. It\nlooks so real."), new LodString("Temporary event \nitem description37"), new LodString("Temporary event \nitem description38"), new LodString("Temporary event \nitem description39"),
-    new LodString("Temporary event \nitem description40"), new LodString("Temporary event \nitem description41"), new LodString("Temporary event \nitem description42"), new LodString("Temporary event \nitem description43"), new LodString("Temporary event \nitem description44"),
-    new LodString("Temporary event \nitem description45"), new LodString("Temporary event \nitem description46"), new LodString("Temporary event \nitem description47"), new LodString("Temporary event \nitem description48"), new LodString("Temporary event \nitem description49"),
-    new LodString("Temporary event \nitem description50"), new LodString("Temporary event \nitem description51"), new LodString("Temporary event \nitem description52"), new LodString("Temporary event \nitem description53"), new LodString("Temporary event \nitem description54"),
-    new LodString("Temporary event \nitem description55"), new LodString("Temporary event \nitem description56"), new LodString("Temporary event \nitem description57"), new LodString("Temporary event \nitem description58"), new LodString("Temporary event \nitem description59"),
-    new LodString("Temporary event \nitem description60"), new LodString("Temporary event \nitem description61"), new LodString("Temporary event \nitem description62"), new LodString("Temporary event \nitem description63"),
+  public static final String[] goodsDescriptions_8011b75c = {
+    "Dragoon Spirit \nhis father left \nhim. Fire-based.", "Dragoon Spirit \nfrom Lenus \nWater-based.", "Dragoon Spirit \nfrom Greham\nWind-based.", "Dragoon Spirit \nfound in Lohan\nEarth-based.", "Dragoon Spirit \nfrom Doel\nThunder-based.",
+    "Dragoon Spirit\nfrom Shirley\nLight-based.", "Dragoon Spirit \nof mysterious Rose\nDarkness-based.", "Dragoon Spirit \nof Divine Dragon.", "Special Edition \nshows tension among\nSandora & Serdio.", "A mysterious stone \nfrom Dart's Father\nGlows when held.",
+    "Key to the second \nprison tower where\nShana is held.", "An axe left in a\nshack in a field.\nIt's well-worn.", "Good spirit that\npleases the \nman in Bale.", "Dabas forced him. \nSeems useless, but\nkept as a memento.", "A bottle acquired\nin Lohan to hold\n\"Life Water\".",
+    "Life water from\na monster plant.\nRefreshes power.", "Fuel to light an\nelevator switch.", "Yellow Stone \nhidden in the \nBlack Castle.", "Blue Stone held by\nthe Spell Master \nMagi.", "Red Stone kept by\nthe janitor of the\nBlack Castle.",
+    "Letter that tells \nof going alone to \nthe Gehrich Gang.", "A pass for\nZero Gravity \nValley.", "Good luck bouquet\nthrown by Kate at\nthe wedding.", "Key from the \nPhantom Ship \nCaptain.", "License to use a\nboat in Furni.\nIt's a must.",
+    "A staff to confine\nDivine Dragon. \nRestrains Dragons.", "Family treasure \nof Serdio. Has\nenormous power.", "Family treasure \nof Tiberoa. Taken\naway.", "Family treasure \nof Mille Seseau.\nHidden by Flamvel.", "Attacking spell \nprepared by Savan\nof Aglis.",
+    "Ultimate attack \nspell given by \nSavan for Rose.", "A certificate of\nlaw production\nin Zenebatos.", "A certificate of\nlaw enactment\nin Zenebatos.", "Dragoon Spirit \nIndora gave Kongol\nEarth-based.", "Dabas' magical\nbag. Items are \nteleported to bag.",
+    "A mysterious stone \nfrom Martel for\ngetting Stardust.", "Lavitz's portrait\ndrawn in Bale. It\nlooks so real.", "Temporary event \nitem description37", "Temporary event \nitem description38", "Temporary event \nitem description39",
+    "Temporary event \nitem description40", "Temporary event \nitem description41", "Temporary event \nitem description42", "Temporary event \nitem description43", "Temporary event \nitem description44",
+    "Temporary event \nitem description45", "Temporary event \nitem description46", "Temporary event \nitem description47", "Temporary event \nitem description48", "Temporary event \nitem description49",
+    "Temporary event \nitem description50", "Temporary event \nitem description51", "Temporary event \nitem description52", "Temporary event \nitem description53", "Temporary event \nitem description54",
+    "Temporary event \nitem description55", "Temporary event \nitem description56", "Temporary event \nitem description57", "Temporary event \nitem description58", "Temporary event \nitem description59",
+    "Temporary event \nitem description60", "Temporary event \nitem description61", "Temporary event \nitem description62", "Temporary event \nitem description63",
   };
-  public static final LodString[] goodsItemNames_8011c008 = {
-    new LodString("Red Dragon DS"), new LodString("Blue Dragon DS"), new LodString("Jade Dragon DS"), new LodString("Gold Dragon DS"), new LodString("Violet Dragon DS"),
-    new LodString("Silver Dragon DS"), new LodString("Dark Dragon DS"), new LodString("Divine Dragon DS"), new LodString("War Bulletin"), new LodString("Father's Stone"),
-    new LodString("Prison Key"), new LodString("Axe From the Shack"), new LodString("Good Spirits"), new LodString("Shiny Bag"), new LodString("Water Bottle"),
-    new LodString("Life Water"), new LodString("Magic Oil"), new LodString("Yellow Stone"), new LodString("Blue Stone"), new LodString("Red Stone"),
-    new LodString("Letter From Lynn"), new LodString("Pass For Valley"), new LodString("Kate's Bouquet"), new LodString("Key to Ship"), new LodString("Boat License"),
-    new LodString("Dragon Blocker"), new LodString("Moon Gem"), new LodString("Moon Dagger"), new LodString("Moon Mirror"), new LodString("Omega Bomb"),
-    new LodString("Omega Master"), new LodString("Law Maker"), new LodString("Law Output"), new LodString("Gold Dragon DS"), new LodString("Magic Shiny Bag"),
-    new LodString("Vanishing Stone"), new LodString("Lavitz's Picture"), new LodString("Temporary37"), new LodString("Temporary38"), new LodString("Temporary39"),
-    new LodString("Temporary40"), new LodString("Temporary41"), new LodString("Temporary42"), new LodString("Temporary43"), new LodString("Temporary44"),
-    new LodString("Temporary45"), new LodString("Temporary46"), new LodString("Temporary47"), new LodString("Temporary48"), new LodString("Temporary49"),
-    new LodString("Temporary50"), new LodString("Temporary51"), new LodString("Temporary52"), new LodString("Temporary53"), new LodString("Temporary54"),
-    new LodString("Temporary55"), new LodString("Temporary56"), new LodString("Temporary57"), new LodString("Temporary58"), new LodString("Temporary59"),
-    new LodString("Temporary60"), new LodString("Temporary61"), new LodString("Temporary62"), new LodString("Temporary63"),
+  public static final String[] goodsItemNames_8011c008 = {
+    "Red Dragon DS", "Blue Dragon DS", "Jade Dragon DS", "Gold Dragon DS", "Violet Dragon DS",
+    "Silver Dragon DS", "Dark Dragon DS", "Divine Dragon DS", "War Bulletin", "Father's Stone",
+    "Prison Key", "Axe From the Shack", "Good Spirits", "Shiny Bag", "Water Bottle",
+    "Life Water", "Magic Oil", "Yellow Stone", "Blue Stone", "Red Stone",
+    "Letter From Lynn", "Pass For Valley", "Kate's Bouquet", "Key to Ship", "Boat License",
+    "Dragon Blocker", "Moon Gem", "Moon Dagger", "Moon Mirror", "Omega Bomb",
+    "Omega Master", "Law Maker", "Law Output", "Gold Dragon DS", "Magic Shiny Bag",
+    "Vanishing Stone", "Lavitz's Picture", "Temporary37", "Temporary38", "Temporary39",
+    "Temporary40", "Temporary41", "Temporary42", "Temporary43", "Temporary44",
+    "Temporary45", "Temporary46", "Temporary47", "Temporary48", "Temporary49",
+    "Temporary50", "Temporary51", "Temporary52", "Temporary53", "Temporary54",
+    "Temporary55", "Temporary56", "Temporary57", "Temporary58", "Temporary59",
+    "Temporary60", "Temporary61", "Temporary62", "Temporary63",
   };
-  public static final LodString[] submapNames_8011c108 = {
-    new LodString(""), new LodString("Forest"), new LodString("Forest"), new LodString("Seles"), new LodString("Hellena Prison"),
-    new LodString("Prairie"), new LodString("Cave"), new LodString(""), new LodString("Bale"), new LodString("Indels Castle"),
-    new LodString("Town of Hoax"), new LodString("Marshland"), new LodString("Vol. Villude"), new LodString("Nest of Dragon"), new LodString("Lohan"),
-    new LodString("Shirley's Shrine"), new LodString(""), new LodString("Kazas"), new LodString("Black Castle"), new LodString("Fletz"),
-    new LodString("Twin Castle"), new LodString("Barrens"), new LodString("Donau"), new LodString("Valley"), new LodString("Giganto Home"),
-    new LodString(""), new LodString("The Queen Fury"), new LodString("Phantom Ship"), new LodString("Lidiera"), new LodString("Undersea Cavern"),
-    new LodString("Feuno"), new LodString("Prison Island"), new LodString("Furni"), new LodString("Evergreen Frst"), new LodString("Deningrad"),
-    new LodString("Crystal Palace"), new LodString("Neet"), new LodString("Wingly Forest"), new LodString("Forbidden Land"), new LodString(""),
-    new LodString("Mortal Dr Mt."), new LodString(""), new LodString("Kashua Glacier"), new LodString("Flanvel Tower"), new LodString("Snowfield"),
-    new LodString("Fort Magrad"), new LodString("Vellweb"), new LodString(""), new LodString("Death Frontier"), new LodString("Ulara"),
-    new LodString("Zenebatos"), new LodString("Mayfil"), new LodString(""), new LodString("Rouge"), new LodString("Aglis"),
-    new LodString("Divine Tree"), new LodString("Moon"),
+  public static final String[] submapNames_8011c108 = {
+    "", "Forest", "Forest", "Seles", "Hellena Prison",
+    "Prairie", "Cave", "", "Bale", "Indels Castle",
+    "Town of Hoax", "Marshland", "Vol. Villude", "Nest of Dragon", "Lohan",
+    "Shirley's Shrine", "", "Kazas", "Black Castle", "Fletz",
+    "Twin Castle", "Barrens", "Donau", "Valley", "Giganto Home",
+    "", "The Queen Fury", "Phantom Ship", "Lidiera", "Undersea Cavern",
+    "Feuno", "Prison Island", "Furni", "Evergreen Frst", "Deningrad",
+    "Crystal Palace", "Neet", "Wingly Forest", "Forbidden Land", "",
+    "Mortal Dr Mt.", "", "Kashua Glacier", "Flanvel Tower", "Snowfield",
+    "Fort Magrad", "Vellweb", "", "Death Frontier", "Ulara",
+    "Zenebatos", "Mayfil", "", "Rouge", "Aglis",
+    "Divine Tree", "Moon",
   };
-  public static final LodString[] worldMapNames_8011c1ec = {
-    new LodString("So. of Serdio"),
-    new LodString("No. of Serdio"),
-    new LodString("Tiberoa"),
-    new LodString("Illisa Bay"),
-    new LodString("Mille Seseau"),
-    new LodString("Gloriano"),
-    new LodString("Death Frontier"),
-    new LodString("Endiness"),
+  public static final String[] worldMapNames_8011c1ec = {
+    "So. of Serdio",
+    "No. of Serdio",
+    "Tiberoa",
+    "Illisa Bay",
+    "Mille Seseau",
+    "Gloriano",
+    "Death Frontier",
+    "Endiness",
   };
-
-  /** "Yes" */
-  public static final LodString Yes_8011c20c = new LodString("Yes");
-  /** "No" */
-  public static final LodString No_8011c214 = new LodString("No");
 
   public static int characterCount_8011d7c4;
 
@@ -808,9 +801,11 @@ public final class SItem {
   }
 
   @Method(0x80103cc4L)
-  public static void renderText(final LodString text, final int x, final int y, final TextColour colour) {
+  public static void renderText(final String text, final int x, final int y, final TextColour colour) {
     final TextColour shadowColour;
-    if(colour == TextColour.LIME) {
+    if(colour == TextColour.WHITE) {
+      shadowColour = TextColour.BLACK;
+    } else if(colour == TextColour.LIME) {
       //LAB_80103d18
       shadowColour = TextColour.GREEN;
     } else if(colour == TextColour.MIDDLE_BROWN) {
@@ -822,10 +817,10 @@ public final class SItem {
 
     //LAB_80103d24
     //LAB_80103d28
+    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
     Scus94491BpeSegment_8002.renderText(text, x    , y + 1, shadowColour, 0);
     Scus94491BpeSegment_8002.renderText(text, x + 1, y    , shadowColour, 0);
     Scus94491BpeSegment_8002.renderText(text, x + 1, y + 1, shadowColour, 0);
-    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
   }
 
   @Method(0x80103dd4L)
@@ -843,7 +838,7 @@ public final class SItem {
   }
 
   @Method(0x80103e90L)
-  public static void renderCentredText(final LodString text, final int x, final int y, final TextColour colour) {
+  public static void renderCentredText(final String text, final int x, final int y, final TextColour colour) {
     renderText(text, x - textWidth(text) / 2, y, colour);
   }
 
@@ -1593,7 +1588,7 @@ public final class SItem {
     //LAB_80108f98
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       if(charData.equipment_14.get(slot) != null) {
-        renderText(new LodString(charData.equipment_14.get(slot).name), 220, 19 + slot.ordinal() * 14, TextColour.BROWN);
+        renderText(charData.equipment_14.get(slot).name, 220, 19 + slot.ordinal() * 14, TextColour.BROWN);
       }
     }
 
@@ -1606,45 +1601,15 @@ public final class SItem {
       allocateUiElement(0x5b, 0x5b, x, y);
     }
 
-    //LAB_801090e0
-    LodString s0 = new LodString(string);
+//    for(int i = 0, pos = 0; i < 4 && pos < string.length(); i++) {
+//      int nextNewLine = string.indexOf('\n', pos + 1);
+//      if(nextNewLine == -1) {
+//        nextNewLine = string.length();
+//      }
 
-    //LAB_80109160
-    //LAB_80109168
-    //LAB_80109188
-    for(int i = 0; i < 4; i++) {
-      int s4 = 0;
-      final int len = Math.min(textLength(s0), 20);
-      final LodString s3 = new LodString(len + 1);
-
-      //LAB_801091bc
-      //LAB_801091cc
-      int a1;
-      for(a1 = 0; a1 < len; a1++) {
-        if(s0.charAt(a1) == 0xa1ffL) {
-          //LAB_8010924c
-          s4 = 1;
-          break;
-        }
-
-        s3.charAt(a1, s0.charAt(a1));
-      }
-
-      //LAB_801091fc
-      s3.charAt(a1, 0xa0ff);
-
-      renderText(s3, x + 2, y + i * 14 + 4, TextColour.BROWN);
-
-      if(textLength(s3) > len) {
-        //LAB_80109270
-        break;
-      }
-
-      //LAB_80109254
-      s0 = s0.slice(textLength(s3) + s4);
-    }
-
-    //LAB_80109284
+      renderText(string, x + 2, y + 4, TextColour.BROWN);
+//      pos = nextNewLine;
+//    }
   }
 
   @Method(0x80109410L)
@@ -1657,7 +1622,7 @@ public final class SItem {
       final MenuEntryStruct04<?> menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(new LodString(menuItem.getName()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+      renderText(menuItem.getName(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
       renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
 
       final int s0 = menuItem.flags_02;
@@ -1753,7 +1718,7 @@ public final class SItem {
         messageBox.ticks_10++;
 
         if(messageBox.text_00 != null) {
-          for(final LodString line : messageBox.text_00) {
+          for(final String line : messageBox.text_00) {
             renderCentredText(line, x, y, TextColour.BROWN);
             y += 14;
           }
@@ -1826,32 +1791,17 @@ public final class SItem {
     return MessageBoxResult.AWAITING_INPUT;
   }
 
-  public static void setMessageBoxOptions(final MessageBox20 messageBox, final LodString yes, final LodString no) {
+  public static void setMessageBoxOptions(final MessageBox20 messageBox, final String yes, final String no) {
     messageBox.yes = yes;
     messageBox.no = no;
   }
 
   @Method(0x8010f130L)
-  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final LodString text, final int type) {
-    setMessageBoxOptions(messageBox, Yes_8011c20c, No_8011c214);
+  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final int type) {
+    setMessageBoxOptions(messageBox, "Yes", "No");
 
     if(text != null) {
-      final List<LodString> lines = new ArrayList<>();
-      final int length = textLength(text);
-
-      int lineStart = 0;
-      for(int charIndex = 0; charIndex < length; charIndex++) {
-        if(text.charAt(charIndex) == 0xa1ff) {
-          final LodString slice = text.slice(lineStart, charIndex - lineStart + 1);
-          slice.charAt(charIndex - lineStart, 0xa0ff);
-          lines.add(slice);
-          lineStart = charIndex + 1;
-        }
-      }
-
-      lines.add(text.slice(lineStart));
-
-      messageBox.text_00 = lines.toArray(LodString[]::new);
+      messageBox.text_00 = text.split("\n");
     } else {
       messageBox.text_00 = null;
     }

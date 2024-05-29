@@ -3,7 +3,6 @@ package legend.game.inventory.screens.controls;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
-import legend.game.types.LodString;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
 
@@ -28,7 +27,7 @@ public class ItemList<T> extends Control {
 
   public ItemList() {
     this(
-      menuItem -> new LodString(menuItem.getName()).get(),
+      MenuEntryStruct04::getName,
       MenuEntryStruct04::getIcon,
       menuItem -> (menuItem.flags_02 & 0x1000) != 0 ? menuItem.flags_02 & 0xf : -1,
       menuItem -> (menuItem.flags_02 & 0x1000) != 0

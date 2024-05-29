@@ -2,6 +2,8 @@ package legend.core.spu;
 
 import legend.game.sound.ReverbConfig;
 
+import static legend.core.audio.AudioThread.SAMPLE_RATE_MULTIPLIER;
+
 public class Reverb {
   public int dAPF1;
   public int dAPF2;
@@ -37,8 +39,8 @@ public class Reverb {
   public float vRIN;
 
   public void set(final ReverbConfig config) {
-    this.dAPF1 = config.dApf1 << 2;
-    this.dAPF2 = config.dApf2 << 2;
+    this.dAPF1 = (int)Math.round((config.dApf1 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.dAPF2 = (int)Math.round((config.dApf2 << 3) * SAMPLE_RATE_MULTIPLIER);
     this.vIIR = config.vIir / 32768.0f;
     this.vCOMB1 = config.vComb1 / 32768.0f;
     this.vCOMB2 = config.vComb2 / 32768.0f;
@@ -47,26 +49,26 @@ public class Reverb {
     this.vWALL = config.vWall / 32768.0f;
     this.vAPF1 = config.vApf1 / 32768.0f;
     this.vAPF2 = config.vApf2 / 32768.0f;
-    this.mLSAME = config.mLSame << 2;
-    this.mRSAME = config.mRSame << 2;
-    this.mLCOMB1 = config.mLComb1 << 2;
-    this.mRCOMB1 = config.mRComb1 << 2;
-    this.mLCOMB2 = config.mLComb2 << 2;
-    this.mRCOMB2 = config.mRComb2 << 2;
-    this.dLSAME = config.dLSame << 2;
-    this.dRSAME = config.dRSame << 2;
-    this.mLDIFF = config.mLDiff << 2;
-    this.mRDIFF = config.mRDiff << 2;
-    this.mLCOMB3 = config.mLComb3 << 2;
-    this.mRCOMB3 = config.mRComb3 << 2;
-    this.mLCOMB4 = config.mLComb4 << 2;
-    this.mRCOMB4 = config.mRComb4 << 2;
-    this.dLDIFF = config.dLDiff << 2;
-    this.dRDIFF = config.dRDiff << 2;
-    this.mLAPF1 = config.mLApf1 << 2;
-    this.mRAPF1 = config.mRApf1 << 2;
-    this.mLAPF2 = config.mLApf2 << 2;
-    this.mRAPF2 = config.mRApf2 << 2;
+    this.mLSAME = (int)Math.round((config.mLSame << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRSAME = (int)Math.round((config.mRSame << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLCOMB1 = (int)Math.round((config.mLComb1 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRCOMB1 = (int)Math.round((config.mRComb1 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLCOMB2 = (int)Math.round((config.mLComb2 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRCOMB2 = (int)Math.round((config.mRComb2 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.dLSAME = (int)Math.round((config.dLSame << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.dRSAME = (int)Math.round((config.dRSame << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLDIFF = (int)Math.round((config.mLDiff << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRDIFF = (int)Math.round((config.mRDiff << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLCOMB3 = (int)Math.round((config.mLComb3 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRCOMB3 = (int)Math.round((config.mRComb3 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLCOMB4 = (int)Math.round((config.mLComb4 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRCOMB4 = (int)Math.round((config.mRComb4 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.dLDIFF = (int)Math.round((config.dLDiff << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.dRDIFF = (int)Math.round((config.dRDiff << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLAPF1 = (int)Math.round((config.mLApf1 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRAPF1 = (int)Math.round((config.mRApf1 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mLAPF2 = (int)Math.round((config.mLApf2 << 3) * SAMPLE_RATE_MULTIPLIER);
+    this.mRAPF2 = (int)Math.round((config.mRApf2 << 3) * SAMPLE_RATE_MULTIPLIER);
     this.vLIN = config.vLIn / 32768.0f;
     this.vRIN = config.vRIn / 32768.0f;
   }

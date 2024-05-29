@@ -1,0 +1,12 @@
+--- original
++++ modified
+@@ -666,7 +666,9 @@
+ call SMap::scriptScaleUniform, stor[0], 0x500 ; sobjIndex, scale
+ call SMap::scriptReadModelPosition, var[64][0], stor[8], stor[9], stor[10] ; scriptIndex, x, y, z
+ jmp_cmp ==, stor[8], 0xf0, inl[:LABEL_62] ; operand, left, right, addr
++jmp_cmp ==, stor[8], 0xf1, inl[:LABEL_62] ; operand, left, right, addr
+ jmp_cmp ==, stor[8], 0xffffff3c, inl[:LABEL_63] ; operand, left, right, addr
++jmp_cmp ==, stor[8], 0xffffff3b, inl[:LABEL_63] ; operand, left, right, addr
+ jmp_cmp ==, stor[8], 0xfffffef5, inl[:LABEL_64] ; operand, left, right, addr
+ jmp_cmp ==, stor[8], 0x6f, inl[:LABEL_65] ; operand, left, right, addr
+ jmp_cmp ==, stor[8], 0xd1, inl[:LABEL_66] ; operand, left, right, addr

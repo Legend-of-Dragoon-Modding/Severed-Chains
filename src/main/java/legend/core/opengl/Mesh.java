@@ -32,6 +32,8 @@ public class Mesh {
   private final int mode;
   private final boolean useIndices;
 
+  private boolean deleted;
+
   public Mesh(final int mode, final float[] vertexData, final int[] indices) {
     this.count = indices.length;
     this.mode = mode;
@@ -91,6 +93,8 @@ public class Mesh {
   }
 
   public void delete() {
+    this.deleted = true;
+
     if(this.ebo != -1) {
       glDeleteBuffers(this.ebo);
     }
@@ -110,6 +114,10 @@ public class Mesh {
   }
 
   public void draw() {
+    if(this.deleted) {
+      return;
+    }
+
     glBindVertexArray(this.vao);
 
     if(this.useIndices) {
@@ -120,6 +128,10 @@ public class Mesh {
   }
 
   public void draw(final int start, final int count) {
+    if(this.deleted) {
+      return;
+    }
+
     if(count == 0) {
       this.draw();
       return;

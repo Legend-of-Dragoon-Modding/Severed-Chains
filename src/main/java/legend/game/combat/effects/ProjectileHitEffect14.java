@@ -1,20 +1,27 @@
 package legend.game.combat.effects;
 
-import legend.core.gpu.GpuCommandLine;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.FUN_800cfb14;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class ProjectileHitEffect14 implements Effect {
   private final int count_00;
 
   private final ProjectileHitEffectInstance48[] instances;
+
+  private Obj obj;
+  private final Matrix4f transforms = new Matrix4f();
 
   public ProjectileHitEffect14(final int count, final int r, final int g, final int b) {
     this.count_00 = count;
@@ -51,6 +58,19 @@ public class ProjectileHitEffect14 implements Effect {
 
   @Method(0x800d019cL)
   public void renderProjectileHitEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+    if(this.obj == null) {
+      this.obj = new PolyBuilder("Projectile hit effect", GL_TRIANGLE_STRIP)
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .monochrome(0.0f)
+        .addVertex(1.0f, 0.0f, 0.0f)
+        .monochrome(0.0f)
+        .addVertex(0.0f, 1.0f, 0.0f)
+        .monochrome(1.0f)
+        .addVertex(1.0f, 1.0f, 0.0f)
+        .monochrome(1.0f)
+        .build();
+    }
+
     float a0 = 0.0f;
 
     //LAB_800d01ec
@@ -107,13 +127,10 @@ public class ProjectileHitEffect14 implements Effect {
             }
 
             //LAB_800d0444
-            GPU.queueCommand((s1_0 + a2_0) / 4.0f, new GpuCommandLine()
-              .translucent(Translucency.B_PLUS_F)
-              .monochrome(0, 0)
-              .rgb(1, s4.r_34 >>> 8, s4.g_36 >>> 8, s4.b_38 >>> 8)
-              .pos(0, screenVert[0].x, screenVert[0].y)
-              .pos(1, screenVert[1].x, screenVert[1].y)
-            );
+            RENDERER.queueLine(this.obj, this.transforms, s1_0 + a2_0, screenVert[0], screenVert[1])
+              .translucency(Translucency.B_PLUS_F)
+              .colour((s4.r_34 >>> 8) / 255.0f, (s4.g_36 >>> 8) / 255.0f, (s4.b_38 >>> 8) / 255.0f)
+              .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
           }
 
           //LAB_800d0460
@@ -122,5 +139,12 @@ public class ProjectileHitEffect14 implements Effect {
     }
 
     //LAB_800d0508
+  }
+
+  public void deallocate(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> effect) {
+    if(this.obj != null) {
+      this.obj.delete();
+      this.obj = null;
+    }
   }
 }

@@ -8,7 +8,6 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -135,7 +134,7 @@ public class ItemListScreen extends MenuScreen {
       playSound(40);
     } else {
       playSound(2);
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new MessageBoxScreen("Discard?", 2, result -> this.discard(result, list, inv)));
     }
   }
 

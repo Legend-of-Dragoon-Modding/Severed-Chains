@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.opengl.Texture;
 import legend.game.types.Model124;
 import org.joml.Vector3f;
 
@@ -100,6 +101,8 @@ public class SubmapObject210 {
 
   public final Vector3f ambientColour_1ca = new Vector3f();
   public final AttachedSobjEffectData40 attachedEffectData_1d0 = new AttachedSobjEffectData40();
+
+  public Texture texture;
 
   public SubmapObject210(final String name) {
     this.model_00 = new Model124(name);

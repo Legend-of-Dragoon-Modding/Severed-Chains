@@ -49,7 +49,7 @@ public final class Renderer {
 
   public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices, final Vector3f[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
     // Read type info from command ---
-    final int command = (primitive.header() | specialFlags) & 0xff04_0000;
+    final int command = (primitive.header() | specialFlags) & 0xff04_0000; // I can only find specialFlags getting set to the bits 0x32 so it probably does nothing here
     final int primitiveId = command >>> 24;
     if((primitiveId >>> 5 & 0b11) != 1) {
       throw new RuntimeException("Unsupported primitive type");
