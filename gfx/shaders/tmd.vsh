@@ -94,7 +94,7 @@ void main() {
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
     vertColour.rgb = inColour.rgb * battleColour.rgb;
   } else if(lit) {
-    vertColour.rgb = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * inColour.rgb, 1.0);
+    vertColour.rgb = (l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * inColour.rgb;
   } else if(coloured) {
     vertColour = inColour;
   } else {
