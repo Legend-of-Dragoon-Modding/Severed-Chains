@@ -3252,10 +3252,8 @@ public class SMap extends EngineState {
       this.playerPositionRestoreMode_800f7e24 = 1;
     } else {
       //LAB_800e4d34
-      final Vector3f primitivePosition = new Vector3f();
-      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, primitivePosition);
-      primitivePosition.round();
-      this.playerPositionWhenLoadingSubmap_800c6ac0.transfer.set(primitivePosition);
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, this.playerPositionWhenLoadingSubmap_800c6ac0.transfer);
+      this.playerPositionWhenLoadingSubmap_800c6ac0.transfer.round();
       this.playerPositionRestoreMode_800f7e24 = 2;
     }
 
@@ -3266,10 +3264,8 @@ public class SMap extends EngineState {
   private void restoreOrSetPlayerPosition(final int collisionPrimitiveIndexForPosition, final Model124 model) {
     if(this.playerPositionRestoreMode_800f7e24 == 0) {
       //LAB_800e4e20
-      final Vector3f primitivePosition = new Vector3f();
-      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndexForPosition, primitivePosition);
-      primitivePosition.round();
-      model.coord2_14.coord.transfer.set(primitivePosition);
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndexForPosition, model.coord2_14.coord.transfer);
+      model.coord2_14.coord.transfer.round();
     } else if(this.playerPositionRestoreMode_800f7e24 == 1) {
       model.coord2_14.coord.set(this.playerPositionWhenLoadingSubmap_800c6ac0);
     } else {
