@@ -42,27 +42,6 @@ public class GpuCommandPoly extends GpuCommand {
     this.colour = new int[vertexCount];
   }
 
-  public GpuCommandPoly(final GpuCommandPoly toCopy) {
-    this.vertexCount = toCopy.vertexCount;
-
-    this.bpp = toCopy.bpp;
-    this.translucence = toCopy.translucence;
-    this.shaded = toCopy.shaded;
-    this.raw = toCopy.raw;
-    this.textured = toCopy.textured;
-
-    this.x = Arrays.copyOf(toCopy.x, this.vertexCount);
-    this.y = Arrays.copyOf(toCopy.y, this.vertexCount);
-    this.u = Arrays.copyOf(toCopy.u, this.vertexCount);
-    this.v = Arrays.copyOf(toCopy.v, this.vertexCount);
-    this.colour = Arrays.copyOf(toCopy.colour, this.vertexCount);
-
-    this.clutX = toCopy.clutX;
-    this.clutY = toCopy.clutY;
-    this.vramX = toCopy.vramX;
-    this.vramY = toCopy.vramY;
-  }
-
   public GpuCommandPoly bpp(final Bpp bpp) {
     this.bpp = bpp;
     return this;

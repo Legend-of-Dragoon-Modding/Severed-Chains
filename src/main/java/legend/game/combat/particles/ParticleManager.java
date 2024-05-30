@@ -3,7 +3,6 @@ package legend.game.combat.particles;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
@@ -697,13 +696,13 @@ public class ParticleManager {
 
   /** Returns Z */
   @Method(0x800fca78L)
-  private float FUN_800fca78(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final Vector3f translation, final GpuCommandPoly cmd) {
+  private float FUN_800fca78(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 particle, final ParticleEffectInstance94 instance, final Vector3f translation, final MV transforms) {
     final Vector2f ref = new Vector2f();
-    final float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, ref);
+    final float z = FUN_800cfc20(instance.managerRotation_68, instance.managerTranslation_2c, translation, ref);
     if(z >= 40) {
       final float zScale = (float)0x5000 / z;
-      final float horizontalScale = zScale * (manager.params_10.scale_16.x + particle.scaleHorizontal_06);
-      final float verticalScale = zScale * (manager.params_10.scale_16.y + particle.scaleVertical_08);
+      final float horizontalScale = zScale * (manager.params_10.scale_16.x + instance.scaleHorizontal_06);
+      final float verticalScale = zScale * (manager.params_10.scale_16.y + instance.scaleVertical_08);
 
       final float angle;
       if((manager.params_10.flags_24 & 0x2) != 0) {
@@ -712,70 +711,17 @@ public class ParticleManager {
 
         //LAB_800fcb90
         //LAB_800fcbd4
-        final float sp18 = (particle.particlePositionCopy2_48.z - translation.z) * -Math.abs(MathHelper.sin(sp0x38.y - manager.params_10.rot_10.y)) - (translation.x - particle.particlePositionCopy2_48.x) * -Math.abs(MathHelper.cos(sp0x38.y + manager.params_10.rot_10.y));
-        final float sp1c = translation.y - particle.particlePositionCopy2_48.y;
+        final float sp18 = (instance.particlePositionCopy2_48.z - translation.z) * -Math.abs(MathHelper.sin(sp0x38.y - manager.params_10.rot_10.y)) - (translation.x - instance.particlePositionCopy2_48.x) * -Math.abs(MathHelper.cos(sp0x38.y + manager.params_10.rot_10.y));
+        final float sp1c = translation.y - instance.particlePositionCopy2_48.y;
         angle = -MathHelper.atan2(sp1c, sp18) + MathHelper.TWO_PI / 4.0f;
-        particle.particlePositionCopy2_48.set(translation);
+        instance.particlePositionCopy2_48.set(translation);
       } else {
-        angle = particle.angle_0e + manager.params_10.rot_10.x - MathHelper.TWO_PI / 1.6f;
-      }
-
-      //LAB_800fcc20
-      final float right = effect.w_5e / 2.0f * horizontalScale;
-      final float left = -right;
-      final float bottom = effect.h_5f / 2.0f * verticalScale;
-      final float top = -bottom;
-      final float cos = MathHelper.cos(angle);
-      final float sin = MathHelper.sin(angle);
-
-      // Rotate coords
-      final float rotX0 = left * cos;
-      final float rotY0 = left * sin;
-      final float rotX1 = right * cos;
-      final float rotY1 = right * sin;
-      final float rotX2 = top * sin;
-      final float rotY2 = top * cos;
-      final float rotX3 = bottom * sin;
-      final float rotY3 = bottom * cos;
-
-      cmd.pos(0, ref.x + rotX0 - rotX2, ref.y + rotY0 + rotY2);
-      cmd.pos(1, ref.x + rotX1 - rotX2, ref.y + rotY1 + rotY2);
-      cmd.pos(2, ref.x + rotX0 - rotX3, ref.y + rotY0 + rotY3);
-      cmd.pos(3, ref.x + rotX1 - rotX3, ref.y + rotY1 + rotY3);
-    }
-
-    //LAB_800fcde0
-    return z;
-  }
-
-  /** Returns Z */
-  @Method(0x800fca78L)
-  private float FUN_800fca78(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle, final Vector3f translation, final MV transforms) {
-    final Vector2f ref = new Vector2f();
-    final float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, ref);
-    if(z >= 40) {
-      final float zScale = (float)0x5000 / z;
-      final float horizontalScale = zScale * (manager.params_10.scale_16.x + particle.scaleHorizontal_06);
-      final float verticalScale = zScale * (manager.params_10.scale_16.y + particle.scaleVertical_08);
-
-      final float angle;
-      if((manager.params_10.flags_24 & 0x2) != 0) {
-        final Vector3f sp0x38 = new Vector3f();
-        this.FUN_800fc8f8(null, sp0x38);
-
-        //LAB_800fcb90
-        //LAB_800fcbd4
-        final float sp18 = (particle.particlePositionCopy2_48.z - translation.z) * -Math.abs(MathHelper.sin(sp0x38.y - manager.params_10.rot_10.y)) - (translation.x - particle.particlePositionCopy2_48.x) * -Math.abs(MathHelper.cos(sp0x38.y + manager.params_10.rot_10.y));
-        final float sp1c = translation.y - particle.particlePositionCopy2_48.y;
-        angle = -MathHelper.atan2(sp1c, sp18) + MathHelper.TWO_PI / 4.0f;
-        particle.particlePositionCopy2_48.set(translation);
-      } else {
-        angle = particle.angle_0e + manager.params_10.rot_10.x - MathHelper.TWO_PI / 1.6f;
+        angle = instance.angle_0e + manager.params_10.rot_10.x - MathHelper.TWO_PI / 1.6f;
       }
 
       transforms.transfer.x = ref.x;
       transforms.transfer.y = ref.y;
-      transforms.rotationZ(angle).scale(horizontalScale, verticalScale, 1.0f);
+      transforms.scaling(horizontalScale * particle.w_5e, verticalScale * particle.h_5f, 1.0f).rotateZ(angle);
     }
 
     //LAB_800fcde0
@@ -1186,10 +1132,11 @@ public class ParticleManager {
         .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
         .vramPos(effect.u_58 & 0x3c0, effect.v_5a < 256 ? 0 : 256)
         .uv((effect.u_58 & 0x3f) * 4, effect.v_5a)
-        .pos(-effect.w_5e / 2.0f, -effect.h_5f / 2.0f, 0.0f)
-        .size(effect.w_5e, effect.h_5f);
+        .uvSize(effect.w_5e, effect.h_5f)
+        .pos(-0.5f, -0.5f, 0.0f)
+        .posSize(1.0f, 1.0f);
 
-      if((manager.params_10.flags_00 & 1 << 30) != 0) {
+      if((manager.params_10.flags_00 & 0x1 << 30) != 0) {
         builder.translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
       }
 
@@ -1237,21 +1184,7 @@ public class ParticleManager {
         //LAB_800fe300
         MathHelper.clamp(colour.add(colourMod), 0.0f, 1.0f);
 
-        final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
-          .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
-          .vramPos(effect.u_58 & 0x3c0, effect.v_5a < 256 ? 0 : 256)
-          .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
-          .uv(0, (effect.u_58 & 0x3f) * 4, effect.v_5a)
-          .uv(1, (effect.u_58 & 0x3f) * 4 + effect.w_5e - 1, effect.v_5a)
-          .uv(2, (effect.u_58 & 0x3f) * 4, effect.v_5a + effect.h_5f - 1)
-          .uv(3, (effect.u_58 & 0x3f) * 4 + effect.w_5e - 1, effect.v_5a + effect.h_5f - 1);
-
-        if((manager.params_10.flags_00 & 1 << 30) != 0) {
-          cmd1.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
-        }
-
-        this.FUN_800fca78(manager, effect, particle, particle.particlePosition_50, cmd1);
-        final float instZ = this.FUN_800fca78(manager, particle, particle.particlePosition_50, effect.transforms) / 4.0f;
+        final float instZ = this.FUN_800fca78(manager, effect, particle, particle.particlePosition_50, effect.transforms) / 4.0f;
         float effectZ = manager.params_10.z_22;
         if(effectZ + instZ >= 160) {
           if(effectZ + instZ >= 4094) {
@@ -1259,25 +1192,16 @@ public class ParticleManager {
           }
 
           //LAB_800fe548
-          GPU.queueCommand((instZ + effectZ) / 4.0f, cmd1);
-          effect.transforms.transfer.x += GPU.getOffsetX();
-          effect.transforms.transfer.y += GPU.getOffsetY();
-          effect.transforms.transfer.z = effectZ * 4.0f;
+          effect.transforms.transfer.z = instZ + effectZ;
           RENDERER.queueOrthoModel(effect.obj, effect.transforms)
+            .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
             .colour(colour);
         }
 
         //LAB_800fe564
         if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
           ParticleEffectInstance94Sub10 particleSub = particle.particleInstanceSubArray_80[0];
-          particleSub.x0_00 = cmd1.getX(0);
-          particleSub.y0_02 = cmd1.getY(0);
-          particleSub.x1_04 = cmd1.getX(1);
-          particleSub.y1_06 = cmd1.getY(1);
-          particleSub.x2_08 = cmd1.getX(2);
-          particleSub.y2_0a = cmd1.getY(2);
-          particleSub.x3_0c = cmd1.getX(3);
-          particleSub.y3_0e = cmd1.getY(3);
+          particleSub.transforms.set(effect.transforms);
           colourStep.set(colour).div(effect.countParticleSub_54);
 
           final int count = Math.min(-particle.framesUntilRender_04, effect.countParticleSub_54);
@@ -1291,20 +1215,14 @@ public class ParticleManager {
                 effectZ = 4094 - instZ;
               }
 
-              final GpuCommandPoly cmd2 = new GpuCommandPoly(cmd1);
-
               particleSub = particle.particleInstanceSubArray_80[k];
 
               //LAB_800fe644
-              cmd2
-                .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
-                .pos(0, particleSub.x0_00, particleSub.y0_02)
-                .pos(1, particleSub.x1_04, particleSub.y1_06)
-                .pos(2, particleSub.x2_08, particleSub.y2_0a)
-                .pos(3, particleSub.x3_0c, particleSub.y3_0e);
-
               //LAB_800fe78c
-              GPU.queueCommand((instZ + effectZ) / 4.0f, cmd2);
+              particleSub.transforms.transfer.z = instZ + effectZ;
+              RENDERER.queueOrthoModel(effect.obj, particleSub.transforms)
+                .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
+                .colour(colour);
             }
 
             colour.sub(colourStep);
@@ -1835,21 +1753,9 @@ public class ParticleManager {
 
       if(v1 == 0) {
         //LAB_801011a0
-        final GpuCommandPoly cmd = new GpuCommandPoly(4);
-
         //LAB_801011d8
         for(int i = 0; i < effect.countParticleSub_54; i++) {
-          final ParticleEffectInstance94Sub10 s0 = particle.particleInstanceSubArray_80[i];
-
-          this.FUN_800fca78(manager, effect, particle, particle.particlePosition_50, cmd);
-          s0.x0_00 = cmd.getX(0);
-          s0.y0_02 = cmd.getY(0);
-          s0.x1_04 = cmd.getX(1);
-          s0.y1_06 = cmd.getY(1);
-          s0.x2_08 = cmd.getX(2);
-          s0.y2_0a = cmd.getY(2);
-          s0.x3_0c = cmd.getX(3);
-          s0.y3_0e = cmd.getY(3);
+          this.FUN_800fca78(manager, effect, particle, particle.particlePosition_50, particle.particleInstanceSubArray_80[i].transforms);
         }
         //LAB_8010114c
       } else if(v1 == 2 || v1 >= 4 && v1 < 6) {
