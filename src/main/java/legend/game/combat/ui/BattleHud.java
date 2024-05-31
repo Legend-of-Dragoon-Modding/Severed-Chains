@@ -2366,32 +2366,32 @@ public class BattleHud {
         }
 
         if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_UP))) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(2) ? 2 : 0;
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[4]) ? iconFlags_800c7194[4] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_DOWN))) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(7) ? 7 : 0;
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[7]) ? iconFlags_800c7194[7] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_RIGHT))) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(3) ? 5 : 3;
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[6]) ? iconFlags_800c7194[2] : iconFlags_800c7194[6];
           playSound(0, 40, 0, 0, (short)0, (short)0);
         }
 
         if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_LEFT_1))) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(6) ? 6 : 0;
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[3]) ? iconFlags_800c7194[3] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_RIGHT_1))) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(1) ? 1 : 0;
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[1]) ? iconFlags_800c7194[1] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         if(Input.pressedThisFrame((InputAction.BUTTON_WEST))) {
-          selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(3, 5);
+          selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(iconFlags_800c7194[2], iconFlags_800c7194[6]);
           this.checkInvalidSelectedAction(selectedAction);
         }
 
@@ -2511,7 +2511,9 @@ public class BattleHud {
   }
 
   private void checkInvalidSelectedAction(final int selectedAction) {
-    if(selectedAction == 0) playSound(0, 40, 0, 0, (short)0, (short)0);
+    if(selectedAction == 0) {
+      playSound(0, 40, 0, 0, (short)0, (short)0);
+    }
   }
 
   @Method(0x800f6b04L)

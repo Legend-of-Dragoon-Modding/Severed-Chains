@@ -344,12 +344,12 @@ public class BattleMenuStruct58 {
     }
   }
 
-  public boolean isIconEnabled(int value) {
+  public boolean isIconEnabled(final int value) {
     return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
       .anyMatch(i -> i == value);
   }
 
-  public int retrieveIconEnabled(int... values) {
+  public int retrieveIconEnabled(final int... values) {
     return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
       .filter(i -> Arrays.stream(values).anyMatch(value -> value == i))
       .findFirst()
