@@ -3264,6 +3264,9 @@ public class SMap extends EngineState {
     } else {
       //LAB_800e4d34
       this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, this.playerPositionWhenLoadingSubmap_800c6ac0.transfer);
+      // Most scripts call readposition and setposition on initialization, if middle of collision
+      // primitive has a fraction, player will have non-zero movement step on submap load (GH#1142)
+      this.playerPositionWhenLoadingSubmap_800c6ac0.transfer.round();
       this.playerPositionRestoreMode_800f7e24 = 2;
     }
 
@@ -3275,6 +3278,9 @@ public class SMap extends EngineState {
     if(this.playerPositionRestoreMode_800f7e24 == 0) {
       //LAB_800e4e20
       this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndexForPosition, model.coord2_14.coord.transfer);
+      // Most scripts call readposition and setposition on initialization, if middle of collision
+      // primitive has a fraction, player will have non-zero movement step on submap load (GH#1142)
+      model.coord2_14.coord.transfer.round();
     } else if(this.playerPositionRestoreMode_800f7e24 == 1) {
       model.coord2_14.coord.set(this.playerPositionWhenLoadingSubmap_800c6ac0);
     } else {
