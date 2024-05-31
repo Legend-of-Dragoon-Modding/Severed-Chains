@@ -14,6 +14,8 @@ import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
+import java.util.Arrays;
+
 import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
 
 public class BattleMenuStruct58 {
@@ -340,5 +342,17 @@ public class BattleMenuStruct58 {
         this.targetArrows[i] = null;
       }
     }
+  }
+
+  public boolean isIconEnabled(int value) {
+    return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
+      .anyMatch(i -> i == value);
+  }
+
+  public int retrieveIconEnabled(int... values) {
+    return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
+      .filter(i -> Arrays.stream(values).anyMatch(value -> value == i))
+      .findFirst()
+      .orElse(0);
   }
 }
