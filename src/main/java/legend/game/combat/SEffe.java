@@ -477,8 +477,8 @@ public final class SEffe {
     }
 
     if((effectParams.flags_00 & 0x400_0000) == 0) {
-      sp0x10.rotationXYZ(effectParams.rot_10);
-      sp0x10.scaleLocal(effectParams.scale_16);
+      sp0x10.scaling(effectParams.scale_16);
+      sp0x10.rotateXYZ(effectParams.rot_10);
 
       // Transform override is already in screenspace so we need to un-transform it
       if(RenderEngine.legacyMode == 0) {
@@ -799,9 +799,9 @@ public final class SEffe {
   /** Considers all parents */
   @Method(0x800e8594L)
   public static void calculateEffectTransforms(final MV transformMatrix, final EffectManagerData6c<?> manager) {
-    transformMatrix.rotationXYZ(manager.params_10.rot_10);
+    transformMatrix.scaling(manager.params_10.scale_16);
+    transformMatrix.rotateXYZ(manager.params_10.rot_10);
     transformMatrix.transfer.set(manager.params_10.trans_04);
-    transformMatrix.scaleLocal(manager.params_10.scale_16);
 
     EffectManagerData6c<?> currentManager = manager;
     int scriptIndex = manager.scriptIndex_0c;
@@ -820,9 +820,9 @@ public final class SEffe {
       if(BattleObject.EM__.equals(base.magic_00)) {
         final EffectManagerData6c<?> baseManager = (EffectManagerData6c<?>)base;
         final MV baseTransformMatrix = new MV();
-        baseTransformMatrix.rotationXYZ(baseManager.params_10.rot_10);
+        baseTransformMatrix.scaling(baseManager.params_10.scale_16);
+        baseTransformMatrix.rotateXYZ(baseManager.params_10.rot_10);
         baseTransformMatrix.transfer.set(baseManager.params_10.trans_04);
-        baseTransformMatrix.scaleLocal(baseManager.params_10.scale_16);
 
         if(currentManager.coord2Index_0d != -1) {
           //LAB_800e866c
@@ -5839,6 +5839,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /** Used by the rotating light disk when Shirley transforms */
   @ScriptDescription("Adds a rotation scaler attachment to an effect")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
@@ -6360,22 +6361,21 @@ public final class SEffe {
 
   @ScriptDescription("Adds a colour scaler attachment to an effect (lasts until removed)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity (8-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity (8-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity (8-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration (8-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration (8-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityR", description = "The R velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityG", description = "The G velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityB", description = "The B velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationR", description = "The R acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationG", description = "The G acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationB", description = "The B acceleration (8-bit fixed-point)")
   @Method(0x801147c8L)
   public static FlowControl scriptAddColourScalerAttachment(final RunningScript<?> script) {
     final int effectIndex = script.params_20[0].get();
-    //TODO .8?
-    final float velocityX = script.params_20[1].get() / (float)0x100;
-    final float velocityY = script.params_20[2].get() / (float)0x100;
-    final float velocityZ = script.params_20[3].get() / (float)0x100;
-    final float accelerationX = script.params_20[4].get() / (float)0x100;
-    final float accelerationY = script.params_20[5].get() / (float)0x100;
-    final float accelerationZ = script.params_20[6].get() / (float)0x100;
+    final float velocityR = script.params_20[1].get() / (float)0x100;
+    final float velocityG = script.params_20[2].get() / (float)0x100;
+    final float velocityB = script.params_20[3].get() / (float)0x100;
+    final float accelerationR = script.params_20[4].get() / (float)0x100;
+    final float accelerationG = script.params_20[5].get() / (float)0x100;
+    final float accelerationB = script.params_20[6].get() / (float)0x100;
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(effectIndex, EffectManagerData6c.class);
 
     if(manager.hasAttachment(4)) {
@@ -6387,8 +6387,8 @@ public final class SEffe {
     attachment.parent_30 = null;
     attachment.ticksRemaining_32 = -1;
     attachment.value_0c.set(manager.getColour());
-    attachment.velocity_18.set(velocityX, velocityY, velocityZ);
-    attachment.acceleration_24.set(accelerationX, accelerationY, accelerationZ);
+    attachment.velocity_18.set(velocityR, velocityG, velocityB);
+    attachment.acceleration_24.set(accelerationR, accelerationG, accelerationB);
     return FlowControl.CONTINUE;
   }
 
@@ -6396,9 +6396,9 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 for none)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until finished")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destR", description = "The final R colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destG", description = "The final G colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destB", description = "The final B colour")
   @Method(0x80114920L)
   public static FlowControl scriptAddConstantColourScalerAttachment(final RunningScript<?> script) {
     final int ticks = script.params_20[2].get();
@@ -6420,8 +6420,7 @@ public final class SEffe {
         colour = manager.getColourDifference(other, new Vector3i());
       }
 
-      // .8?
-      final Vector3f velocityVec = new Vector3f().set(
+      final Vector3f destColour = new Vector3f().set(
         script.params_20[3].get(),
         script.params_20[4].get(),
         script.params_20[5].get()
@@ -6430,7 +6429,7 @@ public final class SEffe {
       colorScaler.parent_30 = null;
       colorScaler.ticksRemaining_32 = ticks;
       colorScaler.value_0c.set(manager.getColour());
-      colorScaler.velocity_18.set(velocityVec).sub(colour.x, colour.y, colour.z).div(ticks);
+      colorScaler.velocity_18.set(destColour).sub(colour.x, colour.y, colour.z).div(ticks);
       colorScaler.acceleration_24.zero();
     }
 
@@ -7108,9 +7107,9 @@ public final class SEffe {
   @Method(0x8011619cL)
   public static void FUN_8011619c(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final LmbAnimationEffect5c effect, final int deffFlags, final MV matrix) {
     final MV sp0x10 = new MV();
-    sp0x10.rotationZYX(manager.params_10.rot_10);
+    sp0x10.scaling(manager.params_10.scale_16);
+    sp0x10.rotateZYX(manager.params_10.rot_10);
     sp0x10.transfer.set(manager.params_10.trans_04);
-    sp0x10.scaleLocal(manager.params_10.scale_16);
     sp0x10.compose(matrix, sp0x10);
     final float scale = manager.params_10.scale_28 / (float)0x1000;
     sp0x10.scaleLocal(scale, scale, scale);
