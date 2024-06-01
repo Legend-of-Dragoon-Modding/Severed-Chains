@@ -28,6 +28,7 @@ public class CombatantStruct1a8 {
    * <ul>
    *   <li>0x1 - used?</li>
    *   <li>0x4 - player (not NPC)</li>
+   *   <li>0x20 - loading model/anims</li>
    * </ul>
    */
   public int flags_19e;
