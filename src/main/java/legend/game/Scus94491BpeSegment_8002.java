@@ -1362,7 +1362,9 @@ public final class Scus94491BpeSegment_8002 {
       final UiPart[] entries = renderable.uiType_20.entries_08;
 
       if((renderable.flags_00 & Renderable58.FLAG_NO_ANIMATION) == 0) {
-        renderable.ticksPerFrame_08--;
+        if(tickCount_800bb0fc % (3 - vsyncMode_8007a3b8) == 0) {
+          renderable.ticksPerFrame_08--;
+        }
 
         if(renderable.ticksPerFrame_08 < 0) {
           if((renderable.flags_00 & Renderable58.FLAG_BACKWARDS_ANIMATION) != 0) {
@@ -1442,7 +1444,7 @@ public final class Scus94491BpeSegment_8002 {
         final RenderableMetrics14[] metricses = entries[renderable.glyph_04].metrics_00();
 
         //LAB_80023e94
-        for(int metricsIndex = 0; metricsIndex < metricses.length; metricsIndex++) {
+        for(int metricsIndex = metricses.length - 1; metricsIndex >= 0; metricsIndex--) {
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
           final float x1;
@@ -1512,7 +1514,7 @@ public final class Scus94491BpeSegment_8002 {
           if(renderable.uiType_20.obj != null) {
             final MV transforms = new MV();
             transforms.scaling(width, height, 1.0f);
-            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f - Math.lerp(0.0f, 3.9f, (metricsIndex + 1.0f) / metricses.length));
+            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
 
             final RenderEngine.QueuedModel<?> model = RENDERER
               .queueOrthoModel(renderable.uiType_20.obj, transforms)

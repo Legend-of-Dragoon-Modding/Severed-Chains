@@ -68,14 +68,14 @@ public class AdditionsScreen extends MenuScreen {
           FUN_80104b60(this.additionHighlight);
         }
 
-        allocateUiElement(69, 69, 0, 0);
-        allocateUiElement(70, 70, 192, 0);
+        allocateUiElement(69, 69, 0, 0); // Background left
+        allocateUiElement(70, 70, 192, 0); // Background right
         this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19, 0xffL);
         this.loadingStage++;
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4); // Left/right arrows
         this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {

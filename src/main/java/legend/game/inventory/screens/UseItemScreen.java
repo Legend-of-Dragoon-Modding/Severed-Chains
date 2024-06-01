@@ -399,6 +399,7 @@ public class UseItemScreen extends MenuScreen {
       this.selectedSlot--;
       this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
     } else if(this.slotScroll > 0) {
+      playSound(1);
       this.slotScroll--;
       this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
     }

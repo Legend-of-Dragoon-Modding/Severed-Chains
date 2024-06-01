@@ -116,6 +116,7 @@ public class MainMenuScreen extends MenuScreen {
             final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
 
             if(!otherButton.isDisabled() && otherButton.isVisible()) {
+              playSound(1);
               this.setFocus(otherButton);
               break;
             }
@@ -126,6 +127,7 @@ public class MainMenuScreen extends MenuScreen {
             final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
 
             if(!otherButton.isDisabled() && otherButton.isVisible()) {
+              playSound(1);
               this.setFocus(otherButton);
               break;
             }
@@ -135,6 +137,7 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index + this.menuButtons.size() / 2, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
+            playSound(1);
             this.setFocus(otherButton);
           }
         }
@@ -142,6 +145,7 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index - this.menuButtons.size() / 2, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
+            playSound(1);
             this.setFocus(otherButton);
           }
         }
@@ -281,7 +285,6 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showOptionsScreen() {
-    playSound(2);
     menuStack.pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
@@ -292,8 +295,6 @@ public class MainMenuScreen extends MenuScreen {
 
   private void showSaveScreen() {
     if(canSave_8011dc88) {
-      playSound(2);
-
       menuStack.pushScreen(new SaveGameScreen(() -> {
         menuStack.popScreen();
         this.fadeOutArrows();
@@ -321,7 +322,6 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showScreen(final Function<Runnable, MenuScreen> screen) {
-    playSound(2);
     menuStack.pushScreen(screen.apply(() -> {
       menuStack.popScreen();
       this.loadingStage = 0;

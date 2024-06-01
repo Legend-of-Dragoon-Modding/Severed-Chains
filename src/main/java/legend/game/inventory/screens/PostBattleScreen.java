@@ -662,7 +662,7 @@ public class PostBattleScreen extends MenuScreen {
 
     final int glyph = charPortraitGlyphs_800fbc9c[charId];
     final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, characterPortraitVs_800fbc88[charId]);
-    renderable.z_3c = 36;
+    renderable.z_3c = 35;
 
     //LAB_8010e1f0
     return renderable;

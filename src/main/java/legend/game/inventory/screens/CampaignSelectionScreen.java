@@ -56,6 +56,8 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void onSelection(final Campaign campaign) {
+    playSound(2);
+
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
 

@@ -1749,7 +1749,7 @@ public final class SItem {
           }
 
           //LAB_8010ef64
-          textZ_800bdf00 = 31;
+          textZ_800bdf00 = 30;
 
           renderCentredText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? TextColour.RED : TextColour.BROWN);
           renderCentredText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? TextColour.BROWN : TextColour.RED);
