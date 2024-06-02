@@ -129,8 +129,8 @@ public class LodString {
       case '&' -> 0x10;
       case '*' -> 0x11;
       case '\u011e' -> 0x12;
-      case '\u011f'+33 -> 0x13;
-      case '\u0120'+33 -> 0x14;
+      case '\u011f' -> 0x13;
+      case '\u0120' -> 0x14;
       case '0' -> 0x15;
       case '1' -> 0x16;
       case '2' -> 0x17;

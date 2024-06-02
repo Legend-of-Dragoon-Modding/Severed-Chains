@@ -47,6 +47,30 @@ public class BigList<T> extends Control {
     }
   }
 
+  public void removeEntry(final T entry) {
+    final int index = this.entries.indexOf(entry);
+
+    if(index != -1) {
+      this.entries.remove(index);
+      this.removeControl(this.labels.get(index));
+      this.labels.remove(index);
+
+      if(this.labels.isEmpty() && this.highlightHandler != null) {
+        this.highlightHandler.highlight(null);
+      } else if(this.slot >= this.entries.size()) {
+        if(this.scroll > 0) {
+          this.scroll--;
+        }
+
+        this.highlight(this.slot - 1);
+        this.updateEntries();
+      } else {
+        this.updateEntries();
+        this.highlight(this.slot);
+      }
+    }
+  }
+
   private Label addLabel() {
     final int index = this.labels.size();
 
@@ -58,7 +82,7 @@ public class BigList<T> extends Control {
     label.hide();
 
     label.onMouseMove((x, y) -> {
-      this.highlight(index);
+      this.highlight(this.labels.indexOf(label));
       return InputPropagation.HANDLED;
     });
 
@@ -73,6 +97,10 @@ public class BigList<T> extends Control {
     });
 
     return label;
+  }
+
+  public int size() {
+    return this.entries.size();
   }
 
   public T getSelected() {

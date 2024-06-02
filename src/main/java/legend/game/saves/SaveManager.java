@@ -10,6 +10,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -414,5 +415,13 @@ public final class SaveManager {
     }
 
     return saves;
+  }
+
+  public void deleteCampaign(final String campaignName) throws IOException {
+    FileUtils.deleteDirectory(this.dir.resolve(campaignName).toFile());
+  }
+
+  public void deleteSave(final String campaignName, final String saveName) throws IOException {
+    Files.delete(this.dir.resolve(campaignName).resolve(saveName + ".dsav"));
   }
 }

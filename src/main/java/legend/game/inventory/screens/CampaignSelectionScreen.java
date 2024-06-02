@@ -13,7 +13,10 @@ import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -34,6 +37,10 @@ import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class CampaignSelectionScreen extends MenuScreen {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(MenuScreen.class);
+
+  private final BigList<Campaign> campaignList;
+
   public CampaignSelectionScreen() {
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
@@ -43,15 +50,22 @@ public class CampaignSelectionScreen extends MenuScreen {
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
 
-    final BigList<Campaign> campaignList = this.addControl(new BigList<>(Campaign::filename));
-    campaignList.setPos(16, 16);
-    campaignList.setSize(360, 144);
-    campaignList.onHighlight(campaign -> saveCard.setSaveData(campaign.latestSave()));
-    campaignList.onSelection(this::onSelection);
-    this.setFocus(campaignList);
+    this.campaignList = this.addControl(new BigList<>(Campaign::filename));
+    this.campaignList.setPos(16, 16);
+    this.campaignList.setSize(360, 144);
+    this.campaignList.onHighlight(campaign -> {
+      if(campaign == null) {
+        this.menuEscape();
+        return;
+      }
+
+      saveCard.setSaveData(campaign.latestSave());
+    });
+    this.campaignList.onSelection(this::onSelection);
+    this.setFocus(this.campaignList);
 
     for(final Campaign campaign : SAVES.loadAllCampaigns()) {
-      campaignList.addEntry(campaign);
+      this.campaignList.addEntry(campaign);
     }
   }
 
@@ -112,6 +126,25 @@ public class CampaignSelectionScreen extends MenuScreen {
   @Override
   protected void render() {
     SItem.renderCentredText("Campaigns", 188, 10, TextColour.BROWN);
+    SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
+  }
+
+  private void menuDelete() {
+    playSound(40);
+
+    if(this.campaignList.getSelected() != null) {
+      menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this campaign?", 2, result -> {
+        if(result == MessageBoxResult.YES) {
+          try {
+            SAVES.deleteCampaign(this.campaignList.getSelected().filename());
+            this.campaignList.removeEntry(this.campaignList.getSelected());
+          } catch(final IOException e) {
+            LOGGER.error("Failed to delete campaign", e);
+            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Failed to delete campaign", 0, result1 -> {})));
+          }
+        }
+      }));
+    }
   }
 
   private void menuEscape() {
@@ -125,6 +158,11 @@ public class CampaignSelectionScreen extends MenuScreen {
   @Override
   public InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.BUTTON_WEST) {
+      this.menuDelete();
       return InputPropagation.HANDLED;
     }
 
