@@ -840,9 +840,11 @@ public final class SItem {
         final int charWidth = Scus94491BpeSegment_8002.charWidth(current);
 
         if(currentWidth + charWidth > maxWidth) {
+          boolean advanceOverSpace = false;
           for(int backtrack = 0; backtrack < 10; backtrack++) {
             if(text.charAt(i - backtrack) == ' ') {
               i -= backtrack;
+              advanceOverSpace = true;
               break;
             }
           }
@@ -850,6 +852,10 @@ public final class SItem {
           temp.add(text.substring(startIndex, i));
           currentWidth = charWidth;
           startIndex = i;
+
+          if(advanceOverSpace) {
+            startIndex++;
+          }
         } else {
           currentWidth += charWidth;
         }
