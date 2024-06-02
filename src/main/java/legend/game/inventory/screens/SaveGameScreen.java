@@ -46,7 +46,7 @@ public class SaveGameScreen extends MenuScreen {
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
 
-    final BigList<SavedGame> saveList = this.addControl(new BigList<>(savedGame -> savedGame != null ? savedGame.saveName() : "<new save>"));
+    final BigList<SavedGame> saveList = this.addControl(new BigList<>(savedGame -> savedGame != null ? savedGame.saveName : "<new save>"));
     saveList.setPos(16, 16);
     saveList.setSize(360, 144);
     saveList.onHighlight(saveCard::setSaveData);
@@ -101,7 +101,7 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.overwriteSave(save.fileName(), save.saveName(), gameState_800babc8, stats_800be5f8);
+        SAVES.overwriteSave(save.fileName, save.saveName, gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));

@@ -74,11 +74,11 @@ public class CampaignSelectionScreen extends MenuScreen {
       menuStack.popScreen();
 
       CONFIG.clearConfig(ConfigStorageLocation.SAVE);
-      CONFIG.copyConfigFrom(save.config());
+      CONFIG.copyConfigFrom(save.config);
 
       GameEngine.bootRegistries();
 
-      final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state()));
+      final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state));
 
       gameState_800babc8 = event.gameState;
       gameState_800babc8.syncIds();

@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -82,8 +83,8 @@ public class Ttle extends EngineState {
   private int flameColour;
   private int menuIdleTime;
 
-  private int _800c6728;
-  private int _800c672c;
+  private int menuTransitionState_800c6728;
+  private int menuState_800c672c;
   private final int[] menuOptionTransparency = new int[4];
 
   private int fadeOutTimer_800c6754;
@@ -150,6 +151,8 @@ public class Ttle extends EngineState {
       case 6 -> this.fadeOutMainMenu();
       case 7 -> this.fadeOutForOptions();
       case 8 -> this.fadeOutForQuit();
+      case 9 -> this.fadeOutForCategorizeSave();
+      case 10 -> this.fadeOutForMemcard();
     }
   }
 
@@ -160,8 +163,8 @@ public class Ttle extends EngineState {
 
     this.menuLoadingStage = 0;
     this.menuIdleTime = 0;
-    this._800c6728 = 0;
-    this._800c672c = 0;
+    this.menuTransitionState_800c6728 = 0;
+    this.menuState_800c672c = 0;
     this.logoFadeInAmount = 0.0f;
     this.backgroundInitialized = false;
     this.backgroundScrollAmount = -176;
@@ -344,49 +347,35 @@ public class Ttle extends EngineState {
 
   @Method(0x800c7e50L)
   private void fadeOutForNewGame() {
-    if(this.fadeOutTimer_800c6754 == 0) {
-      startFadeEffect(1, 15);
-    }
-
-    //LAB_800c7fcc
-    this.fadeOutTimer_800c6754++;
-
-    if(this.fadeOutTimer_800c6754 >= 16) {
-      if(this._800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu.INIT_NEW_CAMPAIGN_MENU;
-        removeInputHandlers();
-        this.deallocate();
-        this._800c6728 = 3;
-      }
-    }
-
-    //LAB_800c8038
-    loadAndRenderMenus();
-
-    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
+    this.fadeOutToMenu(WhichMenu.INIT_NEW_CAMPAIGN_MENU, () -> {
       if(loadingNewGameState_800bdc34) {
         removeInputHandlers();
         this.deallocate();
 
         Fmv.playCurrentFmv(2, EngineStateEnum.TRANSITION_TO_NEW_GAME_03);
-        return;
+        return true;
       }
 
-      if(this._800c6728 == 3) {
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        this.loadingStage = 0;
-        vsyncMode_8007a3b8 = 2;
-      } else {
-        this.renderMenuBackground();
-        this.renderMenuOptions();
-        this.renderMenuLogo();
-        this.renderMenuLogoFire();
-        this.renderCopyright();
-      }
-    }
+      return false;
+    });
   }
 
   private void fadeOutForOptions() {
+    this.fadeOutToMenu(WhichMenu.INIT_OPTIONS_MENU, () -> {
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+      return false;
+    });
+  }
+
+  private void fadeOutForCategorizeSave() {
+    this.fadeOutToMenu(WhichMenu.INIT_CATEGORIZE_SAVE_MENU, () -> false);
+  }
+
+  private void fadeOutForMemcard() {
+    this.fadeOutToMenu(WhichMenu.INIT_MEMCARD_MENU, () -> false);
+  }
+
+  private void fadeOutToMenu(final WhichMenu menu, final BooleanSupplier transition) {
     if(this.fadeOutTimer_800c6754 == 0) {
       startFadeEffect(1, 15);
     }
@@ -395,11 +384,11 @@ public class Ttle extends EngineState {
     this.fadeOutTimer_800c6754++;
 
     if(this.fadeOutTimer_800c6754 >= 16) {
-      if(this._800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu.INIT_OPTIONS_MENU;
+      if(this.menuTransitionState_800c6728 == 2) {
+        whichMenu_800bdc38 = menu;
         removeInputHandlers();
         this.deallocate();
-        this._800c6728 = 3;
+        this.menuTransitionState_800c6728 = 3;
       }
     }
 
@@ -407,11 +396,12 @@ public class Ttle extends EngineState {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(this._800c6728 == 3) {
-        ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        this.loadingStage = 0;
-        vsyncMode_8007a3b8 = 2;
+      if(this.menuTransitionState_800c6728 == 3) {
+        if(!transition.getAsBoolean()) {
+          engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+          this.loadingStage = 0;
+          vsyncMode_8007a3b8 = 2;
+        }
       } else {
         this.renderMenuBackground();
         this.renderMenuOptions();
@@ -445,26 +435,7 @@ public class Ttle extends EngineState {
 
   @Method(0x800c7fa0L)
   private void waitForSaveSelection() {
-    if(this.fadeOutTimer_800c6754 == 0) {
-      startFadeEffect(1, 15);
-    }
-
-    //LAB_800c7fcc
-    this.fadeOutTimer_800c6754++;
-
-    if(this.fadeOutTimer_800c6754 >= 16) {
-      if(this._800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu.INIT_CAMPAIGN_SELECTION_MENU;
-        removeInputHandlers();
-        this.deallocate();
-        this._800c6728 = 3;
-      }
-    }
-
-    //LAB_800c8038
-    loadAndRenderMenus();
-
-    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
+    this.fadeOutToMenu(WhichMenu.INIT_CAMPAIGN_SELECTION_MENU, () -> {
       if(loadingNewGameState_800bdc34) {
         if(gameState_800babc8.isOnWorldMap_4e4) {
           engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
@@ -476,25 +447,11 @@ public class Ttle extends EngineState {
         vsyncMode_8007a3b8 = 2;
 
         //LAB_800c80c4
-        return;
+        return true;
       }
 
-      //LAB_800c80cc
-      if(this._800c6728 == 3) {
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        this.loadingStage = 0;
-        vsyncMode_8007a3b8 = 2;
-      } else {
-        //LAB_800c8108
-        this.renderMenuBackground();
-        this.renderMenuOptions();
-        this.renderMenuLogo();
-        this.renderMenuLogoFire();
-        this.renderCopyright();
-      }
-    }
-
-    //LAB_800c8138
+      return false;
+    });
   }
 
   @Method(0x800c8148L)
@@ -581,7 +538,7 @@ public class Ttle extends EngineState {
       }
     }
 
-    if(this._800c6728 != 1) {
+    if(this.menuTransitionState_800c6728 != 1) {
 //      this.menuIdleTime += 2;
 
       if(this.menuIdleTime > 1680) {
@@ -616,7 +573,7 @@ public class Ttle extends EngineState {
       final float scaleY = h / GPU.getDisplayTextureHeight();
 
       if(this.menuLoadingStage == 3) {
-        if(this._800c672c < 3) {
+        if(this.menuState_800c672c < 3) {
           for(int i = 0; i < 4; i++) {
             if(i == 1 && this.hasSavedGames != 1) {
               continue;
@@ -663,7 +620,7 @@ public class Ttle extends EngineState {
         final float scaleX = w / GPU.getDisplayTextureWidth();
         final float scaleY = h / GPU.getDisplayTextureHeight();
 
-        if(this._800c672c < 3) {
+        if(this.menuState_800c672c < 3) {
           for(int i = 0; i < 4; i++) {
             if(i == 1 && this.hasSavedGames != 1) {
               continue;
@@ -678,7 +635,7 @@ public class Ttle extends EngineState {
               playSound(0, 2, 0, 0, (short)0, (short)0);
               this.selectedMenuOption = i;
 
-              this._800c672c = 3;
+              this.menuState_800c672c = 3;
               break;
             }
           }
@@ -700,11 +657,11 @@ public class Ttle extends EngineState {
 
   @Method(0x800c8484L)
   private void handleMainInput() {
-    if(this._800c672c < 3) {
+    if(this.menuState_800c672c < 3) {
       if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
-        this._800c672c = 3;
+        this.menuState_800c672c = 3;
       } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
@@ -717,7 +674,7 @@ public class Ttle extends EngineState {
           this.selectedMenuOption--;
         }
 
-        this._800c672c = 2;
+        this.menuState_800c672c = 2;
       } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
@@ -730,7 +687,7 @@ public class Ttle extends EngineState {
           this.selectedMenuOption++;
         }
 
-        this._800c672c = 2;
+        this.menuState_800c672c = 2;
       }
     }
   }
@@ -738,7 +695,17 @@ public class Ttle extends EngineState {
   @Method(0x800c8634L)
   private void renderMenuOptions() {
     if(this.hasSavedGames == 0) {
-      SAVES.updateUncategorizedSaves();
+      if(!SAVES.findUncategorizedSaves().isEmpty()) {
+        this.menuState_800c672c = 4;
+        this.menuTransitionState_800c6728 = 2;
+        this.loadingStage = 9;
+      }
+
+      if(!SAVES.findMemcards().isEmpty()) {
+        this.menuState_800c672c = 4;
+        this.menuTransitionState_800c6728 = 2;
+        this.loadingStage = 10;
+      }
 
       this.hasSavedGames = SAVES.hasCampaigns() ? 1 : 2;
       this.selectedMenuOption = this.hasSavedGames == 1 ? 1 : 0;
@@ -746,7 +713,7 @@ public class Ttle extends EngineState {
     }
 
     //LAB_800c868c
-    switch(this._800c672c) {
+    switch(this.menuState_800c672c) {
       case 0 -> {
         //LAB_800c86d8
         for(int i = 0; i < 4; i++) {
@@ -755,7 +722,7 @@ public class Ttle extends EngineState {
         }
 
         //LAB_800c8728
-        this._800c672c = 1;
+        this.menuState_800c672c = 1;
       }
 
       case 1 -> {
@@ -808,19 +775,19 @@ public class Ttle extends EngineState {
       }
 
       case 3 -> { // Clicked on menu option
-        this._800c672c = 4;
+        this.menuState_800c672c = 4;
         if(this.selectedMenuOption == 0) {
-          this._800c6728 = 2;
+          this.menuTransitionState_800c6728 = 2;
           this.loadingStage = 4;
           //LAB_800c8a20
         } else if(this.selectedMenuOption == 1) {
-          this._800c6728 = 2;
+          this.menuTransitionState_800c6728 = 2;
           this.loadingStage = 5;
         } else if(this.selectedMenuOption == 2) {
-          this._800c6728 = 2;
+          this.menuTransitionState_800c6728 = 2;
           this.loadingStage = 7;
         } else if(this.selectedMenuOption == 3) {
-          this._800c6728 = 2;
+          this.menuTransitionState_800c6728 = 2;
           this.loadingStage = 8;
         }
       }

@@ -24,7 +24,6 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
-import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuEntries;
@@ -42,7 +41,9 @@ import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static legend.core.GameEngine.CONFIG;
@@ -56,6 +57,7 @@ import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -819,23 +821,49 @@ public final class SItem {
     Scus94491BpeSegment_8002.renderText(text, x + 1, y + 1, shadowColour, 0);
   }
 
-  @Method(0x80103dd4L)
-  public static int textLength(final LodString text) {
-    //LAB_80103ddc
-    int v1;
-    for(v1 = 0; v1 < 0xff; v1++) {
-      if(text.charAt(v1) == 0xa0ff) {
-        break;
-      }
-    }
-
-    //LAB_80103dfc
-    return v1;
-  }
-
   @Method(0x80103e90L)
   public static void renderCentredText(final String text, final int x, final int y, final TextColour colour) {
     renderText(text, x - textWidth(text) / 2, y, colour);
+  }
+
+  @Method(0x80103e90L)
+  public static void renderCentredText(final String text, final int x, int y, final TextColour colour, final int maxWidth) {
+    final String[] split;
+    if(textWidth(text) <= maxWidth) {
+      split = new String[] {text};
+    } else {
+      final List<String> temp = new ArrayList<>();
+      int currentWidth = 0;
+      int startIndex = 0;
+      for(int i = 0; i < text.length(); i++) {
+        final char current = text.charAt(i);
+        final int charWidth = Scus94491BpeSegment_8002.charWidth(current);
+
+        if(currentWidth + charWidth > maxWidth) {
+          for(int backtrack = 0; backtrack < 10; backtrack++) {
+            if(text.charAt(i - backtrack) == ' ') {
+              i -= backtrack;
+              break;
+            }
+          }
+
+          temp.add(text.substring(startIndex, i));
+          currentWidth = charWidth;
+          startIndex = i;
+        } else {
+          currentWidth += charWidth;
+        }
+      }
+
+      temp.add(text.substring(startIndex));
+      split = temp.toArray(String[]::new);
+    }
+
+    for(int i = 0; i < split.length; i++) {
+      final String str = split[i];
+      renderText(str, x - textWidth(str) / 2, y, colour);
+      y += textHeight(str);
+    }
   }
 
   @Method(0x801038d4L)
