@@ -688,18 +688,14 @@ public final class SItem {
 
   @Method(0x8010376cL)
   public static void renderGlyphs(final MenuGlyph06[] glyphs, final int x, final int y) {
-    float offsetZ = 0.0f;
-
     //LAB_801037ac
-    for(int i = glyphs.length - 1; i >= 0; i--) {
+    for(int i = 0; i < glyphs.length; i++) {
       final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
 
       initGlyph(s0, glyphs[i]);
 
       s0.x_40 += x;
       s0.y_44 += y;
-      s0.z_3c += offsetZ;
-      offsetZ += 0.01f;
     }
 
     //LAB_801037f4
