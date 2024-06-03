@@ -3348,7 +3348,7 @@ public final class Scus94491BpeSegment_8002 {
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .monochrome(0.0f)
-            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
+            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y, 8, height);
 
           textboxText.transforms.transfer.x--;
           textboxText.transforms.transfer.y--;
@@ -3357,7 +3357,7 @@ public final class Scus94491BpeSegment_8002 {
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
-            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
+            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y, 8, height);
         }
 
         nudgeX += getCharWidth(chr.char_06);
@@ -3496,9 +3496,9 @@ public final class Scus94491BpeSegment_8002 {
 
           if(trim != 0) {
             if(trim < 0) {
-              model.scissor(0, (int)y + 12 + trim, displayWidth_1f8003e0, 12 + trim);
+              model.scissor(0, (int)y, displayWidth_1f8003e0, 12 + trim);
             } else {
-              model.scissor(0, (int)y + 12 - trim, displayWidth_1f8003e0, 12);
+              model.scissor(0, (int)y - trim, displayWidth_1f8003e0, 12);
             }
           }
         }

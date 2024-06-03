@@ -1,5 +1,6 @@
 package legend.game.types;
 
+import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
 import legend.game.combat.deff.Cmb;

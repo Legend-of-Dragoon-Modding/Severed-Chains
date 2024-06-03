@@ -705,9 +705,9 @@ public class RenderEngine {
         glEnable(GL_SCISSOR_TEST);
 
         if(widescreen) {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.height - (int)(entry.scissor.y * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
         } else {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - (int)(entry.scissor.y * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
         }
       }
 
@@ -1413,9 +1413,15 @@ public class RenderEngine {
       return this;
     }
 
-    /** Note: origin is bottom-left corner */
+    /** Note: origin is top-left corner */
     public QueuedModel<Options> scissor(final int x, final int y, final int w, final int h) {
       this.scissor.set(x, y, w, h);
+      return this;
+    }
+
+    /** Note: origin is top-left corner */
+    public QueuedModel<Options> scissor(final Rect4i scissor) {
+      this.scissor.set(scissor);
       return this;
     }
 

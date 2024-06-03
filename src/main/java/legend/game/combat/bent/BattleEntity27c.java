@@ -1,5 +1,7 @@
 package legend.game.combat.bent;
 
+import legend.core.RenderEngine;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
@@ -204,6 +206,9 @@ public abstract class BattleEntity27c extends BattleObject {
 
   private final Vector3i colour = new Vector3i(0x80, 0x80, 0x80);
 
+  public final Rect4i scissor = new Rect4i();
+  public boolean useScissor;
+
   public BattleEntity27c(final BattleEntityType type, final String name) {
     super(BattleObject.BOBJ);
     this.type = type;
@@ -212,6 +217,15 @@ public abstract class BattleEntity27c extends BattleObject {
     final Set<StatType> stats = new HashSet<>();
     EVENTS.postEvent(new RegisterBattleEntityStatsEvent(type, stats));
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
+  }
+
+  public void scissor(final int x, final int y, final int w, final int h) {
+    this.scissor.set(x, y, w, h);
+    this.useScissor = true;
+  }
+
+  public void disableScissor() {
+    this.useScissor = false;
   }
 
   public int getEffectiveDefence() {
@@ -638,13 +652,17 @@ public abstract class BattleEntity27c extends BattleObject {
         Renderer.renderDobj2(part, true, 0);
 
         if(model.modelParts_00[i].obj != null) {
-          RENDERER.queueModel(model.modelParts_00[i].obj, lw)
+          final RenderEngine.QueuedModel<?> queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
             .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
             .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
             .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+          if(this.useScissor) {
+            queue.scissor(this.scissor);
+          }
         }
       }
     }

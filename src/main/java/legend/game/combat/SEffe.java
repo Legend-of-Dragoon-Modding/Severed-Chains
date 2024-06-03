@@ -6,7 +6,6 @@ import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
-import legend.core.gpu.GpuCommand;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandSetMaskBit;
@@ -147,6 +146,7 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -8209,69 +8209,17 @@ public final class SEffe {
   }
 
   @Method(0x80118a24L)
-  public static void renderShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ShirleyType>> state, final EffectManagerData6c<EffectManagerParams.ShirleyType> manager) {
-    final float x = manager.params_10.trans_04.x + 160 - manager.params_10.width_24 / 2.0f;
-    final float y = manager.params_10.trans_04.y + 120 - manager.params_10.height_28 / 2.0f;
-    final float minZ = (manager.params_10.trans_04.z - manager.params_10.depth_2c / 2.0f) / 4.0f;
-    final float maxZ = (manager.params_10.trans_04.z + manager.params_10.depth_2c / 2.0f) / 4.0f;
-    final int right = 320;
-    final int bottom = 240;
+  public static void tickShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ShirleyType>> state, final EffectManagerData6c<EffectManagerParams.ShirleyType> manager) {
+    if(manager.params_10.depth_2c == 0) {
+      return;
+    }
 
-    final Rect4i buffPos = new Rect4i();
+    final int y = (int)(manager.params_10.trans_04.y - manager.params_10.height_28 / 2.0f);
 
-    //LAB_80118ba8
-    for(int i = 0; i < 4; i++) {
-      buffPos.x = (int)(x + manager.params_10.width_24 / 2 * (i & 1));
-      buffPos.y = (int)(y + manager.params_10.height_28 / 2 * (i >> 1));
-      buffPos.w = manager.params_10.width_24 / 2;
-      buffPos.h = manager.params_10.height_28 / 2;
-
-      if(buffPos.x < right) {
-        if(buffPos.x < 0) {
-          buffPos.w += buffPos.x;
-          buffPos.x = 0;
-        }
-
-        //LAB_80118c58
-        if(buffPos.x + buffPos.w > right) {
-          buffPos.w = right - buffPos.x;
-        }
-
-        //LAB_80118c7c
-        if(buffPos.w > 0) {
-          if(buffPos.y < bottom) {
-            if(buffPos.y < 0) {
-              buffPos.y = 0;
-            }
-
-            //LAB_80118cc0
-            if(buffPos.y + buffPos.h > bottom) {
-              buffPos.h = bottom - buffPos.y;
-            }
-
-            //LAB_80118ce4
-            if(buffPos.h > 0) {
-              final int[] data = new int[buffPos.w * buffPos.h];
-              final Rect4i rect = new Rect4i(buffPos.x, buffPos.y, buffPos.w, buffPos.h);
-
-              // Back up draw buffer data after background is rendered, but before models are rendered
-              GPU.queueCommand(maxZ, new GpuCommand() {
-                @Override
-                public void render(final Gpu gpu) {
-                  gpu.getDrawBuffer().getRegion(rect, data);
-                }
-              });
-
-              // Overwrite rendered model pixels with the background pixels we backed up to emulate the wipe effect
-              GPU.queueCommand(minZ, new GpuCommand() {
-                @Override
-                public void render(final Gpu gpu) {
-                  gpu.getDrawBuffer().setRegion(rect, data);
-                }
-              });
-            }
-          }
-        }
+    for(final var bent : battleState_8006e398.monsterBents_e50) {
+      if(bent != null) {
+        // Y can go slightly negative so double the height to ensure their feet don't disappear
+        bent.innerStruct_00.scissor(0, displayHeight_1f8003e4 + y, displayWidth_1f8003e0, displayHeight_1f8003e4 * 2);
       }
     }
   }
@@ -8287,9 +8235,15 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.ShirleyType>> state = allocateEffectManager(
       "Shirley transform wipe effect",
       script.scriptState_04,
+      SEffe::tickShirleyTransformWipeEffect,
       null,
-      SEffe::renderShirleyTransformWipeEffect,
-      null,
+      (state1, manager) -> {
+        for(final var bent : battleState_8006e398.monsterBents_e50) {
+          if(bent != null) {
+            bent.innerStruct_00.disableScissor();
+          }
+        }
+      },
       null,
       new EffectManagerParams.ShirleyType()
     );
@@ -8298,7 +8252,7 @@ public final class SEffe {
     manager.params_10.trans_04.z = 256;
     manager.params_10.width_24 = 0x80;
     manager.params_10.height_28 = 0x80;
-    manager.params_10.depth_2c = 0x100;
+    manager.params_10.depth_2c = 0; // This value is set by the script, setting it to 0 allows us to detect if the effect has been initialized in the ticker
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
