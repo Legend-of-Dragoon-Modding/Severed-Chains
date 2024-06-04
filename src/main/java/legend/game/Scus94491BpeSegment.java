@@ -57,6 +57,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -391,7 +392,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
+      RENDERER.window().setFpsLimit(60 / frames * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
 
@@ -2166,12 +2167,16 @@ public final class Scus94491BpeSegment {
     }
   }
 
-  public static int soundBufferOffset;
-
-  /** TODO this isn't thread-safe */
   private static void loadBattlePhaseSounds(final String boss, final int phase) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
-    soundBufferOffset = 0;
+    final AtomicInteger soundbankOffset = new AtomicInteger();
+    final AtomicInteger count = new AtomicInteger(0);
+
+    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+      if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
+        count.incrementAndGet();
+      }
+    }
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
@@ -2180,45 +2185,55 @@ public final class Scus94491BpeSegment {
 
       if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
         final int finalMonsterSlot = monsterSlot;
-        loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> FUN_8001d51c(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, phase), finalMonsterSlot));
+        loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> {
+          final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
+          monsterSoundLoaded(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, phase), finalMonsterSlot, offset);
+
+          if(count.decrementAndGet() == 0) {
+            loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x10);
+          }
+        });
       }
     }
-
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffef);
   }
 
-  /** TODO this isn't thread-safe */
   private static void loadEncounterSounds(final int encounterId) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
-    soundBufferOffset = 0;
 
     loadFile("encounters", file -> {
-      final EncounterData38 encounterData = new EncounterData38(file.getBytes(), encounterId * 0x38);;
-      final short[] monsterIds = encounterData.enemyIndices_00;
+      final AtomicInteger soundbankOffset = new AtomicInteger();
+      final AtomicInteger count = new AtomicInteger(0);
 
-      //TODO this is kinda dirty
+      final EncounterData38 encounterData = new EncounterData38(file.getBytes(), encounterId * 0x38);
+
+      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Unpacker.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
+          count.incrementAndGet();
+        }
+      }
+
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
         soundFile.charId_02 = -1;
         soundFile.used_00 = false;
 
-        if((monsterSlot >= monsterIds.length) || (monsterIds[monsterSlot] == -1)) {
-          continue;
-        }
+        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Unpacker.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
+          final int finalMonsterSlot = monsterSlot;
+          loadDir("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds", files -> {
+            final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
+            monsterSoundLoaded(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, encounterData.enemyIndices_00[finalMonsterSlot]), finalMonsterSlot, offset);
 
-        final int finalMonsterSlot = monsterSlot;
-        if(Unpacker.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
-          loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot));
+            if(count.decrementAndGet() == 0) {
+              loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x10);
+            }
+          });
         }
       }
-
     });
-
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffef);
   }
 
   @Method(0x8001d51cL)
-  public static void FUN_8001d51c(final List<FileData> files, final String soundName, final int monsterSlot) {
+  public static void monsterSoundLoaded(final List<FileData> files, final String soundName, final int monsterSlot, final int soundBufferOffset) {
     //LAB_8001d698
     final int file3Size = files.get(3).size();
 
@@ -2241,11 +2256,8 @@ public final class Scus94491BpeSegment {
       //LAB_8001d80c
       soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0 + soundBufferOffset);
 
-      loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffef);
-
       setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
       soundFile.used_00 = true;
-      soundBufferOffset += file3Size + (file3Size & 0xf);
     }
 
     //LAB_8001d8ac

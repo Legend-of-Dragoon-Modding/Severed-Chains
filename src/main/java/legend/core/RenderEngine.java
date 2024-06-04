@@ -774,6 +774,10 @@ public class RenderEngine {
     this.tmdShaderOptions.translucency(Translucency.B_PLUS_F);
     Translucency.B_PLUS_F.setGlState();
 
+    final boolean widescreen = this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final float w = this.width / this.projectionWidth;
+    final float h = this.height / this.projectionHeight;
+
     for(int i = 0; i < pool.size(); i++) {
       final int modelIndex = i & 0x7f;
 
@@ -805,6 +809,16 @@ public class RenderEngine {
           this.tmdShaderOptions.useVdf(false);
         }
 
+        if(entry.scissor.w != 0) {
+          glEnable(GL_SCISSOR_TEST);
+
+          if(widescreen) {
+            glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
+          } else {
+            glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
+          }
+        }
+
         entry.useTexture();
 
         if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
@@ -829,6 +843,10 @@ public class RenderEngine {
         if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
           this.tmdShaderOptions.colour(entry.colour.mul(0.25f, this.tempColour));
           entry.render(Translucency.B_PLUS_QUARTER_F);
+        }
+
+        if(entry.scissor.w != 0) {
+          glDisable(GL_SCISSOR_TEST);
         }
       }
     }

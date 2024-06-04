@@ -34,7 +34,6 @@ import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -1704,10 +1703,6 @@ public final class SItem {
           .posSize(1.0f, 1.0f)
           .uvSize(metrics.textureWidth, metrics.textureHeight)
         ;
-
-        if((metrics.clut_04 & 0x8000) != 0) {
-          builder.translucency(Translucency.of(metrics.tpage_06 >>> 5 & 0b11));
-        }
 
         metrics.vertexStart = vertices;
         vertices += 4;
