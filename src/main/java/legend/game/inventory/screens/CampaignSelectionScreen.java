@@ -85,7 +85,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     }
 
     final Runnable loadGameScreen = () -> menuStack.pushScreen(new LoadGameScreen(save -> {
-      menuStack.popScreen();
+      menuStack.reset();
 
       CONFIG.clearConfig(ConfigStorageLocation.SAVE);
       CONFIG.copyConfigFrom(save.config);

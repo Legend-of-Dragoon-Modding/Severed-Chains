@@ -55,6 +55,12 @@ public class MenuStack {
     }
   }
 
+  public void reset() {
+    while(!this.screens.isEmpty()) {
+      this.popScreen();
+    }
+  }
+
   public void render() {
     int scrollX = 0;
     int scrollY = 0;

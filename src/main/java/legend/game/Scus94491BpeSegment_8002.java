@@ -892,7 +892,7 @@ public final class Scus94491BpeSegment_8002 {
       case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
 
       case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU, UNLOAD_CATEGORIZE_SAVE_MENU, UNLOAD_MEMCARD_MENU -> {
-        menuStack.popScreen();
+        menuStack.reset();
 
         if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
           stopMenuMusic();
