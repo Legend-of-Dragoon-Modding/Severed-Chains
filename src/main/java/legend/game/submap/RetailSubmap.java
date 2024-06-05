@@ -1341,30 +1341,29 @@ public class RetailSubmap extends Submap {
     jmp_8001c7a0:
     {
       //LAB_8001c63c
-      SubmapMusic08 a2;
-      int a3;
-      for(a3 = 0, a2 = _8004fb00[a3]; a2.submapId_00 != 99 || a2.musicIndex_02 != 99; a3++, a2 = _8004fb00[a3]) { // I think 99 is just a sentinel value that means "end of list"
+      for(int submapMusicIndex = 0; submapMusicIndex < _8004fb00.length; submapMusicIndex++) {
+        final SubmapMusic08 music = _8004fb00[submapMusicIndex];
         final int submapId = submapId_800bd808;
 
-        if(submapId == a2.submapId_00) {
+        if(submapId == music.submapId_00) {
           //LAB_8001c680
-          for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
+          for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
             if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
-              if(a2.submapCuts_04[v1] != this.cut) {
+              if(music.submapCuts_04[cutIndex] != this.cut) {
                 continue;
               }
 
               if((gameState_800babc8._1a4[0] & 0x1) == 0) {
                 //LAB_8001c7cc
-                musicIndex = a2.musicIndex_02;
+                musicIndex = music.musicIndex_02;
                 break jmp_8001c7a0;
               }
             }
 
             //LAB_8001c6ac
-            if(a2.submapCuts_04[v1] == this.cut && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
+            if(music.submapCuts_04[cutIndex] == this.cut && (gameState_800babc8._1a4[submapMusicIndex >>> 5] & 0x1 << (submapMusicIndex & 0x1f)) != 0) {
               //LAB_8001c7c0
-              musicIndex = a2.musicIndex_02;
+              musicIndex = music.musicIndex_02;
               break jmp_8001c7a0;
             }
 
@@ -1376,14 +1375,14 @@ public class RetailSubmap extends Submap {
       }
 
       //LAB_8001c728
-      SubmapMusic08 a0;
-      for(a3 = 0, a0 = _8004fa98[a3]; a0.submapId_00 != 99 || a0.musicIndex_02 != 99; a3++, a0 = _8004fa98[a3]) {
-        if(submapId_800bd808 == a0.submapId_00) {
+      for(int submapMusicIndex = 0; submapMusicIndex < _8004fa98.length; submapMusicIndex++) {
+        final SubmapMusic08 music = _8004fa98[submapMusicIndex];
+        if(submapId_800bd808 == music.submapId_00) {
           //LAB_8001c748
-          for(int v1 = 0; v1 < a0.submapCuts_04.length; v1++) {
-            if(a0.submapCuts_04[v1] == this.cut) {
+          for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
+            if(music.submapCuts_04[cutIndex] == this.cut) {
               //LAB_8001c7d8
-              return this.FUN_8001c84c(soundCharId, a0.musicIndex_02);
+              return this.FUN_8001c84c(soundCharId, music.musicIndex_02);
             }
           }
         }

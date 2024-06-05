@@ -2,13 +2,17 @@ package legend.game.saves.serializers;
 
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.SavedGame;
+import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
+import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.SItem.submapNames_8011c108;
+import static legend.game.SItem.worldMapNames_8011c1ec;
 
 public final class RetailSerializer {
   private RetailSerializer() { }
@@ -23,12 +27,28 @@ public final class RetailSerializer {
     return null;
   }
 
-  public static SavedGame fromRetail(final String name, final FileData data) {
+  public static SavedGame<RetailSaveDisplay> fromRetail(final String name, final FileData data) {
     final GameState52c state = deserializeRetailGameState(data.slice(0x1fc));
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
+
+    final int locationIndex = data.readUByte(0x1a8);
+    final int locationType = data.readUByte(0x1a9);
+    final String[] locationNames;
+    if(locationType == 1) {
+      locationNames = worldMapNames_8011c1ec;
+    } else if(locationType == 3) {
+      locationNames = chapterNames_80114248;
+    } else {
+      locationNames = submapNames_8011c108;
+    }
+
+    final String locationName = locationNames[locationIndex];
     final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
     final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
-    return new SavedGame(name, name, data.readUByte(0x1a9), data.readUByte(0x1a8), state, new ConfigCollection(), maxHp, maxMp);
+
+    final RetailSaveDisplay display = new RetailSaveDisplay(locationName, maxHp, maxMp);
+
+    return new SavedGame<>(name, name, display, state, new ConfigCollection());
   }
 
   public static GameState52c deserializeRetailGameState(final FileData data) {

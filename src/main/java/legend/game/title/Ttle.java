@@ -130,6 +130,16 @@ public class Ttle extends EngineState {
   private static Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
 
   @Override
+  public String getLocationForSave() {
+    return "Title";
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
+
+  @Override
   public boolean allowsHighQualityProjection() {
     return false;
   }

@@ -3,22 +3,20 @@ package legend.game.inventory.screens.controls;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.TextColour;
 import legend.game.saves.SavedGame;
+import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 
 import javax.annotation.Nullable;
 
-import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.renderCentredText;
-import static legend.game.SItem.submapNames_8011c108;
-import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 
 public class SaveCard extends Control {
   final CharacterPortrait[] portraits = new CharacterPortrait[3];
   final DragoonSpirits dragoonSpirits;
 
-  private SavedGame saveData;
+  private SavedGame<RetailSaveDisplay> saveData;
 
   private final Label invalidSave;
 
@@ -40,7 +38,7 @@ public class SaveCard extends Control {
     this.invalidSave.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
   }
 
-  public void setSaveData(@Nullable final SavedGame saveData) {
+  public void setSaveData(@Nullable final SavedGame<RetailSaveDisplay> saveData) {
     this.saveData = saveData;
 
     if(saveData != null && saveData.isValid()) {
@@ -65,20 +63,8 @@ public class SaveCard extends Control {
   protected void render(final int x, final int y) {
     if(this.saveData != null) {
       if(this.saveData.isValid()) {
-        final String[] locationNames;
-        if(this.saveData.locationType == 1) {
-          //LAB_80108b5c
-          locationNames = worldMapNames_8011c1ec;
-        } else if(this.saveData.locationType == 3) {
-          //LAB_80108b78
-          locationNames = chapterNames_80114248;
-        } else {
-          //LAB_80108b90
-          locationNames = submapNames_8011c108;
-        }
-
         //LAB_80108ba0
-        renderCentredText(locationNames[this.saveData.locationIndex], x + 258, y + 47, TextColour.BROWN); // Location text
+        renderCentredText(this.saveData.display.location, x + 258, y + 47, TextColour.BROWN); // Location text
 
         final GameState52c state = this.saveData.state;
 
@@ -94,7 +80,7 @@ public class SaveCard extends Control {
         this.renderNumber(224, y + 6, char0.level_12, 2); // Level
         this.renderNumber(269, y + 6, char0.dlevel_13, 2); // Dragoon level
         this.renderNumber(302, y + 6, char0.hp_08, 4); // Current HP
-        this.renderNumber(332, y + 6, this.saveData.maxHp, 4); // Max HP
+        this.renderNumber(332, y + 6, this.saveData.display.maxHp, 4); // Max HP
         this.renderNumber(245, y + 17, state.gold_94, 8); // Gold
         this.renderNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 3); // Time played hour
         this.renderCharacter(324, y + 17, 10); // Hour-minute colon

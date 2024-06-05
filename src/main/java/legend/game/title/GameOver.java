@@ -36,6 +36,16 @@ public class GameOver extends EngineState {
   private final MV transforms = new MV();
 
   @Override
+  public String getLocationForSave() {
+    return "Game Over";
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
+
+  @Override
   public boolean allowsWidescreen() {
     return false;
   }

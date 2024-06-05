@@ -5,12 +5,17 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import legend.core.GameEngine;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
+import legend.game.saves.types.RetailSaveDisplay;
+import legend.game.saves.types.RetailSaveType;
+import legend.game.saves.types.SaveType;
+import legend.game.saves.types.SaveTypeRegistryEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;
@@ -20,6 +25,8 @@ import legend.lodmod.items.CharmPotionItem;
 import legend.lodmod.items.FileBasedItem;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
+import org.legendofdragoon.modloader.registries.Registrar;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Locale;
@@ -40,6 +47,10 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 @EventListener
 public class LodMod {
   public static final String MOD_ID = "lod";
+
+  private static final Registrar<SaveType<?>, SaveTypeRegistryEvent> SAVE_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.saveTypes, MOD_ID);
+
+  public static final RegistryDelegate<SaveType<RetailSaveDisplay>> RETAIL_SAVE_TYPE = SAVE_TYPE_REGISTRAR.register("retail", RetailSaveType::new);
 
   private static final Slugify slug = Slugify.builder().locale(Locale.US).underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
 

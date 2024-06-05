@@ -4,10 +4,15 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
+import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+
+import static legend.game.SItem.chapterNames_80114248;
+import static legend.game.SItem.submapNames_8011c108;
+import static legend.game.SItem.worldMapNames_8011c1ec;
 
 public final class V3Serializer {
   private V3Serializer() { }
@@ -22,7 +27,7 @@ public final class V3Serializer {
     return null;
   }
 
-  public static SavedGame fromV3(final String filename, final FileData data) {
+  public static SavedGame<RetailSaveDisplay> fromV3(final String filename, final FileData data) {
     final GameState52c state = new GameState52c();
 
     int offset = 0;
@@ -201,6 +206,18 @@ public final class V3Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    return new SavedGame(filename, name, locationType, locationIndex, state, config, maxHp, maxMp);
+    final String[] locationNames;
+    if(locationType == 1) {
+      locationNames = worldMapNames_8011c1ec;
+    } else if(locationType == 3) {
+      locationNames = chapterNames_80114248;
+    } else {
+      locationNames = submapNames_8011c108;
+    }
+
+    final String locationName = locationNames[locationIndex];
+    final RetailSaveDisplay display = new RetailSaveDisplay(locationName, maxHp, maxMp);
+
+    return new SavedGame<>(filename, name, display, state, config);
   }
 }

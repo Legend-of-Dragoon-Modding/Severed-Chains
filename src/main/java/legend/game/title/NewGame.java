@@ -4,6 +4,7 @@ import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.types.CharacterData2c;
+import legend.game.unpacker.FileData;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -15,6 +16,16 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 public class NewGame extends EngineState {
   private static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
   private static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
+
+  @Override
+  public String getLocationForSave() {
+    return "New Game";
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
 
   @Method(0x800c7194L)
   private void setUpNewGameData() {

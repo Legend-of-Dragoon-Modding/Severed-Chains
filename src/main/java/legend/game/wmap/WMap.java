@@ -53,6 +53,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
+import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -377,6 +378,16 @@ public class WMap extends EngineState {
   private int coolonWarpDestLabelX;
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
+
+  @Override
+  public String getLocationForSave() {
+    return worldMapNames_8011c1ec[continentIndex_800bf0b0];
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
 
   @Override
   public int tickMultiplier() {

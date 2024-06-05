@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class FileData {
-  private final byte[] data;
+  protected byte[] data;
   private final int offset;
   private final int size;
   private final int virtualSize;
@@ -43,7 +43,7 @@ public class FileData {
    * Not a virtual file and larger than zero bytes
    */
   public boolean real() {
-    return this.realFileIndex == -1 && this.size != 0;
+    return this.realFileIndex == -1 && this.size() != 0;
   }
 
   public boolean hasVirtualSize() {
@@ -56,19 +56,19 @@ public class FileData {
   }
 
   public FileData slice(final int offset) {
-    this.checkBounds(offset, this.size - offset);
-    return this.slice(offset, this.size - offset);
+    this.checkBounds(offset, this.size() - offset);
+    return this.slice(offset, this.size() - offset);
   }
 
   /**
    * Returns the original array if this file is the only thing it represents
    */
   public byte[] getBytes() {
-    if(this.offset == 0 && this.size == this.data.length) {
+    if(this.offset == 0 && this.size() == this.data.length) {
       return this.data;
     }
 
-    return Arrays.copyOfRange(this.data, this.offset, this.offset + this.size);
+    return Arrays.copyOfRange(this.data, this.offset, this.offset + this.size());
   }
 
   public void copyFrom(final int srcOffset, final byte[] dest, final int destOffset, final int size) {
@@ -77,7 +77,7 @@ public class FileData {
   }
 
   public void copyFrom(final byte[] dest) {
-    this.copyFrom(0, dest, 0, this.size);
+    this.copyFrom(0, dest, 0, this.size());
   }
 
   public void copyTo(final int srcOffset, final byte[] src, final int destOffset, final int size) {
@@ -210,7 +210,7 @@ public class FileData {
     return mv;
   }
 
-  private void checkBounds(final int offset, final int size) {
+  protected void checkBounds(final int offset, final int size) {
     if(offset < 0) {
       throw new IndexOutOfBoundsException("Negative offset " + offset);
     }
@@ -219,13 +219,13 @@ public class FileData {
       throw new IndexOutOfBoundsException("Negative size " + size);
     }
 
-    if(offset + size > this.size) {
-      throw new IndexOutOfBoundsException("Read end " + (offset + size) + " out of bounds " + this.size);
+    if(offset + size > this.size()) {
+      throw new IndexOutOfBoundsException("Read end " + (offset + size) + " out of bounds " + this.size());
     }
   }
 
   public void write(final OutputStream out) throws IOException {
-    out.write(this.data, this.offset, this.size);
+    out.write(this.data, this.offset, this.size());
   }
 
   public int size() {

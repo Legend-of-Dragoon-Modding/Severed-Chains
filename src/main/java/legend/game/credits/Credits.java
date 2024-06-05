@@ -194,6 +194,16 @@ public class Credits extends EngineState {
   private Obj credits;
 
   @Override
+  public String getLocationForSave() {
+    return "Credits";
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
+
+  @Override
   @Method(0x800eaa88L)
   public void tick() {
     if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
