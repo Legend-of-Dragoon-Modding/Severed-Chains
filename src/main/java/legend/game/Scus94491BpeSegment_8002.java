@@ -1418,7 +1418,7 @@ public final class Scus94491BpeSegment_8002 {
       final UiPart[] entries = renderable.uiType_20.entries_08;
 
       if((renderable.flags_00 & Renderable58.FLAG_NO_ANIMATION) == 0) {
-        if(tickCount_800bb0fc % (3 - vsyncMode_8007a3b8) == 0) {
+        if(tickCount_800bb0fc % Math.max(1, 3 - vsyncMode_8007a3b8) == 0) {
           renderable.ticksPerFrame_08--;
         }
 
