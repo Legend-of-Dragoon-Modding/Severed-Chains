@@ -3936,9 +3936,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a6fcL)
   public static void clearCharacterStats() {
+    clearCharacterStats(stats_800be5f8);
+  }
+
+  @Method(0x8002a6fcL)
+  public static void clearCharacterStats(final ActiveStatsa0[] activeStats) {
     //LAB_8002a730
     for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      final ActiveStatsa0 stats = activeStats[charIndex];
 
       stats.xp_00 = 0;
       stats.hp_04 = 0;
@@ -3988,7 +3993,7 @@ public final class Scus94491BpeSegment_8002 {
       stats.dragoonDefence_74 = 0;
       stats.dragoonMagicDefence_75 = 0;
 
-      clearEquipmentStats(charIndex);
+      clearEquipmentStats(activeStats, charIndex);
 
       stats.addition_00_9c = 0;
       stats.additionSpMultiplier_9e = 0;
@@ -3999,8 +4004,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a86cL)
-  public static void clearEquipmentStats(final int charIndex) {
-    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+  public static void clearEquipmentStats(final ActiveStatsa0[] activeStats, final int charIndex) {
+    final ActiveStatsa0 stats = activeStats[charIndex];
 
     stats.specialEffectFlag_76 = 0;
 //    stats.equipmentType_77 = 0;

@@ -50,6 +50,7 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Matrix4f;
@@ -74,6 +75,7 @@ import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -409,6 +411,16 @@ public class SMap extends EngineState {
   private final ChapterTitleCard chapterTitleCard = new ChapterTitleCard();
 
   private final AttachedSobjEffect attachedSobjEffect = new AttachedSobjEffect();
+
+  @Override
+  public String getLocationForSave() {
+    return submapNames_8011c108[submapId_800bd808]; //TODO chapter titles, defer this to the submap implementation
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
 
   @Override
   public void restoreMusicAfterMenu() {

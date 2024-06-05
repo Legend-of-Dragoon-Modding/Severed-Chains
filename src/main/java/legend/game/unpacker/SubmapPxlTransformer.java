@@ -153,11 +153,11 @@ public final class SubmapPxlTransformer {
     final FileData newClutData = newTim.getClutData();
 
     for(int imageRow = 0; imageRow < newImageRect.h; imageRow++) {
-      newImageData.copyTo((tileY + imageRow) * imageRect.w * 2 + tileX * 2, imageData, imageRow * newImageRect.w * 2, newImageRect.w * 2);
+      newImageData.write((tileY + imageRow) * imageRect.w * 2 + tileX * 2, imageData, imageRow * newImageRect.w * 2, newImageRect.w * 2);
     }
 
     for(int clutRow = 0; clutRow < newClutRect.h; clutRow++) {
-      newClutData.copyTo((tileY + clutRow + newImageRect.h) * imageRect.w * 2 + tileX * 2, imageData, clutRow * newClutRect.w * 2, newClutRect.w * 2);
+      newClutData.write((tileY + clutRow + newImageRect.h) * imageRect.w * 2 + tileX * 2, imageData, clutRow * newClutRect.w * 2, newClutRect.w * 2);
     }
 
     return newData;

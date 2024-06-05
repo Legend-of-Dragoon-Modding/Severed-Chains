@@ -1,7 +1,7 @@
 package legend.game.saves.types;
 
-import org.legendofdragoon.modloader.registries.Registry;
+import org.legendofdragoon.modloader.registries.MutableRegistry;
 
-public class SaveTypeRegistry extends Registry<SaveType<?>> {
+public class SaveTypeRegistry extends MutableRegistry<SaveType<?>> {
 
 }

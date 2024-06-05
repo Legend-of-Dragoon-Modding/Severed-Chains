@@ -47,12 +47,12 @@ public final class BackgroundMusic {
     } else {
       final byte[] soundBankData = new byte[sshd.readInt(0x4)];
       int offset = files.get(4).size();
-      files.get(4).copyFrom(0, soundBankData, 0, offset);
+      files.get(4).read(0, soundBankData, 0, offset);
       final int bankCount = files.get(1).readUShort(0x0);
 
       for(int i = 1; i < bankCount; i++) {
         final FileData extraBank = Unpacker.loadFile("SECT/DRGN0.BIN/" + (fileId + i));
-        extraBank.copyFrom(0, soundBankData, offset, extraBank.size());
+        extraBank.read(0, soundBankData, offset, extraBank.size());
         offset += extraBank.size();
       }
 
@@ -80,7 +80,7 @@ public final class BackgroundMusic {
 
     this.sequence = SequenceBuilder.create(sssq.slice(0x110), this.channels);
 
-    sshd.copyFrom(subfileOffsets[1] + 2, this.velocityRamp, 0, 0x80);
+    sshd.read(subfileOffsets[1] + 2, this.velocityRamp, 0, 0x80);
 
     if(subfileOffsets[2] == -1) {
       this.breathControls = new byte[0][];

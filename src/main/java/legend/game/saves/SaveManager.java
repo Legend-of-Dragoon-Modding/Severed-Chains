@@ -3,8 +3,7 @@ package legend.game.saves;
 import com.github.slugify.Slugify;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import legend.game.EngineStateEnum;
-import legend.game.inventory.WhichMenu;
+import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.types.ActiveStatsa0;
@@ -27,6 +26,7 @@ import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -41,12 +41,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.bootRegistries;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class SaveManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SaveManager.class);
@@ -195,38 +190,39 @@ public final class SaveManager {
         final SavedGame<RetailSaveDisplay> save = saves.get(i);
         save.state.syncIds();
 
-        final EngineStateEnum oldState = engineState_8004dd20;
-        final WhichMenu oldMenu = whichMenu_800bdc38;
+        final EngineState dummyEngineState = new EngineState() {
+          @Override
+          public String getLocationForSave() {
+            return save.display.location;
+          }
 
-        if(save.locationType == 1) {
-          continentIndex_800bf0b0 = save.locationIndex;
-          engineState_8004dd20 = EngineStateEnum.WORLD_MAP_08;
-        } else if(save.locationType == 3) {
-          whichMenu_800bdc38 = WhichMenu.RENDER_SAVE_GAME_MENU_19;
-          engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
-        } else {
-          submapId_800bd808 = save.locationIndex;
-          engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
-        }
+          @Override
+          public FileData writeSaveData() {
+            return null;
+          }
+
+          @Override
+          public void tick() {
+
+          }
+        };
 
         indices.mergeInt(save.display.location, 1, Integer::sum);
 
-        gameState_800babc8 = save.state;
+        final ActiveStatsa0[] activeStats = new ActiveStatsa0[9];
+        Arrays.setAll(activeStats, n -> new ActiveStatsa0());
 
         try {
-          loadCharacterStats();
+          loadCharacterStats(save.state, activeStats);
         } catch(final Exception e) {
           LOGGER.error("Failed to convert save %d", i);
           continue;
         }
 
-        gameState_800babc8.syncIds();
+        save.state.syncIds();
 
-        final Path file = this.newSave(save.display.location + ' ' + indices.getInt(save.display.location), gameState_800babc8, stats_800be5f8);
+        final Path file = this.newSave(save.display.location + ' ' + indices.getInt(save.display.location), save.state, activeStats, dummyEngineState);
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
-
-        engineState_8004dd20 = oldState;
-        whichMenu_800bdc38 = oldMenu;
       }
 
       for(final Path memcard : memcards) {
@@ -315,15 +311,15 @@ public final class SaveManager {
     return !this.getCampaigns().isEmpty();
   }
 
-  public Path overwriteSave(final String fileName, final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+  public Path overwriteSave(final String fileName, final String saveName, final GameState52c gameState, final ActiveStatsa0[] activeStats, final EngineState engineState) throws SaveFailedException {
     try {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
 
       final FileData data = new GrowableFileData(1024);
       data.writeInt(0x0, this.serializerMagic);
-      final int length = this.serializer.serializer(saveName, data.slice(0x4), state, activeStats);
+      final int length = this.serializer.serializer(saveName, data.slice(0x4), gameState, activeStats, engineState);
 
-      final Path dir = this.dir.resolve(state.campaignName);
+      final Path dir = this.dir.resolve(gameState.campaignName);
       final Path file = dir.resolve(fileName + ".dsav");
 
       Files.createDirectories(dir);
@@ -334,8 +330,8 @@ public final class SaveManager {
     }
   }
 
-  public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
-    return this.overwriteSave(slug.slugify(saveName), saveName, state, activeStats);
+  public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats, final EngineState engineState) throws SaveFailedException {
+    return this.overwriteSave(slug.slugify(saveName), saveName, state, activeStats, engineState);
   }
 
   public SavedGame<?> loadGame(final String campaign, final String filename) throws InvalidSaveException {

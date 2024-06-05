@@ -169,7 +169,7 @@ public class CollisionGeometry {
     if(a1.size() < this.primitiveCount_0c * 5 * 0xc) {
       LOGGER.warn("Submap file too short, padding with 0's");
       final byte[] newData = new byte[this.primitiveCount_0c * 5 * 0xc];
-      a1.copyFrom(0, newData, 0, a1.size());
+      a1.read(0, newData, 0, a1.size());
       a1 = new FileData(newData);
     }
 

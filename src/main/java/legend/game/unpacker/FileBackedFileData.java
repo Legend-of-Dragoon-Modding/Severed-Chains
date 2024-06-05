@@ -69,7 +69,7 @@ public class FileBackedFileData extends FileData {
   }
 
   @Override
-  public void copyFrom(final int srcOffset, final byte[] dest, final int destOffset, final int size) {
+  public void read(final int srcOffset, final byte[] dest, final int destOffset, final int size) {
     synchronized(this.file) {
       try {
         this.file.seek(this.offset + srcOffset);
@@ -81,7 +81,7 @@ public class FileBackedFileData extends FileData {
   }
 
   @Override
-  public void copyTo(final int srcOffset, final byte[] src, final int destOffset, final int size) {
+  public void write(final int srcOffset, final byte[] src, final int destOffset, final int size) {
     synchronized(this.file) {
       try {
         this.file.seek(this.offset + destOffset);

@@ -22,6 +22,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
+import legend.game.types.GameState52c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
@@ -1514,6 +1515,7 @@ public final class SItem {
   public static void renderCharacterStats(final int charIndex, @Nullable final Equipment equipment, final boolean allocate) {
     if(charIndex != -1) {
       final ActiveStatsa0 statsTmp;
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
       if(equipment != null) {
         final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c[charIndex].equipment_14);
@@ -1523,7 +1525,7 @@ public final class SItem {
         loadCharacterStats();
 
         //LAB_80108694
-        statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
+        statsTmp = new ActiveStatsa0(stats);
 
         //LAB_801086e8
         gameState_800babc8.charData_32c[charIndex].equipment_14.clear();
@@ -1533,11 +1535,10 @@ public final class SItem {
       } else {
         //LAB_80108720
         //LAB_80108740
-        statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
+        statsTmp = new ActiveStatsa0(stats);
       }
 
       //LAB_80108770
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
       renderThreeDigitNumberComparison( 58, 116, stats.bodyAttack_6a, statsTmp.bodyAttack_6a);
       renderThreeDigitNumberComparison( 90, 116, stats.equipmentAttack_88, statsTmp.equipmentAttack_88);
       renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a + stats.equipmentAttack_88, statsTmp.bodyAttack_6a + statsTmp.equipmentAttack_88);
@@ -1841,13 +1842,18 @@ public final class SItem {
 
   @Method(0x80110030L)
   public static void loadCharacterStats() {
-    clearCharacterStats();
+    loadCharacterStats(gameState_800babc8, stats_800be5f8);
+  }
+
+  @Method(0x80110030L)
+  public static void loadCharacterStats(final GameState52c gameState, final ActiveStatsa0[] activeStats) {
+    clearCharacterStats(activeStats);
 
     //LAB_80110174
     for(int charId = 0; charId < 9; charId++) {
-      final ActiveStatsa0 stats = stats_800be5f8[charId];
+      final ActiveStatsa0 stats = activeStats[charId];
 
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+      final CharacterData2c charData = gameState.charData_32c[charId];
 
       final CharacterStatsEvent statsEvent = EVENTS.postEvent(new CharacterStatsEvent(charId));
 
@@ -1905,14 +1911,14 @@ public final class SItem {
       }
 
       //LAB_8011042c
-      applyEquipmentStats(charId);
+      applyEquipmentStats(activeStats, charId);
 
       final int v0 = dragoonGoodsBits_800fbd08[charId];
-      if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
+      if((gameState.goods_19c[0] & 0x1 << v0) != 0) {
         stats.flags_0c |= 0x2000;
 
-        if((gameState_800babc8.characterInitialized_4e6 & 0x1 << v0) == 0) {
-          gameState_800babc8.characterInitialized_4e6 |= 0x1 << v0;
+        if((gameState.characterInitialized_4e6 & 0x1 << v0) == 0) {
+          gameState.characterInitialized_4e6 |= 0x1 << v0;
 
           stats.mp_06 = statsEvent.maxMp;
           stats.maxMp_6e = statsEvent.maxMp;
@@ -1925,15 +1931,15 @@ public final class SItem {
       }
 
       //LAB_801104f8
-      if(charId == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << dragoonGoodsBits_800fbd08[9]) != 0) {
+      if(charId == 0 && (gameState.goods_19c[0] & 0x1 << dragoonGoodsBits_800fbd08[9]) != 0) {
         stats.flags_0c |= 0x6000;
 
-        stats.dlevel_0f = gameState_800babc8.charData_32c[0].dlevel_13;
+        stats.dlevel_0f = gameState.charData_32c[0].dlevel_13;
 
         final int a1 = dragoonGoodsBits_800fbd08[0];
 
-        if((gameState_800babc8.characterInitialized_4e6 & 0x1 << a1) == 0) {
-          gameState_800babc8.characterInitialized_4e6 |= 0x1 << a1;
+        if((gameState.characterInitialized_4e6 & 0x1 << a1) == 0) {
+          gameState.characterInitialized_4e6 |= 0x1 << a1;
           stats.mp_06 = statsEvent.maxMp;
           stats.maxMp_6e = statsEvent.maxMp;
         } else {
@@ -1969,14 +1975,14 @@ public final class SItem {
   }
 
   @Method(0x8011085cL)
-  public static void applyEquipmentStats(final int charId) {
-    clearEquipmentStats(charId);
+  public static void applyEquipmentStats(final ActiveStatsa0[] activeStats, final int charId) {
+    clearEquipmentStats(activeStats, charId);
 
-    final ActiveStatsa0 characterStats = stats_800be5f8[charId];
+    final ActiveStatsa0 characterStats = activeStats[charId];
 
     //LAB_801108b0
     for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-      final Equipment equipment = stats_800be5f8[charId].equipment_30.get(equipmentSlot);
+      final Equipment equipment = activeStats[charId].equipment_30.get(equipmentSlot);
 
       if(equipment != null) {
         //TODO

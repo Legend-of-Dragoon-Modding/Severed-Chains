@@ -56,7 +56,7 @@ public class TmdObjTable1c {
       for(int i = 0; i < count; i++) {
         primitivesOffset += 4;
         packetData[i] = new byte[packetSize];
-        primitives.copyFrom(primitivesOffset, packetData[i], 0, packetSize);
+        primitives.read(primitivesOffset, packetData[i], 0, packetSize);
         primitivesOffset += packetSize;
       }
 

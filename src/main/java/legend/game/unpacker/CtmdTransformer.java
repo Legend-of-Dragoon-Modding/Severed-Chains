@@ -218,8 +218,8 @@ public final class CtmdTransformer {
     final byte[] newData = new byte[newSize];
 
     // Copy data before what we modified
-    node.data.copyFrom(0, newData, 0, containerOffset);
-    containerData.copyFrom(0, newData, containerOffset, 0xc);
+    node.data.read(0, newData, 0, containerOffset);
+    containerData.read(0, newData, containerOffset, 0xc);
 
     // Adjust DEFF container pointers
     final int deffContainerPtr10 = (int)MathHelper.get(newData, 0x10, 2);
@@ -249,10 +249,10 @@ public final class CtmdTransformer {
     System.arraycopy(tmdData, 0, newData, containerOffset + 0xc, tmdData.length);
 
     // Copy unmodified data at the end of the 0xc container
-    containerData.copyFrom(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
+    containerData.read(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
 
     // Copy unmodified data at the end of the DEFF container
-    node.data.copyFrom(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, node.data.size() - containerOffset - containerData.size());
+    node.data.read(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, node.data.size() - containerOffset - containerData.size());
 
     transformations.replaceNode(node, new FileData(newData));
   }

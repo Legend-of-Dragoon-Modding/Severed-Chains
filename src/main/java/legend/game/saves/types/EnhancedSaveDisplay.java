@@ -1,12 +1,27 @@
 package legend.game.saves.types;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.unpacker.FileData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnhancedSaveDisplay extends SaveDisplay {
   public final String location;
+  public final int gold;
+  public final int stardust;
+  public final int time;
 
-  public EnhancedSaveDisplay(final String location) {
+  public final IntList party = new IntArrayList();
+  public final List<Char> chars = new ArrayList<>();
+  public final List<Dragoon> dragoons = new ArrayList<>();
+
+  public EnhancedSaveDisplay(final String location, final int gold, final int stardust, final int time) {
     this.location = location;
+    this.gold = gold;
+    this.stardust = stardust;
+    this.time = time;
   }
 
   public static class Char {

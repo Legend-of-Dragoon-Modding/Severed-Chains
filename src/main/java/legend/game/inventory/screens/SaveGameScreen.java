@@ -21,6 +21,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -59,7 +60,7 @@ public class SaveGameScreen extends MenuScreen {
 
     this.saveList.addEntry(null);
 
-    for(final SavedGame save : SAVES.loadAllSaves(gameState_800babc8.campaignName)) {
+    for(final SavedGame<?> save : SAVES.loadAllSaves(gameState_800babc8.campaignName)) {
       this.saveList.addEntry(save);
     }
   }
@@ -70,7 +71,7 @@ public class SaveGameScreen extends MenuScreen {
     SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
   }
 
-  private void onSelection(@Nullable final SavedGame save) {
+  private void onSelection(@Nullable final SavedGame<?> save) {
     playSound(2);
 
     if(save == null) {
@@ -91,7 +92,7 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
+        SAVES.newSave(name, gameState_800babc8, stats_800be5f8, currentEngineState_8004dd04);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
@@ -100,13 +101,13 @@ public class SaveGameScreen extends MenuScreen {
     }
   }
 
-  private void onOverwriteResult(final MessageBoxResult result, final SavedGame save) {
+  private void onOverwriteResult(final MessageBoxResult result, final SavedGame<?> save) {
     if(result == MessageBoxResult.YES) {
       gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.overwriteSave(save.fileName, save.saveName, gameState_800babc8, stats_800be5f8);
+        SAVES.overwriteSave(save.fileName, save.saveName, gameState_800babc8, stats_800be5f8, currentEngineState_8004dd04);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));

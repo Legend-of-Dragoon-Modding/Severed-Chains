@@ -5,6 +5,16 @@ public class GrowableFileData extends FileData {
     super(new byte[startSize]);
   }
 
+  protected GrowableFileData(final byte[] data, final int offset, final int size) {
+    super(data, offset, size);
+  }
+
+  @Override
+  public FileData slice(final int offset, final int size) {
+    this.checkBounds(offset, size);
+    return new GrowableFileData(this.data, this.offset + offset, size);
+  }
+
   @Override
   public int size() {
     return this.data.length;

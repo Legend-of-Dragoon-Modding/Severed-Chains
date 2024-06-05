@@ -139,7 +139,7 @@ public final class ConfigStorage {
       data.writeInt(offset, entry.getValue().length);
       offset += 4;
 
-      data.copyTo(0, entry.getValue(), offset, entry.getValue().length);
+      data.write(0, entry.getValue(), offset, entry.getValue().length);
       offset += entry.getValue().length;
     }
 
