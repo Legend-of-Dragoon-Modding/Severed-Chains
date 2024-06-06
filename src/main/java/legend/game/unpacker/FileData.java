@@ -7,9 +7,11 @@ import legend.core.memory.types.IntRef;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -456,6 +458,13 @@ public class FileData {
 
   public void write(final OutputStream out) throws IOException {
     out.write(this.data, this.offset, this.size());
+  }
+
+  public ByteBuffer toByteBuffer() {
+    final ByteBuffer buffer = BufferUtils.createByteBuffer(this.size);
+    buffer.put(this.getBytes());
+    buffer.flip();
+    return buffer;
   }
 
   public int size() {

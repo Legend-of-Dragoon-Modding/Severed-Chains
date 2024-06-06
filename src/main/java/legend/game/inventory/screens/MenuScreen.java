@@ -97,6 +97,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.keyPress(key, scancode, mods);
     }
@@ -108,6 +116,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation charPress(final int codepoint) {
     if(super.charPress(codepoint) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.charPress(codepoint) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -123,6 +139,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.pressedThisFrame(inputAction);
     }
@@ -136,6 +160,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.pressedWithRepeatPulse(inputAction);
     }
@@ -147,6 +179,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation releasedThisFrame(final InputAction inputAction) {
     if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {

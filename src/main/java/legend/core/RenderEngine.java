@@ -823,7 +823,13 @@ public class RenderEngine {
 
         if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
           Translucency.HALF_B_PLUS_HALF_F.setGlState();
+
           this.tmdShaderOptions.translucency(Translucency.HALF_B_PLUS_HALF_F);
+
+          if(entry.realTranslucency) {
+            this.tmdShaderOptions.realTranslucency();
+          }
+
           this.tmdShaderOptions.colour(entry.colour);
           entry.render(Translucency.HALF_B_PLUS_HALF_F);
           this.tmdShaderOptions.translucency(Translucency.B_PLUS_F);
@@ -1354,6 +1360,7 @@ public class RenderEngine {
 
     private Translucency translucency;
     private boolean hasTranslucencyOverride;
+    private boolean realTranslucency;
 
     private boolean isTmd;
     private int tmdTranslucency;
@@ -1462,11 +1469,18 @@ public class RenderEngine {
     public QueuedModel<Options> translucency(final Translucency translucency) {
       this.translucency = translucency;
       this.hasTranslucencyOverride = true;
+      this.realTranslucency = false;
 
       if(translucency == Translucency.HALF_B_PLUS_HALF_F) {
         RenderEngine.this.needsSorting = true;
       }
 
+      return this;
+    }
+
+    public QueuedModel<Options> realTranslucency() {
+      this.translucency(Translucency.HALF_B_PLUS_HALF_F);
+      this.realTranslucency = true;
       return this;
     }
 

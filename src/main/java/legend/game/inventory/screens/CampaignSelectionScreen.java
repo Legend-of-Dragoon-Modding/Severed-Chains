@@ -51,6 +51,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     this.saveCard = this.addControl(new RetailSaveCard());
     this.saveCard.setPos(16, 160);
+    this.saveCard.alwaysReceiveInput();
 
     this.campaignList = this.addControl(new BigList<>(Campaign::filename));
     this.campaignList.setPos(16, 16);
@@ -65,6 +66,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       this.saveCard = this.addControl(campaign.latestSave().saveType.makeSaveCard());
       this.saveCard.setPos(16, 160);
       this.saveCard.setSaveData(campaign.latestSave());
+      this.saveCard.alwaysReceiveInput();
     });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);

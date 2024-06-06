@@ -17,7 +17,7 @@ public class Tim {
     return this.data;
   }
 
-  private int getImageDataOffset() {
+  public int getImageDataOffset() {
     if(this.hasClut()) {
       return this.data.readUShort(0x8);
     }

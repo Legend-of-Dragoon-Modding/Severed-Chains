@@ -89,6 +89,17 @@ public final class Texture {
     });
   }
 
+  public static Texture png(final ByteBuffer data) {
+    return Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.minFilter(GL_NEAREST);
+      builder.magFilter(GL_NEAREST);
+      builder.png(data);
+    });
+  }
+
   public static Texture filteredPng(final Path path) {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
@@ -252,12 +263,15 @@ public final class Texture {
         throw new RuntimeException(e);
       }
 
+      this.png(imageBuffer);
+    }
+
+    public void png(final ByteBuffer imageBuffer) {
       try(final MemoryStack stack = stackPush()) {
         final IntBuffer w = stack.mallocInt(1);
         final IntBuffer h = stack.mallocInt(1);
         final IntBuffer comp = stack.mallocInt(1);
 
-//        stbi_set_flip_vertically_on_load(true);
         final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
         if(data == null) {
           throw new RuntimeException("Failed to load image: " + stbi_failure_reason());

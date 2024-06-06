@@ -10,6 +10,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.GrowableFileData;
+import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodMod;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -55,9 +56,12 @@ public final class SaveManager {
   private final int serializerMagic;
   private final SaveSerializer serializer;
 
+  public final FileData saveIcons;
+
   public SaveManager(final int serializerMagic, final SaveSerializer serializer) {
     this.serializerMagic = serializerMagic;
     this.serializer = serializer;
+    this.saveIcons = Unpacker.loadFile("characters/portraits.png");
   }
 
   public void registerDeserializer(final Function<FileData, FileData> matcher, final SaveDeserializer deserializer) {

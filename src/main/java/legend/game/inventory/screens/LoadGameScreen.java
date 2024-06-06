@@ -45,6 +45,7 @@ public class LoadGameScreen extends MenuScreen {
 
     this.saveCard = this.addControl(new RetailSaveCard());
     this.saveCard.setPos(16, 160);
+    this.saveCard.alwaysReceiveInput();
 
     this.saveList = this.addControl(new BigList<>(SavedGame::toString));
     this.saveList.setPos(16, 16);
@@ -54,6 +55,7 @@ public class LoadGameScreen extends MenuScreen {
       this.saveCard = this.addControl(saveData.saveType.makeSaveCard());
       this.saveCard.setPos(16, 160);
       this.saveCard.setSaveData(saveData);
+      this.saveCard.alwaysReceiveInput();
     });
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);

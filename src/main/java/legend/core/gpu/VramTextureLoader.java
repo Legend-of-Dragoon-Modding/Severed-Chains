@@ -5,6 +5,9 @@ import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
 import org.lwjgl.system.MemoryStack;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -23,7 +26,7 @@ public final class VramTextureLoader {
 
   public static final VramTexture EMPTY = new VramTextureSingle(Bpp.BITS_15, new Rect4i(0, 0, 0, 0), new int[0]);
 
-  public static VramTexture textureFromTim(final Tim tim) {
+  public static VramTextureSingle textureFromTim(final Tim tim) {
     if(!tim.hasClut()) {
       throw new RuntimeException("Not yet supported");
     }
@@ -46,7 +49,7 @@ public final class VramTextureLoader {
     return new VramTextureSingle(bpp, new Rect4i(imageSize.x, imageSize.y, width, height), data);
   }
 
-  public static VramTexture textureFromPng(final Path path) {
+  public static VramTextureSingle textureFromPng(final Path path) {
     final ByteBuffer imageBuffer;
     try {
       imageBuffer = pathToByteBuffer(path);
@@ -74,7 +77,7 @@ public final class VramTextureLoader {
     }
   }
 
-  public static VramTexture textureFromPngOneChannelBlue(final Path path) {
+  public static VramTextureSingle textureFromPngOneChannelBlue(final Path path) {
     final ByteBuffer imageBuffer;
     try {
       imageBuffer = pathToByteBuffer(path);
@@ -107,7 +110,7 @@ public final class VramTextureLoader {
   }
 
   /** Stitch textures using their absolute VRAM positions */
-  public static VramTexture stitch(final VramTexture... textures) {
+  public static VramTextureStitched stitch(final VramTexture... textures) {
     return new VramTextureStitched(textures);
   }
 
@@ -196,7 +199,7 @@ public final class VramTextureLoader {
     return new VramTextureSingle(textures[0].bpp, new Rect4i(minVramX, minVramY, newWidth, newHeight), newData);
   }
 
-  public static VramTexture[] palettesFromTim(final Tim tim) {
+  public static VramTextureSingle[] palettesFromTim(final Tim tim) {
     if(!tim.hasClut()) {
       throw new RuntimeException("Not yet supported");
     }
@@ -206,7 +209,7 @@ public final class VramTextureLoader {
     final int paletteCount = clutSize.h;
     final int width = clutSize.w;
 
-    final VramTexture[] palettes = new VramTexture[paletteCount];
+    final VramTextureSingle[] palettes = new VramTextureSingle[paletteCount];
 
     for(int paletteIndex = 0; paletteIndex < paletteCount; paletteIndex++) {
       final int[] data = new int[width];
@@ -221,10 +224,10 @@ public final class VramTextureLoader {
     return palettes;
   }
 
-  public static VramTexture[] palettesFromTims(final Tim... tims) {
-    final VramTexture[][] palettes = new VramTexture[tims.length][];
+  public static VramTextureSingle[] palettesFromTims(final Tim... tims) {
+    final VramTextureSingle[][] palettes = new VramTextureSingle[tims.length][];
     Arrays.setAll(palettes, i -> palettesFromTim(tims[i]));
-    return Arrays.stream(palettes).flatMap(Arrays::stream).toArray(VramTexture[]::new);
+    return Arrays.stream(palettes).flatMap(Arrays::stream).toArray(VramTextureSingle[]::new);
   }
 
   private static int getPixel(final FileData data, final int width, final int x, final int y) {
@@ -255,5 +258,34 @@ public final class VramTextureLoader {
 
   private static int get16bppPixel(final FileData imageData, final int width, final int x, final int y) {
     return MathHelper.colour15To24(getPixel(imageData, width, x, y));
+  }
+
+  public static byte[] convertToPng(final Rect4i rect, final int[] data, final boolean convert15To24) {
+    final BufferedImage image = new BufferedImage(rect.w(), rect.h(), BufferedImage.TYPE_INT_ARGB);
+
+    final int[] newData;
+    if(convert15To24) {
+      newData = Arrays.copyOf(data, data.length);
+      for(int i = 0; i < newData.length; i++) {
+        if(newData[i] != 0) {
+          final int b = newData[i] & 0xff;
+          final int g = newData[i] >>> 8 & 0xff;
+          final int r = newData[i] >>> 16 & 0xff;
+          newData[i] = 0xff << 24 | b << 16 | g << 8 | r;
+        }
+      }
+    } else {
+      newData = data;
+    }
+
+    image.setRGB(0, 0, rect.w(), rect.h(), newData, 0, rect.w());
+
+    try {
+      final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      ImageIO.write(image, "png", outputStream);
+      return outputStream.toByteArray();
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

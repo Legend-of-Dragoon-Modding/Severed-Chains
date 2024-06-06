@@ -8,7 +8,11 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.audio.xa.XaTranscoder;
+import legend.core.gpu.Rect4i;
+import legend.core.gpu.VramTextureLoader;
+import legend.core.gpu.VramTextureSingle;
 import legend.game.Scus94491BpeSegment;
+import legend.game.tim.Tim;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -124,6 +128,7 @@ public final class Unpacker {
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
     transformers.put(Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer);
+    transformers.put(Unpacker::portraitExtractorDiscriminator, Unpacker::portraitExtractorTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
 
     // Remove damage caps from scripts
@@ -1210,6 +1215,82 @@ public final class Unpacker {
       node.data.writeByte(0x24aa + i * 0x14, 0);
     }
 
+    transformations.addNode(node);
+  }
+
+  private static boolean portraitExtractorDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/6665".equals(node.fullPath) && !flags.contains(node.fullPath);
+  }
+
+  private static void portraitExtractorTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.fullPath);
+
+    // Walk to the last TIM in the file
+    Tim tim = null;
+    int offset = 0;
+    for(int i = 0; i < 3; i++) {
+      tim = new Tim(node.data.slice(offset));
+      final Rect4i rect = tim.getImageRect();
+      offset += 0x14 + tim.getImageDataOffset() + rect.w * rect.h * 2;
+    }
+
+    final VramTextureSingle texture = VramTextureLoader.textureFromTim(tim);
+    final VramTextureSingle[] palettes = VramTextureLoader.palettesFromTim(tim);
+
+    // Apply all 3 CLUTs
+    final int[][] applied = new int[3][];
+    for(int i = 0; i < 3; i++) {
+      applied[i] = texture.applyPalette(palettes[i], new Rect4i(0, 0, texture.rect.w, texture.rect.h));
+    }
+
+    // Applied is the TIM with its CLUTs applied
+    // Raw is an intermediate abstraction, as if the texture was one single row with each portrait in order, repeated 3 times (once for each colour channel)
+    // New is the output data
+
+    final int rawWidth = 432 * 3;
+    final int rawHeight = 48;
+    final int rawArea = rawWidth * rawHeight;
+    final int appliedWidth = 256;
+
+    final int[] newData = new int[512 * 64];
+    for(int i = 0; i < rawArea; i++) {
+      final int rawX = i % rawWidth;
+      final int rawY = i / rawWidth;
+
+      int appliedX = rawX % appliedWidth;
+      int appliedY = rawY + rawX / appliedWidth * rawHeight;
+
+      // Handle the lower 32 pixels of the right side of Miranda's blue channel being split up in the last row
+      while(appliedY >= 256) {
+        appliedY -= 16;
+        appliedX += 16;
+      }
+
+      final int appliedIndex = appliedY * appliedWidth + appliedX;
+      final int pixel = applied[i / (rawWidth / 3) % 3][appliedIndex];
+      final int newIndex = i / rawWidth * 512 + (i % (rawWidth / 3));
+
+      final int br = pixel        & 0xff;
+      final int bg = pixel >>>  8 & 0xff;
+      final int bb = pixel >>> 16 & 0xff;
+      final int fb = newData[newIndex]        & 0xff;
+      final int fg = newData[newIndex] >>>  8 & 0xff;
+      final int fr = newData[newIndex] >>> 16 & 0xff;
+
+      final int r = Math.min(0xff, br + fr);
+      final int g = Math.min(0xff, bg + fg);
+      final int b = Math.min(0xff, bb + fb);
+
+      newData[newIndex] = r << 16 | g << 8 | b;
+
+      if(newData[newIndex] != 0 && r != 0) {
+        newData[newIndex] |= 0xff00_0000;
+      } else {
+        newData[newIndex] = 0;
+      }
+    }
+
+    transformations.addNode("characters/portraits.png", new FileData(VramTextureLoader.convertToPng(new Rect4i(0, 0, 512, 64), newData, false)));
     transformations.addNode(node);
   }
 

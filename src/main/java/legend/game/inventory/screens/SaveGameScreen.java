@@ -52,6 +52,7 @@ public class SaveGameScreen extends MenuScreen {
 
     this.saveCard = this.addControl(new RetailSaveCard());
     this.saveCard.setPos(16, 160);
+    this.saveCard.alwaysReceiveInput();
 
     this.saveList = this.addControl(new BigList<>(savedGame -> savedGame != null ? savedGame.saveName : "<new save>"));
     this.saveList.setPos(16, 16);
@@ -61,6 +62,7 @@ public class SaveGameScreen extends MenuScreen {
         this.removeControl(this.saveCard);
         this.saveCard = this.addControl(saveData.saveType.makeSaveCard());
         this.saveCard.setPos(16, 160);
+        this.saveCard.alwaysReceiveInput();
       }
 
       this.saveCard.setSaveData(saveData);

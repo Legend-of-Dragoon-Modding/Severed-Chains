@@ -24,6 +24,9 @@ public abstract class Control extends ControlHost {
   private boolean hovered;
   private boolean focused;
 
+  private boolean forwardInputToChildren;
+  boolean alwaysReceiveInput;
+
   @Override
   public MenuScreen getScreen() {
     return this.screen;
@@ -133,6 +136,14 @@ public abstract class Control extends ControlHost {
 
   public void ignoreInput() {
     this.acceptsInput = false;
+  }
+
+  public void forwardInputToChildren() {
+    this.forwardInputToChildren = true;
+  }
+
+  public void alwaysReceiveInput() {
+    this.alwaysReceiveInput = true;
   }
 
   public boolean isDisabled() {
@@ -343,6 +354,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -358,6 +377,14 @@ public abstract class Control extends ControlHost {
   protected InputPropagation charPress(final int codepoint) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.charPress(codepoint) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.charPress(codepoint) == InputPropagation.HANDLED) {
@@ -377,6 +404,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -394,6 +429,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -409,6 +452,14 @@ public abstract class Control extends ControlHost {
   protected InputPropagation releasedThisFrame(final InputAction inputAction) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {

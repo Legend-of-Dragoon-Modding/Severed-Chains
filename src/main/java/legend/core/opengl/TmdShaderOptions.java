@@ -71,6 +71,11 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
     return this;
   }
 
+  public TmdShaderOptions realTranslucency() {
+    this.translucency.set(0xff);
+    return this;
+  }
+
   public TmdShaderOptions ctmdFlags(final int flags) {
     this.ctmdFlags.set(flags);
     return this;

@@ -44,8 +44,14 @@ public class GrowableFileData extends FileData {
       throw new IndexOutOfBoundsException("Negative size " + size);
     }
 
-    if(this.offset + offset + size > this.size()) {
-      final byte[] newData = new byte[this.size() * 2];
+    final int requiredSize = this.offset + offset + size;
+    if(requiredSize > this.size()) {
+      int newSize = this.size() * 2;
+      while(newSize < requiredSize) {
+        newSize *= 2;
+      }
+
+      final byte[] newData = new byte[newSize];
       System.arraycopy(this.data, 0, newData, 0, this.size());
       this.updateArray(newData);
     }

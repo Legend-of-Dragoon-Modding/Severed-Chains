@@ -1,32 +1,55 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.opengl.Texture;
+import legend.game.input.InputAction;
+import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 import legend.game.saves.SavedGame;
 import legend.game.saves.types.EnhancedSaveDisplay;
+import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static legend.game.SItem.renderCentredText;
+import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
+import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
-  final CharacterPortrait[] portraits = new CharacterPortrait[3];
-  final DragoonSpirits dragoonSpirits;
+  private final Image[] portraits = new Image[3];
+  private final DragoonSpirits dragoonSpirits;
+  private final Glyph highlight;
 
   private SavedGame<EnhancedSaveDisplay> saveData;
 
   private final Label invalidSave;
 
+  private Texture texture;
+
+  private int scroll;
+  private int selectedCharacter;
+  private final List<EnhancedSaveDisplay.Char> chars = new ArrayList<>();
+
   public EnhancedSaveCard() {
     this.addControl(Glyph.uiElement(76, 76)).setPos(0, 0);
     this.addControl(Glyph.uiElement(77, 77)).setPos(176, 0);
+
+    this.highlight = this.addControl(Glyph.glyph(0x83));
+    this.highlight.setPos(26, 8);
 
     this.dragoonSpirits = this.addControl(new DragoonSpirits(0));
     this.dragoonSpirits.setPos(205, 27);
 
     for(int i = 0; i < 3; i++) {
-      this.portraits[i] = this.addControl(new CharacterPortrait());
+      this.portraits[i] = this.addControl(new Image());
       this.portraits[i].setPos(18 + i * 52, 8);
+      this.portraits[i].setZ(124);
+      this.portraits[i].setSize(48, 48);
+      this.portraits[i].setTranslucent(true);
     }
 
     this.invalidSave = this.addControl(new Label("Invalid save"));
@@ -35,30 +58,95 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
     this.invalidSave.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
   }
 
+  private void setTexture(final FileData data) {
+    if(this.texture != null) {
+      this.texture.delete();
+    }
+
+    this.texture = Texture.png(data.toByteBuffer());
+
+    for(int i = 0; i < this.portraits.length; i++) {
+      this.portraits[i].setTexture(this.texture);
+    }
+  }
+
   @Override
   public void setSaveData(@Nullable final SavedGame<EnhancedSaveDisplay> saveData) {
     this.saveData = saveData;
 
     if(saveData != null && saveData.isValid()) {
       this.invalidSave.setVisibility(false);
-      this.dragoonSpirits.setSpirits(saveData.state.goods_19c[0]); //TODO
+      this.setTexture(saveData.display.icons);
 
-      for(int i = 0; i < 3; i++) {
-        if(i < saveData.display.party.size()) {
-          this.portraits[i].setCharId(saveData.display.party.getInt(i));
-        } else {
-          this.portraits[i].setCharId(-1);
+      for(final int party : saveData.display.party) {
+        this.chars.add(saveData.display.chars.get(party));
+      }
+
+      for(final EnhancedSaveDisplay.Char chr : saveData.display.chars) {
+        if(!this.chars.contains(chr)) {
+          this.chars.add(chr);
         }
       }
+
+      this.setSelectedCharacter(0);
+      this.dragoonSpirits.setSpirits(saveData.state.goods_19c[0]); //TODO
     } else {
       this.invalidSave.setVisibility(saveData != null);
 
       this.dragoonSpirits.setSpirits(0);
 
-      for(int i = 0; i < 3; i++) {
-        this.portraits[i].setCharId(-1);
+      for(int i = 0; i < this.portraits.length; i++) {
+        this.portraits[i].hide();
       }
     }
+  }
+
+  public void setSelectedCharacter(final int index) {
+    this.selectedCharacter = index;
+    this.highlight.setX(26 + (index - this.scroll) * 52);
+
+    for(int i = 0; i < this.portraits.length; i++) {
+      if(i < this.saveData.display.chars.size()) {
+        final EnhancedSaveDisplay.Char chr = this.chars.get(this.scroll + i);
+        this.portraits[i].setUv(chr.iconU, chr.iconV, chr.iconW, chr.iconH);
+        this.portraits[i].show();
+      } else {
+        this.portraits[i].hide();
+      }
+    }
+  }
+
+  @Override
+  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.saveData != null) {
+      if(inputAction == InputAction.DPAD_LEFT) {
+        if(this.selectedCharacter > 0) {
+          if(this.selectedCharacter - this.scroll - 1 < 0) {
+            this.scroll--;
+          }
+
+          playSound(1);
+          this.setSelectedCharacter(this.selectedCharacter - 1);
+        }
+
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.DPAD_RIGHT) {
+        if(this.selectedCharacter < this.saveData.display.chars.size() - 1) {
+          if(this.selectedCharacter - this.scroll + 1 > 2) {
+            this.scroll++;
+          }
+
+          playSound(1);
+          this.setSelectedCharacter(this.selectedCharacter + 1);
+        }
+
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return super.pressedWithRepeatPulse(inputAction);
   }
 
   @Override
@@ -66,7 +154,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
     if(this.saveData != null) {
       if(this.saveData.isValid()) {
         final EnhancedSaveDisplay display = this.saveData.display;
-        final EnhancedSaveDisplay.Char char0 = display.chars.get(display.party.getInt(0));
+        final EnhancedSaveDisplay.Char char0 = this.chars.get(this.selectedCharacter);
 
         renderCentredText(display.location, x + 258, y + 47, TextColour.BROWN); // Location text
         this.renderNumber(224, y + 6, char0.lvl, 2); // Level
@@ -80,7 +168,23 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
         this.renderCharacter(342, y + 17, 10); // Minute-second colon
         this.renderNumber(348, y + 17, getTimestampPart(display.time, 2), 2, 0x1); // Time played second
         this.renderNumber(344, y + 34, display.stardust, 2); // Stardust
+
+        for(int i = this.scroll; i < display.party.size(); i++) {
+          final int oldTextZ = textZ_800bdf00;
+          textZ_800bdf00 = 30;
+          renderText("*", x + 56 + (i - this.scroll) * 52, y + 50, TextColour.GREEN);
+          textZ_800bdf00 = oldTextZ;
+        }
       }
+    }
+  }
+
+  @Override
+  protected void delete() {
+    super.delete();
+
+    if(this.texture != null) {
+      this.texture.delete();
     }
   }
 }
