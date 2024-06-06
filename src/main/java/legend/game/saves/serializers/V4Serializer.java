@@ -9,6 +9,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.SItem.chapterNames_80114248;
@@ -231,6 +232,6 @@ public final class V4Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    return new SavedGame<>(filename, name, display, state, config);
+    return new SavedGame<>(filename, name, LodMod.RETAIL_SAVE_TYPE.get(), display, state, config);
   }
 }

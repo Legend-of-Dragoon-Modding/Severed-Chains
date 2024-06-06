@@ -2,6 +2,8 @@ package legend.game.saves.types;
 
 import legend.core.memory.types.IntRef;
 import legend.game.EngineState;
+import legend.game.inventory.screens.controls.EnhancedSaveCard;
+import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
@@ -42,7 +44,7 @@ public class EnhancedSaveType extends SaveType<EnhancedSaveDisplay> {
   }
 
   @Override
-  public int serialize(final FileData data, final EnhancedSaveDisplay display) {
+  public void serialize(final FileData data, final EnhancedSaveDisplay display, final IntRef serializerOffset) {
     final IntRef offset = new IntRef();
     data.writeAscii(offset, display.location);
     data.writeVarInt(offset, display.gold);
@@ -88,11 +90,75 @@ public class EnhancedSaveType extends SaveType<EnhancedSaveDisplay> {
       data.writeAscii(offset, dragoon.name);
     }
 
-    return offset.get();
+    serializerOffset.add(offset.get());
   }
 
   @Override
-  public SaveDisplay deserialize(final FileData data, final EnhancedSaveDisplay display) {
-    return null;
+  public EnhancedSaveDisplay deserialize(final FileData data, final IntRef serializerOffset) {
+    final IntRef offset = new IntRef();
+    final String location = data.readAscii(offset);
+    final int gold = data.readVarInt(offset);
+    final int stardust = data.readVarInt(offset);
+    final int time = data.readVarInt(offset);
+
+    final EnhancedSaveDisplay display = new EnhancedSaveDisplay(location, gold, stardust, time);
+
+    final int partySize = data.readVarInt(offset);
+    for(int i = 0; i < partySize; i++) {
+      display.party.add(data.readVarInt(offset));
+    }
+
+    final int charsSize = data.readVarInt(offset);
+    for(int i = 0; i < charsSize; i++) {
+      final int iconSize = data.readVarInt(offset);
+      final FileData icon;
+
+      if(iconSize != 0) {
+        icon = data.slice(offset.get(), iconSize);
+        offset.add(iconSize);
+      } else {
+        icon = null;
+      }
+
+      final String name = data.readAscii(offset);
+      final int lvl = data.readVarInt(offset);
+      final int exp = data.readVarInt(offset);
+      final int dlvl = data.readVarInt(offset);
+      final int dexp = data.readVarInt(offset);
+      final int hp = data.readVarInt(offset);
+      final int mp = data.readVarInt(offset);
+      final int sp = data.readVarInt(offset);
+      final int maxHp = data.readVarInt(offset);
+      final int maxMp = data.readVarInt(offset);
+      final int maxSp = data.readVarInt(offset);
+
+      display.chars.add(new EnhancedSaveDisplay.Char(icon, name, lvl, exp, dlvl, dexp, hp, mp, sp, maxHp, maxMp, maxSp));
+    }
+
+    final int dragoonsSize = data.readVarInt(offset);
+    for(int i = 0; i < dragoonsSize; i++) {
+      final int iconSize = data.readVarInt(offset);
+      final FileData icon;
+
+      if(iconSize != 0) {
+        icon = data.slice(offset.get(), iconSize);
+        offset.add(iconSize);
+      } else {
+        icon = null;
+      }
+
+      final String name = data.readAscii(offset);
+
+      display.dragoons.add(new EnhancedSaveDisplay.Dragoon(icon, name));
+    }
+
+    serializerOffset.add(offset.get());
+
+    return display;
+  }
+
+  @Override
+  public SaveCard<EnhancedSaveDisplay> makeSaveCard() {
+    return new EnhancedSaveCard();
   }
 }

@@ -6,6 +6,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
+import legend.game.inventory.screens.controls.RetailSaveCard;
 import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
@@ -40,6 +41,7 @@ public class CampaignSelectionScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(MenuScreen.class);
 
   private final BigList<Campaign> campaignList;
+  private SaveCard<?> saveCard;
 
   public CampaignSelectionScreen() {
     deallocateRenderables(0xff);
@@ -47,8 +49,8 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     this.addControl(new Background());
 
-    final SaveCard saveCard = this.addControl(new SaveCard());
-    saveCard.setPos(16, 160);
+    this.saveCard = this.addControl(new RetailSaveCard());
+    this.saveCard.setPos(16, 160);
 
     this.campaignList = this.addControl(new BigList<>(Campaign::filename));
     this.campaignList.setPos(16, 16);
@@ -59,7 +61,10 @@ public class CampaignSelectionScreen extends MenuScreen {
         return;
       }
 
-      saveCard.setSaveData(campaign.latestSave());
+      this.removeControl(this.saveCard);
+      this.saveCard = this.addControl(campaign.latestSave().saveType.makeSaveCard());
+      this.saveCard.setPos(16, 160);
+      this.saveCard.setSaveData(campaign.latestSave());
     });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);

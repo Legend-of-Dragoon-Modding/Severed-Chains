@@ -91,7 +91,7 @@ public class FileData {
   }
 
   public void read(final byte[] dest) {
-    this.read(0, dest, 0, this.size());
+    this.read(0, dest, 0, Math.min(this.size(), dest.length));
   }
 
   public void write(final int srcOffset, final byte[] src, final int destOffset, final int size) {

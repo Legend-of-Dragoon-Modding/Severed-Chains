@@ -322,8 +322,11 @@ public final class SaveManager {
       final Path dir = this.dir.resolve(gameState.campaignName);
       final Path file = dir.resolve(fileName + ".dsav");
 
+      final byte[] out = new byte[length + 0x4];
+      data.read(out);
+
       Files.createDirectories(dir);
-      Files.write(file, data.slice(0x0, length + 0x4).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      Files.write(file, out, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
       return file;
     } catch(final IOException e) {
       throw new SaveFailedException("Failed to save game", e);

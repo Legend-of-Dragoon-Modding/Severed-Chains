@@ -9,6 +9,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
 
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.submapNames_8011c108;
@@ -218,6 +219,6 @@ public final class V3Serializer {
     final String locationName = locationNames[locationIndex];
     final RetailSaveDisplay display = new RetailSaveDisplay(locationName, maxHp, maxMp);
 
-    return new SavedGame<>(filename, name, display, state, config);
+    return new SavedGame<>(filename, name, LodMod.RETAIL_SAVE_TYPE.get(), display, state, config);
   }
 }

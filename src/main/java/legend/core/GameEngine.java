@@ -276,8 +276,9 @@ public final class GameEngine {
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);
 
-    // Initialize config registry and fire off config registry events
+    // Initialize registries needed on the menu and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+    REGISTRY_ACCESS.initialize(REGISTRIES.saveTypes);
 
     MOD_ACCESS.loadingComplete();
 

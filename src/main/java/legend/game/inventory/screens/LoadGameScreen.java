@@ -5,6 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
+import legend.game.inventory.screens.controls.RetailSaveCard;
 import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
@@ -24,11 +25,12 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
 
+  private SaveCard<?> saveCard;
   private final BigList<SavedGame> saveList;
-  private final Consumer<SavedGame> saveSelected;
+  private final Consumer<SavedGame<?>> saveSelected;
   private final Runnable closed;
 
-  public LoadGameScreen(final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
+  public LoadGameScreen(final Consumer<SavedGame<?>> saveSelected, final Runnable closed, final Campaign campaign) {
     this.saveSelected = saveSelected;
     this.closed = closed;
 
@@ -41,17 +43,22 @@ public class LoadGameScreen extends MenuScreen {
     this.addControl(Glyph.glyph(78)).setPos(26, 155);
     this.addControl(Glyph.glyph(79)).setPos(192, 155);
 
-    final SaveCard saveCard = this.addControl(new SaveCard());
-    saveCard.setPos(16, 160);
+    this.saveCard = this.addControl(new RetailSaveCard());
+    this.saveCard.setPos(16, 160);
 
     this.saveList = this.addControl(new BigList<>(SavedGame::toString));
     this.saveList.setPos(16, 16);
     this.saveList.setSize(360, 144);
-    this.saveList.onHighlight(saveCard::setSaveData);
+    this.saveList.onHighlight(saveData -> {
+      this.removeControl(this.saveCard);
+      this.saveCard = this.addControl(saveData.saveType.makeSaveCard());
+      this.saveCard.setPos(16, 160);
+      this.saveCard.setSaveData(saveData);
+    });
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);
 
-    for(final SavedGame save : SAVES.loadAllSaves(campaign.filename())) {
+    for(final SavedGame<?> save : SAVES.loadAllSaves(campaign.filename())) {
       this.saveList.addEntry(save);
     }
   }

@@ -8,7 +8,7 @@ import legend.lodmod.LodMod;
 public class SaveTypeEvent extends SaveEvent {
   public final GameState52c gameState;
   public final EngineState engineState;
-  public SaveType<?> saveType = LodMod.RETAIL_SAVE_TYPE.get();
+  public SaveType<?> saveType = LodMod.ENHANCED_SAVE_TYPE.get();
 
   public SaveTypeEvent(final GameState52c gameState, final EngineState engineState) {
     this.gameState = gameState;

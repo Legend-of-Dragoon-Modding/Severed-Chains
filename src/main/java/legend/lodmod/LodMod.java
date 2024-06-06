@@ -12,6 +12,8 @@ import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
+import legend.game.saves.types.EnhancedSaveDisplay;
+import legend.game.saves.types.EnhancedSaveType;
 import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.saves.types.RetailSaveType;
 import legend.game.saves.types.SaveType;
@@ -51,6 +53,7 @@ public class LodMod {
   private static final Registrar<SaveType<?>, SaveTypeRegistryEvent> SAVE_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.saveTypes, MOD_ID);
 
   public static final RegistryDelegate<SaveType<RetailSaveDisplay>> RETAIL_SAVE_TYPE = SAVE_TYPE_REGISTRAR.register("retail", RetailSaveType::new);
+  public static final RegistryDelegate<SaveType<EnhancedSaveDisplay>> ENHANCED_SAVE_TYPE = SAVE_TYPE_REGISTRAR.register("enhanced", EnhancedSaveType::new);
 
   private static final Slugify slug = Slugify.builder().locale(Locale.US).underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
 
@@ -122,6 +125,11 @@ public class LodMod {
         spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/" + spellId + ".dspl"));
       }
     }
+  }
+
+  @EventListener
+  public static void registerSaveTypes(final SaveTypeRegistryEvent event) {
+    SAVE_TYPE_REGISTRAR.registryEvent(event);
   }
 
   @EventListener

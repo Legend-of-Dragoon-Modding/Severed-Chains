@@ -1,23 +1,37 @@
 package legend.game.unpacker;
 
 public class GrowableFileData extends FileData {
+  private final GrowableFileData parent;
+
   public GrowableFileData(final int startSize) {
     super(new byte[startSize]);
+    this.parent = null;
   }
 
-  protected GrowableFileData(final byte[] data, final int offset, final int size) {
-    super(data, offset, size);
+  protected GrowableFileData(final GrowableFileData parent, final int offset, final int size) {
+    super(parent.data, parent.offset + offset, size);
+    this.parent = parent;
   }
 
   @Override
   public FileData slice(final int offset, final int size) {
     this.checkBounds(offset, size);
-    return new GrowableFileData(this.data, this.offset + offset, size);
+    return new GrowableFileData(this, offset, size);
   }
 
   @Override
   public int size() {
     return this.data.length;
+  }
+
+  private void updateArray(final byte[] data) {
+    this.data = data;
+
+    GrowableFileData parent = this.parent;
+    while(parent != null) {
+      parent.updateArray(data);
+      parent = parent.parent;
+    }
   }
 
   @Override
@@ -30,10 +44,10 @@ public class GrowableFileData extends FileData {
       throw new IndexOutOfBoundsException("Negative size " + size);
     }
 
-    if(offset + size > this.size()) {
+    if(this.offset + offset + size > this.size()) {
       final byte[] newData = new byte[this.size() * 2];
       System.arraycopy(this.data, 0, newData, 0, this.size());
-      this.data = newData;
+      this.updateArray(newData);
     }
   }
 }
