@@ -1225,15 +1225,53 @@ public final class Unpacker {
   private static void portraitExtractorTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
+    final Tim firstTim = new Tim(node.data);
+
     // Walk to the last TIM in the file
-    Tim tim = null;
+    Tim thirdTim = null;
     int offset = 0;
     for(int i = 0; i < 3; i++) {
-      tim = new Tim(node.data.slice(offset));
-      final Rect4i rect = tim.getImageRect();
-      offset += 0x14 + tim.getImageDataOffset() + rect.w * rect.h * 2;
+      thirdTim = new Tim(node.data.slice(offset));
+      final Rect4i rect = thirdTim.getImageRect();
+      offset += 0x14 + thirdTim.getImageDataOffset() + rect.w * rect.h * 2;
     }
 
+    final int[] newData = new int[512 * 64];
+    extractPortraits(thirdTim, newData);
+    extractSpirits(firstTim, newData);
+
+    transformations.addNode(node);
+    transformations.addNode("characters/portraits.png", new FileData(VramTextureLoader.convertToPng(new Rect4i(0, 0, 512, 64), newData, false)));
+  }
+
+  private static void extractSpirits(final Tim tim, final int[] newData) {
+    final VramTextureSingle texture = VramTextureLoader.textureFromTim(tim);
+    final VramTextureSingle[] palettes = VramTextureLoader.palettesFromTim(tim);
+    final int[][] applied = new int[8][];
+
+    for(int spirit = 0; spirit < 7; spirit++) {
+      applied[spirit] = texture.applyPalette(palettes[4 + spirit], new Rect4i(130, 118, 11, 9));
+    }
+
+    applied[7] = texture.applyPalette(palettes[11], new Rect4i(242, 118, 11, 9));
+
+    for(int spirit = 0; spirit < 8; spirit++) {
+      for(int y = 0; y < 9; y++) {
+        for(int x = 0; x < 11; x++) {
+          final int pixel = applied[spirit][y * 11 + x];
+
+          if(pixel != 0) {
+            final int r = pixel        & 0xff;
+            final int g = pixel >>>  8 & 0xff;
+            final int b = pixel >>> 16 & 0xff;
+            newData[(48 + y) * 512 + spirit * 16 + x] = 0xff00_0000 | r << 16 | g << 8 | b;
+          }
+        }
+      }
+    }
+  }
+
+  private static void extractPortraits(final Tim tim, final int[] newData) {
     final VramTextureSingle texture = VramTextureLoader.textureFromTim(tim);
     final VramTextureSingle[] palettes = VramTextureLoader.palettesFromTim(tim);
 
@@ -1252,7 +1290,6 @@ public final class Unpacker {
     final int rawArea = rawWidth * rawHeight;
     final int appliedWidth = 256;
 
-    final int[] newData = new int[512 * 64];
     for(int i = 0; i < rawArea; i++) {
       final int rawX = i % rawWidth;
       final int rawY = i / rawWidth;
@@ -1289,9 +1326,6 @@ public final class Unpacker {
         newData[newIndex] = 0;
       }
     }
-
-    transformations.addNode("characters/portraits.png", new FileData(VramTextureLoader.convertToPng(new Rect4i(0, 0, 512, 64), newData, false)));
-    transformations.addNode(node);
   }
 
   private static boolean monsterSfxDiscriminator(final PathNode node, final Set<String> flags) {

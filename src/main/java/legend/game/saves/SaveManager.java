@@ -56,12 +56,19 @@ public final class SaveManager {
   private final int serializerMagic;
   private final SaveSerializer serializer;
 
-  public final FileData saveIcons;
+  private FileData saveIcons;
 
   public SaveManager(final int serializerMagic, final SaveSerializer serializer) {
     this.serializerMagic = serializerMagic;
     this.serializer = serializer;
+  }
+
+  public void init() {
     this.saveIcons = Unpacker.loadFile("characters/portraits.png");
+  }
+
+  public FileData getSaveIcons() {
+    return this.saveIcons;
   }
 
   public void registerDeserializer(final Function<FileData, FileData> matcher, final SaveDeserializer deserializer) {

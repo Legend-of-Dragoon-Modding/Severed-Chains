@@ -21,7 +21,7 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
   private final Image[] portraits = new Image[3];
-  private final DragoonSpirits dragoonSpirits;
+  private Image[] spirits;
   private final Glyph highlight;
 
   private SavedGame<EnhancedSaveDisplay> saveData;
@@ -40,9 +40,6 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
 
     this.highlight = this.addControl(Glyph.glyph(0x83));
     this.highlight.setPos(26, 8);
-
-    this.dragoonSpirits = this.addControl(new DragoonSpirits(0));
-    this.dragoonSpirits.setPos(205, 27);
 
     for(int i = 0; i < 3; i++) {
       this.portraits[i] = this.addControl(new Image());
@@ -89,11 +86,36 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
       }
 
       this.setSelectedCharacter(0);
-      this.dragoonSpirits.setSpirits(saveData.state.goods_19c[0]); //TODO
+
+      if(this.spirits != null) {
+        for(int i = 0; i < this.spirits.length; i++) {
+          this.removeControl(this.spirits[i]);
+        }
+      }
+
+      this.spirits = new Image[saveData.display.dragoons.size()];
+      for(int i = 0; i < saveData.display.dragoons.size(); i++) {
+        final EnhancedSaveDisplay.Dragoon dragoon = saveData.display.dragoons.get(i);
+
+        if(dragoon.iconW != 0 && dragoon.iconH != 0) {
+          this.spirits[i] = this.addControl(new Image());
+          this.spirits[i].setPos(199 + i * 12, 33);
+          this.spirits[i].setZ(124);
+          this.spirits[i].setSize(11, 9);
+          this.spirits[i].setTranslucent(true);
+          this.spirits[i].setTexture(this.texture);
+          this.spirits[i].setUv(dragoon.iconU, dragoon.iconV, dragoon.iconW, dragoon.iconH);
+        }
+      }
     } else {
       this.invalidSave.setVisibility(saveData != null);
+      this.highlight.setVisibility(false);
 
-      this.dragoonSpirits.setSpirits(0);
+      if(this.spirits != null) {
+        for(int i = 0; i < this.spirits.length; i++) {
+          this.removeControl(this.spirits[i]);
+        }
+      }
 
       for(int i = 0; i < this.portraits.length; i++) {
         this.portraits[i].hide();
@@ -167,7 +189,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
         this.renderNumber(330, y + 17, getTimestampPart(display.time, 1), 2, 0x1); // Time played minute
         this.renderCharacter(342, y + 17, 10); // Minute-second colon
         this.renderNumber(348, y + 17, getTimestampPart(display.time, 2), 2, 0x1); // Time played second
-        this.renderNumber(344, y + 34, display.stardust, 2); // Stardust
+        this.renderNumber(348, y + 34, display.stardust, 2); // Stardust
 
         for(int i = this.scroll; i < display.party.size(); i++) {
           final int oldTextZ = textZ_800bdf00;

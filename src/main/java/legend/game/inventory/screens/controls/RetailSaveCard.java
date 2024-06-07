@@ -87,7 +87,7 @@ public class RetailSaveCard extends SaveCard<RetailSaveDisplay> {
         this.renderNumber(330, y + 17, getTimestampPart(state.timestamp_a0, 1), 2, 0x1); // Time played minute
         this.renderCharacter(342, y + 17, 10); // Minute-second colon
         this.renderNumber(348, y + 17, getTimestampPart(state.timestamp_a0, 2), 2, 0x1); // Time played second
-        this.renderNumber(344, y + 34, state.stardust_9c, 2); // Stardust
+        this.renderNumber(348, y + 34, state.stardust_9c, 2); // Stardust
       }
     }
   }

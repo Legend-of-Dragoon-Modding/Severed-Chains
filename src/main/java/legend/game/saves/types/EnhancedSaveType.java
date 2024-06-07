@@ -19,7 +19,7 @@ public class EnhancedSaveType extends SaveType<EnhancedSaveDisplay> {
 
   @Override
   public EnhancedSaveDisplay createDisplayData(final GameState52c gameState, final ActiveStatsa0[] activeStats, final EngineState engineState) {
-    final EnhancedSaveDisplay display = new EnhancedSaveDisplay(engineState.getLocationForSave(), gameState.gold_94, gameState.stardust_9c, gameState.timestamp_a0, SAVES.saveIcons);
+    final EnhancedSaveDisplay display = new EnhancedSaveDisplay(engineState.getLocationForSave(), gameState.gold_94, gameState.stardust_9c, gameState.timestamp_a0, SAVES.getSaveIcons());
 
     for(int i = 0; i < gameState.charData_32c.length; i++) {
       final CharacterData2c chr = gameState.charData_32c[i];
@@ -39,7 +39,7 @@ public class EnhancedSaveType extends SaveType<EnhancedSaveDisplay> {
     for(int spiritIndex = 0; spiritIndex < 8; spiritIndex++) {
       final int bit = dragoonSpiritGoodsBits_800fbabc[spiritIndex];
       if((gameState_800babc8.goods_19c[0] & 0x1 << bit) != 0) {
-        display.dragoons.add(new EnhancedSaveDisplay.Dragoon(goodsItemNames_8011c008[bit], spiritIndex * 12, 48, 12, 12));
+        display.dragoons.add(new EnhancedSaveDisplay.Dragoon(goodsItemNames_8011c008[bit], spiritIndex * 16, 48, 11, 9));
       } else {
         display.dragoons.add(new EnhancedSaveDisplay.Dragoon("Not discovered", 0, 0, 0, 0));
       }

@@ -426,6 +426,7 @@ public final class GameEngine {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
       }
 
+      SAVES.init();
       initTextboxGeometry();
       battleUiParts.init();
       startSound();
