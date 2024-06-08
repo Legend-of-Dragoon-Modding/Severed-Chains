@@ -55,7 +55,7 @@ public final class Scus94491BpeSegment_800b {
   public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
-  public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
+  public static EngineStateType<?> postBattleEngineState_800bc91c;
   public static int goldGainedFromCombat_800bc920;
 
   public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
@@ -148,7 +148,7 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static EngineStateEnum previousEngineState_800bdb88 = EngineStateEnum.PRELOAD_00;
+  public static EngineStateType<?> previousEngineState_800bdb88;
 
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;

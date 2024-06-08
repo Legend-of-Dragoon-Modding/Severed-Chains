@@ -4,7 +4,7 @@ import legend.game.characters.Element;
 import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.combat.Battle.adjustDamageForPower;
 
 public final class PhysicalDamageFormula {
@@ -32,7 +32,7 @@ public final class PhysicalDamageFormula {
   }
 
   public static int applyDragoonSpace(final State<Integer> state) {
-    final Element element = ((Battle)currentEngineState_8004dd04).dragoonSpaceElement_800c6b64;
+    final Element element = ((Battle)engineState_8004dd04).dragoonSpaceElement_800c6b64;
     int damage = state.value();
 
     if(element != null) {

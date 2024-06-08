@@ -61,7 +61,7 @@ import static legend.core.MathHelper.clamp;
 import static legend.core.MathHelper.put3x4;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -505,7 +505,7 @@ public class RenderEngine {
         this.clear();
 
         // Gross hack bro
-        if(currentEngineState_8004dd04 instanceof final Battle battle && battle._800c6930 != null) {
+        if(engineState_8004dd04 instanceof final Battle battle && battle._800c6930 != null) {
           this.tmdShader.use();
           this.tmdShaderOptions.battleColour(battle._800c6930.colour_00);
         }

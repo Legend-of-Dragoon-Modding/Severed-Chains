@@ -1,7 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.EngineStateEnum;
-import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.Scus94491BpeSegment_8007;
 import legend.game.Scus94491BpeSegment_800b;
@@ -21,7 +19,7 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
@@ -37,7 +35,7 @@ public class GameVarParam extends Param {
   @Override
   public int get() {
     return switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
+//      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc;
       case 3 -> SCRIPTS.joypadInput;
@@ -78,9 +76,9 @@ public class GameVarParam extends Param {
       case 39 -> battleState_8006e398.battlePhase_eec;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.size();
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0);
-      case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc != null ? ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc.index : -1;
+      case 42 -> ((Battle)engineState_8004dd04).forcedTurnBent_800c66bc != null ? ((Battle)engineState_8004dd04).forcedTurnBent_800c66bc.index : -1;
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8;
-      case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748;
+      case 44 -> ((Battle)engineState_8004dd04)._800c6748;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4;
@@ -95,44 +93,44 @@ public class GameVarParam extends Param {
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
       case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
-      case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
+      case 59 -> ((Battle)engineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)engineState_8004dd04).currentTurnBent_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 
-      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0].index;
-      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740.index;
-      case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730;
+      case 64 -> ((SMap)engineState_8004dd04).sobjs_800c6880[0].index;
+      case 65 -> ((SMap)engineState_8004dd04).submapControllerState_800c6740.index;
+      case 66 -> ((SMap)engineState_8004dd04).sobjCount_800c6730;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0;
       case 68 -> Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30;
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34;
 //      case 71 -> SMap._800cb44c;
-      case 72 -> (int)((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0];
+      case 72 -> (int)((SMap)engineState_8004dd04).encounterAccumulator_800c6ae8;
+      case 73 -> ((SMap)engineState_8004dd04).indicatorTickCountArray_800c6970[0];
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 != null ? ((Battle)currentEngineState_8004dd04).scriptState_800c6914.index : -1;
-      case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918;
-      case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8;
-      case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc;
-      case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0;
-      case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710;
-      case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780;
-      case 87 -> ((Battle)currentEngineState_8004dd04)._800c66a8;
-      case 88 -> ((Battle)currentEngineState_8004dd04)._800c6700;
-      case 89 -> ((Battle)currentEngineState_8004dd04)._800c6704;
-      case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0;
+      case 80 -> ((Battle)engineState_8004dd04).scriptState_800c6914 != null ? ((Battle)engineState_8004dd04).scriptState_800c6914.index : -1;
+      case 81 -> ((Battle)engineState_8004dd04)._800c6918;
+      case 82 -> ((Battle)engineState_8004dd04)._800c67c8;
+      case 83 -> ((Battle)engineState_8004dd04)._800c67cc;
+      case 84 -> ((Battle)engineState_8004dd04)._800c67d0;
+      case 85 -> ((Battle)engineState_8004dd04)._800c6710;
+      case 86 -> ((Battle)engineState_8004dd04).currentCameraIndex_800c6780;
+      case 87 -> ((Battle)engineState_8004dd04)._800c66a8;
+      case 88 -> ((Battle)engineState_8004dd04)._800c6700;
+      case 89 -> ((Battle)engineState_8004dd04)._800c6704;
+      case 90 -> ((Battle)engineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0;
 
-      case 96 -> ((Battle)currentEngineState_8004dd04)._800c6754;
-      case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4;
+      case 96 -> ((Battle)engineState_8004dd04)._800c6754;
+      case 97 -> ((Battle)engineState_8004dd04).currentStage_800c66a4;
 
-      case 104 -> ((Battle)currentEngineState_8004dd04).shouldRenderMcq_800c6764 ? 1 : 0;
-      case 105 -> ((Battle)currentEngineState_8004dd04).mcqOffsetX_800c6774;
-      case 106 -> ((Battle)currentEngineState_8004dd04).mcqOffsetY_800c6778;
-      case 107 -> ((Battle)currentEngineState_8004dd04).mcqStepX_800c676c;
-      case 108 -> ((Battle)currentEngineState_8004dd04).mcqStepY_800c6770;
-      case 109 -> ((Battle)currentEngineState_8004dd04).mcqColour_800fa6dc;
+      case 104 -> ((Battle)engineState_8004dd04).shouldRenderMcq_800c6764 ? 1 : 0;
+      case 105 -> ((Battle)engineState_8004dd04).mcqOffsetX_800c6774;
+      case 106 -> ((Battle)engineState_8004dd04).mcqOffsetY_800c6778;
+      case 107 -> ((Battle)engineState_8004dd04).mcqStepX_800c676c;
+      case 108 -> ((Battle)engineState_8004dd04).mcqStepY_800c6770;
+      case 109 -> ((Battle)engineState_8004dd04).mcqColour_800fa6dc;
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(0);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.getRaw(0);
@@ -168,7 +166,7 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineStateEnum.values()[val];
+//      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
       case 3 -> Scus94491BpeSegment_800b.input_800bee90 = val;
@@ -221,9 +219,9 @@ public class GameVarParam extends Param {
           itemOverflow.add(item);
         }
       }
-      case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 42 -> ((Battle)engineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8 = val;
-      case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748 = val;
+      case 44 -> ((Battle)engineState_8004dd04)._800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4 = val;
@@ -238,44 +236,44 @@ public class GameVarParam extends Param {
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974 = val;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
-      case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 59 -> ((Battle)engineState_8004dd04).currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920 = val;
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c = val;
 
-      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
-      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
-      case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730 = val;
+      case 64 -> ((SMap)engineState_8004dd04).sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
+      case 65 -> ((SMap)engineState_8004dd04).submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
+      case 66 -> ((SMap)engineState_8004dd04).sobjCount_800c6730 = val;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0 = val;
       case 68 -> Scus94491BpeSegment_800b.previousSubmapCut_800bda08 = val;
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30 = val;
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34 = val;
 //      case 71 -> SMap._800cb44c;
-      case 72 -> ((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8 = val;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0] = val;
+      case 72 -> ((SMap)engineState_8004dd04).encounterAccumulator_800c6ae8 = val;
+      case 73 -> ((SMap)engineState_8004dd04).indicatorTickCountArray_800c6970[0] = val;
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
-      case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918 = val;
-      case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8 = val;
-      case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc = val;
-      case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0 = val;
-      case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710 = val;
-      case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780 = val;
-      case 87 -> ((Battle)currentEngineState_8004dd04)._800c66a8 = val;
-      case 88 -> ((Battle)currentEngineState_8004dd04)._800c6700 = val;
-      case 89 -> ((Battle)currentEngineState_8004dd04)._800c6704 = val;
-      case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0 = val;
+      case 80 -> ((Battle)engineState_8004dd04).scriptState_800c6914 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 81 -> ((Battle)engineState_8004dd04)._800c6918 = val;
+      case 82 -> ((Battle)engineState_8004dd04)._800c67c8 = val;
+      case 83 -> ((Battle)engineState_8004dd04)._800c67cc = val;
+      case 84 -> ((Battle)engineState_8004dd04)._800c67d0 = val;
+      case 85 -> ((Battle)engineState_8004dd04)._800c6710 = val;
+      case 86 -> ((Battle)engineState_8004dd04).currentCameraIndex_800c6780 = val;
+      case 87 -> ((Battle)engineState_8004dd04)._800c66a8 = val;
+      case 88 -> ((Battle)engineState_8004dd04)._800c6700 = val;
+      case 89 -> ((Battle)engineState_8004dd04)._800c6704 = val;
+      case 90 -> ((Battle)engineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0 = val;
 
-      case 96 -> ((Battle)currentEngineState_8004dd04)._800c6754 = val;
-      case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4 = val;
+      case 96 -> ((Battle)engineState_8004dd04)._800c6754 = val;
+      case 97 -> ((Battle)engineState_8004dd04).currentStage_800c66a4 = val;
 
-      case 104 -> ((Battle)currentEngineState_8004dd04).shouldRenderMcq_800c6764 = val != 0;
-      case 105 -> ((Battle)currentEngineState_8004dd04).mcqOffsetX_800c6774 = val;
-      case 106 -> ((Battle)currentEngineState_8004dd04).mcqOffsetY_800c6778 = val;
-      case 107 -> ((Battle)currentEngineState_8004dd04).mcqStepX_800c676c = val;
-      case 108 -> ((Battle)currentEngineState_8004dd04).mcqStepY_800c6770 = val;
-      case 109 -> ((Battle)currentEngineState_8004dd04).mcqColour_800fa6dc = val;
+      case 104 -> ((Battle)engineState_8004dd04).shouldRenderMcq_800c6764 = val != 0;
+      case 105 -> ((Battle)engineState_8004dd04).mcqOffsetX_800c6774 = val;
+      case 106 -> ((Battle)engineState_8004dd04).mcqOffsetY_800c6778 = val;
+      case 107 -> ((Battle)engineState_8004dd04).mcqStepX_800c676c = val;
+      case 108 -> ((Battle)engineState_8004dd04).mcqStepY_800c6770 = val;
+      case 109 -> ((Battle)engineState_8004dd04).mcqColour_800fa6dc = val;
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(0, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.setRaw(0, val);

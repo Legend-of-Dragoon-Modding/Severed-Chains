@@ -12,7 +12,7 @@ import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.unpacker.FileData;
@@ -223,7 +223,7 @@ public final class Fmv {
   private static final Matrix4f identity = new Matrix4f();
   private static final Vector2f oldProjectionSize = new Vector2f();
 
-  public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
+  public static void playCurrentFmv(final int fmvIndex, final EngineStateType<?> afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808 = -1;

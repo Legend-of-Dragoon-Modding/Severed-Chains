@@ -201,7 +201,7 @@ public final class SaveManager {
         final SavedGame<RetailSaveDisplay> save = saves.get(i);
         save.state.syncIds();
 
-        final EngineState dummyEngineState = new EngineState() {
+        final EngineState dummyEngineState = new EngineState(null) {
           @Override
           public String getLocationForSave() {
             return save.display.location;

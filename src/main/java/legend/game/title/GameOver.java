@@ -6,13 +6,14 @@ import legend.core.memory.Method;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.McqHeader;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MODS;
@@ -29,11 +30,15 @@ import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
-public class GameOver extends EngineState {
+public class GameOver extends EngineState<GameOver> {
   private int loadingStage;
 
   private Obj background;
   private final MV transforms = new MV();
+
+  public GameOver() {
+    super(LodMod.GAME_OVER_STATE_TYPE.get());
+  }
 
   @Override
   public String getLocationForSave() {
@@ -43,6 +48,11 @@ public class GameOver extends EngineState {
   @Override
   public FileData writeSaveData() {
     return null;
+  }
+
+  @Override
+  public boolean advancesTime() {
+    return false;
   }
 
   @Override
@@ -131,7 +141,7 @@ public class GameOver extends EngineState {
 
         uiFile_800bdc3c = null;
         gameOverMcq_800bdc3c = null;
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = CoreMod.TITLE_STATE_TYPE.get();
         vsyncMode_8007a3b8 = 2;
       }
     }

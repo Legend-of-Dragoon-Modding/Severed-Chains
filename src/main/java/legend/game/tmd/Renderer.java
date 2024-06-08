@@ -18,7 +18,7 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 
 public final class Renderer {
   private Renderer() { }
@@ -176,7 +176,7 @@ public final class Renderer {
       }
 
       if(textured && translucent && !lit && (ctmd || uniformLit)) {
-        final BattleLightStruct64 bkLight = ((Battle)currentEngineState_8004dd04)._800c6930;
+        final BattleLightStruct64 bkLight = ((Battle)engineState_8004dd04)._800c6930;
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;

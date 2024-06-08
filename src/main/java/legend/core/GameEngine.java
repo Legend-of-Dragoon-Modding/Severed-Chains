@@ -17,7 +17,6 @@ import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
 import legend.core.ui.ScreenStack;
-import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
@@ -279,6 +278,7 @@ public final class GameEngine {
     // Initialize registries needed on the menu and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
     REGISTRY_ACCESS.initialize(REGISTRIES.saveTypes);
+    REGISTRY_ACCESS.initialize(REGISTRIES.engineStateTypes);
 
     MOD_ACCESS.loadingComplete();
 
@@ -431,7 +431,7 @@ public final class GameEngine {
       battleUiParts.init();
       startSound();
       gameLoop();
-      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
+      Fmv.playCurrentFmv(0, CoreMod.TITLE_STATE_TYPE.get());
     }
   }
 
@@ -439,7 +439,6 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    final Path vsh = Paths.get("gfx", "shaders", "simple.vsh");
     shader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     shaderOptions = shader.makeOptions();
 

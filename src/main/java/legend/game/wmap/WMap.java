@@ -17,7 +17,6 @@ import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
@@ -34,6 +33,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -154,7 +154,7 @@ import static legend.game.wmap.WmapStatics.waterClutYs_800ef348;
 import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
-public class WMap extends EngineState {
+public class WMap extends EngineState<WMap> {
   private enum WorldMapState {
     UNINITIALIZED_0(0),
     UNUSED_1(1),
@@ -378,6 +378,15 @@ public class WMap extends EngineState {
   private int coolonWarpDestLabelX;
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
+
+  public WMap() {
+    super(LodMod.WORLD_MAP_STATE_TYPE.get());
+  }
+
+  @Override
+  public boolean canSave() {
+    return true;
+  }
 
   @Override
   public String getLocationForSave() {
@@ -674,7 +683,7 @@ public class WMap extends EngineState {
     this.deallocate();
 
     this.reinitializingWmap_80052c6c = false;
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = LodMod.SUBMAP_STATE_TYPE.get();
     vsyncMode_8007a3b8 = 2;
   }
 
@@ -690,7 +699,7 @@ public class WMap extends EngineState {
     this.deallocate();
 
     this.reinitializingWmap_80052c6c = false;
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
+    engineStateOnceLoaded_8004dd24 = LodMod.BATTLE_STATE_TYPE.get();
     vsyncMode_8007a3b8 = 2;
   }
 
@@ -717,7 +726,7 @@ public class WMap extends EngineState {
     this.deallocate();
 
     this.reinitializingWmap_80052c6c = false;
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+    engineStateOnceLoaded_8004dd24 = CoreMod.TITLE_STATE_TYPE.get();
     vsyncMode_8007a3b8 = 2;
     drgnBinIndex_800bc058 = 1;
   }
@@ -4558,7 +4567,7 @@ public class WMap extends EngineState {
 
     this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.NONE_0;
 
-    boolean transitionFromCombatOrShip = previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && this.mapState_800c6798.submapCutFrom_c4 != 999;
+    boolean transitionFromCombatOrShip = previousEngineState_8004dd28 == LodMod.BATTLE_STATE_TYPE.get() && this.mapState_800c6798.submapCutFrom_c4 != 999;
 
     //LAB_800e7e2c
     if(this.mapState_800c6798.submapSceneFrom_c6 == 31 && this.mapState_800c6798.submapCutFrom_c4 == 279) { // Exiting ship
@@ -4586,7 +4595,8 @@ public class WMap extends EngineState {
       for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
         //LAB_800e7f24
         final int directionalPathIndex = locations_800f0e34[i].directionalPathIndex_00;
-          //LAB_800e7f68
+
+        //LAB_800e7f68
         if(this.checkLocationIsValidAndOptionallySetPathStart(i, -1, null) == 0) {
           //LAB_800e7f88
           if(directionalPathIndex == this.mapState_800c6798.directionalPathIndex_12) {
@@ -4639,7 +4649,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8464
-    if(previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && this.mapState_800c6798.submapCutFrom_c4 == 999) {
+    if(previousEngineState_8004dd28 == LodMod.BATTLE_STATE_TYPE.get() && this.mapState_800c6798.submapCutFrom_c4 == 999) {
       submapCut_80052c30 = 0;
     }
 

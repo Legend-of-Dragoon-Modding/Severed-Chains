@@ -61,7 +61,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
@@ -301,7 +301,7 @@ public class ShopScreen extends MenuScreen {
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
 
-        currentEngineState_8004dd04.menuClosed();
+        engineState_8004dd04.menuClosed();
 
         whichMenu_800bdc38 = WhichMenu.UNLOAD_SHOP_MENU_10;
         textZ_800bdf00 = 13;

@@ -6,6 +6,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.GameEngine;
+import legend.game.EngineStateType;
+import legend.game.RegisterEngineStateTypeEvent;
+import legend.game.combat.Battle;
+import legend.game.credits.Credits;
+import legend.game.credits.FinalFmv;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
@@ -18,11 +23,15 @@ import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.saves.types.RetailSaveType;
 import legend.game.saves.types.SaveType;
 import legend.game.saves.types.SaveTypeRegistryEvent;
+import legend.game.submap.SMap;
+import legend.game.title.GameOver;
+import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
+import legend.game.wmap.WMap;
 import legend.lodmod.items.CharmPotionItem;
 import legend.lodmod.items.FileBasedItem;
 import org.legendofdragoon.modloader.Mod;
@@ -38,6 +47,10 @@ import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.itemDescriptions_80117a10;
 import static legend.game.SItem.itemNames_8011972c;
 import static legend.game.SItem.itemPrices_80114310;
+import static legend.game.SItem.levelStuff_80111cfc;
+import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.SItem.xpTables;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005.itemCombatDescriptions_80051758;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
@@ -51,9 +64,16 @@ public class LodMod {
   public static final String MOD_ID = "lod";
 
   private static final Registrar<SaveType<?>, SaveTypeRegistryEvent> SAVE_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.saveTypes, MOD_ID);
-
   public static final RegistryDelegate<SaveType<RetailSaveDisplay>> RETAIL_SAVE_TYPE = SAVE_TYPE_REGISTRAR.register("retail", RetailSaveType::new);
   public static final RegistryDelegate<SaveType<EnhancedSaveDisplay>> ENHANCED_SAVE_TYPE = SAVE_TYPE_REGISTRAR.register("enhanced", EnhancedSaveType::new);
+
+  private static final Registrar<EngineStateType<?>, RegisterEngineStateTypeEvent> ENGINE_STATE_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.engineStateTypes, MOD_ID);
+  public static final RegistryDelegate<EngineStateType<SMap>> SUBMAP_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("submap", () -> new EngineStateType<>(SMap.class, SMap::new));
+  public static final RegistryDelegate<EngineStateType<WMap>> WORLD_MAP_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("world_map", () -> new EngineStateType<>(WMap.class, WMap::new));
+  public static final RegistryDelegate<EngineStateType<Battle>> BATTLE_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("battle", () -> new EngineStateType<>(Battle.class, Battle::new));
+  public static final RegistryDelegate<EngineStateType<GameOver>> GAME_OVER_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("game_over", () -> new EngineStateType<>(GameOver.class, GameOver::new));
+  public static final RegistryDelegate<EngineStateType<FinalFmv>> FINAL_FMV_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("final_fmv", () -> new EngineStateType<>(FinalFmv.class, FinalFmv::new));
+  public static final RegistryDelegate<EngineStateType<Credits>> CREDITS_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("credits", () -> new EngineStateType<>(Credits.class, Credits::new));
 
   private static final Slugify slug = Slugify.builder().locale(Locale.US).underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
 
@@ -133,7 +153,58 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerEngineStates(final RegisterEngineStateTypeEvent event) {
+    ENGINE_STATE_TYPE_REGISTRAR.registryEvent(event);
+  }
+
+  private static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
+  private static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
+
+  @EventListener
   public static void newGame(final NewGameEvent event) {
+    event.gameState.charIds_88[0] = 0;
+    event.gameState.charIds_88[1] = -1;
+    event.gameState.charIds_88[2] = -1;
+
+    //LAB_800c723c
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      final CharacterData2c charData = event.gameState.charData_32c[charIndex];
+      final int level = characterStartingLevels[charIndex];
+      charData.xp_00 = xpTables[charIndex][level];
+      charData.hp_08 = levelStuff_80111cfc[charIndex][level].hp_00;
+      charData.mp_0a = magicStuff_80111d20[charIndex][1].mp_00;
+      charData.sp_0c = 0;
+      charData.dlevelXp_0e = 0;
+      charData.status_10 = 0;
+      charData.level_12 = level;
+      charData.dlevel_13 = 1;
+
+      //LAB_800c7294
+      for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
+        charData.additionLevels_1a[additionIndex] = 0;
+        charData.additionXp_22[additionIndex] = 0;
+      }
+
+      charData.additionLevels_1a[0] = 1;
+
+      //LAB_800c72d4
+      for(int i = 1; i < level; i++) {
+        final int index = levelStuff_80111cfc[charIndex][i].addition_02;
+
+        if(index != -1) {
+          final int offset = additionOffsets_8004f5ac[charIndex];
+          charData.additionLevels_1a[index - offset] = 1;
+        }
+
+        //LAB_800c72fc
+      }
+
+      //LAB_800c730c
+      charData.selectedAddition_19 = startingAddition_800ce758[charIndex];
+    }
+
+    event.gameState.charData_32c[0].partyFlags_04 = 0x3;
+
     event.gameState.items_2e9.add(LodItems.BURN_OUT.get());
     event.gameState.items_2e9.add(LodItems.HEALING_POTION.get());
     event.gameState.items_2e9.add(LodItems.HEALING_POTION.get());

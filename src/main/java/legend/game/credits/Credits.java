@@ -9,12 +9,12 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
@@ -34,7 +34,7 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class Credits extends EngineState {
+public class Credits extends EngineState<Credits> {
   public enum CreditsType {
     MAJOR_HEADER_0,
     MINOR_HEADER_1,
@@ -193,6 +193,10 @@ public class Credits extends EngineState {
   private Obj gradient;
   private Obj credits;
 
+  public Credits() {
+    super(LodMod.CREDITS_STATE_TYPE.get());
+  }
+
   @Override
   public String getLocationForSave() {
     return "Credits";
@@ -201,6 +205,11 @@ public class Credits extends EngineState {
   @Override
   public FileData writeSaveData() {
     return null;
+  }
+
+  @Override
+  public boolean advancesTime() {
+    return false;
   }
 
   @Override
@@ -697,7 +706,7 @@ public class Credits extends EngineState {
       this.credits.delete();
       this.credits = null;
     }
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = LodMod.SUBMAP_STATE_TYPE.get();
 
     //LAB_800eaf14
   }

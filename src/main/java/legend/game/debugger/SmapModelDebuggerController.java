@@ -35,7 +35,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyKeyframe;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public class SmapModelDebuggerController {
@@ -89,7 +89,7 @@ public class SmapModelDebuggerController {
   }
 
   public void setSobj(final SubmapObject210 sobj) {
-    this.smap = ((SMap)currentEngineState_8004dd04);
+    this.smap = ((SMap)engineState_8004dd04);
 
     this.model = new Model124("Animation viewer");
     this.model.coord2_14.coord.transfer.set(this.smap.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14.coord.transfer);

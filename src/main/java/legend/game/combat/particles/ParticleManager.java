@@ -48,7 +48,7 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
@@ -793,7 +793,7 @@ public class ParticleManager {
         .backgroundColour(GTE.backgroundColour)
         .ctmdFlags((dobj.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
         .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-        .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+        .battleColour(((Battle)engineState_8004dd04)._800c6930.colour_00);
 
       if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e62a8();

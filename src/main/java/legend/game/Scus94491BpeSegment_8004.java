@@ -3,9 +3,6 @@ package legend.game;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
-import legend.game.combat.Battle;
-import legend.game.credits.Credits;
-import legend.game.credits.FinalFmv;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
@@ -19,15 +16,9 @@ import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
-import legend.game.submap.SMap;
-import legend.game.title.GameOver;
-import legend.game.title.NewGame;
-import legend.game.title.Ttle;
 import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.ItemStats0c;
-import legend.game.types.OverlayStruct;
 import legend.game.unpacker.FileData;
-import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -35,8 +26,6 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
@@ -59,59 +48,12 @@ public final class Scus94491BpeSegment_8004 {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
-  /**
-   * <ol start="0">
-   *   <li>preload</li>
-   *   <li>finalizePregameLoading</li>
-   *   <li>{@link Ttle}</li>
-   *   <li>{@link NewGame}</li>
-   *   <li>{@link Credits}</li>
-   *   <li>{@link SMap} Sets up rendering and loads scene</li>
-   *   <li>{@link Battle}</li>
-   *   <li>{@link GameOver}</li>
-   *   <li>{@link WMap}</li>
-   *   <li>startFmvLoadingStage</li>
-   *   <li>swapDiskLoadingStage</li>
-   *   <li>{@link FinalFmv}</li>
-   *   <li>0x800c6eb8 (TODO)</li>
-   *   <li>0x800cab8c (TODO)</li>
-   *   <li>null</li>
-   *   <li>0x800c6978 (TODO)</li>
-   *   <li>null</li>
-   *   <li>0x800cdcdc (TODO)</li>
-   *   <li>0x800cabd4 (TODO)</li>
-   *   <li>null</li>
-   * </ol>
-   */
-  public static final Map<EngineStateEnum, OverlayStruct> gameStateOverlays_8004dbc0 = new EnumMap<>(EngineStateEnum.class);
-  static {
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.TITLE_02, new OverlayStruct(Ttle.class, Ttle::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.TRANSITION_TO_NEW_GAME_03, new OverlayStruct(NewGame.class, NewGame::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.CREDITS_04, new OverlayStruct(Credits.class, Credits::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.SUBMAP_05, new OverlayStruct(SMap.class, SMap::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.COMBAT_06, new OverlayStruct(Battle.class, Battle::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.GAME_OVER_07, new OverlayStruct(GameOver.class, GameOver::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.WORLD_MAP_08, new OverlayStruct(WMap.class, WMap::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.FINAL_FMV_11, new OverlayStruct(FinalFmv.class, FinalFmv::new));
-  }
+  public static EngineState<?> engineState_8004dd04;
 
-  public static EngineState currentEngineState_8004dd04;
-
-  /**
-   * <ol>
-   *   <li value="5">SMAP</li>
-   *   <li value="6">Combat</li>
-   *   <li value="7">Game over</li>
-   *   <li value="8">WMAP</li>
-   *   <li value="9">FMV?</li>
-   *   <li value="11">Credits?</li>
-   * </ol>
-   */
-  public static EngineStateEnum engineState_8004dd20 = EngineStateEnum.PRELOAD_00;
   /** When the overlay finishes loading, switch to this */
-  public static EngineStateEnum engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
+  public static EngineStateType<?> engineStateOnceLoaded_8004dd24;
   /** The previous state before the file finished loading */
-  public static EngineStateEnum previousEngineState_8004dd28;
+  public static EngineStateType<?> previousEngineState_8004dd28;
 
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;

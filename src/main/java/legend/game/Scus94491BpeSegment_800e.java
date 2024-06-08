@@ -26,7 +26,6 @@ import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
@@ -68,7 +67,6 @@ public final class Scus94491BpeSegment_800e {
     setProjectionPlaneDistance(640);
     initSound();
 
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
     pregameLoadingStage_800bb10c = 0;
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc = 0;

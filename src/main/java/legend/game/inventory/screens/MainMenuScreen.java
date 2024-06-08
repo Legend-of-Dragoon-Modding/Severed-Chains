@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import legend.game.EngineStateEnum;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -11,6 +10,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
+import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -21,7 +21,6 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.canSave_8011dc88;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.menuStack;
@@ -33,7 +32,7 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -80,7 +79,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Replace", this::showCharSwapScreen);
     this.addButton("Options", this::showOptionsScreen);
     this.addButton("", () -> { }).hide();
-    this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88);
+    this.addButton("Save", this::showSaveScreen).setDisabled(!engineState_8004dd04.canSave());
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
@@ -229,7 +228,7 @@ public class MainMenuScreen extends MenuScreen {
     renderCentredText(chapterNames_80114248[gameState_800babc8.chapterIndex_98], 94, 24, TextColour.BROWN);
 
     final String name;
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(engineState_8004dd04.is(LodMod.SUBMAP_STATE_TYPE.get())) {
       name = submapNames_8011c108[submapId_800bd808];
     } else {
       name = worldMapNames_8011c1ec[continentIndex_800bf0b0];
@@ -294,7 +293,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showSaveScreen() {
-    if(canSave_8011dc88) {
+    if(engineState_8004dd04.canSave()) {
       menuStack.pushScreen(new SaveGameScreen(() -> {
         menuStack.popScreen();
         this.fadeOutArrows();

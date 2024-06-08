@@ -122,8 +122,7 @@ import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
@@ -332,8 +331,8 @@ public final class Scus94491BpeSegment_8002 {
       model.animateTextures_ec[i] = false;
     }
 
-    if(currentEngineState_8004dd04 != null) {
-      currentEngineState_8004dd04.modelLoaded(model, cContainer);
+    if(engineState_8004dd04 != null) {
+      engineState_8004dd04.modelLoaded(model, cContainer);
     }
 
     //LAB_8002079c
@@ -493,26 +492,26 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020f34
     submapFullyLoaded_800bd7b4 = false;
 
-    final EngineStateEnum previousState = previousEngineState_800bdb88;
-    if(previousState != engineState_8004dd20) {
-      previousEngineState_800bdb88 = engineState_8004dd20;
+    final EngineStateType<?> previousState = previousEngineState_800bdb88;
+    if(!engineState_8004dd04.is(previousState)) {
+      previousEngineState_800bdb88 = engineState_8004dd04.type;
 
-      if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+      if(engineState_8004dd04.is(LodMod.SUBMAP_STATE_TYPE.get())) {
         _800bd7b0 = 2;
         transitioningFromCombatToSubmap_800bd7b8 = false;
 
-        if(previousState == EngineStateEnum.TITLE_02) {
+        if(previousState == CoreMod.TITLE_STATE_TYPE.get()) {
           _800bd7b0 = 9;
         }
 
         //LAB_80020f84
-        if(previousState == EngineStateEnum.COMBAT_06) {
+        if(previousState == LodMod.BATTLE_STATE_TYPE.get()) {
           _800bd7b0 = -4;
           transitioningFromCombatToSubmap_800bd7b8 = true;
         }
 
         //LAB_80020fa4
-        if(previousState == EngineStateEnum.WORLD_MAP_08) {
+        if(previousState == LodMod.WORLD_MAP_STATE_TYPE.get()) {
           _800bd7b0 = 3;
         }
       }
@@ -520,7 +519,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020fb4
     //LAB_80020fb8
-    if(previousEngineState_800bdb88 == EngineStateEnum.TITLE_02) {
+    if(previousEngineState_800bdb88 == CoreMod.TITLE_STATE_TYPE.get()) {
       _800bd7ac = true;
     }
 
@@ -911,7 +910,7 @@ public final class Scus94491BpeSegment_8002 {
 
         startFadeEffect(2, 10);
 
-        currentEngineState_8004dd04.menuClosed();
+        engineState_8004dd04.menuClosed();
 
         textZ_800bdf00 = 13;
       }
@@ -1904,7 +1903,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textboxText.state_00 == TextboxTextState._13) {
       textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
-      textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
+      textboxText.ticksUntilStateTransition_64 = 10 * engineState_8004dd04.tickMultiplier();
       textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
       Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
     }
@@ -1996,7 +1995,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.flags_08 = 0;
     textboxText.z_0c = 13;
     textboxText.textColour_28 = TextColour.WHITE;
-    textboxText.scrollSpeed_2a = 2.0f / currentEngineState_8004dd04.tickMultiplier();
+    textboxText.scrollSpeed_2a = 2.0f / engineState_8004dd04.tickMultiplier();
     textboxText.scrollAmount_2c = 0.0f;
     textboxText.charIndex_30 = 0;
     textboxText.charX_34 = 0;
@@ -2268,7 +2267,7 @@ public final class Scus94491BpeSegment_8002 {
             case 2 -> {
               textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
               textboxText.flags_08 |= 0x1;
-              textboxText.scrollSpeed_2a = 1.0f / currentEngineState_8004dd04.tickMultiplier();
+              textboxText.scrollSpeed_2a = 1.0f / engineState_8004dd04.tickMultiplier();
               textboxText.charX_34 = 0;
               textboxText.charY_36 = textboxText.lines_1e;
             }
@@ -2276,10 +2275,10 @@ public final class Scus94491BpeSegment_8002 {
             case 3 -> {
               textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
               textboxText.flags_08 |= 0x1;
-              textboxText.scrollSpeed_2a = 1.0f / currentEngineState_8004dd04.tickMultiplier();
+              textboxText.scrollSpeed_2a = 1.0f / engineState_8004dd04.tickMultiplier();
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
-              textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
+              textboxText.ticksUntilStateTransition_64 = 10 * engineState_8004dd04.tickMultiplier();
               textboxText.stateAfterTransition_78 = TextboxTextState._17;
               Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
             }
@@ -2314,7 +2313,7 @@ public final class Scus94491BpeSegment_8002 {
           if(textboxText._3a < textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
             //LAB_80026828
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
-            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
+            textboxText._3a += 1.0f / engineState_8004dd04.tickMultiplier();
             scrollTextboxDown(textboxIndex);
           } else {
             textboxText.flags_08 ^= 0x1;
@@ -2425,7 +2424,7 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026a8c
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
           } else {
-            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
+            textboxText._3a += 1.0f / engineState_8004dd04.tickMultiplier();
 
             if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
               textboxText.delete();
@@ -2493,7 +2492,7 @@ public final class Scus94491BpeSegment_8002 {
         if((textboxText.flags_08 & TextboxText84.SELECTION) != 0) {
           setTextboxArrowPosition(textboxIndex, false);
           textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
-          textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
+          textboxText.ticksUntilStateTransition_64 = 10 * engineState_8004dd04.tickMultiplier();
           textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
           textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
           Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -2593,7 +2592,7 @@ public final class Scus94491BpeSegment_8002 {
                 if(textboxText.selectionLine_60 > 0) {
                   textboxText.state_00 = TextboxTextState._19;
                   textboxText.selectionLine_60--;
-                  textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
+                  textboxText.ticksUntilStateTransition_64 = 4 * engineState_8004dd04.tickMultiplier();
                   textboxText.selectionLine_68--;
                 } else {
                   //LAB_80026f88
@@ -2613,7 +2612,7 @@ public final class Scus94491BpeSegment_8002 {
                     }
 
                     //LAB_80026fe8
-                    textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
+                    textboxText._3a -= 1.0f / engineState_8004dd04.tickMultiplier();
                   }
 
                   //LAB_80027014
@@ -2664,7 +2663,7 @@ public final class Scus94491BpeSegment_8002 {
 
           textboxText.state_00 = TextboxTextState._19;
           textboxText.selectionLine_60++;
-          textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
+          textboxText.ticksUntilStateTransition_64 = 4 * engineState_8004dd04.tickMultiplier();
           textboxText.selectionLine_68++;
 
           if((textboxText.flags_08 & 0x100) == 0 || textboxText.charY_36 + 1 != textboxText.selectionLine_68) {
@@ -2684,7 +2683,7 @@ public final class Scus94491BpeSegment_8002 {
                   if(textboxText.selectionLine_60 > 0) {
                     textboxText.state_00 = TextboxTextState._19;
                     textboxText.selectionLine_60--;
-                    textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
+                    textboxText.ticksUntilStateTransition_64 = 4 * engineState_8004dd04.tickMultiplier();
                     textboxText.selectionLine_68--;
                   } else {
                     //LAB_80026f88
@@ -2704,7 +2703,7 @@ public final class Scus94491BpeSegment_8002 {
                       }
 
                       //LAB_80026fe8
-                      textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
+                      textboxText._3a -= 1.0f / engineState_8004dd04.tickMultiplier();
                     }
 
                     //LAB_80027014
@@ -2784,7 +2783,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _20 -> {
         //LAB_8002715c
-        textboxText.scrollAmount_2c += 4.0f / currentEngineState_8004dd04.tickMultiplier();
+        textboxText.scrollAmount_2c += 4.0f / engineState_8004dd04.tickMultiplier();
 
         if(textboxText.scrollAmount_2c >= 12.0f) {
           advanceTextbox(textboxIndex);
@@ -2810,7 +2809,7 @@ public final class Scus94491BpeSegment_8002 {
               }
             } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
           } else {
-            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
+            textboxText._3a += 1.0f / engineState_8004dd04.tickMultiplier();
 
             if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
               textboxText.delete();
@@ -2827,7 +2826,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_800265f4
       case _21 -> {
         //LAB_8002727c
-        textboxText.scrollAmount_2c -= 4.0f / currentEngineState_8004dd04.tickMultiplier();
+        textboxText.scrollAmount_2c -= 4.0f / engineState_8004dd04.tickMultiplier();
         if(textboxText.scrollAmount_2c <= 0.0f) {
           textboxText.charY_36 = 0;
           textboxText.scrollAmount_2c = 0.0f;
@@ -2875,7 +2874,7 @@ public final class Scus94491BpeSegment_8002 {
         } else {
           //LAB_800273bc
           if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
+            textboxText.ticksUntilStateTransition_64 = 4 * engineState_8004dd04.tickMultiplier();
             textboxText.selectionLine_68--;
 
             if(textboxText.selectionLine_68 < textboxText.minSelectionLine_72) {
@@ -2889,7 +2888,7 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80027420
           if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
+            textboxText.ticksUntilStateTransition_64 = 4 * engineState_8004dd04.tickMultiplier();
             textboxText.selectionLine_68++;
 
             if(textboxText.selectionLine_68 > textboxText.maxSelectionLine_70) {
@@ -2910,7 +2909,7 @@ public final class Scus94491BpeSegment_8002 {
         textboxText.ticksUntilStateTransition_64--;
 
         if(textboxText.ticksUntilStateTransition_64 == 0) {
-          textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
+          textboxText.ticksUntilStateTransition_64 = 4 * engineState_8004dd04.tickMultiplier();
           textboxText.state_00 = textboxText.stateAfterTransition_78;
         }
       }
@@ -2930,7 +2929,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    textboxText.waitTicks = currentEngineState_8004dd04.tickMultiplier();
+    textboxText.waitTicks = engineState_8004dd04.tickMultiplier();
 
     final LodString str = textboxText.str_24;
 
@@ -3220,7 +3219,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80027d74L)
   public static void calculateAppropriateTextboxBounds(final int textboxIndex, final float x, final float y) {
     final int maxX;
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(engineState_8004dd04.is(LodMod.SUBMAP_STATE_TYPE.get())) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -3434,7 +3433,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80028f20L)
   public static boolean textboxFits(final int textboxIndex, final float x, final float y) {
     final int maxX;
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(engineState_8004dd04.is(LodMod.SUBMAP_STATE_TYPE.get())) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -3748,12 +3747,12 @@ public final class Scus94491BpeSegment_8002 {
         renderTextboxBackground(i);
       }
 
-      if(!currentEngineState_8004dd04.renderTextOnTopOfAllBoxes()) {
+      if(!engineState_8004dd04.renderTextOnTopOfAllBoxes()) {
         renderTextboxOverlays(i);
       }
     }
 
-    if(currentEngineState_8004dd04.renderTextOnTopOfAllBoxes()) {
+    if(engineState_8004dd04.renderTextOnTopOfAllBoxes()) {
       for(int i = 0; i < 8; i++) {
         renderTextboxOverlays(i);
       }
@@ -3879,7 +3878,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if((arrow.flags_00 & TextboxArrow0c.ARROW_VISIBLE) != 0) {
       if((textboxText_800bdf38[textboxIndex].flags_08 & TextboxText84.SHOW_ARROW) != 0) {
-        if(tickCount_800bb0fc % (2 * currentEngineState_8004dd04.tickMultiplier()) == 0) {
+        if(tickCount_800bb0fc % (2 * engineState_8004dd04.tickMultiplier()) == 0) {
           arrow.spriteIndex_08++;
         }
 

@@ -17,7 +17,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -52,6 +52,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -99,6 +100,7 @@ import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.srand;
+import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.textboxFits;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -111,10 +113,10 @@ import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
+import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
@@ -151,10 +153,10 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class SMap extends EngineState {
+public class SMap extends EngineState<SMap> {
   private int fmvIndex_800bf0dc;
 
-  private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
+  private EngineStateType<?> afterFmvLoadingStage_800bf0ec;
 
   private final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
@@ -411,6 +413,25 @@ public class SMap extends EngineState {
   private final ChapterTitleCard chapterTitleCard = new ChapterTitleCard();
 
   private final AttachedSobjEffect attachedSobjEffect = new AttachedSobjEffect();
+
+  public SMap() {
+    super(LodMod.SUBMAP_STATE_TYPE.get());
+  }
+
+  @Override
+  public void init() {
+    sssqResetStuff();
+  }
+
+  @Override
+  public void destroy() {
+    sssqResetStuff();
+  }
+
+  @Override
+  public boolean canSave() {
+    return CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
+  }
 
   @Override
   public String getLocationForSave() {
@@ -671,12 +692,7 @@ public class SMap extends EngineState {
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
 
-    final int width;
-    if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
-      width = 320;
-    } else {
-      width = 360;
-    }
+    final int width = 360;
 
     //LAB_80028a20
     if(textboxText.chars_1c >= 17) {
@@ -3550,7 +3566,14 @@ public class SMap extends EngineState {
 
     if(newCut > 0x7ff) {
       this.fmvIndex_800bf0dc = newCut - 0x800;
-      this.afterFmvLoadingStage_800bf0ec = EngineStateEnum.values()[newScene];
+      this.afterFmvLoadingStage_800bf0ec = switch(newScene) {
+        case 2 -> CoreMod.TITLE_STATE_TYPE.get();
+        case 5 -> LodMod.SUBMAP_STATE_TYPE.get();
+        case 6 -> LodMod.BATTLE_STATE_TYPE.get();
+        case 7 -> LodMod.GAME_OVER_STATE_TYPE.get();
+        case 8 -> LodMod.WORLD_MAP_STATE_TYPE.get();
+        default -> throw new IllegalArgumentException("Unknown engine state " + newScene);
+      };
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_FMV_21;
       return;
     }
@@ -3886,7 +3909,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e62cc
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
+        engineStateOnceLoaded_8004dd24 = LodMod.WORLD_MAP_STATE_TYPE.get();
         pregameLoadingStage_800bb10c = 0;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this._800f7e4c = false;
@@ -3896,7 +3919,7 @@ public class SMap extends EngineState {
       case TRANSITION_TO_COMBAT_19 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
+        engineStateOnceLoaded_8004dd24 = LodMod.BATTLE_STATE_TYPE.get();
         pregameLoadingStage_800bb10c = 0;
         this._800f7e4c = false;
         SCRIPTS.resume();
@@ -3922,7 +3945,7 @@ public class SMap extends EngineState {
 
         //LAB_800e6458
         FUN_8002a9c0();
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = CoreMod.TITLE_STATE_TYPE.get();
         pregameLoadingStage_800bb10c = 0;
 
         //LAB_800e6484

@@ -1,5 +1,8 @@
 package legend.core;
 
+import legend.game.EngineStateType;
+import legend.game.RegisterEngineStateTypeEvent;
+import legend.game.EngineStateTypeRegistry;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
@@ -38,6 +41,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<SaveType<?>> saveTypes = this.addRegistry(new SaveTypeRegistry(), SaveTypeRegistryEvent::new);
+  public final Registry<EngineStateType<?>> engineStateTypes = this.addRegistry(new EngineStateTypeRegistry(), RegisterEngineStateTypeEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

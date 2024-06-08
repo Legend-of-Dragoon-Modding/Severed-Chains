@@ -13,7 +13,6 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
@@ -39,6 +38,7 @@ import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -46,7 +46,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -62,10 +61,8 @@ import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
-import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
@@ -496,8 +493,6 @@ public final class SItem {
 
   public static int characterCount_8011d7c4;
 
-  public static boolean canSave_8011dc88;
-
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {
     if(charIndex == -1 || charIndex > 8) {
@@ -549,17 +544,11 @@ public final class SItem {
     inventoryJoypadInput_800bdc44 = getJoypadInputByPriority();
 
     switch(inventoryMenuState_800bdc28) {
-      case INIT_0 -> { // Initialize, loads some files (unknown contents)
+      case INIT_0 -> {
         loadingNewGameState_800bdc34 = false;
         loadCharacterStats();
 
-        if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-          gameState_800babc8.isOnWorldMap_4e4 = true;
-          canSave_8011dc88 = true;
-        } else {
-          gameState_800babc8.isOnWorldMap_4e4 = false;
-          canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
-        }
+        gameState_800babc8.isOnWorldMap_4e4 = engineState_8004dd04.is(LodMod.WORLD_MAP_STATE_TYPE.get());
 
         inventoryMenuState_800bdc28 = InventoryMenuState.AWAIT_INIT_1;
       }
@@ -607,7 +596,7 @@ public final class SItem {
           }
         }
 
-        currentEngineState_8004dd04.menuClosed();
+        engineState_8004dd04.menuClosed();
 
         textZ_800bdf00 = 13;
       }

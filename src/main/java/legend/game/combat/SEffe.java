@@ -144,7 +144,7 @@ import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
@@ -511,7 +511,7 @@ public final class SEffe {
       .backgroundColour(GTE.backgroundColour)
       .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
       .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-      .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+      .battleColour(((Battle)engineState_8004dd04)._800c6930.colour_00);
 
     if(objTable.vdf != null) {
       model.vdf(objTable.vdf);
@@ -545,7 +545,7 @@ public final class SEffe {
 
   @Method(0x800e4d74L)
   public static void getBattleBackgroundLightColour(final Vector3f colour) {
-    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
+    final BattleLightStruct64 light = ((Battle)engineState_8004dd04)._800c6930;
     colour.set(light.colour_00);
   }
 
@@ -563,7 +563,7 @@ public final class SEffe {
       LOGGER.warn("Negative B! %f", b);
     }
 
-    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
+    final BattleLightStruct64 light = ((Battle)engineState_8004dd04)._800c6930;
     final Vector3f colour = light.colours_30[light.colourIndex_60];
     getBattleBackgroundLightColour(colour);
 
@@ -573,7 +573,7 @@ public final class SEffe {
 
   @Method(0x800e6170L)
   public static void FUN_800e6170() {
-    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
+    final BattleLightStruct64 light = ((Battle)engineState_8004dd04)._800c6930;
     light.colourIndex_60 = light.colourIndex_60 - 1 & 3;
     light.colour_00.set(light.colours_30[light.colourIndex_60]);
   }
@@ -597,7 +597,7 @@ public final class SEffe {
     GsSetFlatLight(2, defaultLight_800c6ddc);
     FUN_800e60e0(r, g, b);
 
-    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
+    final BattleLightStruct64 light = ((Battle)engineState_8004dd04)._800c6930;
     GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
   }
 
@@ -605,11 +605,11 @@ public final class SEffe {
   public static void FUN_800e62a8() {
     FUN_800e6170();
 
-    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
+    final BattleLightStruct64 light = ((Battle)engineState_8004dd04)._800c6930;
     GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
 
     for(int i = 0; i < 3; i++) {
-      GsSetFlatLight(i, ((Battle)currentEngineState_8004dd04).lights_800c692c[i].light_00);
+      GsSetFlatLight(i, ((Battle)engineState_8004dd04).lights_800c692c[i].light_00);
     }
   }
 
@@ -1008,7 +1008,7 @@ public final class SEffe {
     final int innerStuff = script.params_20[7].get();
     final int particleType = script.params_20[8].get();
 
-    final ParticleEffectData98 effect = ((Battle)currentEngineState_8004dd04).particles.allocateParticle(script.scriptState_04, particleType, particleCount, particleTypeId, _10, _14, _18, innerStuff, scriptIndex, script.params_20[1].get());
+    final ParticleEffectData98 effect = ((Battle)engineState_8004dd04).particles.allocateParticle(script.scriptState_04, particleType, particleCount, particleTypeId, _10, _14, _18, innerStuff, scriptIndex, script.params_20[1].get());
 
     script.params_20[0].set(effect.myState_00.index);
     return FlowControl.CONTINUE;
@@ -6936,7 +6936,7 @@ public final class SEffe {
     final int _02;
     final int _04;
 
-    final int stage = ((Battle)currentEngineState_8004dd04).currentStage_800c66a4;
+    final int stage = ((Battle)engineState_8004dd04).currentStage_800c66a4;
 
     if(stage < 71 || stage > 78) { // Not in Dragoon "special transformation" stage
       //LAB_80115d14
@@ -7974,7 +7974,7 @@ public final class SEffe {
           .backgroundColour(GTE.backgroundColour)
           .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+          .battleColour(((Battle)engineState_8004dd04)._800c6930.colour_00);
 
         if(deffEffect.tmd_08.vdf != null) {
           model.vdf(deffEffect.tmd_08.vdf);

@@ -17,7 +17,7 @@ import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.Scus94491BpeSegment;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
@@ -146,6 +146,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
+import static legend.game.Scus94491BpeSegment.clearCombatVars;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
@@ -224,7 +225,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
+import static legend.game.Scus94491BpeSegment_800b.postBattleEngineState_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
@@ -255,7 +256,7 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 
-public class Battle extends EngineState {
+public class Battle extends EngineState<Battle> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
@@ -563,6 +564,10 @@ public class Battle extends EngineState {
   public static final int[] melbuStageIndices_800fb064 = {93, 94, 95, 25, 52, -1, -1, -1};
   public static final int[] modelVramSlots_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
 
+  public Battle() {
+    super(LodMod.BATTLE_STATE_TYPE.get());
+  }
+
   @Override
   public String getLocationForSave() {
     return "Battle";
@@ -576,6 +581,18 @@ public class Battle extends EngineState {
   @Override
   public int tickMultiplier() {
     return 1;
+  }
+
+  @Override
+  public void init() {
+    super.init();
+    clearCombatVars();
+  }
+
+  @Override
+  public void destroy() {
+    super.destroy();
+    sssqResetStuff();
   }
 
   @Override
@@ -1669,10 +1686,7 @@ public class Battle extends EngineState {
       this.deallocateStageDarkeningStorage();
       this.FUN_800c8748();
 
-      EngineStateEnum postCombatMainCallbackIndex = previousEngineState_8004dd28;
-      if(postCombatMainCallbackIndex == EngineStateEnum.FMV_09) {
-        postCombatMainCallbackIndex = EngineStateEnum.SUBMAP_05;
-      }
+      EngineStateType<?> postCombatMainCallbackIndex = previousEngineState_8004dd28;
 
       //LAB_800c84b4
       switch(postBattleActionIndex_800bc974) {
@@ -1682,15 +1696,15 @@ public class Battle extends EngineState {
             gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
           } else {
             //LAB_800c8534
-            postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
+            postCombatMainCallbackIndex = LodMod.GAME_OVER_STATE_TYPE.get();
           }
         }
 
-        case 4 -> Fmv.playCurrentFmv(16, EngineStateEnum.FINAL_FMV_11);
+        case 4 -> Fmv.playCurrentFmv(16, LodMod.FINAL_FMV_STATE_TYPE.get());
       }
 
       //LAB_800c8558
-      postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
+      postBattleEngineState_800bc91c = postCombatMainCallbackIndex;
 
       final int postCombatSubmapScene = this.currentStageData_800c6718.postCombatSubmapScene_0c;
       if(postCombatSubmapScene != 0xff) {
