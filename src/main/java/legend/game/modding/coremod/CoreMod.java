@@ -2,7 +2,7 @@ package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
 import legend.game.EngineStateType;
-import legend.game.RegisterEngineStateTypeEvent;
+import legend.game.EngineStateTypeRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.StatType;
@@ -154,7 +154,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_STATUS_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("disable_status_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<BoolConfigEntry> ENEMY_HP_BARS_CONFIG = CONFIG_REGISTRAR.register("enemy_hp_bars", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
 
-  private static final Registrar<EngineStateType<?>, RegisterEngineStateTypeEvent> ENGINE_STATE_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.engineStateTypes, MOD_ID);
+  private static final Registrar<EngineStateType<?>, EngineStateTypeRegistryEvent> ENGINE_STATE_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.engineStateTypes, MOD_ID);
   public static final RegistryDelegate<EngineStateType<Ttle>> TITLE_STATE_TYPE = ENGINE_STATE_TYPE_REGISTRAR.register("title", () -> new EngineStateType<>(Ttle.class, Ttle::new));
 
   public static final Formula<Integer, Integer> PHYSICAL_DAMAGE_FORMULA = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
@@ -206,7 +206,7 @@ public class CoreMod {
   }
 
   @EventListener
-  public static void registerEngineStates(final RegisterEngineStateTypeEvent event) {
+  public static void registerEngineStates(final EngineStateTypeRegistryEvent event) {
     ENGINE_STATE_TYPE_REGISTRAR.registryEvent(event);
   }
 }

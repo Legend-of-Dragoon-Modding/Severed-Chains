@@ -2,10 +2,13 @@ package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
 import legend.game.SItem;
+import legend.game.Scus94491BpeSegment_800b;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
@@ -13,15 +16,21 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
@@ -36,6 +45,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
   private final Set<String> enabledMods = new HashSet<>();
 
+  private final Dropdown campaignType;
   private final Textbox campaignName;
 
   private boolean unload;
@@ -48,6 +58,24 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     startFadeEffect(2, 10);
 
     this.addControl(new Background());
+
+    this.campaignType = this.addRow("Campaign", new Dropdown());
+    this.campaignType.setZ(35);
+
+    final Map<String, RegistryId> campaignTypeIds = new HashMap<>();
+    final List<String> campaignTypeNames = new ArrayList<>();
+    for(final var campaignType : REGISTRIES.campaignTypes) {
+      final String name = I18n.translate(campaignType.modId() + ".campaign." + campaignType.entryId() + ".name");
+      campaignTypeNames.add(name);
+      campaignTypeIds.put(name, campaignType);
+    }
+    campaignTypeNames.sort(String::compareToIgnoreCase);
+
+    for(final String campaignTypeName : campaignTypeNames) {
+      this.campaignType.addOption(campaignTypeName);
+    }
+    this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.get(index))));
+    Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.getFirst()));
 
     this.campaignName = this.addRow("Campaign name", new Textbox());
     this.campaignName.setText(SAVES.generateCampaignName());
@@ -90,6 +118,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
       this.state.campaignName = this.campaignName.getText();
 
+      Scus94491BpeSegment_800b.campaignType.get().setUpNewCampaign(this.state);
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
       final GameLoadedEvent gameLoadedEvent = EVENTS.postEvent(new GameLoadedEvent(newGameEvent.gameState));
 

@@ -232,6 +232,6 @@ public final class V4Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    return new SavedGame<>(filename, name, LodMod.RETAIL_SAVE_TYPE.get(), display, state, config);
+    return new SavedGame<>(filename, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, config);
   }
 }

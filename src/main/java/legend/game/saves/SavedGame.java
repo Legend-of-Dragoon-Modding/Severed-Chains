@@ -1,20 +1,24 @@
 package legend.game.saves;
 
+import legend.game.saves.campaigns.CampaignType;
 import legend.game.saves.types.SaveDisplay;
 import legend.game.saves.types.SaveType;
 import legend.game.types.GameState52c;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 public final class SavedGame<Display extends SaveDisplay> {
   public String fileName;
   public String saveName;
-  public final SaveType<Display> saveType;
+  public final RegistryDelegate<CampaignType> campaignType;
+  public final RegistryDelegate<SaveType<Display>> saveType;
   public final Display display;
   public final GameState52c state;
   public final ConfigCollection config;
 
-  public SavedGame(final String fileName, final String saveName, final SaveType<Display> saveType, final Display display, final GameState52c state, final ConfigCollection config) {
+  public SavedGame(final String fileName, final String saveName, final RegistryDelegate<CampaignType> campaignType, final RegistryDelegate<SaveType<Display>> saveType, final Display display, final GameState52c state, final ConfigCollection config) {
     this.fileName = fileName;
     this.saveName = saveName;
+    this.campaignType = campaignType;
     this.saveType = saveType;
     this.display = display;
     this.state = state;
@@ -22,7 +26,7 @@ public final class SavedGame<Display extends SaveDisplay> {
   }
 
   public static SavedGame<?> invalid(final String fileName) {
-    return new SavedGame<>(fileName, fileName, null, null, null, null);
+    return new SavedGame<>(fileName, fileName, null, null, null, null, null);
   }
 
   public boolean isValid() {

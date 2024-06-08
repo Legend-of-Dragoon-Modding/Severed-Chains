@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.saves.campaigns.CampaignType;
 import legend.game.saves.types.RetailSaveDisplay;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
@@ -232,7 +233,7 @@ public final class SaveManager {
 
         save.state.syncIds();
 
-        final Path file = this.newSave(save.display.location + ' ' + indices.getInt(save.display.location), save.state, activeStats, dummyEngineState);
+        final Path file = this.newSave(save.display.location + ' ' + indices.getInt(save.display.location), save.state, activeStats, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE.get(), dummyEngineState);
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
       }
 
@@ -322,13 +323,13 @@ public final class SaveManager {
     return !this.getCampaigns().isEmpty();
   }
 
-  public Path overwriteSave(final String fileName, final String saveName, final GameState52c gameState, final ActiveStatsa0[] activeStats, final EngineState engineState) throws SaveFailedException {
+  public Path overwriteSave(final String fileName, final String saveName, final GameState52c gameState, final ActiveStatsa0[] activeStats, final CampaignType campaignType, final EngineState<?> engineState) throws SaveFailedException {
     try {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
 
       final FileData data = new GrowableFileData(1024);
       data.writeInt(0x0, this.serializerMagic);
-      final int length = this.serializer.serializer(saveName, data.slice(0x4), gameState, activeStats, engineState);
+      final int length = this.serializer.serializer(saveName, data.slice(0x4), gameState, activeStats, campaignType, engineState);
 
       final Path dir = this.dir.resolve(gameState.campaignName);
       final Path file = dir.resolve(fileName + ".dsav");
@@ -344,8 +345,8 @@ public final class SaveManager {
     }
   }
 
-  public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats, final EngineState engineState) throws SaveFailedException {
-    return this.overwriteSave(slug.slugify(saveName), saveName, state, activeStats, engineState);
+  public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats, final CampaignType campaignType, final EngineState<?> engineState) throws SaveFailedException {
+    return this.overwriteSave(slug.slugify(saveName), saveName, state, activeStats, campaignType, engineState);
   }
 
   public SavedGame<?> loadGame(final String campaign, final String filename) throws InvalidSaveException {

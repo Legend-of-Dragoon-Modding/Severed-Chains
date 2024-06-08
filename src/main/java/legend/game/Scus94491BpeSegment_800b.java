@@ -8,6 +8,7 @@ import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.saves.campaigns.CampaignType;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -26,6 +27,7 @@ import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxText84;
 import legend.game.types.UiFile;
 import org.joml.Vector2f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,6 +163,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static InventoryMenuState inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
 
+  public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
   /**
    * 0xe - load game

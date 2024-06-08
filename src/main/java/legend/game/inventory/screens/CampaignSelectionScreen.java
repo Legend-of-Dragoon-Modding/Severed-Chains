@@ -13,6 +13,8 @@ import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.saves.SavedGame;
+import legend.game.saves.types.SaveDisplay;
 import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,9 +32,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -63,10 +63,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       }
 
       this.removeControl(this.saveCard);
-      this.saveCard = this.addControl(campaign.latestSave().saveType.makeSaveCard());
-      this.saveCard.setPos(16, 160);
-      this.saveCard.setSaveData(campaign.latestSave());
-      this.saveCard.alwaysReceiveInput();
+      this.saveCard = this.addSaveCard(campaign);
     });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);
@@ -74,6 +71,15 @@ public class CampaignSelectionScreen extends MenuScreen {
     for(final Campaign campaign : SAVES.loadAllCampaigns()) {
       this.campaignList.addEntry(campaign);
     }
+  }
+
+  private <T extends SaveDisplay> SaveCard<T> addSaveCard(final Campaign campaign) {
+    final SavedGame<T> latestSave = (SavedGame<T>)campaign.latestSave();
+    final SaveCard<T> saveCard = this.addControl(latestSave.saveType.get().makeSaveCard());
+    saveCard.setPos(16, 160);
+    saveCard.setSaveData(latestSave);
+    saveCard.alwaysReceiveInput();
+    return saveCard;
   }
 
   private void onSelection(final Campaign campaign) {
@@ -107,13 +113,8 @@ public class CampaignSelectionScreen extends MenuScreen {
       loadingNewGameState_800bdc34 = true;
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
 
-      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
-      collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
-
-      if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-        submapScene_80052c34 = 53;
-      }
+      campaignType = save.campaignType;
+      campaignType.get().setUpLoadedGame(gameState_800babc8);
     }, () -> {
       menuStack.popScreen();
       startFadeEffect(2, 10);

@@ -279,6 +279,7 @@ public final class GameEngine {
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
     REGISTRY_ACCESS.initialize(REGISTRIES.saveTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.engineStateTypes);
+    REGISTRY_ACCESS.initialize(REGISTRIES.campaignTypes);
 
     MOD_ACCESS.loadingComplete();
 

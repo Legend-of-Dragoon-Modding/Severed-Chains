@@ -9,6 +9,7 @@ import legend.game.inventory.screens.controls.RetailSaveCard;
 import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
+import legend.game.saves.types.SaveType;
 import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,7 +53,8 @@ public class LoadGameScreen extends MenuScreen {
     this.saveList.setSize(360, 144);
     this.saveList.onHighlight(saveData -> {
       this.removeControl(this.saveCard);
-      this.saveCard = this.addControl(saveData.saveType.makeSaveCard());
+      final SaveType<?> saveType = (SaveType<?>)saveData.saveType.get();
+      this.saveCard = this.addControl(saveType.makeSaveCard());
       this.saveCard.setPos(16, 160);
       this.saveCard.setSaveData(saveData);
       this.saveCard.alwaysReceiveInput();

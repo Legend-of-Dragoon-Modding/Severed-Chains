@@ -219,6 +219,6 @@ public final class V3Serializer {
     final String locationName = locationNames[locationIndex];
     final RetailSaveDisplay display = new RetailSaveDisplay(locationName, maxHp, maxMp);
 
-    return new SavedGame<>(filename, name, LodMod.RETAIL_SAVE_TYPE.get(), display, state, config);
+    return new SavedGame<>(filename, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, config);
   }
 }

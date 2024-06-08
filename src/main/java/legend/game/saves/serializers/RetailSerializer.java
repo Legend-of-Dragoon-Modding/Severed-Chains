@@ -49,7 +49,7 @@ public final class RetailSerializer {
 
     final RetailSaveDisplay display = new RetailSaveDisplay(locationName, maxHp, maxMp);
 
-    return new SavedGame<>(name, name, LodMod.RETAIL_SAVE_TYPE.get(), display, state, new ConfigCollection());
+    return new SavedGame<>(name, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, new ConfigCollection());
   }
 
   public static GameState52c deserializeRetailGameState(final FileData data) {

@@ -16,7 +16,6 @@ import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
 import legend.game.EngineState;
-import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
@@ -27,7 +26,6 @@ import legend.game.tim.Tim;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
-import legend.lodmod.LodMod;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -64,6 +62,7 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -379,8 +378,7 @@ public class Ttle extends EngineState<Ttle> {
       if(loadingNewGameState_800bdc34) {
         removeInputHandlers();
         this.deallocate();
-
-        Fmv.playCurrentFmv(2, LodMod.SUBMAP_STATE_TYPE.get());
+        campaignType.get().transitionToNewCampaign(gameState_800babc8);
         return true;
       }
 
@@ -465,13 +463,7 @@ public class Ttle extends EngineState<Ttle> {
   private void waitForSaveSelection() {
     this.fadeOutToMenu(WhichMenu.INIT_CAMPAIGN_SELECTION_MENU, () -> {
       if(loadingNewGameState_800bdc34) {
-        if(gameState_800babc8.isOnWorldMap_4e4) {
-          engineStateOnceLoaded_8004dd24 = LodMod.WORLD_MAP_STATE_TYPE.get();
-        } else {
-          //LAB_800c80a4
-          engineStateOnceLoaded_8004dd24 = LodMod.SUBMAP_STATE_TYPE.get();
-        }
-
+        campaignType.get().transitionToLoadedGame(gameState_800babc8);
         vsyncMode_8007a3b8 = 2;
 
         //LAB_800c80c4
