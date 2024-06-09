@@ -13,6 +13,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 public class Button extends Control {
   private final Highlight hover;
   private String text;
+  private char icon;
   private TextColour textColour = TextColour.BROWN;
 
   public Button(final String text) {
@@ -29,6 +30,14 @@ public class Button extends Control {
   public void setZ(final int z) {
     super.setZ(z);
     this.hover.setZ(z);
+  }
+
+  public char getIcon() {
+    return this.icon;
+  }
+
+  public void setIcon(final char icon) {
+    this.icon = icon;
   }
 
   public String getText() {
@@ -104,7 +113,13 @@ public class Button extends Control {
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderCentredText(this.text, x + this.getWidth() / 2, y + (this.getHeight() - 11) / 2, this.isDisabled() ? TextColour.MIDDLE_BROWN : this.textColour);
+
+    String text = this.text;
+    if(this.icon != 0) {
+      text = this.icon + " " + this.text;
+    }
+
+    renderCentredText(text, x + this.getWidth() / 2, y + (this.getHeight() - 11) / 2, this.isDisabled() ? TextColour.MIDDLE_BROWN : this.textColour);
     textZ_800bdf00 = oldZ;
   }
 

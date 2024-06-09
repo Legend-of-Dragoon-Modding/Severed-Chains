@@ -13,8 +13,14 @@ import legend.game.saves.types.SaveType;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import org.legendofdragoon.modloader.registries.Registry;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -48,7 +54,21 @@ public final class V5Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
-    return new SavedGame<>(filename, name, campaignType, (RegistryDelegate)saveType, display, state, config);
+    final Map<RegistryId, Set<RegistryId>> registryIds = new HashMap<>();
+    final int registryCount = data.readVarInt(offset);
+    for(int registryIndex = 0; registryIndex < registryCount; registryIndex++) {
+      final RegistryId registryId = data.readRegistryId(offset);
+      final int idCount = data.readVarInt(offset);
+      final Set<RegistryId> ids = new HashSet<>();
+
+      for(int idIndex = 0; idIndex < idCount; idIndex++) {
+        ids.add(data.readRegistryId(offset));
+      }
+
+      registryIds.put(registryId, ids);
+    }
+
+    return new SavedGame<>(filename, name, campaignType, (RegistryDelegate)saveType, display, state, config, registryIds);
   }
 
   public static int toV5(final String name, final FileData data, final GameState52c gameState, final ActiveStatsa0[] activeStats, final CampaignType campaignType, final EngineState<?> engineState) {
@@ -63,6 +83,17 @@ public final class V5Serializer {
     campaignType.saveGameState(data, offset, gameState);
 
     offset.add(ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data.slice(offset.get())));
+
+    // Cache registry keys to make sure mods haven't changed on load
+    data.writeVarInt(offset, REGISTRIES.count());
+    for(final Registry<?> registry : REGISTRIES) {
+      data.writeRegistryId(offset, registry.id);
+      data.writeVarInt(offset, registry.size());
+
+      for(final RegistryId id : registry) {
+        data.writeRegistryId(offset, id);
+      }
+    }
 
     return offset.get();
   }

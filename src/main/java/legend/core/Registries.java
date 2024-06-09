@@ -1,8 +1,8 @@
 package legend.core;
 
 import legend.game.EngineStateType;
-import legend.game.EngineStateTypeRegistryEvent;
 import legend.game.EngineStateTypeRegistry;
+import legend.game.EngineStateTypeRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
@@ -24,8 +24,8 @@ import legend.game.inventory.SpellRegistryEvent;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistry;
 import legend.game.saves.ConfigRegistryEvent;
-import legend.game.saves.campaigns.CampaignRegistry;
 import legend.game.saves.campaigns.CampaignType;
+import legend.game.saves.campaigns.CampaignTypeRegistry;
 import legend.game.saves.campaigns.CampaignTypeRegistryEvent;
 import legend.game.saves.types.SaveType;
 import legend.game.saves.types.SaveTypeRegistry;
@@ -45,7 +45,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<SaveType<?>> saveTypes = this.addRegistry(new SaveTypeRegistry(), SaveTypeRegistryEvent::new);
   public final Registry<EngineStateType<?>> engineStateTypes = this.addRegistry(new EngineStateTypeRegistry(), EngineStateTypeRegistryEvent::new);
-  public final Registry<CampaignType> campaignTypes = this.addRegistry(new CampaignRegistry(), CampaignTypeRegistryEvent::new);
+  public final Registry<CampaignType> campaignTypes = this.addRegistry(new CampaignTypeRegistry(), CampaignTypeRegistryEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

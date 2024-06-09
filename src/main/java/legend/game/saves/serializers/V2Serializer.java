@@ -11,6 +11,8 @@ import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 
+import java.util.Map;
+
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -218,6 +220,6 @@ public final class V2Serializer {
 
     final RetailSaveDisplay display = new RetailSaveDisplay(locationName, maxHp, maxMp);
 
-    return new SavedGame<>(name, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, config);
+    return new SavedGame<>(name, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, config, Map.of());
   }
 }

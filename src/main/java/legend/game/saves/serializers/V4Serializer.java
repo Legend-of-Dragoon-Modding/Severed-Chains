@@ -12,6 +12,8 @@ import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.Map;
+
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
@@ -232,6 +234,6 @@ public final class V4Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    return new SavedGame<>(filename, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, config);
+    return new SavedGame<>(filename, name, LodMod.LEGEND_OF_DRAGOON_CAMPAIGN_TYPE, LodMod.RETAIL_SAVE_TYPE, display, state, config, Map.of());
   }
 }
