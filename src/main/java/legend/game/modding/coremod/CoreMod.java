@@ -151,7 +151,7 @@ public class CoreMod {
   public static int MAX_ADDITION_LEVEL = 5;
   public static int ADDITIONS_PER_LEVEL = 20;
   public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
-  
+
   // Per-campaign config
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
