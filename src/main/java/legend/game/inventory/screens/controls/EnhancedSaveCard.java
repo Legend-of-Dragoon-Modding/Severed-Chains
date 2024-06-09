@@ -113,7 +113,9 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
 
       if(this.spirits != null) {
         for(int i = 0; i < this.spirits.length; i++) {
-          this.removeControl(this.spirits[i]);
+          if(this.spirits[i] != null) {
+            this.removeControl(this.spirits[i]);
+          }
         }
       }
 
