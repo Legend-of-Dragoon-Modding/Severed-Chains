@@ -1,5 +1,7 @@
 package legend.game.scripting;
 
+import org.legendofdragoon.modloader.registries.RegistryId;
+
 public abstract class Param {
   public abstract int get();
   public abstract Param set(final int val);
@@ -11,6 +13,22 @@ public abstract class Param {
 
   public void jump(final ScriptState<?> script) {
     throw new IllegalStateException("Can't jump to non-script param");
+  }
+
+  public Param set(final Param other) {
+    return this.set(other.get());
+  }
+
+  public RegistryId getRegistryId() {
+    throw new IllegalStateException("Registry IDs can't be stored in " + this.getClass().getSimpleName());
+  }
+
+  public Param set(final RegistryId id) {
+    throw new IllegalStateException("Registry IDs can't be stored in " + this.getClass().getSimpleName());
+  }
+
+  public boolean isRegistryId() {
+    return false;
   }
 
   public Param add(final int amount) {

@@ -8586,7 +8586,7 @@ public class Battle extends EngineState {
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(item != null && takeItemId(item) != 0) {
+    if(item != null && !takeItemId(item)) {
       itemId = -1;
     }
 

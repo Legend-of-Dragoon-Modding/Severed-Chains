@@ -211,6 +211,19 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment_8002::scriptGiveChestContents;
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
     scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment_8002::scriptGiveGold;
+
+    scriptSubFunctions_8004e29c[900] = SItem::scriptGetMaxItemCount;
+    scriptSubFunctions_8004e29c[901] = SItem::scriptGetMaxEquipmentCount;
+    scriptSubFunctions_8004e29c[902] = SItem::scriptIsItemSlotUsed;
+    scriptSubFunctions_8004e29c[903] = SItem::scriptIsEquipmentSlotUsed;
+    scriptSubFunctions_8004e29c[904] = SItem::scriptGetItemSlot;
+    scriptSubFunctions_8004e29c[905] = SItem::scriptGetEquipmentSlot;
+    scriptSubFunctions_8004e29c[906] = SItem::scriptSetItemSlot;
+    scriptSubFunctions_8004e29c[907] = SItem::scriptSetEquipmentSlot;
+    scriptSubFunctions_8004e29c[908] = SItem::scriptGiveItem;
+    scriptSubFunctions_8004e29c[909] = SItem::scriptGiveEquipment;
+    scriptSubFunctions_8004e29c[910] = SItem::scriptTakeItem;
+    scriptSubFunctions_8004e29c[911] = SItem::scriptTakeEquipment;
   }
   // 8004f29c end of jump table
 
