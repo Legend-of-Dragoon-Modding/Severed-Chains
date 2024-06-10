@@ -320,7 +320,24 @@ public final class SaveManager {
   }
 
   public boolean hasCampaigns() {
-    return !this.getCampaigns().isEmpty();
+    if(!Files.isDirectory(this.dir)) {
+      return false;
+    }
+
+    try(final Stream<Path> stream = Files.list(this.dir)) {
+      return stream
+        .filter(Files::isDirectory)
+        .anyMatch(path -> {
+          try(final Stream<Path> children = Files.list(path)) {
+            return children.anyMatch(child -> child.toString().endsWith(".dsav"));
+          } catch(final IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+    } catch(final IOException e) {
+      LOGGER.error("Failed to get save files", e);
+      return false;
+    }
   }
 
   public Path overwriteSave(final String fileName, final String saveName, final GameState52c gameState, final ActiveStatsa0[] activeStats, final CampaignType campaignType, final EngineState<?> engineState) throws SaveFailedException {

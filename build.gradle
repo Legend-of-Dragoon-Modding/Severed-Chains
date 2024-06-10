@@ -50,7 +50,7 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 
 repositories {
   mavenCentral()
-//  mavenLocal()
+  mavenLocal()
 }
 
 dependencies {
