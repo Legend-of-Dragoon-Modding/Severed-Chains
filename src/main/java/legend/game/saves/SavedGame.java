@@ -4,6 +4,7 @@ import legend.game.saves.campaigns.CampaignType;
 import legend.game.saves.types.SaveDisplay;
 import legend.game.saves.types.SaveType;
 import legend.game.types.GameState52c;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -32,7 +33,7 @@ public final class SavedGame<Display extends SaveDisplay> {
   }
 
   public static SavedGame<?> invalid(final String fileName) {
-    return new SavedGame<>(fileName, fileName, null, null, null, null, null, null);
+    return new SavedGame<>(fileName, fileName, null, LodMod.RETAIL_SAVE_TYPE, null, null, null, null);
   }
 
   public boolean isValid() {

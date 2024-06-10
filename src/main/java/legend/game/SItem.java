@@ -13,10 +13,15 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
+import legend.game.scripting.FlowControl;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
@@ -39,6 +44,7 @@ import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -46,7 +52,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
@@ -55,7 +63,11 @@ import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
+import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
+import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -492,6 +504,116 @@ public final class SItem {
   };
 
   public static int characterCount_8011d7c4;
+
+  @ScriptDescription("Gets the maximum number of items a player can carry")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
+  public static FlowControl scriptGetMaxItemCount(final RunningScript<?> script) {
+    script.params_20[0].set(CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()));
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gets the maximum number of equipment a player can carry")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
+  public static FlowControl scriptGetMaxEquipmentCount(final RunningScript<?> script) {
+    script.params_20[0].set(255);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Checks whether or not an item slot is used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
+  public static FlowControl scriptIsItemSlotUsed(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(slot < gameState_800babc8.items_2e9.size() ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Checks whether or not an equipment slot is used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
+  public static FlowControl scriptIsEquipmentSlotUsed(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(slot < gameState_800babc8.equipment_1e8.size() ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Get the registry ID of an item slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGetItemSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getRegistryId());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Get the registry ID of an equipment slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGetEquipmentSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(gameState_800babc8.equipment_1e8.get(slot).getRegistryId());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Set the registry ID of an item slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptSetItemSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    final RegistryId id = script.params_20[1].getRegistryId();
+    gameState_800babc8.items_2e9.set(slot, REGISTRIES.items.getEntry(id).get());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Set the registry ID of an equipment slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptSetEquipmentSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    final RegistryId id = script.params_20[1].getRegistryId();
+    gameState_800babc8.equipment_1e8.set(slot, REGISTRIES.equipment.getEntry(id).get());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gives an item to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptGiveItem(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean given = giveItem(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(given ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gives equipment to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptGiveEquipment(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean given = giveEquipment(REGISTRIES.equipment.getEntry(id).get());
+    script.params_20[1].set(given ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Takes an item from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptTakeItem(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean taken = takeItemId(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(taken ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Takes equipment from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptTakeEquipment(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean taken = takeEquipmentId(REGISTRIES.equipment.getEntry(id).get());
+    script.params_20[1].set(taken ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
 
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {

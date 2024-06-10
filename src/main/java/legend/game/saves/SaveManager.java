@@ -373,14 +373,12 @@ public final class SaveManager {
       throw new InvalidSaveException("No saved game " + filename);
     }
 
-    final FileData data;
     try {
-      data = new FileData(Files.readAllBytes(file));
-    } catch(final IOException e) {
+      final FileData data = new FileData(Files.readAllBytes(file));
+      return this.loadGame(campaign, filename, data);
+    } catch(final Exception e) {
       throw new InvalidSaveException("Failed to load saved game " + filename, e);
     }
-
-    return this.loadGame(campaign, filename, data);
   }
 
   public SavedGame<?> loadGame(final String campaign, final String filename, final FileData data) throws InvalidSaveException {

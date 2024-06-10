@@ -1091,21 +1091,21 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
-  public static int takeItemId(final Item item) {
+  public static boolean takeItemId(final Item item) {
     final int itemSlot = gameState_800babc8.items_2e9.indexOf(item);
 
     if(itemSlot != -1) {
       return takeItem(itemSlot);
     }
 
-    return 0xff;
+    return false;
   }
 
   @Method(0x800232dcL)
-  public static int takeItem(final int itemSlot) {
+  public static boolean takeItem(final int itemSlot) {
     if(itemSlot >= gameState_800babc8.items_2e9.size()) {
       LOGGER.warn("Tried to take item index %d (out of bounds)", itemSlot);
-      return 0xff;
+      return false;
     }
 
     final Item item = gameState_800babc8.items_2e9.get(itemSlot);
@@ -1116,29 +1116,28 @@ public final class Scus94491BpeSegment_8002 {
       gameState_800babc8.items_2e9.remove(itemSlot);
     }
 
-    return 0;
+    return true;
   }
 
-  public static int takeEquipmentId(final Equipment equipment) {
+  public static boolean takeEquipmentId(final Equipment equipment) {
     final int equipmentSlot = gameState_800babc8.equipment_1e8.indexOf(equipment);
 
     if(equipmentSlot != -1) {
       return takeEquipment(equipmentSlot);
     }
 
-    return 0xff;
+    return false;
   }
 
   @Method(0x800233d8L)
-  public static int takeEquipment(final int equipmentIndex) {
+  public static boolean takeEquipment(final int equipmentIndex) {
     if(equipmentIndex >= gameState_800babc8.equipment_1e8.size()) {
       LOGGER.warn("Tried to take equipment index %d (out of bounds)", equipmentIndex);
-      return 0xff;
+      return false;
     }
 
     gameState_800babc8.equipment_1e8.remove(equipmentIndex);
-
-    return 0;
+    return true;
   }
 
   @Method(0x80023484L)
@@ -1718,9 +1717,9 @@ public final class Scus94491BpeSegment_8002 {
     final int itemId = script.params_20[0].get() & 0xff;
 
     if(itemId < 0xc0) {
-      script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()));
+      script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()) ? 0 : 0xff);
     } else {
-      script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()));
+      script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()) ? 0 : 0xff);
     }
 
     return FlowControl.CONTINUE;
