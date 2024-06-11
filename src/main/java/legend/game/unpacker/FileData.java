@@ -344,11 +344,11 @@ public class FileData {
   }
 
   public RegistryId readRegistryId(final int offset) {
-    return RegistryId.of(this.readAscii(offset));
+    return new RegistryId(this.readAscii(offset));
   }
 
   public RegistryId readRegistryId(final IntRef offset) {
-    return RegistryId.of(this.readAscii(offset));
+    return new RegistryId(this.readAscii(offset));
   }
 
   public Rect4i readRect(final int offset, final Rect4i rect) {
