@@ -18,8 +18,12 @@ import org.legendofdragoon.scripting.tokens.Script;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import static legend.core.IoHelper.crc32;
 import static legend.core.IoHelper.intsToBytes;
@@ -63,75 +67,106 @@ public class ScriptPatcher {
     final ScriptPatchList cacheList = this.loadPatchList(this.cacheDir.resolve("scripts.csv"));
 
     boolean changed = false;
+    final List<ScriptPatch> failedPatches = new ArrayList<>();
     // Apply new or changed patches
     for(final ScriptPatch patch : this.patches) {
       final ScriptPatch cachedPatch = cacheList.getPatchForScript(patch.sourceFile);
 
-      if(cachedPatch != null && crc32(this.cacheDir.resolve(cachedPatch.patchFile)) != crc32(this.patchesDir.resolve(patch.patchFile))) {
-        // Unpatch file if already patched with a different patch
-        LOGGER.info("Unpatching %s...", cachedPatch.sourceFile);
-        this.unpatchFile(cachedPatch);
+      if(cachedPatch == null || crc32(this.cacheDir.resolve(cachedPatch.patchFile)) != crc32(this.patchesDir.resolve(patch.patchFile))) {
         LOGGER.info("Patching %s...", patch.sourceFile);
-        this.patchFile(patch);
-        changed = true;
-      } else if(cachedPatch == null) {
-        // New patch
-        LOGGER.info("Patching %s...", patch.sourceFile);
-        this.patchFile(patch);
+        try{
+          this.patchFile(patch);
+        }catch(final PatchFailedException error){
+          LOGGER.error("Patch failed for script: %s", patch.patchFile);
+          failedPatches.add(patch);
+        }
         changed = true;
       }
     }
 
-    // Unpatch any patches that have been deleted
+    // Restore any patches that have been deleted
     for(final ScriptPatch cachedPatch : cacheList) {
       if(this.patches.getPatchForScript(cachedPatch.sourceFile) == null) {
-        LOGGER.info("Unpatching %s...", cachedPatch.sourceFile);
-        this.unpatchFile(cachedPatch);
+        LOGGER.info("Restoring %s...", cachedPatch.sourceFile);
+        this.restoreFile(cachedPatch);
         changed = true;
       }
     }
 
     // Cache changes
     if(changed) {
-      FileUtils.deleteDirectory(this.cacheDir.toFile());
       FileUtils.copyDirectory(this.patchesDir.toFile(), this.cacheDir.toFile());
+    }
+
+    if(!failedPatches.isEmpty()){
+      final Path scriptsPath = this.cacheDir.resolve("scripts.csv");
+      final List<String> lines = Files.readAllLines(scriptsPath);
+
+      final Iterator<String> lineIterator = lines.iterator();
+      while (lineIterator.hasNext()) {
+        final String line = lineIterator.next();
+        final Iterator<ScriptPatch> patchIterator = failedPatches.iterator();
+        while (patchIterator.hasNext()) {
+          final ScriptPatch patch = patchIterator.next();
+          final String targetText = patch.sourceFile + ',' + patch.patchFile;
+          if (Objects.equals(line, targetText)) {
+            patchIterator.remove();
+            lineIterator.remove();
+            break;
+          }
+        }
+      }
+
+      Files.write(scriptsPath, lines);
     }
   }
 
   public void patchFile(final ScriptPatch patch) throws IOException, PatchFailedException {
+    if(!Files.exists(this.cacheDir.resolve("backups").resolve(patch.sourceFile))) {
+      this.backupFile(patch.sourceFile);
+    }
     this.patchFile(patch.sourceFile, patch.patchFile);
   }
 
   public void patchFile(final String source, final String patch) throws IOException, PatchFailedException {
-    this.patchFile(this.filesDir.resolve(source), this.patchesDir.resolve(patch));
+    this.patchFile(this.filesDir.resolve(source), this.cacheDir.resolve("backups").resolve(source), this.patchesDir.resolve(patch));
   }
 
-  public void patchFile(final Path sourceFile, final Path patchFile) throws IOException, PatchFailedException {
+  public void patchFile(final Path sourceFile, final Path backupFile, final Path patchFile) throws IOException, PatchFailedException {
     final List<String> patchLines = Files.readAllLines(patchFile);
 
-    final List<String> decompiledLines = this.decompile(Files.readAllBytes(sourceFile));
+    final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile));
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
     final byte[] recompiledSource = this.recompile(patched);
 
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
-
-  public void unpatchFile(final ScriptPatch patch) throws IOException {
-    this.unpatchFile(patch.sourceFile, patch.patchFile);
+  private void restoreAllFiles(final List<ScriptPatch> successfulPatches) throws IOException{
+    for(final ScriptPatch patch : successfulPatches){
+      this.backupFile(patch.sourceFile);
+    }
+  }
+  private void backupFile(final String scriptPath) throws IOException {
+    final Path sourcePath = this.filesDir.resolve(scriptPath);
+    final Path destPath = this.cacheDir.resolve("backups").resolve(scriptPath);
+    if(!Files.exists(destPath.getParent())) {
+      Files.createDirectories(destPath.getParent());
+    }
+    Files.copy(sourcePath,destPath);
   }
 
-  public void unpatchFile(final String source, final String patch) throws IOException {
-    this.unpatchFile(this.filesDir.resolve(source), this.cacheDir.resolve(patch));
-  }
+  private void restoreFile(final ScriptPatch cachedPatch) throws IOException {
+    final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
+    final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
+    Files.move(backupPath,sourcePath,StandardCopyOption.REPLACE_EXISTING);
 
-  public void unpatchFile(final Path sourceFile, final Path patchFile) throws IOException {
-    final List<String> patchLines = Files.readAllLines(patchFile);
-
-    final List<String> decompiledLines = this.decompile(Files.readAllBytes(sourceFile));
-    final String unpatched = Patcher.undoPatch(decompiledLines, patchLines);
-    final byte[] recompiledSource = this.recompile(unpatched);
-
-    Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    Path currentPath = backupPath.getParent();
+    while(!currentPath.equals(this.cacheDir.resolve("backups"))) {
+      if(Objects.requireNonNull(currentPath.toFile().listFiles()).length == 0) {
+        Files.delete(currentPath);
+      }
+      currentPath = currentPath.getParent();
+    }
   }
 
   private List<String> decompile(final byte[] data) {
