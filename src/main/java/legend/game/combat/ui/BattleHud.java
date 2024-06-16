@@ -27,6 +27,7 @@ import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
+import legend.game.modding.events.battle.ItemIdEvent;
 import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -37,6 +38,7 @@ import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.events.Event;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -86,7 +88,6 @@ public class BattleHud {
     new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
   };
 
-  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
   private static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
@@ -175,6 +176,7 @@ public class BattleHud {
 
   private final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   private final List<String> combatAdditions = new ArrayList<>();
+  private Item lastItemSelected = null;
 
   private final Battle battle;
 
@@ -1776,7 +1778,7 @@ public class BattleHud {
         if(ret == 1) { // Pressed X
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
             final int itemId = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c + 192;
-            final Item item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c)).get(); //TODO
+            final Item item = lastItemSelected;
             takeItemId(item);
 
             boolean returnItem = false;
@@ -1888,7 +1890,9 @@ public class BattleHud {
   private int getItemOrSpellId() {
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
       //LAB_800f56f0
-      return LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId());
+      ItemIdEvent itemId = EVENTS.postEvent(new ItemIdEvent(LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()), this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()));
+      lastItemSelected = this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item;
+      return itemId.itemId;
     }
 
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
@@ -2869,14 +2873,14 @@ public class BattleHud {
   private void renderText(final int textType, final int textIndex, final int x, final int y) {
     final String str;
     if(textType == 4) {
-      str = itemStats_8004f2ac[textIndex].combatDescription;
+      str = itemStats_8004f2ac[textIndex >= 64 ? 0 : textIndex].combatDescription;
     } else if(textType == 5) {
       str = spellStats_800fa0b8[textIndex].combatDescription;
     } else if(textType == 6) {
       final int additionOffset = additionOffsets_8004f5ac[this.spellAndItemMenu_800c6b60.player_08.charId_272];
       str = additionNames_800fa8d4[additionOffset + textIndex];
     } else {
-      throw new IllegalArgumentException("Only supports textType 4/5");
+      throw new IllegalArgumentException("Only supports textType 4/5/6");
     }
 
     final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));

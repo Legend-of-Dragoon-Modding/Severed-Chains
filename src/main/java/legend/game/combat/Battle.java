@@ -91,9 +91,10 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
-import legend.game.modding.events.battle.DragoonDEFFLoadedEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SpellItemDeffEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -5791,6 +5792,7 @@ public class Battle extends EngineState {
   public void loadDragoonDeff(final RunningScript<? extends BattleObject> script) {
     final int index = script.params_20[0].get() & 0xffff;
     final int scriptEntrypoint = script.params_20[3].get() & 0xff;
+    final DragoonDeffEvent event = EVENTS.postEvent(new DragoonDeffEvent(4139 + index * 2));
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
@@ -5824,15 +5826,14 @@ public class Battle extends EngineState {
     }
 
     //LAB_800e67b0
-    loadDrgnDir(0, 4139 + index * 2, this::uploadTims);
-    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> {
+    loadDrgnDir(0, event.scriptId + index * 2, this::uploadTims);
+    loadDrgnDir(0, event.scriptId + 1 + index * 2 + "/0", files -> {
       this.loadDeffPackage(files, battle24.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
+      loadDrgnFile(0, event.scriptId + 1 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this._800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
-        EVENTS.postEvent(new DragoonDEFFLoadedEvent(4140 + index * 2));
+        this._800c6938.script_14 = new ScriptFile(event.scriptId + 1 + "/1", file.getBytes());
       });
     });
     this.deffLoadingStage_800fafe8 = 1;
@@ -5847,6 +5848,7 @@ public class Battle extends EngineState {
   public void loadSpellItemDeff(final RunningScript<? extends BattleObject> script) {
     final int id = script.params_20[0].get() & 0xffff;
     final int s0 = (id - 192) * 2;
+    final SpellItemDeffEvent event = EVENTS.postEvent(new SpellItemDeffEvent(4307, s0));
 
     LOGGER.info(DEFF, "Loading spell item DEFF (ID: %d, flags: %x)", id, script.params_20[0].get() & 0xffff_0000);
 
@@ -5860,14 +5862,14 @@ public class Battle extends EngineState {
     }
 
     t0.type_00 |= 0x200_0000;
-    loadDrgnDir(0, 4307 + s0, this::uploadTims);
-    loadDrgnDir(0, 4308 + s0 + "/0", files -> {
+    loadDrgnDir(0, event.scriptId + event.s0, this::uploadTims);
+    loadDrgnDir(0, event.scriptId + 1 + event.s0 + "/0", files -> {
       this.loadDeffPackage(files, t0.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 4308 + s0 + "/1", file -> {
+      loadDrgnFile(0, event.scriptId + 1 + event.s0 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this._800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
+        this._800c6938.script_14 = new ScriptFile(event.scriptId + 1 + event.s0 + "/1", file.getBytes());
       });
     });
     this.deffLoadingStage_800fafe8 = 1;
