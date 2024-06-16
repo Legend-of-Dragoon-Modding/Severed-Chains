@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -112,6 +113,7 @@ public class ScriptState<T> {
    * </ul>
    */
   public final int[] storage_44 = new int[33];
+  public final RegistryId[] registryIds = new RegistryId[100];
   public ScriptState<BattleEntity27c> scriptState_c8;
   public int ticks_cc;
   /** Was .8 */
@@ -457,6 +459,11 @@ public class ScriptState<T> {
             //LAB_8001654c
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + cmd1);
             this.context.commandOffset_0c++;
+          } else if(paramType == 0x20) { // Script state registry ID pointer
+            this.context.params_20[paramIndex] = new ScriptStateRegistryIdParam(this, cmd0);
+          } else if(paramType == 0x21) { // String registry ID
+            this.context.params_20[paramIndex] = new ScriptInlineRegistryIdParam(this, this.context.commandOffset_0c, cmd2);
+            this.context.commandOffset_0c += (cmd2 + 3) / 4;
           } else { // Treated as an immediate if not a valid op
             //LAB_80016574
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
@@ -663,7 +670,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016774L)
   public FlowControl scriptMove() {
-    this.context.params_20[1].set(this.context.params_20[0].get());
+    this.context.params_20[1].set(this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 
@@ -689,7 +696,7 @@ public class ScriptState<T> {
     // See: GH#230, GH#236, GH#237, GH#240
     try {
       for(int i = 0; i < this.context.params_20[0].get(); i++) {
-        this.context.params_20[2].array(i).set(this.context.params_20[1].array(i).get());
+        this.context.params_20[2].array(i).set(this.context.params_20[1].array(i));
       }
     } catch(final IndexOutOfBoundsException e) {
       LOGGER.warn(SCRIPT_MARKER, "Script %d attempted to read out of bounds", this.index);

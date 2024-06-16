@@ -662,16 +662,16 @@ public class ShopScreen extends MenuScreen {
             menuStack.pushScreen(new MessageBoxScreen("Sell item?", 2, result -> {
               if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
                 final InventoryEntry inv;
-                final int v0;
+                final boolean success;
                 if(this.shopType2 != 0) {
                   inv = gameState_800babc8.items_2e9.get(slot);
-                  v0 = takeItem(slot);
+                  success = takeItem(slot);
                 } else {
                   inv = gameState_800babc8.equipment_1e8.get(slot);
-                  v0 = takeEquipment(slot);
+                  success = takeEquipment(slot);
                 }
 
-                if(v0 == 0) {
+                if(success) {
                   final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getPrice()));
                   addGold(event.price);
 
@@ -951,19 +951,19 @@ public class ShopScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Sell item?", 2, result -> {
         if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
           final InventoryEntry inv;
-          final int v0;
+          final boolean taken;
           final int count;
           if(this.shopType2 != 0) {
             inv = gameState_800babc8.items_2e9.get(slot);
-            v0 = takeItem(slot);
+            taken = takeItem(slot);
             count = gameState_800babc8.items_2e9.size();
           } else {
             inv = gameState_800babc8.equipment_1e8.get(slot);
-            v0 = takeEquipment(slot);
+            taken = takeEquipment(slot);
             count = gameState_800babc8.equipment_1e8.size();
           }
 
-          if(v0 == 0) {
+          if(taken) {
             final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getPrice()));
             addGold(event.price);
 
