@@ -2877,7 +2877,7 @@ public class BattleHud {
     if(textType == 4) {
       str = itemStats_8004f2ac[textIndex >= 64 ? 0 : textIndex].combatDescription;
     } else if(textType == 5) {
-      str = spellStats_800fa0b8[textIndex >= 128 ? 0 : textIndex].combatDescription;
+      str = spellStats_800fa0b8[textIndex].combatDescription;
     } else if(textType == 6) {
       final int additionOffset = additionOffsets_8004f5ac[this.spellAndItemMenu_800c6b60.player_08.charId_272];
       str = additionNames_800fa8d4[additionOffset + textIndex];
