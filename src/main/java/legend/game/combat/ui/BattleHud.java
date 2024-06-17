@@ -1945,7 +1945,6 @@ public class BattleHud {
 
       TextColour textColour = TextColour.WHITE;
       final String name;
-      final String itemCount = (char)0x11d + String.valueOf(this.combatItems_800c6988.get(sp7c).count);
       if(type == 0) {
         //LAB_800f5918
         name = this.combatItems_800c6988.get(sp7c).item.getName();
@@ -2001,7 +2000,7 @@ public class BattleHud {
         Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y1, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(itemCount, menu.textX_18 + 128, y1, textColour, trim);
+          Scus94491BpeSegment_8002.renderText((char)0x11d + String.valueOf(this.combatItems_800c6988.get(sp7c).count), menu.textX_18 + 128, y1, textColour, trim);
         }
       } else if(y2 < y1 + 12) {
         if((menu.flags_02 & 0x4) != 0) {
@@ -2014,7 +2013,7 @@ public class BattleHud {
         Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y2, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(itemCount, menu.textX_18 + 128, y2, textColour, trim);
+          Scus94491BpeSegment_8002.renderText((char)0x11d + String.valueOf(this.combatItems_800c6988.get(sp7c).count), menu.textX_18 + 128, y2, textColour, trim);
         }
       }
 
