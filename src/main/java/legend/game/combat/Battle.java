@@ -7797,7 +7797,7 @@ public class Battle extends EngineState {
       effectAccuracy = attacker.spell_94.accuracy_05;
     } else {
       //LAB_800f1c38
-      attacker.setTempItemMagicStats();
+      attacker.setTempItemMagicStats(1);
       effectAccuracy = 100;
     }
 
@@ -8016,7 +8016,7 @@ public class Battle extends EngineState {
     final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     attacker.clearTempWeaponAndSpellStats();
-    attacker.setTempItemMagicStats();
+    attacker.setTempItemMagicStats(2);
 
     int damage = this.calculateMagicDamage(attacker, defender, 0);
     damage = applyMagicDamageMultiplier(attacker, damage, 1);
@@ -8308,7 +8308,7 @@ public class Battle extends EngineState {
 
   @Method(0x800f8854L)
   public void applyItemSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender) {
-    attacker.setTempItemMagicStats();
+    attacker.setTempItemMagicStats(3);
 
     final int turnCount = attacker != defender ? 3 : 4;
 
@@ -8557,7 +8557,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9884L)
   public FlowControl scriptSetTempItemMagicStats(final RunningScript<?> script) {
-    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempItemMagicStats();
+    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempItemMagicStats(4);
     return FlowControl.CONTINUE;
   }
 

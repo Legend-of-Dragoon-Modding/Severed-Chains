@@ -28,6 +28,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.ItemIdEvent;
+import legend.game.modding.events.battle.SelectedItemEvent;
 import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -1648,7 +1649,7 @@ public class BattleHud {
           //LAB_800f50b8
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
             player.itemId_52 = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
-            player.setTempItemMagicStats();
+            player.setTempItemMagicStats(5);
 
             if((player.item_d4.target_00 & 0x4) != 0) {
               this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 1;
@@ -1777,6 +1778,7 @@ public class BattleHud {
         final int ret = this.handleTargeting(targetType, targetAll);
         if(ret == 1) { // Pressed X
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+            this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = EVENTS.postEvent(new SelectedItemEvent(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c, lastItemSelected)).itemId;
             final int itemId = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c + 192;
             final Item item = lastItemSelected;
             takeItemId(item);
@@ -2875,7 +2877,7 @@ public class BattleHud {
     if(textType == 4) {
       str = itemStats_8004f2ac[textIndex >= 64 ? 0 : textIndex].combatDescription;
     } else if(textType == 5) {
-      str = spellStats_800fa0b8[textIndex].combatDescription;
+      str = spellStats_800fa0b8[textIndex >= 128 ? 0 : textIndex].combatDescription;
     } else if(textType == 6) {
       final int additionOffset = additionOffsets_8004f5ac[this.spellAndItemMenu_800c6b60.player_08.charId_272];
       str = additionNames_800fa8d4[additionOffset + textIndex];

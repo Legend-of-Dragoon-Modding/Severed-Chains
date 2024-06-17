@@ -683,12 +683,12 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setTempItemMagicStats() {
+  public void setTempItemMagicStats(int attackType) {
     //LAB_800f7a98
     if(this.itemId_52 >= 64) {
-      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[0])).itemStats;
+      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[0], attackType, this)).itemStats;
     } else {
-      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[this.itemId_52])).itemStats;
+      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[this.itemId_52], attackType, this)).itemStats;
     }
     this._ec = 0;
     this._ee = 0;
