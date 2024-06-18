@@ -27,7 +27,7 @@ import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -98,13 +98,13 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
 
       loadingNewGameState_800bdc34 = true;
-      playSound(2);
+      playMenuSound(2);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
     }
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
 
     bootMods(MODS.getAllModIds());

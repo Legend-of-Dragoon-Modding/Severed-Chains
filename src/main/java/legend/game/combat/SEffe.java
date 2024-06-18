@@ -3033,7 +3033,7 @@ public final class SEffe {
 
   @Method(0x80108cf4L)
   public static void allocatePerfectDragoonAdditionEffect() {
-    playSound(0, 50, 0, 0, (short)0, (short)0);
+    playSound(0, 50, (short)0, (short)0);
 
     final ScriptState<PerfectDragoonAdditionEffect30> state = SCRIPTS.allocateScriptState("PerfectDragoonAdditionEffect30", new PerfectDragoonAdditionEffect30());
     state.loadScriptFile(doNothingScript_8004f650);

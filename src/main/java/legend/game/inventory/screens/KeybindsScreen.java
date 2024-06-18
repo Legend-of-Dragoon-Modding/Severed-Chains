@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_9;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_APOSTROPHE;
@@ -189,14 +189,14 @@ public class KeybindsScreen extends VerticalLayoutScreen {
       for(final InputAction action : InputAction.values()) {
         if(CoreMod.KEYBIND_CONFIGS.containsKey(action)) {
           if(this.config.getConfig(CoreMod.KEYBIND_CONFIGS.get(action).get()).isEmpty()) {
-            playSound(4);
+            playMenuSound(4);
             this.getStack().pushScreen(new MessageBoxScreen(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input"), 0, result -> { }));
             return InputPropagation.HANDLED;
           }
         }
       }
 
-      playSound(3);
+      playMenuSound(3);
       this.unload.run();
       return InputPropagation.HANDLED;
     }

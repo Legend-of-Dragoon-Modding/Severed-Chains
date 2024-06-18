@@ -112,6 +112,7 @@ import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.monsterSoundLoaded;
+import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -287,7 +288,7 @@ public final class Scus94491BpeSegment_8002 {
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      file.charId_02 = -1;
+      file.id_02 = -1;
       file.used_00 = false;
 
       if(Unpacker.exists(path + '/' + monsterSlot)) {
@@ -792,7 +793,7 @@ public final class Scus94491BpeSegment_8002 {
   private static Supplier<MenuScreen> destScreen;
 
   private static void initMenu(final WhichMenu destMenu, final Supplier<MenuScreen> destScreen) {
-    if((getLoadedDrgnFiles() & 0x80L) == 0) {
+    if((getLoadedDrgnFiles() & 0x80) == 0) {
       inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
       startMenuMusic();
@@ -854,7 +855,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, TooManyItemsScreen::new);
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
           if(uiFile_800bdc3c != null) {
             uiFile_800bdc3c.delete();
           }
@@ -876,13 +877,13 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case INIT_POST_COMBAT_REPORT_26 -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80) == 0) {
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
         }
       }
 
       case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
           whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29;
           menuStack.pushScreen(new PostBattleScreen());
         }
@@ -1229,8 +1230,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023870L)
-  public static void playSound(final long soundIndex) {
-    Scus94491BpeSegment.playSound(0, (int)soundIndex, 0, 0, (short)0, (short)0);
+  public static void playMenuSound(final int soundIndex) {
+    playSound(0, soundIndex, (short)0, (short)0);
   }
 
   /**
@@ -1905,7 +1906,7 @@ public final class Scus94491BpeSegment_8002 {
       textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
       textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
       textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
-      Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+      playSound(0, 4, (short)0, (short)0);
     }
 
     //LAB_800257bc
@@ -2280,7 +2281,7 @@ public final class Scus94491BpeSegment_8002 {
               textboxText.charY_36 = 0;
               textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
               textboxText.stateAfterTransition_78 = TextboxTextState._17;
-              Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+              playSound(0, 4, (short)0, (short)0);
             }
 
             case 4 -> {
@@ -2495,7 +2496,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
           textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
           textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
-          Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+          playSound(0, 4, (short)0, (short)0);
         }
       }
 
@@ -2575,7 +2576,7 @@ public final class Scus94491BpeSegment_8002 {
       case _18 -> {
         //LAB_80026d94
         if((press_800bee94 & 0x20) != 0) {
-          Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68;
@@ -2586,7 +2587,7 @@ public final class Scus94491BpeSegment_8002 {
             if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
               if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                 //LAB_80026f38
-                Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+                playSound(0, 1, (short)0, (short)0);
 
                 int extraLines = 3;
                 if(textboxText.selectionLine_60 > 0) {
@@ -2671,13 +2672,13 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026e6c
             if(textboxText.selectionLine_60 < textboxText.lines_1e) {
               //LAB_80026ed0
-              Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
 
               //LAB_80026ee8
               if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
                 if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                   //LAB_80026f38
-                  Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+                  playSound(0, 1, (short)0, (short)0);
 
                   int extraLines = 3;
                   if(textboxText.selectionLine_60 > 0) {
@@ -2867,7 +2868,7 @@ public final class Scus94491BpeSegment_8002 {
       case SELECTION_22 -> {
         //LAB_80027354
         if((press_800bee94 & 0x20) != 0) {
-          Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68 - textboxText.minSelectionLine_72;
@@ -2881,7 +2882,7 @@ public final class Scus94491BpeSegment_8002 {
               textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
             } else {
               //LAB_80027404
-              Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
               textboxText.state_00 = TextboxTextState._19;
             }
           }
@@ -2896,7 +2897,7 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               //LAB_80027480
               //LAB_80027490
-              Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
               textboxText.state_00 = TextboxTextState._19;
             }
           }

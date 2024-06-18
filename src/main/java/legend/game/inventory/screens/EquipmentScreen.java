@@ -29,7 +29,7 @@ import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -113,7 +113,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void scroll(final int scroll) {
-    playSound(1);
+    playMenuSound(1);
     this.slotScroll = scroll;
     this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
   }
@@ -180,7 +180,7 @@ public class EquipmentScreen extends MenuScreen {
 
     for(int slot = 0; slot < Math.min(4, this.equipmentCount - this.slotScroll); slot++) {
       if(this.selectedSlot != slot && MathHelper.inBox(x, y, 212, this.FUN_800fc804(slot), 139, 15)) {
-        playSound(1);
+        playMenuSound(1);
         this.selectedSlot = slot;
         this.itemHighlight.y_44 = this.FUN_800fc804(slot);
         return InputPropagation.HANDLED;
@@ -215,7 +215,7 @@ public class EquipmentScreen extends MenuScreen {
             giveEquipment(previousEquipment.previousEquipment);
           }
 
-          playSound(2);
+          playMenuSound(2);
           loadCharacterStats();
           addHp(characterIndices_800bdbb8[this.charSlot], 0);
           addMp(characterIndices_800bdbb8[this.charSlot], 0);
@@ -248,12 +248,12 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 100;
   }
 
   private void menuNavigateUp() {
-    playSound(1);
+    playMenuSound(1);
 
     if(this.selectedSlot > 0) {
       this.selectedSlot--;
@@ -265,7 +265,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateDown() {
-    playSound(1);
+    playMenuSound(1);
 
     if(this.selectedSlot < 3) {
       this.selectedSlot++;
@@ -291,7 +291,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuSelect() {
-    playSound(2);
+    playMenuSound(2);
 
     final int itemIndex = this.selectedSlot + this.slotScroll;
 
@@ -304,7 +304,7 @@ public class EquipmentScreen extends MenuScreen {
         giveEquipment(previousEquipment.previousEquipment);
       }
 
-      playSound(2);
+      playMenuSound(2);
       loadCharacterStats();
       addHp(characterIndices_800bdbb8[this.charSlot], 0);
       addMp(characterIndices_800bdbb8[this.charSlot], 0);
@@ -313,7 +313,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuItemSort() {
-    playSound(2);
+    playMenuSound(2);
     final MenuEntries<Equipment> equipment = new MenuEntries<>();
     loadItemsAndEquipmentForDisplay(equipment, null, 1);
     equipment.sort();

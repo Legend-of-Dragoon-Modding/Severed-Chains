@@ -63,7 +63,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
@@ -1875,7 +1875,7 @@ public final class SItem {
         if(messageBox.type_15 == 0) {
           //LAB_8010eed8
           if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44 & 0x60) != 0) {
-            playSound(2);
+            playMenuSound(2);
             messageBox.state_0c = 4;
             messageBox.result = MessageBoxResult.YES;
           }

@@ -39,7 +39,7 @@ import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
@@ -193,7 +193,7 @@ public class DabasScreen extends MenuScreen {
         }
 
         if((tickCount_800bb0fc & 0x1) != 0) {
-          playSound(1);
+          playMenuSound(1);
         }
 
         this.FUN_801073f8(112, 144, this.gold);
@@ -328,7 +328,7 @@ public class DabasScreen extends MenuScreen {
 
     for(int i = 0; i < 3; i++) {
       if(this.menuIndex != i && MathHelper.inBox(x, y, 52, this.getDabasMenuY(i), 85, 14)) {
-        playSound(1);
+        playMenuSound(1);
         this.menuIndex = i;
         this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
         return InputPropagation.HANDLED;
@@ -351,7 +351,7 @@ public class DabasScreen extends MenuScreen {
     if(button == GLFW_MOUSE_BUTTON_LEFT) {
       if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(0), 85, 14)) {
         if(this.hasItems || this.gold != 0) {
-          playSound(2);
+          playMenuSound(2);
 
           menuStack.pushScreen(new MessageBoxScreen("Take items from Dabas?", 2, result -> {
             if(result == MessageBoxResult.YES) {
@@ -359,13 +359,13 @@ public class DabasScreen extends MenuScreen {
             }
           }));
         } else {
-          playSound(40);
+          playMenuSound(40);
         }
 
         return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(1), 85, 14)) {
         if(this.hasItems) {
-          playSound(2);
+          playMenuSound(2);
 
           menuStack.pushScreen(new MessageBoxScreen("Discard items?", 2, result -> {
             if(result == MessageBoxResult.YES) {
@@ -373,13 +373,13 @@ public class DabasScreen extends MenuScreen {
             }
           }));
         } else {
-          playSound(40);
+          playMenuSound(40);
         }
 
         return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
         if(this.newDigEnabled) {
-          playSound(2);
+          playMenuSound(2);
 
           menuStack.pushScreen(new MessageBoxScreen("Begin new expedition?", 2, result -> {
             if(result == MessageBoxResult.YES) {
@@ -387,7 +387,7 @@ public class DabasScreen extends MenuScreen {
             }
           }));
         } else {
-          playSound(40);
+          playMenuSound(40);
         }
 
         return InputPropagation.HANDLED;
@@ -398,7 +398,7 @@ public class DabasScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 100;
   }
 

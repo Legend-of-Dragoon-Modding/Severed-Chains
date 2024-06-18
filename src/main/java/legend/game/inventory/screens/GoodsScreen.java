@@ -13,7 +13,7 @@ import static legend.game.SItem.goodsDescriptions_8011b75c;
 import static legend.game.SItem.goodsItemNames_8011c008;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class GoodsScreen extends MenuScreen {
@@ -102,7 +102,7 @@ public class GoodsScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.unload.run();
   }
 

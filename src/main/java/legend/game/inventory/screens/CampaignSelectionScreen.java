@@ -28,7 +28,7 @@ import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -70,7 +70,7 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void onSelection(final Campaign campaign) {
-    playSound(2);
+    playMenuSound(2);
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
@@ -130,7 +130,7 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void menuDelete() {
-    playSound(40);
+    playMenuSound(40);
 
     if(this.campaignList.getSelected() != null) {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this campaign?", 2, result -> {
@@ -148,7 +148,7 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
 
     // Restore all mods when going back to the title screen

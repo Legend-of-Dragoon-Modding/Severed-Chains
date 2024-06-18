@@ -23,7 +23,7 @@ import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -127,7 +127,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
           if(MathHelper.inBox(this.mouseX, this.mouseY, 188, 42, 171, 119)) {
             if(this.invScroll > 0) {
-              playSound(1);
+              playMenuSound(1);
               this.invScroll--;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             } else if(this.invScroll == 0) {
@@ -143,7 +143,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
           if(MathHelper.inBox(this.mouseX, this.mouseY, 188, 42, 171, 119)) {
             if(this.invScroll < slotCount - 7) {
-              playSound(1);
+              playMenuSound(1);
               this.invScroll++;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             } else if(this.invScroll == slotCount - 7) {
@@ -265,7 +265,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.menuState == MenuState._8) {
       for(int i = 0; i < this.droppedItems.size(); i++) {
         if(this.dropIndex != i && MathHelper.inBox(x, y, 9, this.FUN_8010f178(i), 171, 17)) {
-          playSound(1);
+          playMenuSound(1);
           this.dropIndex = i;
           this.renderable_8011e200.y_44 = this.FUN_8010f178(i);
           return InputPropagation.HANDLED;
@@ -274,7 +274,7 @@ public class TooManyItemsScreen extends MenuScreen {
     } else if(this.menuState == MenuState._9) {
       for(int i = 0; i < 7; i++) {
         if(this.invIndex != i && MathHelper.inBox(x, y, 188, this.FUN_8010f178(i), 171, 17)) {
-          playSound(1);
+          playMenuSound(1);
           this.invIndex = i;
           this.renderable_8011e204.y_44 = this.FUN_8010f178(i);
           return InputPropagation.HANDLED;
@@ -294,7 +294,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.menuState == MenuState._8) {
       for(int i = 0; i < this.droppedItems.size(); i++) {
         if(MathHelper.inBox(x, y, 9, this.FUN_8010f178(i), 171, 17)) {
-          playSound(2);
+          playMenuSound(2);
           this.dropIndex = i;
           this.renderable_8011e200.y_44 = this.FUN_8010f178(i);
 
@@ -305,7 +305,7 @@ public class TooManyItemsScreen extends MenuScreen {
     } else if(this.menuState == MenuState._9) {
       for(int i = 0; i < 7; i++) {
         if(MathHelper.inBox(x, y, 188, this.FUN_8010f178(i), 171, 17)) {
-          playSound(2);
+          playMenuSound(2);
           this.invIndex = i;
           this.renderable_8011e204.y_44 = this.FUN_8010f178(i);
 
@@ -337,13 +337,13 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   private void droppedNavigateDown() {
-    playSound(1);
+    playMenuSound(1);
     this.dropIndex = this.dropIndex < this.droppedItems.size() - 1 ? ++this.dropIndex : 0;
     this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
   }
 
   private void droppedNavigateUp() {
-    playSound(1);
+    playMenuSound(1);
     this.dropIndex = this.dropIndex > 0 ? --this.dropIndex : this.droppedItems.size() - 1;
     this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
   }
@@ -375,21 +375,21 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   private void inventoryNavigateDown() {
-    playSound(1);
+    playMenuSound(1);
     this.handleInventoryScrollDown();
     this.invIndex = this.invIndex < 6 ? ++this.invIndex : 6;
     this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
   private void inventoryNavigateUp() {
-    playSound(1);
+    playMenuSound(1);
     this.handleInventoryScrollUp();
     this.invIndex = this.invIndex > 0 ? --this.invIndex : 0;
     this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
   private void escapeMenuState8() {
-    playSound(3);
+    playMenuSound(3);
     unloadRenderable(this.renderable_8011e200);
     this.menuState = MenuState._10;
   }
@@ -398,7 +398,7 @@ public class TooManyItemsScreen extends MenuScreen {
     final Renderable58 renderable3 = allocateUiElement(118, 118, 220, this.FUN_8010f178(0));
     this.renderable_8011e204 = renderable3;
     FUN_80104b60(renderable3);
-    playSound(2);
+    playMenuSound(2);
     this.menuState = MenuState._9;
   }
 
@@ -406,7 +406,7 @@ public class TooManyItemsScreen extends MenuScreen {
     this.invScroll = 0;
     this.invIndex = 0;
 
-    playSound(3);
+    playMenuSound(3);
     unloadRenderable(this.renderable_8011e204);
     this.menuState = MenuState._8;
   }
@@ -416,7 +416,7 @@ public class TooManyItemsScreen extends MenuScreen {
     final boolean isItem = this.droppedItems.get(this.dropIndex).item_00 instanceof Item;
 
     if(((isItem ? this.items : this.equipment).get(this.invIndex + this.invScroll).flags_02 & 0x6000) != 0) {
-      playSound(40);
+      playMenuSound(40);
     } else {
       if(isItem) {
         this.droppedItems.set(this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.items.get(this.invIndex + this.invScroll));
@@ -431,14 +431,14 @@ public class TooManyItemsScreen extends MenuScreen {
       this.invScroll = 0;
       this.invIndex = 0;
 
-      playSound(2);
+      playMenuSound(2);
       unloadRenderable(this.renderable_8011e204);
       this.menuState = MenuState._8;
     }
   }
 
   private void sortMenuState9() {
-    playSound(2);
+    playMenuSound(2);
 
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());

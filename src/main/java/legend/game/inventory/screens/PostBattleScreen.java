@@ -35,7 +35,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -219,7 +219,7 @@ public class PostBattleScreen extends MenuScreen {
         this.soundTick_8011e17c++;
 
         if((this.soundTick_8011e17c & 0x1) != 0) {
-          playSound(0x1L);
+          playMenuSound(1);
         }
 
         this.drawReport();
@@ -241,7 +241,7 @@ public class PostBattleScreen extends MenuScreen {
           this.soundTick_8011e17c++;
 
           if((this.soundTick_8011e17c & 0x1) != 0) {
-            playSound(0x1L);
+            playMenuSound(1);
           }
         } else {
           this.levelUpCharId_8011e170 = 3;
@@ -251,7 +251,7 @@ public class PostBattleScreen extends MenuScreen {
             //LAB_8010dc9c
             this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
           } else if((press_800bee94 & 0x20) != 0) {
-            playSound(0x2L);
+            playMenuSound(2);
             this.unlockHeight_8011e178 = 0;
             this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_UNLOCKED_ADDITIONS_6;
           }
@@ -266,7 +266,7 @@ public class PostBattleScreen extends MenuScreen {
         } else {
           //LAB_8010dcc8
           if((press_800bee94 & 0x20) != 0) {
-            playSound(0x2L);
+            playMenuSound(2);
 
             //LAB_8010dcf0
             this.inventoryMenuState_800bdc28 = MenuState.ENSMALLEN_UNLOCKED_ADDITIONS_7;
@@ -297,7 +297,7 @@ public class PostBattleScreen extends MenuScreen {
           this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
         } else if(this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] != 0) {
           addLevelUpOverlay(-80, 44);
-          playSound(9);
+          playMenuSound(9);
           this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_9;
         } else {
           //LAB_8010dd88
@@ -311,7 +311,7 @@ public class PostBattleScreen extends MenuScreen {
         this.drawChar(24, 152, secondaryCharIds_800bdbf8[this.levelUpCharId_8011e170 - 3]);
 
         if((press_800bee94 & 0x60) != 0) {
-          playSound(0x2L);
+          playMenuSound(2);
           this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] = 0;
           this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
           this.levelUpCharId_8011e170++;
@@ -341,7 +341,7 @@ public class PostBattleScreen extends MenuScreen {
       case WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11:
         if((press_800bee94 & 0x20) != 0) {
           this.unlockHeight_8011e178 = 0;
-          playSound(0x2L);
+          playMenuSound(2);
 
           //LAB_8010decc
           this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_SPELL_UNLOCK_12;
@@ -356,7 +356,7 @@ public class PostBattleScreen extends MenuScreen {
         } else {
           //LAB_8010def4
           if((press_800bee94 & 0x20) != 0) {
-            playSound(0x2L);
+            playMenuSound(2);
 
             //LAB_8010df1c
             this.inventoryMenuState_800bdc28 = MenuState.ENSMALLEN_SPELL_UNLOCK_13;
@@ -386,7 +386,7 @@ public class PostBattleScreen extends MenuScreen {
 
       case WAIT_FOR_INPUT_14:
         if((press_800bee94 & 0x60) != 0) {
-          playSound(3);
+          playMenuSound(3);
 
           if(itemsDroppedByEnemies_800bc928.isEmpty() || giveItems(itemsDroppedByEnemies_800bc928) == 0) {
             //LAB_8010dfac
@@ -812,14 +812,14 @@ public class PostBattleScreen extends MenuScreen {
         if(this.levelsGained_8011e1c8[i] != 0) {
           this.levelsGained_8011e1c8[i] = 0;
           addLevelUpOverlay(72, y2);
-          playSound(9);
+          playMenuSound(9);
         }
 
         //LAB_8010ea44
         if(this.dragoonLevelsGained_8011e1d8[i] != 0) {
           this.dragoonLevelsGained_8011e1d8[i] = 0;
           addLevelUpOverlay(72, y3);
-          playSound(9);
+          playMenuSound(9);
         }
       }
 

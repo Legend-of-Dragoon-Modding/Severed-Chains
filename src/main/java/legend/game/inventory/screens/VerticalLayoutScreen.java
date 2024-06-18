@@ -11,7 +11,7 @@ import legend.game.inventory.screens.controls.Textbox;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 
 public class VerticalLayoutScreen extends MenuScreen {
   private static final int MAX_VISIBLE_ENTRIES = 9;
@@ -137,14 +137,14 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     if(deltaY > 0 && this.scroll > 0) {
-      playSound(1);
+      playMenuSound(1);
       this.scroll--;
       this.updateEntries();
       this.highlightRow(this.highlightedRow - 1);
     }
 
     if(deltaY < 0 && this.scroll < this.rows.size() - MAX_VISIBLE_ENTRIES) {
-      playSound(1);
+      playMenuSound(1);
       this.scroll++;
       this.updateEntries();
       this.highlightRow(this.highlightedRow + 1);
@@ -183,11 +183,11 @@ public class VerticalLayoutScreen extends MenuScreen {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         if(this.highlightedRow > this.scroll) {
-          playSound(1);
+          playMenuSound(1);
           this.highlightRow(Math.floorMod(this.highlightedRow - 1, this.rows.size()));
           return InputPropagation.HANDLED;
         } else if(this.scroll > 0) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll--;
           this.updateEntries();
           this.highlightRow(Math.floorMod(this.highlightedRow - 1, this.rows.size()));
@@ -197,11 +197,11 @@ public class VerticalLayoutScreen extends MenuScreen {
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         if(this.highlightedRow < this.scroll + this.visibleEntries() - 1) {
-          playSound(1);
+          playMenuSound(1);
           this.highlightRow(this.highlightedRow + 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll < this.rows.size() - MAX_VISIBLE_ENTRIES) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll++;
           this.updateEntries();
           this.highlightRow(this.highlightedRow + 1);
