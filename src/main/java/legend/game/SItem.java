@@ -485,7 +485,7 @@ public final class SItem {
     "Shirley's Shrine", "", "Kazas", "Black Castle", "Fletz",
     "Twin Castle", "Barrens", "Donau", "Valley", "Giganto Home",
     "", "The Queen Fury", "Phantom Ship", "Lidiera", "Undersea Cavern",
-    "Feuno", "Prison Island", "Furni", "Evergreen Frst", "Deningrad",
+    "Fueno", "Prison Island", "Furni", "Evergreen Frst", "Deningrad",
     "Crystal Palace", "Neet", "Wingly Forest", "Forbidden Land", "",
     "Mortal Dr Mt.", "", "Kashua Glacier", "Flanvel Tower", "Snowfield",
     "Fort Magrad", "Vellweb", "", "Death Frontier", "Ulara",
