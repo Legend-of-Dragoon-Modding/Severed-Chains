@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class BigList<T> extends Control {
@@ -169,14 +169,14 @@ public class BigList<T> extends Control {
     }
 
     if(deltaY > 0 && this.scroll > 0) {
-      playSound(1);
+      playMenuSound(1);
       this.scroll--;
       this.updateEntries();
       this.highlight(this.slot - 1);
     }
 
     if(deltaY < 0 && this.scroll < this.entries.size() - MAX_VISIBLE_ENTRIES) {
-      playSound(1);
+      playMenuSound(1);
       this.scroll++;
       this.updateEntries();
       this.highlight(this.slot + 1);
@@ -211,11 +211,11 @@ public class BigList<T> extends Control {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         if(this.slot > this.scroll) {
-          playSound(1);
+          playMenuSound(1);
           this.highlight(this.slot - 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll > 0) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll--;
           this.updateEntries();
           this.highlight(this.slot - 1);
@@ -225,11 +225,11 @@ public class BigList<T> extends Control {
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         if(this.slot < this.scroll + this.visibleEntries() - 1) {
-          playSound(1);
+          playMenuSound(1);
           this.highlight(this.slot + 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll < this.entries.size() - MAX_VISIBLE_ENTRIES) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll++;
           this.updateEntries();
           this.highlight(this.slot + 1);

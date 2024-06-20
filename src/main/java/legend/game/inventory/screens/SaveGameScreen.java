@@ -20,7 +20,7 @@ import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -71,7 +71,7 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void onSelection(@Nullable final SavedGame save) {
-    playSound(2);
+    playMenuSound(2);
 
     if(save == null) {
       menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), this::onNewSaveResult));
@@ -116,7 +116,7 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void menuDelete() {
-    playSound(40);
+    playMenuSound(40);
 
     if(this.saveList.size() == 1) {
       menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", 0, result -> {}));
@@ -139,7 +139,7 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.unload.run();
   }
 

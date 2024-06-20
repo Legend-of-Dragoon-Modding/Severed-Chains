@@ -21,7 +21,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.menuItemComparator;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
@@ -131,9 +131,9 @@ public class ItemListScreen extends MenuScreen {
 
   private <T> void showDiscardMenu(final ItemList<T> list, final List<T> inv) {
     if(((list.getSelectedItem().flags_02 & 0x2000) != 0)) {
-      playSound(40);
+      playMenuSound(40);
     } else {
-      playSound(2);
+      playMenuSound(2);
       menuStack.pushScreen(new MessageBoxScreen("Discard?", 2, result -> this.discard(result, list, inv)));
     }
   }
@@ -161,7 +161,7 @@ public class ItemListScreen extends MenuScreen {
   }
 
   private void menuSort() {
-    playSound(2);
+    playMenuSound(2);
     this.itemList.sort(menuItemComparator());
     this.equipmentList.sort(menuItemComparator());
     setInventoryFromDisplay(this.itemList.getItems(), gameState_800babc8.items_2e9, this.itemList.getItems().size());

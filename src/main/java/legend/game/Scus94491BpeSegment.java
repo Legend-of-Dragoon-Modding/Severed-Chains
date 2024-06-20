@@ -1398,7 +1398,7 @@ public final class Scus94491BpeSegment {
    * @param soundIndex 1: up/down, 2: choose menu option, 3: ...
    */
   @Method(0x80019a60L)
-  public static void playSound(final int soundFileIndex, final int soundIndex, final int a2, final int a3, final int initialDelay, final int repeatDelay) {
+  public static void playSound(final int soundFileIndex, final int soundIndex, final int initialDelay, final int repeatDelay) {
     final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
 
     if(!soundFile.used_00 || soundFile.playableSound_10 == null) {
@@ -1407,34 +1407,34 @@ public final class Scus94491BpeSegment {
 
     switch(soundFileIndex) {
       case 0 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x1L) != 0) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x1) != 0) {
           return;
         }
       }
 
       case 8 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x2) != 0 || engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
           return;
         }
       }
 
       case 9 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || engineState_8004dd20 != EngineStateEnum.COMBAT_06) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x4) != 0 || engineState_8004dd20 != EngineStateEnum.COMBAT_06) {
           return;
         }
       }
 
       case 0xa -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x20L) != 0) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x20) != 0) {
           return;
         }
       }
 
       case 0xc -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || engineState_8004dd20 != EngineStateEnum.WORLD_MAP_08) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x8000) != 0 || engineState_8004dd20 != EngineStateEnum.WORLD_MAP_08) {
           return;
         }
       }
@@ -1597,13 +1597,13 @@ public final class Scus94491BpeSegment {
   @ScriptDescription("Play a sound")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundFileIndex", description = "The sound file index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001ab34L)
   public static FlowControl scriptPlaySound(final RunningScript<?> script) {
-    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get() * currentEngineState_8004dd04.tickMultiplier(), script.params_20[5].get() * currentEngineState_8004dd04.tickMultiplier());
+    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[4].get() * currentEngineState_8004dd04.tickMultiplier(), script.params_20[5].get() * currentEngineState_8004dd04.tickMultiplier());
     return FlowControl.CONTINUE;
   }
 
@@ -1978,7 +1978,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
     battleStartDelayTicks_8004f6ec = 0;
-    playSound(0, 16, 0, 0, (short)0, (short)0);
+    playSound(0, 16, (short)0, (short)0);
     vsyncMode_8007a3b8 = 1;
     _800bd740 = 2;
     dissolveDarkening_800bd700.active_00 = false;
@@ -2040,7 +2040,7 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFiles_800bcf80[index];
 
     sound.name = "Char slot %d sound effects".formatted(charSlot);
-    sound.charId_02 = charId;
+    sound.id_02 = charId;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
 
     //LAB_8001cc48
@@ -2067,7 +2067,7 @@ public final class Scus94491BpeSegment {
     for(charSlot = 0; charSlot < 3; charSlot++) {
       final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
 
-      if(soundFile.charId_02 == bent.charId_272) {
+      if(soundFile.id_02 == bent.charId_272) {
         break;
       }
     }
@@ -2107,7 +2107,7 @@ public final class Scus94491BpeSegment {
     //LAB_8001cf2c
     sound.name = soundName;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -2187,7 +2187,7 @@ public final class Scus94491BpeSegment {
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      file.charId_02 = -1;
+      file.id_02 = -1;
       file.used_00 = false;
 
       if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
@@ -2221,7 +2221,7 @@ public final class Scus94491BpeSegment {
 
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-        soundFile.charId_02 = -1;
+        soundFile.id_02 = -1;
         soundFile.used_00 = false;
 
         if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Unpacker.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
@@ -2258,7 +2258,7 @@ public final class Scus94491BpeSegment {
 
       soundFile.name = soundName;
       soundFile.indices_08 = SoundFileIndices.load(files.get(1));
-      soundFile.charId_02 = files.get(0).readShort(0);
+      soundFile.id_02 = files.get(0).readShort(0);
 
       //LAB_8001d80c
       soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0 + soundBufferOffset);
@@ -2275,7 +2275,7 @@ public final class Scus94491BpeSegment {
     final SoundFile soundFile = soundFiles_800bcf80[9];
     soundFile.name = soundName;
     soundFile.used_00 = true;
-    soundFile.charId_02 = files.get(0).readUShort(0);
+    soundFile.id_02 = files.get(0).readUShort(0);
     soundFile.indices_08 = SoundFileIndices.load(files.get(2));
     soundFile.spuRamOffset_14 = files.get(4).size();
     soundFile.numberOfExtraSoundbanks_18 = files.get(1).readUShort(0) - 1;
@@ -2318,7 +2318,7 @@ public final class Scus94491BpeSegment {
     }
 
     musicLoaded_800bd782 = true;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
 
     _800bd0f0 = 2;
   }
@@ -2568,7 +2568,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e780L)
   public static void unloadSoundbank_800bd778() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffe);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x1);
   }
 
   @ScriptDescription("Loads the main menu sounds")
@@ -2584,7 +2584,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e8d4L)
   public static void FUN_8001e8d4() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fff7);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x8);
   }
 
   @ScriptDescription("Unused")
@@ -2604,7 +2604,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e950L)
   public static void cleanUpCharAttackSounds() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fff7);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x8);
   }
 
   @Method(0x8001e98cL)
@@ -2614,7 +2614,7 @@ public final class Scus94491BpeSegment {
     sound.name = soundName;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0);
     FUN_8001ea5c();
@@ -2623,7 +2623,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ea5cL)
   public static void FUN_8001ea5c() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffbf);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x40);
   }
 
   @Method(0x8001eadcL)
@@ -2644,7 +2644,7 @@ public final class Scus94491BpeSegment {
     soundFiles_800bcf80[8].name = soundName;
     soundFiles_800bcf80[8].indices_08 = SoundFileIndices.load(files.get(2));
     soundFiles_800bcf80[8].ptr_0c = files.get(1);
-    soundFiles_800bcf80[8].charId_02 = files.get(0).readShort(0);
+    soundFiles_800bcf80[8].id_02 = files.get(0).readShort(0);
 
     final Sshd sshd = new Sshd(files.get(3));
     if(files.get(4).size() != sshd.soundBankSize_04) {
@@ -2659,7 +2659,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ec18L)
   public static void submapSoundsCleanup() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffd);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x2);
     musicLoaded_800bd782 = true;
   }
 
@@ -2681,11 +2681,11 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001ed88
     for(int i = 1; i <= soundFile.numberOfExtraSoundbanks_18; i++) {
-      loadDrgnFile(0, 2437 + soundFile.charId_02 * 3 + i, Scus94491BpeSegment::uploadExtraBattleCutsceneSoundbank);
+      loadDrgnFileSync(0, 2437 + soundFile.id_02 * 3 + i, Scus94491BpeSegment::uploadExtraBattleCutsceneSoundbank);
     }
 
     //LAB_8001edd4
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffb);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x4);
     musicLoaded_800bd782 = true;
   }
 
@@ -2700,7 +2700,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001eea8L)
   public static void loadLocationMenuSoundEffects(final int index) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "Unknown WMAP sounds %d (file %d)".formatted(index, 5740 + index)));
+    loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
   }
 
   @Method(0x8001eefcL)
@@ -2710,7 +2710,7 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(2));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(files.get(3)), 0x4_de90);
     FUN_8001efcc();
@@ -2720,7 +2720,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001efccL)
   public static void FUN_8001efcc() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_7fff);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
   }
 
   @ScriptDescription("Load a monster's sounds")
@@ -2742,12 +2742,12 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffdf);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x20);
   }
 
   @ScriptDescription("Loads a character's attack sounds")
@@ -2769,7 +2769,7 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
     FUN_8001f390();
@@ -2779,7 +2779,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001f390L)
   public static void FUN_8001f390() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xfffe_ffff);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x1_0000);
   }
 
   /**
@@ -2888,7 +2888,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ffb0L)
-  public static long getLoadedDrgnFiles() {
+  public static int getLoadedDrgnFiles() {
     return loadedDrgnFiles_800bcf78.get();
   }
 

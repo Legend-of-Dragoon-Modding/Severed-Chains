@@ -63,7 +63,7 @@ public class WmapPromptPopup {
     this.promptTranslation.set(240.0f, 140.0f - lines * 7, textZ);
     this.optionsTranslation.set(240.0f, 170.0f, textZ - 2.0f);
     this.altTextTranslation.set(240.0f, 31.0f, textZ - 2.0f);
-    this.thumbnailTranslation.set(0.0f, 0.0f, textZ + 4.0f);
+    this.thumbnailTranslation.set(0.0f, 0.0f, textZ);
     this.currentThumbnailBrightness = 1.0f;
     this.previousThumbnailBrightness = 0.0f;
     this.transforms.identity();

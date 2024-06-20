@@ -1516,7 +1516,7 @@ public class BattleHud {
             this.spellAndItemMenu_800c6b60._88 = 2;
             this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
             this.spellAndItemMenu_800c6b60.menuState_00 = 5;
-            playSound(0, 1, 0, 0, (short)0, (short)0);
+            playSound(0, 1, (short)0, (short)0);
           }
 
           break;
@@ -1538,7 +1538,7 @@ public class BattleHud {
           this.spellAndItemMenu_800c6b60.menuState_00 = 5;
 
           if(oldScroll != this.spellAndItemMenu_800c6b60.listScroll_24) {
-            playSound(0, 1, 0, 0, (short)0, (short)0);
+            playSound(0, 1, (short)0, (short)0);
           }
 
           break;
@@ -1564,7 +1564,7 @@ public class BattleHud {
           this.spellAndItemMenu_800c6b60._88 = 2;
           this.spellAndItemMenu_800c6b60.menuState_00 = 5;
           this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
           break;
         }
 
@@ -1585,7 +1585,7 @@ public class BattleHud {
           this.spellAndItemMenu_800c6b60._88 = 2;
           this.spellAndItemMenu_800c6b60.menuState_00 = 5;
           this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
           break;
         }
 
@@ -1609,7 +1609,7 @@ public class BattleHud {
             this.spellAndItemMenu_800c6b60.listIndex_1e--;
           }
 
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
           break;
         }
 
@@ -1617,7 +1617,7 @@ public class BattleHud {
         if((input_800bee90 & 0x4000) != 0) { // Down
           if(this.spellAndItemMenu_800c6b60.listScroll_24 != this.spellAndItemMenu_800c6b60.count_22 - 1) {
             if(this.spellAndItemMenu_800c6b60.listIndex_1e + this.spellAndItemMenu_800c6b60.listScroll_24 + 1 < this.spellAndItemMenu_800c6b60.count_22) {
-              playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
 
               if(this.spellAndItemMenu_800c6b60.listScroll_24 != 6) {
                 this.spellAndItemMenu_800c6b60.listScroll_24++;
@@ -1668,7 +1668,7 @@ public class BattleHud {
             if(player.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < player.spell_94.mp_06) {
               //LAB_800f5160
               //LAB_800f5168
-              playSound(0, 3, 0, 0, (short)0, (short)0);
+              playSound(0, 3, (short)0, (short)0);
               break;
             }
 
@@ -1676,7 +1676,7 @@ public class BattleHud {
             this.clearFloatingNumber(0);
           } else {
             final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
-            playSound(0, 2, 0, 0, (short)0, (short)0);
+            playSound(0, 2, (short)0, (short)0);
             player.combatant_144.mrg_04 = null;
             gameState_800babc8.charData_32c[player.charId_272].selectedAddition_19 = additionOffsets_8004f5ac[player.charId_272] + this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
             loadCharacterStats();
@@ -1690,7 +1690,7 @@ public class BattleHud {
           }
 
           //LAB_800f5190
-          playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60._8c = 0;
           this.spellAndItemMenu_800c6b60.flags_02 |= 0x4;
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
@@ -1705,7 +1705,7 @@ public class BattleHud {
 
         //LAB_800f5208
         if((press_800bee94 & 0x40) != 0) { // O
-          playSound(0, 3, 0, 0, (short)0, (short)0);
+          playSound(0, 3, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60.menuState_00 = 8;
           this.spellAndItemMenu_800c6b60.flags_02 &= 0xfff7;
         }
@@ -1809,12 +1809,12 @@ public class BattleHud {
           }
 
           //LAB_800f5488
-          playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60._a0 = 1;
           this.spellAndItemMenu_800c6b60.menuState_00 = 9;
         } else if(ret == -1) { // Pressed O
           //LAB_800f54b4
-          playSound(0, 0, 3, 0, (short)0, (short)0);
+          playSound(0, 0, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60.menuState_00 = 7;
           this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffb;
           this.spellAndItemMenu_800c6b60.flags_02 |= 0x20;
@@ -1829,7 +1829,7 @@ public class BattleHud {
         }
 
         this.spellAndItemMenu_800c6b60.menuState_00 = 2;
-        playSound(0, 4, 0, 0, (short)0, (short)0);
+        playSound(0, 4, (short)0, (short)0);
         this.spellAndItemMenu_800c6b60.width_10 = s0;
         this.spellAndItemMenu_800c6b60.height_12 = 82;
         this.spellAndItemMenu_800c6b60.textX_18 = (short)(this.spellAndItemMenu_800c6b60.x_04 - s0 / 2 + 9);
@@ -2306,7 +2306,7 @@ public class BattleHud {
         // Input for cycling right on menu bar
         //LAB_800f65b8
         if((input_800bee90 & 0x2000) != 0) {
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.iconCount_0e - 1) {
             //LAB_800f6640
@@ -2335,7 +2335,7 @@ public class BattleHud {
         // Input for cycling left on menu bar
         //LAB_800f6664
         if((input_800bee90 & 0x8000) != 0) {
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
             //LAB_800f66f0
@@ -2365,10 +2365,10 @@ public class BattleHud {
 
         if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
           if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
-            playSound(0, 2, 0, 0, (short)0, (short)0);
+            playSound(0, 2, (short)0, (short)0);
             this.initSpellAndItemMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
           } else {
-            playSound(0, 40, 0, 0, (short)0, (short)0);
+            playSound(0, 40, (short)0, (short)0);
           }
         }
 
@@ -2377,16 +2377,16 @@ public class BattleHud {
         if((press_800bee94 & 0x20) != 0) {
           int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
           if((selectedIconFlag & 0x80) != 0) {
-            playSound(0, 3, 0, 0, (short)0, (short)0);
+            playSound(0, 3, (short)0, (short)0);
           } else {
             selectedIconFlag = selectedIconFlag & 0xf;
             if(selectedIconFlag == 0x5) {
               this.prepareItemList();
 
               if(this.combatItems_800c6988.isEmpty()) {
-                playSound(0, 3, 0, 0, (short)0, (short)0);
+                playSound(0, 3, (short)0, (short)0);
               } else {
-                playSound(0, 2, 0, 0, (short)0, (short)0);
+                playSound(0, 2, (short)0, (short)0);
                 selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
               }
               //LAB_800f6790
@@ -2403,15 +2403,15 @@ public class BattleHud {
 
               //LAB_800f681c
               if(spellIndex == 8) {
-                playSound(0, 3, 0, 0, (short)0, (short)0);
+                playSound(0, 3, (short)0, (short)0);
               } else {
-                playSound(0, 2, 0, 0, (short)0, (short)0);
+                playSound(0, 2, (short)0, (short)0);
                 selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
               }
             } else {
               //LAB_800f6858
               //LAB_800f6860
-              playSound(0, 2, 0, 0, (short)0, (short)0);
+              playSound(0, 2, (short)0, (short)0);
               selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
             }
           }
@@ -2420,7 +2420,7 @@ public class BattleHud {
         } else if((press_800bee94 & 0x40) != 0) {
           //LAB_800f68a4
           //LAB_800f68bc
-          playSound(0, 3, 0, 0, (short)0, (short)0);
+          playSound(0, 3, (short)0, (short)0);
         }
 
         //LAB_800f68c4
@@ -2592,7 +2592,7 @@ public class BattleHud {
         }
 
         if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0x80) != 0) {
-          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 123.8f);
+          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 123.7f);
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.actionDisabledObj, this.battleMenu_800c6c34.transforms);
         }
 

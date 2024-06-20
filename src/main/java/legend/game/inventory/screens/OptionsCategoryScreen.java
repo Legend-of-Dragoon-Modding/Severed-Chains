@@ -18,7 +18,7 @@ import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 
 public class OptionsCategoryScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -60,7 +60,7 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
     }
 
     if(inputAction == InputAction.BUTTON_EAST) {
-      playSound(3);
+      playMenuSound(3);
       this.unload.run();
       return InputPropagation.HANDLED;
     }

@@ -1001,7 +1001,7 @@ public class Battle extends EngineState {
       //LAB_80019e68
       for(int charSlot = 0; charSlot < 3; charSlot++) {
         final int index = characterSoundFileIndices_800500f8[charSlot];
-        if(soundFiles_800bcf80[index].charId_02 == bent.charId_272) {
+        if(soundFiles_800bcf80[index].id_02 == bent.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -1012,7 +1012,7 @@ public class Battle extends EngineState {
       //LAB_80019f30
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final int index = monsterSoundFileIndices_800500e8[monsterSlot];
-        if(soundFiles_800bcf80[index].charId_02 == bent.charId_272) {
+        if(soundFiles_800bcf80[index].id_02 == bent.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -1053,7 +1053,7 @@ public class Battle extends EngineState {
       for(int charSlot = 0; charSlot < 3; charSlot++) {
         final int index = characterSoundFileIndices_800500f8[charSlot];
 
-        if(soundFiles_800bcf80[index].charId_02 == charOrMonsterIndex) {
+        if(soundFiles_800bcf80[index].id_02 == charOrMonsterIndex) {
           soundFileIndex = index;
           break;
         }
@@ -1064,7 +1064,7 @@ public class Battle extends EngineState {
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final int index = monsterSoundFileIndices_800500e8[monsterSlot];
 
-        if(soundFiles_800bcf80[index].charId_02 == charOrMonsterIndex) {
+        if(soundFiles_800bcf80[index].id_02 == charOrMonsterIndex) {
           //LAB_8001a078
           soundFileIndex = index;
           break;

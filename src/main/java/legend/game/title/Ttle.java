@@ -586,7 +586,7 @@ public class Ttle extends EngineState {
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(this.selectedMenuOption != i) {
-                playSound(0, 1, 0, 0, (short)0, (short)0);
+                playSound(0, 1, (short)0, (short)0);
                 this.selectedMenuOption = i;
               }
 
@@ -632,7 +632,7 @@ public class Ttle extends EngineState {
             final int menuY = (int)((this.menuTextXy_800ce8ac[i * 2 + 1] - 6) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
-              playSound(0, 2, 0, 0, (short)0, (short)0);
+              playSound(0, 2, (short)0, (short)0);
               this.selectedMenuOption = i;
 
               this.menuState_800c672c = 3;
@@ -659,11 +659,11 @@ public class Ttle extends EngineState {
   private void handleMainInput() {
     if(this.menuState_800c672c < 3) {
       if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) { // Menu button X
-        playSound(0, 2, 0, 0, (short)0, (short)0);
+        playSound(0, 2, (short)0, (short)0);
 
         this.menuState_800c672c = 3;
       } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
-        playSound(0, 1, 0, 0, (short)0, (short)0);
+        playSound(0, 1, (short)0, (short)0);
 
         this.selectedMenuOption--;
         if(this.selectedMenuOption < 0) {
@@ -676,7 +676,7 @@ public class Ttle extends EngineState {
 
         this.menuState_800c672c = 2;
       } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
-        playSound(0, 1, 0, 0, (short)0, (short)0);
+        playSound(0, 1, (short)0, (short)0);
 
         this.selectedMenuOption++;
         if(this.selectedMenuOption >= 4) {
