@@ -444,8 +444,6 @@ public class Battle extends EngineState {
   /** Different sets of bents for different target types (chars, monsters, all) */
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
 
-  public static final int[] protectedItems_800c72cc = {224, 227, 228, 230, 232, 235, 236, 237, 238, 250};
-
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
   public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
 
@@ -8580,14 +8578,9 @@ public class Battle extends EngineState {
       item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
       itemId = LodMod.idItemMap.getInt(item.getRegistryId());
 
-      //LAB_800f996c
-      for(int i = 0; i < 10; i++) {
-        if(itemId == protectedItems_800c72cc[i]) {
-          //LAB_800f999c
-          item = null;
-          itemId = -1;
-          break;
-        }
+      if(item.isProtected()) {
+        item = null;
+        itemId = -1;
       }
     }
 
