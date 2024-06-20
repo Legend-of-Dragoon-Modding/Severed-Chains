@@ -199,7 +199,7 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
-import static legend.game.Scus94491BpeSegment_8005._8005027c;
+import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -352,6 +352,7 @@ public class Battle extends EngineState {
 
   public ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
 
+  private final Object usedMonsterTextureSlotsLock = new Object();
   private int usedMonsterTextureSlots_800c66c4;
   public ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
   private int mcqBaseOffsetX_800c66cc;
@@ -561,7 +562,7 @@ public class Battle extends EngineState {
    * The rest are -1
    */
   public static final int[] melbuStageIndices_800fb064 = {93, 94, 95, 25, 52, -1, -1, -1};
-  public static final int[] modelVramSlots_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
+  public static final int[] modelVramSlotIndices_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
 
   @Override
   public int tickMultiplier() {
@@ -2495,29 +2496,35 @@ public class Battle extends EngineState {
   public int findFreeMonsterTextureSlot(final int a0) {
     //LAB_800ca8ac
     //LAB_800ca8c4
-    for(int i = a0 < 0x200 ? 4 : 1; i < 9; i++) {
-      final int a0_0 = 0x1 << i;
+    synchronized(this.usedMonsterTextureSlotsLock) {
+      for(int i = a0 < 0x200 ? 4 : 1; i < 9; i++) {
+        final int a0_0 = 0x1 << i;
 
-      if((this.usedMonsterTextureSlots_800c66c4 & a0_0) == 0) {
-        this.usedMonsterTextureSlots_800c66c4 |= a0_0;
-        return i;
+        if((this.usedMonsterTextureSlots_800c66c4 & a0_0) == 0) {
+          this.usedMonsterTextureSlots_800c66c4 |= a0_0;
+          return i;
+        }
+
+        //LAB_800ca8e4
       }
 
-      //LAB_800ca8e4
+      //LAB_800ca8f4
+      return 0;
     }
-
-    //LAB_800ca8f4
-    return 0;
   }
 
   @Method(0x800ca8fcL)
   public void setMonsterTextureSlotUsed(final int shift) {
-    this.usedMonsterTextureSlots_800c66c4 |= 0x1 << shift;
+    synchronized(this.usedMonsterTextureSlotsLock) {
+      this.usedMonsterTextureSlots_800c66c4 |= 0x1 << shift;
+    }
   }
 
   @Method(0x800ca918L)
   public void unsetMonsterTextureSlotUsed(final int shift) {
-    this.usedMonsterTextureSlots_800c66c4 &= ~(0x1 << shift);
+    synchronized(this.usedMonsterTextureSlotsLock) {
+      this.usedMonsterTextureSlots_800c66c4 &= ~(0x1 << shift);
+    }
   }
 
   @Method(0x800cae44L)
@@ -6476,7 +6483,7 @@ public class Battle extends EngineState {
     if(animatedTmdType.textureInfo_08 != null) {
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x, textureInfo.vramPos_00.y);
-      model.uvAdjustments_9d = _8005027c[modelVramSlots_800fb06c[tpage]];
+      model.uvAdjustments_9d = vramSlots_8005027c[modelVramSlotIndices_800fb06c[tpage]];
     } else {
       model.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
     }

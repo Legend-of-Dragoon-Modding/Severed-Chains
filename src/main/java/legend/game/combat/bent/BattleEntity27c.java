@@ -41,7 +41,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8005._8005027c;
+import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
@@ -565,7 +565,7 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cae98
     if(v1 != 0) {
       if(this.combatant_144.isModelLoaded()) {
-        this.model_148.uvAdjustments_9d = _8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
+        this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
         this.loadingAnimIndex_26e = 0;
         loadCombatantModelAndAnimation(this.model_148, this.combatant_144);
         this._278 = 1;
