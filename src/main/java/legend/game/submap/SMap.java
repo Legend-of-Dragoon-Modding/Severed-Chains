@@ -24,6 +24,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
+import legend.game.modding.events.submap.SubmapWarpEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -3559,6 +3560,7 @@ public class SMap extends EngineState {
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
       submapCutForSave_800cb450 = newCut;
+      EVENTS.postEvent(new SubmapWarpEvent(submapCut_80052c30, gameState_800babc8));
       return;
     }
 

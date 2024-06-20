@@ -12,6 +12,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
+import legend.game.modding.events.inventory.ShopTypeEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
@@ -137,8 +138,8 @@ public class ShopScreen extends MenuScreen {
         }
 
         startFadeEffect(2, 10);
-
-        this.shopType = shops_800f4930[shopId_8007a3b4].shopType_00 & 1;
+        final ShopTypeEvent shopTypeEvent = EVENTS.postEvent(new ShopTypeEvent(shops_800f4930[shopId_8007a3b4].shopType_00 & 1, shopId_8007a3b4));
+        this.shopType = shopTypeEvent.shopType;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();

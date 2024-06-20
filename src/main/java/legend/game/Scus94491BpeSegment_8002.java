@@ -33,6 +33,8 @@ import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.GiveEquipmentEvent;
+import legend.game.modding.events.inventory.GiveItemEvent;
 import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
@@ -1147,7 +1149,9 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    gameState_800babc8.items_2e9.add(item);
+    GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(item));
+
+    gameState_800babc8.items_2e9.add(event.override ? event.item : item);
     return true;
   }
 
@@ -1157,7 +1161,9 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    gameState_800babc8.equipment_1e8.add(equipment);
+    GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment));
+
+    gameState_800babc8.equipment_1e8.add(event.override ? event.equip : equipment);
     return true;
   }
 
