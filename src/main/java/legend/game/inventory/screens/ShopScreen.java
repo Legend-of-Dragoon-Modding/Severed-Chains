@@ -81,7 +81,7 @@ public class ShopScreen extends MenuScreen {
   private static final String Carried_8011c6b8 = "Carried";
   private static final String Leave_8011c6c8 = "Leave";
   private static final String Cannot_be_armed_with_8011c6d4 = "Cannot be armed\nwith";
-  private static final String Number_kept_8011c7f4 = "Number kept";
+  private static final String Number_kept_8011c7f4 = "Carrying: ";
 
   private MenuState menuState = MenuState.INIT_0;
   private MenuState confirmDest;
@@ -400,9 +400,8 @@ public class ShopScreen extends MenuScreen {
       }
     }
 
-    renderText(Number_kept_8011c7f4, 228, 137, TextColour.BROWN);
-    renderText(String.valueOf(count), 274, 137, TextColour.BROWN);
-  }
+    renderText(Number_kept_8011c7f4 + count, 195, 125, TextColour.BROWN);
+   }
 
   private void renderItemList(final int firstItem, final int isItemMenu, final Renderable58 upArrow, final Renderable58 downArrow) {
     if(isItemMenu != 0) {
