@@ -20,7 +20,7 @@ public class CharacterData {
   public ArrayList<AdditionHits80> additions = new ArrayList<>();
   public ArrayList<Addition04[]> additionsMultiplier = new ArrayList<>();
   public ArrayList<AdditionHits80> dragoonAddition = new ArrayList<>();
-  public int[][] spBarColours = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
+  public int[][] spBarColours = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}, {0, 0, 0, 0, 0, 0}};
 
   public int getAdditionHitCount(final int index) {
     final AdditionHits80 addition = this.additions.get(index);

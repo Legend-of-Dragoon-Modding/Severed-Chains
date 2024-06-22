@@ -197,7 +197,7 @@ public class BattleHud {
   private UiBox battleUiItemSpellList;
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
-  private Obj spBars;
+  private ArrayList<ArrayList<Obj>> spBars = new ArrayList<>();
   private final MV spBarTransforms = new MV();
   private final MV lineTransforms = new MV();
 
@@ -733,22 +733,25 @@ public class BattleHud {
               final int right = left + spBarW;
               final int bottom = top + 3;
 
-              final int[] spBarColours = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[spBarIndex];
-
-              if(this.spBars == null) {
-                this.spBars = new QuadBuilder("SPBar")
-                  .monochrome(0, 229.0f / 255.0f)
-                  .monochrome(1, 133.0f / 255.0f)
-                  .monochrome(2, 229.0f / 255.0f)
-                  .monochrome(3, 133.0f / 255.0f)
-                  .size(1, 1)
-                  .build();
+              if(player.charSlot_276 + 1 > this.spBars.size()) {
+                final ArrayList<Obj> characterSpBars = new ArrayList<>();
+                for(int x = 0; x < CoreMod.MAX_DRAGOON_LEVEL + 2; x++) {
+                  final int[] spBarColoursInit = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[x];
+                  characterSpBars.add(new QuadBuilder("SPBar" + player.charSlot_276 + "-" + spBarIndex)
+                    .rgb(0, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
+                    .rgb(1, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
+                    .rgb(2, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
+                    .rgb(3, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
+                    .size(1, 1)
+                    .build());
+                }
+                this.spBars.add(characterSpBars);
               }
 
               spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
               spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
-              RENDERER.queueOrthoModel(this.spBars, spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
+              RENDERER.queueOrthoModel(this.spBars.get(player.charSlot_276).get(spBarIndex), spBarTransforms);
             }
 
             //SP border
@@ -3023,7 +3026,12 @@ public class BattleHud {
     }
 
     if(this.spBars != null) {
-      this.spBars.delete();
+      for(int i = 0; i < spBars.size(); i++) {
+        ArrayList<Obj> barObj = spBars.get(i);
+        for(Obj bar : barObj) {
+          bar.delete();
+        }
+      }
       this.spBars = null;
     }
   }

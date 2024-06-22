@@ -88,6 +88,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.AttackSpGainEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
@@ -960,6 +961,7 @@ public class Battle extends EngineState {
 
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
+    functions[912] = this::bowUserSpEvent;
 
     return functions;
   }
@@ -4924,6 +4926,25 @@ public class Battle extends EngineState {
   public FlowControl scriptWobbleCamera(final RunningScript<?> script) {
     this.camera_800c67f0.setWobble(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     getScreenOffset(this.camera_800c67f0.screenOffset_800c67bc);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Replaces Shana/???'s SP Table")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "sp")
+  public FlowControl bowUserSpEvent(final RunningScript<?> script) {
+    final PlayerBattleEntity bent = (PlayerBattleEntity)script.scriptState_04.innerStruct_00;
+
+    final int sp = switch(bent.dlevel_06) {
+      case 1 -> 35;
+      case 2 -> 50;
+      case 3 -> 70;
+      case 4 -> 100;
+      case 5 -> 150;
+      default -> 0;
+    };
+
+    script.params_20[0].set(EVENTS.postEvent(new AttackSpGainEvent(bent, sp)).sp);
+
     return FlowControl.CONTINUE;
   }
 
