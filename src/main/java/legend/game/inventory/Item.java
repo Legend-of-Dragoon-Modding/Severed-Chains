@@ -42,6 +42,11 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
     return this.price;
   }
 
+  /** Item can't be stolen by enemies */
+  public boolean isProtected() {
+    return false;
+  }
+
   /** Check if an item can ever be used in this location */
   public abstract boolean canBeUsed(final UsageLocation location);
 
