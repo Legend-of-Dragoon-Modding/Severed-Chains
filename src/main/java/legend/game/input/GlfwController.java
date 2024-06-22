@@ -219,7 +219,7 @@ public class GlfwController extends Controller {
     this.rumbleBigEndingIntensity = bigIntensity;
     this.rumbleSmallEndingIntensity = smallIntensity;
     this.rumbleLerpStart = System.nanoTime();
-    this.rumbleLerpDuration = ms * 1_000_000;
+    this.rumbleLerpDuration = ms * 1_000_000L;
   }
 
   @Override
