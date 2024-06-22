@@ -71,10 +71,10 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
-import static legend.game.Scus94491BpeSegment_8002.startRumble;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
+import static legend.game.Scus94491BpeSegment_8002.startRumbleMode;
+import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
+import static legend.game.Scus94491BpeSegment_8002.setRumbleDampener;
+import static legend.game.Scus94491BpeSegment_8002.resetRumbleDampener;
 import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
@@ -1039,7 +1039,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x80017584L)
   public static FlowControl FUN_80017584(final RunningScript<?> script) {
-    FUN_8002bb38(script.params_20[0].get(), script.params_20[1].get());
+    startRumbleMode(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1088,22 +1088,22 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "duration")
   @Method(0x80017688L)
   public static FlowControl scriptStartRumble(final RunningScript<?> script) {
-    startRumble(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    adjustRumbleOverTime(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to rumble")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Sets the rumble intensity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "intensity")
   @Method(0x800176c0L)
-  public static FlowControl FUN_800176c0(final RunningScript<?> script) {
-    FUN_8002c178(script.params_20[0].get());
+  public static FlowControl scriptSetRumbleDampener(final RunningScript<?> script) {
+    setRumbleDampener(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to rumble")
+  @ScriptDescription("Sets the rumble intensity param back to 0")
   @Method(0x800176ecL)
-  public static FlowControl FUN_800176ec(final RunningScript<?> script) {
-    FUN_8002c184();
+  public static FlowControl scriptResetRumbleDampener(final RunningScript<?> script) {
+    resetRumbleDampener();
     return FlowControl.CONTINUE;
   }
 

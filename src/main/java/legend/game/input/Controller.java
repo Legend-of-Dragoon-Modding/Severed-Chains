@@ -18,5 +18,18 @@ public abstract class Controller {
 
   public abstract String getGuid();
 
-  public void rumble(final int ms) { }
+  public void rumble(final float bigIntensity, final float smallIntensity, final int ms) { }
+  public void adjustRumble(final float bigIntensity, final float smallIntensity, final int ms) { }
+
+  public void rumble(final float intensity, final int ms) {
+    this.rumble(intensity, intensity, ms);
+  }
+
+  public void adjustRumble(final float intensity, final int ms) {
+    this.adjustRumble(intensity, intensity, ms);
+  }
+
+  public void stopRumble() {
+    this.rumble(0.0f, 0);
+  }
 }

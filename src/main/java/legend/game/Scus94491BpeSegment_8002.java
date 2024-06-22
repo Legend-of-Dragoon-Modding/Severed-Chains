@@ -153,6 +153,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
+import static legend.game.Scus94491BpeSegment_800b.rumbleDampener_800bee80;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
@@ -4042,41 +4043,91 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bb38L)
-  public static void FUN_8002bb38(final int joypadIndex, final int a1) {
+  public static void startRumbleMode(final int pad, final int mode) {
+    LOGGER.debug("startRumbleMode %x %x", pad, mode);
+
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
 
-    LOGGER.info("Rumble 8002bb38 %x %x", joypadIndex, a1);
+    switch(mode) {
+      case 0 -> stopRumble(pad);
+      case 1 -> Input.rumble(0.25f, 0);
+      case 2 -> {
+        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+          Input.rumble(0.3f, 0);
+        } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+          Input.rumble(0.75f - rumbleDampener_800bee80, 0);
+        } else {
+          Input.rumble(0.75f, 0);
+        }
+      }
+      case 3 -> {
+        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+          Input.rumble(0.4f, 0);
+        } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+          Input.rumble(1.0f - rumbleDampener_800bee80, 0);
+        } else {
+          Input.rumble(1.0f, 0);
+        }
+      }
+    }
   }
 
   @Method(0x8002bcc8L)
-  public static void resetRumble(final int a0, final int a1) {
+  public static void startRumbleIntensity(final int pad, int intensityIn) {
+    LOGGER.debug("startRumbleIntensity %x %x", pad, intensityIn);
+
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
 
-    LOGGER.info("Rumble 8002bcc8 %x %x", a0, a1);
+    if(intensityIn > 0x1ff) {
+      intensityIn = 0x1ff;
+    }
+
+    float intensity = intensityIn / (float)0x1ff;
+
+    if(intensity > 0.25f) {
+      intensity -= rumbleDampener_800bee80;
+    }
+
+    Input.rumble(intensity, 0);
   }
 
   @Method(0x8002bda4L)
-  public static void startRumble(final int pad, final int a1, final int duration) {
+  public static void adjustRumbleOverTime(final int pad, int intensity, final int frames) {
+    LOGGER.debug("adjustRumbleOverTime %x %x %x", pad, intensity, frames);
+
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
 
-    LOGGER.info("Start rumble %x %x %x", pad, a1, duration);
-    Input.rumble(duration / (vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier()) * 50);
+    intensity = MathHelper.clamp(intensity, 0, 0x1ff);
+
+    if(frames == 0) {
+      startRumbleIntensity(pad, intensity);
+      return;
+    }
+
+    Input.adjustRumble(intensity / (float)0x1ff, frames / (vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier()) * 50);
+  }
+
+  @Method(0x8002c150L)
+  public static void stopRumble(final int pad) {
+    Input.stopRumble();
   }
 
   @Method(0x8002c178L)
-  public static void FUN_8002c178(final int a0) {
-    LOGGER.info("Rumble 8002c178 %x", a0);
+  public static void setRumbleDampener(final int intensity) {
+    LOGGER.debug("setRumbleDampener %x", intensity);
+    rumbleDampener_800bee80 = intensity / (float)0x1ff;
   }
 
   @Method(0x8002c184L)
-  public static void FUN_8002c184() {
-    LOGGER.info("Rumble 8002c184");
+  public static void resetRumbleDampener() {
+    LOGGER.debug("resetRumbleDampener");
+    rumbleDampener_800bee80 = 0.0f;
   }
 
   @Method(0x8002c984L)

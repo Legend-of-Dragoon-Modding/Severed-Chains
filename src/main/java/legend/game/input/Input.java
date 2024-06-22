@@ -221,8 +221,24 @@ public final class Input {
     }
   }
 
-  public static void rumble(final int ms) {
-    activeController.rumble(ms);
+  public static void rumble(final float bigIntensity, final float smallIntensity, final int ms) {
+    activeController.rumble(bigIntensity, smallIntensity, ms);
+  }
+
+  public static void rumble(final float intensity, final int ms) {
+    activeController.rumble(intensity, ms);
+  }
+
+  public static void adjustRumble(final float bigIntensity, final float smallIntensity, final int ms) {
+    activeController.adjustRumble(bigIntensity, smallIntensity, ms);
+  }
+
+  public static void adjustRumble(final float intensity, final int ms) {
+    activeController.adjustRumble(intensity, ms);
+  }
+
+  public static void stopRumble() {
+    activeController.stopRumble();
   }
 
   private static void onControllerConnected(final GlfwController controller) {

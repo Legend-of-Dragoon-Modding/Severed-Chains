@@ -2,10 +2,12 @@ package legend.game.input;
 
 import com.studiohartman.jamepad.ControllerIndex;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
+import legend.core.MathHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.joml.Math;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -31,6 +33,15 @@ public class GlfwController extends Controller {
   private int maxAxis;
   private int maxButtons;
   private int maxHats;
+
+  private float rumbleBigCurrentIntensity;
+  private float rumbleSmallCurrentIntensity;
+  private float rumbleBigStartingIntensity;
+  private float rumbleSmallStartingIntensity;
+  private float rumbleBigEndingIntensity;
+  private float rumbleSmallEndingIntensity;
+  private long rumbleLerpStart;
+  private long rumbleLerpDuration;
 
   public GlfwController(final String glfwJoystickName, final String glfwJoystickGuid, final int glfwControllerId, final ControllerIndex rumbleController) {
     this.glfwJoystickName = glfwJoystickName;
@@ -66,6 +77,18 @@ public class GlfwController extends Controller {
 
     for(final InputBinding binding : this.bindings) {
       binding.poll();
+    }
+
+    if(this.rumbleController != null && this.rumbleLerpStart != 0) {
+      final long time = System.nanoTime() - this.rumbleLerpStart;
+      final float ratio = MathHelper.clamp(time / (float)this.rumbleLerpDuration, 0.0f, 1.0f);
+      final float big = Math.lerp(this.rumbleBigStartingIntensity, this.rumbleBigEndingIntensity, ratio);
+      final float small = Math.lerp(this.rumbleSmallStartingIntensity, this.rumbleSmallEndingIntensity, ratio);
+      this.rumble(big, small, 0);
+
+      if(time >= this.rumbleLerpDuration) {
+        this.rumbleLerpStart = 0;
+      }
     }
   }
 
@@ -178,12 +201,25 @@ public class GlfwController extends Controller {
   }
 
   @Override
-  public void rumble(final int ms) {
+  public void rumble(final float bigIntensity, final float smallIntensity, final int ms) {
+    this.rumbleBigCurrentIntensity = bigIntensity;
+    this.rumbleSmallCurrentIntensity = smallIntensity;
+
     if(this.rumbleController != null) {
       try {
-        this.rumbleController.doVibration(0.5f, 0.5f, ms);
+        this.rumbleController.doVibration(bigIntensity, smallIntensity, ms);
       } catch(final ControllerUnpluggedException ignored) { }
     }
+  }
+
+  @Override
+  public void adjustRumble(final float bigIntensity, final float smallIntensity, final int ms) {
+    this.rumbleBigStartingIntensity = this.rumbleBigCurrentIntensity;
+    this.rumbleSmallStartingIntensity = this.rumbleSmallCurrentIntensity;
+    this.rumbleBigEndingIntensity = bigIntensity;
+    this.rumbleSmallEndingIntensity = smallIntensity;
+    this.rumbleLerpStart = System.nanoTime();
+    this.rumbleLerpDuration = ms * 1_000_000;
   }
 
   @Override

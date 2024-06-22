@@ -139,6 +139,8 @@ public class Ttle extends EngineState {
     return false;
   }
 
+  private int ticks;
+
   @Override
   @Method(0x800c7798L)
   public void tick() {
@@ -153,6 +155,14 @@ public class Ttle extends EngineState {
       case 8 -> this.fadeOutForQuit();
       case 9 -> this.fadeOutForCategorizeSave();
       case 10 -> this.fadeOutForMemcard();
+    }
+
+    ticks++;
+
+    if(ticks > 60) {
+      ticks = 0;
+//      Input.rumble(0.5f, 0);
+//      Input.adjustRumble(0.0f, 1000);
     }
   }
 
