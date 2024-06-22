@@ -253,6 +253,7 @@ public final class GameEngine {
     RENDERER.run();
 
     RENDERER.delete();
+    Input.destroy();
   }
 
   /** Returns missing mod IDs, if any */

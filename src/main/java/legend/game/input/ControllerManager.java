@@ -1,5 +1,8 @@
 package legend.game.input;
 
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
+import legend.core.Tuple;
 import legend.core.opengl.Window;
 import legend.game.modding.coremod.CoreMod;
 
@@ -15,12 +18,15 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public class ControllerManager {
+  private final com.studiohartman.jamepad.ControllerManager jamepad;
+
   private final Consumer<GlfwController> onConnect;
   private final Consumer<GlfwController> onDisconnect;
 
   private final List<GlfwController> connectedControllers = new ArrayList<>();
 
-  public ControllerManager(final Consumer<GlfwController> onConnect, final Consumer<GlfwController> onDisconnect) {
+  public ControllerManager(final com.studiohartman.jamepad.ControllerManager jamepad, final Consumer<GlfwController> onConnect, final Consumer<GlfwController> onDisconnect) {
+    this.jamepad = jamepad;
     this.onConnect = onConnect;
     this.onDisconnect = onDisconnect;
 
@@ -40,7 +46,7 @@ public class ControllerManager {
 
   private GlfwController addController(final int index) {
     final String controllerGuid = glfwGetJoystickGUID(index);
-    final GlfwController controller = new GlfwController(glfwGetJoystickName(index), controllerGuid, index);
+    final GlfwController controller = new GlfwController(glfwGetJoystickName(index), controllerGuid, index, this.jamepad.getControllerIndex(index));
 
     this.connectedControllers.add(controller);
 

@@ -79,6 +79,8 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
+  api group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.30.0.0'
+
   implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
   implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.12'
   implementation group: 'commons-io', name: 'commons-io', version: '2.15.1'

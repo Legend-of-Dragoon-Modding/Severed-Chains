@@ -4051,7 +4051,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bcc8L)
-  public static void FUN_8002bcc8(final int a0, final int a1) {
+  public static void resetRumble(final int a0, final int a1) {
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
@@ -4060,12 +4060,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bda4L)
-  public static void FUN_8002bda4(final int a0, final int a1, final int a2) {
+  public static void startRumble(final int pad, final int a1, final int duration) {
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
 
-    LOGGER.info("Rumble 8002bda4 %x %x %x", a0, a1, a2);
+    LOGGER.info("Start rumble %x %x %x", pad, a1, duration);
+    Input.rumble(duration / (vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier()) * 50);
   }
 
   @Method(0x8002c178L)

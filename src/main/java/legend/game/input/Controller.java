@@ -17,4 +17,6 @@ public abstract class Controller {
   }
 
   public abstract String getGuid();
+
+  public void rumble(final int ms) { }
 }

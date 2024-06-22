@@ -1,5 +1,7 @@
 package legend.game.input;
 
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -20,6 +22,7 @@ public class GlfwController extends Controller {
   private final String glfwJoystickName;
   private final String glfwJoystickGuid;
   private final int glfwControllerId;
+  private final ControllerIndex rumbleController;
 
   private FloatBuffer axis;
   private ByteBuffer hats;
@@ -29,10 +32,11 @@ public class GlfwController extends Controller {
   private int maxButtons;
   private int maxHats;
 
-  public GlfwController(final String glfwJoystickName, final String glfwJoystickGuid, final int glfwControllerId) {
+  public GlfwController(final String glfwJoystickName, final String glfwJoystickGuid, final int glfwControllerId, final ControllerIndex rumbleController) {
     this.glfwJoystickName = glfwJoystickName;
     this.glfwJoystickGuid = glfwJoystickGuid;
     this.glfwControllerId = glfwControllerId;
+    this.rumbleController = rumbleController;
 
     this.probeInputs();
 
@@ -171,6 +175,15 @@ public class GlfwController extends Controller {
     }
 
     LOGGER.info(INPUT_MARKER, "Max Hats: %d", this.maxHats);
+  }
+
+  @Override
+  public void rumble(final int ms) {
+    if(this.rumbleController != null) {
+      try {
+        this.rumbleController.doVibration(0.5f, 0.5f, ms);
+      } catch(final ControllerUnpluggedException ignored) { }
+    }
   }
 
   @Override

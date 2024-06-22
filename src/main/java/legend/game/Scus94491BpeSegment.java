@@ -72,7 +72,7 @@ import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
+import static legend.game.Scus94491BpeSegment_8002.startRumble;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
 import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
@@ -1083,12 +1083,12 @@ public final class Scus94491BpeSegment {
   }
 
   @ScriptDescription("Something related to rumble")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "joypadIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "duration")
   @Method(0x80017688L)
-  public static FlowControl FUN_80017688(final RunningScript<?> script) {
-    FUN_8002bda4(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+  public static FlowControl scriptStartRumble(final RunningScript<?> script) {
+    startRumble(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 

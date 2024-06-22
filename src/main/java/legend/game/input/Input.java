@@ -1,5 +1,6 @@
 package legend.game.input;
 
+import com.studiohartman.jamepad.Configuration;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import legend.core.opengl.Window;
@@ -27,14 +28,19 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Input.class);
 
-  public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
+  private static final Configuration jamepadConfig = new Configuration();
+  static {
+    jamepadConfig.maxNumControllers = 16;
+  }
+
+  private static final com.studiohartman.jamepad.ControllerManager jamepad = new com.studiohartman.jamepad.ControllerManager(jamepadConfig, "./gamecontrollerdb.txt");
+  public static final ControllerManager controllerManager = new ControllerManager(jamepad, Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
   private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
 
-  private Input() {
-  }
+  private Input() { }
 
   public static void update() {
     if(!MODS.isReady(CoreMod.MOD_ID)) {
@@ -45,6 +51,7 @@ public final class Input {
       return;
     }
 
+    jamepad.update();
     activeController.poll();
 
     for(int i = 0; i < activeController.bindings.size(); i++) {
@@ -134,7 +141,12 @@ public final class Input {
 
     useController(null);
 
+    jamepad.initSDLGamepad();
     controllerManager.init();
+  }
+
+  public static void destroy() {
+    jamepad.quitSDLGamepad();
   }
 
   public static boolean pressedThisFrame(final InputAction targetKey) {
@@ -207,6 +219,10 @@ public final class Input {
       activeController = new DummyController();
       addKeyboardBindings(activeController);
     }
+  }
+
+  public static void rumble(final int ms) {
+    activeController.rumble(ms);
   }
 
   private static void onControllerConnected(final GlfwController controller) {
