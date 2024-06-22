@@ -191,7 +191,7 @@ public final class V3Serializer {
 
 //    state.mono_4e0 = data.readUByte(offset) != 0;
     offset++;
-    state.vibrationEnabled_4e1 = data.readUByte(offset) != 0;
+//    state.vibrationEnabled_4e1 = data.readUByte(offset) != 0;
     offset++;
 //    state.morphMode_4e2 = data.readUByte(offset);
     offset++;

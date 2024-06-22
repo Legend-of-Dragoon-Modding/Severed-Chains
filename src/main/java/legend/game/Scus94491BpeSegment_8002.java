@@ -4046,7 +4046,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void startRumbleMode(final int pad, final int mode) {
     LOGGER.debug("startRumbleMode %x %x", pad, mode);
 
-    if(!gameState_800babc8.vibrationEnabled_4e1) {
+    if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 
@@ -4078,7 +4078,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void startRumbleIntensity(final int pad, int intensityIn) {
     LOGGER.debug("startRumbleIntensity %x %x", pad, intensityIn);
 
-    if(!gameState_800babc8.vibrationEnabled_4e1) {
+    if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 
@@ -4099,7 +4099,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void adjustRumbleOverTime(final int pad, int intensity, final int frames) {
     LOGGER.debug("adjustRumbleOverTime %x %x %x", pad, intensity, frames);
 
-    if(!gameState_800babc8.vibrationEnabled_4e1) {
+    if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 

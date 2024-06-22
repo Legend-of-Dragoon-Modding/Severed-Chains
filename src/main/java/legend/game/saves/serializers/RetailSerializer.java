@@ -140,7 +140,7 @@ public final class RetailSerializer {
     state.directionalPathIndex_4de = data.readUShort(0x4de);
 
 //    state.mono_4e0 = data.readUByte(0x4e0) != 0;
-    state.vibrationEnabled_4e1 = data.readUByte(0x4e1) != 0;
+//    state.vibrationEnabled_4e1 = data.readUByte(0x4e1) != 0;
 //    state.morphMode_4e2 = data.readUByte(0x4e2);
     state.indicatorsDisabled_4e3 = data.readUByte(0x4e3) != 0;
     state.isOnWorldMap_4e4 = data.readUByte(0x4e4) != 0;
