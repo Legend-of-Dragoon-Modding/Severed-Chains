@@ -8,9 +8,9 @@ public abstract class Controller {
 
   public abstract void poll();
 
-  public abstract boolean readButton(final int glfwCode);
-  public abstract float readAxis(final int glfwCode);
-  public abstract boolean readHat(final int glfwCode, final int hatIndex);
+  public abstract boolean readButton(final int input);
+  public abstract float readAxis(final int input);
+  public abstract boolean readHat(final int input, final int hatIndex);
 
   public void addBinding(final InputBinding binding) {
     this.bindings.add(binding);

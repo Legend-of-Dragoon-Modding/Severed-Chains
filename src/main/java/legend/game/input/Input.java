@@ -1,6 +1,5 @@
 package legend.game.input;
 
-import com.studiohartman.jamepad.Configuration;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import legend.core.opengl.Window;
@@ -28,13 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Input.class);
 
-  private static final Configuration jamepadConfig = new Configuration();
-  static {
-    jamepadConfig.maxNumControllers = 16;
-  }
-
-  private static final com.studiohartman.jamepad.ControllerManager jamepad = new com.studiohartman.jamepad.ControllerManager(jamepadConfig, "./gamecontrollerdb.txt");
-  public static final ControllerManager controllerManager = new ControllerManager(jamepad, Input::onControllerConnected, Input::onControllerDisconnected);
+  public static final ControllerManager controllerManager = new JamepadControllerManager("./gamecontrollerdb.txt", Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
@@ -51,7 +44,7 @@ public final class Input {
       return;
     }
 
-    jamepad.update();
+    controllerManager.update();
     activeController.poll();
 
     for(int i = 0; i < activeController.bindings.size(); i++) {
@@ -141,12 +134,11 @@ public final class Input {
 
     useController(null);
 
-    jamepad.initSDLGamepad();
     controllerManager.init();
   }
 
   public static void destroy() {
-    jamepad.quitSDLGamepad();
+    controllerManager.destroy();
   }
 
   public static boolean pressedThisFrame(final InputAction targetKey) {
@@ -245,6 +237,13 @@ public final class Input {
     LOGGER.info("Controller %s (%s) connected", controller.getName(), controller.getGuid());
 
     addKeyboardBindings(controller);
+
+    final String controllerFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
+
+    if(controllerFromConfig.isBlank() || controllerFromConfig.equals(controller.getGuid())) {
+      useController(controller);
+      CONFIG.setConfig(CoreMod.CONTROLLER_CONFIG.get(), controller.getGuid());
+    }
   }
 
   private static void onControllerDisconnected(final Controller controller) {
