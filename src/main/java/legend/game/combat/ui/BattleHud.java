@@ -704,6 +704,21 @@ public class BattleHud {
             }
           }
 
+          if(player.charSlot_276 + 1 > this.spBars.size()) {
+            final ArrayList<Obj> characterSpBars = new ArrayList<>();
+            for(int x = 0; x < CoreMod.MAX_DRAGOON_LEVEL + 2; x++) {
+              final int[] spBarColoursInit = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[x];
+              characterSpBars.add(new QuadBuilder("SPBar" + player.charSlot_276 + "-" + spBarIndex)
+                .rgb(0, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
+                .rgb(1, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
+                .rgb(2, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
+                .rgb(3, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
+                .size(1, 1)
+                .build());
+            }
+            this.spBars.add(characterSpBars);
+          }
+
           if(canTransform) {
             final int sp = player.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
             final int fullLevels = sp / 100;
@@ -732,21 +747,6 @@ public class BattleHud {
               final int top = displayStats.y_02 - centreScreenY_1f8003de + 8;
               final int right = left + spBarW;
               final int bottom = top + 3;
-
-              if(player.charSlot_276 + 1 > this.spBars.size()) {
-                final ArrayList<Obj> characterSpBars = new ArrayList<>();
-                for(int x = 0; x < CoreMod.MAX_DRAGOON_LEVEL + 2; x++) {
-                  final int[] spBarColoursInit = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[x];
-                  characterSpBars.add(new QuadBuilder("SPBar" + player.charSlot_276 + "-" + spBarIndex)
-                    .rgb(0, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
-                    .rgb(1, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
-                    .rgb(2, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
-                    .rgb(3, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
-                    .size(1, 1)
-                    .build());
-                }
-                this.spBars.add(characterSpBars);
-              }
 
               spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
               spBarTransforms.scaling(right - left, bottom - top, 1.0f);

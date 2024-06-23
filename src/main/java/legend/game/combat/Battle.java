@@ -3520,19 +3520,6 @@ public class Battle extends EngineState {
       int nonMaxedAdditions = CoreMod.CHARACTER_DATA[charIndex].getNonMaxedAdditions(charIndex);
       int lastNonMaxAdditionIndex = -1;
 
-      // Find the first addition that isn't already maxed out
-      //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
-          nonMaxedAdditions--;
-        } else {
-          //LAB_800cd308
-          lastNonMaxAdditionIndex = additionIndex2;
-        }
-
-        //LAB_800cd30c
-      }
-
       // If there's only one addition that isn't maxed (the ultimate addition), unlock it
       //LAB_800cd31c
       if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
