@@ -16,6 +16,7 @@ public abstract class Controller {
     this.bindings.add(binding);
   }
 
+  public abstract String getName();
   public abstract String getGuid();
 
   public void rumble(final float bigIntensity, final float smallIntensity, final int ms) { }

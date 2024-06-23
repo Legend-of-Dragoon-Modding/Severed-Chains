@@ -241,13 +241,13 @@ public final class Input {
     activeController.stopRumble();
   }
 
-  private static void onControllerConnected(final GlfwController controller) {
+  private static void onControllerConnected(final Controller controller) {
     LOGGER.info("Controller %s (%s) connected", controller.getName(), controller.getGuid());
 
     addKeyboardBindings(controller);
   }
 
-  private static void onControllerDisconnected(final GlfwController controller) {
+  private static void onControllerDisconnected(final Controller controller) {
     LOGGER.info("Controller %s (%s) disconnected", controller.getName(), controller.getGuid());
 
     if(activeController == controller) {

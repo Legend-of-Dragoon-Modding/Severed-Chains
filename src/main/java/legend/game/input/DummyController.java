@@ -24,6 +24,11 @@ public class DummyController extends Controller {
   }
 
   @Override
+  public String getName() {
+    return "No Controller";
+  }
+
+  @Override
   public String getGuid() {
     return "";
   }

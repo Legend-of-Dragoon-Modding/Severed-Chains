@@ -1,8 +1,5 @@
 package legend.game.input;
 
-import com.studiohartman.jamepad.ControllerIndex;
-import com.studiohartman.jamepad.ControllerUnpluggedException;
-import legend.core.Tuple;
 import legend.core.opengl.Window;
 import legend.game.modding.coremod.CoreMod;
 
@@ -20,12 +17,12 @@ import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 public class ControllerManager {
   private final com.studiohartman.jamepad.ControllerManager jamepad;
 
-  private final Consumer<GlfwController> onConnect;
-  private final Consumer<GlfwController> onDisconnect;
+  private final Consumer<Controller> onConnect;
+  private final Consumer<Controller> onDisconnect;
 
-  private final List<GlfwController> connectedControllers = new ArrayList<>();
+  private final List<Controller> connectedControllers = new ArrayList<>();
 
-  public ControllerManager(final com.studiohartman.jamepad.ControllerManager jamepad, final Consumer<GlfwController> onConnect, final Consumer<GlfwController> onDisconnect) {
+  public ControllerManager(final com.studiohartman.jamepad.ControllerManager jamepad, final Consumer<Controller> onConnect, final Consumer<Controller> onDisconnect) {
     this.jamepad = jamepad;
     this.onConnect = onConnect;
     this.onDisconnect = onDisconnect;
@@ -44,17 +41,17 @@ public class ControllerManager {
     }
   }
 
-  private GlfwController addController(final int index) {
+  private Controller addController(final int index) {
     final String controllerGuid = glfwGetJoystickGUID(index);
-    final GlfwController controller = new GlfwController(glfwGetJoystickName(index), controllerGuid, index, this.jamepad.getControllerIndex(index));
+    final Controller controller = new GlfwController(glfwGetJoystickName(index), controllerGuid, index, this.jamepad.getControllerIndex(index));
 
     this.connectedControllers.add(controller);
 
     this.onConnect.accept(controller);
 
-    final String controllerGuidFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
+    final String controllerFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
 
-    if(controllerGuidFromConfig.isBlank() || controllerGuidFromConfig.equals(controllerGuid)) {
+    if(controllerFromConfig.isBlank() || controllerFromConfig.equals(controllerGuid)) {
       Input.useController(controller);
       CONFIG.setConfig(CoreMod.CONTROLLER_CONFIG.get(), controller.getGuid());
     }
@@ -62,12 +59,12 @@ public class ControllerManager {
     return controller;
   }
 
-  public List<GlfwController> getConnectedControllers() {
+  public List<Controller> getConnectedControllers() {
     return this.connectedControllers;
   }
 
-  public GlfwController getControllerByGuid(final String guid) {
-    for(final GlfwController controller : this.connectedControllers) {
+  public Controller getControllerByGuid(final String guid) {
+    for(final Controller controller : this.connectedControllers) {
       if(controller.getGuid().equals(guid)) {
         return controller;
       }
@@ -77,20 +74,20 @@ public class ControllerManager {
   }
 
   private void onControllerConnected(final Window window, final int id) {
-    for(final GlfwController controller : this.connectedControllers) {
+    for(final Controller controller : this.connectedControllers) {
       if(controller.getGuid().equals(glfwGetJoystickGUID(id))) {
         this.onConnect.accept(controller);
         break;
       }
     }
 
-    final GlfwController controller = this.addController(id);
+    final Controller controller = this.addController(id);
     this.onConnect.accept(controller);
   }
 
   private void onControllerDisconnected(final Window window, final int id) {
-    for(final GlfwController controller : this.connectedControllers) {
-      if(controller.getId() == id) {
+    for(final Controller controller : this.connectedControllers) {
+      if(controller.getGuid().equals(glfwGetJoystickGUID(id))) {
         this.connectedControllers.remove(controller);
         this.onDisconnect.accept(controller);
         break;

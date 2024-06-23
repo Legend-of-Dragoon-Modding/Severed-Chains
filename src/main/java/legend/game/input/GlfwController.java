@@ -54,6 +54,7 @@ public class GlfwController extends Controller {
     this.bindings.addAll(ControllerDatabase.createBindings(this.getGuid(), this));
   }
 
+  @Override
   public String getName() {
     return this.glfwJoystickName;
   }
@@ -61,10 +62,6 @@ public class GlfwController extends Controller {
   @Override
   public String getGuid() {
     return this.glfwJoystickGuid;
-  }
-
-  public int getId() {
-    return this.glfwControllerId;
   }
 
   @Override
