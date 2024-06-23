@@ -22,9 +22,6 @@ public class SBtld {
 
       if(charIndex >= 0) {
         int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
-        if(charIndex == 5) {
-          activeAdditionIndex += 28;
-        }
 
         //LAB_801092dc
         final int activeDragoonAdditionIndex;
