@@ -399,9 +399,8 @@ public class ShopScreen extends MenuScreen {
         count++;
       }
     }
-
     renderText(Number_kept_8011c7f4 + count, 195, 125, TextColour.BROWN);
-   }
+  }
 
   private void renderItemList(final int firstItem, final int isItemMenu, final Renderable58 upArrow, final Renderable58 downArrow) {
     if(isItemMenu != 0) {
