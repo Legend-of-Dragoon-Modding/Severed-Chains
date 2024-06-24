@@ -21,7 +21,7 @@ sourceCompatibility = targetCompatibility = 1.21
 compileJava.options.encoding = 'UTF-8'
 
 project.ext.lwjglVersion = "3.3.3"
-project.ext.jomlVersion = "1.10.5"
+project.ext.jomlVersion = "1.10.6"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
 final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
@@ -78,6 +78,8 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
+
+  api group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.30.0.0'
 
   implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
   implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.12'

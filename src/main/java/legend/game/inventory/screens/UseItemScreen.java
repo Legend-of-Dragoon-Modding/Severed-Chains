@@ -39,11 +39,11 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 public class UseItemScreen extends MenuScreen {
   private static final String HP_recovered_for_all_8011cfcc = "HP recovered for all";
   private static final String MP_recovered_for_all_8011cff8 = "MP recovered for all";
-  private static final String Completely_recovered_8011d534 = "SP recovered for all";
+  private static final String Completely_recovered_8011d534 = "recovered for all";
   private static final String Recovered_8011d560 = "Recovered";
-  private static final String HP_8011d57c = "HP";
-  private static final String MP_8011d584 = "MP";
-  private static final String SP_8011d58c = "SP";
+  private static final String HP_8011d57c = " HP ";
+  private static final String MP_8011d584 = " MP ";
+  private static final String SP_8011d58c = " SP ";
   private static final String Encounter_risk_reduced_8011d594 = "Encounter risk reduced";
   private static final String Detoxified_8011d5c8 = "Detoxified";
   private static final String Spirit_recovered_8011d5e0 = "Spirit recovered";

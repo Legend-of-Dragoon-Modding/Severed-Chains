@@ -27,14 +27,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Input.class);
 
-  public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
+  public static final ControllerManager controllerManager = new JamepadControllerManager("./gamecontrollerdb.txt", Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
   private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
 
-  private Input() {
-  }
+  private Input() { }
 
   public static void update() {
     if(!MODS.isReady(CoreMod.MOD_ID)) {
@@ -45,6 +44,7 @@ public final class Input {
       return;
     }
 
+    controllerManager.update();
     activeController.poll();
 
     for(int i = 0; i < activeController.bindings.size(); i++) {
@@ -137,6 +137,10 @@ public final class Input {
     controllerManager.init();
   }
 
+  public static void destroy() {
+    controllerManager.destroy();
+  }
+
   public static boolean pressedThisFrame(final InputAction targetKey) {
     for(final var entry : pressedThisFrame.object2BooleanEntrySet()) {
       if(entry.getKey().getInputAction() == targetKey) {
@@ -209,13 +213,40 @@ public final class Input {
     }
   }
 
-  private static void onControllerConnected(final GlfwController controller) {
+  public static void rumble(final float bigIntensity, final float smallIntensity, final int ms) {
+    activeController.rumble(bigIntensity, smallIntensity, ms);
+  }
+
+  public static void rumble(final float intensity, final int ms) {
+    activeController.rumble(intensity, ms);
+  }
+
+  public static void adjustRumble(final float bigIntensity, final float smallIntensity, final int ms) {
+    activeController.adjustRumble(bigIntensity, smallIntensity, ms);
+  }
+
+  public static void adjustRumble(final float intensity, final int ms) {
+    activeController.adjustRumble(intensity, ms);
+  }
+
+  public static void stopRumble() {
+    activeController.stopRumble();
+  }
+
+  private static void onControllerConnected(final Controller controller) {
     LOGGER.info("Controller %s (%s) connected", controller.getName(), controller.getGuid());
 
     addKeyboardBindings(controller);
+
+    final String controllerFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
+
+    if(controllerFromConfig.isBlank() || controllerFromConfig.equals(controller.getGuid())) {
+      useController(controller);
+      CONFIG.setConfig(CoreMod.CONTROLLER_CONFIG.get(), controller.getGuid());
+    }
   }
 
-  private static void onControllerDisconnected(final GlfwController controller) {
+  private static void onControllerDisconnected(final Controller controller) {
     LOGGER.info("Controller %s (%s) disconnected", controller.getName(), controller.getGuid());
 
     if(activeController == controller) {
