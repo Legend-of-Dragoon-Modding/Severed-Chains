@@ -21,7 +21,7 @@ sourceCompatibility = targetCompatibility = 1.21
 compileJava.options.encoding = 'UTF-8'
 
 project.ext.lwjglVersion = "3.3.3"
-project.ext.jomlVersion = "1.10.5"
+project.ext.jomlVersion = "1.10.6"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
 final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")

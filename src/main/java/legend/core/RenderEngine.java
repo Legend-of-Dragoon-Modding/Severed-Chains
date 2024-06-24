@@ -58,7 +58,6 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
-import static legend.core.MathHelper.put3x4;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
@@ -1553,7 +1552,7 @@ public class RenderEngine {
 
       if(this.lightUsed) {
         this.lightDirection.get(modelIndex * 32, lightingBuffer);
-        put3x4(this.lightColour, modelIndex * 32 + 16, lightingBuffer);
+        this.lightColour.get3x4(modelIndex * 32 + 16, lightingBuffer);
         this.backgroundColour.get(modelIndex * 32 + 28, lightingBuffer);
       }
     }
