@@ -23,6 +23,8 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.characters.DivineDragoonEvent;
+import legend.game.modding.events.submap.SubmapWarpEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -65,6 +67,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
@@ -900,12 +903,16 @@ public class SMap extends EngineState {
   @ScriptDescription("Maxes out Dart's Dragoon and fully restores his HP/MP/SP")
   @Method(0x800d9d60L)
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
-    if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
-      gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
-    }
+    final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
 
-    //LAB_800d9d90
-    gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+    if(!divineEvent.bypassOverride) {
+      if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
+        gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
+      }
+
+      //LAB_800d9d90
+      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+    }
 
     this.restoreVitalsAndSp(0);
     return FlowControl.CONTINUE;
@@ -3553,6 +3560,7 @@ public class SMap extends EngineState {
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
       submapCutForSave_800cb450 = newCut;
+      EVENTS.postEvent(new SubmapWarpEvent(submapCut_80052c30, gameState_800babc8));
       return;
     }
 

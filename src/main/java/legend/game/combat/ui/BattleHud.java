@@ -27,6 +27,9 @@ import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
+import legend.game.modding.events.battle.ItemIdEvent;
+import legend.game.modding.events.battle.SelectedItemEvent;
+import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.ScriptState;
@@ -36,6 +39,7 @@ import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.events.Event;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -85,7 +89,6 @@ public class BattleHud {
     new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
   };
 
-  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
   private static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
@@ -174,6 +177,7 @@ public class BattleHud {
 
   private final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   private final List<String> combatAdditions = new ArrayList<>();
+  private Item lastItemSelected = null;
 
   private final Battle battle;
 
@@ -193,7 +197,7 @@ public class BattleHud {
   private UiBox battleUiItemSpellList;
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
-  private Obj spBars;
+  private ArrayList<ArrayList<Obj>> spBars = new ArrayList<>();
   private final MV spBarTransforms = new MV();
   private final MV lineTransforms = new MV();
 
@@ -700,6 +704,21 @@ public class BattleHud {
             }
           }
 
+          if(player.charSlot_276 + 1 > this.spBars.size()) {
+            final ArrayList<Obj> characterSpBars = new ArrayList<>();
+            for(int x = 0; x < CoreMod.MAX_DRAGOON_LEVEL + 2; x++) {
+              final int[] spBarColoursInit = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[x];
+              characterSpBars.add(new QuadBuilder("SPBar" + player.charSlot_276 + "-" + spBarIndex)
+                .rgb(0, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
+                .rgb(1, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
+                .rgb(2, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
+                .rgb(3, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
+                .size(1, 1)
+                .build());
+            }
+            this.spBars.add(characterSpBars);
+          }
+
           if(canTransform) {
             final int sp = player.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
             final int fullLevels = sp / 100;
@@ -729,22 +748,10 @@ public class BattleHud {
               final int right = left + spBarW;
               final int bottom = top + 3;
 
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
-
-              if(this.spBars == null) {
-                this.spBars = new QuadBuilder("SPBar")
-                  .monochrome(0, 229.0f / 255.0f)
-                  .monochrome(1, 133.0f / 255.0f)
-                  .monochrome(2, 229.0f / 255.0f)
-                  .monochrome(3, 133.0f / 255.0f)
-                  .size(1, 1)
-                  .build();
-              }
-
               spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
               spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
-              RENDERER.queueOrthoModel(this.spBars, spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
+              RENDERER.queueOrthoModel(this.spBars.get(player.charSlot_276).get(spBarIndex), spBarTransforms);
             }
 
             //SP border
@@ -804,6 +811,7 @@ public class BattleHud {
             str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
             element = monsterBent.displayElement_1c;
             targetBent = monsterBent;
+            EVENTS.postEvent(new SingleMonsterTargetEvent(monsterBent));
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378[targetBent.charId_272];
@@ -1644,7 +1652,7 @@ public class BattleHud {
           //LAB_800f50b8
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
             player.itemId_52 = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
-            player.setTempItemMagicStats();
+            player.setTempItemMagicStats(5);
 
             if((player.item_d4.target_00 & 0x4) != 0) {
               this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 1;
@@ -1773,8 +1781,9 @@ public class BattleHud {
         final int ret = this.handleTargeting(targetType, targetAll);
         if(ret == 1) { // Pressed X
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+            this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = EVENTS.postEvent(new SelectedItemEvent(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c, lastItemSelected)).itemId;
             final int itemId = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c + 192;
-            final Item item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c)).get(); //TODO
+            final Item item = lastItemSelected;
             takeItemId(item);
 
             boolean returnItem = false;
@@ -1886,7 +1895,9 @@ public class BattleHud {
   private int getItemOrSpellId() {
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
       //LAB_800f56f0
-      return LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId());
+      ItemIdEvent itemId = EVENTS.postEvent(new ItemIdEvent(LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()), this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()));
+      lastItemSelected = this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item;
+      return itemId.itemId;
     }
 
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
@@ -2866,14 +2877,14 @@ public class BattleHud {
   private void renderText(final int textType, final int textIndex, final int x, final int y) {
     final String str;
     if(textType == 4) {
-      str = itemStats_8004f2ac[textIndex].combatDescription;
+      str = itemStats_8004f2ac[textIndex >= 64 ? 0 : textIndex].combatDescription;
     } else if(textType == 5) {
       str = spellStats_800fa0b8[textIndex].combatDescription;
     } else if(textType == 6) {
       final int additionOffset = additionOffsets_8004f5ac[this.spellAndItemMenu_800c6b60.player_08.charId_272];
       str = additionNames_800fa8d4[additionOffset + textIndex];
     } else {
-      throw new IllegalArgumentException("Only supports textType 4/5");
+      throw new IllegalArgumentException("Only supports textType 4/5/6");
     }
 
     final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));
@@ -3015,7 +3026,12 @@ public class BattleHud {
     }
 
     if(this.spBars != null) {
-      this.spBars.delete();
+      for(int i = 0; i < spBars.size(); i++) {
+        ArrayList<Obj> barObj = spBars.get(i);
+        for(Obj bar : barObj) {
+          bar.delete();
+        }
+      }
       this.spBars = null;
     }
   }

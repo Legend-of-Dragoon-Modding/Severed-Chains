@@ -88,11 +88,14 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.AttackSpGainEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SpellItemDeffEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -533,6 +536,7 @@ public class Battle extends EngineState {
   public static final int[] dragoonDeffFlags_800fafec = {
     112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 64, 64,
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 20, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112,
+    4, 9, 10, 11, 11, 13, 20, 22, 27, 28, 30, 36, 40, 42, 44, 46, 65, 66, 70, 71, 73, 75, 78, 82, 255, 0, 0, 0, 10, 67, 69, 70, 70, 70, 255, 0, 93, 94, 95, 25, 52, 255, 255
   };
   public static final int[] dragoonDeffsWithExtraTims_800fb040 = {4, 9, 10, 11, 11, 13, 20, 22, 27, 28, 30, 36, 40, 42, 44, 46, 65, 66, 70, 71, 73, 75, 78, 82};
   /**
@@ -956,6 +960,7 @@ public class Battle extends EngineState {
 
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
+    functions[912] = this::bowUserSpEvent;
 
     return functions;
   }
@@ -3503,30 +3508,17 @@ public class Battle extends EngineState {
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final int additionXp = Math.min(999, charData.additionXp_22[additionIndex] + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
+      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= (charData.additionLevels_1a[additionIndex]) * CoreMod.ADDITIONS_PER_LEVEL) {
         charData.additionLevels_1a[additionIndex]++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
+      int nonMaxedAdditions = CoreMod.CHARACTER_DATA[charIndex].getNonMaxedAdditions(charIndex);
       int lastNonMaxAdditionIndex = -1;
-
-      // Find the first addition that isn't already maxed out
-      //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
-          nonMaxedAdditions--;
-        } else {
-          //LAB_800cd308
-          lastNonMaxAdditionIndex = additionIndex2;
-        }
-
-        //LAB_800cd30c
-      }
 
       // If there's only one addition that isn't maxed (the ultimate addition), unlock it
       //LAB_800cd31c
@@ -4929,6 +4921,25 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Replaces Shana/???'s SP Table")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "sp")
+  public FlowControl bowUserSpEvent(final RunningScript<?> script) {
+    final PlayerBattleEntity bent = (PlayerBattleEntity)script.scriptState_04.innerStruct_00;
+
+    final int sp = switch(bent.dlevel_06) {
+      case 1 -> 35;
+      case 2 -> 50;
+      case 3 -> 70;
+      case 4 -> 100;
+      case 5 -> 150;
+      default -> 0;
+    };
+
+    script.params_20[0].set(EVENTS.postEvent(new AttackSpGainEvent(bent, sp)).sp);
+
+    return FlowControl.CONTINUE;
+  }
+
   @Method(0x800ddac8L)
   public void loadModelTmd(final Model124 model, final CContainer extTmd) {
     final Vector3f sp0x18 = new Vector3f(model.coord2_14.coord.transfer);
@@ -5827,6 +5838,7 @@ public class Battle extends EngineState {
     }
 
     //LAB_800e67b0
+    final DragoonDeffEvent event = EVENTS.postEvent(new DragoonDeffEvent(4139 + index * 2));
     loadDrgnDir(0, 4139 + index * 2, this::uploadTims);
     loadDrgnDir(0, 4140 + index * 2 + "/0", files -> {
       this.loadDeffPackage(files, battle24.managerState_18);
@@ -5849,6 +5861,7 @@ public class Battle extends EngineState {
   public void loadSpellItemDeff(final RunningScript<? extends BattleObject> script) {
     final int id = script.params_20[0].get() & 0xffff;
     final int s0 = (id - 192) * 2;
+    final SpellItemDeffEvent event = EVENTS.postEvent(new SpellItemDeffEvent(4307, s0));
 
     LOGGER.info(DEFF, "Loading spell item DEFF (ID: %d, flags: %x)", id, script.params_20[0].get() & 0xffff_0000);
 
@@ -5862,14 +5875,14 @@ public class Battle extends EngineState {
     }
 
     t0.type_00 |= 0x200_0000;
-    loadDrgnDir(0, 4307 + s0, this::uploadTims);
-    loadDrgnDir(0, 4308 + s0 + "/0", files -> {
+    loadDrgnDir(0, event.scriptId + event.s0, this::uploadTims);
+    loadDrgnDir(0, event.scriptId + 1 + event.s0 + "/0", files -> {
       this.loadDeffPackage(files, t0.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 4308 + s0 + "/1", file -> {
+      loadDrgnFile(0, event.scriptId + 1 + event.s0 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this._800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
+        this._800c6938.script_14 = new ScriptFile(event.scriptId + 1 + event.s0 + "/1", file.getBytes());
       });
     });
     this.deffLoadingStage_800fafe8 = 1;
@@ -7797,7 +7810,7 @@ public class Battle extends EngineState {
       effectAccuracy = attacker.spell_94.accuracy_05;
     } else {
       //LAB_800f1c38
-      attacker.setTempItemMagicStats();
+      attacker.setTempItemMagicStats(1);
       effectAccuracy = 100;
     }
 
@@ -8017,7 +8030,7 @@ public class Battle extends EngineState {
     final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     attacker.clearTempWeaponAndSpellStats();
-    attacker.setTempItemMagicStats();
+    attacker.setTempItemMagicStats(2);
 
     int damage = this.calculateMagicDamage(attacker, defender, 0);
     damage = applyMagicDamageMultiplier(attacker, damage, 1);
@@ -8309,7 +8322,7 @@ public class Battle extends EngineState {
 
   @Method(0x800f8854L)
   public void applyItemSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender) {
-    attacker.setTempItemMagicStats();
+    attacker.setTempItemMagicStats(3);
 
     final int turnCount = attacker != defender ? 3 : 4;
 
@@ -8558,7 +8571,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9884L)
   public FlowControl scriptSetTempItemMagicStats(final RunningScript<?> script) {
-    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempItemMagicStats();
+    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempItemMagicStats(4);
     return FlowControl.CONTINUE;
   }
 

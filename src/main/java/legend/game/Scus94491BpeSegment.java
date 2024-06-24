@@ -28,6 +28,7 @@ import legend.game.combat.environment.StageData2c;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.RenderEvent;
+import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -984,9 +985,12 @@ public final class Scus94491BpeSegment {
 
     //LAB_800174a4
     if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
-      final CharacterData2c charData = gameState_800babc8.charData_32c[0];
-      charData.dlevelXp_0e = 0x7fff;
-      charData.dlevel_13 = 5;
+      final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
+      if(!divineEvent.bypassOverride) {
+        final CharacterData2c charData = gameState_800babc8.charData_32c[0];
+        charData.dlevelXp_0e = 0x7fff;
+        charData.dlevel_13 = 5;
+      }
     }
 
     //LAB_800174d0
@@ -1060,9 +1064,12 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
-      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
-      gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
+    final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
+    if(!divineEvent.bypassOverride) {
+      if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+        gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+        gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
+      }
     }
 
     //LAB_80017640

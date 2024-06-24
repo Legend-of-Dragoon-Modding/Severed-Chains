@@ -16,6 +16,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
+import legend.game.modding.events.battle.TemporaryItemStatsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
@@ -682,9 +683,13 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setTempItemMagicStats() {
+  public void setTempItemMagicStats(int attackType) {
     //LAB_800f7a98
-    this.item_d4 = itemStats_8004f2ac[this.itemId_52];
+    if(this.itemId_52 >= 64) {
+      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[0], attackType, this)).itemStats;
+    } else {
+      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[this.itemId_52], attackType, this)).itemStats;
+    }
     this._ec = 0;
     this._ee = 0;
     this._f0 = 0;
