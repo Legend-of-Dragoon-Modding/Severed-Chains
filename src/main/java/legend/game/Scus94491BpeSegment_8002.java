@@ -4110,11 +4110,19 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    Input.adjustRumble(intensity / (float)0x1ff, frames / (vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier()) * 50);
+    final int divisor;
+    if(engineState_8004dd20 == EngineStateEnum.FMV_09) {
+      divisor = 1;
+    } else {
+      divisor = vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier();
+    }
+
+    Input.adjustRumble(intensity / (float)0x1ff, frames / divisor * 50);
   }
 
   @Method(0x8002c150L)
   public static void stopRumble(final int pad) {
+    LOGGER.debug("stopRumble");
     Input.stopRumble();
   }
 

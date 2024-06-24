@@ -93,6 +93,9 @@ public class JamepadController extends Controller {
       final float ratio = MathHelper.clamp(time / (float)this.rumbleLerpDuration, 0.0f, 1.0f);
       final float big = Math.lerp(this.rumbleBigStartingIntensity, this.rumbleBigEndingIntensity, ratio);
       final float small = Math.lerp(this.rumbleSmallStartingIntensity, this.rumbleSmallEndingIntensity, ratio);
+//      LOGGER.info("%d / %d = %f", time, this.rumbleLerpDuration, ratio);
+//      LOGGER.info("Big %f -> %f -> %f", this.rumbleBigCurrentIntensity, big, this.rumbleBigEndingIntensity);
+//      LOGGER.info("Small %f -> %f -> %f", this.rumbleSmallCurrentIntensity, small, this.rumbleSmallEndingIntensity);
       this.rumble(big, small, 0);
 
       if(time >= this.rumbleLerpDuration) {
