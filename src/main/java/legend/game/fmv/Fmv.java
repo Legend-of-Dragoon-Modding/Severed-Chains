@@ -29,8 +29,12 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
+import static legend.game.Scus94491BpeSegment_8002.startRumbleIntensity;
+import static legend.game.Scus94491BpeSegment_8002.stopRumble;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
@@ -208,6 +212,7 @@ public final class Fmv {
   private static Runnable oldRenderer;
   private static int oldFps;
   private static int sector;
+  private static int frame;
 
   private static GenericSource source;
 
@@ -223,16 +228,22 @@ public final class Fmv {
   private static final Matrix4f identity = new Matrix4f();
   private static final Vector2f oldProjectionSize = new Vector2f();
 
+  private static RumbleData[] rumbleData;
+  private static int rumbleFrames;
+
   public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808 = -1;
 
+    rumbleData = RumbleData.load(Unpacker.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
+    rumbleFrames = 0;
+
     Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 
-  public static void play(final String file, final boolean doubleSpeed) {
+  private static void play(final String file, final boolean doubleSpeed) {
     shouldStop = false;
 
     final byte[] data = new byte[2352];
@@ -246,6 +257,7 @@ public final class Fmv {
 
     final FileData fileData = Unpacker.loadFile(file);
     sector = 0;
+    frame = 0;
 
     oldFps = RENDERER.window().getFpsLimit();
     RENDERER.window().setFpsLimit(15);
@@ -478,6 +490,26 @@ public final class Fmv {
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
       fullScrenMesh.draw();
+
+      if(rumbleData != null) {
+        for(final RumbleData rumble : rumbleData) {
+          if(rumble.frame == frame) {
+            final EngineStateEnum oldEngineState = engineState_8004dd20;
+            engineState_8004dd20 = EngineStateEnum.FMV_09;
+            startRumbleIntensity(0, rumble.initialIntensity);
+            adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration);
+            rumbleFrames = rumble.duration;
+            engineState_8004dd20 = oldEngineState;
+          }
+        }
+
+        rumbleFrames--;
+        if(rumbleFrames == 0) {
+          stopRumble(0);
+        }
+      }
+
+      frame++;
     });
   }
 
@@ -516,6 +548,8 @@ public final class Fmv {
 
       AUDIO_THREAD.removeSource(source);
       source = null;
+
+      rumbleData = null;
     });
   }
 

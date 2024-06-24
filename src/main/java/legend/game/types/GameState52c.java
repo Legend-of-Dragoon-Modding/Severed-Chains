@@ -79,7 +79,7 @@ public class GameState52c {
   public int directionalPathIndex_4de;
 
   // Config stuff
-  public boolean vibrationEnabled_4e1;
+//  public boolean vibrationEnabled_4e1;
   public boolean indicatorsDisabled_4e3;
   public boolean isOnWorldMap_4e4;
 

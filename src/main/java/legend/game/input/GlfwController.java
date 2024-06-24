@@ -39,6 +39,7 @@ public class GlfwController extends Controller {
     this.bindings.addAll(ControllerDatabase.createBindings(this.getGuid(), this));
   }
 
+  @Override
   public String getName() {
     return this.glfwJoystickName;
   }
@@ -46,10 +47,6 @@ public class GlfwController extends Controller {
   @Override
   public String getGuid() {
     return this.glfwJoystickGuid;
-  }
-
-  public int getId() {
-    return this.glfwControllerId;
   }
 
   @Override
@@ -66,46 +63,46 @@ public class GlfwController extends Controller {
   }
 
   @Override
-  public boolean readButton(final int glfwCode) {
-    if(this.buttons == null || this.buttons.remaining() == 0 || glfwCode == -1 || glfwCode >= this.maxButtons) {
+  public boolean readButton(final int input) {
+    if(this.buttons == null || this.buttons.remaining() == 0 || input == -1 || input >= this.maxButtons) {
       return false;
     }
 
     try {
-      final byte button = this.buttons.get(glfwCode);
+      final byte button = this.buttons.get(input);
       return button != 0;
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with button using glfwcode %d", glfwCode);
+      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with button using glfwcode %d", input);
       return false;
     }
 
   }
 
   @Override
-  public float readAxis(final int glfwCode) {
-    if(this.axis == null || this.axis.remaining() == 0 || glfwCode == -1 || glfwCode >= this.maxAxis) {
+  public float readAxis(final int input) {
+    if(this.axis == null || this.axis.remaining() == 0 || input == -1 || input >= this.maxAxis) {
       return 0;
     }
 
     try {
-      return this.axis.get(glfwCode);
+      return this.axis.get(input);
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with axis using glfwcode %d", glfwCode);
+      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with axis using glfwcode %d", input);
       return 0;
     }
   }
 
   @Override
-  public boolean readHat(final int glfwCode, final int hatIndex) {
-    if(this.hats == null || this.hats.remaining() == 0 || glfwCode == -1 || hatIndex >= this.maxHats) {
+  public boolean readHat(final int input, final int hatIndex) {
+    if(this.hats == null || this.hats.remaining() == 0 || input == -1 || hatIndex >= this.maxHats) {
       return false;
     }
 
     try {
       final int hat = this.hats.get(hatIndex);
-      return (hat & glfwCode) != 0;
+      return (hat & input) != 0;
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with hat index %d glfwcode %d", hatIndex, glfwCode);
+      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with hat index %d glfwcode %d", hatIndex, input);
       return false;
     }
   }

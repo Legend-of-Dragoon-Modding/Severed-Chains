@@ -222,6 +222,8 @@ public final class Scus94491BpeSegment_800b {
   public static final MV playerPositionBeforeBattle_800bed30 = new MV();
   public static final Vector2f screenOffsetBeforeBattle_800bed50 = new Vector2f();
 
+  public static float rumbleDampener_800bee80;
+
   /**
    * Remains set for the duration of the button press
    * <ul>
