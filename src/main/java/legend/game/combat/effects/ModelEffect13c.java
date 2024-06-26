@@ -31,7 +31,7 @@ import static legend.game.combat.SEffe.FUN_800e62a8;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
-public class ModelEffect13c implements Effect {
+public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
   public int _00;
   /** Can be LMB or CMB subtype */
   public DeffPart.TmdType tmdType_04;
@@ -119,8 +119,10 @@ public class ModelEffect13c implements Effect {
     //LAB_800dda98
   }
 
+  @Override
   @Method(0x800ea3f8L)
-  public void modelEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     final MV sp0x10 = new MV();
     calculateEffectTransforms(sp0x10, manager);
 
@@ -139,9 +141,10 @@ public class ModelEffect13c implements Effect {
     //LAB_800ea4fc
   }
 
+  @Override
   @Method(0x800ea510L)
-  public void modelEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
-    final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     if(manager.params_10.flags_00 >= 0) {
       if((manager.params_10.flags_00 & 0x40) == 0) {
         FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
@@ -151,7 +154,7 @@ public class ModelEffect13c implements Effect {
       }
 
       //LAB_800ea574
-      final Model124 model = effect.model_134;
+      final Model124 model = this.model_134;
 
       final int oldTpage = model.tpage_108;
 
@@ -173,5 +176,10 @@ public class ModelEffect13c implements Effect {
     }
 
     //LAB_800ea5dc
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
+
   }
 }

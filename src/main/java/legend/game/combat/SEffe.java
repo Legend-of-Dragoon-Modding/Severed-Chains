@@ -1,13 +1,10 @@
 package legend.game.combat;
 
-import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
-import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -18,8 +15,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
-import legend.core.memory.types.QuadConsumer;
-import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
@@ -32,9 +27,7 @@ import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
-import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
-import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
 import legend.game.combat.effects.DeffTmdRenderer14;
@@ -49,12 +42,10 @@ import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.GradientRaysEffect24;
-import legend.game.combat.effects.GradientRaysEffectInstance04;
 import legend.game.combat.effects.LensFlareEffect50;
 import legend.game.combat.effects.LensFlareEffectInstance3c;
 import legend.game.combat.effects.LightningBoltEffect14;
 import legend.game.combat.effects.LightningBoltEffectSegment30;
-import legend.game.combat.effects.LightningBoltEffectSegmentOrigin08;
 import legend.game.combat.effects.LmbAnimationEffect5c;
 import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.MoonlightStarsEffect18;
@@ -63,7 +54,10 @@ import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
+import legend.game.combat.effects.ScreenDarkeningEffect;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
+import legend.game.combat.effects.ShadowEffect;
+import legend.game.combat.effects.ShirleyTransformWipeEffect;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.SpriteWithTrailEffect30;
 import legend.game.combat.effects.StarChildrenImpactEffect20;
@@ -80,13 +74,11 @@ import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.particles.ParticleEffectData98;
 import legend.game.combat.particles.ParticleEffectInstance94;
-import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.PerfectDragoonAdditionEffect30;
 import legend.game.combat.types.PerfectDragoonAdditionEffectGlyph06;
 import legend.game.combat.types.VertexDifferenceAnimation18;
-import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -110,7 +102,6 @@ import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import static legend.core.GameEngine.CONFIG;
@@ -120,8 +111,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -140,13 +129,9 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
-import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -161,7 +146,6 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public final class SEffe {
   private SEffe() { }
@@ -173,15 +157,6 @@ public final class SEffe {
 
   private static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
 
-  private static final byte[] additionButtonRenderCallbackIndices_800fb7bc = {35, 40, 33, 38};
-
-  /** Some kind of mysterious global 2-hit addition array. Should probably be yeeted, but need to be sure. */
-  private static final AdditionHitProperties10[] staticTestAdditionHitProperties_800fb7c0 = {
-    new AdditionHitProperties10(0xc0, 13, 9, 2, 50, 20, 2, 0, 0, 0, 8, 5, 8, 32, 0, 11),
-    new AdditionHitProperties10(0xc0, 33, 27, 1, 30, 10, 0, 0, 0, 25, 2, 1, 8, 32, 0, 0),
-    new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-  };
-
   /** Four sets of color values used for addition overlay borders; only last actually used */
   public static final int[] additionBorderColours_800fb7f0 = {0x70, 0xc0, 0x75, 0xc0, 0xa8, 0x70, 0x70, 0xb5, 0xc0, 0x48, 0x60, 0xff};
   public static final int[][] daddyHudEyeTranslucencyModes_800fb7fc = {{3, 0}, {1, 1}, {1, 1}, {0, 0}};
@@ -191,113 +166,9 @@ public final class SEffe {
   public static final int[] daddyHudFrameClutOffsets_800fb840 = {0x50, 0x51, 0x52, 0x53, 0x54, 0x51, 0x55, 0x56, 0x52, 0x57, 0, 0};
   public static final int[] daddyHudEyeClutOffsets_800fb84c = {0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x59, 0x5d, 0x5e, 0x5a, 0x5f, 0, 0, 0, 1, 0, 0};
 
-  private static final Vector3f _800fb8d0 = new Vector3f(1.0f, 0.0f, 0.0f);
-
-  private static final int[] lensFlareGlowScales_800fb8fc = {0xf0, 0xa0, 0x60, 0x30, 0x10};
-  private static final int[][] lensFlareTranslationMagnitudeFactors_800fb910 = {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}};
-  private static final int[][] lensFlareVertexIndices_800fb930 = {{3, 2, 1, 0}, {2, 3, 0, 1}, {1, 0, 3, 2}, {0, 1, 2, 3}};
-
-  /**
-   * <ol start="0">
-   *   <li>{@link SEffe#FUN_801049d4}</li>
-   *   <li>{@link SEffe#FUN_801049dc}</li>
-   *   <li>{@link SEffe#FUN_80104a14}</li>
-   *   <li>{@link SEffe#FUN_80104b10}</li>
-   *   <li>{@link SEffe#FUN_80104bec}</li>
-   *   <li>{@link SEffe#FUN_80104c9c}</li>
-   *   <li>{@link SEffe#FUN_80104e40}</li>
-   *   <li>{@link SEffe#FUN_80104f70}</li>
-   *   <li>{@link SEffe#FUN_80105050}</li>
-   *   <li>{@link SEffe#FUN_801051ac}</li>
-   *   <li>{@link SEffe#FUN_801049d4}</li>
-   * </ol>
-   */
-  private static final QuadConsumer<EffectManagerData6c<EffectManagerParams.ElectricityType>, ElectricityEffect38, LightningBoltEffect14, Integer>[] electricityEffectCallbacks_80119ee8 = new QuadConsumer[11];
-  static {
-    electricityEffectCallbacks_80119ee8[0] = SEffe::FUN_801049d4;
-    electricityEffectCallbacks_80119ee8[1] = SEffe::FUN_801049dc;
-    electricityEffectCallbacks_80119ee8[2] = SEffe::FUN_80104a14;
-    electricityEffectCallbacks_80119ee8[3] = SEffe::FUN_80104b10;
-    electricityEffectCallbacks_80119ee8[4] = SEffe::FUN_80104bec;
-    electricityEffectCallbacks_80119ee8[5] = SEffe::FUN_80104c9c;
-    electricityEffectCallbacks_80119ee8[6] = SEffe::FUN_80104e40;
-    electricityEffectCallbacks_80119ee8[7] = SEffe::FUN_80104f70;
-    electricityEffectCallbacks_80119ee8[8] = SEffe::FUN_80105050;
-    electricityEffectCallbacks_80119ee8[9] = SEffe::FUN_801051ac;
-    electricityEffectCallbacks_80119ee8[10] = SEffe::FUN_801049d4;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link SEffe#renderElectricEffectType0}</li>
-   *   <li>{@link SEffe#renderElectricEffectType0}</li>
-   *   <li>{@link SEffe#renderElectricEffectType0}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   *   <li>{@link SEffe#renderElectricEffectType1}</li>
-   * </ol>
-   */
-  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.ElectricityType>>, EffectManagerData6c<EffectManagerParams.ElectricityType>>[] electricityEffectRenderers_80119f14 = new BiConsumer[11];
-  static {
-    electricityEffectRenderers_80119f14[0] = SEffe::renderElectricEffectType0;
-    electricityEffectRenderers_80119f14[1] = SEffe::renderElectricEffectType0;
-    electricityEffectRenderers_80119f14[2] = SEffe::renderElectricEffectType0;
-    electricityEffectRenderers_80119f14[3] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[4] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[5] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[6] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[7] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[8] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[9] = SEffe::renderElectricEffectType1;
-    electricityEffectRenderers_80119f14[10] = SEffe::renderElectricEffectType1;
-  }
-
-  /**
-   * <ol start="0">
-   *   <li>{@link SEffe#renderScreenDistortionWaveEffect}</li>
-   *   <li>{@link SEffe#renderScreenDistortionWaveEffect}</li>
-   *   <li>{@link SEffe#renderScreenDistortionBlurEffect}</li>
-   * </ol>
-   */
-  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] screenDistortionEffectRenderers_80119fd4 = new BiConsumer[3];
-  static {
-    screenDistortionEffectRenderers_80119fd4[0] = SEffe::renderScreenDistortionWaveEffect;
-    screenDistortionEffectRenderers_80119fd4[1] = SEffe::renderScreenDistortionWaveEffect;
-    screenDistortionEffectRenderers_80119fd4[2] = SEffe::renderScreenDistortionBlurEffect;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link SEffe#FUN_80109a4c}</li>
-   *   <li>{@link SEffe#FUN_80109a4c}</li>
-   *   <li>{@link SEffe#tickScreenDistortionBlurEffect}</li>
-   * </ol>
-   */
-  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] screenDistortionEffectTickers_80119fe0 = new BiConsumer[3];
-  static {
-    screenDistortionEffectTickers_80119fe0[0] = SEffe::FUN_80109a4c;
-    screenDistortionEffectTickers_80119fe0[1] = SEffe::FUN_80109a4c;
-    screenDistortionEffectTickers_80119fe0[2] = SEffe::tickScreenDistortionBlurEffect;
-  }
-
-  /**
-   * <ol start="0">
-   *   <li>{@link SEffe#renderImagoInstantDeathCapture}</li>
-   *   <li>{@link SEffe#renderScreenCapture}</li>
-   * </ol>
-   */
-  private static final TriConsumer<EffectManagerData6c<EffectManagerParams.VoidType>, ScreenCaptureEffect1c, MV>[] screenCaptureRenderers_80119fec = new TriConsumer[2];
-  static {
-    screenCaptureRenderers_80119fec[0] = SEffe::renderImagoInstantDeathCapture;
-    screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
-  }
-
   /** -1 = failed with no successful presses, 0 = continue, 1-4 = number successful presses */
   private static int daddyHitsCompleted_80119f40;
-  private static byte additionOverlayActive_80119f41;
+  public static byte additionOverlayActive_80119f41;
   /** Active when spinning */
   private static byte daddyMeterSpinning_80119f42;
 
@@ -314,35 +185,14 @@ public final class SEffe {
   public static final int[] perfectDaddyGlyphUs_80119fbc = {232, 208, 40, 48, 208, 56, 64, 240};
   public static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
 
-  /**
-   * <ol start="0">
-   *   <li>{@link SEffe#initializeWsDragoonTransformationEffect}</li>
-   *   <li>{@link SEffe#expandWsDragoonTransformationEffect}</li>
-   *   <li>{@link SEffe#spinWsDragoonTransformationEffect}</li>
-   *   <li>{@link SEffe#contractWsDragoonTransformationEffect}</li>
-   *   <li>{@link SEffe#WsDragoonTransformationCallback4}</li>
-   * </ol>
-   */
-  private static final BiConsumer<EffectManagerData6c<EffectManagerParams.VoidType>, WsDragoonTransformationFeatherInstance70>[] WsDragoonTransformationFeatherCallbacks_80119ff4 = new BiConsumer[5];
-  static {
-    WsDragoonTransformationFeatherCallbacks_80119ff4[0] = SEffe::initializeWsDragoonTransformationEffect;
-    WsDragoonTransformationFeatherCallbacks_80119ff4[1] = SEffe::expandWsDragoonTransformationEffect;
-    WsDragoonTransformationFeatherCallbacks_80119ff4[2] = SEffe::spinWsDragoonTransformationEffect;
-    WsDragoonTransformationFeatherCallbacks_80119ff4[3] = SEffe::contractWsDragoonTransformationEffect;
-    WsDragoonTransformationFeatherCallbacks_80119ff4[4] = SEffe::WsDragoonTransformationCallback4; // no-op
-  }
-
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
-  private static final byte[] additionHitCompletionState_8011a014 = new byte[8];
+  public static final byte[] additionHitCompletionState_8011a014 = new byte[8];
 
   private static int daddyHudOffsetX_8011a01c;
   private static int daddyHudOffsetY_8011a020;
 
   private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
-
-  /** Related to processing type 2 LMBs */
-  private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
@@ -662,32 +512,32 @@ public final class SEffe {
   }
 
   @Method(0x800e7ec4L)
-  public static <T extends EffectManagerParams<T>> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> struct) {
+  public static <T extends EffectManagerParams<T>> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> manager) {
     LOGGER.info(EFFECTS, "Deallocating effect manager %d", state.index);
 
-    if(struct.parentScript_50 != null) {
-      if(struct.newChildScript_56 != null) {
-        struct.newChildScript_56.innerStruct_00.oldChildScript_54 = struct.oldChildScript_54;
+    if(manager.parentScript_50 != null) {
+      if(manager.newChildScript_56 != null) {
+        manager.newChildScript_56.innerStruct_00.oldChildScript_54 = manager.oldChildScript_54;
       } else {
         //LAB_800e7f4c
-        struct.parentScript_50.innerStruct_00.childScript_52 = struct.oldChildScript_54;
+        manager.parentScript_50.innerStruct_00.childScript_52 = manager.oldChildScript_54;
       }
 
       //LAB_800e7f6c
-      if(struct.oldChildScript_54 != null) {
-        struct.oldChildScript_54.innerStruct_00.newChildScript_56 = struct.newChildScript_56;
+      if(manager.oldChildScript_54 != null) {
+        manager.oldChildScript_54.innerStruct_00.newChildScript_56 = manager.newChildScript_56;
       }
 
       //LAB_800e7fa0
-      struct.parentScript_50 = null;
-      struct.oldChildScript_54 = null;
-      struct.newChildScript_56 = null;
+      manager.parentScript_50 = null;
+      manager.oldChildScript_54 = null;
+      manager.newChildScript_56 = null;
     }
 
     //LAB_800e7fac
     //LAB_800e7fcc
-    while(struct.childScript_52 != null) {
-      EffectManagerData6c<?> child = struct.childScript_52.innerStruct_00;
+    while(manager.childScript_52 != null) {
+      EffectManagerData6c<?> child = manager.childScript_52.innerStruct_00;
 
       //LAB_800e7ff8
       while(child.childScript_52 != null) {
@@ -699,25 +549,25 @@ public final class SEffe {
     }
 
     //LAB_800e8040
-    if(struct.destructor_4c != null) {
-      struct.destructor_4c.accept(state, struct);
+    if(manager.effect_44 != null) {
+      manager.effect_44.destroy(state);
     }
   }
 
-  public static ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateEffectManager(final String name, @Nullable final ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> destructor, @Nullable final Effect effect) {
-    return allocateEffectManager(name, parentState, ticker, renderer, destructor, effect, new EffectManagerParams.VoidType());
+  public static ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateEffectManager(final String name, @Nullable final ScriptState<? extends BattleObject> parentState, @Nullable final Effect<EffectManagerParams.VoidType> effect) {
+    return allocateEffectManager(name, parentState, effect, new EffectManagerParams.VoidType());
   }
 
   @Method(0x800e80c4L)
-  public static <T extends EffectManagerParams<T>> ScriptState<EffectManagerData6c<T>> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor, @Nullable final Effect effect, final T inner) {
+  public static <T extends EffectManagerParams<T>> ScriptState<EffectManagerData6c<T>> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleObject> parentState, @Nullable final Effect<T> effect, final T inner) {
     final ScriptState<EffectManagerData6c<T>> state = SCRIPTS.allocateScriptState(name, new EffectManagerData6c<>(name, inner));
     final EffectManagerData6c<T> manager = state.innerStruct_00;
 
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::effectManagerTicker);
 
-    if(renderer != null) {
-      state.setRenderer(renderer);
+    if(effect != null) {
+      state.setRenderer((s, m) -> m.effect_44.render(s));
     }
 
     state.setDestructor(SEffe::effectManagerDestructor);
@@ -739,8 +589,6 @@ public final class SEffe {
     manager.params_10.flags_00 = 0x5400_0000;
     manager.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
     manager.params_10.colour_1c.set(0x80, 0x80, 0x80);
-    manager.ticker_48 = ticker;
-    manager.destructor_4c = destructor;
 
     if(parentState != null) {
       if(!BattleObject.EM__.equals(parentState.innerStruct_00.magic_00)) {
@@ -763,17 +611,17 @@ public final class SEffe {
   }
 
   @Method(0x800e8e9cL)
-  public static <T extends EffectManagerParams<T>> void effectManagerTicker(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> data) {
-    AttachmentHost subPtr = data;
+  public static <T extends EffectManagerParams<T>> void effectManagerTicker(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> manager) {
+    AttachmentHost subPtr = manager;
 
     //LAB_800e8ee0
     while(subPtr.getAttachment() != null) {
       final EffectAttachment sub = subPtr.getAttachment();
 
-      final int ret = (int)((BiFunction)sub.ticker_08).apply(data, subPtr.getAttachment());
+      final int ret = (int)((BiFunction)sub.ticker_08).apply(manager, subPtr.getAttachment());
       if(ret == 0) { // Remove this attachment
         //LAB_800e8f2c
-        data.flags_04 &= ~(1 << sub.id_05);
+        manager.flags_04 &= ~(1 << sub.id_05);
         subPtr.setAttachment(sub.getAttachment());
       } else if(ret == 1) { // Continue
         //LAB_800e8f6c
@@ -789,8 +637,8 @@ public final class SEffe {
     }
 
     //LAB_800e8f9c
-    if(data.ticker_48 != null) {
-      data.ticker_48.accept(state, data);
+    if(manager.effect_44 != null) {
+      manager.effect_44.tick(state);
     }
 
     //LAB_800e8fb8
@@ -1097,142 +945,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80102618L)
-  public static void modifyLightningSegmentOriginsBySecondaryScriptTranslation(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect) {
-    if(electricEffect.scriptIndex_08 != -1) {
-      final Vector3f secondaryScriptTranslation = new Vector3f();
-      final Vector3f newOrigin = new Vector3f();
-      scriptGetScriptedObjectPos(electricEffect.scriptIndex_08, secondaryScriptTranslation);
-      secondaryScriptTranslation.sub(manager.params_10.trans_04).div(electricEffect.boltSegmentCount_28);
-
-      //LAB_801026f0
-      for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
-        final LightningBoltEffectSegment30 boltSegment = boltEffect.boltSegments_10[i];
-        boltSegment.origin_00.set(newOrigin);
-
-        newOrigin.x += (seed_800fa754.nextInt(257) - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
-        newOrigin.z += (seed_800fa754.nextInt(257) - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
-        newOrigin.add(secondaryScriptTranslation);
-      }
-    }
-    //LAB_80102848
-  }
-
-  @Method(0x80102860L)
-  public static void initializeRadialElectricityBoltColour(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect) {
-    int innerColourR;
-    int innerColourG;
-    int innerColourB;
-    int outerColourR;
-    int outerColourG;
-    int outerColourB;
-    int innerColourFadeStepR = 0;
-    int innerColourFadeStepG = 0;
-    int innerColourFadeStepB = 0;
-    int outerColourFadeStepR = 0;
-    int outerColourFadeStepG = 0;
-    int outerColourFadeStepB = 0;
-
-    //LAB_801028a4
-    for(int boltNum = 0; boltNum < electricEffect.boltCount_00; boltNum++) {
-      final LightningBoltEffect14 bolt = electricEffect.bolts_34[boltNum];
-
-      outerColourR = manager.params_10.colour_1c.x << 8;
-      outerColourG = manager.params_10.colour_1c.y << 8;
-      outerColourB = manager.params_10.colour_1c.z << 8;
-
-      final int managerR = manager.params_10.colour_1c.x;
-      int managerG = manager.params_10.colour_1c.y;
-      int managerB = manager.params_10.colour_1c.z;
-
-      if(managerG < managerR) {
-        managerG = managerR;
-      }
-
-      //LAB_8010290c
-      if(managerB < managerG) {
-        managerB = managerG;
-      }
-
-      //LAB_8010292c
-      innerColourR = managerB << 8;
-      innerColourG = managerB << 8;
-      innerColourB = managerB << 8;
-
-      if(electricEffect.fadeSuccessiveSegments_23) {
-        innerColourFadeStepR = innerColourR / electricEffect.boltSegmentCount_28;
-        innerColourFadeStepG = innerColourG / electricEffect.boltSegmentCount_28;
-        innerColourFadeStepB = innerColourB / electricEffect.boltSegmentCount_28;
-        outerColourFadeStepR = outerColourR / electricEffect.boltSegmentCount_28;
-        outerColourFadeStepG = outerColourG / electricEffect.boltSegmentCount_28;
-        outerColourFadeStepB = outerColourB / electricEffect.boltSegmentCount_28;
-      }
-
-      //LAB_801029f0
-      //LAB_80102a04
-      for(int segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28; segmentNum++) {
-        final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[segmentNum];
-        segment.innerColour_10.set(innerColourR, innerColourG, innerColourB);
-        segment.outerColour_16.set(outerColourR, outerColourG, outerColourB);
-
-        if(electricEffect.colourShouldFade_22 && electricEffect.numColourFadeSteps_0c != -1) {
-          segment.innerColourFadeStep_1c.set(segment.innerColour_10).div(electricEffect.numColourFadeSteps_0c);
-          segment.outerColourFadeStep_22.set(segment.outerColour_16).div(electricEffect.numColourFadeSteps_0c);
-        } else {
-          //LAB_80102b10
-          segment.innerColourFadeStep_1c.set(0, 0, 0);
-          segment.outerColourFadeStep_22.set(0, 0, 0);
-        }
-
-        //LAB_80102b28
-        innerColourR = innerColourR - innerColourFadeStepR;
-        innerColourG = innerColourG - innerColourFadeStepG;
-        innerColourB = innerColourB - innerColourFadeStepB;
-        outerColourR = outerColourR - outerColourFadeStepR;
-        outerColourG = outerColourG - outerColourFadeStepG;
-        outerColourB = outerColourB - outerColourFadeStepB;
-      }
-
-      //LAB_80102bb8
-      modifyLightningSegmentOriginsBySecondaryScriptTranslation(manager, electricEffect, bolt);
-    }
-    //LAB_80102be0
-  }
-
-  @Method(0x80102bfcL)
-  public static void initializeElectricityNodes(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt) {
-    float segmentOriginX = 0;
-    final float segmentOriginY = -(electricEffect.boltAngleRangeCutoff_1c / (float)electricEffect.boltSegmentCount_28);
-    float segmentOriginZ = 0;
-
-    //LAB_80102c58
-    for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.set(segmentOriginX, segmentOriginY * i, segmentOriginZ);
-      segment.scaleMultiplier_28 = seed_800fa754.nextInt(7) + 5;
-      segment.unused_2a = 0;
-      segment.originTranslationMagnitude_2c = segmentOriginX / 16.0f;
-      segment.baseVertexTranslationScale_2e = (seed_800fa754.nextInt(193) + 64) / (float)0x100;
-
-      if(electricEffect.addSuccessiveSegmentOriginTranslations_14) {
-        segmentOriginX += (seed_800fa754.nextInt(257) - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
-        segmentOriginZ += (seed_800fa754.nextInt(257) - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
-        //LAB_80102e58
-      } else if(i < electricEffect.boltSegmentCount_28 - 2) {
-        segmentOriginX = (seed_800fa754.nextInt(257) - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
-        segmentOriginZ = (seed_800fa754.nextInt(257) - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
-      } else {
-        //LAB_80102f44
-        segmentOriginX = 0;
-        segmentOriginZ = 0;
-      }
-      //LAB_80102f4c
-    }
-
-    //LAB_80102f64
-    modifyLightningSegmentOriginsBySecondaryScriptTranslation(manager, electricEffect, bolt);
-  }
-
   /**
    * Used by the following two lightning renderers and FUN_80105704
    *
@@ -1255,519 +967,6 @@ public final class SEffe {
       .rgb((colour1.x >>> 8) / 255.0f, (colour1.y >>> 8) / 255.0f, (colour1.z >>> 8) / 255.0f);
   }
 
-  /**
-   * Renders certain types of lightning effects. (Confirmed for Rose's D transformation)
-   * Used by allocator 0x801052dc
-   */
-  @Method(0x801030d8L)
-  public static void renderElectricEffectType0(final ScriptState<EffectManagerData6c<EffectManagerParams.ElectricityType>> state, final EffectManagerData6c<EffectManagerParams.ElectricityType> manager) {
-    final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
-
-    if(electricEffect.currentColourFadeStep_04 + 1 == electricEffect.numColourFadeSteps_0c) {
-      return;
-    }
-
-    electricEffect.currentColourFadeStep_04++;
-
-    //LAB_80103140
-    if(electricEffect.currentColourFadeStep_04 == 1) {
-      initializeRadialElectricityBoltColour(manager, electricEffect);
-
-      //LAB_80103174
-      for(int i = 0; i < electricEffect.boltCount_00; i++) {
-        electricEffect.callback_2c.accept(manager, electricEffect, electricEffect.bolts_34[i], i);
-      }
-
-      return;
-    }
-
-    //LAB_801031cc
-    electricEffect.frameNum_2a = electricEffect.frameNum_2a + 1 & 0x1f;
-
-    final boolean effectShouldRender = (manager.params_10.shouldRenderFrameBits_24 >> electricEffect.frameNum_2a & 0x1) == 0;
-
-    final Vector2f[] vertexArray = new Vector2f[4];
-    Arrays.setAll(vertexArray, i -> new Vector2f());
-
-    final Vector2f refOuterOriginA = new Vector2f();
-    final Vector2f lastSegmentRef = new Vector2f();
-    final Vector2f refOuterOriginB = new Vector2f();
-
-    final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
-
-    final PolyBuilder builder = new PolyBuilder("Electricity effect type 0", GL_TRIANGLES)
-      .translucency(translucency);
-
-    //LAB_80103200
-    //LAB_8010322c
-    for(int boltNum = 0; boltNum < electricEffect.boltCount_00; boltNum++) {
-      final LightningBoltEffect14 bolt = electricEffect.bolts_34[boltNum];
-
-      if(electricEffect.reinitializeNodes_24) {
-        initializeElectricityNodes(manager, electricEffect, bolt);
-      }
-
-      //LAB_8010324c
-      electricEffect.callback_2c.accept(manager, electricEffect, bolt, boltNum);
-      bolt.angle_02 -= electricEffect.boltAngleStep_10 / 2.0f;
-      float zMod = FUN_800cfb94(manager, bolt.rotation_04, bolt.boltSegments_10[0].origin_00, refOuterOriginA) / 4.0f;
-      FUN_800cfb94(manager, bolt.rotation_04, bolt.boltSegments_10[electricEffect.boltSegmentCount_28 - 1].origin_00, lastSegmentRef);
-      final float boltLengthX = lastSegmentRef.x - refOuterOriginA.x;
-      final float boltLengthY = lastSegmentRef.y - refOuterOriginA.y;
-      final float segmentLengthX = boltLengthX / (electricEffect.boltSegmentCount_28 - 1);
-      final float segmentLengthY = boltLengthY / (electricEffect.boltSegmentCount_28 - 1);
-      float previousOriginX = refOuterOriginA.x;
-      float centerLineOriginX = refOuterOriginA.x;
-      float previousOriginY = refOuterOriginA.y;
-      float centerLineOriginY = refOuterOriginA.y;
-      final float firstSegmentScaleX = bolt.boltSegments_10[0].scaleMultiplier_28 * manager.params_10.scale_16.x;
-      final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
-      final float sin = MathHelper.sin(angle);
-      final float cos = MathHelper.cosFromSin(sin, angle);
-      final float outerXOffset = cos * firstSegmentScaleX;
-      final float outerYOffset = sin * firstSegmentScaleX;
-      refOuterOriginB.x = refOuterOriginA.x - outerXOffset;
-      refOuterOriginB.y = refOuterOriginA.y - outerYOffset;
-      refOuterOriginA.x += outerXOffset;
-      refOuterOriginA.y += outerYOffset;
-
-      //LAB_80103488
-      for(int segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28; segmentNum++) {
-        final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[segmentNum];
-        segment.innerColour_10.sub(segment.innerColourFadeStep_1c);
-        segment.outerColour_16.sub(segment.outerColourFadeStep_22);
-        segment.unused_2a += electricEffect.boltAngleStep_10 / 2.0f;
-      }
-
-      //LAB_80103538
-      if(effectShouldRender) {
-        final float z = manager.params_10.z_22 + zMod;
-        if(z >= 0xa0) {
-          if(z >= 0xffe) {
-            zMod = 0xffe - manager.params_10.z_22;
-          }
-
-          //LAB_80103574
-          //LAB_80103594
-          for(int segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28 - 1; segmentNum++) {
-            final LightningBoltEffectSegment30 currentSegment = bolt.boltSegments_10[segmentNum];
-            final LightningBoltEffectSegment30 nextSegment = bolt.boltSegments_10[segmentNum + 1];
-            float centerLineEndpointX = centerLineOriginX + segmentLengthX;
-            float centerLineEndpointY = centerLineOriginY + segmentLengthY;
-            final float currentSegmentEndpointX = centerLineOriginX + segmentLengthX;
-            final float currentSegmentEndpointY = centerLineOriginY + segmentLengthY;
-            centerLineOriginX += cos * currentSegment.originTranslationMagnitude_2c;
-            centerLineOriginY += sin * currentSegment.originTranslationMagnitude_2c;
-            centerLineEndpointX += cos * nextSegment.originTranslationMagnitude_2c;
-            centerLineEndpointY += sin * nextSegment.originTranslationMagnitude_2c;
-            final float scale = currentSegment.scaleMultiplier_28 * manager.params_10.scale_16.x;
-            final float outerEndpointXa = centerLineEndpointX + cos * scale;
-            final float outerEndpointYa = centerLineEndpointY + sin * scale;
-            final float outerEndpointXb = centerLineEndpointX - cos * scale;
-            final float outerEndpointYb = centerLineEndpointY - sin * scale;
-
-            if(electricEffect.hasMonochromeBase_29) {
-              final float baseX0 = (previousOriginX - centerLineOriginX) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginX;
-              final float baseY0 = (previousOriginY - centerLineOriginY) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginY;
-              final float baseX2 = (centerLineEndpointX - centerLineOriginX) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginX;
-              final float baseY2 = (centerLineEndpointY - centerLineOriginY) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginY;
-
-              //LAB_80103808
-              int baseColour = (int)(currentSegment.innerColour_10.x + Math.abs(currentSegment.originTranslationMagnitude_2c - nextSegment.originTranslationMagnitude_2c) * 8);
-              if((baseColour & 0xffff) > 0xff00) {
-                baseColour = 0xff00;
-              }
-
-              //LAB_80103834
-              builder
-                .addVertex(baseX0, baseY0, manager.params_10.z_22 + zMod)
-                .monochrome((baseColour >>> 9) / 255.0f)
-                .addVertex(centerLineOriginX, centerLineOriginY, manager.params_10.z_22 + zMod)
-                .monochrome((baseColour >>> 8) / 255.0f)
-                .addVertex(baseX2, baseY2, manager.params_10.z_22 + zMod)
-                .monochrome((baseColour >>> 9) / 255.0f);
-            }
-
-            //LAB_80103994
-            vertexArray[1].set(centerLineEndpointX, centerLineEndpointY);
-            vertexArray[3].set(centerLineOriginX, centerLineOriginY);
-
-            vertexArray[0].set(outerEndpointXa, outerEndpointYa);
-            vertexArray[2].set(refOuterOriginA);
-            renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
-
-            vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
-            vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
-            vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
-            vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-            renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
-
-            vertexArray[0].set(outerEndpointXb, outerEndpointYb);
-            vertexArray[2].set(refOuterOriginB);
-            renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
-
-            vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
-            vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
-            vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
-            vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-            renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
-
-            refOuterOriginA.set(outerEndpointXa, outerEndpointYa);
-            refOuterOriginB.set(outerEndpointXb, outerEndpointYb);
-            previousOriginX = centerLineOriginX;
-            previousOriginY = centerLineOriginY;
-            centerLineOriginX = currentSegmentEndpointX;
-            centerLineOriginY = currentSegmentEndpointY;
-          }
-          //LAB_80103ca0
-        }
-      }
-    }
-
-    if(builder.count() != 0) {
-      final Obj obj = builder.build();
-      obj.delete();
-
-      electricEffect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
-      RENDERER.queueOrthoModel(obj, electricEffect.transforms);
-    }
-  }
-
-  /**
-   * Renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block,
-   * some Haschel stuff, Doel's fancy lightning bomb attack)
-   * Used by allocator 0x801052dc
-   */
-  @Method(0x80103db0L)
-  public static void renderElectricEffectType1(final ScriptState<EffectManagerData6c<EffectManagerParams.ElectricityType>> state, final EffectManagerData6c<EffectManagerParams.ElectricityType> manager) {
-    final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
-
-    if(electricEffect.currentColourFadeStep_04 + 1 == electricEffect.numColourFadeSteps_0c) {
-      return;
-    }
-
-    electricEffect.currentColourFadeStep_04++;
-
-    //LAB_80103e40
-    if(electricEffect.currentColourFadeStep_04 == 1) {
-      initializeRadialElectricityBoltColour(manager, electricEffect);
-
-      //LAB_80103e8c
-      for(int i = 0; i < electricEffect.boltCount_00; i++) {
-        electricEffect.callback_2c.accept(manager, electricEffect, electricEffect.bolts_34[i], i);
-      }
-    } else {
-      final LightningBoltEffectSegmentOrigin08[] segmentArray = new LightningBoltEffectSegmentOrigin08[electricEffect.boltSegmentCount_28];
-      Arrays.setAll(segmentArray, LightningBoltEffectSegmentOrigin08::new);
-      LightningBoltEffectSegmentOrigin08 currentSegmentOrigin;
-      LightningBoltEffectSegmentOrigin08 nextSegmentOrigin;
-
-      //LAB_80103ee4
-      electricEffect.frameNum_2a = electricEffect.frameNum_2a + 1 & 0x1f;
-      final boolean effectShouldRender = (manager.params_10.shouldRenderFrameBits_24 >> electricEffect.frameNum_2a & 0x1) == 0;
-
-      final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
-
-      final PolyBuilder builder = new PolyBuilder("Lightning effect type 1", GL_TRIANGLES)
-        .translucency(translucency);
-
-      //LAB_80103f18
-      //LAB_80103f44
-      for(int i = 0; i < electricEffect.boltCount_00; i++) {
-        final LightningBoltEffect14 bolt = electricEffect.bolts_34[i];
-
-        if(electricEffect.reinitializeNodes_24) {
-          initializeElectricityNodes(manager, electricEffect, bolt);
-        }
-
-        //LAB_80103f6c
-        electricEffect.callback_2c.accept(manager, electricEffect, bolt, i);
-
-        bolt.angle_02 -= electricEffect.boltAngleStep_10 / 2.0f;
-
-        //LAB_80103fc4
-        int segmentNum;
-        for(segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28; segmentNum++) {
-          final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[segmentNum];
-          final LightningBoltEffectSegmentOrigin08 segmentOrigin = segmentArray[segmentNum];
-          final Vector2f ref = new Vector2f();
-          bolt.sz3_0c = FUN_800cfb94(manager, bolt.rotation_04, segment.origin_00, ref) / 4;
-          segmentOrigin.x_00 = ref.x;
-          segmentOrigin.y_04 = ref.y;
-          segment.innerColour_10.sub(segment.innerColourFadeStep_1c);
-          segment.outerColour_16.sub(segment.outerColourFadeStep_22);
-          segment.unused_2a += electricEffect.boltAngleStep_10;
-        }
-
-        //LAB_801040d0
-        if(effectShouldRender) {
-          final float boltLengthX = segmentArray[segmentNum - 1].x_00 - segmentArray[0].x_00;
-          final float boltLengthY = segmentArray[segmentNum - 1].y_04 - segmentArray[0].y_04;
-          final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
-          final float sin = MathHelper.sin(angle);
-          final float cos = MathHelper.cosFromSin(sin, angle);
-          float currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager.params_10.scale_16.x;
-          float outerOriginXa = segmentArray[0].x_00 + cos * currentSegmentScale;
-          float outerOriginYa = segmentArray[0].y_04 + sin * currentSegmentScale;
-          float outerOriginXb = segmentArray[0].x_00 - cos * currentSegmentScale;
-          float outerOriginYb = segmentArray[0].y_04 - sin * currentSegmentScale;
-
-          final float z = manager.params_10.z_22 + bolt.sz3_0c;
-          if(z >= 0xa0) {
-            if(z >= 0xffe) {
-              bolt.sz3_0c = 0xffe - manager.params_10.z_22;
-            }
-
-            //LAB_8010422c
-            //LAB_8010424c
-            for(segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28 - 1; segmentNum++) {
-              final LightningBoltEffectSegment30 currentSegment = bolt.boltSegments_10[segmentNum];
-              final LightningBoltEffectSegment30 nextSegment = bolt.boltSegments_10[segmentNum + 1];
-              currentSegmentScale = currentSegment.scaleMultiplier_28 * manager.params_10.scale_16.x;
-              final float nextSegmentScale = nextSegment.scaleMultiplier_28 * manager.params_10.scale_16.x;
-
-              if(electricEffect.type1RendererType_18) {
-                currentSegmentOrigin = segmentArray[segmentNum];
-                nextSegmentOrigin = segmentArray[segmentNum + 1];
-                final float outerEndpointXa = nextSegmentOrigin.x_00 + cos * currentSegmentScale;
-                final float outerEndpointYa = nextSegmentOrigin.y_04 + sin * currentSegmentScale;
-                final float outerEndpointXb = nextSegmentOrigin.x_00 - cos * currentSegmentScale;
-                final float outerEndpointYb = nextSegmentOrigin.y_04 - sin * currentSegmentScale;
-
-                final Vector2f[] vertexArray = new Vector2f[4];
-                Arrays.setAll(vertexArray, n -> new Vector2f());
-
-                vertexArray[1].x = nextSegmentOrigin.x_00;
-                vertexArray[1].y = nextSegmentOrigin.y_04;
-                vertexArray[3].x = currentSegmentOrigin.x_00;
-                vertexArray[3].y = currentSegmentOrigin.y_04;
-
-                vertexArray[0].x = outerEndpointXa;
-                vertexArray[0].y = outerEndpointYa;
-                vertexArray[2].x = outerOriginXa;
-                vertexArray[2].y = outerOriginYa;
-                renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-
-                vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
-                vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
-                vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
-                vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-                renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-
-                vertexArray[0].x = outerEndpointXb;
-                vertexArray[0].y = outerEndpointYb;
-                vertexArray[2].x = outerOriginXb;
-                vertexArray[2].y = outerOriginYb;
-                renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-
-                vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
-                vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
-                vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
-                vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-                renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-
-                outerOriginXa = outerEndpointXa;
-                outerOriginYa = outerEndpointYa;
-                outerOriginXb = outerEndpointXb;
-                outerOriginYb = outerEndpointYb;
-              } else {
-                //LAB_801045e8
-                currentSegmentOrigin = segmentArray[segmentNum];
-                nextSegmentOrigin = segmentArray[segmentNum + 1];
-                float centerLineEndpointX = Math.abs(currentSegmentOrigin.x_00 - nextSegmentOrigin.x_00);
-                centerLineEndpointX = seed_800fa754.nextFloat(centerLineEndpointX * 2 + 1) - centerLineEndpointX + currentSegmentOrigin.x_00;
-                float centerLineOriginX = currentSegmentOrigin.x_00;
-                float centerLineOriginY = currentSegmentOrigin.y_04;
-                float centerLineEndpointY = (nextSegmentOrigin.y_04 - currentSegmentOrigin.y_04) / 2 + currentSegmentOrigin.y_04;
-                final float nextSegmentQuarterScale = nextSegmentScale / 4.0f;
-                final float currentSegmentQuarterScale = currentSegmentScale / 4.0f;
-
-                //LAB_801046c4
-                for(int j = 2; j > 0; j--) {
-                  final Vector2f[] vertexArray = new Vector2f[4];
-                  Arrays.setAll(vertexArray, n -> new Vector2f());
-
-                  vertexArray[0].y = centerLineEndpointY;
-                  vertexArray[1].y = centerLineEndpointY;
-                  vertexArray[2].y = centerLineOriginY;
-                  vertexArray[3].y = centerLineOriginY;
-
-                  vertexArray[0].x = centerLineEndpointX - nextSegmentScale;
-                  vertexArray[1].x = centerLineEndpointX + 1;
-                  vertexArray[2].x = centerLineOriginX - currentSegmentScale;
-                  vertexArray[3].x = centerLineOriginX + 1;
-                  renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-                  vertexArray[0].x = centerLineEndpointX - nextSegmentQuarterScale;
-                  vertexArray[2].x = centerLineOriginX - currentSegmentQuarterScale;
-                  renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-                  vertexArray[0].x = centerLineEndpointX + nextSegmentScale;
-                  vertexArray[1].x = centerLineEndpointX;
-                  vertexArray[2].x = centerLineOriginX + currentSegmentScale;
-                  vertexArray[3].x = centerLineOriginX;
-                  renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-                  vertexArray[0].x = centerLineEndpointX + nextSegmentQuarterScale;
-                  vertexArray[2].x = centerLineOriginX + currentSegmentQuarterScale;
-                  renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
-
-                  centerLineOriginX = centerLineEndpointX;
-                  centerLineOriginY = centerLineEndpointY;
-                  centerLineEndpointX = nextSegmentOrigin.x_00;
-                  centerLineEndpointY = nextSegmentOrigin.y_04;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if(effectShouldRender) {
-        final Obj obj = builder.build();
-        obj.delete();
-
-        electricEffect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
-        RENDERER.queueOrthoModel(obj, electricEffect.transforms);
-      }
-    }
-  }
-
-  @Method(0x801049d4L)
-  public static void FUN_801049d4(final EffectManagerData6c<EffectManagerParams.ElectricityType> a0, final ElectricityEffect38 a1, final LightningBoltEffect14 a2, final int a3) {
-    // no-op
-  }
-
-  @Method(0x801049dcL)
-  public static void FUN_801049dc(final EffectManagerData6c<EffectManagerParams.ElectricityType> a0, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect, final int boltIndex) {
-    boltEffect.rotation_04.y = MathHelper.TWO_PI / electricEffect.boltCount_00 * boltIndex;
-    boltEffect.rotation_04.z = MathHelper.psxDegToRad(electricEffect.segmentOriginTranslationMagnitude_1e * 2);
-  }
-
-  @Method(0x80104a14L)
-  public static void FUN_80104a14(final EffectManagerData6c<EffectManagerParams.ElectricityType> a0, final ElectricityEffect38 a1, final LightningBoltEffect14 bolt, final int a3) {
-    bolt.rotation_04.x = seed_800fa754.nextFloat(MathHelper.TWO_PI);
-    bolt.rotation_04.y = seed_800fa754.nextFloat(MathHelper.TWO_PI);
-    bolt.rotation_04.z = seed_800fa754.nextFloat(MathHelper.TWO_PI);
-  }
-
-  @Method(0x80104b10L)
-  public static void FUN_80104b10(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final float angleStep = MathHelper.psxDegToRad(manager.params_10._28 << 8 >> 8);
-    float angle = bolt.angle_02;
-
-    //LAB_80104b58
-    for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x += MathHelper.cos(angle) * electricEffect.segmentOriginTranslationMagnitude_1e;
-      segment.origin_00.z += MathHelper.sin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e;
-      angle += angleStep;
-    }
-
-    //LAB_80104bcc
-  }
-
-  @Method(0x80104becL)
-  public static void FUN_80104bec(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final float angleStep = MathHelper.psxDegToRad(manager.params_10._28 << 8 >> 8);
-    float angle = bolt.angle_02;
-
-    //LAB_80104c34
-    for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.z += MathHelper.sin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e;
-      angle += angleStep;
-    }
-
-    //LAB_80104c7c
-  }
-
-  @Method(0x80104c9cL)
-  public static void FUN_80104c9c(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    int translationMagnitudeModifier = 0;
-    int segmentIndex = (electricEffect.boltSegmentCount_28 - 2) / 2;
-    final int angle0 = (manager.params_10._28 & 0xff) << 4;
-    final int angle1 = (manager.params_10._28 & 0xff00) >>> 4;
-    final int angle2 = manager.params_10._28 >>> 12 & 0xff0;
-
-    //LAB_80104d24
-    for(int i = 1; i < electricEffect.boltSegmentCount_28; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      translationMagnitudeModifier = translationMagnitudeModifier + segmentIndex;
-      final int translationMagnitude = translationMagnitudeModifier * electricEffect.segmentOriginTranslationMagnitude_1e;
-      final int x = translationMagnitude * (rsin(angle1) + rcos(angle2)) >> 12;
-      final int y = translationMagnitude * (rcos(angle0) + rcos(angle2)) >> 12;
-      final int z = translationMagnitude * (rcos(angle1) + rsin(angle0)) >> 12;
-      segment.origin_00.add(x, y, z);
-      segmentIndex--;
-    }
-  }
-
-  @Method(0x80104e40L)
-  public static void FUN_80104e40(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final int translationMagnitude = electricEffect.segmentOriginTranslationMagnitude_1e / electricEffect.boltCount_00 & 0xffff;
-    final int angle = 0x1000 / electricEffect.boltCount_00 * a3;
-
-    //LAB_80104ec4
-    short originTranslationX = 0;
-    short originTranslationY = 0;
-    for(int i = 1; i < electricEffect.boltSegmentCount_28; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x += originTranslationX;
-      segment.origin_00.z += originTranslationY;
-      originTranslationX += rcos(angle) * translationMagnitude >> 12;
-      originTranslationY += rsin(angle) * translationMagnitude >> 12;
-    }
-  }
-
-  @Method(0x80104f70L)
-  public static void FUN_80104f70(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 effect, final LightningBoltEffect14 bolt, final int a3) {
-    final int angleStep = 0x1000 / (effect.boltSegmentCount_28 - 1);
-    int angle = 0;
-
-    //LAB_80104fb8
-    for(int i = 0; i < effect.boltSegmentCount_28; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x += rsin(angle) * effect.segmentOriginTranslationMagnitude_1e >> 12;
-      segment.origin_00.z += rcos(angle) * effect.segmentOriginTranslationMagnitude_1e >> 12;
-      segment.origin_00.y = 0.0f;
-      angle += angleStep;
-    }
-  }
-
-  @Method(0x80105050L)
-  public static void FUN_80105050(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int boltAngleModifier) {
-    final int segmentCount = electricEffect.boltSegmentCount_28;
-    final int angleStep = 0x800 / (segmentCount - 1);
-    final int boltAngleZ = 0x1000 / electricEffect.boltCount_00 * boltAngleModifier;
-    int angle = 0;
-
-    //LAB_801050c0
-    for(int i = 0; i < segmentCount; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x += rcos(angle) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12;
-      segment.origin_00.y = (rsin(angle) * rsin(angle) >> 12) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12;
-      segment.origin_00.z += (rsin(angle) * rcos(boltAngleZ) >> 12) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12;
-      angle += angleStep;
-    }
-  }
-
-  @Method(0x801051acL)
-  public static void FUN_801051ac(final EffectManagerData6c<EffectManagerParams.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final int segmentCount = electricEffect.boltSegmentCount_28;
-    final float angleStepXZ = MathHelper.TWO_PI / (segmentCount - 1);
-    final float angleStepY = MathHelper.psxDegToRad(manager.params_10._28 << 8 >> 8);
-    float angleY = bolt.angle_02;
-    float angleXZ = 0;
-
-    //LAB_80105210
-    for(int i = 0; i < segmentCount; i++) {
-      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x += MathHelper.sin(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e;
-      segment.origin_00.y = MathHelper.sin(angleY) * electricEffect.segmentOriginTranslationMagnitude_1e / 4;
-      segment.origin_00.z += MathHelper.cos(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e;
-      angleXZ = angleXZ + angleStepXZ;
-      angleY = angleY + angleStepY;
-    }
-  }
-
   @ScriptDescription("Allocates an electricity effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 for none)")
@@ -1779,53 +978,37 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The electricity type")
   @Method(0x801052dcL)
   public static FlowControl scriptAllocateElectricityEffect(final RunningScript<? extends BattleObject> script) {
+    final int scriptIndex = script.params_20[1].get();
+    final int boltAngleRangeCutoff = script.params_20[2].get();
+    final int boltCount = script.params_20[3].get();
+    final int segmentOriginTranslationMagnitude = script.params_20[4].get();
+    final float boltAngleStep = MathHelper.psxDegToRad(script.params_20[5].get());
     final int effectFlag = script.params_20[6].get();
     final int callbackIndex = script.params_20[7].get();
-    final int boltCount = script.params_20[3].get();
-    final int boltSegmentCount = effectFlag >> 8 & 0xff;
+    final int segmentOriginTranslationModifier = effectFlag & 0xff;
+    final int boltSegmentCount = effectFlag >>> 8 & 0xff;
+    final int numColourFadeSteps = effectFlag >>> 16 & 0xff;
+    final boolean colourShouldFade = (effectFlag >>> 24 & 0x1) == 0;
+    final boolean fadeSuccessiveSegments = (effectFlag >>> 24 & 0x2) == 0;
+    final boolean reinitializeNodes = (effectFlag >>> 24 & 0x4) == 0;
+    final boolean addSuccessiveSegmentOriginTranslations = (effectFlag >>> 24 & 0x8) == 0;
+    final boolean type1RenderType = (effectFlag >>> 24 & 0x10) == 0;
+    final boolean hasMonochromeBase = (effectFlag >>> 24 & 0x20) == 0;
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.ElectricityType>> state = allocateEffectManager(
       "ElectricityEffect38",
       script.scriptState_04,
-      null,
-      electricityEffectRenderers_80119f14[callbackIndex],
-      null,
-      new ElectricityEffect38(boltCount, boltSegmentCount),
+      new ElectricityEffect38(callbackIndex, scriptIndex, boltAngleRangeCutoff, boltCount, segmentOriginTranslationMagnitude, boltAngleStep, segmentOriginTranslationModifier, boltSegmentCount, numColourFadeSteps, colourShouldFade, fadeSuccessiveSegments, reinitializeNodes, addSuccessiveSegmentOriginTranslations, type1RenderType, hasMonochromeBase),
       new EffectManagerParams.ElectricityType()
     );
 
     final EffectManagerData6c<EffectManagerParams.ElectricityType> manager = state.innerStruct_00;
-    final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
-    electricEffect.currentColourFadeStep_04 = 0;
-    electricEffect.scriptIndex_08 = script.params_20[1].get();
-    electricEffect.numColourFadeSteps_0c = effectFlag >> 16 & 0xff;
-    electricEffect.boltAngleStep_10 = MathHelper.psxDegToRad(script.params_20[5].get());
-    electricEffect.addSuccessiveSegmentOriginTranslations_14 = (effectFlag >>> 24 & 0x8) == 0;
-    electricEffect.type1RendererType_18 = (effectFlag >>> 24 & 0x10) == 0;
-    electricEffect.boltAngleRangeCutoff_1c = script.params_20[2].get();
-    electricEffect.segmentOriginTranslationMagnitude_1e = script.params_20[4].get();
-    electricEffect.callbackIndex_20 = callbackIndex;
-    electricEffect.colourShouldFade_22 = (effectFlag >>> 24 & 0x1) == 0;
-    electricEffect.fadeSuccessiveSegments_23 = (effectFlag >>> 24 & 0x2) == 0;
-    electricEffect.reinitializeNodes_24 = (effectFlag >>> 24 & 0x4) == 0;
-    electricEffect.segmentOriginTranslationModifier_26 = effectFlag & 0xff;
-    electricEffect.hasMonochromeBase_29 = (effectFlag >>> 24 & 0x20) == 0;
-    electricEffect.frameNum_2a = 0;
-    electricEffect.callback_2c = electricityEffectCallbacks_80119ee8[callbackIndex];
+    final ElectricityEffect38 effect = (ElectricityEffect38)manager.effect_44;
 
-    if(electricEffect.numColourFadeSteps_0c == 0) {
-      electricEffect.numColourFadeSteps_0c = -1;
-    }
-
-    //LAB_8010549c
-    //LAB_801054b4
-    for(int i = 0; i < electricEffect.boltCount_00; i++) {
-      final LightningBoltEffect14 boltEffect = electricEffect.bolts_34[i];
-      boltEffect.unused_00 = 1;
-      boltEffect.angle_02 = seed_800fa754.nextFloat(MathHelper.TWO_PI);
-      boltEffect.rotation_04.zero();
+    for(int i = 0; i < effect.boltCount_00; i++) {
+      final LightningBoltEffect14 boltEffect = effect.bolts_34[i];
       // Ran callback here from method array _80119ebc, which was filled with copies of the same no-op method FUN_801052d4
-      initializeElectricityNodes(manager, electricEffect, boltEffect);
+      effect.initializeElectricityNodes(manager.params_10.trans_04, effect, boltEffect);
     }
 
     //LAB_80105590
@@ -1988,601 +1171,8 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Used to calculate unused vectors on AdditionOverlaysEffect. Gets translation of attacker or target at start of
-   * addition, and for some reason does a meaningless 0 rotation.
-   */
-  @Method(0x80105f98L)
-  public static void getBentTranslation(final int scriptIndex, final Vector3f out, final long coordType) {
-    final MV transformationMatrix = new MV();
-
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-
-    final GsCOORDINATE2 coord2;
-    if(coordType == 0) {
-      coord2 = bent.model_148.modelParts_00[1].coord2_04;
-    } else {
-      //LAB_80105fe4
-      coord2 = bent.model_148.coord2_14;
-    }
-
-    //LAB_80105fec
-    GsGetLw(coord2, transformationMatrix);
-    // Does nothing? Changed line below to set //ApplyMatrixLV(transformationMatrix, zeroVec, out);
-    out.set(transformationMatrix.transfer);
-  }
-
-  /** Runs callbacks to render correct button icon effects during addition */
-  @Method(0x80106050L)
-  public static void renderAdditionButton(final int frames, final boolean isCounter) {
-    final int offset = isCounter ? 1 : 0;
-    if(Math.abs(frames) >= 2) {  // Button up position
-      renderButtonPressHudElement1(0x24, 119, 43, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
-    } else {  // Button down position
-      //LAB_80106114
-      renderButtonPressHudElement1(0x24, 119, 51, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
-    }
-  }
-
   public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
     battleUiParts.queueButton(type, x, y, translucency, brightness, 1.0f, 1.0f);
-  }
-
-  /**
-   * Selects where to get hit property from based on auto-complete type. 1 and 3 use a mysterious global 2-hit array,
-   * which may be unused testing code.
-   */
-  @Method(0x801061bcL)
-  public static int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex, final int autoCompleteType) {
-    //LAB_80106264
-    final int hitPropertyValue;
-    if(autoCompleteType == 1 || autoCompleteType == 3) {
-      //LAB_80106274
-      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].get(hitPropertyIndex);
-    } else {
-      //LAB_8010628c
-      hitPropertyValue = battlePreloadedEntities_1f8003f4.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
-    }
-
-    //LAB_80106298
-    return hitPropertyValue;
-  }
-
-  @Method(0x801062a8L)
-  public static void initializeAdditionOverlaysEffect(final int attackerScriptIndex, final int targetScriptIndex, final AdditionOverlaysEffect44 effect, final int autoCompleteType) {
-    final BattleEntity27c s5 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerScriptIndex].innerStruct_00;
-
-    effect.reticleBorderShadow = new QuadBuilder("Reticle background")
-      .translucency(Translucency.B_MINUS_F)
-      .monochrome(0, 0.0f)
-      .monochrome(1, 0.0f)
-      .monochrome(2, 1.0f)
-      .monochrome(3, 1.0f)
-      .pos(-1.0f, -0.5f, 0.0f)
-      .size(1.0f, 1.0f)
-      .build();
-
-    //LAB_8010633c
-    int hitNum;
-    for(hitNum = 0; hitNum < 8; hitNum++) {
-      // Number of hits calculated by counting to first hit with 0 total frames
-      if((getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff) == 0) {
-        break;
-      }
-    }
-
-    //LAB_80106374
-    final int hitCount = hitNum - 1;
-    effect.count_30 = hitCount;
-    effect.attackerScriptIndex_00 = attackerScriptIndex;
-    effect.targetScriptIndex_04 = targetScriptIndex;
-    effect.currentFrame_34 = 0;
-    effect.pauseTickerAndRenderer_31 = 0;
-    effect.additionComplete_32 = 0;
-    effect.numFramesToRenderCenterSquare_38 = 0;
-    effect.lastCompletedHit_39 = 0;
-    effect.autoCompleteType_3a = autoCompleteType;
-    final AdditionOverlaysHit20[] hitArray = new AdditionOverlaysHit20[hitCount];
-    Arrays.setAll(hitArray, AdditionOverlaysHit20::new);
-    effect.hitOverlays_40 = hitArray;
-    int overlayDisplayDelay = getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xff;
-    effect.unused_36 = overlayDisplayDelay;
-
-    //LAB_801063f0
-    for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-      final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-      hitOverlay.unused_00 = 1;
-      hitOverlay.hitSuccessful_01 = false;
-      hitOverlay.shadowColour_08 = (short)0;
-      hitOverlay.frameSuccessLowerBound_10 = (short)(overlayDisplayDelay + 2);
-      hitOverlay.borderColoursArrayIndex_02 = 3;
-      hitOverlay.isCounter_1c = false;
-      additionHitCompletionState_8011a014[hitNum] = 0;
-      int hitProperty = getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff;
-      overlayDisplayDelay += hitProperty; // Display delay for each hit
-      hitOverlay.totalHitFrames_0a = (short)hitProperty;
-      hitProperty = getHitProperty(s5.charSlot_276, hitNum, 2, autoCompleteType) & 0xff;
-      hitOverlay.frameBeginDisplay_0c = (short)hitProperty;
-      hitProperty = getHitProperty(s5.charSlot_276, hitNum, 3, autoCompleteType) & 0xff;
-      hitOverlay.numSuccessFrames_0e = (short)hitProperty;
-      final int successFrameTarget = hitOverlay.frameSuccessLowerBound_10 + hitOverlay.frameBeginDisplay_0c;
-      hitOverlay.frameSuccessLowerBound_10 = (short)(successFrameTarget - hitOverlay.numSuccessFrames_0e / 2 + 1);
-      hitOverlay.frameSuccessUpperBound_12 = (short)(successFrameTarget + hitOverlay.numSuccessFrames_0e - hitOverlay.numSuccessFrames_0e / 2);
-
-      final AdditionOverlaysBorder0e[] borderArray = hitOverlay.borderArray_18;
-
-      //LAB_8010652c
-      if(Config.changeAdditionOverlayRgb()) {
-        final int counterRgb = Config.getCounterOverlayRgb();
-        final int additionRgb = Config.getAdditionOverlayRgb();
-        additionBorderColours_800fb7f0[6] = counterRgb & 0xff;
-        additionBorderColours_800fb7f0[7] = counterRgb >> 8 & 0xff;
-        additionBorderColours_800fb7f0[8] = counterRgb >> 16 & 0xff;
-        additionBorderColours_800fb7f0[9] = additionRgb & 0xff;
-        additionBorderColours_800fb7f0[10] = additionRgb >> 8 & 0xff;
-        additionBorderColours_800fb7f0[11] = additionRgb >> 16 & 0xff;
-      }
-
-      int val = 16;
-      for(int borderNum = 0; borderNum < 17; borderNum++) {
-        final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (18 - val) * 10;
-        borderOverlay.isVisible_00 = true;
-        //LAB_8010656c
-        //LAB_80106574
-        borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f);
-        borderOverlay.countFramesVisible_0c = 5;
-        borderOverlay.sideEffects_0d = 0;
-        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);
-        borderOverlay.r_04 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3];
-        borderOverlay.g_05 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3 + 1];
-        borderOverlay.b_06 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3 + 2];
-
-        val--;
-      }
-
-      //LAB_80106634
-      val = 0;
-      for(int borderNum = 16; borderNum >= 14; borderNum--) {
-        final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = 20 - val * 2;
-        borderOverlay.angleModifier_02 = 0.0f;
-        borderOverlay.countFramesVisible_0c = 0x11;
-        borderOverlay.framesUntilRender_0a = hitOverlay.frameSuccessLowerBound_10 - 17;
-
-        if(val != 0x1L) {
-          borderOverlay.r_04 = 0x30;
-          borderOverlay.g_05 = 0x30;
-          borderOverlay.b_06 = 0x30;
-          borderOverlay.sideEffects_0d = 1;
-        } else {
-          //LAB_80106680
-          borderOverlay.sideEffects_0d = -1;
-        }
-        //LAB_80106684
-        val++;
-      }
-    }
-
-    // These fields are not used for anything
-    //LAB_801066c8
-    getBentTranslation(effect.attackerScriptIndex_00, effect.attackerStartingPosition_10, 0);
-
-    final Vector3f targetStartingPosition = new Vector3f();
-    getBentTranslation(effect.targetScriptIndex_04, targetStartingPosition, 1);
-
-    final int firstHitSuccessLowerBound = effect.hitOverlays_40[0].frameSuccessLowerBound_10;
-    effect.distancePerFrame_20.x = (targetStartingPosition.x - effect.attackerStartingPosition_10.x) / firstHitSuccessLowerBound;
-    effect.distancePerFrame_20.y = (targetStartingPosition.y - effect.attackerStartingPosition_10.y) / firstHitSuccessLowerBound;
-    effect.distancePerFrame_20.z = (targetStartingPosition.z - effect.attackerStartingPosition_10.z) / firstHitSuccessLowerBound;
-  }
-
-  @Method(0x80106774L)
-  public static long fadeAdditionBorders(final AdditionOverlaysBorder0e square, final int fadeStep) {
-    int numberOfNegativeComponents = 0;
-    int newColour = square.r_04 - fadeStep;
-    final int newR;
-    if(newColour > 0) {
-      newR = newColour;
-    } else {
-      newR = 0;
-      numberOfNegativeComponents++;
-    }
-
-    //LAB_801067b0
-    newColour = square.g_05 - fadeStep;
-    final int newG;
-    if(newColour > 0) {
-      newG = newColour;
-    } else {
-      newG = 0;
-      numberOfNegativeComponents++;
-    }
-
-    //LAB_801067c4
-    newColour = square.b_06 - fadeStep;
-    final int newB;
-    if(newColour > 0) {
-      newB = newColour;
-    } else {
-      newB = 0;
-      numberOfNegativeComponents++;
-    }
-
-    //LAB_801067d8
-    square.r_04 = newR;
-    square.g_05 = newG;
-    square.b_06 = newB;
-    return numberOfNegativeComponents;
-  }
-
-  @Method(0x80106808L)
-  public static void renderAdditionCentreSolidSquare(final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20 hitOverlay, final int completionState, final EffectManagerData6c<?> manager) {
-    if(manager.params_10.flags_00 >= 0) {
-      final AdditionOverlaysBorder0e[] targetBorderArray = hitOverlay.borderArray_18;
-
-      //LAB_8010685c
-      for(int targetBorderNum = 0; targetBorderNum < 2; targetBorderNum++) {
-        final int squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8;
-
-        effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
-        effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms);
-
-        if(completionState == 1) {  // Success
-          model.monochrome(1.0f);
-        } else if(completionState != -2) {  // Too early
-          model.monochrome(0x30 / 255.0f);
-        } else if(hitOverlay.isCounter_1c) {  // Counter-attack too late
-          if(Config.changeAdditionOverlayRgb()) {
-            model.colour(additionBorderColours_800fb7f0[6] / 255.0f, additionBorderColours_800fb7f0[7] / 255.0f, (additionBorderColours_800fb7f0[8] * 8 - 2) * 8 / 255.0f);
-          } else {
-            model.colour(targetBorderArray[15].r_04 * 3 / 255.0f, targetBorderArray[15].g_05 / 255.0f, (targetBorderArray[15].b_06 - 1) * 8 / 255.0f);
-          }
-        } else {  // Too late
-          model.colour(targetBorderArray[15].r_04 / 255.0f, targetBorderArray[15].g_05 / 255.0f, targetBorderArray[15].b_06 / 255.0f);
-        }
-      }
-    }
-
-    //LAB_80106a4c
-  }
-
-  /** Renders the shadow on the inside of the innermost rotating border. */
-  @Method(0x80106ac4L)
-  public static void renderAdditionBorderShadow(final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20 hitOverlay, final float angle, final int borderSize) {
-    // Would you believe me if I said I knew what I was doing when I wrote any of this?
-    final int offset = borderSize - 1;
-    final float sin0 = MathHelper.sin(angle);
-    final float cos0 = MathHelper.cosFromSin(sin0, angle);
-    final float x0 = cos0 * offset / 2.0f;
-    final float y0 = sin0 * offset / 2.0f;
-    final int colour = hitOverlay.shadowColour_08 * 4;
-
-    effect.transforms.transfer.set(x0 + GPU.getOffsetX(), y0 + GPU.getOffsetY() + 30.0f, 124.0f);
-    effect.transforms
-      .scaling(10.0f, borderSize, 1.0f)
-      .rotateLocalZ(angle);
-
-    RENDERER.queueOrthoModel(effect.reticleBorderShadow, effect.transforms)
-      .monochrome(colour / 255.0f);
-  }
-
-  @Method(0x80106cccL)
-  public static void renderAdditionBorders(final AdditionOverlaysEffect44 effect, final int hitNum, final AdditionOverlaysHit20[] hitArray) {
-    final AdditionOverlaysBorder0e[] borderArray = hitArray[hitNum].borderArray_18;
-    final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
-
-    //LAB_80106d18
-    for(int borderNum = 0; borderNum < 17; borderNum++) {
-      final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-
-      if(borderOverlay.isVisible_00 && borderOverlay.framesUntilRender_0a <= 0) {
-        effect.transforms
-          .scaling(borderOverlay.size_08, borderOverlay.size_08, 1.0f)
-          .rotateZ(borderOverlay.angleModifier_02);
-        effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
-
-        final RenderEngine.QueuedModel<?> model;
-
-        // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
-        if((borderOverlay.sideEffects_0d == 0 || borderOverlay.sideEffects_0d == -1) && currentHitCompletionState >= 0) {
-          model = RENDERER.queueOrthoModel(RENDERER.lineBox, effect.transforms);
-        } else {
-          model = RENDERER.queueOrthoModel(RENDERER.lineBoxBPlusF, effect.transforms);
-        }
-
-        if(hitArray[hitNum].isCounter_1c && borderNum != 16) {
-          if(Config.changeAdditionOverlayRgb()) {
-            final int rgb = Config.getCounterOverlayRgb();
-
-            // Hack to get around lack of separate counterattack color field until full dememulation
-            final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0[9];
-            final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0[10];
-            final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0[11];
-
-            model.colour((rgb & 0xff) * rFactor / 255.0f, (rgb >> 8 & 0xff) * gFactor / 255.0f, (rgb >> 16 & 0xff) * bFactor / 255.0f);
-          } else {
-            model.colour(borderOverlay.r_04 * 3 / 255.0f, borderOverlay.g_05 / 255.0f, (borderOverlay.b_06 + 1) / 8.0f / 255.0f);
-          }
-        } else {
-          //LAB_80106e58
-          model.colour(borderOverlay.r_04 / 255.0f, borderOverlay.g_05 / 255.0f, borderOverlay.b_06 / 255.0f);
-        }
-
-        // Renders rotating shadow on innermost rotating border
-        if(borderOverlay.sideEffects_0d == 0) {
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08 * 2);
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08 * 2);
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
-        }
-      }
-      //LAB_80106fac
-    }
-  }
-
-  @Method(0x80107088L)
-  public static int tickBorderDisplay(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray) {
-    // Darken shadow color of innermost border of current hit
-    final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-    if(effect.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 - 0x11) {
-      hitOverlay.shadowColour_08 += 1;
-
-      if(hitOverlay.shadowColour_08 >= 0xe) {
-        hitOverlay.shadowColour_08 = 0xd;
-      }
-    }
-
-    //LAB_801070ec
-    final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
-    final AdditionOverlaysBorder0e[] borderArray = hitOverlay.borderArray_18;
-    int isRendered = 0;
-
-    //LAB_80107104
-    for(int borderNum = 0; borderNum < 17; borderNum++) {
-      final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-
-      // Fade shadow if hit failed, set invisible if border is within 0x20 of fully faded
-      if(currentHitCompletionState < 0) {
-        hitOverlay.shadowColour_08 -= 3;
-
-        if(hitOverlay.shadowColour_08 < 0) {
-          hitOverlay.shadowColour_08 = 0;
-        }
-
-        //LAB_80107134
-        if(fadeAdditionBorders(borderOverlay, 0x20) == 0x3L) {
-          borderOverlay.isVisible_00 = false;
-        }
-      }
-
-      //LAB_80107150
-      if(borderOverlay.isVisible_00) {
-        if(borderOverlay.framesUntilRender_0a > 0) {
-          borderOverlay.framesUntilRender_0a--;
-        } else {
-          //LAB_80107178
-          if(borderOverlay.sideEffects_0d != -1) {
-            borderOverlay.sideEffects_0d++;
-          }
-
-          //LAB_80107190
-          borderOverlay.countFramesVisible_0c--;
-          if(borderOverlay.countFramesVisible_0c == 0) {
-            borderOverlay.isVisible_00 = false;
-          }
-
-          //LAB_801071b0
-          // Fade rotating borders only
-          if(borderNum < 14) {
-            fadeAdditionBorders(borderOverlay, 0x4e);
-          }
-
-          isRendered = 1;
-        }
-      }
-      //LAB_801071c0
-    }
-
-    return isRendered;
-  }
-
-  /** If a hit is failed, flag all subsequent hits as failed as well */
-  @Method(0x801071fcL)
-  public static void propagateFailedAdditionHitFlag(final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray, int hitNum) {
-    final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
-    effect.additionComplete_32 = 1;
-
-    //LAB_80107234
-    hitNum += 1;
-    for(; hitNum < effect.count_30; hitNum++) {
-      final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-      hitOverlay.frameSuccessUpperBound_12 = -1;
-      hitOverlay.frameSuccessLowerBound_10 = -1;
-      hitOverlay.numSuccessFrames_0e = 0;
-      hitOverlay.frameBeginDisplay_0c = 0;
-      additionHitCompletionState_8011a014[hitNum] = currentHitCompletionState;
-    }
-    //LAB_80107264
-  }
-
-  @Method(0x8010726cL)
-  public static void renderAdditionOverlaysEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
-
-    if(effect.pauseTickerAndRenderer_31 != 1) {
-      if(data.params_10.flags_00 >= 0) {
-        final AdditionOverlaysHit20[] hitArray = effect.hitOverlays_40;
-
-        //LAB_801072c4
-        int hitNum;
-        for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            renderAdditionBorders((AdditionOverlaysEffect44)data.effect_44, hitNum, hitArray);
-          }
-        }
-
-        //LAB_801072f4
-        //LAB_8010730c
-        for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-          if(additionHitCompletionState_8011a014[hitNum] == 0) {
-            break;
-          }
-        }
-
-        //LAB_80107330
-        if(hitNum < effect.count_30) {
-          final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            renderAdditionButton(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - effect.currentFrame_34 - 1, hitOverlay.isCounter_1c);
-          }
-
-          final byte currentFrame = (byte)effect.currentFrame_34;
-          if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
-            if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
-              renderAdditionCentreSolidSquare(effect, hitOverlay, -2, data);
-            }
-          }
-        }
-      }
-    }
-    //LAB_801073b4
-  }
-
-  @Method(0x801073d4L)
-  public static void tickAdditionOverlaysEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
-
-    if(effect.pauseTickerAndRenderer_31 == 0) {
-      final AdditionOverlaysHit20[] hitArray = effect.hitOverlays_40;
-      effect.currentFrame_34++;
-
-      //LAB_80107440
-      int hitNum;
-      int hitFailed = 1;
-      for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-        // Catch too late failure when no button pressed
-        if(effect.currentFrame_34 == hitArray[hitNum].frameSuccessUpperBound_12 + 1) {
-          if(additionHitCompletionState_8011a014[hitNum] == 0) {
-            additionHitCompletionState_8011a014[hitNum] = -2;
-            propagateFailedAdditionHitFlag(effect, hitArray, hitNum);
-
-            //LAB_80107478
-          }
-        } else if(additionHitCompletionState_8011a014[hitNum] == 0) {
-          hitFailed = 0;
-        }
-        //LAB_8010748c
-      }
-
-      //LAB_801074a8
-      if(hitFailed != 0) {
-        propagateFailedAdditionHitFlag(effect, hitArray, hitNum);
-      }
-
-      //LAB_801074bc
-      int numberBordersRendering = 0;
-
-      //LAB_801074d0
-      for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-        numberBordersRendering += tickBorderDisplay(hitArray[hitNum].borderColoursArrayIndex_02, hitNum, effect, hitArray);
-      }
-
-      //LAB_80107500
-      // If addition is complete and there are no more visible overlays to render, deallocate effect
-      if(numberBordersRendering == 0 && effect.additionComplete_32 != 0) {
-        additionOverlayActive_80119f41 = 0;
-
-        //LAB_8010752c
-        for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-          hitArray[hitNum].borderArray_18 = null;
-        }
-
-        //LAB_80107554
-        state.deallocateWithChildren();
-      } else {
-        //LAB_8010756c
-        if(effect.currentFrame_34 >= 9) {
-          //LAB_80107598
-          for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
-            if(additionHitCompletionState_8011a014[hitNum] == 0) {
-              break;
-            }
-          }
-
-          //LAB_801075bc
-          if(hitNum < effect.count_30) {
-            final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-
-            if(state.storage_44[8] != 0) {
-              hitOverlay.isCounter_1c = true;
-              state.storage_44[8] = 0;
-            }
-
-            //LAB_801075e8
-            if(effect.autoCompleteType_3a < 1 || effect.autoCompleteType_3a > 2) {
-              //LAB_8010763c
-              if(effect.autoCompleteType_3a != 3) {
-                final int buttonType;
-                if(!hitOverlay.isCounter_1c) {
-                  buttonType = 0x20;
-                } else {
-                  buttonType = 0x40;
-                }
-
-                //LAB_80107664
-                final int buttonPressed = press_800bee94;
-
-                if((buttonPressed & 0x60) != 0) {
-                  additionHitCompletionState_8011a014[hitNum] = -1;
-
-                  if((buttonPressed & buttonType) == 0 || (buttonPressed & ~buttonType) != 0) {
-                    //LAB_801076d8
-                    //LAB_801076dc
-                    additionHitCompletionState_8011a014[hitNum] = -3;
-                  } else if(effect.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && effect.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
-                    additionHitCompletionState_8011a014[hitNum] = 1;
-                    hitOverlay.hitSuccessful_01 = true;
-                  }
-
-                  //LAB_801076f0
-                  if(additionHitCompletionState_8011a014[hitNum] < 0) {
-                    propagateFailedAdditionHitFlag(effect, hitArray, hitNum);
-                  }
-
-                  //LAB_80107718
-                  //LAB_8010771c
-                  effect.numFramesToRenderCenterSquare_38 = 2;
-                  effect.lastCompletedHit_39 = hitNum;
-                }
-              }
-            } else {  // Auto-complete
-              if(effect.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && effect.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
-                additionHitCompletionState_8011a014[hitNum] = 1;
-                hitOverlay.hitSuccessful_01 = true;
-
-                //LAB_8010771c
-                effect.numFramesToRenderCenterSquare_38 = 2;
-                effect.lastCompletedHit_39 = hitNum;
-              }
-            }
-          }
-
-          //LAB_80107728
-          if(effect.numFramesToRenderCenterSquare_38 != 0) {
-            effect.numFramesToRenderCenterSquare_38--;
-            if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
-              renderAdditionCentreSolidSquare(effect, effect.hitOverlays_40[effect.lastCompletedHit_39], additionHitCompletionState_8011a014[effect.lastCompletedHit_39], data);
-            }
-          }
-        }
-      }
-    }
-    //LAB_80107764
   }
 
   @ScriptDescription("Gets the success or failure of the addition hit")
@@ -2603,16 +1193,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x801077e8L)
   public static FlowControl scriptAllocateAdditionOverlaysEffect(final RunningScript<? extends BattleObject> script) {
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "Addition overlays",
-      script.scriptState_04,
-      SEffe::tickAdditionOverlaysEffect,
-      SEffe::renderAdditionOverlaysEffect,
-      (state1, manager) -> ((AdditionOverlaysEffect44)manager.effect_44).reticleBorderShadow.delete(),
-      new AdditionOverlaysEffect44()
-    );
-
-    initializeAdditionOverlaysEffect(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)state.innerStruct_00.effect_44, script.params_20[2].get());
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Addition overlays", script.scriptState_04, new AdditionOverlaysEffect44(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
     state.storage_44[8] = 0; // Storage for counterattack state
     script.params_20[4].set(state.index);
     additionOverlayActive_80119f41 = 1;
@@ -2636,8 +1217,10 @@ public final class SEffe {
       //LAB_80107924
       effect.pauseTickerAndRenderer_31 = effect.pauseTickerAndRenderer_31 < 1 ? 1 : 0;
       return FlowControl.CONTINUE;
-      //LAB_80107910
-    } else if(additionContinuationState == 2) {
+    }
+
+    //LAB_80107910
+    if(additionContinuationState == 2) {
       //LAB_80107984
       //LAB_80107994
       effect.pauseTickerAndRenderer_31 = effect.pauseTickerAndRenderer_31 < 1 ? 2 : 0;
@@ -2645,15 +1228,7 @@ public final class SEffe {
     }
 
     //LAB_80107930
-    effect.additionComplete_32 = additionContinuationState;
-
-    //LAB_80107954
-    final AdditionOverlaysHit20[] hitArray = effect.hitOverlays_40;
-    for(int hitNum = 0; hitNum < effect.count_30; hitNum++) {
-      hitArray[hitNum].frameSuccessLowerBound_10 = 0;
-      hitArray[hitNum].frameSuccessUpperBound_12 = 0;
-      additionHitCompletionState_8011a014[hitNum] = -1;
-    }
+    effect.setContinuationState(additionContinuationState);
 
     //LAB_80107998
     //LAB_8010799c
@@ -3071,70 +1646,8 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x80108df8L)
   public static FlowControl FUN_80108df8(final RunningScript<? extends BattleObject> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown (FUN_80108df8)", script.scriptState_04, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_80108df8)", script.scriptState_04, null).index);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x80108e40L)
-  public static void renderRainEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final RainEffect08 effect = (RainEffect08)data.effect_44;
-    final RaindropEffect0c[] rainArray = effect.raindropArray_04;
-
-    if(effect.obj == null) {
-      effect.obj = new PolyBuilder("Rain effect", GL_TRIANGLE_STRIP)
-        .addVertex(0.0f, 0.0f, 0.0f)
-        .monochrome(0.0f)
-        .addVertex(1.0f, 0.0f, 0.0f)
-        .monochrome(0.0f)
-        .addVertex(0.0f, 1.0f, 0.0f)
-        .monochrome(1.0f)
-        .addVertex(1.0f, 1.0f, 0.0f)
-        .monochrome(1.0f)
-        .build();
-    }
-
-    //LAB_80108e84
-    for(int i = 0; i < effect.count_00; i++) {
-      if(Math.abs(Math.abs(rainArray[i].pos0_02.y + rainArray[i].pos0_02.x) - Math.abs(rainArray[i].pos1_06.y + rainArray[i].pos1_06.x)) <= 180) {
-        final float offsetX = GPU.getOffsetX() - 256;
-        final float offsetY = GPU.getOffsetY() - 128;
-        rainArray[i].pos0_02.add(offsetX, offsetY);
-        rainArray[i].pos1_06.add(offsetX, offsetY);
-        RENDERER.queueLine(effect.obj, effect.transforms, 120.0f, rainArray[i].pos1_06, rainArray[i].pos0_02)
-          .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
-          .colour(data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f);
-        rainArray[i].pos0_02.sub(offsetX, offsetY);
-        rainArray[i].pos1_06.sub(offsetX, offsetY);
-      }
-      //LAB_80108f6c
-    }
-    //LAB_80108f84
-  }
-
-  @Method(0x80109000L)
-  public static void tickRainEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final RainEffect08 effect = (RainEffect08)data.effect_44;
-    final RaindropEffect0c[] rainArray = effect.raindropArray_04;
-
-    //LAB_80109038
-    for(int i = 0; i < effect.count_00; i++) {
-      final int endpointShiftX = (int)(MathHelper.sin(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].speed_0a);
-      final int endpointShiftY = (int)(MathHelper.cos(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].speed_0a);
-      rainArray[i].pos1_06.x = rainArray[i].pos0_02.x;
-      rainArray[i].pos1_06.y = rainArray[i].pos0_02.y;
-      rainArray[i].pos0_02.x = (rainArray[i].pos0_02.x + endpointShiftX) % 512;
-      rainArray[i].pos0_02.y = (rainArray[i].pos0_02.y + endpointShiftY) % 256;
-    }
-    //LAB_80109110
-  }
-
-  public static void deallocateRainEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final RainEffect08 effect = (RainEffect08)data.effect_44;
-
-    if(effect.obj != null) {
-      effect.obj.delete();
-      effect.obj = null;
-    }
   }
 
   @ScriptDescription("Allocates a rain effect")
@@ -3143,17 +1656,9 @@ public final class SEffe {
   @Method(0x80109158L)
   public static FlowControl scriptAllocateRainEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "RainEffect08",
-      script.scriptState_04,
-      SEffe::tickRainEffect,
-      SEffe::renderRainEffect,
-      SEffe::deallocateRainEffect,
-      new RainEffect08(count)
-    );
-
+    final RainEffect08 effect = new RainEffect08(count);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("RainEffect08", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final RainEffect08 effect = (RainEffect08)manager.effect_44;
     manager.params_10.flags_00 = 0x5000_0000;
 
     //LAB_80109204
@@ -3170,149 +1675,15 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Used in burning wave, psych bomb */
-  @Method(0x80109358L)
-  public static void renderScreenDistortionWaveEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
-
-    // Dunno why these actually need to be truncated instead of fractions, but it breaks the effect otherwise
-    final float multiplierX = (int)(data.params_10.scale_16.x * 0x1000) >> 8;
-    final float multiplierHeight = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
-    final float rowLimit = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
-
-    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
-    final float fullWidth;
-    if(widescreen) {
-      fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
-    } else {
-      fullWidth = displayWidth_1f8003e0;
-    }
-
-    final float extraWidth = fullWidth - displayWidth_1f8003e0;
-    final float inverseScreenHeight = 1.0f / 240.0f;
-
-    final PolyBuilder builder = new PolyBuilder("Wave effect", GL_TRIANGLES)
-      .bpp(Bpp.BITS_24)
-      .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3));
-
-    //LAB_801093f0
-    // whichHalf: 1 = bottom, -1 = top
-    for(int whichHalf = 1; whichHalf >= -1; whichHalf -= 2) {
-      float angle1 = effect.angle_00;
-      float angle2 = effect.angle_00;
-      float rowOffset = whichHalf == 1 ? 0.0f : -1.0f;
-      int v = whichHalf == 1 ? 120 : 119;
-
-      //LAB_80109430
-      //LAB_8010944c
-      while(whichHalf == -1 && rowOffset > -rowLimit || whichHalf == 1 && rowOffset < rowLimit) {
-        float height = (MathHelper.sin(angle1) + 1.0f) * multiplierHeight + 1.0f;
-
-        if((int)height == 0.0f) {
-          height = 1.0f;
-        }
-
-        //LAB_8010949c
-        //LAB_801094b8
-        for(int row = 0; row < (int)height; row++) {
-          final int x = (int)(MathHelper.sin(angle2) * multiplierX);
-          final int y = (int)(row * whichHalf + rowOffset);
-
-          addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f);
-
-          angle2 += whichHalf * 0.05f;
-        }
-
-        //LAB_80109678
-        angle1 += height * 0.05f;
-        v += whichHalf;
-        rowOffset += height * whichHalf;
-      }
-    }
-
-    effect.transforms.scaling(fullWidth, 1.0f, 1.0f);
-    effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
-
-    final Obj obj = builder.build();
-    obj.delete();
-    RENDERER.queueOrthoModel(obj, effect.transforms)
-      .texture(RENDERER.getLastFrame());
-  }
-
-  private static void addLineToEffect(final PolyBuilder builder, final float x, final float y, final float v, final float r, final float g, final float b) {
-    builder
-      .addVertex(0.0f, y, 0.0f)
-      .uv(x / 320.0f, v)
-      .rgb(r, g, b)
-      .addVertex(1.0f, y, 0.0f)
-      .uv(x / 320.0f + 1.0f, v)
-      .rgb(r, g, b)
-      .addVertex(0.0f, y + 1.0f, 0.0f)
-      .uv(x / 320.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b)
-      .addVertex(1.0f, y, 0.0f)
-      .uv(x / 320.0f + 1.0f, v)
-      .rgb(r, g, b)
-      .addVertex(0.0f, y + 1.0f, 0.0f)
-      .uv(x / 320.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b)
-      .addVertex(1.0f, y + 1.0f, 0.0f)
-      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b);
-  }
-
-  @Method(0x801097e0L)
-  public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
-
-    // Make sure effect fills the whole screen
-    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
-    final float fullWidth;
-    if(widescreen) {
-      fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
-    } else {
-      fullWidth = displayWidth_1f8003e0;
-    }
-
-    final float extraWidth = fullWidth - displayWidth_1f8003e0;
-    effect.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-    effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
-
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, effect.transforms)
-      .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
-      .colour(data.params_10.colour_1c.x / 128.0f, data.params_10.colour_1c.y / 128.0f, data.params_10.colour_1c.z / 128.0f)
-      .texture(RENDERER.getLastFrame());
-  }
-
-  @Method(0x80109a4cL)
-  public static void FUN_80109a4c(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
-    effect.angle_00 += effect.angleStep_04;
-  }
-
-  @Method(0x80109a6cL)
-  public static void tickScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    // no-op
-  }
-
   @ScriptDescription("Allocates a screen distortion effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "angleStep", description = "The amount to rotate each frame (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The distortion type")
   @Method(0x80109a7cL)
   public static FlowControl scriptAllocateScreenDistortionEffect(final RunningScript<? extends BattleObject> script) {
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "Screen distortion",
-      script.scriptState_04,
-      // Ticker and renderer are swapped for some reason
-      screenDistortionEffectRenderers_80119fd4[script.params_20[2].get()],
-      screenDistortionEffectTickers_80119fe0[script.params_20[2].get()],
-      null,
-      new ScreenDistortionEffectData08()
-    );
-
+    final ScreenDistortionEffectData08 effect = new ScreenDistortionEffectData08(script.params_20[2].get());
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen distortion", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)manager.effect_44;
     effect.angle_00 = MathHelper.PI;
     effect.angleStep_04 = MathHelper.psxDegToRad(script.params_20[1].get());
     manager.params_10.flags_00 = 0x4000_0000;
@@ -3376,44 +1747,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Code deleted from LAB_8010a130. Condition variable was set from script, and value
-   * was hardcoded to 0 so that the code in the condition was never run.
-   */
-  @Method(0x80109fc4L)
-  public static void FUN_80109fc4(final ScriptState<EffectManagerData6c<EffectManagerParams.FrozenJetType>> state, final EffectManagerData6c<EffectManagerParams.FrozenJetType> manager) {
-    final FrozenJetEffect28 effect = (FrozenJetEffect28)manager.effect_44;
-    int s1 = effect._18;
-
-    //LAB_8010a020
-    outer:
-    while(true) {
-      int s4 = effect._1a + (s1 << 11);
-      s1++;
-
-      //LAB_8010a04c
-      for(int s2 = 1; s2 < effect._18 - 1; s2++) {
-        if(s1 >= effect.vertices_0c.length - effect._18) {
-          break outer;
-        }
-
-        final Vector3f sp0x10 = new Vector3f(effect.verticesCopy_1c[s1]);
-        sp0x10.y += rsin(s4) * (manager.params_10._28 << 10 >> 8) >> 12;
-        effect.vertices_0c[s1].set(sp0x10);
-        s4 += 0x1000 / effect._18 / manager.params_10._2c >> 8;
-        s1++;
-      }
-
-      //LAB_8010a124
-      s1++;
-    }
-
-    //LAB_8010a130
-    //LAB_8010a15c
-    //LAB_8010a374
-    effect._1a += (short)(manager.params_10._24 << 7 >> 8);
-  }
-
   @ScriptDescription("Allocates a frozen jet effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "tmdDeffIndex", description = "The effect index of the model to use")
@@ -3430,9 +1763,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.FrozenJetType>> state = allocateEffectManager(
       "FrozenJetEffect28",
       script.scriptState_04,
-      SEffe::FUN_80109fc4,
-      null,
-      null,
       new FrozenJetEffect28(tmd.vert_top_00, tmd.primitives_10, s4, sp18 & 0xff),
       new EffectManagerParams.FrozenJetType()
     );
@@ -3461,17 +1791,9 @@ public final class SEffe {
   public static FlowControl scriptAllocateGradientRaysEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "GradientRaysEffect24",
-      script.scriptState_04,
-      SEffe::gradientRaysEffectTicker,
-      SEffe::gradientRaysEffectRenderer,
-      null,
-      new GradientRaysEffect24(count)
-    );
-
+    final GradientRaysEffect24 effect = new GradientRaysEffect24(count);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GradientRaysEffect24", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final GradientRaysEffect24 effect = (GradientRaysEffect24)manager.effect_44;
     effect._08 = script.params_20[2].get();
     effect._0c = script.params_20[3].get();
     effect._10 = script.params_20[4].get();
@@ -3509,185 +1831,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Used in Rose transform */
-  @Method(0x8010a860L)
-  public static void renderGradientRay(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final GradientRaysEffectInstance04 gradientRay) {
-    final Vector3f sp0x38 = new Vector3f();
-    final Vector3f sp0x40 = new Vector3f();
-    final Vector3f sp0x48 = new Vector3f();
-    final Vector3f sp0x50 = new Vector3f();
-    final Vector2f xy0 = new Vector2f();
-    final Vector2f xy1 = new Vector2f();
-    final Vector2f xy2 = new Vector2f();
-    final Vector2f xy3 = new Vector2f();
-
-    final MV sp0x80 = new MV();
-    final MV sp0xa0 = new MV();
-    final MV sp0xc0 = new MV();
-
-    final GradientRaysEffect24 effect = (GradientRaysEffect24)manager.effect_44;
-
-    //LAB_8010a968
-    if((effect.flags_18 & 0x4) == 0) {
-      if(effect._10 * 2 < gradientRay._02 * effect._08) {
-        sp0x40.y = -effect._10;
-        sp0x48.y = -effect._10;
-        sp0x50.y = -effect._10 * 2.0f;
-      } else {
-        //LAB_8010a9ec
-        sp0x40.y = gradientRay._02 * -effect._08 / 2.0f;
-        sp0x48.y = gradientRay._02 * -effect._08 / 2.0f;
-        sp0x50.y = gradientRay._02 * -effect._08;
-      }
-
-      //LAB_8010aa34
-      sp0x40.z = effect._0c;
-      sp0x48.z = -effect._0c;
-    }
-
-    //LAB_8010aa54
-    final Vector3f translation = new Vector3f(0.0f, gradientRay._02 * effect._08, 0.0f);
-    final Vector3f rotation = new Vector3f(gradientRay.angle_00, 0.0f, 0.0f);
-    sp0xa0.rotationXYZ(rotation);
-    sp0x80.transfer.set(translation);
-    sp0x80.compose(sp0xa0, sp0xc0);
-    calculateEffectTransforms(sp0x80, manager);
-
-    if((manager.params_10.flags_00 & 0x400_0000) == 0) {
-      sp0x80.compose(worldToScreenMatrix_800c3548, sp0xa0);
-      sp0xa0.rotationXYZ(manager.params_10.rot_10);
-      sp0xc0.compose(sp0xa0, sp0xc0);
-      GTE.setTransforms(sp0xc0);
-    } else {
-      //LAB_8010ab10
-      sp0xc0.compose(sp0x80, sp0xa0);
-      sp0xa0.compose(worldToScreenMatrix_800c3548, sp0x80);
-      GTE.setTransforms(sp0x80);
-    }
-
-    //LAB_8010ab34
-    final float z = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, xy0, xy1, xy2, xy3);
-    if(z >= effect.projectionPlaneDistanceDiv4_20) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .translucent(Translucency.B_PLUS_F);
-
-      if(effect.type_1c == 1) {
-        //LAB_8010abf4
-        final int v0 = (0x80 - gradientRay._02) * manager.params_10.colour_1c.x / 0x80;
-        final int v1 = (short)v0 / 2;
-
-        cmd
-          .monochrome(0, 0)
-          .monochrome(1, 0)
-          .rgb(2, v0, v1, v1)
-          .rgb(3, v0, v1, v1);
-      } else if(effect.type_1c == 2) {
-        //LAB_8010ac68
-        final short s3 = (short)(FUN_8010b058(gradientRay._02) * manager.params_10.colour_1c.x * 8 / 0x80);
-        final short s2 = (short)(FUN_8010b0dc(gradientRay._02) * manager.params_10.colour_1c.y * 8 / 0x80);
-        final short a2 = (short)(FUN_8010b160(gradientRay._02) * manager.params_10.colour_1c.z * 8 / 0x80);
-
-        cmd
-          .monochrome(0, 0)
-          .rgb(1, s3 / 2, s2 / 2, a2 / 2)
-          .rgb(2, s3 / 2, s2 / 2, a2 / 2)
-          .rgb(3, s3, s2, a2);
-      }
-
-      //LAB_8010ad68
-      //LAB_8010ad6c
-      cmd
-        .pos(0, xy0.x, xy0.y)
-        .pos(1, xy1.x, xy1.y)
-        .pos(2, xy2.x, xy2.y)
-        .pos(3, xy3.x, xy3.y);
-
-      GPU.queueCommand(z / 4.0f, cmd);
-    }
-
-    //LAB_8010ae18
-  }
-
-  @Method(0x8010ae40L)
-  public static void gradientRaysEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)data.effect_44;
-
-    //LAB_8010ae80
-    for(int i = 0; i < rayEffect.count_04; i++) {
-      final GradientRaysEffectInstance04 ray = rayEffect.rays_00[i];
-
-      if((rayEffect.flags_18 & 0x1) == 0) {
-        //LAB_8010aee8
-        ray._02 += (short)rayEffect._14;
-
-        if((rayEffect.flags_18 & 0x2) != 0 && ray._02 >= 0x80) {
-          ray._02 = 0x80;
-        } else {
-          //LAB_8010af28
-          //LAB_8010af3c
-          ray._02 %= 0x80;
-        }
-      } else {
-        ray._02 -= (short)rayEffect._14;
-
-        if((rayEffect.flags_18 & 0x2) != 0 && ray._02 <= 0) {
-          ray._02 = 0;
-        } else {
-          //LAB_8010aecc
-          ray._02 += 0x80;
-          ray._02 %= 0x80;
-        }
-      }
-      //LAB_8010af4c
-    }
-    //LAB_8010af64
-  }
-
-  @Method(0x8010af6cL)
-  public static void gradientRaysEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    if(manager.params_10.flags_00 >= 0) {
-      final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)manager.effect_44;
-
-      //LAB_8010afcc
-      for(int i = 0; i < rayEffect.count_04; i++) {
-        renderGradientRay(manager, rayEffect.rays_00[i]);
-      }
-    }
-
-    //LAB_8010aff0
-  }
-
-  @Method(0x8010b058L)
-  public static short FUN_8010b058(final short a0) {
-    //LAB_8010b06c
-    return (short)switch(a0 / 0x10) {
-      case 0, 1, 6 -> 0x10;
-      case 2, 7 -> 0x10 - a0 % 0x10;
-      case 5 -> a0 % 0x10;
-      default -> 0;
-    };
-  }
-
-  @Method(0x8010b0dcL)
-  public static short FUN_8010b0dc(final short a0) {
-    //LAB_8010b0f0
-    return (short)switch(a0 / 0x10) {
-      case 0, 4, 5 -> 0x10;
-      case 1, 6 -> 0x10 - a0 % 0x10;
-      case 3 -> a0 % 0x10;
-      default -> 0;
-    };
-  }
-
-  @Method(0x8010b160L)
-  public static short FUN_8010b160(final short a0) {
-    return (short)switch(a0 / 0x10) {
-      case 0, 1, 2, 3 -> 0x10L;
-      case 4 -> 0x10 - a0 % 0x10;
-      default -> 0;
-    };
-  }
-
   /** Used for Death Dimension, Melbu's screenshot attack, and Kubila's demon frog, possibly other unknown effects */
   @ScriptDescription("Allocates a screen capture effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
@@ -3699,23 +1842,15 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010b1d8L)
   public static FlowControl scriptAllocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "Screen capture",
-      script.scriptState_04,
-      null,
-      SEffe::renderScreenCaptureEffect,
-      null,
-      new ScreenCaptureEffect1c()
-    );
-
+    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c();
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen capture", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
     effect.captureW_04 = script.params_20[4].get();
     effect.captureH_08 = script.params_20[5].get();
     effect.rendererIndex_0c = script.params_20[6].get();
     effect.screenspaceW_10 = 0;
     script.params_20[0].set(state.index);
-    FUN_8010c2e0(effect.metrics_00, script.params_20[1].get());
+    effect.setDeff(script.params_20[1].get());
 
     final int v0 = effect.rendererIndex_0c;
     if(v0 == 0) {
@@ -3753,275 +1888,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8010b594L)
-  public static void renderImagoInstantDeathCapture(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
-    int a0;
-    int a1;
-
-    final Vector3i rgb = new Vector3i();
-
-    if((manager.params_10.flags_00 & 0x40) != 0) {
-      final Vector3f normal = new Vector3f();
-      _800fb8d0.mul(transforms, normal);
-      normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      GTE.normalColour(normal, 0xffffff, rgb);
-    } else {
-      //LAB_8010b6c8
-      rgb.set(0x80, 0x80, 0x80);
-    }
-
-    //LAB_8010b6d8
-    rgb.x = rgb.x * manager.params_10.colour_1c.x / 128;
-    rgb.y = rgb.y * manager.params_10.colour_1c.y / 128;
-    rgb.z = rgb.z * manager.params_10.colour_1c.z / 128;
-
-    //LAB_8010b764
-    for(int i = 0; i < 8; i++) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .rgb(rgb.x, rgb.y, rgb.z);
-
-      switch(i) {
-        case 1, 2, 4, 7 -> {
-          final Vector3f vert0 = new Vector3f();
-          final Vector3f vert1 = new Vector3f();
-          final Vector3f vert2 = new Vector3f();
-          final Vector2f sxy0 = new Vector2f();
-          final Vector2f sxy1 = new Vector2f();
-          final Vector2f sxy2 = new Vector2f();
-
-          //LAB_8010b80c
-          if(i == 1 || i == 4) {
-            //LAB_8010b828
-            a0 = i & 0x3;
-            vert1.z = (a0 - 2) * effect.screenspaceW_10 / 4.0f;
-            vert0.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
-            vert2.z = vert0.z;
-            a0 = i >> 2;
-            vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
-            vert1.y = a0 * effect.screenspaceH_14 / 2.0f;
-            vert2.y = vert1.y;
-            final int u = (i >> 1) * 64;
-            final int v = (i & 0x1) * 32;
-
-            cmd
-              .uv(0, u, v + effect.captureW_04 / 4 - 1)
-              .uv(1, v, u + effect.captureH_08 / 2 - 1)
-              .uv(2, v + effect.captureW_04 / 4 - 1, u + effect.captureH_08 / 2 - 1);
-          } else {
-            //LAB_8010b8c8
-            a0 = i & 0x3;
-            vert1.z = (a0 - 2) * effect.screenspaceW_10 / 4.0f;
-            vert0.z = vert1.z;
-            vert2.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
-            a0 = i >> 2;
-            vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
-            vert2.y = a0 * effect.screenspaceH_14 / 2.0f;
-            vert1.y = vert2.y;
-            final int u = (i & 1) * 32;
-            final int v = (i >> 1) * 64;
-
-            cmd
-              .uv(0, u, v)
-              .uv(1, u, v + effect.captureH_08 / 2 - 1)
-              .uv(2, u + effect.captureW_04 / 4 - 1, v + effect.captureH_08 / 2 - 1);
-          }
-
-          //LAB_8010b9a4
-          final float z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
-
-          if(effect.screenspaceW_10 == 0) {
-            //LAB_8010b638
-            final float sp8c = getProjectionPlaneDistance();
-            final float zShift = z * 4;
-            effect.screenspaceW_10 = effect.captureW_04 * zShift / sp8c;
-            effect.screenspaceH_14 = effect.captureH_08 * zShift / sp8c;
-            break;
-          }
-
-          final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-          cmd
-            .bpp(Bpp.BITS_15)
-            .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) == 0 ? 0 : 256)
-            .pos(0, sxy0.x, sxy0.y)
-            .pos(1, sxy1.x, sxy1.y)
-            .pos(2, sxy2.x, sxy2.y);
-
-          GPU.queueCommand(z / 4.0f, cmd);
-        }
-
-        case 5, 6 -> {
-          final Vector3f vert0 = new Vector3f();
-          final Vector3f vert1 = new Vector3f();
-          final Vector3f vert2 = new Vector3f();
-          final Vector3f vert3 = new Vector3f();
-          final Vector2f sxy0 = new Vector2f();
-          final Vector2f sxy1 = new Vector2f();
-          final Vector2f sxy2 = new Vector2f();
-          final Vector2f sxy3 = new Vector2f();
-
-          a0 = i & 0x3;
-          a1 = i >> 2;
-          vert2.z = (a0 - 2) * effect.screenspaceW_10 / 4.0f;
-          vert0.z = vert2.z;
-          vert1.y = (a1 - 1) * effect.screenspaceH_14 / 2.0f;
-          vert0.y = vert1.y;
-          vert3.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
-          vert1.z = vert3.z;
-          vert3.y = a1 * effect.screenspaceH_14 / 2.0f;
-          vert2.y = vert3.y;
-          final float z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
-
-          if(effect.screenspaceW_10 == 0) {
-            //LAB_8010b664
-            final float sp90 = getProjectionPlaneDistance();
-            final float z2 = z * 4.0f;
-
-            //LAB_8010b688
-            effect.screenspaceW_10 = effect.captureW_04 * z2 / sp90;
-            effect.screenspaceH_14 = effect.captureH_08 * z2 / sp90;
-            break;
-          }
-
-          final int u = (i & 0x1) * 32;
-          final int v = (i >> 1) * 64;
-          final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-          GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
-            .bpp(Bpp.BITS_15)
-            .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
-            .rgb(rgb.x, rgb.y, rgb.z)
-            .pos(0, sxy0.x, sxy0.y)
-            .pos(1, sxy1.x, sxy1.y)
-            .pos(2, sxy2.x, sxy2.y)
-            .pos(3, sxy3.x, sxy3.y)
-            .uv(0, u, v)
-            .uv(1, u + effect.captureW_04 / 4 - 1, v)
-            .uv(2, u, v + effect.captureH_08 / 2 - 1)
-            .uv(3, u + effect.captureW_04 / 4 - 1, v + effect.captureH_08 / 2 - 1)
-          );
-        }
-      }
-    }
-
-    //LAB_8010bc40
-  }
-
-  @Method(0x8010bc60L)
-  public static void renderScreenCapture(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
-    final Vector3i rgb = new Vector3i();
-
-    if((manager.params_10.flags_00 & 0x40) != 0) {
-      final Vector3f normal = new Vector3f();
-      _800fb8d0.mul(transforms, normal);
-      normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      GTE.normalColour(normal, 0xffffff, rgb);
-    } else {
-      //LAB_8010bd6c
-      rgb.set(0x80, 0x80, 0x80);
-    }
-
-    //LAB_8010bd7c
-    rgb.x = rgb.x * manager.params_10.colour_1c.x / 128;
-    rgb.y = rgb.y * manager.params_10.colour_1c.y / 128;
-    rgb.z = rgb.z * manager.params_10.colour_1c.z / 128;
-
-    //LAB_8010be14
-    for(int s0 = 0; s0 < 15; s0++) {
-      final Vector3f sp0x28 = new Vector3f();
-      final Vector3f sp0x30 = new Vector3f();
-      final Vector3f sp0x38 = new Vector3f();
-      final Vector3f sp0x40 = new Vector3f();
-
-      final int a0 = s0 % 5;
-      float v1 = effect.screenspaceW_10;
-      float v0 = a0 * v1 / 5 - v1 / 2;
-      sp0x28.z = v0;
-      sp0x38.z = v0;
-
-      final int a1 = s0 / 5;
-      v1 = effect.screenspaceH_14;
-      v0 = a1 * v1 / 3 - v1 / 2;
-      sp0x28.y = v0;
-      sp0x30.y = v0;
-
-      v1 = effect.screenspaceW_10;
-      v0 = (a0 + 1) * v1 / 5 - v1 / 2;
-      sp0x30.z = v0;
-      sp0x40.z = v0;
-
-      v1 = effect.screenspaceH_14;
-      v0 = (a1 + 1) * v1 / 3 - v1 / 2;
-      sp0x38.y = v0;
-      sp0x40.y = v0;
-
-      final Vector2f sxy0 = new Vector2f();
-      final Vector2f sxy1 = new Vector2f();
-      final Vector2f sxy2 = new Vector2f();
-      final Vector2f sxy3 = new Vector2f();
-      final float z = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sxy0, sxy1, sxy2, sxy3);
-
-      if(effect.screenspaceW_10 == 0) {
-        //LAB_8010bd08
-        final float sp8c = getProjectionPlaneDistance();
-        final float zShift = z * 4.0f;
-        effect.screenspaceW_10 = effect.captureW_04 * zShift / sp8c;
-        effect.screenspaceH_14 = effect.captureH_08 * zShift / sp8c;
-        break;
-      }
-
-      final int leftU = s0 % 2 * 32;
-      final int topV = s0 / 2 * 32;
-      final int rightU = leftU + effect.captureW_04 / 5 - 1;
-      final int bottomV = topV + effect.captureH_08 / 3 - 1;
-
-      final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-      GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_15)
-        .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
-        .rgb(rgb.x, rgb.y, rgb.z)
-        .pos(0, sxy0.x, sxy0.y)
-        .pos(1, sxy1.x, sxy1.y)
-        .pos(2, sxy2.x, sxy2.y)
-        .pos(3, sxy3.x, sxy3.y)
-        .uv(0, leftU, topV)
-        .uv(1, rightU, topV)
-        .uv(2, leftU, bottomV)
-        .uv(3, rightU, bottomV)
-      );
-    }
-
-    //LAB_8010c0f0
-  }
-
-  @Method(0x8010c114L)
-  public static void renderScreenCaptureEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final MV transforms = new MV();
-
-    if(manager.params_10.flags_00 >= 0) {
-      final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
-      calculateEffectTransforms(transforms, manager);
-      transforms.compose(worldToScreenMatrix_800c3548);
-      screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, effect, transforms);
-    }
-
-    //LAB_8010c278
-  }
-
-  @Method(0x8010c2e0L)
-  public static void FUN_8010c2e0(final ScreenCaptureEffectMetrics8 metrics, final int deffFlags) {
-    if((deffFlags & 0xf_ff00) != 0xf_ff00) {
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(deffFlags | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      metrics.u_00 = deffMetrics.u_00;
-      metrics.v_02 = deffMetrics.v_02;
-      metrics.clut_06 = deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4;
-    }
-
-    //LAB_8010c368
-  }
-
   @ScriptDescription("Allocates a lens flare effect attached to a battle entity")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The battle entity to attach to")
@@ -4043,9 +1909,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "LensFlareEffect50",
       script.scriptState_04,
-      SEffe::tickLensFlareEffect,
-      SEffe::renderLensFlareEffect,
-      null,
       new LensFlareEffect50()
     );
 
@@ -4112,147 +1975,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8010c69cL)
-  public static void tickLensFlareEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
-    effect.shouldRender_4a = (short)(rand() % 30);
-
-    if(effect.shouldRender_4a != 0) {
-      final Vector2f screenCoords = SCRIPTS.getObject(effect.bentIndex_3c, BattleEntity27c.class).transformRelative(effect.x_40, effect.y_42, effect.z_44);
-      final float x = -(screenCoords.x * 2.5f);
-      final float y = -(screenCoords.y * 2.5f);
-
-      //LAB_8010c7c0
-      for(int i = 0; i < 5; i++) {
-        final LensFlareEffectInstance3c inst = effect.instances_38[i];
-        final int dispW = displayWidth_1f8003e0;
-        final int dispH = displayHeight_1f8003e4;
-        inst.x_04 = screenCoords.x + dispW / 2.0f;
-        inst.y_06 = screenCoords.y + dispH / 2.0f;
-
-        if(inst.x_04 > 0 && inst.x_04 < dispW && inst.y_06 > 0 && inst.y_06 < dispH) {
-          inst.onScreen_03 = true;
-
-          final int scale = lensFlareGlowScales_800fb8fc[i];
-          inst.x_04 += x * scale / 0x100;
-          inst.y_06 += y * scale / 0x100;
-        } else {
-          //LAB_8010c870
-          inst.onScreen_03 = false;
-        }
-        //LAB_8010c874
-      }
-
-      // Adjust brightness based on X position
-      float screenX = Math.abs(screenCoords.x);
-      final int screenWidth = displayWidth_1f8003e0 / 2;
-      if(screenX > screenWidth) {
-        screenX = screenWidth;
-      }
-
-      //LAB_8010c8b8
-      effect.brightness_48 = (short)(255.0f - 255.0f / screenWidth * screenX);
-    }
-    //LAB_8010c8e0
-  }
-
-  @Method(0x8010c8f8L)
-  public static void renderLensFlareEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
-
-    if(effect.shouldRender_4a != 0) {
-      effect._02++;
-      final int sp10 = manager.params_10.flags_00;
-
-      //LAB_8010c9fc
-      for(int i = 0; i < 5; i++) {
-        final LensFlareEffectInstance3c inst = effect.instances_38[i];
-
-        if(inst.enabled_02 && inst.onScreen_03) {
-          final int w = effect.w_18[i];
-          final int h = effect.h_22[i];
-          final int tpage = (effect.v_0e[i] & 0x100) >>> 4 | (effect.u_04[i] & 0x3ff) >>> 6;
-          final int u = (effect.u_04[i] & 0x3f) * 4;
-          final int v = effect.v_0e[i] & 0xff;
-          final int clutX = effect.clut_2c[i] << 4 & 0x3ff;
-          final int clutY = effect.clut_2c[i] >>> 6 & 0x1ff;
-          final int r = manager.params_10.colour_1c.x * effect.brightness_48 >> 8;
-          final int g = manager.params_10.colour_1c.y * effect.brightness_48 >> 8;
-          final int b = manager.params_10.colour_1c.z * effect.brightness_48 >> 8;
-
-          if(i == 0) {
-            for(int j = 0; j < 4; j++) {
-              final int x = (inst.widthScale_2e * w >> 12) * lensFlareTranslationMagnitudeFactors_800fb910[j][0];
-              final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910[j][1];
-              final int halfW = displayWidth_1f8003e0 / 2;
-              final int halfH = displayHeight_1f8003e4 / 2;
-              final float[][] sp0x48 = new float[4][2];
-              sp0x48[0][0] = inst.x_04 - halfW + x;
-              sp0x48[0][1] = inst.y_06 - halfH + y;
-              sp0x48[1][0] = inst.x_04 - halfW + x + (w * inst.widthScale_2e >> 12);
-              sp0x48[1][1] = inst.y_06 - halfH + y;
-              sp0x48[2][0] = inst.x_04 - halfW + x;
-              sp0x48[2][1] = inst.y_06 - halfH + y + (h * inst.heightScale_30 >> 12);
-              sp0x48[3][0] = inst.x_04 - halfW + x + (w * inst.widthScale_2e >> 12);
-              sp0x48[3][1] = inst.y_06 - halfH + y + (h * inst.heightScale_30 >> 12);
-
-              final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                .bpp(Bpp.BITS_4)
-                .clut(clutX, clutY)
-                .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-                .rgb(r, g, b)
-                .pos(0, sp0x48[lensFlareVertexIndices_800fb930[j][0]][0], sp0x48[lensFlareVertexIndices_800fb930[j][0]][1])
-                .pos(1, sp0x48[lensFlareVertexIndices_800fb930[j][1]][0], sp0x48[lensFlareVertexIndices_800fb930[j][1]][1])
-                .pos(2, sp0x48[lensFlareVertexIndices_800fb930[j][2]][0], sp0x48[lensFlareVertexIndices_800fb930[j][2]][1])
-                .pos(3, sp0x48[lensFlareVertexIndices_800fb930[j][3]][0], sp0x48[lensFlareVertexIndices_800fb930[j][3]][1])
-                .uv(0, u, v)
-                .uv(1, u + w - 1, v)
-                .uv(2, u, v + h - 1)
-                .uv(3, u + w - 1, v + h - 1);
-
-              if((sp10 >>> 30 & 1) != 0) {
-                cmd.translucent(Translucency.of(sp10 >>> 28 & 0b11));
-              }
-
-              GPU.queueCommand(30, cmd);
-            }
-          } else {
-            //LAB_8010ceec
-            final int halfW = displayWidth_1f8003e0 / 2;
-            final int halfH = displayHeight_1f8003e4 / 2;
-            final float x = inst.x_04 - halfW - (inst.widthScale_2e * w >> 12) / 2.0f;
-            final float y = inst.y_06 - halfH - (inst.heightScale_30 * h >> 12) / 2.0f;
-            final int w2 = w * inst.widthScale_2e >> 12;
-            final int h2 = h * inst.heightScale_30 >> 12;
-
-            final GpuCommandPoly cmd = new GpuCommandPoly(4)
-              .bpp(Bpp.BITS_4)
-              .clut(clutX, clutY)
-              .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-              .rgb(r, g, b)
-              .pos(0, x, y)
-              .pos(1, x + w2, y)
-              .pos(2, x, y + h2)
-              .pos(3, x + w2, y + h2)
-              .uv(0, u, v)
-              .uv(1, u + w - 1, v)
-              .uv(2, u, v + h - 1)
-              .uv(3, u + w - 1, v + h - 1);
-
-            if((sp10 >>> 30 & 1) != 0) {
-              cmd.translucent(Translucency.of(sp10 >>> 28 & 0b11));
-            }
-
-            GPU.queueCommand(30, cmd);
-          }
-        }
-        //LAB_8010d198
-        //LAB_8010d19c
-      }
-    }
-    //LAB_8010d1ac
-  }
-
   @ScriptDescription("Allocates a white-silver dragoon transformation feathers effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The number of feathers")
@@ -4262,17 +1984,9 @@ public final class SEffe {
     final int featherCount = script.params_20[1].get();
     final int effectFlags = script.params_20[2].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "WsDragoonTransformationFeathersEffect14",
-      script.scriptState_04,
-      SEffe::tickWsDragoonTransformationFeathersEffect,
-      SEffe::renderWsDragoonTransformationFeathersEffect,
-      null,
-      new WsDragoonTransformationFeathersEffect14(featherCount)
-    );
-
+    final WsDragoonTransformationFeathersEffect14 featherEffect = new WsDragoonTransformationFeathersEffect14(featherCount);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("WsDragoonTransformationFeathersEffect14", script.scriptState_04, featherEffect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final WsDragoonTransformationFeathersEffect14 featherEffect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
     featherEffect.unused_02 = 0;
 
     //LAB_8010d298
@@ -4341,40 +2055,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8010d5b4L)
-  public static void renderWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
-    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(manager.params_10.flags_00, -effect.width_0a / 2, -effect.height_0c / 2, effect.width_0a, effect.height_0c, (effect.v_08 & 0x100) >>> 4 | (effect.u_06 & 0x3ff) >>> 6, effect.clut_0e << 4 & 0x3ff, effect.clut_0e >>> 6 & 0x1ff, (effect.u_06 & 0x3f) * 4, effect.v_08);
-
-    final Vector3f translation = new Vector3f();
-
-    //LAB_8010d6c8
-    for(int i = 0; i < effect.count_00; i++) {
-      final WsDragoonTransformationFeatherInstance70 feather = effect.featherArray_10[i];
-
-      if(feather.renderFeather_00) {
-        if(feather.r_38 == 0x7f && feather.g_39 == 0x7f && feather.b_3a == 0x7f) {
-          spriteEffect.r_14 = manager.params_10.colour_1c.x;
-          spriteEffect.g_15 = manager.params_10.colour_1c.y;
-          spriteEffect.b_16 = manager.params_10.colour_1c.z;
-        } else {
-          //LAB_8010d718
-          spriteEffect.r_14 = feather.r_38;
-          spriteEffect.g_15 = feather.g_39;
-          spriteEffect.b_16 = feather.b_3a;
-        }
-
-        //LAB_8010d73c
-        spriteEffect.scaleX_1c = manager.params_10.scale_16.x;
-        spriteEffect.scaleY_1e = manager.params_10.scale_16.y;
-        spriteEffect.angle_20 = feather.spriteAngle_6e;
-        translation.set(feather.translation_08).add(manager.params_10.trans_04);
-        spriteEffect.render(translation);
-        spriteEffect.delete();
-      }
-    }
-  }
-
   @ScriptDescription("Allocates a gold dragoon transformation effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
@@ -4395,16 +2075,8 @@ public final class SEffe {
     final int sp2c = script.params_20[7].get();
     final int sp30 = script.params_20[8].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "GoldDragoonTransformEffect20",
-      script.scriptState_04,
-      SEffe::goldDragoonTransformEffectTicker,
-      SEffe::goldDragoonTransformEffectRenderer,
-      null,
-      new GoldDragoonTransformEffect20(count)
-    );
-
-    final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)state.innerStruct_00.effect_44;
+    final GoldDragoonTransformEffect20 effect = new GoldDragoonTransformEffect20(count);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GoldDragoonTransformEffect20", script.scriptState_04, effect);
 
     //LAB_8010d8ec
     for(int i = 0; i < count; i++) {
@@ -4455,94 +2127,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8010dcd0L)
-  public static void goldDragoonTransformEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)manager.effect_44;
-    int unusedCount = 0;
-
-    //LAB_8010dd00
-    for(final GoldDragoonTransformEffectInstance84 instance : effect.parts_08) {
-      if(!instance.used_00) {
-        unusedCount++;
-        continue;
-      }
-
-      //LAB_8010dd18
-      instance._80++;
-
-      if(instance._7e != -1) {
-        if(instance._7e == instance._80) {
-          instance._7e = -1;
-        }
-      }
-
-      //LAB_8010dd40
-      if(instance._7e == -1) {
-        //LAB_8010dd50
-        instance.counter_04++;
-        final int counter = instance.counter_04;
-
-        instance.trans_08.x += instance.transStep_28.x;
-        instance.trans_08.y = counter * counter * 24 - instance.transStep_28.y * counter;
-        instance.trans_08.z += instance.transStep_28.z;
-
-        instance.rot_38.add(instance.rotStep_48);
-
-        if(instance._7c <= 0) {
-          if(instance.trans_08.y > 4.0f) {
-            instance.used_00 = false;
-          }
-          //LAB_8010ddf8
-        } else if(instance.trans_08.y >= 0.0f) {
-          instance.counter_04 = 1;
-          instance.transStep_28.y /= 2.0f;
-          instance._7c--;
-        }
-      }
-    }
-
-    if(unusedCount >= effect.parts_08.length) {
-      //LAB_8010de5c
-      state.deallocateWithChildren();
-    }
-
-    //LAB_8010de6c
-  }
-
-  @Method(0x8010de7cL)
-  public static void goldDragoonTransformEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)manager.effect_44;
-    effect._04++;
-
-    final ModelPart10 dobj2 = new ModelPart10();
-    final Vector3f trans = new Vector3f();
-    final MV transforms = new MV();
-    final MV sp0x98 = new MV();
-
-    //LAB_8010ded8
-    for(final GoldDragoonTransformEffectInstance84 instance : effect.parts_08) {
-      if(instance.used_00) {
-        trans.set(instance.trans_08).add(manager.params_10.trans_04);
-
-        transforms.rotationXYZ(instance.rot_38);
-        transforms.transfer.set(trans);
-        transforms.scale(manager.params_10.scale_16);
-
-        dobj2.tmd_08 = instance.tmd_70;
-
-        transforms.compose(worldToScreenMatrix_800c3548, sp0x98);
-        GTE.setTransforms(sp0x98);
-
-        zOffset_1f8003e8 = 0;
-        tmdGp0Tpage_1f8003ec = 2;
-
-        Renderer.renderDobj2(dobj2, false, 0);
-      }
-    }
-
-    //LAB_8010e020
-  }
-
   @ScriptDescription("Allocates a Star Children meteor effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
@@ -4552,19 +2136,11 @@ public final class SEffe {
     final int meteorCount = script.params_20[2].get();
     final int effectFlag = script.params_20[1].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "StarChildrenMeteorEffect10",
-      script.scriptState_04,
-      StarChildrenMeteorEffect10::tickStarChildrenMeteorEffect,
-      StarChildrenMeteorEffect10::renderStarChildrenMeteorEffect,
-      StarChildrenMeteorEffect10::destructor,
-      new StarChildrenMeteorEffect10(meteorCount)
-    );
-
+    final StarChildrenMeteorEffect10 meteorEffect = new StarChildrenMeteorEffect10(meteorCount);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("StarChildrenMeteorEffect10", script.scriptState_04, meteorEffect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.params_10.flags_00 = 0x5000_0000;
 
-    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
     final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
 
     //LAB_8010e100
@@ -4615,17 +2191,9 @@ public final class SEffe {
     final int maxToggleFrameThreshold = script.params_20[2].get();
     final int maxScale = script.params_20[3].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "MoonlightStarsEffect18",
-      script.scriptState_04,
-      SEffe::tickMoonlightStarsEffect,
-      SEffe::renderMoonlightStarsEffect,
-      null,
-      new MoonlightStarsEffect18(starCount)
-    );
-
+    final MoonlightStarsEffect18 starEffect = new MoonlightStarsEffect18(starCount);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("MoonlightStarsEffect18", script.scriptState_04, starEffect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
     manager.params_10.flags_00 = 0x5000_0000;
 
     //LAB_8010e980
@@ -4668,36 +2236,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8010ec08L)
-  public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
-    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(manager.params_10.flags_00, -starEffect.metrics_04.w_04 / 2, -starEffect.metrics_04.h_05 / 2, starEffect.metrics_04.w_04, starEffect.metrics_04.h_05, (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6, starEffect.metrics_04.clut_06 << 4 & 0x3ff, starEffect.metrics_04.clut_06 >>> 6 & 0x1ff, (starEffect.metrics_04.u_00 & 0x3f) << 2, starEffect.metrics_04.v_02);
-
-    final Vector3f translation = new Vector3f();
-
-    //LAB_8010ed00
-    for(int i = 0; i < starEffect.count_00; i++) {
-      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
-
-      // If a star is set not to render, do not render subsequent stars either.
-      if(!star.renderStars_03) {
-        break;
-      }
-
-      spriteEffect.r_14 = manager.params_10.colour_1c.x;
-      spriteEffect.g_15 = manager.params_10.colour_1c.y;
-      spriteEffect.b_16 = manager.params_10.colour_1c.z;
-      spriteEffect.scaleX_1c = manager.params_10.scale_16.x;
-      spriteEffect.scaleY_1e = manager.params_10.scale_16.y;
-      spriteEffect.angle_20 = manager.params_10.rot_10.x;
-      translation.set(manager.params_10.trans_04).add(star.translation_04);
-      spriteEffect.render(translation);
-      spriteEffect.delete();
-    }
-
-    //LAB_8010edac
-  }
-
   @ScriptDescription("Allocates a Star Children impact effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The impact count")
@@ -4709,17 +2247,9 @@ public final class SEffe {
     final int maxStartingFrame = script.params_20[2].get();
     final int maxTranslationMagnitude = script.params_20[3].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "StarChildrenImpactEffect20",
-      script.scriptState_04,
-      SEffe::tickStarChildrenImpactEffect,
-      SEffe::renderStarChildrenImpactEffect,
-      null,
-      new StarChildrenImpactEffect20(impactCount)
-    );
-
+    final StarChildrenImpactEffect20 impactEffect = new StarChildrenImpactEffect20(impactCount);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("StarChildrenImpactEffect20", script.scriptState_04, impactEffect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
 
     //LAB_8010eecc
     for(int i = 0; i < impactCount; i++) {
@@ -4756,267 +2286,6 @@ public final class SEffe {
     manager.params_10.flags_00 = 0x1400_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8010f124L)
-  public static void tickStarChildrenImpactEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
-
-    //LAB_8010f168
-    for(int i = 0; i < impactEffect.impactArray_08.length; i++) {
-      final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
-
-      if(impactEffect.currentFrame_04 > impact.startingFrame_04) {
-        if(impact.explosionHeightAngle_a0 >= MathHelper.TWO_PI) {
-          impact.renderImpact_00 = false;
-        } else {
-          //LAB_8010f19c
-          final int currentAnimFrame = impact.animationFrame_a2;
-
-          // Stage 0
-          if(currentAnimFrame < 9) {
-            //LAB_8010f240
-            impact.renderImpact_00 = true;
-            impact.renderShockwave_01 = true;
-            impact.rotation_2c[0].y += MathHelper.TWO_PI / 32.0f;
-            impact.scale_6c[0].x += 0.15f;
-            impact.scale_6c[0].z += 0.15f;
-            impact.explosionHeightAngle_a0 += MathHelper.TWO_PI / 20.0f;
-
-            final float explosionHeight = MathHelper.sin(impact.explosionHeightAngle_a0) * 1.375f;
-            impact.scale_6c[0].y = Math.max(explosionHeight, 0.0f);
-
-            //LAB_8010f2a8
-            impact.opacity_8c[0].x -= 23;
-            impact.opacity_8c[0].y -= 23;
-            impact.opacity_8c[0].z -= 23;
-          } else { // Stage 1
-            if(currentAnimFrame == 9) {
-              impact.translation_0c[0].y = -0x800;
-              impact.scale_6c[0].x = 6.5f;
-              impact.scale_6c[0].z = 6.5f;
-            }
-
-            //LAB_8010f1dc
-            // Start transforming plume
-            if(currentAnimFrame >= 10) {
-              if(currentAnimFrame == 10) {
-                impact.renderShockwave_01 = false;
-              }
-
-              //LAB_8010f1f0
-              impact.rotation_2c[1].y += MathHelper.TWO_PI / 32.0f;
-              impact.explosionHeightAngle_a0 += MathHelper.TWO_PI / 8.0f;
-              impact.scale_6c[1].x -= 0.109375f;
-              impact.scale_6c[1].y += 0.375f;
-              impact.scale_6c[1].z -= 0.109375f;
-            }
-            //LAB_8010f22c
-          }
-          impact.animationFrame_a2++;
-        }
-      }
-    }
-
-    //LAB_8010f2f4
-    impactEffect.currentFrame_04++;
-
-    if(impactEffect.impactArray_08.length == 0) {
-      state.deallocateWithChildren();
-    }
-    //LAB_8010f31c
-  }
-
-  /** Used renderCtmd */
-  @Method(0x8010f340L)
-  public static void renderStarChildrenImpactEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
-    if(manager.params_10.flags_00 >= 0) {
-      final Vector3f translation = new Vector3f();
-      final MV transformMatrix1 = new MV();
-      final MV finalTransformMatrix1 = new MV();
-      final Vector3f scale = new Vector3f();
-      final MV transformMatrix0 = new MV();
-
-      final ModelPart10 dobj = new ModelPart10();
-
-      //LAB_8010f3a4
-      for(int i = 0; i < impactEffect.impactArray_08.length; i++) {
-        final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
-
-        if(impact.renderImpact_00) {
-          calculateEffectTransforms(transformMatrix0, manager);
-          final int stageNum = impact.animationFrame_a2 >= 10 ? 1 : 0;
-          translation.set(impact.translation_0c[stageNum]).add(manager.params_10.trans_04);
-          final float scaleX = impact.scale_6c[stageNum].x * manager.params_10.scale_16.x;
-          final float scaleY = impact.scale_6c[stageNum].y * manager.params_10.scale_16.y;
-          final float scaleZ = impact.scale_6c[stageNum].z * manager.params_10.scale_16.z;
-          final int r = impact.opacity_8c[stageNum].x * manager.params_10.colour_1c.x >> 8;
-          final int g = impact.opacity_8c[stageNum].y * manager.params_10.colour_1c.y >> 8;
-          final int b = impact.opacity_8c[stageNum].z * manager.params_10.colour_1c.z >> 8;
-
-          if((manager.params_10.flags_00 & 0x40) == 0) {
-            FUN_800e61e4(r / 128.0f, g / 128.0f, b / 128.0f);
-          }
-
-          //LAB_8010f50c
-          GsSetLightMatrix(transformMatrix0);
-          transformMatrix1.rotationXYZ(impact.rotation_2c[stageNum]);
-          transformMatrix1.transfer.set(translation);
-          scale.set(scaleX, scaleY, scaleZ);
-          transformMatrix1.scale(scale);
-          dobj.attribute_00 = manager.params_10.flags_00;
-          transformMatrix1.compose(worldToScreenMatrix_800c3548, finalTransformMatrix1);
-          GTE.setTransforms(finalTransformMatrix1);
-          zOffset_1f8003e8 = 0;
-          tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
-
-          final int oldZShift = zShift_1f8003c4;
-          final int oldZMax = zMax_1f8003cc;
-          final int oldZMin = zMin;
-          zShift_1f8003c4 = 2;
-          zMax_1f8003cc = 0xffe;
-          zMin = 0xb;
-
-          if(impact.renderShockwave_01) {
-            dobj.tmd_08 = impact.shockwaveObjTable_98;
-            Renderer.renderDobj2(dobj, false, 0x20);
-          }
-
-          //LAB_8010f5d0
-          if(impact.animationFrame_a2 < 9) {
-            dobj.tmd_08 = impact.explosionObjTable_94;
-            Renderer.renderDobj2(dobj, false, 0x20);
-          } else if(impact.animationFrame_a2 >= 11) {
-            dobj.tmd_08 = impact.plumeObjTable_9c;
-            Renderer.renderDobj2(dobj, false, 0x20);
-          }
-
-          zShift_1f8003c4 = oldZShift;
-          zMax_1f8003cc = oldZMax;
-          zMin = oldZMin;
-
-          //LAB_8010f608
-          if((manager.params_10.flags_00 & 0x40) == 0) {
-            FUN_800e62a8();
-          }
-        }
-      }
-    }
-    //LAB_8010f640
-  }
-
-  @Method(0x8010f978L)
-  public static void tickWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
-
-    //LAB_8010f9c0
-    for(int i = 0; i < effect.count_00; i++) {
-      final WsDragoonTransformationFeatherInstance70 feather = effect.featherArray_10[i];
-      WsDragoonTransformationFeatherCallbacks_80119ff4[feather.callbackIndex_02].accept(manager, feather);
-    }
-    //LAB_8010f9fc
-  }
-
-  @Method(0x8010fa4cL)
-  public static void initializeWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
-    feather.currentFrame_04++;
-
-    if(feather.currentFrame_04 >= feather.countCallback0Frames_64) {
-      feather.renderFeather_00 = true;
-      feather.currentFrame_04 = 0;
-      feather.callbackIndex_02++;
-    }
-  }
-
-  @Method(0x8010fa88L)
-  public static void expandWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
-    feather.angle_58 += feather.angleStep_60;
-    feather.angle_58 %= MathHelper.TWO_PI;
-
-    feather.velocityTranslationMagnitudeXz_40 += feather.accelerationTranslationMagnitudeXz_44;
-    feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
-
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    feather.translation_08.set(x, y, z);
-
-    feather.currentFrame_04++;
-    if(feather.currentFrame_04 >= feather.countCallback1and3Frames_4c) {
-      feather.currentFrame_04 = 0;
-      feather.callbackIndex_02++;
-    }
-    //LAB_8010fbc0
-  }
-
-  @Method(0x8010fbd4L)
-  public static void spinWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
-    feather.angle_58 += feather.angleStep_60;
-    feather.angle_58 %= MathHelper.TWO_PI;
-
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    feather.translation_08.set(x, y, z);
-
-    feather.currentFrame_04++;
-    if(feather.currentFrame_04 >= 0xf) {
-      feather.currentFrame_04 = 0;
-      feather.callbackIndex_02++;
-      feather.velocityTranslationMagnitudeXz_40 = -feather.translationMagnitudeXz_3c / feather.countCallback1and3Frames_4c;
-      feather.velocityTranslationMagnitudeY_1c = -feather.translationMagnitudeY_50 / feather.countCallback1and3Frames_4c;
-    }
-    //LAB_8010fd20
-  }
-
-  @Method(0x8010fd34L)
-  public static void contractWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
-    feather.angle_58 += feather.angleStep_60;
-    feather.angle_58 %= MathHelper.TWO_PI;
-    feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
-
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    feather.translation_08.set(x, y, z);
-    feather.translationMagnitudeY_50 += feather.velocityTranslationMagnitudeY_1c;
-
-    feather.currentFrame_04++;
-    if(feather.currentFrame_04 >= feather.countCallback1and3Frames_4c) {
-      feather.renderFeather_00 = false;
-      feather.currentFrame_04 = 0;
-      feather.callbackIndex_02++;
-    }
-    //LAB_8010fe70
-  }
-
-  @Method(0x8010fe84L)
-  public static void WsDragoonTransformationCallback4(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final WsDragoonTransformationFeatherInstance70 a2) {
-    // no-op
-  }
-
-  @Method(0x8010ff10L)
-  public static void tickMoonlightStarsEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
-
-    //LAB_8010ff34
-    for(int i = 0; i < starEffect.count_00; i++) {
-      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
-
-      // Seems like stars stop rendering when the current frame exceeds a randomized threshold.
-      // The threshold is then re-randomized each tick until the current frame falls below the
-      // threshold again, and then the star is rendered again.
-      star.currentFrame_00++;
-      if(star.currentFrame_00 > star.toggleOffFrameThreshold_38) {
-        star.renderStars_03 = false;
-        star.currentFrame_00 = 0;
-        star.toggleOffFrameThreshold_38 = (short)seed_800fa754.nextInt(star.maxToggleFrameThreshold_36 + 1);
-      } else {
-        //LAB_8010ffb0
-        star.renderStars_03 = true;
-      }
-    }
   }
 
   /** Returns reference */
@@ -6887,51 +4156,15 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80115b2cL)
-  public static void screenDarkeningTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final int currentVal = state.storage_44[8];
-    final int targetVal = state.storage_44[9];
-
-    if(currentVal == targetVal) {
-      state.deallocateWithChildren();
-    } else {
-      //LAB_80115b80
-      applyScreenDarkening(currentVal);
-
-      //LAB_80115bd4
-      if(currentVal > targetVal) {
-        state.storage_44[8]--;
-      } else {
-        //LAB_80115bb4
-        state.storage_44[8]++;
-      }
-    }
-
-    //LAB_80115bd8
-  }
-
-  @Method(0x80115bf0L)
-  public static void screenDarkeningDestructor(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    applyScreenDarkening(state.storage_44[9]);
-  }
-
   @Method(0x80115c2cL)
   public static void allocateScreenDarkeningEffect(final int startVal, final int targetVal) {
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "Screen darkening",
-      deffManager_800c693c.scriptState_1c,
-      SEffe::screenDarkeningTicker,
-      null,
-      SEffe::screenDarkeningDestructor,
-      null
-    );
-
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen darkening", deffManager_800c693c.scriptState_1c, new ScreenDarkeningEffect());
     state.storage_44[8] = startVal;
     state.storage_44[9] = targetVal;
   }
 
   @Method(0x80115cacL)
-  public static long loadDeffStageEffects(final int mode) {
+  public static int loadDeffStageEffects(final int mode) {
     final int _00;
     final int _02;
     final int _04;
@@ -7100,712 +4333,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * TODO used for rendering deffs of some kind, possibly sprite deffs?
-   *   Uses CTMD render pipeline if type == 0x300_0000
-   */
-  @Method(0x8011619cL)
-  public static void FUN_8011619c(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final LmbAnimationEffect5c effect, final int deffFlags, final MV matrix) {
-    final MV sp0x10 = new MV();
-    sp0x10.scaling(manager.params_10.scale_16);
-    sp0x10.rotateZYX(manager.params_10.rot_10);
-    sp0x10.transfer.set(manager.params_10.trans_04);
-    sp0x10.compose(matrix, sp0x10);
-    final float scale = manager.params_10.scale_28 / (float)0x1000;
-    sp0x10.scaleLocal(scale, scale, scale);
-    manager.params_10.scale_16.mul(scale);
-
-    final int type = deffFlags & 0xff00_0000;
-    if(type == 0x300_0000) {
-      //LAB_80116708
-      final TmdObjTable1c tmdObjTable;
-      // If we already have it cached
-      if(effect.deffTmdFlags_48 == deffFlags) {
-        tmdObjTable = effect.deffTmdObjTable_4c;
-      } else {
-        //LAB_80116724
-        if((deffFlags & 0xf_ff00) == 0xf_ff00) {
-          tmdObjTable = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
-        } else {
-          //LAB_80116750
-          tmdObjTable = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-        }
-
-        //LAB_8011676c
-        // Cache it
-        effect.deffTmdFlags_48 = deffFlags;
-        effect.deffTmdObjTable_4c = tmdObjTable;
-
-        if(effect.obj != null) {
-          effect.obj.delete();
-        }
-
-        effect.obj = TmdObjLoader.fromObjTable(manager.name, effect.deffTmdObjTable_4c);
-      }
-
-      //LAB_80116778
-      renderTmdSpriteEffect(tmdObjTable, effect.obj, manager.params_10, sp0x10);
-    } else if(type == 0x400_0000) {
-      if(effect.deffSpriteFlags_50 != deffFlags) {
-        //LAB_801162e8
-        final BillboardSpriteEffect0c sp0x48 = new BillboardSpriteEffect0c();
-
-        sp0x48.set(deffFlags);
-        effect.metrics_54.u_00 = sp0x48.metrics_04.u_00;
-        effect.metrics_54.v_02 = sp0x48.metrics_04.v_02;
-        effect.metrics_54.w_04 = sp0x48.metrics_04.w_04;
-        effect.metrics_54.h_05 = sp0x48.metrics_04.h_05;
-        effect.metrics_54.clut_06 = sp0x48.metrics_04.clut_06;
-        effect.deffSpriteFlags_50 = deffFlags;
-      }
-
-      final int u = (effect.metrics_54.u_00 & 0x3f) * 4;
-      final int v = effect.metrics_54.v_02 & 0xff;
-      final int w = effect.metrics_54.w_04 & 0xff;
-      final int h = effect.metrics_54.h_05 & 0xff;
-      final int clut = effect.metrics_54.clut_06;
-
-      //LAB_8011633c
-      final Vector3f sp0x58 = new Vector3f();
-      final MV sp0x60 = new MV();
-      final Vector2f sp0x80 = new Vector2f();
-      sp0x10.compose(worldToScreenMatrix_800c3548, sp0x60);
-      GTE.setTransforms(sp0x60);
-
-      final float z = perspectiveTransform(sp0x58, sp0x80);
-      if(z >= 0x50) {
-        //LAB_801163c4
-        final float a1 = projectionPlaneDistance_1f8003f8 * 2.0f / z * manager.params_10.scale_16.z;
-        final float l = -w / 2.0f * a1;
-        final float r = w / 2.0f * a1;
-        final float t = -h / 2.0f * a1;
-        final float b = h / 2.0f * a1;
-        final float sin = MathHelper.sin(manager.params_10.rot_10.z);
-        final float cos = MathHelper.cos(manager.params_10.rot_10.z);
-        final float sinL = l * sin;
-        final float cosL = l * cos;
-        final float sinR = r * sin;
-        final float cosR = r * cos;
-        final float sinT = t * sin;
-        final float cosT = t * cos;
-        final float sinB = b * sin;
-        final float cosB = b * cos;
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
-          .rgb(manager.params_10.colour_1c)
-          .pos(0, sp0x80.x + cosL - sinT, sp0x80.y + sinL + cosT)
-          .pos(1, sp0x80.x + cosR - sinT, sp0x80.y + sinR + cosT)
-          .pos(2, sp0x80.x + cosL - sinB, sp0x80.y + sinL + cosB)
-          .pos(3, sp0x80.x + cosR - sinB, sp0x80.y + sinR + cosB)
-          .uv(0, u, v)
-          .uv(1, u + w - 1, v)
-          .uv(2, u, v + h - 1)
-          .uv(3, u + w - 1, v + h - 1);
-
-        if((manager.params_10.flags_00 >>> 30 & 1) != 0) {
-          cmd.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
-        }
-
-        GPU.queueCommand(z / 4.0f, cmd);
-      }
-    } else {
-      //LAB_80116790
-      final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
-      final EffectManagerData6c<?> manager2 = state.innerStruct_00;
-      manager.params_10.trans_04.set(sp0x10.transfer);
-      getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, sp0x10);
-
-      final int oldScriptIndex = manager2.scriptIndex_0c;
-      final int oldCoord2Index = manager2.coord2Index_0d;
-      manager2.scriptIndex_0c = manager.myScriptState_0e.index;
-      manager2.coord2Index_0d = -1;
-      final int r = manager2.params_10.colour_1c.x;
-      final int g = manager2.params_10.colour_1c.y;
-      final int b = manager2.params_10.colour_1c.z;
-      // As far as I can tell, using R for each of these is right...
-      manager2.params_10.colour_1c.x = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.x / 128;
-      manager2.params_10.colour_1c.y = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.y / 128;
-      manager2.params_10.colour_1c.z = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.z / 128;
-      state.renderer_08.accept(state, manager2);
-      manager2.params_10.colour_1c.x = r;
-      manager2.params_10.colour_1c.y = g;
-      manager2.params_10.colour_1c.z = b;
-      manager2.scriptIndex_0c = oldScriptIndex;
-      manager2.coord2Index_0d = oldCoord2Index;
-    }
-
-    //LAB_801168b8
-  }
-
-  @Method(0x801168e8L)
-  public static void processLmbType0(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final LmbAnimationEffect5c effect, final int a2, final MV matrix) {
-    final LmbType0 lmb = (LmbType0)effect.lmb_0c;
-    final int s6 = a2 / 0x2000;
-    final int v1 = s6 + 1;
-    final int s0 = a2 & 0x1fff;
-    final int s1 = 0x2000 - s0;
-    final int fp = v1 % lmb.partAnimations_08[0].count_04;
-
-    //LAB_80116960
-    for(int i = 0; i < lmb.objectCount_04; i++) {
-      if(effect._14[lmb.partAnimations_08[i]._00] != 0) {
-        final LmbTransforms14 a1 = lmb.partAnimations_08[i].keyframes_08[s6];
-        final LmbTransforms14 a0 = lmb.partAnimations_08[i].keyframes_08[fp];
-        manager.params_10.rot_10.set(a1.rot_0c);
-        manager.params_10.trans_04.x = (a1.trans_06.x * s1 + a0.trans_06.x * s0) / 0x2000;
-        manager.params_10.trans_04.y = (a1.trans_06.y * s1 + a0.trans_06.y * s0) / 0x2000;
-        manager.params_10.trans_04.z = (a1.trans_06.z * s1 + a0.trans_06.z * s0) / 0x2000;
-        manager.params_10.scale_16.x = (a1.scale_00.x * s1 + a0.scale_00.x * s0) / 0x2000;
-        manager.params_10.scale_16.y = (a1.scale_00.y * s1 + a0.scale_00.y * s0) / 0x2000;
-        manager.params_10.scale_16.z = (a1.scale_00.z * s1 + a0.scale_00.z * s0) / 0x2000;
-        FUN_8011619c(manager, effect, effect._14[lmb.partAnimations_08[i]._00], matrix);
-      }
-    }
-  }
-
-  @Method(0x80116b7cL)
-  public static void processLmbType1(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final LmbAnimationEffect5c effect, final int t0, final MV matrix) {
-    final LmbType1 lmb = (LmbType1)effect.lmb_0c;
-    int a0 = t0 >> 13;
-    float lerpScale = (t0 & 0x1fff) / (float)0x2000;
-    int s5 = (a0 + 1) % lmb.keyframeCount_0a;
-    final LmbTransforms14[] s7 = effect.lmbTransforms_10;
-    if(effect._04 != t0) {
-      if(s5 == 0) {
-        if(a0 == 0) {
-          return;
-        }
-
-        s5 = a0;
-        a0 = 0;
-        lerpScale = 1.0f - lerpScale;
-      }
-
-      //LAB_80116c20
-      if(a0 == 0) {
-        for(int i = 0; i < lmb.objectCount_04; i++) {
-          s7[i].set(lmb._10[i]);
-        }
-      } else {
-        //LAB_80116c50
-        int a0_0 = (a0 - 1) * lmb._08 / 2;
-
-        //LAB_80116c80
-        for(int i = 0; i < lmb.objectCount_04; i++) {
-          final LmbTransforms14 transforms = s7[i];
-          final LmbType1.Sub04 v1 = lmb._0c[i];
-
-          if((v1.transformsType_00 & 0x8000) == 0) {
-            transforms.scale_00.x = lmb._14[a0_0];
-            a0_0++;
-          }
-
-          //LAB_80116ca0
-          if((v1.transformsType_00 & 0x4000) == 0) {
-            transforms.scale_00.y = lmb._14[a0_0];
-            a0_0++;
-          }
-
-          //LAB_80116cc0
-          if((v1.transformsType_00 & 0x2000) == 0) {
-            transforms.scale_00.z = lmb._14[a0_0];
-            a0_0++;
-          }
-
-          //LAB_80116ce0
-          if((v1.transformsType_00 & 0x1000) == 0) {
-            transforms.trans_06.x = lmb._14[a0_0];
-            a0_0++;
-          }
-
-          //LAB_80116d00
-          if((v1.transformsType_00 & 0x800) == 0) {
-            transforms.trans_06.y = lmb._14[a0_0];
-            a0_0++;
-          }
-
-          //LAB_80116d20
-          if((v1.transformsType_00 & 0x400) == 0) {
-            transforms.trans_06.z = lmb._14[a0_0];
-            a0_0++;
-          }
-
-          //LAB_80116d40
-          if((v1.transformsType_00 & 0x200) == 0) {
-            transforms.rot_0c.x = MathHelper.psxDegToRad(lmb._14[a0_0]);
-            a0_0++;
-          }
-
-          //LAB_80116d60
-          if((v1.transformsType_00 & 0x100) == 0) {
-            transforms.rot_0c.y = MathHelper.psxDegToRad(lmb._14[a0_0]);
-            a0_0++;
-          }
-
-          //LAB_80116d80
-          if((v1.transformsType_00 & 0x80) == 0) {
-            transforms.rot_0c.z = MathHelper.psxDegToRad(lmb._14[a0_0]);
-            a0_0++;
-          }
-        }
-      }
-
-      //LAB_80116db8
-      int a0_0 = (s5 - 1) * lmb._08 / 2;
-
-      //LAB_80116de8
-      for(int i = 0; i < lmb.objectCount_04; i++) {
-        final LmbTransforms14 transforms = s7[i];
-        final LmbType1.Sub04 a2 = lmb._0c[i];
-
-        if((a2.transformsType_00 & 0x8000) == 0) {
-          transforms.scale_00.x = Math.lerp(lmb._14[a0_0], transforms.scale_00.x, lerpScale);
-          a0_0++;
-        }
-
-        //LAB_80116e34
-        if((a2.transformsType_00 & 0x4000) == 0) {
-          transforms.scale_00.y = Math.lerp(lmb._14[a0_0], transforms.scale_00.y, lerpScale);
-          a0_0++;
-        }
-
-        //LAB_80116e80
-        if((a2.transformsType_00 & 0x2000) == 0) {
-          transforms.scale_00.z = Math.lerp(lmb._14[a0_0], transforms.scale_00.z, lerpScale);
-          a0_0++;
-        }
-
-        //LAB_80116ecc
-        if((a2.transformsType_00 & 0x1000) == 0) {
-          transforms.trans_06.x = Math.lerp(lmb._14[a0_0], transforms.trans_06.x, lerpScale);
-          a0_0++;
-        }
-
-        //LAB_80116f18
-        if((a2.transformsType_00 & 0x800) == 0) {
-          transforms.trans_06.y = Math.lerp(lmb._14[a0_0], transforms.trans_06.y, lerpScale);
-          a0_0++;
-        }
-
-        //LAB_80116f64
-        if((a2.transformsType_00 & 0x400) == 0) {
-          transforms.trans_06.z = Math.lerp(lmb._14[a0_0], transforms.trans_06.z, lerpScale);
-          a0_0++;
-        }
-
-        //LAB_80116fb0
-        if((a2.transformsType_00 & 0x200) == 0) {
-          a0_0++;
-        }
-
-        //LAB_80116fc8
-        if((a2.transformsType_00 & 0x100) == 0) {
-          a0_0++;
-        }
-
-        //LAB_80116fd4
-        if((a2.transformsType_00 & 0x80) == 0) {
-          a0_0++;
-        }
-      }
-
-      //LAB_80116ff8
-      effect._04 = t0;
-    }
-
-    //LAB_80116ffc
-    //LAB_80117014
-    for(int i = 0; i < lmb.objectCount_04; i++) {
-      final LmbTransforms14 transforms = s7[i];
-
-      final int deffFlags = effect._14[lmb._0c[i]._03];
-      if(deffFlags != 0) {
-        manager.params_10.rot_10.set(transforms.rot_0c);
-        manager.params_10.trans_04.set(transforms.trans_06);
-        manager.params_10.scale_16.set(transforms.scale_00);
-
-        FUN_8011619c(manager, effect, deffFlags, matrix);
-      }
-    }
-
-    //LAB_801170d4
-  }
-
-  @Method(0x80117104L)
-  public static void processLmbType2(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final LmbAnimationEffect5c effect, final int t5, final MV matrix) {
-    final LmbType2 lmb = (LmbType2)effect.lmb_0c;
-    final LmbTransforms14[] originalTransforms = lmb.initialTransforms_10;
-    final int keyframeIndex = t5 / 0x2000;
-    final float lerpScale = (t5 & 0x1fff) / (float)0x2000;
-    final LmbTransforms14[] transformsLo = effect.lmbTransforms_10;
-    final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.objectCount_04, transformsLo.length);
-    final int nextKeyframeIndex = (keyframeIndex + 1) % lmb.keyframeCount_0a;
-    if(effect._04 != t5) {
-      int s1 = effect._04 / 0x2000;
-
-      if(nextKeyframeIndex == 0 && keyframeIndex == 0) {
-        return;
-      }
-
-      //LAB_801171c8
-      if(s1 > keyframeIndex) {
-        s1 = 0;
-
-        for(int i = 0; i < lmb.objectCount_04; i++) {
-          transformsLo[i].scale_00.set(originalTransforms[i].scale_00);
-          transformsLo[i].trans_06.set(originalTransforms[i].trans_06);
-          transformsLo[i].rot_0c.set(originalTransforms[i].rot_0c);
-        }
-      }
-
-      //LAB_801171f8
-      //LAB_8011720c
-      for(; s1 < keyframeIndex; s1++) {
-        int a0 = s1 * lmb.transformDataPairCount_08;
-
-        //LAB_80117234
-        for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
-          lmbType2TransformationData_8011a048[i] = (byte)(lmb._14[a0] >> 4);
-          lmbType2TransformationData_8011a048[i + 1] = (byte)(lmb._14[a0] << 28 >> 28);
-          a0++;
-        }
-
-        //LAB_80117270
-        //LAB_8011728c
-        int index = 0;
-        for(int i = 0; i < lmb.objectCount_04; i++) {
-          final LmbTransforms14 transform = transformsLo[i];
-
-          final int flags = lmb.flags_0c[i];
-
-          if((flags & 0xe000) != 0xe000) {
-            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
-
-            if((flags & 0x8000) == 0) {
-              transform.scale_00.x += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-
-            //LAB_801172c8
-            if((flags & 0x4000) == 0) {
-              transform.scale_00.y += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-
-            //LAB_801172f0
-            if((flags & 0x2000) == 0) {
-              transform.scale_00.z += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-          }
-
-          //LAB_80117310
-          //LAB_80117314
-          if((flags & 0x1c00) != 0x1c00) {
-            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
-
-            if((flags & 0x1000) == 0) {
-              transform.trans_06.x += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-
-            //LAB_80117348
-            if((flags & 0x800) == 0) {
-              transform.trans_06.y += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-
-            //LAB_80117370
-            if((flags & 0x400) == 0) {
-              transform.trans_06.z += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-          }
-
-          //LAB_80117390
-          //LAB_80117394
-          if((flags & 0x380) != 0x380) {
-            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
-
-            if((flags & 0x200) == 0) {
-              transform.rot_0c.x += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-
-            //LAB_801173c8
-            if((flags & 0x100) == 0) {
-              transform.rot_0c.y += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-
-            //LAB_801173f0
-            if((flags & 0x80) == 0) {
-              transform.rot_0c.z += lmbType2TransformationData_8011a048[index++] << shift;
-            }
-          }
-        }
-      }
-
-      //LAB_80117438
-      if(nextKeyframeIndex == 0) {
-        //LAB_801176c0
-        //LAB_801176e0
-        for(int i = 0; i < lmb.objectCount_04; i++) {
-          final LmbTransforms14 originalTransform = originalTransforms[i];
-          final LmbTransforms14 transformLo = transformsLo[i];
-          final LmbTransforms14 transformHi = transformsHi[i];
-
-          final int flags = lmb.flags_0c[i];
-
-          if((flags & 0x8000) == 0) {
-            transformHi.scale_00.x = Math.lerp(originalTransform.scale_00.x, transformLo.scale_00.x, lerpScale);
-          }
-
-          //LAB_80117730
-          if((flags & 0x4000) == 0) {
-            transformHi.scale_00.y = Math.lerp(originalTransform.scale_00.y, transformLo.scale_00.y, lerpScale);
-          }
-
-          //LAB_80117774
-          if((flags & 0x2000) == 0) {
-            transformHi.scale_00.z = Math.lerp(originalTransform.scale_00.z, transformLo.scale_00.z, lerpScale);
-          }
-
-          //LAB_801177b8
-          if((flags & 0x1000) == 0) {
-            transformHi.trans_06.x = Math.lerp(originalTransform.trans_06.x, transformLo.trans_06.x, lerpScale);
-          }
-
-          //LAB_801177fc
-          if((flags & 0x800) == 0) {
-            transformHi.trans_06.y = Math.lerp(originalTransform.trans_06.y, transformLo.trans_06.y, lerpScale);
-          }
-
-          //LAB_80117840
-          if((flags & 0x400) == 0) {
-            transformHi.trans_06.z = Math.lerp(originalTransform.trans_06.z, transformLo.trans_06.z, lerpScale);
-          }
-        }
-      } else {
-        int a0 = (nextKeyframeIndex - 1) * lmb.transformDataPairCount_08;
-
-        //LAB_80117470
-        for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
-          lmbType2TransformationData_8011a048[i] = (byte)(lmb._14[a0] >> 4);
-          lmbType2TransformationData_8011a048[i + 1] = (byte)(lmb._14[a0] << 28 >> 28);
-          a0++;
-        }
-
-        //LAB_801174ac
-        //LAB_801174d0
-        int index = 0;
-        for(int i = 0; i < lmb.objectCount_04; i++) {
-          final LmbTransforms14 transformLo = transformsLo[i];
-          final LmbTransforms14 transformHi = transformsHi[i];
-
-          final int flags = lmb.flags_0c[i];
-
-          if((flags & 0xe000) != 0xe000) {
-            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
-
-            if((flags & 0x8000) == 0) {
-              transformHi.scale_00.x = transformLo.scale_00.x + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
-            }
-
-            //LAB_80117524
-            if((flags & 0x4000) == 0) {
-              transformHi.scale_00.y = transformLo.scale_00.y + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
-            }
-
-            //LAB_80117564
-            if((flags & 0x2000) == 0) {
-              transformHi.scale_00.z = transformLo.scale_00.z + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
-            }
-          }
-
-          //LAB_8011759c
-          //LAB_801175a0
-          if((flags & 0x1c00) != 0x1c00) {
-            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
-
-            if((flags & 0x1000) == 0) {
-              transformHi.trans_06.x = transformLo.trans_06.x + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
-            }
-
-            //LAB_801175ec
-            if((flags & 0x800) == 0) {
-              transformHi.trans_06.y = transformLo.trans_06.y + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
-            }
-
-            //LAB_8011762c
-            if((flags & 0x400) == 0) {
-              transformHi.trans_06.z = transformLo.trans_06.z + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
-            }
-          }
-
-          //LAB_80117664
-          //LAB_80117668
-          if((flags & 0x380) != 0x380) {
-            index++;
-
-            if((flags & 0x200) == 0) {
-              index++;
-            }
-
-            //LAB_80117680
-            if((flags & 0x100) == 0) {
-              index++;
-            }
-
-            //LAB_80117690
-            if((flags & 0x80) == 0) {
-              index++;
-            }
-          }
-        }
-      }
-
-      //LAB_801178a0
-      effect._04 = t5;
-    }
-
-    //LAB_801178a4
-    //LAB_801178c0
-    for(int i = 0; i < lmb.objectCount_04; i++) {
-      final LmbTransforms14 transformLo = transformsLo[i];
-      final LmbTransforms14 transformHi = transformsHi[i];
-      final int flags = lmb.flags_0c[i];
-
-      if(effect._14[flags >>> 24] != 0) {
-        if(manager.params_10._2c != 0) {
-          manager.params_10.rot_10.set(transformLo.rot_0c);
-        } else {
-          //LAB_80117914
-          manager.params_10.rot_10.set(transformHi.rot_0c);
-        }
-
-        //LAB_80117938
-        manager.params_10.trans_04.set(transformHi.trans_06);
-        manager.params_10.scale_16.set(transformHi.scale_00);
-        FUN_8011619c(manager, effect, effect._14[flags >>> 24], matrix);
-      }
-    }
-    //LAB_801179c0
-  }
-
-  @Method(0x801179f0L)
-  public static void lmbAnimationRenderer(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
-    final int flags = manager.params_10.flags_00;
-    final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
-    if(flags >= 0) { // No errors
-      int s1 = Math.max(0, manager.params_10.ticks_24) % (effect.keyframeCount_08 * 2) << 12;
-      tmdGp0Tpage_1f8003ec = flags >>> 23 & 0x60; // tpage
-      zOffset_1f8003e8 = manager.params_10.z_22;
-      if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
-      }
-
-      //LAB_80117ac0
-      //LAB_80117acc
-      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>("Temp 2", new EffectManagerParams.AnimType());
-      anim.set(manager);
-
-      final MV sp0x80 = new MV();
-      calculateEffectTransforms(sp0x80, manager);
-
-      final int type = effect.lmbType_00 & 0x7;
-      if(type == 0) {
-        //LAB_80117b50
-        processLmbType0(manager, effect, s1, sp0x80);
-      } else if(type == 1) {
-        //LAB_80117b68
-        processLmbType1(manager, effect, s1, sp0x80);
-      } else if(type == 2) {
-        //LAB_80117b80
-        processLmbType2(manager, effect, s1, sp0x80);
-      }
-
-      //LAB_80117b8c
-      final int steps = effect._38;
-
-      if(steps >= 2) {
-        final int spe4 = effect._3c;
-        int accumulatorR;
-        int accumulatorG;
-        int accumulatorB;
-        final int stepR;
-        final int stepG;
-        final int stepB;
-        if((effect.flags_34 & 0x4) != 0) {
-          final int v0 = effect._40 - 0x1000;
-          stepR = anim.params_10.colour_1c.x * v0 / steps;
-          stepG = anim.params_10.colour_1c.y * v0 / steps;
-          stepB = anim.params_10.colour_1c.z * v0 / steps;
-          accumulatorR = anim.params_10.colour_1c.x << 12;
-          accumulatorG = anim.params_10.colour_1c.y << 12;
-          accumulatorB = anim.params_10.colour_1c.z << 12;
-        } else {
-          //LAB_80117c30
-          accumulatorR = 0;
-          accumulatorG = 0;
-          accumulatorB = 0;
-          stepR = 0;
-          stepG = 0;
-          stepB = 0;
-        }
-
-        //LAB_80117c48
-        int accumulatorScale = 0;
-        int stepScale = 0;
-        if((effect.flags_34 & 0x8) != 0) {
-          final int t4 = anim.params_10.scale_28 * (effect._40 - 0x1000);
-          accumulatorScale = anim.params_10.scale_28 << 12;
-          stepScale = t4 / steps;
-        }
-
-        //LAB_80117c88
-        s1 -= spe4;
-
-        //LAB_80117ca0
-        for(int i = 1; i < steps && s1 >= 0; i++) {
-          if((effect.flags_34 & 0x4) != 0) {
-            accumulatorR += stepR;
-            accumulatorG += stepG;
-            accumulatorB += stepB;
-            manager.params_10.colour_1c.x = accumulatorR >> 12;
-            manager.params_10.colour_1c.y = accumulatorG >> 12;
-            manager.params_10.colour_1c.z = accumulatorB >> 12;
-          }
-
-          //LAB_80117d1c
-          if((effect.flags_34 & 0x8) != 0) {
-            accumulatorScale += stepScale;
-            manager.params_10.scale_28 = accumulatorScale >> 12;
-          }
-
-          //LAB_80117d54
-          if(type == 0) {
-            //LAB_80117dc4
-            processLmbType0(manager, effect, s1, sp0x80);
-          } else if(type == 1) {
-            //LAB_80117ddc
-            processLmbType1(manager, effect, s1, sp0x80);
-          } else if(type == 2) {
-            //LAB_80117df4
-            processLmbType2(manager, effect, s1, sp0x80);
-          }
-
-          //LAB_80117e04
-          s1 -= spe4;
-        }
-      }
-
-      //LAB_80117e14
-      //LAB_80117e20
-      manager.set(anim);
-
-      if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e62a8();
-      }
-    }
-
-    //LAB_80117e80
-  }
-
   /** Used by down burst and night raid */
   @ScriptDescription("Allocates an LMB animation")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
@@ -7816,13 +4343,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "LMB animation",
       script.scriptState_04,
-      null,
-      SEffe::lmbAnimationRenderer,
-      (s, manager) -> {
-        if(((LmbAnimationEffect5c)manager.effect_44).obj != null) {
-          ((LmbAnimationEffect5c)manager.effect_44).obj.delete();
-        }
-      },
       new LmbAnimationEffect5c(),
       new EffectManagerParams.AnimType()
     );
@@ -7919,83 +4439,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** TODO renders other effects too? Burnout, more? Uses CTMD render pipeline */
-  @Method(0x8011826cL)
-  public static void renderDeffTmd(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> data) {
-    final DeffTmdRenderer14 deffEffect = (DeffTmdRenderer14)data.effect_44;
-
-    if(data.params_10.flags_00 >= 0) {
-      final MV sp0x10 = new MV();
-      calculateEffectTransforms(sp0x10, data);
-      if((data.params_10.flags_00 & 0x4000_0000) != 0) {
-        tmdGp0Tpage_1f8003ec = data.params_10.flags_00 >>> 23 & 0x60;
-      } else {
-        //LAB_801182bc
-        tmdGp0Tpage_1f8003ec = deffEffect.tpage_10;
-      }
-
-      //LAB_801182c8
-      zOffset_1f8003e8 = data.params_10.z_22;
-      if((data.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(data.params_10.colour_1c.x / 128.0f, data.params_10.colour_1c.y / 128.0f, data.params_10.colour_1c.z / 128.0f);
-      } else {
-        //LAB_80118304
-        FUN_800e60e0(1.0f, 1.0f, 1.0f);
-      }
-
-      //LAB_80118314
-      if(data.scriptIndex_0c < -2) {
-        if(data.scriptIndex_0c == -4) {
-          sp0x10.transfer.z = projectionPlaneDistance_1f8003f8;
-        }
-
-        //LAB_8011833c
-        GsSetLightMatrix(sp0x10);
-        GTE.setTransforms(sp0x10);
-
-        final ModelPart10 dobj2 = new ModelPart10();
-        dobj2.attribute_00 = data.params_10.flags_00;
-        dobj2.tmd_08 = deffEffect.tmd_08;
-
-        final int oldZShift = zShift_1f8003c4;
-        final int oldZMax = zMax_1f8003cc;
-        final int oldZMin = zMin;
-        zShift_1f8003c4 = 2;
-        zMax_1f8003cc = 0xffe;
-        zMin = 0xb;
-        Renderer.renderDobj2(dobj2, false, 0);
-        zShift_1f8003c4 = oldZShift;
-        zMax_1f8003cc = oldZMax;
-        zMin = oldZMin;
-
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(deffEffect.obj, sp0x10)
-          .lightDirection(lightDirectionMatrix_800c34e8)
-          .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour)
-          .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
-
-        if(deffEffect.tmd_08.vdf != null) {
-          model.vdf(deffEffect.tmd_08.vdf);
-        }
-      } else {
-        //LAB_80118370
-        renderTmdSpriteEffect(deffEffect.tmd_08, deffEffect.obj, data.params_10, sp0x10);
-      }
-
-      //LAB_80118380
-      if((data.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e62a8();
-      } else {
-        //LAB_801183a4
-        FUN_800e6170();
-      }
-    }
-
-    //LAB_801183ac
-  }
-
   @ScriptDescription("Allocates a DEFF TMD effect manager")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
@@ -8013,9 +4456,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,
-      null,
-      SEffe::renderDeffTmd,
-      (s, manager) -> ((DeffTmdRenderer14)manager.effect_44).obj.delete(),
       new DeffTmdRenderer14(),
       new EffectManagerParams.AnimType()
     );
@@ -8095,9 +4535,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       objTable != null ? "Obj table renderer FUN_801184e4 " + objTable.name : "TMD renderer with no TMD? FUN_801184e4",
       script.scriptState_04,
-      null,
-      SEffe::renderDeffTmd,
-      (s, manager) -> ((DeffTmdRenderer14)manager.effect_44).obj.delete(),
       new DeffTmdRenderer14(),
       new EffectManagerParams.AnimType()
     );
@@ -8138,49 +4575,11 @@ public final class SEffe {
     //LAB_80118780
   }
 
-  /** Uses ctmd render pipeline */
-  @Method(0x80118790L)
-  public static void renderShadowEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    if(manager.params_10.flags_00 >= 0) { // No errors
-      final float y = manager.params_10.trans_04.y;
-      manager.params_10.trans_04.y = 0.0f;
-      final MV sp0x10 = new MV();
-      calculateEffectTransforms(sp0x10, manager);
-      sp0x10.transfer.y = y;
-      manager.params_10.trans_04.y = y;
-
-      final float rotY = MathHelper.atan2(-sp0x10.m02, sp0x10.m00);
-      sp0x10.rotateY(-rotY);
-      sp0x10.rotateZ(-MathHelper.atan2(sp0x10.m01, sp0x10.m00));
-      sp0x10.rotateX(-MathHelper.atan2(-sp0x10.m21, sp0x10.m22));
-      sp0x10.rotateY(rotY);
-      sp0x10.m01 = 0.0f;
-      sp0x10.m11 = 0.0f;
-      sp0x10.m21 = 0.0f;
-      sp0x10.transfer.y -= 0.05f; // Fix Z-fighting with ground
-      tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
-      zOffset_1f8003e8 = manager.params_10.z_22;
-      FUN_800e60e0(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
-      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager.params_10, sp0x10);
-      FUN_800e6170();
-    }
-
-    //LAB_801188d8
-  }
-
   @ScriptDescription("Allocates a shadow effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x801188ecL)
   public static FlowControl scriptAllocateShadowEffect(final RunningScript<? extends BattleObject> script) {
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
-      "Unknown (FUN_801188ec, %s)".formatted(shadowModel_800bda10.modelParts_00[0].tmd_08.name),
-      script.scriptState_04,
-      null,
-      SEffe::renderShadowEffect,
-      null,
-      null
-    );
-
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Unknown (FUN_801188ec, %s)".formatted(shadowModel_800bda10.modelParts_00[0].tmd_08.name), script.scriptState_04, new ShadowEffect());
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0000;
     manager.params_10.scale_16.set(0.25f, 0.25f, 0.25f);
@@ -8208,22 +4607,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80118a24L)
-  public static void tickShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ShirleyType>> state, final EffectManagerData6c<EffectManagerParams.ShirleyType> manager) {
-    if(manager.params_10.depth_2c == 0) {
-      return;
-    }
-
-    final int y = (int)(manager.params_10.trans_04.y - manager.params_10.height_28 / 2.0f);
-
-    for(final var bent : battleState_8006e398.monsterBents_e50) {
-      if(bent != null) {
-        // Y can go slightly negative so double the height to ensure their feet don't disappear
-        bent.innerStruct_00.scissor(0, displayHeight_1f8003e4 + y, displayWidth_1f8003e0, displayHeight_1f8003e4 * 2);
-      }
-    }
-  }
-
   /**
    * Used when Shirley transforms into another char. Causes the wipe effect where her model
    * disappears from top to bottom and then reappears as another char from bottom to top.
@@ -8235,16 +4618,7 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.ShirleyType>> state = allocateEffectManager(
       "Shirley transform wipe effect",
       script.scriptState_04,
-      SEffe::tickShirleyTransformWipeEffect,
-      null,
-      (state1, manager) -> {
-        for(final var bent : battleState_8006e398.monsterBents_e50) {
-          if(bent != null) {
-            bent.innerStruct_00.disableScissor();
-          }
-        }
-      },
-      null,
+      new ShirleyTransformWipeEffect(),
       new EffectManagerParams.ShirleyType()
     );
 
@@ -8255,138 +4629,6 @@ public final class SEffe {
     manager.params_10.depth_2c = 0; // This value is set by the script, setting it to 0 allows us to detect if the effect has been initialized in the ticker
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
-  }
-
-  /** Some effects use CTMD render pipeline if type == 0x300_0000 */
-  @Method(0x80118e98L)
-  public static void renderSpriteWithTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ColourType>> state, final EffectManagerData6c<EffectManagerParams.ColourType> manager) {
-    final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
-    if(manager.params_10.flags_00 >= 0) { // No errors
-      final MV transformMatrix = new MV();
-      calculateEffectTransforms(transformMatrix, manager);
-
-      final int type = effect.effectFlag_04 & 0xff00_0000;
-      if(type == 0x300_0000) {
-        final TmdSpriteEffect10 sprite = (TmdSpriteEffect10)effect.subEffect_1c;
-
-        //LAB_80118f38
-        if((manager.params_10.flags_00 & 0x4000_0000) != 0) {
-          tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
-        } else {
-          //LAB_80118f5c
-          tmdGp0Tpage_1f8003ec = sprite.tpage_10;
-        }
-
-        //LAB_80118f68
-        zOffset_1f8003e8 = manager.params_10.z_22;
-
-        if((manager.params_10.flags_00 & 0x40) == 0) {
-          FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
-        }
-
-        //LAB_80118f9c
-        renderTmdSpriteEffect(sprite.tmd_08, sprite.obj, manager.params_10, transformMatrix);
-      } else if(type == 0x400_0000) {
-        final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)effect.subEffect_1c;
-        renderBillboardSpriteEffect(sprite.metrics_04, manager.params_10, transformMatrix);
-      }
-
-      //LAB_80118fac
-      if(effect.countCopies_08 != 0) {
-        final EffectManagerParams.ColourType managerInner = new EffectManagerParams.ColourType();
-        final Vector3i colour = new Vector3i();
-        final Vector3f stepScale = new Vector3f();
-
-        //LAB_80118fc4
-        managerInner.set(manager.params_10);
-
-        final int combinedSteps = effect.countCopies_08 * (effect.countTransformSteps_0c + 1);
-        if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
-          final int brightness = effect.colourAndScaleTransformModifier_10 - 0x1000;
-          managerInner.r_28 = managerInner.colour_1c.x << 12;
-          managerInner.g_2c = managerInner.colour_1c.y << 12;
-          managerInner.b_30 = managerInner.colour_1c.z << 12;
-          colour.x = managerInner.colour_1c.x * brightness / combinedSteps;
-          colour.y = managerInner.colour_1c.y * brightness / combinedSteps;
-          colour.z = managerInner.colour_1c.z * brightness / combinedSteps;
-        }
-
-        //LAB_801190a8
-        if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
-          final float scaleModifier = (effect.colourAndScaleTransformModifier_10 - 0x1000) / (float)0x1000;
-          stepScale.x = managerInner.scale_16.x * scaleModifier / combinedSteps;
-          stepScale.y = managerInner.scale_16.y * scaleModifier / combinedSteps;
-          stepScale.z = managerInner.scale_16.z * scaleModifier / combinedSteps;
-        }
-
-        //LAB_80119130
-        //LAB_8011914c
-        for(int i = 1; i < effect.countCopies_08 && i < effect.translationIndexBase_14; i++) {
-          final Vector3f instTranslation = effect.instanceTranslations_18[(effect.translationIndexBase_14 - i - 1) % effect.countCopies_08];
-
-          final int steps = effect.countTransformSteps_0c + 1;
-          final float stepX = (instTranslation.x - transformMatrix.transfer.x) / steps;
-          final float stepY = (instTranslation.y - transformMatrix.transfer.y) / steps;
-          final float stepZ = (instTranslation.z - transformMatrix.transfer.z) / steps;
-
-          float x = transformMatrix.transfer.x;
-          float y = transformMatrix.transfer.y;
-          float z = transformMatrix.transfer.z;
-
-          //LAB_80119204
-          for(int j = effect.countTransformSteps_0c; j >= 0; j--) {
-            if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
-              managerInner.r_28 += colour.x;
-              managerInner.g_2c += colour.y;
-              managerInner.b_30 += colour.z;
-              //LAB_80119254
-              //LAB_80119270
-              //LAB_8011928c
-              managerInner.colour_1c.x = managerInner.r_28 >> 12;
-              managerInner.colour_1c.y = managerInner.g_2c >> 12;
-              managerInner.colour_1c.z = managerInner.b_30 >> 12;
-            }
-
-            //LAB_80119294
-            if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
-              //LAB_801192e4
-              //LAB_80119300
-              //LAB_8011931c
-              managerInner.scale_16.add(stepScale);
-            }
-
-            //LAB_80119324
-            x += stepX;
-            y += stepY;
-            z += stepZ;
-
-            //LAB_80119348
-            //LAB_80119360
-            //LAB_80119378
-            transformMatrix.transfer.set(x, y, z);
-            transformMatrix.scaleLocal(managerInner.scale_16);
-
-            if(type == 0x300_0000) {
-              //LAB_801193f0
-              final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;
-              renderTmdSpriteEffect(subEffect.tmd_08, subEffect.obj, managerInner, transformMatrix);
-            } else if(type == 0x400_0000) {
-              final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
-              renderBillboardSpriteEffect(subEffect.metrics_04, managerInner, transformMatrix);
-            }
-            //LAB_80119400
-            //LAB_80119404
-          }
-          //LAB_8011940c
-        }
-
-        //LAB_80119420
-        if(type == 0x300_0000 && (manager.params_10.flags_00 & 0x40) == 0) {
-          FUN_800e62a8();
-        }
-      }
-    }
-    //LAB_80119454
   }
 
   /**
@@ -8409,13 +4651,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.ColourType>> state = allocateEffectManager(
       "SpriteWithTrailEffect30",
       script.scriptState_04,
-      SEffe::tickSpriteWithTrailEffect,
-      SEffe::renderSpriteWithTrailEffect,
-      (s, manager) -> {
-        if(((SpriteWithTrailEffect30)manager.effect_44).subEffect_1c instanceof final TmdSpriteEffect10 effect) {
-          effect.obj.delete();
-        }
-      },
       new SpriteWithTrailEffect30(script.params_20[3].get()),
       new EffectManagerParams.ColourType()
     );
@@ -8450,18 +4685,5 @@ public final class SEffe {
     //LAB_8011967c
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x801196bcL)
-  public static void tickSpriteWithTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ColourType>> state, final EffectManagerData6c<EffectManagerParams.ColourType> manager) {
-    final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
-
-    if(effect.countCopies_08 != 0) {
-      final MV transformMatrix = new MV();
-      calculateEffectTransforms(transformMatrix, manager);
-      effect.instanceTranslations_18[effect.translationIndexBase_14 % effect.countCopies_08].set(transformMatrix.transfer);
-      effect.translationIndexBase_14++;
-    }
-    //LAB_80119778
   }
 }

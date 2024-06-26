@@ -6,7 +6,6 @@ import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class EffectManagerData6c<T extends EffectManagerParams<T>> extends BattleObject implements AttachmentHost {
@@ -19,9 +18,9 @@ public class EffectManagerData6c<T extends EffectManagerParams<T>> extends Battl
   public ScriptState<EffectManagerData6c<T>> myScriptState_0e;
 
   public final T params_10;
-  public Effect effect_44;
-  public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker_48;
-  public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor_4c;
+  public Effect<T> effect_44;
+//  public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker_48;
+//  public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor_4c;
   public ScriptState<EffectManagerData6c<?>> parentScript_50;
   public ScriptState<EffectManagerData6c<?>> childScript_52;
   /** If replacing a child, this is the old child's ID */
@@ -49,8 +48,6 @@ public class EffectManagerData6c<T extends EffectManagerParams<T>> extends Battl
     this.myScriptState_0e = other.myScriptState_0e;
     this.params_10.set(other.params_10);
     this.effect_44 = other.effect_44;
-    this.ticker_48 = other.ticker_48;
-    this.destructor_4c = other.destructor_4c;
     this.parentScript_50 = other.parentScript_50;
     this.childScript_52 = other.childScript_52;
     this.oldChildScript_54 = other.oldChildScript_54;
