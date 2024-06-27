@@ -660,7 +660,7 @@ public class Battle extends EngineState {
     functions[168] = this::scriptSetBentStat;
     functions[169] = this::scriptGetBentStat;
     functions[170] = this::scriptSetPostBattleAction;
-    functions[171] = this::FUN_800ccec8;
+    functions[171] = this::scriptSetBattleHudVisibility;
     functions[172] = this::FUN_800ccef8;
     functions[173] = this::scriptSetBentDeadAndDropLoot;
     functions[174] = this::scriptGetHitProperty;
@@ -740,7 +740,7 @@ public class Battle extends EngineState {
     functions[487] = this::scriptGiveSp;
     functions[488] = this::scriptConsumeSp;
     functions[489] = this::scriptInitSpellAndItemMenu;
-    functions[490] = this::FUN_800f4600;
+    functions[490] = this::scriptGetItemOrSpellTargetingInfo;
     functions[491] = this::scriptGetItemOrSpellAttackTarget;
     functions[492] = this::scriptDragoonMagicStatusItemAttack;
     functions[493] = this::scriptSetTempSpellStats;
@@ -857,7 +857,7 @@ public class Battle extends EngineState {
     functions[621] = this::scriptGetEffectLoopCount;
     functions[622] = SEffe::allocateSpriteWithTrailEffect;
     functions[623] = this::scriptLoadDeff;
-    functions[624] = this::FUN_800e6db4;
+    functions[624] = this::scriptTickDeffLoadingStage;
     functions[625] = this::scriptGetDeffLoadingStage;
     functions[626] = SEffe::scriptGetEffectZ;
     functions[627] = SEffe::scriptSetEffectZ;
@@ -3384,11 +3384,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to HUD")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Shows or hides the battle HUD")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "visible", description = "True to show HUD, false to hide")
   @Method(0x800ccec8L)
-  public FlowControl FUN_800ccec8(final RunningScript<?> script) {
-    this.hud.FUN_800f1a00(script.params_20[0].get() > 0);
+  public FlowControl scriptSetBattleHudVisibility(final RunningScript<?> script) {
+    this.hud.setBattleHudVisibility(script.params_20[0].get() > 0);
     return FlowControl.CONTINUE;
   }
 
@@ -5933,10 +5933,10 @@ public class Battle extends EngineState {
     this.deffLoadingStage_800fafe8 = 1;
   }
 
-  @ScriptDescription("Unknown, related to loading DEFFs")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Ticks the DEFF loader for DEFFs that are not set up to tick themselves. May pause and rewind if the DEFF is not yet ready for that stage.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "loadingStage", description = "The loading stage to run (ranges from 0-4 inclusive)")
   @Method(0x800e6db4L)
-  public FlowControl FUN_800e6db4(final RunningScript<?> script) {
+  public FlowControl scriptTickDeffLoadingStage(final RunningScript<?> script) {
     final FlowControl flow;
     final int deffStage;
     switch(script.params_20[0].get() & 0xffff) {
@@ -8003,11 +8003,11 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Unknown, this might handle players selecting an attack target")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectionState", description = "0 - nothing selected, 1 - item/spell selected, -1 - menu unloading")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
   @Method(0x800f4600L)
-  public FlowControl FUN_800f4600(final RunningScript<?> script) {
+  public FlowControl scriptGetItemOrSpellTargetingInfo(final RunningScript<?> script) {
     final SpellAndItemMenuA4 menu = this.hud.spellAndItemMenu_800c6b60;
     int itemOrSpellId = menu.itemOrSpellId_1c;
     if(menu.player_08.charId_272 == 8 && menu.menuType_0a == 1) {
@@ -8028,7 +8028,7 @@ public class Battle extends EngineState {
 
     //LAB_800f4704
     //LAB_800f4708
-    script.params_20[0].set(menu._a0);
+    script.params_20[0].set(menu.selectionState_a0);
     script.params_20[1].set(this.hud.battleMenu_800c6c34.target_48);
     script.params_20[2].set(itemOrSpellId);
 
@@ -8036,7 +8036,8 @@ public class Battle extends EngineState {
     //LAB_800f47ac
     menu.player_08.spellId_4e = itemOrSpellId;
 
-    if(menu._a0 == 1 && menu.menuType_0a == 0) {
+    // If it's a target all item, -1 the target
+    if(menu.selectionState_a0 == 1 && menu.menuType_0a == 0) {
       //LAB_800f47e4
       for(int i = 0; i < 17; i++) {
         if(targetAllItemIds_800c7124[i] == itemOrSpellId + 0xc0) {
