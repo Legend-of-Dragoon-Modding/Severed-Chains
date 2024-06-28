@@ -226,16 +226,7 @@ public class PostBattleScreen extends MenuScreen {
         break;
 
       case TICK_XP_5:
-        final boolean moreXpToGive =
-          this.givePendingXp(gameState_800babc8.charIds_88[0], 0) ||
-          this.givePendingXp(gameState_800babc8.charIds_88[1], 1) ||
-          this.givePendingXp(gameState_800babc8.charIds_88[2], 2) ||
-          this.givePendingXp(secondaryCharIds_800bdbf8[0], 3) ||
-          this.givePendingXp(secondaryCharIds_800bdbf8[1], 4) ||
-          this.givePendingXp(secondaryCharIds_800bdbf8[2], 5) ||
-          this.givePendingXp(secondaryCharIds_800bdbf8[3], 6) ||
-          this.givePendingXp(secondaryCharIds_800bdbf8[4], 7) ||
-          this.givePendingXp(secondaryCharIds_800bdbf8[5], 8);
+        final boolean moreXpToGive = this.givePendingXp();
 
         if(moreXpToGive) {
           this.soundTick_8011e17c++;
@@ -449,54 +440,60 @@ public class PostBattleScreen extends MenuScreen {
    * @return True if there is remaining XP to give
    */
   @Method(0x8010cc24L)
-  private boolean givePendingXp(final int charIndex, final int charSlot) {
-    if(charIndex == -1) {
-      return false;
-    }
+  private boolean givePendingXp() {
+    final int[] charIds = {gameState_800babc8.charIds_88[0], gameState_800babc8.charIds_88[1], gameState_800babc8.charIds_88[2], secondaryCharIds_800bdbf8[0], secondaryCharIds_800bdbf8[1], secondaryCharIds_800bdbf8[2], secondaryCharIds_800bdbf8[3], secondaryCharIds_800bdbf8[4], secondaryCharIds_800bdbf8[5]};
+    int pendingXpCleared = 0;
 
-    final int pendingXp = this.pendingXp_8011e180[charIndex];
+    for(int i = 0; i < 9; i++) {
+      if(charIds[i] >= 0) {
+        final int pendingXp = this.pendingXp_8011e180[i];
 
-    if(pendingXp == 0) {
-      //LAB_8010cc68
-      return false;
-    }
+        if(pendingXp == 0) {
+          //LAB_8010cc68
+          pendingXpCleared++;
+          continue;
+        }
 
-    //LAB_8010cc70
-    final int cappedPendingXp;
-    if((press_800bee94 & 0x20) != 0 || pendingXp < 10) {
-      cappedPendingXp = pendingXp;
-    } else {
-      cappedPendingXp = 10;
-    }
+        //LAB_8010cc70
+        final int cappedPendingXp;
+        if((press_800bee94 & 0x20) != 0 || pendingXp < 10) {
+          cappedPendingXp = pendingXp;
+        } else {
+          cappedPendingXp = 10;
+        }
 
-    //LAB_8010cc94
-    //LAB_8010cc98
-    int xp = gameState_800babc8.charData_32c[charIndex].xp_00;
-    if(xp <= 999999) {
-      xp = xp + cappedPendingXp;
-    } else {
-      xp = 999999;
-    }
+        //LAB_8010cc94
+        //LAB_8010cc98
+        int xp = gameState_800babc8.charData_32c[i].xp_00;
+        if(xp <= 999999) {
+          xp = xp + cappedPendingXp;
+        } else {
+          xp = 999999;
+        }
 
-    //LAB_8010ccd4
-    gameState_800babc8.charData_32c[charIndex].xp_00 = xp;
-    this.pendingXp_8011e180[charIndex] -= cappedPendingXp;
+        //LAB_8010ccd4
+        gameState_800babc8.charData_32c[i].xp_00 = xp;
+        this.pendingXp_8011e180[i] -= cappedPendingXp;
 
-    //LAB_8010cd30
-    while(gameState_800babc8.charData_32c[charIndex].xp_00 >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c[charIndex].level_12 < 60) {
-      gameState_800babc8.charData_32c[charIndex].level_12++;
+        //LAB_8010cd30
+        while(gameState_800babc8.charData_32c[i].xp_00 >= getXpToNextLevel(i) && gameState_800babc8.charData_32c[i].level_12 < 60) {
+          gameState_800babc8.charData_32c[i].level_12++;
 
-      this.levelsGained_8011e1c8[charSlot]++;
-      if(this.additionsUnlocked_8011e1b8[charSlot] == 0) {
-        this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charIndex, null);
+          this.levelsGained_8011e1c8[i]++;
+          if(this.additionsUnlocked_8011e1b8[i] == 0) {
+            this.additionsUnlocked_8011e1b8[i] = loadAdditions(i, null);
+          }
+
+          //LAB_8010cd9c
+        }
+      } else {
+        pendingXpCleared++;
       }
-
-      //LAB_8010cd9c
     }
 
     //LAB_8010cdb0
     //LAB_8010cdcc
-    return this.pendingXp_8011e180[charIndex] > 0;
+    return pendingXpCleared < 9;
   }
 
   @Method(0x8010cde8L)
