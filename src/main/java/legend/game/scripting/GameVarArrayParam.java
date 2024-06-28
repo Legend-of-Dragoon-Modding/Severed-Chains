@@ -218,7 +218,7 @@ public class GameVarArrayParam extends Param {
       case 103 -> Scus94491BpeSegment_8006.battleState_8006e398._31c;
       case 104 -> Scus94491BpeSegment_8006.battleState_8006e398._320;
       case 105 -> Scus94491BpeSegment_8006.battleState_8006e398.additionState_324;
-      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398._328;
+      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398.additionStarbustEffectCountParam_328;
       case 107 -> Scus94491BpeSegment_8006.battleState_8006e398._32c;
       case 108 -> Scus94491BpeSegment_8006.battleState_8006e398._330;
       case 109 -> Scus94491BpeSegment_8006.battleState_8006e398._334[0];
@@ -240,7 +240,7 @@ public class GameVarArrayParam extends Param {
       case 125 -> Scus94491BpeSegment_8006.battleState_8006e398._374;
       case 126 -> Scus94491BpeSegment_8006.battleState_8006e398._378;
       case 127 -> Scus94491BpeSegment_8006.battleState_8006e398._37c;
-      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398._380;
+      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398.scriptEffectTableJumpIndex_380;
       case 129 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[0].pack();
       case 130 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[1].pack();
       case 131 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[2].pack();
@@ -259,7 +259,7 @@ public class GameVarArrayParam extends Param {
       case 144 -> Scus94491BpeSegment_8006.battleState_8006e398._3c0;
       case 145 -> Scus94491BpeSegment_8006.battleState_8006e398._3c4;
       case 146 -> Scus94491BpeSegment_8006.battleState_8006e398._3c8;
-      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398._3cc;
+      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemDamageMultiplier_3cc;
       case 148 -> Scus94491BpeSegment_8006.battleState_8006e398._3d0;
       case 149 -> Scus94491BpeSegment_8006.battleState_8006e398._3d4;
       case 150 -> Scus94491BpeSegment_8006.battleState_8006e398._3d8;
@@ -314,7 +314,7 @@ public class GameVarArrayParam extends Param {
       case 199 -> Scus94491BpeSegment_8006.battleState_8006e398._49c;
       case 200 -> Scus94491BpeSegment_8006.battleState_8006e398._4a0;
       case 201 -> Scus94491BpeSegment_8006.battleState_8006e398._4a4;
-      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398._4a8;
+      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemLevel_4a8;
       case 203 -> Scus94491BpeSegment_8006.battleState_8006e398._4ac;
       case 204 -> Scus94491BpeSegment_8006.battleState_8006e398._4b0;
       case 205 -> Scus94491BpeSegment_8006.battleState_8006e398._4b4;
@@ -481,7 +481,7 @@ public class GameVarArrayParam extends Param {
       case 103 -> Scus94491BpeSegment_8006.battleState_8006e398._31c = val;
       case 104 -> Scus94491BpeSegment_8006.battleState_8006e398._320 = val;
       case 105 -> Scus94491BpeSegment_8006.battleState_8006e398.additionState_324 = val;
-      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398._328 = val;
+      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398.additionStarbustEffectCountParam_328 = val;
       case 107 -> Scus94491BpeSegment_8006.battleState_8006e398._32c = val;
       case 108 -> Scus94491BpeSegment_8006.battleState_8006e398._330 = val;
       case 109 -> Scus94491BpeSegment_8006.battleState_8006e398._334[0] = val;
@@ -503,7 +503,7 @@ public class GameVarArrayParam extends Param {
       case 125 -> Scus94491BpeSegment_8006.battleState_8006e398._374 = val;
       case 126 -> Scus94491BpeSegment_8006.battleState_8006e398._378 = val;
       case 127 -> Scus94491BpeSegment_8006.battleState_8006e398._37c = val;
-      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398._380 = val;
+      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398.scriptEffectTableJumpIndex_380 = val;
       case 129 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[0].unpack(val);
       case 130 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[1].unpack(val);
       case 131 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[2].unpack(val);
@@ -522,7 +522,7 @@ public class GameVarArrayParam extends Param {
       case 144 -> Scus94491BpeSegment_8006.battleState_8006e398._3c0 = val;
       case 145 -> Scus94491BpeSegment_8006.battleState_8006e398._3c4 = val;
       case 146 -> Scus94491BpeSegment_8006.battleState_8006e398._3c8 = val;
-      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398._3cc = val;
+      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemDamageMultiplier_3cc = val;
       case 148 -> Scus94491BpeSegment_8006.battleState_8006e398._3d0 = val;
       case 149 -> Scus94491BpeSegment_8006.battleState_8006e398._3d4 = val;
       case 150 -> Scus94491BpeSegment_8006.battleState_8006e398._3d8 = val;
@@ -577,7 +577,7 @@ public class GameVarArrayParam extends Param {
       case 199 -> Scus94491BpeSegment_8006.battleState_8006e398._49c = val;
       case 200 -> Scus94491BpeSegment_8006.battleState_8006e398._4a0 = val;
       case 201 -> Scus94491BpeSegment_8006.battleState_8006e398._4a4 = val;
-      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398._4a8 = val;
+      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemLevel_4a8 = val;
       case 203 -> Scus94491BpeSegment_8006.battleState_8006e398._4ac = val;
       case 204 -> Scus94491BpeSegment_8006.battleState_8006e398._4b0 = val;
       case 205 -> Scus94491BpeSegment_8006.battleState_8006e398._4b4 = val;

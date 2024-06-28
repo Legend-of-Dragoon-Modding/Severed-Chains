@@ -180,7 +180,9 @@ public class BattleStateEf4 {
    * </ul>
    */
   public int additionState_324;
-  public int _328;
+
+  /** Only used in player combat script for third param of 800d19ec */
+  public int additionStarbustEffectCountParam_328;
   public int _32c;
   public int _330;
   /** Pretty sure this is character index loading (boolean) */
@@ -201,7 +203,7 @@ public class BattleStateEf4 {
   public int _374;
   public int _378;
   public int _37c;
-  public int _380;
+  public int scriptEffectTableJumpIndex_380;
   public final Status04[] status_384 = new Status04[8];
   public int _3a4;
   public int _3a8;
@@ -213,7 +215,9 @@ public class BattleStateEf4 {
   public int _3c0;
   public int _3c4;
   public int _3c8;
-  public int _3cc;
+
+  /** Hardcoded to be in range 1-999 (inclusive). If out of range, 100% is used */
+  public int magicItemDamageMultiplier_3cc;
   public int _3d0;
   public int _3d4;
   public int _3d8;
@@ -263,7 +267,9 @@ public class BattleStateEf4 {
   public int _49c;
   public int _4a0;
   public int _4a4;
-  public int _4a8;
+
+  /** Has a value between 5-8 (inclusive). If out of range, 5 is used. Button mashing effect for enemies.*/
+  public int magicItemLevel_4a8;
   public int _4ac;
   public int _4b0;
   public int _4b4;
@@ -342,7 +348,8 @@ public class BattleStateEf4 {
   // nodart code no longer uses this
 //  public final Pointer<PartyPermutation08> partyPermutation_ee8;
   public int battlePhase_eec;
-  public int _ef0;
+  /** Only used in 800db8b0 inside DRGN1/401 */
+  public int cameraControllerScriptTicksParam_ef0;
 
   private int aliveBentCount_800c669c;
   private int currentAssetIndex_800c66b4;
