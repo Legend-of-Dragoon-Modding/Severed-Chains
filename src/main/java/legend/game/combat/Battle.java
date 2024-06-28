@@ -345,7 +345,7 @@ public class Battle extends EngineState {
   private int combatantCount_800c66a0;
   public int currentStage_800c66a4;
 
-  public int _800c66a8;
+  public boolean battleInitialCameraMovementFinished_800c66a8;
   private int currentCompressedAssetIndex_800c66ac;
 
   private boolean stageHasModel_800c66b8;
@@ -363,16 +363,16 @@ public class Battle extends EngineState {
 
   private ScriptFile playerBattleScript_800c66fc;
 
-  public int _800c6700;
-  public int _800c6704;
+  public int cameraScriptSubtableJumpIndex_800c6700;
+  public int cameraScriptSubtableJumpIndex_800c6704;
 
   public int _800c6710;
 
   public StageData2c currentStageData_800c6718;
-  public int _800c6748;
+  public int cameraScriptMainTableJumpIndex_800c6748;
   private ScriptState<Void> scriptState_800c674c;
 
-  public int _800c6754;
+  public boolean shouldRenderStage_800c6754;
 
   private int currentDisplayableIconsBitset_800c675c;
 
@@ -1460,7 +1460,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c7a80L)
   public void calculateInitialTurnValues() {
-    if(this._800c66a8 != 0) {
+    if(this.battleInitialCameraMovementFinished_800c66a8) {
       battleFlags_800bc960 |= 0x10;
       battleState_8006e398.calculateInitialTurnValues();
       pregameLoadingStage_800bb10c++;
@@ -1554,7 +1554,7 @@ public class Battle extends EngineState {
       final int postBattleAction = postBattleActions_800fa6c4[postBattleActionIndex];
 
       if(postBattleAction >= 0) {
-        this._800c6748 = postBattleAction;
+        this.cameraScriptMainTableJumpIndex_800c6748 = postBattleAction;
         this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
       }
 
@@ -1734,7 +1734,7 @@ public class Battle extends EngineState {
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
 
-      this._800c6754 = 1;
+      this.shouldRenderStage_800c6754 = true;
       this.stageHasModel_800c66b8 = true;
     }
 
@@ -1849,7 +1849,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c8cf0L)
   public void rotateAndRenderBattleStage() {
-    if(this.stageHasModel_800c66b8 && this._800c6754 != 0 && (battleFlags_800bc960 & 0x20) != 0) {
+    if(this.stageHasModel_800c66b8 && this.shouldRenderStage_800c6754 && (battleFlags_800bc960 & 0x20) != 0) {
       this.rotateBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
       this.renderBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
     }
@@ -8719,7 +8719,7 @@ public class Battle extends EngineState {
     }
 
     //LAB_801091dc
-    this._800c6748 = v1 + 1;
+    this.cameraScriptMainTableJumpIndex_800c6748 = v1 + 1;
     this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
     this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
     battleFlags_800bc960 |= 0x2;
