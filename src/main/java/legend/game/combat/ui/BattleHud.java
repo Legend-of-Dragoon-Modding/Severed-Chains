@@ -2285,7 +2285,7 @@ public class BattleHud {
           }
 
           //LAB_800f6560
-          this.battle._800c6748 = 33;
+          this.battle.cameraScriptMainTableJumpIndex_800c6748 = 33;
           this.battleMenu_800c6c34.state_00 = 5;
           this.currentCameraPositionIndicesIndex_800c66b0 = this.cameraPositionIndicesIndices_800c6c30[this.currentCameraPositionIndicesIndicesIndex_800c6ba1];
           this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 60 / vsyncMode_8007a3b8 + 2;
