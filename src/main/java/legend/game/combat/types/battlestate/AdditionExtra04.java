@@ -4,6 +4,7 @@ import legend.game.combat.AdditionMode;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
+import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -34,7 +35,7 @@ public class AdditionExtra04 {
       if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
         boolean enemyAlive = false;
         for(int i = 0; i < battleState_8006e398.aliveMonsterBents_ebc.length; i++) {
-          if(battleState_8006e398.aliveMonsterBents_ebc[i] != null && battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00 != null && battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00.stats.getStat(CoreMod.HP_STAT.get()).getCurrent() != 0) {
+          if(battleState_8006e398.aliveMonsterBents_ebc[i] != null && battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00 != null && battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00.stats.getStat(LodMod.HP_STAT.get()).getCurrent() != 0) {
             enemyAlive = true;
             break;
           }

@@ -70,7 +70,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   private final ScriptFile script;
 
   public PlayerBattleEntity(final String name, final int scriptIndex, final ScriptFile script) {
-    super(CoreMod.PLAYER_TYPE.get(), name);
+    super(LodMod.PLAYER_TYPE.get(), name);
 
     //noinspection unchecked
     this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[scriptIndex]);
@@ -112,7 +112,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Override
   public Element getElement() {
     if(this.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && this.isDragoon()) { // Dart Divine Dragoon
-      return CoreMod.DIVINE_ELEMENT.get();
+      return LodMod.DIVINE_ELEMENT.get();
     }
 
     return this.element;
@@ -243,10 +243,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case LEVEL -> this.level_04;
       case DLEVEL -> this.dlevel_06;
 
-      case CURRENT_SP -> this.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
-      case CURRENT_MP -> this.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
+      case CURRENT_SP -> this.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
+      case CURRENT_MP -> this.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
 
-      case MAX_MP -> this.stats.getStat(CoreMod.MP_STAT.get()).getMax();
+      case MAX_MP -> this.stats.getStat(LodMod.MP_STAT.get()).getMax();
 
       case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT -> this.equipmentAttackElements_1c.pack();
 
@@ -296,8 +296,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case LEVEL -> this.level_04 = value;
       case DLEVEL -> this.dlevel_06 = value;
 
-      case CURRENT_SP -> this.stats.getStat(CoreMod.SP_STAT.get()).setCurrent(value);
-      case CURRENT_MP -> this.stats.getStat(CoreMod.MP_STAT.get()).setCurrent(value);
+      case CURRENT_SP -> this.stats.getStat(LodMod.SP_STAT.get()).setCurrent(value);
+      case CURRENT_MP -> this.stats.getStat(LodMod.MP_STAT.get()).setCurrent(value);
 
       case ADDITION_HITS -> this.additionHits_56 = value;
       case SELECTED_ADDITION -> this.selectedAddition_58 = value;

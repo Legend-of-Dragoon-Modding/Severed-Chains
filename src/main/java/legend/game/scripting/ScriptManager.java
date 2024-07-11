@@ -225,7 +225,7 @@ public class ScriptManager {
     //LAB_80017750
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null) {
+      if(scriptState != null && scriptState.hasExecuted()) {
         scriptState.tick();
       }
     }
@@ -233,7 +233,7 @@ public class ScriptManager {
     //LAB_800177ac
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null) {
+      if(scriptState != null && scriptState.hasExecuted()) {
         scriptState.tempTick();
       }
     }
@@ -247,7 +247,7 @@ public class ScriptManager {
     //LAB_80017854
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null) {
+      if(scriptState != null && scriptState.hasExecuted()) {
         scriptState.render();
       }
     }

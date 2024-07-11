@@ -9,6 +9,7 @@ import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -38,7 +39,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   public final Vector3f targetArrowPos_78 = new Vector3f();
 
   public MonsterBattleEntity(final String name) {
-    super(CoreMod.MONSTER_TYPE.get(), name);
+    super(LodMod.MONSTER_TYPE.get(), name);
   }
 
   @Override
@@ -113,7 +114,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
     super.bentRenderer(state, bent);
 
     if((state.storage_44[7] & 0xa11) == 0 && CONFIG.getConfig(CoreMod.ENEMY_HP_BARS_CONFIG.get())) {
-      final VitalsStat stat = bent.stats.getStat(CoreMod.HP_STAT.get());
+      final VitalsStat stat = bent.stats.getStat(LodMod.HP_STAT.get());
       final float hp = (float)stat.getCurrent() / stat.getMax();
 
       if(hp != 0.0f) {

@@ -126,6 +126,7 @@ public class ScriptState<T> {
   public int ui_fc;
 
   private boolean paused;
+  private int ticks;
 
   public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
     return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
@@ -188,6 +189,11 @@ public class ScriptState<T> {
 
   public boolean isPaused() {
     return this.paused;
+  }
+
+  /** Script has run at least one script tick */
+  public boolean hasExecuted() {
+    return this.ticks != 0;
   }
 
   void tick() {
@@ -329,6 +335,8 @@ public class ScriptState<T> {
   }
 
   void executeFrame() {
+    this.ticks++;
+
     if((this.storage_44[7] & 0x12_0000) == 0 && !this.paused) {
       this.context.commandOffset_0c = this.offset_18;
       this.context.opOffset_08 = this.offset_18;

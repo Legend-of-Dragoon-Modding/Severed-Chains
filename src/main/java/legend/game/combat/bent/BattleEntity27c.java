@@ -13,7 +13,6 @@ import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
@@ -22,6 +21,7 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
+import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -319,10 +319,10 @@ public abstract class BattleEntity27c extends BattleObject {
   @Deprecated
   public int getStat(final BattleEntityStat statIndex) {
     return switch(statIndex) {
-      case CURRENT_HP -> this.stats.getStat(CoreMod.HP_STAT.get()).getCurrent();
+      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getCurrent();
 
       case STATUS -> this.status_0e;
-      case MAX_HP -> this.stats.getStat(CoreMod.HP_STAT.get()).getMax();
+      case MAX_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getMax();
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14;
 //      case EQUIPMENT_TYPE -> this.equipmentType_16;
@@ -338,7 +338,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
       case _21 -> this._2e;
       case EQUIPMENT_ICON -> this.equipmentIcon_30;
-      case SPEED -> this.stats.getStat(CoreMod.SPEED_STAT.get()).get();
+      case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
       case ATTACK -> this.attack_34;
       case MAGIC_ATTACK -> this.magicAttack_36;
       case DEFENCE -> this.defence_38;
@@ -419,7 +419,7 @@ public abstract class BattleEntity27c extends BattleObject {
   @Deprecated
   public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case CURRENT_HP -> this.stats.getStat(CoreMod.HP_STAT.get()).setCurrent(value);
+      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).setCurrent(value);
 
       case STATUS -> this.status_0e = value;
 
