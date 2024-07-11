@@ -16,7 +16,7 @@ public class FractionalStatMod implements StatMod<FractionalStat> {
 
   @Override
   public StatModType<FractionalStat, FractionalStatMod, FractionalStatModConfig> getType() {
-    return LodMod.UNARY_STAT_MOD_TYPE.get();
+    return LodMod.FRACTIONAL_STAT_MOD_TYPE.get();
   }
 
   @Override
