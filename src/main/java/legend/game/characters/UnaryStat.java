@@ -30,7 +30,7 @@ public class UnaryStat extends Stat {
   public int getMods() {
     int value = 0;
 
-    for(final StatMod mod : this.mods) {
+    for(final StatMod mod : this.mods.values()) {
       value += mod.apply(this.stats, this.type);
     }
 

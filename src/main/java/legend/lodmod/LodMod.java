@@ -5,11 +5,39 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import legend.core.GameEngine;
+import legend.game.characters.Element;
+import legend.game.characters.ElementRegistryEvent;
+import legend.game.characters.FractionalStat;
+import legend.game.characters.FractionalStatMod;
+import legend.game.characters.FractionalStatModConfig;
+import legend.game.characters.FractionalStatModType;
+import legend.game.characters.StatModType;
+import legend.game.characters.StatModTypeRegistryEvent;
+import legend.game.characters.StatType;
+import legend.game.characters.StatTypeRegistryEvent;
+import legend.game.characters.UnaryStat;
+import legend.game.characters.UnaryStatMod;
+import legend.game.characters.UnaryStatModConfig;
+import legend.game.characters.UnaryStatModType;
+import legend.game.characters.VitalsStat;
+import legend.game.combat.bent.BattleEntityType;
+import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
+import legend.game.modding.coremod.elements.DarkElement;
+import legend.game.modding.coremod.elements.DivineElement;
+import legend.game.modding.coremod.elements.EarthElement;
+import legend.game.modding.coremod.elements.FireElement;
+import legend.game.modding.coremod.elements.LightElement;
+import legend.game.modding.coremod.elements.NoElement;
+import legend.game.modding.coremod.elements.ThunderElement;
+import legend.game.modding.coremod.elements.WaterElement;
+import legend.game.modding.coremod.elements.WindElement;
+import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
@@ -20,6 +48,8 @@ import legend.lodmod.items.CharmPotionItem;
 import legend.lodmod.items.FileBasedItem;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
+import org.legendofdragoon.modloader.registries.Registrar;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Locale;
@@ -46,6 +76,32 @@ public class LodMod {
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
   }
+
+  private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
+  public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
+  public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_TYPE_REGISTRAR.register("mp", () -> new StatType<>(VitalsStat::new));
+  public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
+
+  public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_TYPE_REGISTRAR.register("speed", () -> new StatType<>(UnaryStat::new));
+
+  private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statModTypes, MOD_ID);
+  public static final RegistryDelegate<StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig>> UNARY_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("unary", UnaryStatModType::new);
+  public static final RegistryDelegate<StatModType<FractionalStat, FractionalStatMod, FractionalStatModConfig>> FRACTIONAL_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("fractional", FractionalStatModType::new);
+
+  private static final Registrar<Element, ElementRegistryEvent> ELEMENT_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.elements, MOD_ID);
+  public static final RegistryDelegate<Element> NO_ELEMENT = ELEMENT_REGISTRAR.register("none", NoElement::new);
+  public static final RegistryDelegate<Element> WATER_ELEMENT = ELEMENT_REGISTRAR.register("water", WaterElement::new);
+  public static final RegistryDelegate<Element> EARTH_ELEMENT = ELEMENT_REGISTRAR.register("earth", EarthElement::new);
+  public static final RegistryDelegate<Element> DARK_ELEMENT = ELEMENT_REGISTRAR.register("dark", DarkElement::new);
+  public static final RegistryDelegate<Element> DIVINE_ELEMENT = ELEMENT_REGISTRAR.register("divine", DivineElement::new);
+  public static final RegistryDelegate<Element> THUNDER_ELEMENT = ELEMENT_REGISTRAR.register("thunder", ThunderElement::new);
+  public static final RegistryDelegate<Element> LIGHT_ELEMENT = ELEMENT_REGISTRAR.register("light", LightElement::new);
+  public static final RegistryDelegate<Element> WIND_ELEMENT = ELEMENT_REGISTRAR.register("wind", WindElement::new);
+  public static final RegistryDelegate<Element> FIRE_ELEMENT = ELEMENT_REGISTRAR.register("fire", FireElement::new);
+
+  private static final Registrar<BattleEntityType, BattleEntityTypeRegistryEvent> BENT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.battleEntityTypes, MOD_ID);
+  public static final RegistryDelegate<BattleEntityType> PLAYER_TYPE = BENT_TYPE_REGISTRAR.register("player", BattleEntityType::new);
+  public static final RegistryDelegate<BattleEntityType> MONSTER_TYPE = BENT_TYPE_REGISTRAR.register("monster", BattleEntityType::new);
 
   @Deprecated
   public static final Int2ObjectMap<RegistryId> itemIdMap = new Int2ObjectOpenHashMap<>();
@@ -111,6 +167,38 @@ public class LodMod {
         spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/" + spellId + ".dspl"));
       }
     }
+  }
+
+  @EventListener
+  public static void registerStatTypes(final StatTypeRegistryEvent event) {
+    STAT_TYPE_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerStatModTypes(final StatModTypeRegistryEvent event) {
+    STAT_MOD_TYPE_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerElements(final ElementRegistryEvent event) {
+    ELEMENT_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerBentTypes(final BattleEntityTypeRegistryEvent event) {
+    BENT_TYPE_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerBentStats(final RegisterBattleEntityStatsEvent event) {
+    event.addStat(HP_STAT.get());
+
+    if(event.type == PLAYER_TYPE.get()) {
+      event.addStat(MP_STAT.get());
+      event.addStat(SP_STAT.get());
+    }
+
+    event.addStat(SPEED_STAT.get());
   }
 
   @EventListener

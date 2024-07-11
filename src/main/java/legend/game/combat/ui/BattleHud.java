@@ -25,7 +25,6 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -246,7 +245,7 @@ public class BattleHud {
       //LAB_800ecb54
       final BattleEntity27c target = targetState.innerStruct_00;
       final int colour;
-      final VitalsStat targetHp = target.stats.getStat(CoreMod.HP_STAT.get());
+      final VitalsStat targetHp = target.stats.getStat(LodMod.HP_STAT.get());
       if(targetHp.getCurrent() > targetHp.getMax() / 4) {
         colour = targetHp.getCurrent() > targetHp.getMax() / 2 ? 0 : 1;
       } else {
@@ -293,7 +292,7 @@ public class BattleHud {
         final BattleEntity27c target = targetBent.innerStruct_00;
 
         final int colour;
-        final VitalsStat targetHp = target.stats.getStat(CoreMod.HP_STAT.get());
+        final VitalsStat targetHp = target.stats.getStat(LodMod.HP_STAT.get());
         if(targetHp.getCurrent() > targetHp.getMax() / 4) {
           colour = targetHp.getCurrent() > targetHp.getMax() / 2 ? 0 : 1;
         } else {
@@ -439,9 +438,9 @@ public class BattleHud {
         if(charDisplay.charIndex_00 != -1 && (charDisplay.flags_06 & 0x1) != 0 && (charDisplay.flags_06 & 0x2) != 0) {
           final PlayerBattleEntity player = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
 
-          final VitalsStat playerHp = player.stats.getStat(CoreMod.HP_STAT.get());
-          final VitalsStat playerMp = player.stats.getStat(CoreMod.MP_STAT.get());
-          final VitalsStat playerSp = player.stats.getStat(CoreMod.SP_STAT.get());
+          final VitalsStat playerHp = player.stats.getStat(LodMod.HP_STAT.get());
+          final VitalsStat playerMp = player.stats.getStat(LodMod.MP_STAT.get());
+          final VitalsStat playerSp = player.stats.getStat(LodMod.SP_STAT.get());
 
           final int colour;
           if(playerHp.getCurrent() > playerHp.getMax() / 2) {
@@ -701,7 +700,7 @@ public class BattleHud {
           }
 
           if(canTransform) {
-            final int sp = player.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
+            final int sp = player.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
             final int fullLevels = sp / 100;
             final int partialSp = sp % 100;
 
@@ -783,7 +782,7 @@ public class BattleHud {
         Element element;
         if(targetCombatant == -1) {  // Target all
           str = targeting_800fb36c[menu.targetType_50];
-          element = CoreMod.DIVINE_ELEMENT.get();
+          element = LodMod.DIVINE_ELEMENT.get();
         } else {  // Target single
           final BattleEntity27c targetBent;
 
@@ -810,7 +809,7 @@ public class BattleHud {
             element = targetBent.getElement();
 
             if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-              element = CoreMod.DIVINE_ELEMENT.get();
+              element = LodMod.DIVINE_ELEMENT.get();
             }
           } else {
             //LAB_800f0d58
@@ -826,7 +825,7 @@ public class BattleHud {
               element = targetBent.getElement();
 
               if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-                element = CoreMod.DIVINE_ELEMENT.get();
+                element = LodMod.DIVINE_ELEMENT.get();
               }
             }
           }
@@ -1659,7 +1658,7 @@ public class BattleHud {
             //LAB_800f5134
             player.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
 
-            if(player.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < player.spell_94.mp_06) {
+            if(player.stats.getStat(LodMod.MP_STAT.get()).getCurrent() < player.spell_94.mp_06) {
               //LAB_800f5160
               //LAB_800f5168
               playSound(0, 3, (short)0, (short)0);
@@ -1797,7 +1796,7 @@ public class BattleHud {
 
           //LAB_800f545c
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
-            final VitalsStat mp = this.spellAndItemMenu_800c6b60.player_08.stats.getStat(CoreMod.MP_STAT.get());
+            final VitalsStat mp = this.spellAndItemMenu_800c6b60.player_08.stats.getStat(LodMod.MP_STAT.get());
             mp.setCurrent(mp.getCurrent() - this.spellAndItemMenu_800c6b60.player_08.spell_94.mp_06);
           }
 
@@ -1972,7 +1971,7 @@ public class BattleHud {
         final PlayerBattleEntity bent = this.setActiveCharacterSpell(spellId);
 
         // Not enough MP for spell
-        if(bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
+        if(bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
           textColour = TextColour.GREY;
         }
       } else if(type == 2) {

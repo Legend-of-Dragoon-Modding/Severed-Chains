@@ -7,10 +7,10 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
 import legend.game.combat.types.battlestate.SpecialEffects20;
 import legend.game.combat.types.battlestate.Status04;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
 
 import java.util.Arrays;
 
@@ -635,7 +635,7 @@ public class BattleStateEf4 {
       //LAB_800c7fb0
       for(int combatantIndex = 0; combatantIndex < this.aliveBentCount_800c669c; combatantIndex++) {
         final BattleEntity27c bent = this.aliveBents_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bent.stats.getStat(CoreMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
+        highestTurnValue = bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
         final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
         bent.turnValue_4c += v1;
       }

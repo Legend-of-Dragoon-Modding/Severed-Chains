@@ -20,7 +20,12 @@ import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment;
 import legend.game.characters.Element;
-import legend.game.characters.TurnBasedPercentileBuff;
+import legend.game.characters.Stat;
+import legend.game.characters.StatMod;
+import legend.game.characters.StatModConfig;
+import legend.game.characters.StatModType;
+import legend.game.characters.StatType;
+import legend.game.characters.UnaryStatModConfig;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.AttackEvent;
 import legend.game.combat.bent.BattleEntity27c;
@@ -96,6 +101,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.scripting.FlowControl;
+import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptEnum;
@@ -130,6 +136,7 @@ import org.joml.Matrix3f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -439,7 +446,7 @@ public class Battle extends EngineState {
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
 
   @SuppressWarnings("unchecked")
-  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
+  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {LodMod.FIRE_ELEMENT, LodMod.WIND_ELEMENT, LodMod.LIGHT_ELEMENT, LodMod.DARK_ELEMENT, LodMod.THUNDER_ELEMENT, LodMod.WIND_ELEMENT, LodMod.WATER_ELEMENT, LodMod.EARTH_ELEMENT, LodMod.LIGHT_ELEMENT};
 
   public static final int[] targetAllItemIds_800c7124 = {193, 207, 208, 209, 210, 214, 216, 220, 241, 242, 243, 244, 245, 246, 247, 248, 250};
 
@@ -959,7 +966,117 @@ public class Battle extends EngineState {
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
 
+    functions[1000] = this::scriptHasStatMod;
+    functions[1001] = this::scriptAddStatMod;
+    functions[1002] = this::scriptRemoveStatMod;
+    functions[1003] = this::scriptGetStatModType;
+    functions[1004] = this::scriptUpdateStatModParams;
+    functions[1005] = this::scriptGetStatModParams;
+
     return functions;
+  }
+
+  @ScriptDescription("Check if a stat modifier is present on a battle entity stat")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id", description = "A unique identifier to assign to this stat mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentId", description = "The battle entity to apply the stat mod to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "present", description = "True if present, false otherwise")
+  private FlowControl scriptHasStatMod(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
+
+    script.params_20[3].set(bent.stats.getStat(statType).hasMod(id) ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Add a stat modifier to a battle entity stat")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id", description = "A unique identifier to assign to this stat mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentId", description = "The battle entity to apply the stat mod to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statModType", description = "The stat mod type")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "statModParams", description = "The implementation-specific configuration for the stat mod type")
+  private FlowControl scriptAddStatMod(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
+    final StatModType statModType = REGISTRIES.statModTypes.getEntry(script.params_20[3].getRegistryId()).get();
+    final Param params = script.params_20[4];
+
+    final StatModConfig config = statModType.makeConfig();
+    statModType.readConfigFromScript(config, params);
+    bent.stats.getStat(statType).addMod(id, statModType.make(config));
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Remove a stat modifier from a battle entity stat")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id", description = "A unique identifier to assign to this stat mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentId", description = "The battle entity to apply the stat mod to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
+  private FlowControl scriptRemoveStatMod(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
+
+    bent.stats.getStat(statType).removeMod(id);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Get a stat modifier's type from a battle entity stat")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id", description = "A unique identifier to assign to this stat mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentId", description = "The battle entity to apply the stat mod to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "statModType", description = "The stat mod type")
+  private FlowControl scriptGetStatModType(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
+
+    script.params_20[3].set(bent.stats.getStat(statType).getMod(id).getType().getRegistryId());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Update a stat modifier on a battle entity stat")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id", description = "A unique identifier to assign to this stat mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentId", description = "The battle entity to apply the stat mod to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "statModParams", description = "The implementation-specific configuration for the stat mod type")
+  private FlowControl scriptUpdateStatModParams(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
+    final Param params = script.params_20[3];
+
+    final Stat stat = bent.stats.getStat(statType);
+    final StatMod statMod = stat.getMod(id);
+    final StatModType statModType = statMod.getType();
+
+    final StatModConfig config = statModType.makeConfig();
+    statModType.readConfigFromScript(config, params);
+    statModType.update(statMod, config);
+
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Get a stat modifier's params on a battle entity stat")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id", description = "A unique identifier to assign to this stat mod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentId", description = "The battle entity to apply the stat mod to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT_ARRAY, name = "statModParams", description = "The implementation-specific configuration for the stat mod type")
+  private FlowControl scriptGetStatModParams(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
+    final Param params = script.params_20[3];
+
+    final Stat stat = bent.stats.getStat(statType);
+    final StatMod statMod = stat.getMod(id);
+    final StatModType statModType = statMod.getType();
+
+    final StatModConfig config = statModType.makeConfig();
+    statModType.writeConfigToScript(config, params);
+
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80018744L)
@@ -7569,20 +7686,20 @@ public class Battle extends EngineState {
       final CharacterData2c charData = gameState_800babc8.charData_32c[bent.charId_272];
 
       //LAB_800eec10
-      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(CoreMod.HP_STAT.get()).getCurrent());
+      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(LodMod.HP_STAT.get()).getCurrent());
 
       if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[bent.charId_272]) != 0) {
-        charData.mp_0a = bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
+        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eec78
       if(bent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[9]) != 0) {
-        charData.mp_0a = bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
+        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eecb8
       charData.status_10 = bent.status_0e & 0xc8;
-      charData.sp_0c = bent.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
+      charData.sp_0c = bent.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
     }
 
     //LAB_800eed78
@@ -7622,9 +7739,9 @@ public class Battle extends EngineState {
       System.arraycopy(spellIndices, 0, this.dragoonSpells_800c6960[charSlot].spellIndex_01, 0, 8);
 
       //LAB_800ef400
-      final VitalsStat playerHp = player.stats.getStat(CoreMod.HP_STAT.get());
-      final VitalsStat playerMp = player.stats.getStat(CoreMod.MP_STAT.get());
-      final VitalsStat playerSp = player.stats.getStat(CoreMod.SP_STAT.get());
+      final VitalsStat playerHp = player.stats.getStat(LodMod.HP_STAT.get());
+      final VitalsStat playerMp = player.stats.getStat(LodMod.MP_STAT.get());
+      final VitalsStat playerSp = player.stats.getStat(LodMod.SP_STAT.get());
 
       final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
       player.level_04 = stats.level_0e;
@@ -7649,7 +7766,7 @@ public class Battle extends EngineState {
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
-      player.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
+      player.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
       player.attack_34 = stats.equipmentAttack_88 + stats.bodyAttack_6a;
       player.magicAttack_36 = stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b;
       player.defence_38 = stats.equipmentDefence_8c + stats.bodyDefence_6c;
@@ -7798,20 +7915,20 @@ public class Battle extends EngineState {
         case 0 -> {
           //LAB_800f2454
           attacker.status_0e |= 0x800;
-          yield defender.stats.getStat(CoreMod.HP_STAT.get()).getMax();
+          yield defender.stats.getStat(LodMod.HP_STAT.get()).getMax();
         }
 
         case 1 -> {
           //LAB_800f2464
           attacker.status_0e |= 0x800;
-          yield defender.stats.getStat(CoreMod.MP_STAT.get()).getMax();
+          yield defender.stats.getStat(LodMod.MP_STAT.get()).getMax();
         }
 
         //LAB_800f2478
-        case 6 -> defender.stats.getStat(CoreMod.HP_STAT.get()).getMax();
+        case 6 -> defender.stats.getStat(LodMod.HP_STAT.get()).getMax();
 
         //LAB_800f2484
-        case 7 -> defender.stats.getStat(CoreMod.MP_STAT.get()).getMax();
+        case 7 -> defender.stats.getStat(LodMod.MP_STAT.get()).getMax();
 
         //LAB_800f2490
         default -> 0;
@@ -7825,7 +7942,7 @@ public class Battle extends EngineState {
     //LAB_800f2140
     int damage;
     if(attacker.spell_94 != null && (attacker.spell_94.flags_01 & 0x4) != 0) {
-      damage = defender.stats.getStat(CoreMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
+      damage = defender.stats.getStat(LodMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
 
       final List<BattleEntity27c> targets = new ArrayList<>();
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
@@ -7970,7 +8087,7 @@ public class Battle extends EngineState {
     //LAB_800f4410
     //LAB_800f4430
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
     spGained_800bc950[player.charSlot_276] += script.params_20[1].get();
@@ -7990,7 +8107,7 @@ public class Battle extends EngineState {
     //LAB_800f454c
     //LAB_800f456c
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
@@ -8175,7 +8292,7 @@ public class Battle extends EngineState {
 
     final MonsterStatsEvent statsEvent = EVENTS.postEvent(new MonsterStatsEvent(monster.charId_272));
 
-    final VitalsStat monsterHp = monster.stats.getStat(CoreMod.HP_STAT.get());
+    final VitalsStat monsterHp = monster.stats.getStat(LodMod.HP_STAT.get());
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
@@ -8190,7 +8307,7 @@ public class Battle extends EngineState {
     monster.equipmentAttack1_28 = 0;
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
-    monster.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
+    monster.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
     monster.attack_34 = statsEvent.attack;
     monster.magicAttack_36 = statsEvent.magicAttack;
     monster.defence_38 = statsEvent.defence;
@@ -8285,11 +8402,11 @@ public class Battle extends EngineState {
     }
 
     if(attacker.item_d4.speedDown != 0) {
-      defender.stats.getStat(CoreMod.SPEED_STAT.get()).addMod(new TurnBasedPercentileBuff(attacker.item_d4.speedDown, turnCount));
+      defender.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_down"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().percent(attacker.item_d4.speedDown).turns(turnCount)));
     }
 
     if(attacker.item_d4.speedUp != 0) {
-      defender.stats.getStat(CoreMod.SPEED_STAT.get()).addMod(new TurnBasedPercentileBuff(attacker.item_d4.speedUp, turnCount));
+      defender.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_up"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().percent(attacker.item_d4.speedUp).turns(turnCount)));
     }
 
     if(defender instanceof final PlayerBattleEntity playerDefender) {
@@ -8607,7 +8724,7 @@ public class Battle extends EngineState {
 
     if(characterId != -1) {
       if(characterId == 9) { //TODO stupid special case handling for DD Dart
-        this.dragoonSpaceElement_800c6b64 = CoreMod.DIVINE_ELEMENT.get();
+        this.dragoonSpaceElement_800c6b64 = LodMod.DIVINE_ELEMENT.get();
       } else {
         this.dragoonSpaceElement_800c6b64 = battleState_8006e398.getPlayerById(characterId).element;
       }
