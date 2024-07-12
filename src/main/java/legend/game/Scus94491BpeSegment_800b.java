@@ -88,7 +88,7 @@ public final class Scus94491BpeSegment_800b {
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static int postBattleActionIndex_800bc974;
+  public static int postBattleAction_800bc974;
 
   public static int livingCharCount_800bc97c;
 

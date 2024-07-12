@@ -232,7 +232,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
-import static legend.game.Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
@@ -456,7 +456,7 @@ public class Battle extends EngineState {
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
   public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
 
-  public static final int[] postBattleActions_800fa6c4 = {-1, 195, 211, -1, 211, -1};
+  public static final int[] postBattleCamera_800fa6c4 = {-1, 195, 211, -1, 211, -1};
 
   public static final int[] postCombatActionFrames_800fa6d0 = {0, 30, 45, 30, 45, 30};
 
@@ -1287,7 +1287,7 @@ public class Battle extends EngineState {
 
     totalXpFromCombat_800bc95c = 0;
     battleFlags_800bc960 = 0;
-    postBattleActionIndex_800bc974 = 0;
+    postBattleAction_800bc974 = 0;
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
     equipmentOverflow.clear();
@@ -1588,7 +1588,7 @@ public class Battle extends EngineState {
   public void battleTick() {
     this.hud.draw();
 
-    if(postBattleActionIndex_800bc974 != 0) {
+    if(postBattleAction_800bc974 != 0) {
       pregameLoadingStage_800bb10c++;
       return;
     }
@@ -1621,12 +1621,12 @@ public class Battle extends EngineState {
         }
       } else { // Game over
         loadMusicPackage(19);
-        postBattleActionIndex_800bc974 = 2;
+        postBattleAction_800bc974 = 2;
       }
     }
 
     //LAB_800c7d78
-    if(postBattleActionIndex_800bc974 != 0) {
+    if(postBattleAction_800bc974 != 0) {
       //LAB_800c7d88
       pregameLoadingStage_800bb10c++;
     }
@@ -1638,11 +1638,11 @@ public class Battle extends EngineState {
     FUN_80020308();
 
     if(encounterId_800bb0f8 != 443) { // Standard victory
-      postBattleActionIndex_800bc974 = 1;
+      postBattleAction_800bc974 = 1;
       startEncounterSounds();
     } else { // Melbu Victory
       //LAB_800c7d30
-      postBattleActionIndex_800bc974 = 4;
+      postBattleAction_800bc974 = 4;
     }
   }
 
@@ -1665,13 +1665,13 @@ public class Battle extends EngineState {
   public void performPostBattleAction() {
     EVENTS.postEvent(new BattleEndedEvent());
 
-    final int postBattleActionIndex = postBattleActionIndex_800bc974;
+    final int postBattleAction = postBattleAction_800bc974;
 
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
-      final int postBattleAction = postBattleActions_800fa6c4[postBattleActionIndex];
+      final int postBattleCamera = postBattleCamera_800fa6c4[postBattleAction];
 
-      if(postBattleAction >= 0) {
-        this.cameraScriptMainTableJumpIndex_800c6748 = postBattleAction;
+      if(postBattleCamera >= 0) {
+        this.cameraScriptMainTableJumpIndex_800c6748 = postBattleCamera;
         this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
       }
 
@@ -1685,7 +1685,7 @@ public class Battle extends EngineState {
       }
 
       //LAB_800c8144
-      if(postBattleActionIndex == 1) {
+      if(postBattleAction == 1) {
         //LAB_800c8180
         for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
           battleState_8006e398.playerBents_e40[i].storage_44[7] |= 0x8;
@@ -1697,16 +1697,16 @@ public class Battle extends EngineState {
     //LAB_800c81c0
     this.currentPostCombatActionFrame_800c6690++;
 
-    if(this.currentPostCombatActionFrame_800c6690 >= postCombatActionTotalFrames_800fa6b8[postBattleActionIndex] || (press_800bee94 & 0xff) != 0 && this.currentPostCombatActionFrame_800c6690 >= 25) {
+    if(this.currentPostCombatActionFrame_800c6690 >= postCombatActionTotalFrames_800fa6b8[postBattleAction] || (press_800bee94 & 0xff) != 0 && this.currentPostCombatActionFrame_800c6690 >= 25) {
       //LAB_800c8214
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleActionIndex]);
+        startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
       }
 
       //LAB_800c8274
-      if(postBattleActionIndex == 2) {
+      if(postBattleAction == 2) {
         sssqFadeOut((short)(postCombatActionFrames_800fa6d0[2] - 2));
       }
 
@@ -1783,7 +1783,7 @@ public class Battle extends EngineState {
       }
 
       //LAB_800c84b4
-      switch(postBattleActionIndex_800bc974) {
+      switch(postBattleAction_800bc974) {
         case 2 -> {
           if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
             //LAB_800c8514
@@ -1815,7 +1815,7 @@ public class Battle extends EngineState {
       setDepthResolution(14);
       battleLoaded_800bc94c = false;
 
-      switch(postBattleActionIndex_800bc974) {
+      switch(postBattleAction_800bc974) {
         case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
@@ -3512,7 +3512,7 @@ public class Battle extends EngineState {
   @ScriptDescription("Sets post-battle action to 3")
   @Method(0x800ccef8L)
   public FlowControl FUN_800ccef8(final RunningScript<?> script) {
-    postBattleActionIndex_800bc974 = 3;
+    postBattleAction_800bc974 = 3;
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -3520,7 +3520,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "action", description = "The post-battle action")
   @Method(0x800ccf0cL)
   public FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
-    postBattleActionIndex_800bc974 = script.params_20[0].get();
+    postBattleAction_800bc974 = script.params_20[0].get();
     return FlowControl.PAUSE_AND_REWIND;
   }
 
