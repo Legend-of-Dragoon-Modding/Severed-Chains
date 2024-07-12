@@ -684,21 +684,21 @@ public final class SEffe {
         //LAB_800e86c8
       } else if(BattleObject.BOBJ.equals(base.magic_00)) {
         final BattleEntity27c bent = (BattleEntity27c)base;
-        final Model124 s1 = bent.model_148;
-        applyModelRotationAndScale(s1);
+        final Model124 model = bent.model_148;
+        applyModelRotationAndScale(model);
         final int coord2Index = currentManager.coord2Index_0d;
 
-        final MV sp0x10 = new MV();
+        final MV transforms = new MV();
         if(coord2Index == -1) {
-          sp0x10.set(s1.coord2_14.coord);
+          transforms.set(model.coord2_14.coord);
         } else {
           //LAB_800e8738
-          GsGetLw(s1.modelParts_00[coord2Index].coord2_04, sp0x10);
-          s1.modelParts_00[coord2Index].coord2_04.flg = 0;
+          GsGetLw(model.modelParts_00[coord2Index].coord2_04, transforms);
+          model.modelParts_00[coord2Index].coord2_04.flg = 0;
         }
 
         //LAB_800e8774
-        transformMatrix.compose(sp0x10);
+        transformMatrix.compose(transforms);
         currentManager = null;
         scriptIndex = -1; // finished
       } else { // error, parent not a bent or effect
