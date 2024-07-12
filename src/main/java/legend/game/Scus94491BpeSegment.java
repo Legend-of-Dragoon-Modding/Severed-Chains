@@ -1038,7 +1038,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "joypadIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x80017584L)
-  public static FlowControl FUN_80017584(final RunningScript<?> script) {
+  public static FlowControl scriptStartRumbleMode(final RunningScript<?> script) {
     startRumbleMode(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }

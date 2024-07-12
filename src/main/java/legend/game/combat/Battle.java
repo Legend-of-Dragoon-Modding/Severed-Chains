@@ -619,7 +619,7 @@ public class Battle extends EngineState {
     functions[44] = this::scriptWobbleCamera;
     functions[45] = this::scriptStopCameraMovement;
     functions[46] = this::scriptSetViewportTwist;
-    functions[47] = this::FUN_800dbc80;
+    functions[47] = this::scriptStopCameraZAcceleration;
     functions[48] = this::scriptSetCameraProjectionPlaneDistance;
     functions[49] = this::scriptGetProjectionPlaneDistance;
     functions[50] = this::scriptMoveCameraProjectionPlane;
@@ -2784,7 +2784,7 @@ public class Battle extends EngineState {
 
     //LAB_800cb668
     if(script.params_20[1].get() != 0) {
-      a1.storage_44[7] &= 0xffff_ffef;
+      a1.storage_44[7] &= ~0x10;
     } else {
       //LAB_800cb65c
       a1.storage_44[7] |= 0x10;
@@ -4891,10 +4891,10 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = viewpoint, 1 = refpoint")
+  @ScriptDescription("Sets the camera viewpoint and/or refpoint Z acceleration to 0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "Bitfield, 0x1 = viewpoint, 0x2 = refpoint")
   @Method(0x800dbc80L)
-  public FlowControl FUN_800dbc80(final RunningScript<?> script) {
+  public FlowControl scriptStopCameraZAcceleration(final RunningScript<?> script) {
     final int type = script.params_20[0].get();
 
     if((type & UPDATE_VIEWPOINT) != 0) {
