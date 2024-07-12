@@ -771,17 +771,17 @@ public class Battle extends EngineState {
     functions[512] = this::scriptSetBentZOffset;
     functions[513] = this::scriptSetBentScaleUniform;
     functions[514] = this::scriptSetBentScale;
-    functions[515] = this::FUN_800ee384;
+    functions[515] = this::scriptAttachShadowToBottomOfBentModel;
     functions[516] = this::scriptDisableBentShadow;
     functions[517] = this::scriptSetBentShadowSize;
     functions[518] = this::scriptSetBentShadowOffset;
     functions[519] = this::scriptApplyScreenDarkening;
-    functions[520] = this::FUN_800ee384;
+    functions[520] = this::scriptAttachShadowToBottomOfBentModel;
     functions[521] = this::scriptGetStageNobj;
     functions[522] = this::scriptShowStageModelPart;
     functions[523] = this::scriptHideStageModelPart;
-    functions[524] = this::FUN_800ee3c0;
-    functions[525] = this::FUN_800ee408;
+    functions[524] = this::scriptAttachShadowToBentModelPart;
+    functions[525] = this::scriptUpdateBentShadowType;
     functions[526] = this::scriptSetStageZ;
 
     functions[544] = SEffe::scriptGetRelativePosition;
@@ -884,7 +884,7 @@ public class Battle extends EngineState {
     functions[640] = SEffe::scriptConvertRotationYxzToXyz;
     functions[641] = SEffe::scriptResetDeffManager;
     functions[642] = SEffe::FUN_8011287c;
-    functions[643] = this::FUN_800e9798;
+    functions[643] = this::scriptSetModelShadow;
     functions[644] = this::scriptSetBttlShadowSize;
     functions[645] = this::scriptSetBttlShadowOffset;
     functions[646] = SEffe::scriptAllocateShadowEffect;
@@ -6456,11 +6456,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, sets shadow type")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
+  @ScriptDescription("Sets the shadow for a BattleObject with a models")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject or ModelEffect13c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "-1 = shadow type 2, -2 = shadow type 3, -3 = shadow type 0, all other values are model part index to attach type 2 shadow to")
   @Method(0x800e9798L)
-  public FlowControl FUN_800e9798(final RunningScript<?> script) {
+  public FlowControl scriptSetModelShadow(final RunningScript<?> script) {
     final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
@@ -7499,31 +7499,31 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, sets shadow type to 2")
+  @ScriptDescription("Attaches a shadow to the bottom of a bent's model")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee384L)
-  public FlowControl FUN_800ee384(final RunningScript<?> script) {
+  public FlowControl scriptAttachShadowToBottomOfBentModel(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bent.model_148.shadowType_cc = 2;
     bent.model_148.modelPartWithShadowIndex_cd = -1;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, sets shadow type to 3, used when player combat script is initialized, second param is based on char ID")
+  @ScriptDescription("Attaches a shadow to a bent's model part")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartAttachmentIndex", description = "The model part index to attach the shadow to")
   @Method(0x800ee3c0L)
-  public FlowControl FUN_800ee3c0(final RunningScript<?> script) {
-    final BattleEntity27c v1 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    v1.model_148.shadowType_cc = 3;
-    v1.model_148.modelPartWithShadowIndex_cd = script.params_20[1].get();
+  public FlowControl scriptAttachShadowToBentModelPart(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.shadowType_cc = 3;
+    bent.model_148.modelPartWithShadowIndex_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, sets shadow type")
+  @ScriptDescription("Updates a bent's shadow type based on its modelPartWithShadowIndex_cd")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee408L)
-  public FlowControl FUN_800ee408(final RunningScript<?> script) {
+  public FlowControl scriptUpdateBentShadowType(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final int index = bent.model_148.modelPartWithShadowIndex_cd;
     if(index == -2) {
