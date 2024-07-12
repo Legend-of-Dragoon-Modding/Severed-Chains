@@ -6621,8 +6621,9 @@ public class Battle extends EngineState {
     Arrays.setAll(model1.modelParts_00, i -> new ModelPart10().set(model2.modelParts_00[i]));
 
     //LAB_800e9ee8
-    for(final ModelPart10 dobj2 : model1.modelParts_00) {
-      dobj2.coord2_04 = new GsCOORDINATE2();
+    for(int i = 0; i < model1.partCount_98; i++) {
+      final ModelPart10 dobj2 = model1.modelParts_00[i];
+      dobj2.coord2_04 = new GsCOORDINATE2().set(model2.modelParts_00[i].coord2_04);
       dobj2.coord2_04.super_ = model1.coord2_14;
     }
   }
@@ -6634,33 +6635,33 @@ public class Battle extends EngineState {
   public FlowControl scriptAllocateClonedModelEffect(final RunningScript<? extends BattleObject> script) {
     final int id = script.params_20[1].get();
 
-    final ModelEffect13c s0 = new ModelEffect13c("Script " + script.scriptState_04.index);
+    final ModelEffect13c effect = new ModelEffect13c("Script " + script.scriptState_04.index);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       (id & 0x700_0000) != 0 ? "Cloned battle stage model" : "Cloned bent model %d".formatted(id),
       script.scriptState_04,
-      s0,
+      effect,
       new EffectManagerParams.AnimType()
     );
 
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
-    s0._00 = 0;
-    s0.tmdType_04 = null;
-    s0.extTmd_08 = null;
-    s0.anim_0c = null;
-    s0.model_134 = s0.model_10;
+    effect._00 = 0;
+    effect.tmdType_04 = null;
+    effect.extTmd_08 = null;
+    effect.anim_0c = null;
+    effect.model_134 = effect.model_10;
 
     if((id & 0xff00_0000) == 0x700_0000) {
-      this.copyBattleStageModel(s0.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
+      this.copyBattleStageModel(effect.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
-      this.copyModel(s0.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[id].innerStruct_00).model_148);
+      this.copyModel(effect.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[id].innerStruct_00).model_148);
     }
 
     //LAB_800ea04c
-    final Model124 model = s0.model_134;
+    final Model124 model = effect.model_134;
     manager.params_10.trans_04.set(model.coord2_14.coord.transfer);
     manager.params_10.rot_10.set(model.coord2_14.transforms.rotate);
     manager.params_10.scale_16.set(model.coord2_14.transforms.scale);

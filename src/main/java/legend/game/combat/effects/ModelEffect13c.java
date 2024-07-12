@@ -123,15 +123,15 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
   @Method(0x800ea3f8L)
   public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
-    final MV sp0x10 = new MV();
-    calculateEffectTransforms(sp0x10, manager);
+    final MV transformMatrix = new MV();
+    calculateEffectTransforms(transformMatrix, manager);
 
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     final Model124 model = effect.model_134;
     model.coord2_14.transforms.rotate.set(manager.params_10.rot_10);
     model.coord2_14.transforms.scale.set(manager.params_10.scale_16);
     model.zOffset_a0 = manager.params_10.z_22;
-    model.coord2_14.coord.set(sp0x10);
+    model.coord2_14.coord.set(transformMatrix);
     model.coord2_14.flg = 0;
 
     if(effect.anim_0c != null) {
