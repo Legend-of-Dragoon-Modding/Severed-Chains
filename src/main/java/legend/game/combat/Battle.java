@@ -805,7 +805,7 @@ public class Battle extends EngineState {
     functions[562] = SEffe::FUN_801155f8; // no-op
     functions[563] = SEffe::scriptGetRelativeAngleBetweenBobjs;
     functions[564] = SEffe::scriptRotateBobjTowardsPoint;
-    functions[565] = SEffe::FUN_80115440;
+    functions[565] = SEffe::scriptSetEffectApplyRotationAndScaleFlag;
     functions[566] = SEffe::scriptGetEffectTranslationRelativeToParent;
     functions[567] = SEffe::scriptAddRotationScalerAttachment;
     functions[568] = SEffe::scriptAddRotationScalerAttachmentTicks;
@@ -829,13 +829,13 @@ public class Battle extends EngineState {
     functions[586] = SEffe::scriptAddGenericAttachmentTicks;
     functions[587] = SEffe::scriptAddGenericAttachmentSpeed;
     functions[588] = SEffe::scriptAddLifespanAttachment;
-    functions[589] = SEffe::FUN_80115324;
-    functions[590] = SEffe::FUN_80115388;
-    functions[591] = SEffe::FUN_801153e4;
+    functions[589] = SEffe::scriptSetEffectErrorFlag;
+    functions[590] = SEffe::scriptSetEffectTranslucencySourceFlag;
+    functions[591] = SEffe::scriptSetEffectTranslucencyModeFlag;
     functions[592] = this::FUN_800e74ac;
     functions[593] = SEffe::scriptGetPositionScalerAttachmentVelocity;
     functions[594] = this::scriptAddOrUpdateTextureAnimationAttachment;
-    functions[595] = SEffe::FUN_8011549c;
+    functions[595] = SEffe::scriptSetEffectLightingDisableFlag;
     functions[596] = SEffe::scriptAddRelativePositionScalerDistance1;
     functions[597] = SEffe::scriptAddRelativePositionScalerTicks1;
     functions[598] = SEffe::scriptAddOrUpdatePositionScalerAttachment;
@@ -891,7 +891,7 @@ public class Battle extends EngineState {
     functions[647] = SEffe::scriptUpdateDeffManagerFlags;
     functions[648] = SEffe::scriptLoadDeffStageEffects;
     functions[649] = SEffe::scriptGetEffectTextureMetrics;
-    functions[650] = SEffe::FUN_801154f4;
+    functions[650] = SEffe::scriptSetEffectNormalizeLightMatrixFlag;
     functions[651] = SEffe::scriptConsolidateEffectMemory;
 
     functions[712] = this::scriptPlayCombatantSound;

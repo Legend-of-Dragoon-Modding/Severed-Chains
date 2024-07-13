@@ -3886,63 +3886,63 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect manager's flag 0x8000_0000 and then sets or unsets flag 0x8000_0000 (bit 31)")
+  @ScriptDescription("Sets or unsets an effect manager's error flag (0x8000_0000, bit 31)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "clear", description = "True to clear, false otherwise (NOTE: backwards from others)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "clear", description = "True to clear (no error), false otherwise (error) (NOTE: backwards from others)")
   @Method(0x80115324L)
-  public static FlowControl FUN_80115324(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectErrorFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.params_10.flags_00 = manager.params_10.flags_00 & 0x7fff_ffff | ((script.params_20[1].get() ^ 1) & 1) << 31;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & ~0x8000_0000 | ((script.params_20[1].get() ^ 1) & 1) << 31;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect manager's flag 0x4000_0000 and then sets or unsets flag 0x4000_0000 (bit 30)")
+  @ScriptDescription("Sets or unsets an effect manager's translucency source flag (0x4000_0000, bit 30)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (use effect manager translucency), false otherwise (use effect translucency)")
   @Method(0x80115388L)
-  public static FlowControl FUN_80115388(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectTranslucencySourceFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.params_10.flags_00 = manager.params_10.flags_00 & 0xbfff_ffff | script.params_20[1].get() << 30;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & ~0x4000_0000 | script.params_20[1].get() << 30;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect manager's flags 0x3000_0000 and then sets or unsets flag 0x1000_0000 (bit 28)")
+  @ScriptDescription("Clears an effect's translucency flags (0x3000_0000, bits 28-29) and then sets or unsets flag 0x1000_0000 (bit 28)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (B+F), false otherwise (B/2+F/2)")
   @Method(0x801153e4L)
-  public static FlowControl FUN_801153e4(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectTranslucencyModeFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.params_10.flags_00 = manager.params_10.flags_00 & 0xcfff_ffff | script.params_20[1].get() << 28;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & ~0x3000_0000 | script.params_20[1].get() << 28;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect manager's flag 0x400_0000 and then sets or unsets flag 0x400_0000 (bit 28)")
+  @ScriptDescription("Sets or unsets an effect's apply rotation and scale flag flag (0x400_0000, bit 26)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (apply), false otherwise (don't apply)")
   @Method(0x80115440L)
-  public static FlowControl FUN_80115440(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectApplyRotationAndScaleFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.params_10.flags_00 = manager.params_10.flags_00 & 0xfbff_ffff | script.params_20[1].get() << 26;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & ~0x400_0000 | script.params_20[1].get() << 26;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect manager's flag 0x40 and then sets or unsets flag 0x40 (bit 6)")
+  @ScriptDescription("Sets or unsets an effect's lighting disable flag (0x40, bit 6)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (disabled), false otherwise (enabled)")
   @Method(0x8011549cL)
-  public static FlowControl FUN_8011549c(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectLightingDisableFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.params_10.flags_00 = manager.params_10.flags_00 & 0xffff_ffbf | script.params_20[1].get() << 6;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & ~0x40 | script.params_20[1].get() << 6;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect manager's flag 0x8 and then sets or unsets flag 0x8 (bit 3)")
+  @ScriptDescription("Sets or unsets an effect's normalize light matrix flag (0x8, bit 3)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (enabled), false otherwise (disabled)")
   @Method(0x801154f4L)
-  public static FlowControl FUN_801154f4(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectNormalizeLightMatrixFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.params_10.flags_00 = manager.params_10.flags_00 & 0xffff_fff7 | script.params_20[1].get() << 3;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & ~0x8 | script.params_20[1].get() << 3;
     return FlowControl.CONTINUE;
   }
 
