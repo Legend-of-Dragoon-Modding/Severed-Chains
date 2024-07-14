@@ -5,7 +5,7 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
-import legend.game.combat.types.battlestate.SpecialEffects20;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.combat.types.battlestate.Status04;
 import legend.game.scripting.ScriptState;
 import legend.game.types.TmdAnimationFile;
@@ -19,7 +19,7 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class BattleStateEf4 {
-  public final SpecialEffects20[] specialEffect_00 = new SpecialEffects20[10];
+  public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];
 
   public int _180;
   /**
@@ -253,8 +253,8 @@ public class BattleStateEf4 {
   public int _450;
   public int _454;
   public int _458;
-  /** Briefly a bitset of which battle entities have status afflictions, maybe a flag that says this character's status effects forked script hasn't finished yet */
-  public int _45c;
+  /** Bitset of which scripts are currently running the status afflictions entrypoint */
+  public int scriptsProcessingStatusAfflictions_45c;
   /** Indexed by char slot, something to do with bewitched (set to -1 if not bewitched) */
   public final int[] _460 = new int[3];
   /** Combat stage ID is stored here when player combat script is initialized */
@@ -362,7 +362,7 @@ public class BattleStateEf4 {
   private int playerCount_800c677c;
 
   public BattleStateEf4() {
-    Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
+    Arrays.setAll(this.statusConditions_00, i -> new StatusConditions20());
     Arrays.setAll(this.status_384, i -> new Status04());
     Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
     Arrays.setAll(this.compressedAssets_d8c, i -> new CompressedAsset08());

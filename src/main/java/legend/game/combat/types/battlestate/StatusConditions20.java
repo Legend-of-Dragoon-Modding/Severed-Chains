@@ -3,7 +3,7 @@ package legend.game.combat.types.battlestate;
 /**
  * One for each ally and enemy
  */
-public class SpecialEffects20 {
+public class StatusConditions20 {
   public int _00;
   public int _04;
   public int _08;
