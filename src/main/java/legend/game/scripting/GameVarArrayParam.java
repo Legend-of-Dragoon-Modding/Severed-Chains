@@ -654,7 +654,7 @@ public class GameVarArrayParam extends Param {
       case 4 -> conditions._10;
       case 5 -> conditions._14;
       case 6 -> conditions.menuBlockFlag_18;
-      case 7 -> (conditions.unknown_1f & 0xff) << 24 | (conditions.chargingSpirit_1e & 0xff) << 16 | (conditions.pandemoniumTurns_1d & 0xff) << 8 | conditions.shieldsSigStoneCharmTurns_1c & 0xff;
+      case 7 -> (conditions.unknown_1f & 0xff) << 24 | (conditions.chargingSpirit_1e & 0xff) << 16 | (conditions.pandemoniumTurnsDiedAsDragoon_1d & 0xff) << 8 | conditions.shieldsSigStoneCharmTurns_1c & 0xff;
 
       default -> throw new IllegalArgumentException("Unknown status condition var index " + varIndex);
     };
@@ -673,7 +673,7 @@ public class GameVarArrayParam extends Param {
       case 6 -> conditions.menuBlockFlag_18 = val;
       case 7 -> {
         conditions.shieldsSigStoneCharmTurns_1c = val & 0xff;
-        conditions.pandemoniumTurns_1d = val >>> 8 & 0xff;
+        conditions.pandemoniumTurnsDiedAsDragoon_1d = val >>> 8 & 0xff;
         conditions.chargingSpirit_1e = val >>> 16 & 0xff;
         conditions.unknown_1f = val >>> 24 & 0xff;
       }

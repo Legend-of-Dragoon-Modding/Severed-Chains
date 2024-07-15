@@ -8325,8 +8325,8 @@ public class Battle extends EngineState {
     monster.hitCounterFrameThreshold_7e = monsterStats.hitCounterFrameThreshold_15;
     monster._80 = monsterStats._16;
     monster._82 = monsterStats._17;
-    monster._84 = monsterStats._18;
-    monster._86 = monsterStats._19;
+    monster.middleOffsetX_84 = monsterStats.middleOffsetX_18;
+    monster.middleOffsetY_86 = monsterStats.middleOffsetY_19;
     monster._88 = monsterStats._1a;
     monster._8a = monsterStats._1b;
 

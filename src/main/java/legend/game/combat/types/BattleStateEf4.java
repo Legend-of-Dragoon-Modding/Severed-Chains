@@ -318,7 +318,12 @@ public class BattleStateEf4 {
   public int _548;
   public int _54c;
   public int dragonBlockStaff_550;
-  /** Flag 0x1 causes the player combat script to rewind and yield in its main loop */
+  /**
+   * <ul>
+   *   <li>0x1 - causes the player combat script to rewind and yield in its main loop</li>
+   *   <li>0x2 - something related to curing petrify animation loading</li>
+   * </ul>
+   */
   public int _554;
   /** Bit set specifying which bent indices are being targeted */
   public int attackTargets_558;

@@ -94,6 +94,7 @@ public class ScriptState<T> {
    *       <li>0x1000 - ?</li>
    *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
    *       <li>0x4000 - cannot target</li>
+   *       <li>0x20_0000 - ? used in scripts</li>
    *     </ul>
    *   </li>
    *   <li>
@@ -574,8 +575,8 @@ public class ScriptState<T> {
       case 64 -> this.scriptJump();
       case 65 -> this.scriptConditionalJump();
       case 66 -> this.scriptConditionalJump0();
-      case 67 -> this.FUN_80016dec();
-      case 68 -> this.FUN_80016e1c();
+      case 67 -> this.scriptWhile();
+      case 68 -> this.scriptJumpTable();
 
       case 72 -> this.scriptJumpAndLink();
       case 73 -> this.scriptJumpReturn();
@@ -1030,7 +1031,7 @@ public class ScriptState<T> {
    * Decrements param0 and jumps to param1 if param0 > 0... maybe used for do...while loops?
    */
   @Method(0x80016decL)
-  public FlowControl FUN_80016dec() {
+  public FlowControl scriptWhile() {
     this.context.params_20[0].decr();
 
     if(this.context.params_20[0].get() != 0) {
@@ -1042,7 +1043,7 @@ public class ScriptState<T> {
   }
 
   @Method(0x80016e1cL)
-  public FlowControl FUN_80016e1c() {
+  public FlowControl scriptJumpTable() {
     this.context.params_20[1].array(this.context.params_20[1].array(this.context.params_20[0].get()).get()).jump(this.context);
     return FlowControl.CONTINUE;
   }

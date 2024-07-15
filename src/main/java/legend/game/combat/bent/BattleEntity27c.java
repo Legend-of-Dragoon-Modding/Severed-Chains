@@ -150,8 +150,10 @@ public abstract class BattleEntity27c extends BattleObject {
   public int hitCounterFrameThreshold_7e;
   public int _80;
   public int _82;
-  public int _84;
-  public int _86;
+  /** X offset for archer/item throw target, status ailment effect, 1/100 scale */
+  public int middleOffsetX_84;
+  /** Y offset for archer/item throw target, status ailment effect, 1/100 scale */
+  public int middleOffsetY_86;
   public int _88;
   public int _8a;
 
@@ -360,8 +362,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e;
       case _62 -> this._80;
       case _63 -> this._82;
-      case _64 -> this._84;
-      case _65 -> this._86;
+      case MIDDLE_OFFSET_X -> this.middleOffsetX_84;
+      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86;
       case _66 -> this._88;
       case _67 -> this._8a;
 
@@ -458,8 +460,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
       case _62 -> this._80 = value;
       case _63 -> this._82 = value;
-      case _64 -> this._84 = value;
-      case _65 -> this._86 = value;
+      case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value;
+      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value;
       case _66 -> this._88 = value;
       case _67 -> this._8a = value;
 

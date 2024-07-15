@@ -34,7 +34,13 @@ public class StatusConditions20 {
    * </ul>
    */
   public int shieldsSigStoneCharmTurns_1c;
-  public int pandemoniumTurns_1d;
+  /**
+   * <ul>
+   *   <li>0 - 1 Pandemonium turns</li>
+   *   <li>2     Died as dragoon</li>
+   * </ul>
+   */
+  public int pandemoniumTurnsDiedAsDragoon_1d;
   public int chargingSpirit_1e;
   public int unknown_1f;
 }
