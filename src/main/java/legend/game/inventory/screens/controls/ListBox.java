@@ -316,6 +316,54 @@ public class ListBox<T> extends Control {
           return InputPropagation.HANDLED;
         }
       }
+
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        if(this.slot > 0) {
+          playMenuSound(1);
+          this.select(0);
+          return InputPropagation.HANDLED;
+        }
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        if(this.entries.size() > this.maxVisibleEntries - 1 && this.slot != this.maxVisibleEntries - 1) {
+          playMenuSound(1);
+          this.select(this.maxVisibleEntries - 1);
+          return InputPropagation.HANDLED;
+        }
+      }
+
+      case BUTTON_SHOULDER_RIGHT_1 -> {
+        if(this.scroll - this.maxVisibleEntries - 1 >= 0) {
+          playMenuSound(1);
+          this.scroll -= this.maxVisibleEntries - 1;
+          this.updateEntries();
+          this.select(this.slot);
+        } else {
+          if(this.scroll != 0) {
+            this.scroll = 0;
+            this.updateEntries();
+            this.select(this.slot);
+          }
+        }
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_2 -> {
+        if(this.scroll + this.maxVisibleEntries - 1 < this.entries.size() - this.maxVisibleEntries) {
+          playMenuSound(1);
+          this.scroll += this.maxVisibleEntries - 1;
+          this.updateEntries();
+          this.select(this.slot);
+        } else {
+          if(this.entries.size() > this.maxVisibleEntries && this.scroll != this.entries.size() - this.maxVisibleEntries) {
+            this.scroll = this.entries.size() - this.maxVisibleEntries;
+            this.updateEntries();
+            this.select(this.slot);
+          }
+        }
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;
