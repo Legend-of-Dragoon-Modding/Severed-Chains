@@ -25,6 +25,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.ItemIdEvent;
 import legend.game.modding.events.battle.SelectedItemEvent;
