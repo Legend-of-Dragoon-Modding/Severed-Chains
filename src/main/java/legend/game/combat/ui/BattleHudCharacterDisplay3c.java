@@ -5,6 +5,8 @@ public class BattleHudCharacterDisplay3c {
   public int charId_02;
 
   /**
+   * 0x1 - render battle UI background
+   * 0x2 - render player stats, portrait, name, etc.
    * 0x4 - max SP
    * 0x8 - max SP blinking border (turns on and off each frame)
    */

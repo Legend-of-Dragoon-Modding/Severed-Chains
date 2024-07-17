@@ -19,7 +19,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
-public class GuardEffect06 implements Effect {
+public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
   private static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {
     new GuardEffectMetrics04(0, 0),
     new GuardEffectMetrics04(0, -1000),
@@ -36,8 +36,16 @@ public class GuardEffect06 implements Effect {
 
   private final MV transforms = new MV();
 
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
+  }
+
+  @Override
   @Method(0x800d2810L)
-  public void renderGuardEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     final Vector3f translation = new Vector3f();
     final Vector2f[] pos = new Vector2f[7];
 
@@ -133,5 +141,10 @@ public class GuardEffect06 implements Effect {
         //LAB_800d2fa4
       }
     }
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
   }
 }

@@ -2,7 +2,7 @@ package legend.game.characters;
 
 import legend.core.GameEngine;
 import legend.game.combat.types.AttackType;
-import legend.game.modding.coremod.CoreMod;
+import legend.lodmod.LodMod;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -17,7 +17,7 @@ public abstract class Element extends RegistryEntry {
   @Deprecated
   public static Element fromFlag(final int flag) {
     if(flag == 0) {
-      return CoreMod.NO_ELEMENT.get();
+      return LodMod.NO_ELEMENT.get();
     }
 
     for(final RegistryId elementId : GameEngine.REGISTRIES.elements) {

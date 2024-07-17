@@ -12,7 +12,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
@@ -21,7 +21,7 @@ import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
-public class AdditionStarburstEffect10 implements Effect {
+public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.VoidType> {
   private static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {
     new Vector3i(360, 210, 210),
     new Vector3i(210,  60, 210),
@@ -35,6 +35,7 @@ public class AdditionStarburstEffect10 implements Effect {
     new Vector3f(0, MathHelper.psxDegToRad(16), 0),
   };
 
+  private final int type;
   private final int parentIndex_00;
   /** ushort */
   private final int rayCount_04;
@@ -48,7 +49,7 @@ public class AdditionStarburstEffect10 implements Effect {
    *   <li>{@link #renderAdditionCompletedStarburst}</li>
    * </ol>
    */
-  public final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
+  public final Consumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>>[] additionStarburstRenderers_800c6dc4 = new Consumer[3];
   {
     this.additionStarburstRenderers_800c6dc4[0] = this::renderAdditionHitStarburst;
     this.additionStarburstRenderers_800c6dc4[1] = this::renderAdditionCompletedStarburst;
@@ -57,7 +58,8 @@ public class AdditionStarburstEffect10 implements Effect {
 
   private final MV transforms = new MV();
 
-  public AdditionStarburstEffect10(final int parentIndex, final int rayCount) {
+  public AdditionStarburstEffect10(final int type, final int parentIndex, final int rayCount) {
+    this.type = type;
     this.parentIndex_00 = parentIndex;
     this.rayCount_04 = rayCount;
     this.rayArray_0c = new AdditionStarburstEffectRay10[rayCount];
@@ -66,6 +68,21 @@ public class AdditionStarburstEffect10 implements Effect {
     for(int rayNum = 0; rayNum < rayCount; rayNum++) {
       this.rayArray_0c[rayNum] = new AdditionStarburstEffectRay10(seed_800fa754.nextFloat(MathHelper.TWO_PI), (short)(seed_800fa754.nextInt(31)), (short)(seed_800fa754.nextInt(21) + 10), MathHelper.psxDegToRad(seed_800fa754.nextInt(11) - 5));
     }
+  }
+
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
+  }
+
+  @Override
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    this.additionStarburstRenderers_800c6dc4[this.type].accept(state);
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
   }
 
   /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
@@ -85,16 +102,16 @@ public class AdditionStarburstEffect10 implements Effect {
   }
 
   @Method(0x800d1220L)
-  public void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     final float[] baseAngle = {MathHelper.psxDegToRad(-16), MathHelper.psxDegToRad(16)};
-    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
 
     final PolyBuilder builder = new PolyBuilder("Addition starburst", GL_TRIANGLES)
       .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d128c
-    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
-      final AdditionStarburstEffectRay10 ray = starburstEffect.rayArray_0c[rayNum];
+    for(int rayNum = 0; rayNum < this.rayCount_04; rayNum++) {
+      final AdditionStarburstEffectRay10 ray = this.rayArray_0c[rayNum];
 
       //LAB_800d12a4
       for(int i = 0; i < 2; i++) {
@@ -127,7 +144,7 @@ public class AdditionStarburstEffect10 implements Effect {
         final float y1 = sin2 * translationScale;
 
         final Vector2f translation = new Vector2f();
-        this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+        this.modifyAdditionStarburstTranslation(manager, this, translation);
         x2 += translation.x;
         y2 += translation.y;
         x3 += translation.x;
@@ -157,8 +174,8 @@ public class AdditionStarburstEffect10 implements Effect {
   }
 
   @Method(0x800d15d8L)
-  public void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
+  public void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     final float[] xArray = new float[3];
     final float[] yArray = new float[3];
@@ -167,15 +184,15 @@ public class AdditionStarburstEffect10 implements Effect {
       .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d16fc
-    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
-      final AdditionStarburstEffectRay10 ray = starburstEffect.rayArray_0c[rayNum];
+    for(int rayNum = 0; rayNum < this.rayCount_04; rayNum++) {
+      final AdditionStarburstEffectRay10 ray = this.rayArray_0c[rayNum];
 
       ray.endpointTranslationMagnitude_06 += ray.endpointTranslationMagnitudeVelocity_08;
 
       //LAB_800d1728
       for(int i = 0; i < 4; i++) {
         final Vector2f translation = new Vector2f();
-        this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+        this.modifyAdditionStarburstTranslation(manager, this, translation);
 
         //LAB_800d174c
         for(int j = 0; j < 3; j++) {

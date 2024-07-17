@@ -24,8 +24,8 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.ui.BattleHud;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
+import legend.lodmod.LodMod;
 
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -142,8 +142,8 @@ public class CombatDebuggerController {
     this.scriptIndex.setText("View script %d".formatted(state.index));
 
     if(bent instanceof final PlayerBattleEntity player) {
-      final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
-      final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+      final VitalsStat mp = player.stats.getStat(LodMod.MP_STAT.get());
+      final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
 
       this.level.getValueFactory().setValue(player.level_04);
       this.dlevel.getValueFactory().setValue(player.dlevel_06);
@@ -163,11 +163,11 @@ public class CombatDebuggerController {
       this.sp.setVisible(false);
     }
 
-    final VitalsStat hp = bent.stats.getStat(CoreMod.HP_STAT.get());
+    final VitalsStat hp = bent.stats.getStat(LodMod.HP_STAT.get());
     this.hp.getValueFactory().setValue(hp.getCurrent());
     this.maxHp.getValueFactory().setValue(hp.getMaxRaw());
 
-    final UnaryStat speedStat = bent.stats.getStat(CoreMod.SPEED_STAT.get());
+    final UnaryStat speedStat = bent.stats.getStat(LodMod.SPEED_STAT.get());
     final int speedMod = speedStat.getMods();
     this.spd.getValueFactory().setValue(speedStat.getRaw());
     this.spdMod.setText(speedMod < 0 ? Integer.toString(speedMod) : "+" + speedMod);
@@ -230,8 +230,8 @@ public class CombatDebuggerController {
     final BattleEntity27c bent = state.innerStruct_00;
 
     if(bent instanceof final PlayerBattleEntity player) {
-      final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
-      final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+      final VitalsStat mp = player.stats.getStat(LodMod.MP_STAT.get());
+      final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
 
       player.level_04 = this.level.getValue();
       player.dlevel_06 = this.dlevel.getValue();
@@ -240,11 +240,11 @@ public class CombatDebuggerController {
       sp.setCurrent(this.sp.getValue());
     }
 
-    final VitalsStat hp = bent.stats.getStat(CoreMod.HP_STAT.get());
+    final VitalsStat hp = bent.stats.getStat(LodMod.HP_STAT.get());
     hp.setCurrent(this.hp.getValue());
     hp.setMaxRaw(this.maxHp.getValue());
 
-    bent.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
+    bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
     bent.turnValue_4c = this.turn.getValue().shortValue();
     bent.attack_34 = this.atk.getValue();
     bent.defence_38 = this.def.getValue();

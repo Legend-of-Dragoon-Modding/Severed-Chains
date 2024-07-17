@@ -9,14 +9,27 @@ import legend.game.scripting.ScriptState;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
 
-public class BillboardSpriteEffect0c extends SpriteWithTrailEffect30.Sub implements Effect {
+public class BillboardSpriteEffect0c extends SpriteWithTrailEffect30.Sub implements Effect<EffectManagerParams.VoidType> {
   public final SpriteMetrics08 metrics_04 = new SpriteMetrics08();
 
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
+  }
+
+  @Override
   @Method(0x800e9590L)
-  public void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     final MV transformMatrix = new MV();
     calculateEffectTransforms(transformMatrix, manager);
     SEffe.renderBillboardSpriteEffect(this.metrics_04, manager.params_10, transformMatrix);
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
   }
 
   @Method(0x800e95f0L)

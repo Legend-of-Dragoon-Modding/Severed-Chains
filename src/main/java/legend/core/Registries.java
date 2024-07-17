@@ -3,6 +3,9 @@ package legend.core;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
+import legend.game.characters.StatModType;
+import legend.game.characters.StatModTypeRegistry;
+import legend.game.characters.StatModTypeRegistryEvent;
 import legend.game.characters.StatType;
 import legend.game.characters.StatTypeRegistry;
 import legend.game.characters.StatTypeRegistryEvent;
@@ -27,7 +30,8 @@ import org.legendofdragoon.modloader.registries.Registry;
 import java.util.function.Consumer;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
-  public final Registry<StatType<?>> stats = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
+  public final Registry<StatType<?>> statTypes = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
+  public final Registry<StatModType<?, ?, ?>> statModTypes = this.addRegistry(new StatModTypeRegistry(), StatModTypeRegistryEvent::new);
   public final Registry<Element> elements = this.addRegistry(new ElementRegistry(), ElementRegistryEvent::new);
   public final Registry<BattleEntityType> battleEntityTypes = this.addRegistry(new BattleEntityTypeRegistry(), BattleEntityTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);

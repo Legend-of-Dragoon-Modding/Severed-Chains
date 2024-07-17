@@ -59,7 +59,14 @@ public class SpellAndItemMenuA4 {
   public int _94;
   public int _98;
   public int _9c;
-  public int _a0;
+  /**
+   * <ul>
+   *   <li>0 - nothing selected</li>
+   *   <li>1 - item or spell selected</li>
+   *   <li>2 - menu unloading</li>
+   * </ul>
+   */
+  public int selectionState_a0;
 
   public final MV transforms = new MV();
   public final Obj[] arrowObj = new Obj[8];

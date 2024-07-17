@@ -9,7 +9,7 @@ import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 
-public class FullScreenOverlayEffect0e implements Effect {
+public class FullScreenOverlayEffect0e implements Effect<EffectManagerParams.VoidType> {
   private int r_00;
   private int g_02;
   private int b_04;
@@ -28,8 +28,11 @@ public class FullScreenOverlayEffect0e implements Effect {
     this.ticksRemaining_0c = ticks;
   }
 
+  @Override
   @Method(0x800cea9cL)
-  public void tickFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     if(this.ticksRemaining_0c != 0) {
       this.r_00 += this.stepR_06;
       this.g_02 += this.stepG_08;
@@ -40,8 +43,11 @@ public class FullScreenOverlayEffect0e implements Effect {
     //LAB_800ceb20
   }
 
+  @Override
   @Method(0x800ceb28L)
-  public void renderFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     // Make sure effect fills the whole screen
     final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
     final float extraWidth = fullWidth - displayWidth_1f8003e0;
@@ -52,5 +58,10 @@ public class FullScreenOverlayEffect0e implements Effect {
     RENDERER.queueOrthoModel(RENDERER.opaqueQuad, fullScreenEffect_800bb140.transforms)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11))
       .colour((this.r_00 >> 8) / 255.0f, (this.g_02 >> 8) / 255.0f, (this.b_04 >> 8) / 255.0f);
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
   }
 }
