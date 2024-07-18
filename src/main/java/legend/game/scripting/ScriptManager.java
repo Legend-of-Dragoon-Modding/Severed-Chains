@@ -143,10 +143,10 @@ public class ScriptManager {
   }
 
   public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
-    return this.allocateScriptState(this.findFreeScriptState(), name, 0, type);
+    return this.allocateScriptState(this.findFreeScriptState(), name, type);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final int index, final String name, final int a4, @Nullable final T type) {
+  public <T> ScriptState<T> allocateScriptState(final int index, final String name, @Nullable final T type) {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, name);
 
     final ScriptState<T> scriptState = new ScriptState<>(this, index, name, type);
@@ -159,10 +159,6 @@ public class ScriptManager {
 
     scriptState.storage_44[0] = index;
     scriptState.storage_44[7] = 0x80f_0000;
-
-    //LAB_800159f8
-    //LAB_80015a14
-    scriptState.ui_fc = a4;
 
     EVENTS.postEvent(new ScriptAllocatedEvent(index));
 

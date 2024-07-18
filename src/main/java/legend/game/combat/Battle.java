@@ -1436,7 +1436,7 @@ public class Battle extends EngineState {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
       final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
       final PlayerBattleEntity bent = new PlayerBattleEntity(name, charSlot + 6, this.playerBattleScript_800c66fc);
-      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, bent);
+      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
       bent.element = characterElements_800c706c[charIndex].get();
@@ -2650,50 +2650,50 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800cb250L)
-  public boolean FUN_800cb250(final ScriptState<BattleEntity27c> state, final BattleEntity27c data) {
-    float x = state._e8.x;
-    float y = state._e8.y;
-    float z = state._e8.z;
+  public boolean FUN_800cb250(final ScriptState<BattleEntity27c> state, final BattleEntity27c bent) {
+    float x = bent.movementDestination_e8.x;
+    float y = bent.movementDestination_e8.y;
+    float z = bent.movementDestination_e8.z;
 
-    if(state.scriptState_c8 != null) {
-      final BattleEntity27c data2 = state.scriptState_c8.innerStruct_00;
+    if(bent.movementParent_c8 != null) {
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
 
-      x += data2.model_148.coord2_14.coord.transfer.x;
-      y += data2.model_148.coord2_14.coord.transfer.y;
-      z += data2.model_148.coord2_14.coord.transfer.z;
+      x += parent.model_148.coord2_14.coord.transfer.x;
+      y += parent.model_148.coord2_14.coord.transfer.y;
+      z += parent.model_148.coord2_14.coord.transfer.z;
     }
 
     //LAB_800cb2ac
-    state.ticks_cc--;
-    if(state.ticks_cc > 0) {
-      state._d0.sub(state._dc);
-      data.model_148.coord2_14.coord.transfer.x = x - state._d0.x;
-      data.model_148.coord2_14.coord.transfer.y = y - state._d0.y;
-      data.model_148.coord2_14.coord.transfer.z = z - state._d0.z;
-      state._dc.y += state._f4;
+    bent.movementTicks_cc--;
+    if(bent.movementTicks_cc > 0) {
+      bent.movementRemaining_d0.sub(bent.movementStep_dc);
+      bent.model_148.coord2_14.coord.transfer.x = x - bent.movementRemaining_d0.x;
+      bent.model_148.coord2_14.coord.transfer.y = y - bent.movementRemaining_d0.y;
+      bent.model_148.coord2_14.coord.transfer.z = z - bent.movementRemaining_d0.z;
+      bent.movementStep_dc.y += bent.movementStepYAcceleration_f4;
       return false;
     }
 
     //LAB_800cb338
-    data.model_148.coord2_14.coord.transfer.set(x, y, z);
+    bent.model_148.coord2_14.coord.transfer.set(x, y, z);
     return true;
   }
 
   @Method(0x800cb34cL)
-  public boolean FUN_800cb34c(final ScriptState<BattleEntity27c> state, final BattleEntity27c data) {
-    final BattleEntity27c bent = state.scriptState_c8.innerStruct_00;
-    final Vector3f vec = bent.model_148.coord2_14.coord.transfer;
-    final float angle = MathHelper.atan2(vec.x - data.model_148.coord2_14.coord.transfer.x, vec.z - data.model_148.coord2_14.coord.transfer.z) + MathHelper.PI;
+  public boolean FUN_800cb34c(final ScriptState<BattleEntity27c> state, final BattleEntity27c bent) {
+    final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+    final Vector3f vec = parent.model_148.coord2_14.coord.transfer;
+    final float angle = MathHelper.atan2(vec.x - bent.model_148.coord2_14.coord.transfer.x, vec.z - bent.model_148.coord2_14.coord.transfer.z) + MathHelper.PI;
 
-    state.ticks_cc--;
-    if(state.ticks_cc > 0) {
-      state._d0.x -= state._d0.y; // This is correct, sometimes this vec is used as (angle, step)
-      data.model_148.coord2_14.transforms.rotate.y = angle + state._d0.x;
+    bent.movementTicks_cc--;
+    if(bent.movementTicks_cc > 0) {
+      bent.movementRemaining_d0.x -= bent.movementRemaining_d0.y; // This is correct, sometimes this vec is used as (angle, step)
+      bent.model_148.coord2_14.transforms.rotate.y = angle + bent.movementRemaining_d0.x;
       return false;
     }
 
     //LAB_800cb3e0
-    data.model_148.coord2_14.transforms.rotate.y = angle;
+    bent.model_148.coord2_14.transforms.rotate.y = angle;
 
     //LAB_800cb3e8
     return true;
@@ -2982,7 +2982,7 @@ public class Battle extends EngineState {
   public FlowControl FUN_800cbb00(final RunningScript<?> script) {
     final int scriptIndex = script.params_20[0].get();
     final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex];
-    BattleEntity27c v1 = state.innerStruct_00;
+    final BattleEntity27c v1 = state.innerStruct_00;
 
     float x = v1.model_148.coord2_14.coord.transfer.x;
     float y = v1.model_148.coord2_14.coord.transfer.y;
@@ -2990,13 +2990,13 @@ public class Battle extends EngineState {
 
     final int t0 = script.params_20[1].get();
     if(t0 >= 0) {
-      state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
-      v1 = state.scriptState_c8.innerStruct_00;
-      x -= v1.model_148.coord2_14.coord.transfer.x;
-      y -= v1.model_148.coord2_14.coord.transfer.y;
-      z -= v1.model_148.coord2_14.coord.transfer.z;
+      v1.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
+      final BattleEntity27c parent = v1.movementParent_c8.innerStruct_00;
+      x -= parent.model_148.coord2_14.coord.transfer.x;
+      y -= parent.model_148.coord2_14.coord.transfer.y;
+      z -= parent.model_148.coord2_14.coord.transfer.z;
     } else {
-      state.scriptState_c8 = null;
+      v1.movementParent_c8 = null;
     }
 
     //LAB_800cbb98
@@ -3016,16 +3016,16 @@ public class Battle extends EngineState {
   public FlowControl FUN_800cbc14(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent1 = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
+    final BattleEntity27c bent = state.innerStruct_00;
+    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
     final int scriptIndex2 = script.params_20[1].get();
 
     if(scriptIndex2 >= 0) {
-      state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c bent2 = state.scriptState_c8.innerStruct_00;
-      vec.sub(bent2.model_148.coord2_14.coord.transfer);
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+      vec.sub(parent.model_148.coord2_14.coord.transfer);
     } else {
-      state.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cbcc4
@@ -3047,19 +3047,19 @@ public class Battle extends EngineState {
   @Method(0x800cbde0L)
   public FlowControl FUN_800cbde0(final RunningScript<?> script) {
     final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    BattleEntity27c bent = state.innerStruct_00;
+    final BattleEntity27c bent = state.innerStruct_00;
     float x = bent.model_148.coord2_14.coord.transfer.x;
     float y = bent.model_148.coord2_14.coord.transfer.y;
     float z = bent.model_148.coord2_14.coord.transfer.z;
 
     if(script.params_20[1].get() >= 0) {
-      state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-      bent = state.scriptState_c8.innerStruct_00;
-      x -= bent.model_148.coord2_14.coord.transfer.x;
-      y -= bent.model_148.coord2_14.coord.transfer.y;
-      z -= bent.model_148.coord2_14.coord.transfer.z;
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+      x -= parent.model_148.coord2_14.coord.transfer.x;
+      y -= parent.model_148.coord2_14.coord.transfer.y;
+      z -= parent.model_148.coord2_14.coord.transfer.z;
     } else {
-      state.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cbe78
@@ -3076,27 +3076,27 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbef8L)
-  public FlowControl FUN_800cbef8(final RunningScript<?> state) {
-    final int scriptIndex1 = state.params_20[0].get();
-    final int scriptIndex2 = state.params_20[1].get();
-    final ScriptState<BattleEntity27c> s5 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent1 = s5.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
+  public FlowControl FUN_800cbef8(final RunningScript<?> script) {
+    final int scriptIndex1 = script.params_20[0].get();
+    final int scriptIndex2 = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent = state.innerStruct_00;
+    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
-      s5.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c bent2 = s5.scriptState_c8.innerStruct_00;
-      vec.sub(bent2.model_148.coord2_14.coord.transfer);
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+      vec.sub(parent.model_148.coord2_14.coord.transfer);
     } else {
-      s5.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cbfa8
-    final float x = state.params_20[3].get() - vec.x;
-    final float y = state.params_20[4].get() - vec.y;
-    final float z = state.params_20[5].get() - vec.z;
-    this.FUN_800cdc1c(s5, vec.x, vec.y, vec.z, state.params_20[3].get(), state.params_20[4].get(), state.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / state.params_20[2].get()));
-    s5.setTempTicker(this::FUN_800cb250);
+    final float x = script.params_20[3].get() - vec.x;
+    final float y = script.params_20[4].get() - vec.y;
+    final float z = script.params_20[5].get() - vec.z;
+    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    state.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3109,20 +3109,21 @@ public class Battle extends EngineState {
   @Method(0x800cc0c8L)
   public FlowControl FUN_800cc0c8(final RunningScript<?> script) {
     final int s0 = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> a0 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[s0];
-    final Vector3f a1 = new Vector3f(a0.innerStruct_00.model_148.coord2_14.coord.transfer);
-    final int t0 = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[s0];
+    final BattleEntity27c bent = state.innerStruct_00;
+    final Vector3f translation = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int parentIndex = script.params_20[1].get();
 
-    if(t0 >= 0) {
-      a0.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
-      a1.sub(a0.scriptState_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
+    if(parentIndex >= 0) {
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
+      translation.sub(bent.movementParent_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
     } else {
-      a0.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cc160
-    this.FUN_800cdc1c(a0, a1.x, a1.y, a1.z, script.params_20[3].get(), a1.y, script.params_20[4].get(), 0, script.params_20[2].get());
-    a0.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(state, translation.x, translation.y, translation.z, script.params_20[3].get(), translation.y, script.params_20[4].get(), 0, script.params_20[2].get());
+    state.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3135,24 +3136,24 @@ public class Battle extends EngineState {
   @Method(0x800cc1ccL)
   public FlowControl FUN_800cc1cc(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
-    final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent1 = state1.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
+    final int parentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent = state.innerStruct_00;
+    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      state1.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c bent2 = state1.scriptState_c8.innerStruct_00;
-      vec.sub(bent2.model_148.coord2_14.coord.transfer);
+    if(parentIndex >= 0) {
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+      vec.sub(parent.model_148.coord2_14.coord.transfer);
     } else {
-      state1.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cc27c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    this.FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
-    state1.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    state.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3165,22 +3166,22 @@ public class Battle extends EngineState {
   @Method(0x800cc364L)
   public FlowControl FUN_800cc364(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
-    final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent1 = state1.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
+    final int parentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent = state.innerStruct_00;
+    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      state1.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c bent2 = state1.scriptState_c8.innerStruct_00;
-      vec.sub(bent2.model_148.coord2_14.coord.transfer);
+    if(parentIndex >= 0) {
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+      vec.sub(parent.model_148.coord2_14.coord.transfer);
     } else {
-      state1.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cc3fc
-    this.FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
-    state1.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
+    state.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3193,24 +3194,24 @@ public class Battle extends EngineState {
   @Method(0x800cc46cL)
   public FlowControl FUN_800cc46c(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
-    final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> s5 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent1 = s5.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
+    final int parentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent = state.innerStruct_00;
+    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      s5.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c bent2 = s5.scriptState_c8.innerStruct_00;
-      vec.sub(bent2.model_148.coord2_14.coord.transfer);
+    if(parentIndex >= 0) {
+      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
+      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
+      vec.sub(parent.model_148.coord2_14.coord.transfer);
     } else {
-      s5.scriptState_c8 = null;
+      bent.movementParent_c8 = null;
     }
 
     //LAB_800cc51c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    this.FUN_800cdc1c(s5, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
-    s5.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    state.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3240,10 +3241,10 @@ public class Battle extends EngineState {
     final BattleEntity27c bent2 = state2.innerStruct_00;
     final int ticks = script.params_20[2].get();
     final float v0 = MathHelper.floorMod(MathHelper.atan2(bent2.model_148.coord2_14.coord.transfer.x - bent1.model_148.coord2_14.coord.transfer.x, bent2.model_148.coord2_14.coord.transfer.z - bent1.model_148.coord2_14.coord.transfer.z) - bent1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
-    state1.scriptState_c8 = state2;
-    state1.ticks_cc = ticks;
-    state1._d0.x = v0;
-    state1._d0.y = v0 / ticks;
+    bent1.movementParent_c8 = state2;
+    bent1.movementTicks_cc = ticks;
+    bent1.movementRemaining_d0.x = v0;
+    bent1.movementRemaining_d0.y = v0 / ticks;
     state1.setTempTicker(this::FUN_800cb34c);
     return FlowControl.CONTINUE;
   }
@@ -3951,19 +3952,21 @@ public class Battle extends EngineState {
     final float dy = y1 - y0;
     final float dz = z1 - z0;
 
-    s1.ticks_cc = ticks;
-    s1._e8.set(x1, y1, z1);
-    s1._d0.set(dx, dy, dz);
+    final BattleEntity27c bent = s1.innerStruct_00;
+
+    bent.movementTicks_cc = ticks;
+    bent.movementDestination_e8.set(x1, y1, z1);
+    bent.movementRemaining_d0.set(dx, dy, dz);
 
     // Fix for retail /0 bug
     if(ticks > 0) {
-      s1._dc.set(dx / ticks, 0.0f, dz / ticks);
+      bent.movementStep_dc.set(dx / ticks, 0.0f, dz / ticks);
     } else {
-      s1._dc.zero();
+      bent.movementStep_dc.zero();
     }
 
-    s1._dc.y = FUN_80013404(a7, dy, ticks);
-    s1._f4 = a7;
+    bent.movementStep_dc.y = FUN_80013404(a7, dy, ticks);
+    bent.movementStepYAcceleration_f4 = a7;
   }
 
   @ScriptDescription("Allocates a weapon trail effect manager")
@@ -5754,7 +5757,7 @@ public class Battle extends EngineState {
 
   @Method(0x800e6070L)
   public void allocateLighting() {
-    final ScriptState<Void> state = SCRIPTS.allocateScriptState(1, "Lighting controller", 0, null);
+    final ScriptState<Void> state = SCRIPTS.allocateScriptState(1, "Lighting controller", null);
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(this::tickLighting);
     state.setRenderer(this::deallocateLighting);
@@ -8826,7 +8829,7 @@ public class Battle extends EngineState {
 
   @Method(0x80109170L)
   private void combatControllerScriptLoaded(final FileData file) {
-    this.scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", 0, null);
+    this.scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", null);
     this.scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
     final int v1;

@@ -206,6 +206,17 @@ public abstract class BattleEntity27c extends BattleObject {
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
+  // These were pulled from ScriptState, they're only used on bents
+  public ScriptState<BattleEntity27c> movementParent_c8;
+  public int movementTicks_cc;
+  /** Was .8 */
+  public final Vector3f movementRemaining_d0 = new Vector3f();
+  /** Was .8 */
+  public final Vector3f movementStep_dc = new Vector3f();
+  public final Vector3f movementDestination_e8 = new Vector3f();
+  /** Was .8 */
+  public float movementStepYAcceleration_f4;
+
   private final Vector3i colour = new Vector3i(0x80, 0x80, 0x80);
 
   public final Rect4i scissor = new Rect4i();
