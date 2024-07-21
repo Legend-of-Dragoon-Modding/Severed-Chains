@@ -22,7 +22,7 @@ import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
@@ -153,7 +153,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void scroll(final int scroll) {
-    playSound(1);
+    playMenuSound(1);
     this.charSlot = scroll;
     unloadRenderable(this.additionHighlight);
     this.loadingStage = 1;
@@ -171,7 +171,7 @@ public class AdditionsScreen extends MenuScreen {
 
     for(int i = 0; i < 7; i++) {
       if(this.selectedSlot != i && MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
-        playSound(1);
+        playMenuSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
         return InputPropagation.HANDLED;
@@ -201,11 +201,11 @@ public class AdditionsScreen extends MenuScreen {
 
           if(additionOffset != -1) {
             gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = additionOffset;
-            playSound(2);
+            playMenuSound(2);
             unloadRenderable(this.additionHighlight);
             this.loadingStage = 1;
           } else {
-            playSound(40);
+            playMenuSound(40);
           }
 
           return InputPropagation.HANDLED;
@@ -217,7 +217,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 100;
   }
 
@@ -226,7 +226,7 @@ public class AdditionsScreen extends MenuScreen {
       this.selectedSlot--;
     }
 
-    playSound(1);
+    playMenuSound(1);
     this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
   }
 
@@ -235,7 +235,7 @@ public class AdditionsScreen extends MenuScreen {
       this.selectedSlot++;
     }
 
-    playSound(1);
+    playMenuSound(1);
     this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
   }
 
@@ -252,11 +252,11 @@ public class AdditionsScreen extends MenuScreen {
 
     if(additionOffset != -1) {
       gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = additionOffset;
-      playSound(2);
+      playMenuSound(2);
       unloadRenderable(this.additionHighlight);
       this.loadingStage = 1;
     } else {
-      playSound(40);
+      playMenuSound(40);
     }
   }
 

@@ -270,7 +270,6 @@ public class LegendOfDragoonCampaign extends CampaignType {
 
     data.writeInt(offset, gameState.characterInitialized_4e6);
     data.writeByte(offset, gameState.isOnWorldMap_4e4 ? 1 : 0);
-    data.writeByte(offset, gameState.vibrationEnabled_4e1 ? 1 : 0);
     data.writeByte(offset, gameState.indicatorsDisabled_4e3 ? 1 : 0);
   }
 
@@ -382,7 +381,6 @@ public class LegendOfDragoonCampaign extends CampaignType {
 
     state.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
 
-    state.vibrationEnabled_4e1 = data.readUByte(offset) != 0;
     state.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
 
     return state;

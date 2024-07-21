@@ -9,18 +9,23 @@ public class DummyController extends Controller {
   }
 
   @Override
-  public boolean readButton(final int glfwCode) {
+  public boolean readButton(final int input) {
     return false;
   }
 
   @Override
-  public float readAxis(final int glfwCode) {
+  public float readAxis(final int input) {
     return 0;
   }
 
   @Override
-  public boolean readHat(final int glfwCode, final int hatIndex) {
+  public boolean readHat(final int input, final int hatIndex) {
     return false;
+  }
+
+  @Override
+  public String getName() {
+    return "No Controller";
   }
 
   @Override

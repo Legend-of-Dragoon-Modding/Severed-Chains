@@ -11,7 +11,7 @@ import legend.game.types.MessageBoxResult;
 import java.util.function.BiConsumer;
 
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -94,7 +94,7 @@ public class InputBoxScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    playSound(1);
+    playMenuSound(1);
 
     this.getSelectedControl().hoverOut();
 
@@ -109,7 +109,7 @@ public class InputBoxScreen extends MenuScreen {
   }
 
   private void menuNavigateDown() {
-    playSound(1);
+    playMenuSound(1);
 
     this.getSelectedControl().hoverOut();
 
@@ -124,7 +124,7 @@ public class InputBoxScreen extends MenuScreen {
   }
 
   private void menuSelect() {
-    playSound(2);
+    playMenuSound(2);
 
     if(this.selectedIndex == 0) {
       this.deferAction(this.text::focus);
@@ -134,7 +134,7 @@ public class InputBoxScreen extends MenuScreen {
   }
 
   private void menuCancel() {
-    playSound(3);
+    playMenuSound(3);
 
     menuStack.popScreen();
     this.onResult.accept(MessageBoxResult.CANCEL, this.text.getText());

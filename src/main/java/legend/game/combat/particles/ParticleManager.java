@@ -34,6 +34,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -82,14 +83,11 @@ public class ParticleManager {
   }
 
   public ParticleEffectData98 allocateParticle(final ScriptState<? extends BattleObject> parent, final int type, final int particleCount, final int particleTypeId, final int _10, final int _14, final int _18, final int innerStuff, final int scriptIndex, final int parentScriptIndex) {
-    final ParticleEffectData98 particle = new ParticleEffectData98(particleCount);
+    final ParticleEffectData98 particle = new ParticleEffectData98(this, particleTypeId >> 20, particleCount);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state = allocateEffectManager(
       "Particle effect %x".formatted(particleTypeId),
       parent,
-      null,
-      this.particleEffectRenderers_80119b7c[particleTypeId >> 20],
-      this::particleEffectDestructor,
       particle,
       new EffectManagerParams.ParticleType()
     );
@@ -206,23 +204,21 @@ public class ParticleManager {
   }
 
   @Method(0x800fe8b8L)
-  private void particleEffectDestructor(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
-    final ParticleEffectData98 effectParent = this.findParticleParent(effect);
+  public void deleteParticle(final ParticleEffectData98 particle) {
+    final ParticleEffectData98 parent = this.findParticleParent(particle);
 
-    effect.delete();
-
-    if(effectParent == null) {
-      this.firstParticle_8011a00c = effect.next_94;
+    if(parent == null) {
+      this.firstParticle_8011a00c = particle.next_94;
     } else {
       //LAB_800fe8f0
-      effectParent.next_94 = effect.next_94;
+      parent.next_94 = particle.next_94;
     }
 
     //LAB_800fe8fc
-    if(effect.next_94 == null) {
-      this.lastParticle_8011a010 = effectParent;
+    if(particle.next_94 == null) {
+      this.lastParticle_8011a010 = parent;
     }
+
     //LAB_800fea30
     //LAB_800fea3c
   }
@@ -945,7 +941,8 @@ public class ParticleManager {
   }
 
   @Method(0x800fd600L)
-  private void renderTmdParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
+  private void renderTmdParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
+    final EffectManagerData6c<EffectManagerParams.ParticleType> manager = state.innerStruct_00;
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -990,7 +987,8 @@ public class ParticleManager {
   }
 
   @Method(0x800fd87cL)
-  private void renderLineParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
+  private void renderLineParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
+    final EffectManagerData6c<EffectManagerParams.ParticleType> manager = state.innerStruct_00;
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1075,12 +1073,13 @@ public class ParticleManager {
   }
 
   @Method(0x800fddd0L)
-  private void renderNoParticlesWhatsoever(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
+  private void renderNoParticlesWhatsoever(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
     // no-op
   }
 
   @Method(0x800fddd8L)
-  private void renderPixelParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
+  private void renderPixelParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
+    final EffectManagerData6c<EffectManagerParams.ParticleType> manager = state.innerStruct_00;
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1121,7 +1120,8 @@ public class ParticleManager {
 
   /** Has some kind of sub-particles */
   @Method(0x800fe120L)
-  private void renderQuadParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
+  private void renderQuadParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
+    final EffectManagerData6c<EffectManagerParams.ParticleType> manager = state.innerStruct_00;
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
     effect.countFramesRendered_52++;
@@ -2229,7 +2229,7 @@ public class ParticleManager {
    *   <li>{@link #renderNoParticlesWhatsoever}</li>
    * </ol>
    */
-  private final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>>, EffectManagerData6c<EffectManagerParams.ParticleType>>[] particleEffectRenderers_80119b7c = new BiConsumer[6];
+  public final Consumer<ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>>>[] particleEffectRenderers_80119b7c = new Consumer[6];
   {
     this.particleEffectRenderers_80119b7c[0] = this::renderQuadParticleEffect;
     this.particleEffectRenderers_80119b7c[1] = this::renderTmdParticleEffect;

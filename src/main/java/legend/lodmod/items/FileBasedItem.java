@@ -5,6 +5,7 @@ import legend.game.characters.Element;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodItems;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -160,6 +161,21 @@ public class FileBasedItem extends Item {
     this.percentage_09 = percentage;
     this.uu2_0a = uu2;
     this.type_0b = type;
+  }
+
+  @Override
+  public boolean isProtected() {
+    return
+      this == LodItems.PANDEMONIUM.get() ||
+      this == LodItems.MAGIC_SHIELD.get() ||
+      this == LodItems.MATERIAL_SHIELD.get() ||
+      this == LodItems.SMOKE_BALL.get() ||
+      this == LodItems.MAGIC_SIG_STONE.get() ||
+      this == LodItems.POWER_UP.get() ||
+      this == LodItems.POWER_DOWN.get() ||
+      this == LodItems.SPEED_UP.get() ||
+      this == LodItems.SPEED_DOWN.get() ||
+      this == LodItems.PSYCHE_BOMB_X.get();
   }
 
   @Override

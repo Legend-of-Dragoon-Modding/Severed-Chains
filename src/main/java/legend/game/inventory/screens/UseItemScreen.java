@@ -26,7 +26,7 @@ import static legend.game.SItem.useItemGlyphs_801141fc;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -39,11 +39,11 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 public class UseItemScreen extends MenuScreen {
   private static final String HP_recovered_for_all_8011cfcc = "HP recovered for all";
   private static final String MP_recovered_for_all_8011cff8 = "MP recovered for all";
-  private static final String Completely_recovered_8011d534 = "SP recovered for all";
+  private static final String Completely_recovered_8011d534 = "recovered for all";
   private static final String Recovered_8011d560 = "Recovered";
-  private static final String HP_8011d57c = "HP";
-  private static final String MP_8011d584 = "MP";
-  private static final String SP_8011d58c = "SP";
+  private static final String HP_8011d57c = " HP ";
+  private static final String MP_8011d584 = " MP ";
+  private static final String SP_8011d58c = " SP ";
   private static final String Encounter_risk_reduced_8011d594 = "Encounter risk reduced";
   private static final String Detoxified_8011d5c8 = "Detoxified";
   private static final String Spirit_recovered_8011d5e0 = "Spirit recovered";
@@ -128,7 +128,7 @@ public class UseItemScreen extends MenuScreen {
   }
 
   private void scroll(final int scroll) {
-    playSound(1);
+    playMenuSound(1);
     this.slotScroll = scroll;
     this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
   }
@@ -215,7 +215,7 @@ public class UseItemScreen extends MenuScreen {
     if(this.loadingStage == 2) {
       for(int slot = 0; slot < Math.min(5, this.itemCount - this.slotScroll); slot++) {
         if(this.selectedSlot != slot && MathHelper.inBox(x, y, 33, this.getItemSlotY(slot), 136, 17)) {
-          playSound(1);
+          playMenuSound(1);
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
           return InputPropagation.HANDLED;
@@ -224,7 +224,7 @@ public class UseItemScreen extends MenuScreen {
     } else if(this.loadingStage == 3 && !this.itemTargetAll) {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
         if(this.charSlot != slot && MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
-          playSound(1);
+          playMenuSound(1);
           this.charSlot = slot;
           this.charHighlight.x_40 = this.getCharacterPortraitX(this.charSlot) - 3;
           return InputPropagation.HANDLED;
@@ -265,10 +265,10 @@ public class UseItemScreen extends MenuScreen {
               FUN_80104b60(this.charHighlight);
             }
 
-            playSound(2);
+            playMenuSound(2);
             this.loadingStage = 3;
           } else {
-            playSound(40);
+            playMenuSound(40);
           }
 
           return InputPropagation.HANDLED;
@@ -293,7 +293,7 @@ public class UseItemScreen extends MenuScreen {
             this.useItemResponse.value_04 = responseValue;
           }
 
-          playSound(2);
+          playMenuSound(2);
           takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats();
@@ -389,17 +389,17 @@ public class UseItemScreen extends MenuScreen {
   }
 
   private void menuStage2Escape() {
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 100;
   }
 
   private void menuStage2NavigateUp() {
     if(this.selectedSlot > 0) {
-      playSound(1);
+      playMenuSound(1);
       this.selectedSlot--;
       this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
     } else if(this.slotScroll > 0) {
-      playSound(1);
+      playMenuSound(1);
       this.slotScroll--;
       this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
     }
@@ -407,7 +407,7 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage2NavigateDown() {
     if((this.selectedSlot + this.slotScroll) < this.itemCount - 1) {
-      playSound(1);
+      playMenuSound(1);
 
       if(this.selectedSlot == 4) {
         this.slotScroll++;
@@ -421,7 +421,7 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage2Select() {
     if(this.slotScroll + this.selectedSlot >= this.itemCount) {
-      playSound(40);
+      playMenuSound(40);
       return;
     }
 
@@ -429,7 +429,7 @@ public class UseItemScreen extends MenuScreen {
     this.itemTargetAll = item.canTarget(Item.TargetType.ALL);
 
     if(!item.canBeUsed(Item.UsageLocation.MENU) || (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) != 0) {
-      playSound(40);
+      playMenuSound(40);
       return;
     }
 
@@ -443,7 +443,7 @@ public class UseItemScreen extends MenuScreen {
       FUN_80104b60(this.charHighlight);
     }
 
-    playSound(2);
+    playMenuSound(2);
     this.loadingStage = 3;
   }
 
@@ -456,13 +456,13 @@ public class UseItemScreen extends MenuScreen {
       }
     }
 
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 2;
   }
 
   private void menuStage3NavigateLeft() {
     if(!this.itemTargetAll) {
-      playSound(1);
+      playMenuSound(1);
 
       if(this.charSlot > 0) {
         this.charSlot--;
@@ -474,7 +474,7 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage3NavigateRight() {
     if(!this.itemTargetAll) {
-      playSound(1);
+      playMenuSound(1);
 
       if(this.charSlot < characterCount_8011d7c4 - 1) {
         this.charSlot++;
@@ -501,7 +501,7 @@ public class UseItemScreen extends MenuScreen {
       this.useItemResponse.value_04 = responseValue;
     }
 
-    playSound(2);
+    playMenuSound(2);
     takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
     this.itemCount = this.getUsableItemsInMenu();
     loadCharacterStats();

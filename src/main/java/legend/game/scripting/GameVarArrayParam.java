@@ -7,7 +7,7 @@ import legend.game.Scus94491BpeSegment_800b;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.types.battlestate.SpecialEffects20;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.modding.events.battle.DragonBlockStaffOffEvent;
 import legend.game.modding.events.battle.DragonBlockStaffOnEvent;
 import legend.game.submap.SubmapObject210;
@@ -47,16 +47,16 @@ public class GameVarArrayParam extends Param {
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex];
-      case 128 -> this.readSpecialEffectVar(0, this.arrIndex);
-      case 129 -> this.readSpecialEffectVar(1, this.arrIndex);
-      case 130 -> this.readSpecialEffectVar(2, this.arrIndex);
-      case 131 -> this.readSpecialEffectVar(3, this.arrIndex);
-      case 132 -> this.readSpecialEffectVar(4, this.arrIndex);
-      case 133 -> this.readSpecialEffectVar(5, this.arrIndex);
-      case 134 -> this.readSpecialEffectVar(6, this.arrIndex);
-      case 135 -> this.readSpecialEffectVar(7, this.arrIndex);
-      case 136 -> this.readSpecialEffectVar(8, this.arrIndex);
-      case 137 -> this.readSpecialEffectVar(9, this.arrIndex);
+      case 128 -> this.readStatusConditionsVar(0, this.arrIndex);
+      case 129 -> this.readStatusConditionsVar(1, this.arrIndex);
+      case 130 -> this.readStatusConditionsVar(2, this.arrIndex);
+      case 131 -> this.readStatusConditionsVar(3, this.arrIndex);
+      case 132 -> this.readStatusConditionsVar(4, this.arrIndex);
+      case 133 -> this.readStatusConditionsVar(5, this.arrIndex);
+      case 134 -> this.readStatusConditionsVar(6, this.arrIndex);
+      case 135 -> this.readStatusConditionsVar(7, this.arrIndex);
+      case 136 -> this.readStatusConditionsVar(8, this.arrIndex);
+      case 137 -> this.readStatusConditionsVar(9, this.arrIndex);
 
       default -> throw new IllegalArgumentException("Unknown game data index " + this.varIndex);
     };
@@ -83,16 +83,16 @@ public class GameVarArrayParam extends Param {
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex] = val;
-      case 128 -> this.writeSpecialEffectVar(0, this.arrIndex, val);
-      case 129 -> this.writeSpecialEffectVar(1, this.arrIndex, val);
-      case 130 -> this.writeSpecialEffectVar(2, this.arrIndex, val);
-      case 131 -> this.writeSpecialEffectVar(3, this.arrIndex, val);
-      case 132 -> this.writeSpecialEffectVar(4, this.arrIndex, val);
-      case 133 -> this.writeSpecialEffectVar(5, this.arrIndex, val);
-      case 134 -> this.writeSpecialEffectVar(6, this.arrIndex, val);
-      case 135 -> this.writeSpecialEffectVar(7, this.arrIndex, val);
-      case 136 -> this.writeSpecialEffectVar(8, this.arrIndex, val);
-      case 137 -> this.writeSpecialEffectVar(9, this.arrIndex, val);
+      case 128 -> this.writeStatusConditionsVar(0, this.arrIndex, val);
+      case 129 -> this.writeStatusConditionsVar(1, this.arrIndex, val);
+      case 130 -> this.writeStatusConditionsVar(2, this.arrIndex, val);
+      case 131 -> this.writeStatusConditionsVar(3, this.arrIndex, val);
+      case 132 -> this.writeStatusConditionsVar(4, this.arrIndex, val);
+      case 133 -> this.writeStatusConditionsVar(5, this.arrIndex, val);
+      case 134 -> this.writeStatusConditionsVar(6, this.arrIndex, val);
+      case 135 -> this.writeStatusConditionsVar(7, this.arrIndex, val);
+      case 136 -> this.writeStatusConditionsVar(8, this.arrIndex, val);
+      case 137 -> this.writeStatusConditionsVar(9, this.arrIndex, val);
 
       default -> throw new IllegalArgumentException("Unknown game data index " + this.varIndex);
     }
@@ -218,7 +218,7 @@ public class GameVarArrayParam extends Param {
       case 103 -> Scus94491BpeSegment_8006.battleState_8006e398._31c;
       case 104 -> Scus94491BpeSegment_8006.battleState_8006e398._320;
       case 105 -> Scus94491BpeSegment_8006.battleState_8006e398.additionState_324;
-      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398._328;
+      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398.additionStarbustEffectCountParam_328;
       case 107 -> Scus94491BpeSegment_8006.battleState_8006e398._32c;
       case 108 -> Scus94491BpeSegment_8006.battleState_8006e398._330;
       case 109 -> Scus94491BpeSegment_8006.battleState_8006e398._334[0];
@@ -240,7 +240,7 @@ public class GameVarArrayParam extends Param {
       case 125 -> Scus94491BpeSegment_8006.battleState_8006e398._374;
       case 126 -> Scus94491BpeSegment_8006.battleState_8006e398._378;
       case 127 -> Scus94491BpeSegment_8006.battleState_8006e398._37c;
-      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398._380;
+      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398.scriptEffectTableJumpIndex_380;
       case 129 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[0].pack();
       case 130 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[1].pack();
       case 131 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[2].pack();
@@ -259,7 +259,7 @@ public class GameVarArrayParam extends Param {
       case 144 -> Scus94491BpeSegment_8006.battleState_8006e398._3c0;
       case 145 -> Scus94491BpeSegment_8006.battleState_8006e398._3c4;
       case 146 -> Scus94491BpeSegment_8006.battleState_8006e398._3c8;
-      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398._3cc;
+      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemDamageMultiplier_3cc;
       case 148 -> Scus94491BpeSegment_8006.battleState_8006e398._3d0;
       case 149 -> Scus94491BpeSegment_8006.battleState_8006e398._3d4;
       case 150 -> Scus94491BpeSegment_8006.battleState_8006e398._3d8;
@@ -295,7 +295,7 @@ public class GameVarArrayParam extends Param {
       case 180 -> Scus94491BpeSegment_8006.battleState_8006e398._450;
       case 181 -> Scus94491BpeSegment_8006.battleState_8006e398._454;
       case 182 -> Scus94491BpeSegment_8006.battleState_8006e398._458;
-      case 183 -> Scus94491BpeSegment_8006.battleState_8006e398._45c;
+      case 183 -> Scus94491BpeSegment_8006.battleState_8006e398.scriptsProcessingStatusAfflictions_45c;
       case 184 -> Scus94491BpeSegment_8006.battleState_8006e398._460[0];
       case 185 -> Scus94491BpeSegment_8006.battleState_8006e398._460[1];
       case 186 -> Scus94491BpeSegment_8006.battleState_8006e398._460[2];
@@ -314,7 +314,7 @@ public class GameVarArrayParam extends Param {
       case 199 -> Scus94491BpeSegment_8006.battleState_8006e398._49c;
       case 200 -> Scus94491BpeSegment_8006.battleState_8006e398._4a0;
       case 201 -> Scus94491BpeSegment_8006.battleState_8006e398._4a4;
-      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398._4a8;
+      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemLevel_4a8;
       case 203 -> Scus94491BpeSegment_8006.battleState_8006e398._4ac;
       case 204 -> Scus94491BpeSegment_8006.battleState_8006e398._4b0;
       case 205 -> Scus94491BpeSegment_8006.battleState_8006e398._4b4;
@@ -481,7 +481,7 @@ public class GameVarArrayParam extends Param {
       case 103 -> Scus94491BpeSegment_8006.battleState_8006e398._31c = val;
       case 104 -> Scus94491BpeSegment_8006.battleState_8006e398._320 = val;
       case 105 -> Scus94491BpeSegment_8006.battleState_8006e398.additionState_324 = val;
-      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398._328 = val;
+      case 106 -> Scus94491BpeSegment_8006.battleState_8006e398.additionStarbustEffectCountParam_328 = val;
       case 107 -> Scus94491BpeSegment_8006.battleState_8006e398._32c = val;
       case 108 -> Scus94491BpeSegment_8006.battleState_8006e398._330 = val;
       case 109 -> Scus94491BpeSegment_8006.battleState_8006e398._334[0] = val;
@@ -503,7 +503,7 @@ public class GameVarArrayParam extends Param {
       case 125 -> Scus94491BpeSegment_8006.battleState_8006e398._374 = val;
       case 126 -> Scus94491BpeSegment_8006.battleState_8006e398._378 = val;
       case 127 -> Scus94491BpeSegment_8006.battleState_8006e398._37c = val;
-      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398._380 = val;
+      case 128 -> Scus94491BpeSegment_8006.battleState_8006e398.scriptEffectTableJumpIndex_380 = val;
       case 129 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[0].unpack(val);
       case 130 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[1].unpack(val);
       case 131 -> Scus94491BpeSegment_8006.battleState_8006e398.status_384[2].unpack(val);
@@ -522,7 +522,7 @@ public class GameVarArrayParam extends Param {
       case 144 -> Scus94491BpeSegment_8006.battleState_8006e398._3c0 = val;
       case 145 -> Scus94491BpeSegment_8006.battleState_8006e398._3c4 = val;
       case 146 -> Scus94491BpeSegment_8006.battleState_8006e398._3c8 = val;
-      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398._3cc = val;
+      case 147 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemDamageMultiplier_3cc = val;
       case 148 -> Scus94491BpeSegment_8006.battleState_8006e398._3d0 = val;
       case 149 -> Scus94491BpeSegment_8006.battleState_8006e398._3d4 = val;
       case 150 -> Scus94491BpeSegment_8006.battleState_8006e398._3d8 = val;
@@ -558,7 +558,7 @@ public class GameVarArrayParam extends Param {
       case 180 -> Scus94491BpeSegment_8006.battleState_8006e398._450 = val;
       case 181 -> Scus94491BpeSegment_8006.battleState_8006e398._454 = val;
       case 182 -> Scus94491BpeSegment_8006.battleState_8006e398._458 = val;
-      case 183 -> Scus94491BpeSegment_8006.battleState_8006e398._45c = val;
+      case 183 -> Scus94491BpeSegment_8006.battleState_8006e398.scriptsProcessingStatusAfflictions_45c = val;
       case 184 -> Scus94491BpeSegment_8006.battleState_8006e398._460[0] = val;
       case 185 -> Scus94491BpeSegment_8006.battleState_8006e398._460[1] = val;
       case 186 -> Scus94491BpeSegment_8006.battleState_8006e398._460[2] = val;
@@ -577,7 +577,7 @@ public class GameVarArrayParam extends Param {
       case 199 -> Scus94491BpeSegment_8006.battleState_8006e398._49c = val;
       case 200 -> Scus94491BpeSegment_8006.battleState_8006e398._4a0 = val;
       case 201 -> Scus94491BpeSegment_8006.battleState_8006e398._4a4 = val;
-      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398._4a8 = val;
+      case 202 -> Scus94491BpeSegment_8006.battleState_8006e398.magicItemLevel_4a8 = val;
       case 203 -> Scus94491BpeSegment_8006.battleState_8006e398._4ac = val;
       case 204 -> Scus94491BpeSegment_8006.battleState_8006e398._4b0 = val;
       case 205 -> Scus94491BpeSegment_8006.battleState_8006e398._4b4 = val;
@@ -643,39 +643,39 @@ public class GameVarArrayParam extends Param {
     }
   }
 
-  private int readSpecialEffectVar(final int effectIndex, final int varIndex) {
-    final SpecialEffects20 effect = Scus94491BpeSegment_8006.battleState_8006e398.specialEffect_00[effectIndex];
+  private int readStatusConditionsVar(final int effectIndex, final int varIndex) {
+    final StatusConditions20 conditions = Scus94491BpeSegment_8006.battleState_8006e398.statusConditions_00[effectIndex];
 
     return switch(varIndex) {
-      case 0 -> effect._00;
-      case 1 -> effect._04;
-      case 2 -> effect._08;
-      case 3 -> effect._0c;
-      case 4 -> effect._10;
-      case 5 -> effect._14;
-      case 6 -> effect.menuBlockFlag_18;
-      case 7 -> (effect.unknown_1f & 0xff) << 24 | (effect.chargingSpirit_1e & 0xff) << 16 | (effect.pandemoniumTurns_1d & 0xff) << 8 | effect.shieldsSigStoneCharmTurns_1c & 0xff;
+      case 0 -> conditions._00;
+      case 1 -> conditions._04;
+      case 2 -> conditions._08;
+      case 3 -> conditions._0c;
+      case 4 -> conditions._10;
+      case 5 -> conditions._14;
+      case 6 -> conditions.menuBlockFlag_18;
+      case 7 -> (conditions.unknown_1f & 0xff) << 24 | (conditions.chargingSpirit_1e & 0xff) << 16 | (conditions.pandemoniumTurnsDiedAsDragoon_1d & 0xff) << 8 | conditions.shieldsSigStoneCharmTurns_1c & 0xff;
 
-      default -> throw new IllegalArgumentException("Unknown special effect var index " + varIndex);
+      default -> throw new IllegalArgumentException("Unknown status condition var index " + varIndex);
     };
   }
 
-  private void writeSpecialEffectVar(final int effectIndex, final int varIndex, final int val) {
-    final SpecialEffects20 effect = Scus94491BpeSegment_8006.battleState_8006e398.specialEffect_00[effectIndex];
+  private void writeStatusConditionsVar(final int effectIndex, final int varIndex, final int val) {
+    final StatusConditions20 conditions = Scus94491BpeSegment_8006.battleState_8006e398.statusConditions_00[effectIndex];
 
     switch(varIndex) {
-      case 0 -> effect._00 = val;
-      case 1 -> effect._04 = val;
-      case 2 -> effect._08 = val;
-      case 3 -> effect._0c = val;
-      case 4 -> effect._10 = val;
-      case 5 -> effect._14 = val; // Move ID? (0x20 is pre-move, other values are SpellIDs)
-      case 6 -> effect.menuBlockFlag_18 = val;
+      case 0 -> conditions._00 = val;
+      case 1 -> conditions._04 = val;
+      case 2 -> conditions._08 = val;
+      case 3 -> conditions._0c = val;
+      case 4 -> conditions._10 = val;
+      case 5 -> conditions._14 = val; // Move ID? (0x20 is pre-move, other values are SpellIDs)
+      case 6 -> conditions.menuBlockFlag_18 = val;
       case 7 -> {
-        effect.shieldsSigStoneCharmTurns_1c = val & 0xff;
-        effect.pandemoniumTurns_1d = val >>> 8 & 0xff;
-        effect.chargingSpirit_1e = val >>> 16 & 0xff;
-        effect.unknown_1f = val >>> 24 & 0xff;
+        conditions.shieldsSigStoneCharmTurns_1c = val & 0xff;
+        conditions.pandemoniumTurnsDiedAsDragoon_1d = val >>> 8 & 0xff;
+        conditions.chargingSpirit_1e = val >>> 16 & 0xff;
+        conditions.unknown_1f = val >>> 24 & 0xff;
       }
 
       default -> throw new IllegalArgumentException("Unknown special effect var index " + varIndex);

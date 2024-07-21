@@ -9,7 +9,7 @@ import org.joml.Vector3f;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.getModelObjectTranslation;
 
-public class MonsterDeathEffect34 implements Effect {
+public class MonsterDeathEffect34 implements Effect<EffectManagerParams.VoidType> {
   /** short; Indicates highest part index to turn off. Parts at index <= value are "destroyed" */
   private int destroyedPartsCutoffIndex_00;
   /** ushort */
@@ -35,8 +35,11 @@ public class MonsterDeathEffect34 implements Effect {
     }
   }
 
+  @Override
   @Method(0x800d30c0L)
-  public void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     //LAB_800d30fc
     for(int objIndex = 0; objIndex < this.modelObjectCount_04; objIndex++) {
       final MonsterDeathEffectObjectDestructor30 obj = this.objectDestructorArray_30[objIndex];
@@ -55,8 +58,11 @@ public class MonsterDeathEffect34 implements Effect {
     //LAB_800d3190
   }
 
+  @Override
   @Method(0x800d31b0L)
-  public void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     this.remainingFrameLimit_02--;
     if(this.remainingFrameLimit_02 == 0) {
       state.deallocateWithChildren();
@@ -108,7 +114,8 @@ public class MonsterDeathEffect34 implements Effect {
     //LAB_800d346c
   }
 
-  public void destructor(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
     this.sprite_0c.delete();
   }
 

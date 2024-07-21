@@ -6,7 +6,7 @@ public class RunningScript<T> {
   public int opOffset_08;
   /** Pointer to the current element in the packet (may be op or param) */
   public int commandOffset_0c;
-  public int opIndex_10;
+  public OpType opIndex_10;
   public int paramCount_14;
   public int opParam_18;
 

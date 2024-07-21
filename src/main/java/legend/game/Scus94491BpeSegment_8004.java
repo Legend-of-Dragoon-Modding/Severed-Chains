@@ -78,13 +78,13 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[5] = Scus94491BpeSegment::scriptReadGlobalFlag2;
     scriptSubFunctions_8004e29c[6] = Scus94491BpeSegment::scriptStartFadeEffect;
     scriptSubFunctions_8004e29c[7] = Scus94491BpeSegment::scriptWaitForFilesToLoad;
-    scriptSubFunctions_8004e29c[8] = Scus94491BpeSegment::FUN_80017584;
+    scriptSubFunctions_8004e29c[8] = Scus94491BpeSegment::scriptStartRumbleMode;
     scriptSubFunctions_8004e29c[9] = Scus94491BpeSegment::scriptSetFlag;
     scriptSubFunctions_8004e29c[10] = Scus94491BpeSegment::scriptReadFlag;
-    scriptSubFunctions_8004e29c[11] = Scus94491BpeSegment::FUN_80017688;
+    scriptSubFunctions_8004e29c[11] = Scus94491BpeSegment::scriptStartRumble;
 
-    scriptSubFunctions_8004e29c[16] = Scus94491BpeSegment::FUN_800176c0;
-    scriptSubFunctions_8004e29c[17] = Scus94491BpeSegment::FUN_800176ec;
+    scriptSubFunctions_8004e29c[16] = Scus94491BpeSegment::scriptSetRumbleDampener;
+    scriptSubFunctions_8004e29c[17] = Scus94491BpeSegment::scriptResetRumbleDampener;
 
     scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
     scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::scriptInitTextbox;

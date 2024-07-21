@@ -1,7 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.Config;
@@ -29,6 +27,7 @@ import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.RenderEvent;
 import legend.game.scripting.FlowControl;
+import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -55,8 +54,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -71,17 +72,17 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
+import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
 import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.renderUi;
+import static legend.game.Scus94491BpeSegment_8002.resetRumbleDampener;
+import static legend.game.Scus94491BpeSegment_8002.setRumbleDampener;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
+import static legend.game.Scus94491BpeSegment_8002.startRumbleMode;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffClip;
 import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffOffset;
@@ -214,12 +215,12 @@ public final class Scus94491BpeSegment {
 
   public static boolean[] scriptLog = new boolean[0x48];
 
-  public static final Int2ObjectMap<Function<RunningScript<?>, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
+  public static final Map<OpType, Function<RunningScript<?>, String>> scriptFunctionDescriptions = new EnumMap<>(OpType.class);
 
   static {
-    scriptFunctionDescriptions.put(0, r -> "pause;");
-    scriptFunctionDescriptions.put(1, r -> "rewind;");
-    scriptFunctionDescriptions.put(2, r -> {
+    scriptFunctionDescriptions.put(OpType.YIELD, r -> "pause;");
+    scriptFunctionDescriptions.put(OpType.REWIND, r -> "rewind;");
+    scriptFunctionDescriptions.put(OpType.WAIT, r -> {
       final int waitFrames = r.params_20[0].get();
 
       if(waitFrames != 0) {
@@ -228,7 +229,7 @@ public final class Scus94491BpeSegment {
         return "wait complete - continue;";
       }
     });
-    scriptFunctionDescriptions.put(3, r -> {
+    scriptFunctionDescriptions.put(OpType.WAIT_CMP, r -> {
       final int operandA = r.params_20[0].get();
       final int operandB = r.params_20[1].get();
       final int op = r.opParam_18;
@@ -245,7 +246,7 @@ public final class Scus94491BpeSegment {
         default -> "illegal cmp 3";
       }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - continue" : "no - rewind");
     });
-    scriptFunctionDescriptions.put(4, r -> {
+    scriptFunctionDescriptions.put(OpType.WAIT_CMP_0, r -> {
       final int operandB = r.params_20[0].get();
       final int op = r.opParam_18;
 
@@ -261,38 +262,38 @@ public final class Scus94491BpeSegment {
         default -> "illegal cmp 4";
       }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - continue" : "no - rewind");
     });
-    scriptFunctionDescriptions.put(8, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(9, r -> "tmp = 0x%x (p0); *%s (p1) = tmp; *%s (p0) = tmp; // Broken swap".formatted(r.params_20[0].get(), r.params_20[1], r.params_20[0]));
-    scriptFunctionDescriptions.put(10, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(12, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(16, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(17, r -> "*%s (p1) |= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(18, r -> "*%s (p1) ^= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(19, r -> "*%s (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(20, r -> "~*%s (p0);".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(21, r -> "*%s (p1) <<= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(22, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(24, r -> "*%s (p1) += 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(25, r -> "*%s (p1) -= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(26, r -> "*%s (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(27, r -> "*%s (p0) ++;".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(28, r -> "*%s (p0) --;".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(29, r -> "-*%s (p0);".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(30, r -> "|*%s| (p0);".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(32, r -> "*%s (p1) *= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(33, r -> "*%s (p1) /= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(34, r -> "*%s (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(35, r -> "*%s (p1) %%= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(36, r -> "*%s (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(43, scriptFunctionDescriptions.get(35));
-    scriptFunctionDescriptions.put(44, scriptFunctionDescriptions.get(36));
-    scriptFunctionDescriptions.put(48, r -> "*%s (p1) = sqrt(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(50, r -> "*%s (p1) = sin(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(51, r -> "*%s (p1) = cos(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(52, r -> "*%s (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp));".formatted(r.opParam_18));
-    scriptFunctionDescriptions.put(64, r -> "jmp %s (p0);".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(65, r -> {
+    scriptFunctionDescriptions.put(OpType.MOV, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SWAP_BROKEN, r -> "tmp = 0x%x (p0); *%s (p1) = tmp; *%s (p0) = tmp; // Broken swap".formatted(r.params_20[0].get(), r.params_20[1], r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.MEMCPY, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.MOV_0, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.AND, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.OR, r -> "*%s (p1) |= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.XOR, r -> "*%s (p1) ^= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.ANDOR, r -> "*%s (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.NOT, r -> "~*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.SHL, r -> "*%s (p1) <<= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SHL, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.ADD, r -> "*%s (p1) += 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SUB, r -> "*%s (p1) -= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SUB_REV, r -> "*%s (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.INCR, r -> "*%s (p0) ++;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.DECR, r -> "*%s (p0) --;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.NEG, r -> "-*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.ABS, r -> "|*%s| (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.MUL, r -> "*%s (p1) *= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.DIV, r -> "*%s (p1) /= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.DIV_REV, r -> "*%s (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.MOD, r -> "*%s (p1) %%= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.MOD_REV, r -> "*%s (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.MOD43, scriptFunctionDescriptions.get(OpType.MOD));
+    scriptFunctionDescriptions.put(OpType.MOD_REV44, scriptFunctionDescriptions.get(OpType.MOD_REV));
+    scriptFunctionDescriptions.put(OpType.SQRT, r -> "*%s (p1) = sqrt(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SIN_12, r -> "*%s (p1) = sin(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.COS_12, r -> "*%s (p1) = cos(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.ATAN2_12, r -> "*%s (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.CALL, r -> "subfunc(%d (pp));".formatted(r.opParam_18));
+    scriptFunctionDescriptions.put(OpType.JMP, r -> "jmp %s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.JMP_CMP, r -> {
       final int operandA = r.params_20[0].get();
       final int operandB = r.params_20[1].get();
       final int op = r.opParam_18;
@@ -310,7 +311,7 @@ public final class Scus94491BpeSegment {
         default -> "illegal cmp 65";
       }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
     });
-    scriptFunctionDescriptions.put(66, r -> {
+    scriptFunctionDescriptions.put(OpType.JMP_CMP_0, r -> {
       final int operandB = r.params_20[0].get();
       final int op = r.opParam_18;
       final Param dest = r.params_20[1];
@@ -327,20 +328,20 @@ public final class Scus94491BpeSegment {
         default -> "illegal cmp 66";
       }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
     });
-    scriptFunctionDescriptions.put(67, r -> "if(--%s (p0) != 0) jmp %s (p1)".formatted(r.params_20[0], r.params_20[1]));
-    scriptFunctionDescriptions.put(72, r -> "gosub %s (p0);".formatted(r.params_20[0]));
-    scriptFunctionDescriptions.put(73, r -> "return;");
-    scriptFunctionDescriptions.put(74, r -> {
+    scriptFunctionDescriptions.put(OpType.WHILE, r -> "if(--%s (p0) != 0) jmp %s (p1)".formatted(r.params_20[0], r.params_20[1]));
+    scriptFunctionDescriptions.put(OpType.GOSUB, r -> "gosub %s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.RETURN, r -> "return;");
+    scriptFunctionDescriptions.put(OpType.GOSUB_TABLE, r -> {
       final Param a = r.params_20[1];
       final Param b = r.params_20[0];
       final Param ptr = a.array(a.array(b.get()).get());
       return "gosub %s (p1[p1[p0]]);".formatted(ptr);
     });
 
-    scriptFunctionDescriptions.put(80, r -> "deallocate; pause; rewind;");
+    scriptFunctionDescriptions.put(OpType.DEALLOCATE, r -> "deallocate; pause; rewind;");
 
-    scriptFunctionDescriptions.put(82, r -> "deallocate children; pause; rewind;");
-    scriptFunctionDescriptions.put(83, r -> "deallocate %s (p0);%s".formatted(r.params_20[0], r.scriptState_04.index == r.params_20[0].get() ? "; pause; rewind;" : ""));
+    scriptFunctionDescriptions.put(OpType.DEALLOCATE82, r -> "deallocate children; pause; rewind;");
+    scriptFunctionDescriptions.put(OpType.DEALLOCATE_OTHER, r -> "deallocate %s (p0);%s".formatted(r.params_20[0], r.scriptState_04.index == r.params_20[0].get() ? "; pause; rewind;" : ""));
   }
 
   private static final RenderEvent RENDER_EVENT = new RenderEvent();
@@ -1032,8 +1033,8 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "joypadIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x80017584L)
-  public static FlowControl FUN_80017584(final RunningScript<?> script) {
-    FUN_8002bb38(script.params_20[0].get(), script.params_20[1].get());
+  public static FlowControl scriptStartRumbleMode(final RunningScript<?> script) {
+    startRumbleMode(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1077,27 +1078,27 @@ public final class Scus94491BpeSegment {
   }
 
   @ScriptDescription("Something related to rumble")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "joypadIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "duration")
   @Method(0x80017688L)
-  public static FlowControl FUN_80017688(final RunningScript<?> script) {
-    FUN_8002bda4(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+  public static FlowControl scriptStartRumble(final RunningScript<?> script) {
+    adjustRumbleOverTime(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to rumble")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Sets the rumble intensity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "intensity")
   @Method(0x800176c0L)
-  public static FlowControl FUN_800176c0(final RunningScript<?> script) {
-    FUN_8002c178(script.params_20[0].get());
+  public static FlowControl scriptSetRumbleDampener(final RunningScript<?> script) {
+    setRumbleDampener(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to rumble")
+  @ScriptDescription("Sets the rumble intensity param back to 0")
   @Method(0x800176ecL)
-  public static FlowControl FUN_800176ec(final RunningScript<?> script) {
-    FUN_8002c184();
+  public static FlowControl scriptResetRumbleDampener(final RunningScript<?> script) {
+    resetRumbleDampener();
     return FlowControl.CONTINUE;
   }
 
@@ -1343,7 +1344,7 @@ public final class Scus94491BpeSegment {
    * @param soundIndex 1: up/down, 2: choose menu option, 3: ...
    */
   @Method(0x80019a60L)
-  public static void playSound(final int soundFileIndex, final int soundIndex, final int a2, final int a3, final int initialDelay, final int repeatDelay) {
+  public static void playSound(final int soundFileIndex, final int soundIndex, final int initialDelay, final int repeatDelay) {
     final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
 
     if(!soundFile.used_00 || soundFile.playableSound_10 == null) {
@@ -1542,13 +1543,13 @@ public final class Scus94491BpeSegment {
   @ScriptDescription("Play a sound")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundFileIndex", description = "The sound file index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001ab34L)
   public static FlowControl scriptPlaySound(final RunningScript<?> script) {
-    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get() * engineState_8004dd04.tickMultiplier(), script.params_20[5].get() * engineState_8004dd04.tickMultiplier());
+    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[4].get() * engineState_8004dd04.tickMultiplier(), script.params_20[5].get() * engineState_8004dd04.tickMultiplier());
     return FlowControl.CONTINUE;
   }
 
@@ -1923,7 +1924,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
     battleStartDelayTicks_8004f6ec = 0;
-    playSound(0, 16, 0, 0, (short)0, (short)0);
+    playSound(0, 16, (short)0, (short)0);
     vsyncMode_8007a3b8 = 1;
     _800bd740 = 2;
     dissolveDarkening_800bd700.active_00 = false;
@@ -1985,7 +1986,7 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFiles_800bcf80[index];
 
     sound.name = "Char slot %d sound effects".formatted(charSlot);
-    sound.charId_02 = charId;
+    sound.id_02 = charId;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
 
     //LAB_8001cc48
@@ -2012,7 +2013,7 @@ public final class Scus94491BpeSegment {
     for(charSlot = 0; charSlot < 3; charSlot++) {
       final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
 
-      if(soundFile.charId_02 == bent.charId_272) {
+      if(soundFile.id_02 == bent.charId_272) {
         break;
       }
     }
@@ -2052,7 +2053,7 @@ public final class Scus94491BpeSegment {
     //LAB_8001cf2c
     sound.name = soundName;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -2132,7 +2133,7 @@ public final class Scus94491BpeSegment {
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      file.charId_02 = -1;
+      file.id_02 = -1;
       file.used_00 = false;
 
       if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
@@ -2166,7 +2167,7 @@ public final class Scus94491BpeSegment {
 
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-        soundFile.charId_02 = -1;
+        soundFile.id_02 = -1;
         soundFile.used_00 = false;
 
         if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Unpacker.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
@@ -2203,7 +2204,7 @@ public final class Scus94491BpeSegment {
 
       soundFile.name = soundName;
       soundFile.indices_08 = SoundFileIndices.load(files.get(1));
-      soundFile.charId_02 = files.get(0).readShort(0);
+      soundFile.id_02 = files.get(0).readShort(0);
 
       //LAB_8001d80c
       soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0 + soundBufferOffset);
@@ -2220,7 +2221,7 @@ public final class Scus94491BpeSegment {
     final SoundFile soundFile = soundFiles_800bcf80[9];
     soundFile.name = soundName;
     soundFile.used_00 = true;
-    soundFile.charId_02 = files.get(0).readUShort(0);
+    soundFile.id_02 = files.get(0).readUShort(0);
     soundFile.indices_08 = SoundFileIndices.load(files.get(2));
     soundFile.spuRamOffset_14 = files.get(4).size();
     soundFile.numberOfExtraSoundbanks_18 = files.get(1).readUShort(0) - 1;
@@ -2263,7 +2264,7 @@ public final class Scus94491BpeSegment {
     }
 
     musicLoaded_800bd782 = true;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
 
     _800bd0f0 = 2;
   }
@@ -2513,7 +2514,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e780L)
   public static void unloadSoundbank_800bd778() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffe);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x1);
   }
 
   @ScriptDescription("Loads the main menu sounds")
@@ -2529,7 +2530,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e8d4L)
   public static void FUN_8001e8d4() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fff7);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x8);
   }
 
   @ScriptDescription("Unused")
@@ -2549,7 +2550,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e950L)
   public static void cleanUpCharAttackSounds() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fff7);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x8);
   }
 
   @Method(0x8001e98cL)
@@ -2559,7 +2560,7 @@ public final class Scus94491BpeSegment {
     sound.name = soundName;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0);
     FUN_8001ea5c();
@@ -2568,7 +2569,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ea5cL)
   public static void FUN_8001ea5c() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffbf);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x40);
   }
 
   @Method(0x8001eadcL)
@@ -2589,7 +2590,7 @@ public final class Scus94491BpeSegment {
     soundFiles_800bcf80[8].name = soundName;
     soundFiles_800bcf80[8].indices_08 = SoundFileIndices.load(files.get(2));
     soundFiles_800bcf80[8].ptr_0c = files.get(1);
-    soundFiles_800bcf80[8].charId_02 = files.get(0).readShort(0);
+    soundFiles_800bcf80[8].id_02 = files.get(0).readShort(0);
 
     final Sshd sshd = new Sshd(files.get(3));
     if(files.get(4).size() != sshd.soundBankSize_04) {
@@ -2604,7 +2605,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ec18L)
   public static void submapSoundsCleanup() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffd);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x2);
     musicLoaded_800bd782 = true;
   }
 
@@ -2626,11 +2627,11 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001ed88
     for(int i = 1; i <= soundFile.numberOfExtraSoundbanks_18; i++) {
-      loadDrgnFile(0, 2437 + soundFile.charId_02 * 3 + i, Scus94491BpeSegment::uploadExtraBattleCutsceneSoundbank);
+      loadDrgnFileSync(0, 2437 + soundFile.id_02 * 3 + i, Scus94491BpeSegment::uploadExtraBattleCutsceneSoundbank);
     }
 
     //LAB_8001edd4
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffb);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x4);
     musicLoaded_800bd782 = true;
   }
 
@@ -2645,7 +2646,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001eea8L)
   public static void loadLocationMenuSoundEffects(final int index) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "Unknown WMAP sounds %d (file %d)".formatted(index, 5740 + index)));
+    loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
   }
 
   @Method(0x8001eefcL)
@@ -2655,7 +2656,7 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(2));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(files.get(3)), 0x4_de90);
     FUN_8001efcc();
@@ -2665,7 +2666,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001efccL)
   public static void FUN_8001efcc() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_7fff);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
   }
 
   @ScriptDescription("Load a monster's sounds")
@@ -2687,12 +2688,12 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffdf);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x20);
   }
 
   @ScriptDescription("Loads a character's attack sounds")
@@ -2714,7 +2715,7 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = files.get(0).readShort(0);
+    sound.id_02 = files.get(0).readShort(0);
 
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
     FUN_8001f390();
@@ -2724,7 +2725,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001f390L)
   public static void FUN_8001f390() {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xfffe_ffff);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x1_0000);
   }
 
   /**
@@ -2833,7 +2834,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ffb0L)
-  public static long getLoadedDrgnFiles() {
+  public static int getLoadedDrgnFiles() {
     return loadedDrgnFiles_800bcf78.get();
   }
 

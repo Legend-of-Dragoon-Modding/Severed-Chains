@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 
 public class MissingRegistryIdsScreen extends MenuScreen {
   private final String prompt;
@@ -44,7 +44,7 @@ public class MissingRegistryIdsScreen extends MenuScreen {
     yes.setPos(199, 210);
     yes.onPressed(() -> {
       startFadeEffect(2, 10);
-      playSound(1);
+      playMenuSound(1);
       this.deferAction(() -> {
         this.getStack().popScreen();
         onResult.accept(MessageBoxResult.YES);
@@ -55,7 +55,7 @@ public class MissingRegistryIdsScreen extends MenuScreen {
     no.setPos(109, 210);
     no.onPressed(() -> {
       startFadeEffect(2, 10);
-      playSound(3);
+      playMenuSound(3);
       this.deferAction(() -> {
         this.getStack().popScreen();
         onResult.accept(MessageBoxResult.NO);

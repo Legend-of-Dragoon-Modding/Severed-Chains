@@ -7,9 +7,8 @@ public abstract class EffectManagerParams<T extends EffectManagerParams<T>> {
   /**
    * <ul>
    *   <li>0x8 - normalize light matrix before use</li>
-   *   <li>0x40 - use manager light colour</li>
-   *   <li>0x780_0000 - texpage vram X (bits 23-26)</li>
-   *   <li>0x800_0000 - texpage vram Y</li>
+   *   <li>0x40 - disable custom lighting</li>
+   *   <li>0x400_0000 - apply rotation and scale</li>
    *   <li>0x3000_0000 - texpage translucency mode (bits 28-29)</li>
    *   <li>0x4000_0000 - use effect manager's translucency instead of effect's</li>
    *   <li>0x8000_0000 - error</li>

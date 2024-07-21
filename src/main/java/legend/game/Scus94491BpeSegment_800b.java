@@ -90,7 +90,7 @@ public final class Scus94491BpeSegment_800b {
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static int postBattleActionIndex_800bc974;
+  public static int postBattleAction_800bc974;
 
   public static int livingCharCount_800bc97c;
 
@@ -103,8 +103,17 @@ public final class Scus94491BpeSegment_800b {
   public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
-   * Bits:
-   * 0 - MRG @ 62802 - audio
+   * 0x1 - menu sounds
+   * 0x2 - submap sounds
+   * 0x4 - battle cutscene sounds
+   * 0x8 - battle character sounds
+   * 0x10 - battle phase sounds
+   * 0x20 - battle monster sounds
+   * 0x40 - battle DEFF sounds
+   * 0x80 - music
+   * 0x4000 - victory music
+   * 0x8000 - world map destination sounds
+   * 0x10000 - different battle character attack sounds?
    */
   public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 
@@ -215,6 +224,8 @@ public final class Scus94491BpeSegment_800b {
   // These are outside of SMAP because they have to persist between engine states
   public static final MV playerPositionBeforeBattle_800bed30 = new MV();
   public static final Vector2f screenOffsetBeforeBattle_800bed50 = new Vector2f();
+
+  public static float rumbleDampener_800bee80;
 
   /**
    * Remains set for the duration of the button press

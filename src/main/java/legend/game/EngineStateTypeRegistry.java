@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class EngineStateTypeRegistry extends MutableRegistry<EngineStateType<?>> {
   public EngineStateTypeRegistry() {
-    super(new RegistryId("lod_core", "engine_state_types"));
+    super(new RegistryId("lod-core", "engine_state_types"));
   }
 }

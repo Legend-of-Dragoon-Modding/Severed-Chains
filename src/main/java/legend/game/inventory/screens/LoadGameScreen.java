@@ -28,7 +28,7 @@ import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 
 public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
@@ -85,18 +85,18 @@ public class LoadGameScreen extends MenuScreen {
         this.showMissingIdsScreen(missingIds, () -> this.onMessageboxResult(MessageBoxResult.YES, save));
       }
     } else {
-      playSound(4);
+      playMenuSound(4);
       menuStack.pushScreen(new MessageBoxScreen("This save cannot be loaded", 0, result -> { }));
     }
   }
 
   private void showLoadGameBox(final SavedGame save) {
-    playSound(2);
+    playMenuSound(2);
     menuStack.pushScreen(new MessageBoxScreen("Load this save?", 2, result -> this.onMessageboxResult(result, save)));
   }
 
   private void showMissingIdsScreen(final Map<RegistryId, Set<RegistryId>> missingIds, final Runnable onConfirm) {
-    playSound(4);
+    playMenuSound(4);
     menuStack.pushScreen(new MissingRegistryIdsScreen(missingIds, result -> {
       if(result == MessageBoxResult.YES) {
         onConfirm.run();
@@ -117,7 +117,7 @@ public class LoadGameScreen extends MenuScreen {
   }
 
   private void menuDelete() {
-    playSound(40);
+    playMenuSound(40);
 
     if(this.saveList.size() == 1) {
       menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", 0, result -> {}));
@@ -140,7 +140,7 @@ public class LoadGameScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.closed.run();
   }
 

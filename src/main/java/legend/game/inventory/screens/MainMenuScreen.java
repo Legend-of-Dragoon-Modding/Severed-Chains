@@ -31,7 +31,7 @@ import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
@@ -115,7 +115,7 @@ public class MainMenuScreen extends MenuScreen {
             final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
 
             if(!otherButton.isDisabled() && otherButton.isVisible()) {
-              playSound(1);
+              playMenuSound(1);
               this.setFocus(otherButton);
               break;
             }
@@ -126,7 +126,7 @@ public class MainMenuScreen extends MenuScreen {
             final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
 
             if(!otherButton.isDisabled() && otherButton.isVisible()) {
-              playSound(1);
+              playMenuSound(1);
               this.setFocus(otherButton);
               break;
             }
@@ -136,7 +136,7 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index + this.menuButtons.size() / 2, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playSound(1);
+            playMenuSound(1);
             this.setFocus(otherButton);
           }
         }
@@ -144,7 +144,7 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index - this.menuButtons.size() / 2, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playSound(1);
+            playMenuSound(1);
             this.setFocus(otherButton);
           }
         }
@@ -238,7 +238,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 100;
   }
 
@@ -300,7 +300,7 @@ public class MainMenuScreen extends MenuScreen {
         this.loadingStage = 0;
       }));
     } else {
-      playSound(40);
+      playMenuSound(40);
     }
   }
 

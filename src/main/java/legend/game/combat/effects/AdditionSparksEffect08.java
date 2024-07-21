@@ -16,7 +16,7 @@ import static legend.game.combat.SEffe.rotateAndTranslateEffect;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class AdditionSparksEffect08 implements Effect {
+public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidType> {
   /** ubyte */
   private final int count_00;
   private final AdditionSparksEffectInstance4c[] instances_04;
@@ -60,8 +60,16 @@ public class AdditionSparksEffect08 implements Effect {
     inst.endPos_18.set(inst.startPos_08);
   }
 
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
+  }
+
+  @Override
   @Method(0x800d0a30L)
-  public void renderAdditionSparks(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     if(this.spark == null) {
       this.spark = new PolyBuilder("Addition spark", GL_TRIANGLE_STRIP)
         .addVertex(0.0f, 0.0f, 0.0f)
@@ -85,7 +93,7 @@ public class AdditionSparksEffect08 implements Effect {
         //LAB_800d0a94
       } else if(inst.ticksRemaining_05 != 0) {
         if(inst.ticksExisted_00 == 0) {
-          this.FUN_800d09c0(data, inst);
+          this.FUN_800d09c0(manager, inst);
         }
 
         //LAB_800d0ac8
@@ -109,7 +117,7 @@ public class AdditionSparksEffect08 implements Effect {
         }
 
         //LAB_800d0b88
-        float a3 = data.params_10.z_22;
+        float a3 = manager.params_10.z_22;
         final float v1 = s7 + a3;
         if(v1 >= 0xa0) {
           if(v1 >= 0xffe) {
@@ -141,7 +149,8 @@ public class AdditionSparksEffect08 implements Effect {
     //LAB_800d0d94
   }
 
-  public void deallocate(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> effect) {
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
     if(this.spark != null) {
       this.spark.delete();
       this.spark = null;

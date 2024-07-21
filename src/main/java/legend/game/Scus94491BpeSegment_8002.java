@@ -112,6 +112,7 @@ import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.monsterSoundLoaded;
+import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -151,6 +152,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
+import static legend.game.Scus94491BpeSegment_800b.rumbleDampener_800bee80;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
@@ -286,7 +288,7 @@ public final class Scus94491BpeSegment_8002 {
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      file.charId_02 = -1;
+      file.id_02 = -1;
       file.used_00 = false;
 
       if(Unpacker.exists(path + '/' + monsterSlot)) {
@@ -791,7 +793,7 @@ public final class Scus94491BpeSegment_8002 {
   private static Supplier<MenuScreen> destScreen;
 
   private static void initMenu(final WhichMenu destMenu, final Supplier<MenuScreen> destScreen) {
-    if((getLoadedDrgnFiles() & 0x80L) == 0) {
+    if((getLoadedDrgnFiles() & 0x80) == 0) {
       inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
       startMenuMusic();
@@ -853,7 +855,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, TooManyItemsScreen::new);
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
           if(uiFile_800bdc3c != null) {
             uiFile_800bdc3c.delete();
           }
@@ -875,13 +877,13 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case INIT_POST_COMBAT_REPORT_26 -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80) == 0) {
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
         }
       }
 
       case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
           whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29;
           menuStack.pushScreen(new PostBattleScreen());
         }
@@ -1228,8 +1230,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023870L)
-  public static void playSound(final long soundIndex) {
-    Scus94491BpeSegment.playSound(0, (int)soundIndex, 0, 0, (short)0, (short)0);
+  public static void playMenuSound(final int soundIndex) {
+    playSound(0, soundIndex, (short)0, (short)0);
   }
 
   /**
@@ -1904,7 +1906,7 @@ public final class Scus94491BpeSegment_8002 {
       textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
       textboxText.ticksUntilStateTransition_64 = 10 * engineState_8004dd04.tickMultiplier();
       textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
-      Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+      playSound(0, 4, (short)0, (short)0);
     }
 
     //LAB_800257bc
@@ -2279,7 +2281,7 @@ public final class Scus94491BpeSegment_8002 {
               textboxText.charY_36 = 0;
               textboxText.ticksUntilStateTransition_64 = 10 * engineState_8004dd04.tickMultiplier();
               textboxText.stateAfterTransition_78 = TextboxTextState._17;
-              Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+              playSound(0, 4, (short)0, (short)0);
             }
 
             case 4 -> {
@@ -2494,7 +2496,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.ticksUntilStateTransition_64 = 10 * engineState_8004dd04.tickMultiplier();
           textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
           textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
-          Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+          playSound(0, 4, (short)0, (short)0);
         }
       }
 
@@ -2574,7 +2576,7 @@ public final class Scus94491BpeSegment_8002 {
       case _18 -> {
         //LAB_80026d94
         if((press_800bee94 & 0x20) != 0) {
-          Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68;
@@ -2585,7 +2587,7 @@ public final class Scus94491BpeSegment_8002 {
             if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
               if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                 //LAB_80026f38
-                Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+                playSound(0, 1, (short)0, (short)0);
 
                 int extraLines = 3;
                 if(textboxText.selectionLine_60 > 0) {
@@ -2670,13 +2672,13 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026e6c
             if(textboxText.selectionLine_60 < textboxText.lines_1e) {
               //LAB_80026ed0
-              Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
 
               //LAB_80026ee8
               if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
                 if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                   //LAB_80026f38
-                  Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+                  playSound(0, 1, (short)0, (short)0);
 
                   int extraLines = 3;
                   if(textboxText.selectionLine_60 > 0) {
@@ -2866,7 +2868,7 @@ public final class Scus94491BpeSegment_8002 {
       case SELECTION_22 -> {
         //LAB_80027354
         if((press_800bee94 & 0x20) != 0) {
-          Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68 - textboxText.minSelectionLine_72;
@@ -2880,7 +2882,7 @@ public final class Scus94491BpeSegment_8002 {
               textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
             } else {
               //LAB_80027404
-              Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
               textboxText.state_00 = TextboxTextState._19;
             }
           }
@@ -2895,7 +2897,7 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               //LAB_80027480
               //LAB_80027490
-              Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
+              playSound(0, 1, (short)0, (short)0);
               textboxText.state_00 = TextboxTextState._19;
             }
           }
@@ -4045,40 +4047,98 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bb38L)
-  public static void FUN_8002bb38(final int joypadIndex, final int a1) {
-    if(!gameState_800babc8.vibrationEnabled_4e1) {
+  public static void startRumbleMode(final int pad, final int mode) {
+    LOGGER.debug("startRumbleMode %x %x", pad, mode);
+
+    if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 
-    LOGGER.info("Rumble 8002bb38 %x %x", joypadIndex, a1);
+    switch(mode) {
+      case 0 -> stopRumble(pad);
+      case 1 -> Input.rumble(0.25f, 0);
+      case 2 -> {
+        if(engineState_8004dd04.is(LodMod.SUBMAP_STATE_TYPE.get())) {
+          Input.rumble(0.3f, 0);
+        } else if(engineState_8004dd04.is(LodMod.BATTLE_STATE_TYPE.get())) {
+          Input.rumble(0.75f - rumbleDampener_800bee80, 0);
+        } else {
+          Input.rumble(0.75f, 0);
+        }
+      }
+      case 3 -> {
+        if(engineState_8004dd04.is(LodMod.SUBMAP_STATE_TYPE.get())) {
+          Input.rumble(0.4f, 0);
+        } else if(engineState_8004dd04.is(LodMod.BATTLE_STATE_TYPE.get())) {
+          Input.rumble(1.0f - rumbleDampener_800bee80, 0);
+        } else {
+          Input.rumble(1.0f, 0);
+        }
+      }
+    }
   }
 
   @Method(0x8002bcc8L)
-  public static void FUN_8002bcc8(final int a0, final int a1) {
-    if(!gameState_800babc8.vibrationEnabled_4e1) {
+  public static void startRumbleIntensity(final int pad, int intensityIn) {
+    LOGGER.debug("startRumbleIntensity %x %x", pad, intensityIn);
+
+    if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 
-    LOGGER.info("Rumble 8002bcc8 %x %x", a0, a1);
+    if(intensityIn > 0x1ff) {
+      intensityIn = 0x1ff;
+    }
+
+    float intensity = intensityIn / (float)0x1ff;
+
+    if(intensity > 0.25f) {
+      intensity -= rumbleDampener_800bee80;
+    }
+
+    Input.rumble(intensity, 0);
   }
 
   @Method(0x8002bda4L)
-  public static void FUN_8002bda4(final int a0, final int a1, final int a2) {
-    if(!gameState_800babc8.vibrationEnabled_4e1) {
+  public static void adjustRumbleOverTime(final int pad, final int intensity, final int frames) {
+    final int divisor = vsyncMode_8007a3b8 * engineState_8004dd04.tickMultiplier();
+    adjustRumbleOverTime(pad, intensity, frames, divisor);
+  }
+
+  @Method(0x8002bda4L)
+  public static void adjustRumbleOverTime(final int pad, int intensity, final int frames, final int framesDivisor) {
+    LOGGER.debug("adjustRumbleOverTime %x %x %x", pad, intensity, frames);
+
+    if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 
-    LOGGER.info("Rumble 8002bda4 %x %x %x", a0, a1, a2);
+    intensity = MathHelper.clamp(intensity, 0, 0x1ff);
+
+    if(frames == 0) {
+      startRumbleIntensity(pad, intensity);
+      return;
+    }
+
+    Input.adjustRumble(intensity / (float)0x1ff, frames / framesDivisor * 50);
+  }
+
+  @Method(0x8002c150L)
+  public static void stopRumble(final int pad) {
+    LOGGER.debug("stopRumble");
+    Input.stopRumble();
   }
 
   @Method(0x8002c178L)
-  public static void FUN_8002c178(final int a0) {
-    LOGGER.info("Rumble 8002c178 %x", a0);
+  public static void setRumbleDampener(final int intensity) {
+    LOGGER.debug("setRumbleDampener %x", intensity);
+    rumbleDampener_800bee80 = intensity / (float)0x1ff;
   }
 
   @Method(0x8002c184L)
-  public static void FUN_8002c184() {
-    LOGGER.info("Rumble 8002c184");
+  public static void resetRumbleDampener() {
+    LOGGER.debug("resetRumbleDampener");
+    rumbleDampener_800bee80 = 0.0f;
   }
 
   @Method(0x8002c984L)

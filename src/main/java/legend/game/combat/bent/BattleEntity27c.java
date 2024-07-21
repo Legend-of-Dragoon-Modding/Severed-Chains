@@ -13,7 +13,6 @@ import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
@@ -22,6 +21,7 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
+import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -41,7 +41,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8005._8005027c;
+import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
@@ -150,8 +150,10 @@ public abstract class BattleEntity27c extends BattleObject {
   public int hitCounterFrameThreshold_7e;
   public int _80;
   public int _82;
-  public int _84;
-  public int _86;
+  /** X offset for archer/item throw target, status ailment effect, 1/100 scale */
+  public int middleOffsetX_84;
+  /** Y offset for archer/item throw target, status ailment effect, 1/100 scale */
+  public int middleOffsetY_86;
   public int _88;
   public int _8a;
 
@@ -203,6 +205,17 @@ public abstract class BattleEntity27c extends BattleObject {
   public int charSlot_276;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
+
+  // These were pulled from ScriptState, they're only used on bents
+  public ScriptState<BattleEntity27c> movementParent_c8;
+  public int movementTicks_cc;
+  /** Was .8 */
+  public final Vector3f movementRemaining_d0 = new Vector3f();
+  /** Was .8 */
+  public final Vector3f movementStep_dc = new Vector3f();
+  public final Vector3f movementDestination_e8 = new Vector3f();
+  /** Was .8 */
+  public float movementStepYAcceleration_f4;
 
   private final Vector3i colour = new Vector3i(0x80, 0x80, 0x80);
 
@@ -319,10 +332,10 @@ public abstract class BattleEntity27c extends BattleObject {
   @Deprecated
   public int getStat(final BattleEntityStat statIndex) {
     return switch(statIndex) {
-      case CURRENT_HP -> this.stats.getStat(CoreMod.HP_STAT.get()).getCurrent();
+      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getCurrent();
 
       case STATUS -> this.status_0e;
-      case MAX_HP -> this.stats.getStat(CoreMod.HP_STAT.get()).getMax();
+      case MAX_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getMax();
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14;
 //      case EQUIPMENT_TYPE -> this.equipmentType_16;
@@ -338,7 +351,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
       case _21 -> this._2e;
       case EQUIPMENT_ICON -> this.equipmentIcon_30;
-      case SPEED -> this.stats.getStat(CoreMod.SPEED_STAT.get()).get();
+      case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
       case ATTACK -> this.attack_34;
       case MAGIC_ATTACK -> this.magicAttack_36;
       case DEFENCE -> this.defence_38;
@@ -360,8 +373,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e;
       case _62 -> this._80;
       case _63 -> this._82;
-      case _64 -> this._84;
-      case _65 -> this._86;
+      case MIDDLE_OFFSET_X -> this.middleOffsetX_84;
+      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86;
       case _66 -> this._88;
       case _67 -> this._8a;
 
@@ -419,7 +432,7 @@ public abstract class BattleEntity27c extends BattleObject {
   @Deprecated
   public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case CURRENT_HP -> this.stats.getStat(CoreMod.HP_STAT.get()).setCurrent(value);
+      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).setCurrent(value);
 
       case STATUS -> this.status_0e = value;
 
@@ -458,8 +471,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
       case _62 -> this._80 = value;
       case _63 -> this._82 = value;
-      case _64 -> this._84 = value;
-      case _65 -> this._86 = value;
+      case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value;
+      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value;
       case _66 -> this._88 = value;
       case _67 -> this._8a = value;
 
@@ -565,7 +578,7 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cae98
     if(v1 != 0) {
       if(this.combatant_144.isModelLoaded()) {
-        this.model_148.uvAdjustments_9d = _8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
+        this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
         this.loadingAnimIndex_26e = 0;
         loadCombatantModelAndAnimation(this.model_148, this.combatant_144);
         this._278 = 1;

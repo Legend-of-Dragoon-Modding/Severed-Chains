@@ -2828,7 +2828,7 @@ public class SMap extends EngineState<SMap> {
         this.firstMovement = true;
 
         //LAB_800e1914
-        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
+        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submap.script);
 
@@ -3717,8 +3717,9 @@ public class SMap extends EngineState<SMap> {
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
         this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
-        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
+
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
+        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
       }
 
       case CHANGE_SUBMAP_4 -> {

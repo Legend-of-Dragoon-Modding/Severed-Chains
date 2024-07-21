@@ -15,7 +15,7 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.FUN_800cfb14;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class ProjectileHitEffect14 implements Effect {
+public class ProjectileHitEffect14 implements Effect<EffectManagerParams.VoidType> {
   private final int count_00;
 
   private final ProjectileHitEffectInstance48[] instances;
@@ -56,8 +56,16 @@ public class ProjectileHitEffect14 implements Effect {
     }
   }
 
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
+  }
+
+  @Override
   @Method(0x800d019cL)
-  public void renderProjectileHitEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+
     if(this.obj == null) {
       this.obj = new PolyBuilder("Projectile hit effect", GL_TRIANGLE_STRIP)
         .addVertex(0.0f, 0.0f, 0.0f)
@@ -95,7 +103,7 @@ public class ProjectileHitEffect14 implements Effect {
         for(int s3 = 0; s3 < 2; s3++) {
           final Vector3f s1 = s4._04[s3];
           final Vector3f a1 = s4._24[s3];
-          a0 = FUN_800cfb14(data, s1, screenVert[s3]);
+          a0 = FUN_800cfb14(manager, s1, screenVert[s3]);
           s1.add(a1);
           a1.y += 25.0f;
 
@@ -104,8 +112,8 @@ public class ProjectileHitEffect14 implements Effect {
           }
 
           //LAB_800d0308
-          if(s1.y + data.params_10.trans_04.y >= 0) {
-            s1.y = -data.params_10.trans_04.y;
+          if(s1.y + manager.params_10.trans_04.y >= 0) {
+            s1.y = -manager.params_10.trans_04.y;
             a1.y = -a1.y;
           }
 
@@ -119,7 +127,7 @@ public class ProjectileHitEffect14 implements Effect {
           }
 
           //LAB_800d037c
-          float a2_0 = data.params_10.z_22;
+          float a2_0 = manager.params_10.z_22;
           final float v1 = s1_0 + a2_0;
           if(v1 >= 0xa0) {
             if(v1 >= 0xffe) {
@@ -141,7 +149,8 @@ public class ProjectileHitEffect14 implements Effect {
     //LAB_800d0508
   }
 
-  public void deallocate(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> effect) {
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
     if(this.obj != null) {
       this.obj.delete();
       this.obj = null;

@@ -16,6 +16,7 @@ lod-core.config.controller_keybinds.label=Controller Keybinds
 lod-core.config.controller_keybinds.configure=Configure...
 lod-core.config.controller_deadzone.label=Controller Deadzone
 lod-core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
+lod-core.config.rumble.label=Rumble
 lod-core.config.allow_widescreen.label=Allow Widescreen When Possible
 lod-core.config.high_quality_projection.label=Use High Quality Projection When Possible
 lod-core.config.fullscreen.label=Fullscreen

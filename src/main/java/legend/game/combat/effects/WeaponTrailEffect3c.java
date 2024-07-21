@@ -23,7 +23,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
-public class WeaponTrailEffect3c implements Effect {
+public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTrailType> {
   private int currentSegmentIndex_00 = -1;
   private final int dobjIndex_08;
   /** ubyte */
@@ -110,14 +110,17 @@ public class WeaponTrailEffect3c implements Effect {
     return segment;
   }
 
+  @Override
   @Method(0x800cde94L)
-  public void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> data) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state) {
+    final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager = state.innerStruct_00;
+
     // Prevent garbage trails from rendering across the screen
     final int renderCoordThreshold = 5000;
     boolean renderCoordThresholdExceeded;
 
     if(this.currentSegment_38 != null) {
-      final Vector3i colour = new Vector3i(data.params_10.colour_1c).mul(0x100);
+      final Vector3i colour = new Vector3i(manager.params_10.colour_1c).mul(0x100);
       final Vector3i colourStep = new Vector3i(colour).div(this.segmentCount_0e);
       WeaponTrailEffectSegment2c segment = this.currentSegment_38;
 
@@ -175,7 +178,7 @@ public class WeaponTrailEffect3c implements Effect {
           Math.abs(v2.y) > renderCoordThreshold;
       }
 
-      float zFinal = z + data.params_10.z_22;
+      float zFinal = z + manager.params_10.z_22;
       if(zFinal >= 0xa0) {
         if(zFinal >= 0xffe) {
           zFinal = 0xffe;
@@ -196,11 +199,14 @@ public class WeaponTrailEffect3c implements Effect {
     //LAB_800ce230
   }
 
+  @Override
   @Method(0x800ce254L)
-  public void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> data) {
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state) {
+    final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager = state.innerStruct_00;
+
     this.currentSegmentIndex_00++;
     if(this.currentSegmentIndex_00 == 0) {
-      this.getVertexMinMaxByComponent(this.parentModel_30, this.dobjIndex_08, this.smallestVertex_20, this.largestVertex_10, data);
+      this.getVertexMinMaxByComponent(this.parentModel_30, this.dobjIndex_08, this.smallestVertex_20, this.largestVertex_10, manager);
       return;
     }
 
@@ -279,6 +285,11 @@ public class WeaponTrailEffect3c implements Effect {
     }
 
     //LAB_800ce650
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state) {
+
   }
 
   @Method(0x800ce83cL)

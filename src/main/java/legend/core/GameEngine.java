@@ -250,10 +250,12 @@ public final class GameEngine {
     SPU.init();
     RENDERER.init();
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
+    Input.init();
     GPU.init();
     RENDERER.run();
 
     RENDERER.delete();
+    Input.destroy();
   }
 
   /** Returns missing mod IDs, if any */
@@ -420,8 +422,6 @@ public final class GameEngine {
     openalThread.start();
 
     synchronized(LOCK) {
-      Input.init();
-
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;

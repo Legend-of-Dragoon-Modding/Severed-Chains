@@ -1326,7 +1326,7 @@ public class RetailSubmap extends Submap {
   @Method(0x8001b3e4L)
   private int getSoundCharId() {
     if(soundFiles_800bcf80[11].used_00) {
-      return soundFiles_800bcf80[11].charId_02;
+      return soundFiles_800bcf80[11].id_02;
     }
 
     //LAB_8001b408

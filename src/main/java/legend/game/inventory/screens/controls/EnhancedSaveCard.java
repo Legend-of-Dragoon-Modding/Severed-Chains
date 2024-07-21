@@ -9,14 +9,13 @@ import legend.game.saves.types.EnhancedSaveDisplay;
 import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
@@ -149,7 +148,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
             this.scroll--;
           }
 
-          playSound(1);
+          playMenuSound(1);
           this.setSelectedCharacter(this.selectedCharacter - 1);
         }
 
@@ -162,7 +161,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
             this.scroll++;
           }
 
-          playSound(1);
+          playMenuSound(1);
           this.setSelectedCharacter(this.selectedCharacter + 1);
         }
 

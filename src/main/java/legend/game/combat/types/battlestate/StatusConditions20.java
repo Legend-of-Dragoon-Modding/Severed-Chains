@@ -3,7 +3,7 @@ package legend.game.combat.types.battlestate;
 /**
  * One for each ally and enemy
  */
-public class SpecialEffects20 {
+public class StatusConditions20 {
   public int _00;
   public int _04;
   public int _08;
@@ -34,7 +34,13 @@ public class SpecialEffects20 {
    * </ul>
    */
   public int shieldsSigStoneCharmTurns_1c;
-  public int pandemoniumTurns_1d;
+  /**
+   * <ul>
+   *   <li>0 - 1 Pandemonium turns</li>
+   *   <li>2     Died as dragoon</li>
+   * </ul>
+   */
+  public int pandemoniumTurnsDiedAsDragoon_1d;
   public int chargingSpirit_1e;
   public int unknown_1f;
 }

@@ -101,7 +101,7 @@ public class DeffManager7cc {
       //LAB_800e9214
       this.deallocateScriptsArray();
       this.scriptState_1c.deallocateWithChildren();
-      final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> manager = allocateEffectManager("DEFF manager (but different)", null, null, null, null, null);
+      final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> manager = allocateEffectManager("DEFF manager (but different)", null, null);
       this.scriptState_1c = manager;
       manager.innerStruct_00.flags_04 = 0x600_0400;
     }

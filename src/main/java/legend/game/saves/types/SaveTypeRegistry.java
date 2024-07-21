@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class SaveTypeRegistry extends MutableRegistry<SaveType<?>> {
   public SaveTypeRegistry() {
-    super(new RegistryId("lod_core", "save_types"));
+    super(new RegistryId("lod-core", "save_types"));
   }
 }
