@@ -48,9 +48,9 @@ public class ScriptManager {
       ticked = true;
     }
 
-    this.executeScriptTickers();
+    this.executeScriptTickers(ticked);
     this.upperBound = 9;
-    this.executeScriptRenderers();
+    this.executeScriptRenderers(ticked);
 
     this.currentTicks = (this.currentTicks + 1) % this.framesPerTick;
     return ticked;
@@ -213,7 +213,7 @@ public class ScriptManager {
     //LAB_80016624
   }
 
-  private void executeScriptTickers() {
+  private void executeScriptTickers(final boolean isScriptFrame) {
     if(this.paused || this.stopped) {
       return;
     }
@@ -221,7 +221,9 @@ public class ScriptManager {
     //LAB_80017750
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null && scriptState.hasExecuted()) {
+      // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
+      // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tick();
       }
     }
@@ -229,13 +231,13 @@ public class ScriptManager {
     //LAB_800177ac
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null && scriptState.hasExecuted()) {
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tempTick();
       }
     }
   }
 
-  private void executeScriptRenderers() {
+  private void executeScriptRenderers(final boolean isScriptFrame) {
     if(this.stopped) {
       return;
     }
@@ -243,7 +245,9 @@ public class ScriptManager {
     //LAB_80017854
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null && scriptState.hasExecuted()) {
+      // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
+      // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.render();
       }
     }
