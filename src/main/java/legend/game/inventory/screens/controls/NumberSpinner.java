@@ -5,6 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -29,7 +30,7 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float min, final float max) {
-    return new NumberSpinner<>(number, step, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), "%.2f"::formatted);
+    return new NumberSpinner<>(number, step, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
   }
 
   public NumberSpinner(final T number, final T step, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp) {
