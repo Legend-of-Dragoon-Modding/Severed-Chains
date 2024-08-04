@@ -69,9 +69,9 @@ public class WMapModelAndAnimData258 {
     DESCENT_12(12),
     RESTORE_DART_NEG_1(-1),
     ;
-    
+
     public final int state;
-    
+
     CoolonWarpState(final int state) {
       this.state = state;
     }
@@ -223,6 +223,7 @@ public class WMapModelAndAnimData258 {
   public int currShipPositionIndex_230;
   public int prevShipPositionIndex_234;
   public int shipPositionsCount_238;
+  public int wakeSegmentCount;
   public int wakeSegmentStride_23c;
   public int tickNum_240;
   /** byte */

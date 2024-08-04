@@ -47,6 +47,8 @@ public class TmdAnimationFile extends Anim {
       return;
     }
 
+    final int framesPerKeyframe = 2;
+
     //LAB_800dd4fc
     final int totalFrames;
     final int frame;
@@ -61,20 +63,25 @@ public class TmdAnimationFile extends Anim {
       frame = animationTicks % totalFrames;
       model.currentKeyframe_94 = frame / 2;
 
-      if((frame & 0x1) == 0 || frame == model.totalFrames_9a - 1 || model.ub_a3 != 0) {
+      if(model.subFrameIndex == framesPerKeyframe - 1 || model.ub_a3 != 0) {
+        if(model.currentKeyframe_94 > 0 && (frame & 0x1) == 0) {
+          model.currentKeyframe_94--;
+        }
+
         applyKeyframe(model);
+        model.subFrameIndex = 0;
       } else {
-        applyInterpolationFrame(model, 2);
+        applyInterpolationFrame(model, framesPerKeyframe);
+        model.subFrameIndex++;
       }
     }
 
     //LAB_800dd5f0
-    model.currentKeyframe_94++;
     model.remainingFrames_9e = totalFrames - frame - 1;
-    model.subFrameIndex = 0;
 
     if(model.remainingFrames_9e == 0) {
       model.animationState_9c = 0;
+      model.subFrameIndex = 0;
     } else {
       //LAB_800dd618
       model.animationState_9c = 1;

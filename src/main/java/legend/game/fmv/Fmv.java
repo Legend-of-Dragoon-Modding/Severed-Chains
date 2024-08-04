@@ -3,6 +3,7 @@ package legend.game.fmv;
 import legend.core.MathHelper;
 import legend.core.ProjectionMode;
 import legend.core.RenderEngine;
+import legend.core.audio.GenericSource;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
@@ -22,19 +23,21 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
+import static legend.game.Scus94491BpeSegment_8002.startRumbleIntensity;
+import static legend.game.Scus94491BpeSegment_8002.stopRumble;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glDisable;
@@ -209,8 +212,9 @@ public final class Fmv {
   private static Runnable oldRenderer;
   private static int oldFps;
   private static int sector;
+  private static int frame;
 
-  private static SourceDataLine sound;
+  private static GenericSource source;
 
   private static Window.Events.Char charPress;
   private static Window.Events.Click click;
@@ -224,16 +228,22 @@ public final class Fmv {
   private static final Matrix4f identity = new Matrix4f();
   private static final Vector2f oldProjectionSize = new Vector2f();
 
+  private static RumbleData[] rumbleData;
+  private static int rumbleFrames;
+
   public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808 = -1;
 
+    rumbleData = RumbleData.load(Unpacker.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
+    rumbleFrames = 0;
+
     Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 
-  public static void play(final String file, final boolean doubleSpeed) {
+  private static void play(final String file, final boolean doubleSpeed) {
     shouldStop = false;
 
     final byte[] data = new byte[2352];
@@ -247,6 +257,7 @@ public final class Fmv {
 
     final FileData fileData = Unpacker.loadFile(file);
     sector = 0;
+    frame = 0;
 
     oldFps = RENDERER.window().getFpsLimit();
     RENDERER.window().setFpsLimit(15);
@@ -258,13 +269,7 @@ public final class Fmv {
 
     transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
 
-    try {
-      sound = AudioSystem.getSourceDataLine(new AudioFormat(37800, 16, 2, true, false));
-      sound.open();
-      sound.start();
-    } catch(final LineUnavailableException|IllegalArgumentException e) {
-      LOGGER.error("Failed to start audio for FMV");
-    }
+    source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
 
     charPress = RENDERER.events().onCharPress((window, codepoint) -> shouldStop = true);
     click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
@@ -307,15 +312,15 @@ public final class Fmv {
         }
 
         if(header.submode.getType() == SectorHeader.TYPE.AUDIO) {
-          final byte[] decodedXaAdpcm = XaAdpcm.decode(data, data[19]);
+          final short[] decodedXaAdpcm = XaAdpcm.decode(data, data[19]);
 
           // Halve the volume
           for(int i = 0; i < decodedXaAdpcm.length; i++) {
             decodedXaAdpcm[i] >>= 1;
           }
 
-          if(sound != null) {
-            sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
+          if(source.canBuffer()) {
+            source.bufferOutput(decodedXaAdpcm);
           }
         }
       }
@@ -485,6 +490,26 @@ public final class Fmv {
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
       fullScrenMesh.draw();
+
+      if(rumbleData != null) {
+        for(final RumbleData rumble : rumbleData) {
+          if(rumble.frame == frame) {
+            final EngineStateEnum oldEngineState = engineState_8004dd20;
+            engineState_8004dd20 = EngineStateEnum.FMV_09;
+            startRumbleIntensity(0, rumble.initialIntensity);
+            adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration);
+            rumbleFrames = rumble.duration;
+            engineState_8004dd20 = oldEngineState;
+          }
+        }
+
+        rumbleFrames--;
+        if(rumbleFrames == 0) {
+          stopRumble(0);
+        }
+      }
+
+      frame++;
     });
   }
 
@@ -521,10 +546,10 @@ public final class Fmv {
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
       oldRenderer = null;
 
-      if(sound != null) {
-        sound.close();
-        sound = null;
-      }
+      AUDIO_THREAD.removeSource(source);
+      source = null;
+
+      rumbleData = null;
     });
   }
 
@@ -699,45 +724,5 @@ public final class Fmv {
         dest[iDestOfs1] = rgb1.toArgb();
       }
     }
-  }
-
-  public static void playXa(final int archiveIndex, final int fileIndex) {
-    final byte[] data = new byte[2352];
-    final SectorHeader header = new SectorHeader(data);
-
-    final int offset = archiveIndex == 3 ? 4 : 16;
-
-    final byte[] fileData = Unpacker.loadFile(System.getProperty("user.dir") + "\\files\\XA\\LODXA0" + archiveIndex + ".XA").data();
-    sector = 0;
-
-    try {
-      sound = AudioSystem.getSourceDataLine(new AudioFormat(37800, 16, 2, true, false));
-      sound.open();
-      sound.start();
-    } catch(final LineUnavailableException|IllegalArgumentException e) {
-      LOGGER.error("Failed to start audio for FMV");
-    }
-
-    for(int sector = fileIndex; sector < fileData.length / 0x930; sector += offset) {
-      System.arraycopy(fileData, sector * data.length, data, 0, data.length);
-
-      final byte[] decodedXaAdpcm = XaAdpcm.decode(data, data[19]);
-
-      // Halve the volume
-      for(int i = 0; i < decodedXaAdpcm.length; i++) {
-        decodedXaAdpcm[i] >>= 1;
-      }
-
-      if(sound != null) {
-        sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
-      }
-
-      if(header.submode.isEof()) {
-        break;
-      }
-    }
-
-    sound.close();
-    sound = null;
   }
 }

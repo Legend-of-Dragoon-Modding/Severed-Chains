@@ -2,15 +2,9 @@ package legend.core;
 
 import legend.core.gpu.Bpp;
 import legend.game.types.Translucency;
-import org.joml.Matrix3f;
 import org.joml.Vector3f;
-import sun.misc.Unsafe;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
 
 public final class MathHelper {
   private MathHelper() { }
@@ -293,81 +287,5 @@ public final class MathHelper {
 
   public static boolean flEq(final float a, final float b) {
     return flEq(a, b, 0.00001f);
-  }
-
-  private static final Unsafe UNSAFE = getUnsafeInstance();
-  private static final long ADDRESS = findBufferAddress();
-  private static final long Matrix3f_m00 = checkMatrix3f();
-
-  /** Fixes a bug in JOML that makes it overwrite the first row instead of inserting a fourth row */
-  public static void put3x4(final Matrix3f m, final int offset, final FloatBuffer dest) {
-    put3x4(m, UNSAFE.getLong(dest, ADDRESS) + (offset << 2));
-  }
-
-  public static void put3x4(final Matrix3f m, final long destAddr) {
-    for (int i = 0; i < 3; i++) {
-      UNSAFE.putLong(null, destAddr + (i << 4), UNSAFE.getLong(m, Matrix3f_m00 + 12 * i));
-      UNSAFE.putFloat(null, destAddr + (i << 4) + 8, UNSAFE.getFloat(m, Matrix3f_m00 + 8 + 12 * i));
-      UNSAFE.putFloat(null, destAddr + (i << 4) + 12, 0.0f);
-    }
-  }
-
-  public static Unsafe getUnsafeInstance() throws SecurityException {
-    final Field[] fields = Unsafe.class.getDeclaredFields();
-    for (int i = 0; i < fields.length; i++) {
-      final Field field = fields[i];
-      if (!field.getType().equals(Unsafe.class))
-        continue;
-      final int modifiers = field.getModifiers();
-      if (!(Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers)))
-        continue;
-      field.setAccessible(true);
-      try {
-        return (Unsafe) field.get(null);
-      } catch (final IllegalAccessException e) {
-        /* Ignore */
-      }
-      break;
-    }
-    throw new UnsupportedOperationException();
-  }
-
-  private static long findBufferAddress() {
-    try {
-      return UNSAFE.objectFieldOffset(getDeclaredField(Buffer.class, "address")); //$NON-NLS-1$
-    } catch (final Exception e) {
-      throw new UnsupportedOperationException(e);
-    }
-  }
-
-  private static Field getDeclaredField(final Class root, final String fieldName) throws NoSuchFieldException {
-    Class type = root;
-    do {
-      try {
-        return type.getDeclaredField(fieldName);
-      } catch (final NoSuchFieldException | SecurityException e) {
-        type = type.getSuperclass();
-      }
-    } while (type != null);
-    throw new NoSuchFieldException(fieldName + " does not exist in " + root.getName() + " or any of its superclasses."); //$NON-NLS-1$ //$NON-NLS-2$
-  }
-
-  private static long checkMatrix3f() {
-    try {
-      Field f = Matrix3f.class.getDeclaredField("m00");
-      final long Matrix3f_m00 = UNSAFE.objectFieldOffset(f);
-      // Validate expected field offsets
-      for (int i = 1; i < 9; i++) {
-        final int c = i / 3;
-        final int r = i % 3;
-        f = Matrix3f.class.getDeclaredField("m" + c + r);
-        final long offset = UNSAFE.objectFieldOffset(f);
-        if (offset != Matrix3f_m00 + (i << 2))
-          throw new UnsupportedOperationException("Unexpected Matrix3f element offset");
-      }
-      return Matrix3f_m00;
-    } catch(final NoSuchFieldException e) {
-      throw new RuntimeException(e);
-    }
   }
 }

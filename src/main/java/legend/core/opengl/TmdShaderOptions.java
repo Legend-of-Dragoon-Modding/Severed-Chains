@@ -15,8 +15,9 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
   private final Shader<TmdShaderOptions>.UniformInt tmdTranslucency;
   private final Shader<TmdShaderOptions>.UniformInt ctmdFlags;
   private final Shader<TmdShaderOptions>.UniformVec3 battleColour;
+  private final Shader<TmdShaderOptions>.UniformInt useVdf;
 
-  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency, final Shader<TmdShaderOptions>.UniformInt tmdTranslucency, final Shader<TmdShaderOptions>.UniformInt ctmdFlags, final Shader<TmdShaderOptions>.UniformVec3 battleColour) {
+  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency, final Shader<TmdShaderOptions>.UniformInt tmdTranslucency, final Shader<TmdShaderOptions>.UniformInt ctmdFlags, final Shader<TmdShaderOptions>.UniformVec3 battleColour, final Shader<TmdShaderOptions>.UniformInt useVdf) {
     this.modelIndex = modelIndex;
     this.colourUniform = colourUniform;
     this.uvOffsetUniform = uvOffsetUniform;
@@ -27,6 +28,7 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
     this.tmdTranslucency = tmdTranslucency;
     this.ctmdFlags = ctmdFlags;
     this.battleColour = battleColour;
+    this.useVdf = useVdf;
   }
 
   public TmdShaderOptions modelIndex(final float modelIndex) {
@@ -88,6 +90,11 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
    */
   public TmdShaderOptions discardMode(final int discardMode) {
     this.discardTranslucency.set(discardMode);
+    return this;
+  }
+
+  public TmdShaderOptions useVdf(final boolean useVdf) {
+    this.useVdf.set(useVdf ? 1 : 0);
     return this;
   }
 

@@ -13,7 +13,10 @@ import org.joml.Vector3f;
 
 import java.util.Arrays;
 
-public class ParticleEffectData98 implements Effect {
+public class ParticleEffectData98 implements Effect<EffectManagerParams.ParticleType> {
+  private final ParticleManager manager;
+  private final int type;
+
   public ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> myState_00;
   /** Can be -1 */
   public int parentScriptIndex_04;
@@ -64,16 +67,31 @@ public class ParticleEffectData98 implements Effect {
   public Obj obj;
   public final MV transforms = new MV();
 
-  public ParticleEffectData98(final int count) {
+  public ParticleEffectData98(final ParticleManager manager, final int type, final int count) {
+    this.manager = manager;
+    this.type = type;
     this.countParticleInstance_50 = count;
     this.particleArray_68 = new ParticleEffectInstance94[count];
     Arrays.setAll(this.particleArray_68, ParticleEffectInstance94::new);
   }
 
-  public void delete() {
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
+
+  }
+
+  @Override
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
+    this.manager.particleEffectRenderers_80119b7c[this.type].accept(state);
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
     if(this.obj != null) {
       this.obj.delete();
       this.obj = null;
     }
+
+    this.manager.deleteParticle(this);
   }
 }

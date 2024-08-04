@@ -3,13 +3,13 @@ package legend.game.wmap;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
+import legend.core.memory.types.FloatRef;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
@@ -135,9 +135,7 @@ import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
 import static legend.game.wmap.WmapStatics.inputAngleModifierAtPathIntersection_800f021c;
 import static legend.game.wmap.WmapStatics.loadWait;
 import static legend.game.wmap.WmapStatics.locations_800f0e34;
-import static legend.game.wmap.WmapStatics.mapFrameTmdIndices_800ef19c;
 import static legend.game.wmap.WmapStatics.mapPositions_800ef1a8;
-import static legend.game.wmap.WmapStatics.mapTerrainTmdIndices_800ef194;
 import static legend.game.wmap.WmapStatics.negativeDirectionMovementMask_800f0210;
 import static legend.game.wmap.WmapStatics.pathDotPosArr_800f591c;
 import static legend.game.wmap.WmapStatics.pathSegmentLengths_800f5810;
@@ -153,6 +151,7 @@ import static legend.game.wmap.WmapStatics.teleportationLocations_800ef6c8;
 import static legend.game.wmap.WmapStatics.tmdUvAdjustmentMetrics_800eee48;
 import static legend.game.wmap.WmapStatics.waterClutYs_800ef348;
 import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
 public class WMap extends EngineState {
   private enum WorldMapState {
@@ -398,7 +397,6 @@ public class WMap extends EngineState {
   private void renderWmapModel(final Model124 model) {
     final MV lw = new MV();
 
-    zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     //LAB_800c92c8
@@ -1230,7 +1228,7 @@ public class WMap extends EngineState {
                 if(cameraAndLights.mapRotationState_110 == MapRotationState.MAIN_LOOP_0) {
                   if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-                      playSound(0, 4, 0, 0, (short)0, (short)0);
+                      playSound(0, 4, (short)0, (short)0);
                       cameraAndLights.finalCameraY_9e = -9000;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_OUT_1;
                       cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
@@ -1245,7 +1243,7 @@ public class WMap extends EngineState {
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.CONTINENT_1) {
                       //LAB_800d3814
                       setTextAndTextboxesToUninitialized(7, 0);
-                      playSound(0, 4, 0, 0, (short)0, (short)0);
+                      playSound(0, 4, (short)0, (short)0);
                       cameraAndLights.finalCameraY_9e = -300;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
                       this.initCameraZoomPositionAndRotationSteps(1);
@@ -1253,7 +1251,7 @@ public class WMap extends EngineState {
                       this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL_0;
                       //LAB_800d3898
                     } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-                      playSound(0, 0x28, 0, 0, (short)0, (short)0);
+                      playSound(0, 0x28, (short)0, (short)0);
                     }
                   }
                 }
@@ -2058,16 +2056,6 @@ public class WMap extends EngineState {
       final Vector3f rotation = this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
-      if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7) {
-        //LAB_800d91cc
-        if(mapTerrainTmdIndices_800ef194[this.mapState_800c6798.continent_00.continentNum] == i || mapFrameTmdIndices_800ef19c[this.mapState_800c6798.continent_00.continentNum] == i) {
-//          zOffset_1f8003e8 = 500; // background models
-        } else {
-          //LAB_800d9204
-//          zOffset_1f8003e8 = 100; // location models
-        }
-      }
-
       //LAB_800d9210
       this.rotateCoord2(rotation, coord2);
 
@@ -2102,8 +2090,13 @@ public class WMap extends EngineState {
 
       final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(dobj2.obj, lw);
 
-      if(this.mapState_800c6798.continent_00.continentNum < 9 && i == 0) {
-        model.clutOverride(1008, waterClutYs_800ef348[(int)this.modelAndAnimData_800c66a8.clutYIndex_28]);
+      if(i == 0) {
+        if(this.mapState_800c6798.continent_00.continentNum < 9) {
+          model.clutOverride(1008, waterClutYs_800ef348[(int)this.modelAndAnimData_800c66a8.clutYIndex_28]);
+        }
+
+        // Push water depth back so that the Queen Fury wake renders on top of it
+        model.depthOffset(500.0f);
       }
 
       //LAB_800d93d4
@@ -2150,7 +2143,7 @@ public class WMap extends EngineState {
     switch(this.modelAndAnimData_800c66a8.zoomState_1f8) {
       case CONTINENT_1:
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // Zoom out
-          playSound(0, 4, 0, 0, (short)0, (short)0);
+          playSound(0, 4, (short)0, (short)0);
           this.shouldSetDestLabelMetrics = true;
 
           this.modelAndAnimData_800c66a8.mapPosition_1e8.set(cameraAndLights.coord2_20.coord.transfer);
@@ -2195,7 +2188,7 @@ public class WMap extends EngineState {
 
       case WORLD_3:
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // Can't zoom out more
-          playSound(0, 40, 0, 0, (short)0, (short)0);
+          playSound(0, 40, (short)0, (short)0);
         }
 
         //LAB_800d9858
@@ -2207,7 +2200,7 @@ public class WMap extends EngineState {
 
         //LAB_800d98a8
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // Zoom in
-          playSound(0, 4, 0, 0, (short)0, (short)0);
+          playSound(0, 4, (short)0, (short)0);
           this.initMapModelZoom(-1);
 
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.TRANSITION_MODEL_IN_4;
@@ -2379,7 +2372,7 @@ public class WMap extends EngineState {
     //LAB_800da544
     switch(modelAndAnimData.coolonWarpState_220) {
       case NONE_0:
-        playSound(0, 4, 0, 0, (short)0, (short)0);
+        playSound(0, 4, (short)0, (short)0);
 
         modelAndAnimData.mapPos_200.set(cameraAndLights.coord2_20.coord.transfer);
         modelAndAnimData.playerPos_208.set(modelAndAnimData.currPlayerPos_94);
@@ -2407,7 +2400,7 @@ public class WMap extends EngineState {
 
         //LAB_800da940
         if(((int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x3) == 0) {
-          playSound(12, 1, 0, 0, (short)0, (short)0);
+          playSound(12, 1, (short)0, (short)0);
         }
 
         //LAB_800da978
@@ -2515,7 +2508,7 @@ public class WMap extends EngineState {
           this.shouldSetCoolonWarpDestLabelMetrics = false;
           this.coolonWarpDestLabelName = null;
 
-          playSound(0, 3, 0, 0, (short)0, (short)0);
+          playSound(0, 3, (short)0, (short)0);
 
           //LAB_800daef8
           for(int i = 0; i < 8; i++) {
@@ -2543,7 +2536,7 @@ public class WMap extends EngineState {
 
         //LAB_800db00c
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
-          playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
           initTextbox(6, true, 240, 64, 9, 4);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_PROMPT_4;
         }
@@ -2581,7 +2574,7 @@ public class WMap extends EngineState {
         this.renderCoolonMapSymbols(false, true);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
-          playSound(0, 3, 0, 0, (short)0, (short)0);
+          playSound(0, 3, (short)0, (short)0);
           setTextAndTextboxesToUninitialized(6, 1);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
         }
@@ -2589,19 +2582,19 @@ public class WMap extends EngineState {
         //LAB_800db39c
         if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
           Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
           modelAndAnimData.coolonPromptIndex_223 ^= 1;
         }
 
         //LAB_800db3f8
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           if(modelAndAnimData.coolonPromptIndex_223 == 0) {
-            playSound(0, 3, 0, 0, (short)0, (short)0);
+            playSound(0, 3, (short)0, (short)0);
             setTextAndTextboxesToUninitialized(6, 1);
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
           } else {
             //LAB_800db474
-            playSound(0, 2, 0, 0, (short)0, (short)0);
+            playSound(0, 2, (short)0, (short)0);
             setTextAndTextboxesToUninitialized(6, 1);
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.FLY_ANIM_6;
           }
@@ -2772,7 +2765,7 @@ public class WMap extends EngineState {
 
     if(enableInput) {
       if((repeat_800bee98 & 0x6000) != 0) {
-        playSound(0, 1, 0, 0, (short)0, (short)0);
+        playSound(0, 1, (short)0, (short)0);
 
         if(modelAndAnimData.coolonDestIndex_222 > 0) {
           modelAndAnimData.coolonDestIndex_222--;
@@ -2783,7 +2776,7 @@ public class WMap extends EngineState {
 
       //LAB_800dc384
       if((repeat_800bee98 & 0x9000) != 0) {
-        playSound(0, 1, 0, 0, (short)0, (short)0);
+        playSound(0, 1, (short)0, (short)0);
 
         modelAndAnimData.coolonDestIndex_222++;
         if(modelAndAnimData.coolonDestIndex_222 > 8) {
@@ -2960,7 +2953,7 @@ public class WMap extends EngineState {
 
     //LAB_800e002c
     modelAndAnimData.modelIndex_1e4 = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
-    this.initQueenFuryWake(40, 3);
+    this.initQueenFuryWake(40 * (4 - vsyncMode_8007a3b8), 1);
 
     final int modelIndex = modelAndAnimData.modelIndex_1e4;
     final Model124 model = modelAndAnimData.models_0c[modelIndex];
@@ -2988,14 +2981,12 @@ public class WMap extends EngineState {
     //LAB_800e0260
   }
 
-  @Method(0x800e0274L) // Pretty sure this renders the player
+  @Method(0x800e0274L)
   private void renderPlayer() {
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
     if(modelAndAnimData.fastTravelTransitionMode_250 != FastTravelTransitionMode.OPEN_COOLON_MAP_2) {
       modelAndAnimData.modelIndex_1e4 = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
-
-      assert modelAndAnimData.modelIndex_1e4 < 4;
     } else {
       //LAB_800e02d0
       modelAndAnimData.modelIndex_1e4 = 2;
@@ -3032,7 +3023,6 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e04fc
-    modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].zOffset_a0 = 78;
     this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
     GTE.setBackgroundColour(this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.x, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.y, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.z);
     this.handlePlayerMovement();
@@ -3202,8 +3192,8 @@ public class WMap extends EngineState {
 
       //LAB_800e1210
       if(modelIndex == 1) {
-        if(((int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x3) == 0) {
-          playSound(0xc, 0, 0, 0, (short)0, (short)0);
+        if(tickCount_800bb0fc % (4 * this.tickMultiplier()) == 0) {
+          playSound(0xc, 0, (short)0, (short)0);
         }
       }
     } else {
@@ -3265,8 +3255,8 @@ public class WMap extends EngineState {
     final Vector3f vertex2 = new Vector3f();
     final Vector3f vertex3 = new Vector3f();
 
-    final IntRef deltaScaleFactor = new IntRef();
-    final IntRef colourScaleFactor = new IntRef();
+    final FloatRef deltaScaleFactor = new FloatRef();
+    final FloatRef colourScaleFactor = new FloatRef();
 
     final Vector3f pos0 = new Vector3f();
     final Vector3f pos1 = new Vector3f();
@@ -3288,34 +3278,41 @@ public class WMap extends EngineState {
     GsGetLs(modelAndAnimData.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
 
+    final PolyBuilder builder = new PolyBuilder("Queen Fury wake", GL_TRIANGLES);
+    builder
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
+      .vramPos(448, 0);
+
     //LAB_800e1ccc
-    for(int i = 0; i < 39; i++) {
+    for(int i = 0; i < modelAndAnimData.wakeSegmentCount - 1; i++) {
       //LAB_800e1ce8
       this.getQueenFuryWakeMetrics(i, spread0, pos0, colourScaleFactor, deltaScaleFactor);
       spread0.mul(deltaScaleFactor.get());
       vertex0.set(pos0).add(spread0);
       vertex1.set(pos0);
 
-      int baseColour = 256 - colourScaleFactor.get() * 256 / 40;
-      final int r0 = baseColour * 96 / 256;
-      final int g0 = baseColour * 96 / 256;
-      final int b0 = baseColour * 96 / 256;
-      final int r1 = 0;
-      final int g1 = baseColour / 8;
-      final int b1 = baseColour * 96 / 256;
+      float baseColour = 1.0f - colourScaleFactor.get() / modelAndAnimData.wakeSegmentCount;
+      final float r0 = baseColour * 96 / 255.0f;
+      final float g0 = baseColour * 96 / 255.0f;
+      final float b0 = baseColour * 96 / 255.0f;
+      final float r1 = 0;
+      final float g1 = baseColour / 8.0f;
+      final float b1 = baseColour * 96 / 255.0f;
 
       this.getQueenFuryWakeMetrics(i + 1, spread1, pos1, colourScaleFactor, deltaScaleFactor);
       spread1.mul(deltaScaleFactor.get());
       vertex2.set(pos1).add(spread1);
       vertex3.set(pos1);
 
-      baseColour = 256 - colourScaleFactor.get() * 256 / 40;
-      final int r2 = baseColour * 96 / 256;
-      final int g2 = baseColour * 96 / 256;
-      final int b2 = baseColour * 96 / 256;
-      final int r3 = 0;
-      final int g3 = baseColour / 8;
-      final int b3 = baseColour * 96 / 256;
+      baseColour = 1.0f - colourScaleFactor.get() / modelAndAnimData.wakeSegmentCount;
+      final float r2 = baseColour * 96 / 255.0f;
+      final float g2 = baseColour * 96 / 255.0f;
+      final float b2 = baseColour * 96 / 255.0f;
+      final float r3 = 0;
+      final float g3 = baseColour / 8.0f;
+      final float b3 = baseColour * 96 / 255.0f;
 
       final Vector2f sxyz0 = new Vector2f();
       final Vector2f sxyz1 = new Vector2f();
@@ -3324,26 +3321,27 @@ public class WMap extends EngineState {
 
       float z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
+      // ship starboard wake
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
-          .vramPos(448, 0)
-          .rgb(0, r0, g0, b0)
-          .rgb(1, r1, g1, b1)
-          .rgb(2, r2, g2, b2)
-          .rgb(3, r3, g3, b3)
-          .uv(0,  0,  0)
-          .uv(1, 63,  0)
-          .uv(2,  0, 63)
-          .uv(3, 63, 63)
-          .pos(0, sxyz0.x, sxyz0.y)
-          .pos(1, sxyz1.x, sxyz1.y)
-          .pos(2, sxyz2.x, sxyz2.y)
-          .pos(3, sxyz3.x, sxyz3.y);
-
-        GPU.queueCommand(orderingTableSize_1f8003c8 - 4, cmd); // ship starboard wake
+        builder
+          .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
+          .uv(0, 0)
+          .rgb(r0, g0, b0)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
+          .uv(64, 64)
+          .rgb(r3, g3, b3);
       }
 
       //LAB_800e2440
@@ -3351,32 +3349,41 @@ public class WMap extends EngineState {
       vertex2.set(pos1).sub(spread1);
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
+      // ship port wake
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
-          .vramPos(448, 0)
-          .rgb(0, r0, g0, b0)
-          .rgb(1, r1, g1, b1)
-          .rgb(2, r2, g2, b2)
-          .rgb(3, r3, g3, b3)
-          .uv(0,  0,  0)
-          .uv(1, 63,  0)
-          .uv(2,  0, 63)
-          .uv(3, 63, 63)
-          .pos(0, sxyz0.x, sxyz0.y)
-          .pos(1, sxyz1.x, sxyz1.y)
-          .pos(2, sxyz2.x, sxyz2.y)
-          .pos(3, sxyz3.x, sxyz3.y);
-
-        GPU.queueCommand(orderingTableSize_1f8003c8 - 4, cmd); // ship port wake
+        builder
+          .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
+          .uv(0, 0)
+          .rgb(r0, g0, b0)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
+          .uv(64, 64)
+          .rgb(r3, g3, b3);
       }
     }
 
+    final Obj obj = builder.build();
+    obj.delete();
+
+    transforms.identity();
+    transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0);
+    RENDERER.queueOrthoModel(obj, transforms)
+      .depthOffset(400.0f);
+
     //LAB_800e2770
     //LAB_800e2774
-    for(int i = 0; i < 40; i++) {
+    for(int i = 0; i < modelAndAnimData.wakeSegmentCount; i++) {
       //LAB_800e2790
       int wakeSegmentIndex = modelAndAnimData.currShipPositionIndex_230 - i * modelAndAnimData.wakeSegmentStride_23c;
 
@@ -3403,6 +3410,7 @@ public class WMap extends EngineState {
     this.modelAndAnimData_800c66a8.currShipPositionIndex_230 = 0;
     this.modelAndAnimData_800c66a8.prevShipPositionIndex_234 = count - 1;
     this.modelAndAnimData_800c66a8.shipPositionsCount_238 = count;
+    this.modelAndAnimData_800c66a8.wakeSegmentCount = segmentCount;
     this.modelAndAnimData_800c66a8.wakeSegmentStride_23c = stride;
 
     //NOTE: there's a bug in the original code, it just sets the first vector in the array over and over again
@@ -3420,6 +3428,7 @@ public class WMap extends EngineState {
       //LAB_800e2b14
       for(int i = 0; i < modelAndAnimData.shipPositionsCount_238; i++) {
         //LAB_800e2b3c
+        modelAndAnimData.wakeSpreadsArray_224[i].set(wakeSpread);
         modelAndAnimData.shipPositionsArray_228[i].set(currPlayerPos);
       }
 
@@ -3439,15 +3448,15 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800e2e1cL)
-  private void getQueenFuryWakeMetrics(final int index, final Vector3f spread, final Vector3f position, final IntRef colourFadeFactor, final IntRef spreadScaleFactor) {
+  private void getQueenFuryWakeMetrics(final int index, final Vector3f spread, final Vector3f position, final FloatRef colourFadeFactor, final FloatRef spreadScaleFactor) {
     final int angle;
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
     if(index == 0) {
       spread.set(modelAndAnimData.wakeSpreadsArray_224[modelAndAnimData.prevShipPositionIndex_234]);
       position.set(modelAndAnimData.shipPositionsArray_228[modelAndAnimData.prevShipPositionIndex_234]);
       colourFadeFactor.set(modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234]);
-      angle = modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234] - (int)(modelAndAnimData.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
-      spreadScaleFactor.set(modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234] + (rsin(angle << 8 & 0x7ff) * modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234] >> 12));
+      angle = (int)((modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234] - modelAndAnimData.tickNum_240) / (4.0f - vsyncMode_8007a3b8));
+      spreadScaleFactor.set((modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234] + (rsin(angle << 8 & 0x7ff) * modelAndAnimData.wakeSegmentNumArray_22c[modelAndAnimData.prevShipPositionIndex_234] >> 12)) / (4.0f - vsyncMode_8007a3b8));
     } else {
       //LAB_800e3024
       int wakeSegmentIndex = modelAndAnimData.currShipPositionIndex_230 - index * modelAndAnimData.wakeSegmentStride_23c;
@@ -3460,8 +3469,8 @@ public class WMap extends EngineState {
       spread.set(modelAndAnimData.wakeSpreadsArray_224[wakeSegmentIndex]);
       position.set(modelAndAnimData.shipPositionsArray_228[wakeSegmentIndex]);
       colourFadeFactor.set(modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex]);
-      angle = modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex] - (int)(modelAndAnimData.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
-      spreadScaleFactor.set(modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(angle << 8 & 0x7ff) * modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12));
+      angle = (int)((modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex] - modelAndAnimData.tickNum_240) / (4.0f - vsyncMode_8007a3b8));
+      spreadScaleFactor.set((modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(angle << 8 & 0x7ff) * modelAndAnimData.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12)) / (4.0f - vsyncMode_8007a3b8));
     }
     //LAB_800e321c
   }
@@ -3479,10 +3488,10 @@ public class WMap extends EngineState {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   private void renderFastTravelScreenDistortionEffect() {
-    fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
-    fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
+    this.fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
+    this.fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
 
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, fastTravelTransforms)
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.fastTravelTransforms)
       .texture(RENDERER.getLastFrame())
       .translucency(Translucency.HALF_B_PLUS_HALF_F);
   }
@@ -3939,7 +3948,7 @@ public class WMap extends EngineState {
 
         this.mapTransitionState_800c68a4 = MapTransitionState.BUILD_PROMPT_2;
 
-        playSound(0, 4, 0, 0, (short)0, (short)0);
+        playSound(0, 4, (short)0, (short)0);
 
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
@@ -3947,7 +3956,7 @@ public class WMap extends EngineState {
           final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
-            playSound(0xc, soundIndex, 0, 0, (short)0, (short)0);
+            playSound(0xc, soundIndex, (short)0, (short)0);
           }
 
           //LAB_800e5698
@@ -4033,7 +4042,7 @@ public class WMap extends EngineState {
           this.wmapLocationPromptPopup.decrMenuSelectorOptionIndex();
 
           //LAB_800e5950
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
         }
 
         //LAB_800e5970
@@ -4041,7 +4050,7 @@ public class WMap extends EngineState {
           this.wmapLocationPromptPopup.incrMenuSelectorOptionIndex();
 
           //LAB_800e59c0
-          playSound(0, 1, 0, 0, (short)0, (short)0);
+          playSound(0, 1, (short)0, (short)0);
         }
 
         //LAB_800e5b38
@@ -4079,7 +4088,7 @@ public class WMap extends EngineState {
         );
 
         if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCutTo_c8 != 999) { // Square
-          playSound(0, 2, 0, 0, (short)0, (short)0);
+          playSound(0, 2, (short)0, (short)0);
         }
 
         //LAB_800e60d0
@@ -4115,7 +4124,7 @@ public class WMap extends EngineState {
             setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = MapTransitionState.INIT_MOVEMENT_6;
 
-            playSound(0, 3, 0, 0, (short)0, (short)0);
+            playSound(0, 3, (short)0, (short)0);
 
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
@@ -4137,7 +4146,7 @@ public class WMap extends EngineState {
             setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = MapTransitionState.ANIMATE_PROMPT_OUT_5;
 
-            playSound(0, 2, 0, 0, (short)0, (short)0);
+            playSound(0, 2, (short)0, (short)0);
 
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
@@ -4155,7 +4164,7 @@ public class WMap extends EngineState {
         } else {
           //LAB_800e6524
           if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
-            playSound(0, 3, 0, 0, (short)0, (short)0);
+            playSound(0, 3, (short)0, (short)0);
 
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
@@ -4312,7 +4321,7 @@ public class WMap extends EngineState {
       //LAB_800e6afc
     } else {
       if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)) {
-        playSound(0, 2, 0, 0, (short)0, (short)0);
+        playSound(0, 2, (short)0, (short)0);
         this.startLocationLabelsActive_800c68a8 = true;
 
         //LAB_800e6aac

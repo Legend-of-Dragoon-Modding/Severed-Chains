@@ -1,6 +1,6 @@
 #version 330 core
 
-layout(location = 0) in vec3 inPos;
+layout(location = 0) in vec4 inPos; // w is vertex index
 layout(location = 1) in vec3 inNorm;
 layout(location = 2) in vec2 inUv;
 layout(location = 3) in float inTpage;
@@ -29,6 +29,8 @@ uniform float modelIndex;
 uniform float translucency;
 uniform int ctmdFlags;
 uniform vec3 battleColour;
+
+uniform int useVdf;
 
 struct ModelTransforms {
   mat4 model;
@@ -65,8 +67,18 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
+layout(std140) uniform vdf {
+  vec4[1024] vertices;
+};
+
 void main() {
-  vec4 pos = vec4(inPos, 1.0);
+  vec4 pos;
+
+  if(useVdf == 0) {
+    pos = vec4(inPos.xyz, 1.0f);
+  } else {
+    pos = vec4(vertices[int(inPos.w)].xyz, 1.0f);
+  }
 
   vertFlags = int(inFlags);
   bool ctmd = (ctmdFlags & 0x20) != 0;
@@ -82,7 +94,7 @@ void main() {
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
     vertColour.rgb = inColour.rgb * battleColour.rgb;
   } else if(lit) {
-    vertColour.rgb = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * inColour.rgb, 1.0);
+    vertColour.rgb = clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb;
   } else if(coloured) {
     vertColour = inColour;
   } else {
@@ -129,10 +141,12 @@ void main() {
     if(z != 0) {
       gl_Position.xy *= zfar / z;
     }
+  }
 
-    if(t.screenOffset.z != 0) {
-      gl_Position.z += t.screenOffset.z;
-    }
+  if(projectionMode == 2) { // High quality projection
+    depthOffset = t.screenOffset.z * zdiffInv; // Depth is computed in the fragment shader
+  } else if(t.screenOffset.z != 0) {
+    gl_Position.z += t.screenOffset.z;
   }
 
   gl_Position.xy += t.screenOffset.xy;
@@ -140,5 +154,4 @@ void main() {
   vertUv = inUv;
 
   depth = gl_Position.z;
-  depthOffset = t.screenOffset.z;
 }

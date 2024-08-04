@@ -1,12 +1,13 @@
 package legend.game.modding.coremod.config;
 
+import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.unpacker.FileData;
 
 public class EnabledModsConfigEntry extends ConfigEntry<String[]> {
   public EnabledModsConfigEntry() {
-    super(new String[0], ConfigStorageLocation.CAMPAIGN, EnabledModsConfigEntry::serializer, EnabledModsConfigEntry::deserializer);
+    super(new String[0], ConfigStorageLocation.CAMPAIGN, ConfigCategory.OTHER, EnabledModsConfigEntry::serializer, EnabledModsConfigEntry::deserializer);
   }
 
   private static byte[] serializer(final String[] ids) {

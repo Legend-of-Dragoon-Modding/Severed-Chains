@@ -21,6 +21,7 @@ import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -242,12 +243,18 @@ public final class GameEngine {
 
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
+    AUDIO_THREAD.init();
+    AUDIO_THREAD.getSequencer().setVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()));
+
+    SPU.init();
     RENDERER.init();
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
+    Input.init();
     GPU.init();
     RENDERER.run();
 
     RENDERER.delete();
+    Input.destroy();
   }
 
   /** Returns missing mod IDs, if any */
@@ -411,8 +418,6 @@ public final class GameEngine {
     openalThread.start();
 
     synchronized(LOCK) {
-      Input.init();
-
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;

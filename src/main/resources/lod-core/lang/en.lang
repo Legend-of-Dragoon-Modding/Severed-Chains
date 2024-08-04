@@ -1,6 +1,14 @@
 # Mod metadata
 lod-core.name=Legend of Dragoon (core)
 
+# Config categories
+lod-core.config.category.configure=Configure
+lod-core.config.category.gameplay.label=Gameplay
+lod-core.config.category.graphics.label=Graphics
+lod-core.config.category.audio.label=Audio
+lod-core.config.category.controls.label=Controls
+lod-core.config.category.other.label=Other
+
 # Global config
 lod-core.config.render_scale.label=Render Scale
 lod-core.config.controller.label=Controller
@@ -8,6 +16,7 @@ lod-core.config.controller_keybinds.label=Controller Keybinds
 lod-core.config.controller_keybinds.configure=Configure...
 lod-core.config.controller_deadzone.label=Controller Deadzone
 lod-core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
+lod-core.config.rumble.label=Rumble
 lod-core.config.allow_widescreen.label=Allow Widescreen When Possible
 lod-core.config.high_quality_projection.label=Use High Quality Projection When Possible
 lod-core.config.fullscreen.label=Fullscreen
@@ -19,6 +28,8 @@ lod-core.config.resolution._1080=1080p
 lod-core.config.resolution._4K=4K
 lod-core.config.resolution._8K=8K
 lod-core.config.resolution.NATIVE=Native (window size)
+lod-core.config.audio_device.label=Audio Device
+lod-core.config.music_volume.label=Music Volume
 
 # Campaign config
 lod-core.config.indicator_mode.label=Indicator Mode

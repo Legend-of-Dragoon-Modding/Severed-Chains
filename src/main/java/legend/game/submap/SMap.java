@@ -59,7 +59,9 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -791,7 +793,7 @@ public class SMap extends EngineState {
 
   /** Pulled from BPE segment */
   @Method(0x8002aae8L)
-  private void renderEnvironmentAndHandleTransitions() {
+  private void renderEnvironmentAndHandleTransitions(final boolean scriptsTicked) {
     switch(submapEnvState_80052c44) {
       case RENDER_AND_CHECK_TRANSITIONS_0:
         this.renderEnvironment();
@@ -807,9 +809,12 @@ public class SMap extends EngineState {
         //LAB_8002abdc
         //LAB_8002abe0
         // Handle map transitions
-        final int collisionAndTransitionInfo = this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
-        if((collisionAndTransitionInfo & 0x10) != 0) {
-          this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
+        // Transitions by collisions must be handled only if scripts were ticked due to some edge cases (GH#1195)
+        if(scriptsTicked) {
+          final int collisionAndTransitionInfo = this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
+          if((collisionAndTransitionInfo & 0x10) != 0) {
+            this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
+          }
         }
         break;
 
@@ -919,8 +924,8 @@ public class SMap extends EngineState {
     shadowModel_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
     shadowModel_800bda10.coord2_14.transforms.scale.set(model.shadowSize_10c).div(64.0f);
 
-    shadowModel_800bda10.coord2_14.coord.rotationXYZ(shadowModel_800bda10.coord2_14.transforms.rotate);
-    shadowModel_800bda10.coord2_14.coord.scaleLocal(shadowModel_800bda10.coord2_14.transforms.scale);
+    shadowModel_800bda10.coord2_14.coord.scaling(shadowModel_800bda10.coord2_14.transforms.scale);
+    shadowModel_800bda10.coord2_14.coord.rotateXYZ(shadowModel_800bda10.coord2_14.transforms.rotate);
     shadowModel_800bda10.coord2_14.coord.transfer.set(model.shadowOffset_118);
 
     final ModelPart10 modelPart = shadowModel_800bda10.modelParts_00[0];
@@ -2795,9 +2800,11 @@ public class SMap extends EngineState {
         this.firstMovement = true;
 
         //LAB_800e1914
-        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
+        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submap.script);
+
+        final Set<CContainer> visited = new HashSet<>();
 
         //LAB_800e1b20
         //LAB_800e1b54
@@ -2813,9 +2820,13 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.uvAdjustments_9d = this.submap.uvAdjustments.get(i);
-
           final CContainer tmd = this.submap.objects.get(i).model;
+
+          if(!visited.contains(tmd)) {
+            model.uvAdjustments_9d = this.submap.uvAdjustments.get(i);
+            visited.add(tmd);
+          }
+
           final TmdAnimationFile anim = obj.animations.get(0);
           initModel(model, tmd, anim);
 
@@ -3253,6 +3264,9 @@ public class SMap extends EngineState {
     } else {
       //LAB_800e4d34
       this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, this.playerPositionWhenLoadingSubmap_800c6ac0.transfer);
+      // Most scripts call readposition and setposition on initialization, if middle of collision
+      // primitive has a fraction, player will have non-zero movement step on submap load (GH#1142)
+      this.playerPositionWhenLoadingSubmap_800c6ac0.transfer.round();
       this.playerPositionRestoreMode_800f7e24 = 2;
     }
 
@@ -3264,6 +3278,9 @@ public class SMap extends EngineState {
     if(this.playerPositionRestoreMode_800f7e24 == 0) {
       //LAB_800e4e20
       this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndexForPosition, model.coord2_14.coord.transfer);
+      // Most scripts call readposition and setposition on initialization, if middle of collision
+      // primitive has a fraction, player will have non-zero movement step on submap load (GH#1142)
+      model.coord2_14.coord.transfer.round();
     } else if(this.playerPositionRestoreMode_800f7e24 == 1) {
       model.coord2_14.coord.set(this.playerPositionWhenLoadingSubmap_800c6ac0);
     } else {
@@ -3665,8 +3682,9 @@ public class SMap extends EngineState {
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
         this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
-        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
+
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
+        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
       }
 
       case CHANGE_SUBMAP_4 -> {
@@ -3934,9 +3952,9 @@ public class SMap extends EngineState {
 
   /** Has to be done after scripts are ticked since the camera is attached to a sobj and it would use the position from the previous frame */
   @Override
-  public void postScriptTick() {
+  public void postScriptTick(final boolean scriptsTicked) {
     //LAB_80020f20
-    this.renderEnvironmentAndHandleTransitions();
+    this.renderEnvironmentAndHandleTransitions(scriptsTicked);
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
 
     if(this.screenOffsetTicks < this.screenOffsetTicksTotal) {
@@ -3999,8 +4017,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set((int)this.screenOffset_800cb568.x);
-    script.params_20[1].set((int)this.screenOffset_800cb568.y);
+    script.params_20[0].set((int)this.screenOffsetDest.x);
+    script.params_20[1].set((int)this.screenOffsetDest.y);
     return FlowControl.CONTINUE;
   }
 

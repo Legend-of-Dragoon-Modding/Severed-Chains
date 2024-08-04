@@ -215,7 +215,7 @@ public final class V4Serializer {
 
 //    state.mono_4e0 = data.readUByte(offset) != 0;
     offset++;
-    state.vibrationEnabled_4e1 = data.readUByte(offset) != 0;
+//    state.vibrationEnabled_4e1 = data.readUByte(offset) != 0;
     offset++;
 //    state.morphMode_4e2 = data.readUByte(offset);
     offset++;
@@ -426,7 +426,7 @@ public final class V4Serializer {
 
 //    data.writeByte(offset, state.mono_4e0 ? 1 : 0);
     offset++;
-    data.writeByte(offset, state.vibrationEnabled_4e1 ? 1 : 0);
+//    data.writeByte(offset, state.vibrationEnabled_4e1 ? 1 : 0);
     offset++;
 //    data.writeByte(offset, state.morphMode_4e2);
     offset++;

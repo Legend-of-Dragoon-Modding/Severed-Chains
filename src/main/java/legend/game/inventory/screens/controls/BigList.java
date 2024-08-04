@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class BigList<T> extends Control {
@@ -47,6 +47,30 @@ public class BigList<T> extends Control {
     }
   }
 
+  public void removeEntry(final T entry) {
+    final int index = this.entries.indexOf(entry);
+
+    if(index != -1) {
+      this.entries.remove(index);
+      this.removeControl(this.labels.get(index));
+      this.labels.remove(index);
+
+      if(this.labels.isEmpty() && this.highlightHandler != null) {
+        this.highlightHandler.highlight(null);
+      } else if(this.slot >= this.entries.size()) {
+        if(this.scroll > 0) {
+          this.scroll--;
+        }
+
+        this.highlight(this.slot - 1);
+        this.updateEntries();
+      } else {
+        this.updateEntries();
+        this.highlight(this.slot);
+      }
+    }
+  }
+
   private Label addLabel() {
     final int index = this.labels.size();
 
@@ -58,7 +82,7 @@ public class BigList<T> extends Control {
     label.hide();
 
     label.onMouseMove((x, y) -> {
-      this.highlight(index);
+      this.highlight(this.labels.indexOf(label));
       return InputPropagation.HANDLED;
     });
 
@@ -73,6 +97,10 @@ public class BigList<T> extends Control {
     });
 
     return label;
+  }
+
+  public int size() {
+    return this.entries.size();
   }
 
   public T getSelected() {
@@ -141,14 +169,14 @@ public class BigList<T> extends Control {
     }
 
     if(deltaY > 0 && this.scroll > 0) {
-      playSound(1);
+      playMenuSound(1);
       this.scroll--;
       this.updateEntries();
       this.highlight(this.slot - 1);
     }
 
     if(deltaY < 0 && this.scroll < this.entries.size() - MAX_VISIBLE_ENTRIES) {
-      playSound(1);
+      playMenuSound(1);
       this.scroll++;
       this.updateEntries();
       this.highlight(this.slot + 1);
@@ -183,11 +211,11 @@ public class BigList<T> extends Control {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         if(this.slot > this.scroll) {
-          playSound(1);
+          playMenuSound(1);
           this.highlight(this.slot - 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll > 0) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll--;
           this.updateEntries();
           this.highlight(this.slot - 1);
@@ -197,11 +225,11 @@ public class BigList<T> extends Control {
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         if(this.slot < this.scroll + this.visibleEntries() - 1) {
-          playSound(1);
+          playMenuSound(1);
           this.highlight(this.slot + 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll < this.entries.size() - MAX_VISIBLE_ENTRIES) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll++;
           this.updateEntries();
           this.highlight(this.slot + 1);

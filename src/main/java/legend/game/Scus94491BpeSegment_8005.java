@@ -41,7 +41,7 @@ public final class Scus94491BpeSegment_8005 {
     712, 712, 712, 712, 712, 712, 712, 712,
   };
 
-  public static final UvAdjustmentMetrics14[] _8005027c = {
+  public static final UvAdjustmentMetrics14[] vramSlots_8005027c = {
     UvAdjustmentMetrics14.NONE,
     new UvAdjustmentMetrics14( 1, 320, 496, 320, 256),
     new UvAdjustmentMetrics14( 2, 384, 496, 384, 256),

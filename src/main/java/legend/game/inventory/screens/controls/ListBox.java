@@ -17,7 +17,7 @@ import java.util.function.ToIntFunction;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class ListBox<T> extends Control {
@@ -213,7 +213,7 @@ public class ListBox<T> extends Control {
 
     for(int i = 0; i < this.visibleEntries(); i++) {
       if(this.slot != i && MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
-        playSound(1);
+        playMenuSound(1);
         this.select(i);
         return InputPropagation.HANDLED;
       }
@@ -291,11 +291,11 @@ public class ListBox<T> extends Control {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         if(this.slot > 0) {
-          playSound(1);
+          playMenuSound(1);
           this.select(this.slot - 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll > 0) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll--;
           this.updateEntries();
           this.select(this.slot);
@@ -305,11 +305,11 @@ public class ListBox<T> extends Control {
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         if(this.slot < this.visibleEntries() - 1) {
-          playSound(1);
+          playMenuSound(1);
           this.select(this.slot + 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll < this.entries.size() - this.maxVisibleEntries) {
-          playSound(1);
+          playMenuSound(1);
           this.scroll++;
           this.updateEntries();
           this.select(this.slot);
@@ -327,7 +327,7 @@ public class ListBox<T> extends Control {
       this.scrollAccumulator -= 1.0d;
 
       if(this.scroll > 0) {
-        playSound(1);
+        playMenuSound(1);
         this.scroll--;
         this.updateEntries();
         this.select(this.slot);
@@ -338,7 +338,7 @@ public class ListBox<T> extends Control {
       this.scrollAccumulator += 1.0d;
 
       if(this.scroll < this.entries.size() - this.maxVisibleEntries) {
-        playSound(1);
+        playMenuSound(1);
         this.scroll++;
         this.updateEntries();
         this.select(this.slot);

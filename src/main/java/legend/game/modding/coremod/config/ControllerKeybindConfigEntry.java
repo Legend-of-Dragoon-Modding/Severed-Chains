@@ -4,12 +4,13 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
+import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
 public class ControllerKeybindConfigEntry extends ConfigEntry<IntSet> {
   public ControllerKeybindConfigEntry(final int... defaultValue) {
-    super(new IntOpenHashSet(defaultValue), ConfigStorageLocation.GLOBAL, ControllerKeybindConfigEntry::serializer, data -> deserializer(data, new IntOpenHashSet(defaultValue)));
+    super(new IntOpenHashSet(defaultValue), ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, ControllerKeybindConfigEntry::serializer, data -> deserializer(data, new IntOpenHashSet(defaultValue)));
   }
 
   private static byte[] serializer(final IntSet val) {

@@ -18,13 +18,16 @@ import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
+import legend.game.scripting.FlowControl;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
-import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuEntries;
@@ -35,18 +38,21 @@ import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
@@ -55,7 +61,12 @@ import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
+import static legend.game.Scus94491BpeSegment_8002.giveItem;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
+import static legend.game.Scus94491BpeSegment_8002.takeItemId;
+import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -474,7 +485,7 @@ public final class SItem {
     "Shirley's Shrine", "", "Kazas", "Black Castle", "Fletz",
     "Twin Castle", "Barrens", "Donau", "Valley", "Giganto Home",
     "", "The Queen Fury", "Phantom Ship", "Lidiera", "Undersea Cavern",
-    "Feuno", "Prison Island", "Furni", "Evergreen Frst", "Deningrad",
+    "Fueno", "Prison Island", "Furni", "Evergreen Frst", "Deningrad",
     "Crystal Palace", "Neet", "Wingly Forest", "Forbidden Land", "",
     "Mortal Dr Mt.", "", "Kashua Glacier", "Flanvel Tower", "Snowfield",
     "Fort Magrad", "Vellweb", "", "Death Frontier", "Ulara",
@@ -495,6 +506,116 @@ public final class SItem {
   public static int characterCount_8011d7c4;
 
   public static boolean canSave_8011dc88;
+
+  @ScriptDescription("Gets the maximum number of items a player can carry")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
+  public static FlowControl scriptGetMaxItemCount(final RunningScript<?> script) {
+    script.params_20[0].set(CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()));
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gets the maximum number of equipment a player can carry")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
+  public static FlowControl scriptGetMaxEquipmentCount(final RunningScript<?> script) {
+    script.params_20[0].set(255);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Checks whether or not an item slot is used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
+  public static FlowControl scriptIsItemSlotUsed(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(slot < gameState_800babc8.items_2e9.size() ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Checks whether or not an equipment slot is used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
+  public static FlowControl scriptIsEquipmentSlotUsed(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(slot < gameState_800babc8.equipment_1e8.size() ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Get the registry ID of an item slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGetItemSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getRegistryId());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Get the registry ID of an equipment slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGetEquipmentSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    script.params_20[1].set(gameState_800babc8.equipment_1e8.get(slot).getRegistryId());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Set the registry ID of an item slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptSetItemSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    final RegistryId id = script.params_20[1].getRegistryId();
+    gameState_800babc8.items_2e9.set(slot, REGISTRIES.items.getEntry(id).get());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Set the registry ID of an equipment slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptSetEquipmentSlot(final RunningScript<?> script) {
+    final int slot = script.params_20[0].get();
+    final RegistryId id = script.params_20[1].getRegistryId();
+    gameState_800babc8.equipment_1e8.set(slot, REGISTRIES.equipment.getEntry(id).get());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gives an item to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptGiveItem(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean given = giveItem(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(given ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gives equipment to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptGiveEquipment(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean given = giveEquipment(REGISTRIES.equipment.getEntry(id).get());
+    script.params_20[1].set(given ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Takes an item from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptTakeItem(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean taken = takeItemId(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(taken ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Takes equipment from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
+  public static FlowControl scriptTakeEquipment(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    final boolean taken = takeEquipmentId(REGISTRIES.equipment.getEntry(id).get());
+    script.params_20[1].set(taken ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
 
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {
@@ -688,18 +809,14 @@ public final class SItem {
 
   @Method(0x8010376cL)
   public static void renderGlyphs(final MenuGlyph06[] glyphs, final int x, final int y) {
-    float offsetZ = 0.0f;
-
     //LAB_801037ac
-    for(int i = glyphs.length - 1; i >= 0; i--) {
+    for(int i = 0; i < glyphs.length; i++) {
       final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
 
       initGlyph(s0, glyphs[i]);
 
       s0.x_40 += x;
       s0.y_44 += y;
-      s0.z_3c += offsetZ;
-      offsetZ += 0.01f;
     }
 
     //LAB_801037f4
@@ -823,23 +940,55 @@ public final class SItem {
     Scus94491BpeSegment_8002.renderText(text, x + 1, y + 1, shadowColour, 0);
   }
 
-  @Method(0x80103dd4L)
-  public static int textLength(final LodString text) {
-    //LAB_80103ddc
-    int v1;
-    for(v1 = 0; v1 < 0xff; v1++) {
-      if(text.charAt(v1) == 0xa0ff) {
-        break;
-      }
-    }
-
-    //LAB_80103dfc
-    return v1;
-  }
-
   @Method(0x80103e90L)
   public static void renderCentredText(final String text, final int x, final int y, final TextColour colour) {
     renderText(text, x - textWidth(text) / 2, y, colour);
+  }
+
+  @Method(0x80103e90L)
+  public static void renderCentredText(final String text, final int x, int y, final TextColour colour, final int maxWidth) {
+    final String[] split;
+    if(textWidth(text) <= maxWidth) {
+      split = new String[] {text};
+    } else {
+      final List<String> temp = new ArrayList<>();
+      int currentWidth = 0;
+      int startIndex = 0;
+      for(int i = 0; i < text.length(); i++) {
+        final char current = text.charAt(i);
+        final int charWidth = Scus94491BpeSegment_8002.charWidth(current);
+
+        if(currentWidth + charWidth > maxWidth) {
+          boolean advanceOverSpace = false;
+          for(int backtrack = 0; backtrack < 10; backtrack++) {
+            if(text.charAt(i - backtrack) == ' ') {
+              i -= backtrack;
+              advanceOverSpace = true;
+              break;
+            }
+          }
+
+          temp.add(text.substring(startIndex, i));
+          currentWidth = charWidth;
+          startIndex = i;
+
+          if(advanceOverSpace) {
+            startIndex++;
+          }
+        } else {
+          currentWidth += charWidth;
+        }
+      }
+
+      temp.add(text.substring(startIndex));
+      split = temp.toArray(String[]::new);
+    }
+
+    for(int i = 0; i < split.length; i++) {
+      final String str = split[i];
+      renderText(str, x - textWidth(str) / 2, y, colour);
+      y += textHeight(str);
+    }
   }
 
   @Method(0x801038d4L)
@@ -1675,10 +1824,6 @@ public final class SItem {
           .uvSize(metrics.textureWidth, metrics.textureHeight)
         ;
 
-        if((metrics.clut_04 & 0x8000) != 0) {
-          builder.translucency(Translucency.of(metrics.tpage_06 >>> 5 & 0b11));
-        }
-
         metrics.vertexStart = vertices;
         vertices += 4;
       }
@@ -1730,7 +1875,7 @@ public final class SItem {
         if(messageBox.type_15 == 0) {
           //LAB_8010eed8
           if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44 & 0x60) != 0) {
-            playSound(2);
+            playMenuSound(2);
             messageBox.state_0c = 4;
             messageBox.result = MessageBoxResult.YES;
           }
@@ -1749,7 +1894,7 @@ public final class SItem {
           }
 
           //LAB_8010ef64
-          textZ_800bdf00 = 31;
+          textZ_800bdf00 = 30;
 
           renderCentredText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? TextColour.RED : TextColour.BROWN);
           renderCentredText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? TextColour.BROWN : TextColour.RED);

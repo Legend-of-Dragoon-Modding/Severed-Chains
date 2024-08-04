@@ -1,13 +1,13 @@
 package legend.game.modding.coremod.config;
 
 import legend.core.IoHelper;
-import legend.game.input.GlfwController;
+import legend.game.input.Controller;
 import legend.game.input.Input;
 import legend.game.inventory.screens.controls.Dropdown;
+import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.types.GameState52c;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +20,19 @@ public class ControllerConfigEntry extends ConfigEntry<String> {
     super(
       "",
       ConfigStorageLocation.GLOBAL,
+      ConfigCategory.CONTROLS,
       str -> IoHelper.stringToBytes(str, 1),
       bytes -> IoHelper.stringFromBytes(bytes, 1, "")
     );
 
     this.setEditControl((current, gameState) -> {
-      final List<GlfwController> joypads = new ArrayList<>();
+      final List<Controller> joypads = new ArrayList<>();
 
       final Dropdown dropdown = new Dropdown();
       dropdown.onSelection(index -> gameState.setConfig(this, index == 0 ? "" : joypads.get(index - 1).getGuid()));
       dropdown.addOption("<none>");
 
-      for(final GlfwController controller : Input.controllerManager.getConnectedControllers()) {
+      for(final Controller controller : Input.controllerManager.getConnectedControllers()) {
         dropdown.addOption(controller.getName());
         joypads.add(controller);
 

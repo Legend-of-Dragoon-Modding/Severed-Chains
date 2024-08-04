@@ -100,6 +100,7 @@ public class QuadBuilder {
   public QuadBuilder uvSize(final float w, final float h) {
     this.addFirstQuad();
     this.current.uvSize.set(w, h);
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
@@ -213,6 +214,7 @@ public class QuadBuilder {
     vertices[offset++] = x;
     vertices[offset++] = y;
     vertices[offset++] = z;
+    vertices[offset++] = 0.0f; // Vertex index, only used for VDF
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
@@ -265,10 +267,10 @@ public class QuadBuilder {
 
     final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, this.quads.size() * 4);
 
-    mesh.attribute(0, 0L, 3, vertexSize);
+    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
     int meshIndex = 1;
-    int meshOffset = 3;
+    int meshOffset = POS_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
     meshIndex++;

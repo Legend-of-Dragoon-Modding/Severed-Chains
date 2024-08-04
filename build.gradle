@@ -21,7 +21,7 @@ sourceCompatibility = targetCompatibility = 1.21
 compileJava.options.encoding = 'UTF-8'
 
 project.ext.lwjglVersion = "3.3.3"
-project.ext.jomlVersion = "1.10.5"
+project.ext.jomlVersion = "1.10.6"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
 final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
@@ -55,7 +55,7 @@ repositories {
 
 dependencies {
   api group: 'org.legendofdragoon', name: 'mod-loader', version: '2.0.2'
-  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.2.2'
+  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.3.0'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
@@ -78,6 +78,8 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
+
+  api group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.30.0.0'
 
   implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
   implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.12'

@@ -1,6 +1,7 @@
 package legend.core.audio.sequencer;
 
 import legend.core.MathHelper;
+import legend.core.audio.AudioSource;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
 import legend.core.audio.sequencer.assets.sequence.Command;
@@ -30,23 +31,9 @@ import java.util.Map;
 
 import static legend.core.audio.AudioThread.ACTUAL_SAMPLE_RATE;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
-import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
-import static org.lwjgl.openal.AL10.AL_BUFFERS_QUEUED;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
-import static org.lwjgl.openal.AL10.AL_PLAYING;
-import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
-import static org.lwjgl.openal.AL10.alBufferData;
-import static org.lwjgl.openal.AL10.alDeleteBuffers;
-import static org.lwjgl.openal.AL10.alDeleteSources;
-import static org.lwjgl.openal.AL10.alGenBuffers;
-import static org.lwjgl.openal.AL10.alGenSources;
-import static org.lwjgl.openal.AL10.alGetSourcei;
-import static org.lwjgl.openal.AL10.alSourcePlay;
-import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
-import static org.lwjgl.openal.AL10.alSourceStop;
-import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 
-public final class Sequencer {
+public final class Sequencer extends AudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
   private static final int EFFECT_OVER_TIME_SAMPLES = ACTUAL_SAMPLE_RATE / 60;
@@ -63,14 +50,9 @@ public final class Sequencer {
   private float reverbVolumeLeft = 0x3000 / 32_768f;
   private float reverbVolumeRight = 0x3000 / 32_768f;
 
-  /** Use powers of 2 to avoid % operator */
-  private static final int BUFFER_COUNT = 8;
-  private final int[] buffers = new int[BUFFER_COUNT];
-  private int bufferIndex;
-  private final int sourceId;
-
-  private float mainVolumeLeft = 0.5f;
-  private float mainVolumeRight = 0.5f;
+  private float playerVolume = 1.0f;
+  private float engineVolumeLeft = 0.5f;
+  private float engineVolumeRight = 0.5f;
   private Fading fading = Fading.NONE;
   private float fadeInVolume;
   private float fadeOutVolumeLeft;
@@ -89,9 +71,10 @@ public final class Sequencer {
 
   private BackgroundMusic backgroundMusic;
   private int samplesToProcess;
-  private boolean playing;
 
   public Sequencer(final int frequency, final boolean stereo, final int voiceCount, final int interpolationBitDepth) {
+    super(8);
+
     if(ACTUAL_SAMPLE_RATE % frequency != 0) {
       throw new IllegalArgumentException("Sample Rate (44_100) is not divisible by frequency");
     }
@@ -112,10 +95,6 @@ public final class Sequencer {
       this.voices[voice] = new Voice(voice, lookupTables, interpolationBitDepth);
     }
 
-    this.sourceId = alGenSources();
-
-    alGenBuffers(this.buffers);
-
     this.addCommandCallback(KeyOn.class, this::keyOn);
     this.addCommandCallback(KeyOff.class, this::keyOff);
     this.addCommandCallback(ModulationChange.class, this::modulation);
@@ -131,6 +110,11 @@ public final class Sequencer {
     this.addCommandCallback(EndOfTrack.class, this::endOfTrack);
   }
 
+  public void setVolume(final float volume) {
+    this.playerVolume = volume;
+  }
+
+  @Override
   public void tick() {
     for(int sample = 0; sample < this.outputBuffer.length; sample += 2) {
       this.clearFinishedVoices();
@@ -158,22 +142,13 @@ public final class Sequencer {
 
       this.reverb.processReverb(this.voiceReverbBuffer[0] / 32_768f, this.voiceReverbBuffer[1] / 32_768f);
 
-      this.outputBuffer[sample] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft() * this.reverbVolumeLeft * 0x8000) * this.mainVolumeLeft), -0x8000, 0x7fff);
-      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + this.reverb.getOutputRight() * this.reverbVolumeRight * 0x8000) * this.mainVolumeRight), -0x8000, 0x7fff);
+      this.outputBuffer[sample    ] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft()  * this.reverbVolumeLeft  * 0x8000) * this.engineVolumeLeft  * this.playerVolume), -0x8000, 0x7fff);
+      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + this.reverb.getOutputRight() * this.reverbVolumeRight * 0x8000) * this.engineVolumeRight * this.playerVolume), -0x8000, 0x7fff);
     }
 
-    this.bufferOutput();
+    this.bufferOutput(AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
 
-    // Restart playback if stopped
-    this.play();
-  }
-
-  public boolean canBuffer() {
-    if(!this.playing) {
-      return false;
-    }
-
-    return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 6;
+    super.tick();
   }
 
   private void clearFinishedVoices() {
@@ -452,50 +427,9 @@ public final class Sequencer {
     }
   }
 
-  public void processBuffers() {
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
-
-    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-      alDeleteBuffers(processedBufferName);
-    }
-
-    alGenBuffers(this.buffers);
-  }
-
-  private void bufferOutput() {
-    final int bufferId = this.buffers[this.bufferIndex++];
-    alBufferData(bufferId, AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
-    alSourceQueueBuffers(this.sourceId, bufferId);
-    this.bufferIndex &= BUFFER_COUNT - 1;
-  }
-
-  private void play() {
-    if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) == AL_PLAYING) {
-      return;
-    }
-
-    alSourcePlay(this.sourceId);
-  }
-
-  public void destroy() {
-    alSourceStop(this.sourceId);
-
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
-
-    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-      alDeleteBuffers(processedBufferName);
-    }
-
-    alDeleteBuffers(this.buffers);
-    alDeleteSources(this.sourceId);
-  }
-
   public void setMainVolume(final int left, final int right) {
-    this.mainVolumeLeft = left >= 0x80 ? 1 : left / 256.0f;
-
-    this.mainVolumeRight = right >= 0x80 ? 1 : right / 256.0f;
+    this.engineVolumeLeft = left >= 0x80 ? 1 : left / 256.0f;
+    this.engineVolumeRight = right >= 0x80 ? 1 : right / 256.0f;
   }
 
   private void handleFadeInOut() {
@@ -513,15 +447,15 @@ public final class Sequencer {
       case FADE_IN -> {
         final float volume = (this.fadeInVolume * this.fadeCounter) / this.fadeTime;
         this.fadeCounter++;
-        this.mainVolumeLeft = volume;
-        this.mainVolumeRight = volume;
+        this.engineVolumeLeft = volume;
+        this.engineVolumeRight = volume;
       }
       case FADE_OUT -> {
         final float volumeLeft = (this.fadeOutVolumeLeft * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
         final float volumeRight = (this.fadeOutVolumeRight * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
         this.fadeCounter++;
-        this.mainVolumeLeft = volumeLeft;
-        this.mainVolumeRight = volumeRight;
+        this.engineVolumeLeft = volumeLeft;
+        this.engineVolumeRight = volumeRight;
       }
     }
   }
@@ -555,15 +489,15 @@ public final class Sequencer {
   }
 
   public void fadeOut(final int time) {
-    if(!this.playing) {
-      this.mainVolumeLeft = 0;
-      this.mainVolumeRight = 0;
+    if(!this.isPlaying()) {
+      this.engineVolumeLeft = 0;
+      this.engineVolumeRight = 0;
       return;
     }
 
     this.fadeTime = time;
-    this.fadeOutVolumeLeft = this.mainVolumeLeft;
-    this.fadeOutVolumeRight = this.mainVolumeRight;
+    this.fadeOutVolumeLeft = this.engineVolumeLeft;
+    this.fadeOutVolumeRight = this.engineVolumeRight;
     this.fadeCounter = 0;
     this.fading = Fading.FADE_OUT;
   }
@@ -582,21 +516,20 @@ public final class Sequencer {
 
   public void unloadMusic() {
     this.stopSequence();
-
     this.backgroundMusic = null;
   }
 
   public void startSequence() {
-    if(!this.playing) {
-      this.playing = true;
+    if(!this.isPlaying()) {
+      this.setPlaying(true);
       this.effectsOverTimeCounter = 0;
       this.samplesToProcess = 0;
     }
   }
 
   public void stopSequence() {
-    this.playing = false;
-    alSourceStop(this.sourceId);
+    this.stop();
+
     this.volumeChanging = false;
     this.volumeChangingTimeRemaining = 0;
     this.volumeChangingTimeTotal = 0;
@@ -663,9 +596,5 @@ public final class Sequencer {
     }
 
     return flags;
-  }
-
-  public boolean isPlaying() {
-    return this.playing;
   }
 }

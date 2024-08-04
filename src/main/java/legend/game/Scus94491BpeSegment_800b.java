@@ -9,9 +9,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
-import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
-import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.submap.SobjPos14;
@@ -90,7 +88,7 @@ public final class Scus94491BpeSegment_800b {
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static int postBattleActionIndex_800bc974;
+  public static int postBattleAction_800bc974;
 
   public static int livingCharCount_800bc97c;
 
@@ -103,8 +101,17 @@ public final class Scus94491BpeSegment_800b {
   public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
-   * Bits:
-   * 0 - MRG @ 62802 - audio
+   * 0x1 - menu sounds
+   * 0x2 - submap sounds
+   * 0x4 - battle cutscene sounds
+   * 0x8 - battle character sounds
+   * 0x10 - battle phase sounds
+   * 0x20 - battle monster sounds
+   * 0x40 - battle DEFF sounds
+   * 0x80 - music
+   * 0x4000 - victory music
+   * 0x8000 - world map destination sounds
+   * 0x10000 - different battle character attack sounds?
    */
   public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 
@@ -115,17 +122,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static int _800bd0f0;
 
-  public static SequenceData124 currentSequenceData_800bd0f8;
-
-  public static int musicFileIndex_800bd0fc;
   /** .8 */
   public static int sssqTempoScale_800bd100;
-  public static int sssqTempo_800bd104;
-  public static int sequenceVolume_800bd108;
 
   public static final Queue<QueuedSound28> queuedSounds_800bd110 = new LinkedList<>();
-  /** NOTE: this used to be an array, but only the 6th element was used */
-  public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
   public static BackgroundMusic victoryMusic;
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
@@ -221,6 +221,8 @@ public final class Scus94491BpeSegment_800b {
   // These are outside of SMAP because they have to persist between engine states
   public static final MV playerPositionBeforeBattle_800bed30 = new MV();
   public static final Vector2f screenOffsetBeforeBattle_800bed50 = new Vector2f();
+
+  public static float rumbleDampener_800bee80;
 
   /**
    * Remains set for the duration of the button press

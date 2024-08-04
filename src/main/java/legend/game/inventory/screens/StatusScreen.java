@@ -19,7 +19,7 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -83,7 +83,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void scroll(final int slot) {
-    playSound(1);
+    playMenuSound(1);
     this.charSlot = slot;
     this.loadingStage = 1;
   }
@@ -128,7 +128,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    playSound(3);
+    playMenuSound(3);
     this.loadingStage = 3;
   }
 

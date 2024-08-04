@@ -6,7 +6,7 @@ import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 
 import static legend.game.SItem.renderCentredText;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -48,7 +48,7 @@ public class Button extends Control {
   }
 
   public void press() {
-    playSound(2);
+    playMenuSound(2);
 
     if(this.pressedHandler != null) {
       this.pressedHandler.pressed();

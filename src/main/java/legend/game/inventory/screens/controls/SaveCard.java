@@ -5,7 +5,6 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
-import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
 
@@ -46,10 +45,10 @@ public class SaveCard extends Control {
 
     if(saveData != null && saveData.isValid()) {
       this.invalidSave.setVisibility(false);
-      this.dragoonSpirits.setSpirits(saveData.state().goods_19c[0]);
+      this.dragoonSpirits.setSpirits(saveData.state.goods_19c[0]);
 
       for(int i = 0; i < 3; i++) {
-        this.portraits[i].setCharId(saveData.state().charIds_88[i]);
+        this.portraits[i].setCharId(saveData.state.charIds_88[i]);
       }
     } else {
       this.invalidSave.setVisibility(saveData != null);
@@ -67,10 +66,10 @@ public class SaveCard extends Control {
     if(this.saveData != null) {
       if(this.saveData.isValid()) {
         final String[] locationNames;
-        if(this.saveData.locationType() == 1) {
+        if(this.saveData.locationType == 1) {
           //LAB_80108b5c
           locationNames = worldMapNames_8011c1ec;
-        } else if(this.saveData.locationType() == 3) {
+        } else if(this.saveData.locationType == 3) {
           //LAB_80108b78
           locationNames = chapterNames_80114248;
         } else {
@@ -79,9 +78,9 @@ public class SaveCard extends Control {
         }
 
         //LAB_80108ba0
-        renderCentredText(locationNames[this.saveData.locationIndex()], x + 258, y + 47, TextColour.BROWN); // Location text
+        renderCentredText(locationNames[this.saveData.locationIndex], x + 258, y + 47, TextColour.BROWN); // Location text
 
-        final GameState52c state = this.saveData.state();
+        final GameState52c state = this.saveData.state;
 
         int firstCharId = 0;
         for(int i = 0; i < state.charIds_88.length; i++) {
@@ -95,7 +94,7 @@ public class SaveCard extends Control {
         this.renderNumber(224, y + 6, char0.level_12, 2); // Level
         this.renderNumber(269, y + 6, char0.dlevel_13, 2); // Dragoon level
         this.renderNumber(302, y + 6, char0.hp_08, 4); // Current HP
-        this.renderNumber(332, y + 6, this.saveData.maxHp(), 4); // Max HP
+        this.renderNumber(332, y + 6, this.saveData.maxHp, 4); // Max HP
         this.renderNumber(245, y + 17, state.gold_94, 8); // Gold
         this.renderNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 3); // Time played hour
         this.renderCharacter(324, y + 17, 10); // Hour-minute colon

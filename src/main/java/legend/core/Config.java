@@ -27,6 +27,7 @@ public final class Config {
   public static final Vector3f defaultUiColour = new Vector3f(0.0f, 0x29 / 255.0f, 0x9f / 255.0f);
 
   static {
+    properties.setProperty("low_memory_unpacker", "false");
     properties.setProperty("window_width", "640");
     properties.setProperty("window_height", "480");
     properties.setProperty("unlock_party", "false");
@@ -74,6 +75,14 @@ public final class Config {
   }
 
   private static int gameSpeedMultiplier = 1;
+
+  public static boolean lowMemoryUnpacker() {
+    return readBool("low_memory_unpacker", false);
+  }
+
+  public static void enableLowMemoryUnpacker() {
+    properties.setProperty("low_memory_unpacker", "true");
+  }
 
   public static int windowWidth() {
     return readInt("window_width", 640, 1, Integer.MAX_VALUE);

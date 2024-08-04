@@ -49,7 +49,7 @@ public class UvAdjustmentMetrics14 {
 
     this.index = index;
     this.clutMaskOr_00 = clut << 16;
-    this.clutMaskAnd_04 = 0x3c0ffff;
+    this.clutMaskAnd_04 = 0x3c3ffff;
     this.tpageMaskOr_08 = tpage << 16;
     this.tpageMaskAnd_0c = 0xffe0ffff;
     this.uvOffset_10 = uv;

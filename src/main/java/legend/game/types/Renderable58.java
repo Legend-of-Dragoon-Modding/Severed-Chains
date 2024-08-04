@@ -36,6 +36,7 @@ public class Renderable58 {
   public Renderable58 child_50;
   public Renderable58 parent_54;
 
+  public int widthCut;
   public int heightCut;
 
   public int baseX;

@@ -11,6 +11,10 @@ public class ThunderElement extends Element {
 
   @Override
   public int adjustAttackingElementalDamage(final AttackType attackType, final int damage, final Element targetElement) {
+    if(targetElement == this) {
+      return damage * 50 / 100;
+    }
+
     return damage;
   }
 

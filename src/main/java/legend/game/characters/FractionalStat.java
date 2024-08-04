@@ -40,7 +40,7 @@ public class FractionalStat extends Stat {
   public int getMax() {
     int value = this.getMaxRaw();
 
-    for(final StatMod mod : this.mods) {
+    for(final StatMod mod : this.mods.values()) {
       value += mod.apply(this.stats, this.type);
     }
 

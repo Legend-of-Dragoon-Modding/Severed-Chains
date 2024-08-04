@@ -3,12 +3,13 @@ package legend.game.modding.coremod.config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.game.inventory.screens.controls.NumberSpinner;
+import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
 public class InventorySizeConfigEntry extends ConfigEntry<Integer> {
   public InventorySizeConfigEntry() {
-    super(32, ConfigStorageLocation.CAMPAIGN, InventorySizeConfigEntry::serializer, InventorySizeConfigEntry::deserializer);
+    super(32, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY, InventorySizeConfigEntry::serializer, InventorySizeConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
       final NumberSpinner<Integer> spinner = NumberSpinner.intSpinner(number, 1, 9999);

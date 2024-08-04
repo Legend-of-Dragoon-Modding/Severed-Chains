@@ -29,6 +29,7 @@ public class LegacyTextBuilder {
     vertices[offset++] = x;
     vertices[offset++] = y;
     vertices[offset++] = 0.0f;
+    vertices[offset++] = 0.0f; // Vertex index, only used for VDF
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
@@ -70,10 +71,10 @@ public class LegacyTextBuilder {
 
     final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, CHAR_COUNT * 4);
 
-    mesh.attribute(0, 0L, 3, vertexSize);
+    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
     int meshIndex = 1;
-    int meshOffset = 3;
+    int meshOffset = POS_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
     meshIndex++;

@@ -2,12 +2,13 @@ package legend.game.modding.coremod.config;
 
 import legend.core.IoHelper;
 import legend.game.inventory.screens.controls.NumberSpinner;
+import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
 public class ControllerDeadzoneConfigEntry extends ConfigEntry<Float> {
   public ControllerDeadzoneConfigEntry() {
-    super(0.3f, ConfigStorageLocation.GLOBAL, ControllerDeadzoneConfigEntry::serializer, ControllerDeadzoneConfigEntry::deserializer);
+    super(0.3f, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, ControllerDeadzoneConfigEntry::serializer, ControllerDeadzoneConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
       final NumberSpinner<Float> spinner = NumberSpinner.floatSpinner(number, 0.05f, 0.0f, 0.95f);

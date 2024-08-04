@@ -10,14 +10,21 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.TransformationMode;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
+import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
+import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
+import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class GameVarParam extends Param {
@@ -73,7 +80,7 @@ public class GameVarParam extends Param {
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0);
       case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc != null ? ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc.index : -1;
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8;
-      case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748;
+      case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4;
@@ -83,10 +90,10 @@ public class GameVarParam extends Param {
       case 51 -> battleState_8006e398.getAlivePlayerCount();
       case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] != null ? battleState_8006e398.aliveMonsterBents_ebc[0].index : -1;
       case 53 -> battleState_8006e398.getAliveMonsterCount();
-      case 54 -> battleState_8006e398._ef0;
+      case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
-      case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
+      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -112,12 +119,12 @@ public class GameVarParam extends Param {
       case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0;
       case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710;
       case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780;
-      case 87 -> ((Battle)currentEngineState_8004dd04)._800c66a8;
-      case 88 -> ((Battle)currentEngineState_8004dd04)._800c6700;
-      case 89 -> ((Battle)currentEngineState_8004dd04)._800c6704;
+      case 87 -> ((Battle)currentEngineState_8004dd04).battleInitialCameraMovementFinished_800c66a8 ? 1 : 0;
+      case 88 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6700;
+      case 89 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6704;
       case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0;
 
-      case 96 -> ((Battle)currentEngineState_8004dd04)._800c6754;
+      case 96 -> ((Battle)currentEngineState_8004dd04).shouldRenderStage_800c6754 ? 1 : 0;
       case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4;
 
       case 104 -> ((Battle)currentEngineState_8004dd04).shouldRenderMcq_800c6764 ? 1 : 0;
@@ -200,10 +207,23 @@ public class GameVarParam extends Param {
 //      case 37 -> battleState_8006e398.monsterCount_800c6768 = val;
       case 38 -> CONFIG.setConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.values()[val]);
       case 39 -> battleState_8006e398.battlePhase_eec = val;
-      case 40, 41 -> throw new RuntimeException("Not supported"); // Dropped item list size, dropped item 0
+      case 40 -> {
+        // When given items on submaps (Sapphire Pin from Dabas, Psych Bomb from Savan), if you have a full inventory it'll
+        // set the dropped items to 1, add the item to the drops list, and open the "Too Many Items" screen. We ignore the
+        // size and simply add the drop to the list if var[41] is set.
+      }
+      case 41 -> {
+        final InventoryEntry invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(val)).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(val - 192)).get();
+
+        if(invEntry instanceof final Equipment equipment) {
+          equipmentOverflow.add(equipment);
+        } else if(invEntry instanceof final Item item) {
+          itemOverflow.add(item);
+        }
+      }
       case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8 = val;
-      case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748 = val;
+      case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4 = val;
@@ -213,10 +233,10 @@ public class GameVarParam extends Param {
 //      case 51 -> battleState_8006e398.alivePlayerCount_800c6760 = val;
       case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
 //      case 53 -> battleState_8006e398.aliveMonsterCount_800c6758 = val;
-      case 54 -> battleState_8006e398._ef0 = val;
+      case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
-      case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974 = val;
+      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = val;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920 = val;
@@ -242,12 +262,12 @@ public class GameVarParam extends Param {
       case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0 = val;
       case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710 = val;
       case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780 = val;
-      case 87 -> ((Battle)currentEngineState_8004dd04)._800c66a8 = val;
-      case 88 -> ((Battle)currentEngineState_8004dd04)._800c6700 = val;
-      case 89 -> ((Battle)currentEngineState_8004dd04)._800c6704 = val;
+      case 87 -> ((Battle)currentEngineState_8004dd04).battleInitialCameraMovementFinished_800c66a8 = val != 0;
+      case 88 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6700 = val;
+      case 89 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6704 = val;
       case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0 = val;
 
-      case 96 -> ((Battle)currentEngineState_8004dd04)._800c6754 = val;
+      case 96 -> ((Battle)currentEngineState_8004dd04).shouldRenderStage_800c6754 = val != 0;
       case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4 = val;
 
       case 104 -> ((Battle)currentEngineState_8004dd04).shouldRenderMcq_800c6764 = val != 0;

@@ -18,7 +18,7 @@ import static legend.game.combat.SEffe.FUN_800cfb14;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class RadialGradientEffect14 implements Effect {
+public class RadialGradientEffect14 implements Effect<EffectManagerParams.RadialGradientType> {
   private final int circleSubdivisionModifier_00;
   private final float scaleModifier_01;
 
@@ -116,8 +116,15 @@ public class RadialGradientEffect14 implements Effect {
     //LAB_800d2460
   }
 
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.RadialGradientType>> state) {
+
+  }
+
+  @Override
   @Method(0x800d247cL)
-  public void renderRadialGradientEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.RadialGradientType>> state, final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager) {
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.RadialGradientType>> state) {
+    final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager = state.innerStruct_00;
     this.angleStep_08 = 0x1000 / (0x4 << this.circleSubdivisionModifier_00);
 
     final Vector2f screenVert0 = new Vector2f();
@@ -160,5 +167,10 @@ public class RadialGradientEffect14 implements Effect {
     }
 
     //LAB_800d2710
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.RadialGradientType>> state) {
+
   }
 }

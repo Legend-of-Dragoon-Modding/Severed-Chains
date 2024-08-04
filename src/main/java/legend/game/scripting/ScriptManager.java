@@ -32,7 +32,8 @@ public class ScriptManager {
   /** Accumulates joypad repeat on script engine off frames */
   public int joypadRepeat;
 
-  public void tick() {
+  public boolean tick() {
+    boolean ticked = false;
     this.joypadInput |= input_800bee90;
     this.joypadPress |= press_800bee94;
     this.joypadRepeat |= repeat_800bee98;
@@ -43,13 +44,16 @@ public class ScriptManager {
       this.joypadInput = 0;
       this.joypadPress = 0;
       this.joypadRepeat = 0;
+
+      ticked = true;
     }
 
-    this.executeScriptTickers();
+    this.executeScriptTickers(ticked);
     this.upperBound = 9;
-    this.executeScriptRenderers();
+    this.executeScriptRenderers(ticked);
 
     this.currentTicks = (this.currentTicks + 1) % this.framesPerTick;
+    return ticked;
   }
 
   /** When running at higher frame rates, the number of frames to wait before ticking the script engine */
@@ -139,10 +143,10 @@ public class ScriptManager {
   }
 
   public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
-    return this.allocateScriptState(this.findFreeScriptState(), name, 0, type);
+    return this.allocateScriptState(this.findFreeScriptState(), name, type);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final int index, final String name, final int a4, @Nullable final T type) {
+  public <T> ScriptState<T> allocateScriptState(final int index, final String name, @Nullable final T type) {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, name);
 
     final ScriptState<T> scriptState = new ScriptState<>(this, index, name, type);
@@ -155,10 +159,6 @@ public class ScriptManager {
 
     scriptState.storage_44[0] = index;
     scriptState.storage_44[7] = 0x80f_0000;
-
-    //LAB_800159f8
-    //LAB_80015a14
-    scriptState.ui_fc = a4;
 
     EVENTS.postEvent(new ScriptAllocatedEvent(index));
 
@@ -213,7 +213,7 @@ public class ScriptManager {
     //LAB_80016624
   }
 
-  private void executeScriptTickers() {
+  private void executeScriptTickers(final boolean isScriptFrame) {
     if(this.paused || this.stopped) {
       return;
     }
@@ -221,7 +221,9 @@ public class ScriptManager {
     //LAB_80017750
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null) {
+      // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
+      // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tick();
       }
     }
@@ -229,13 +231,13 @@ public class ScriptManager {
     //LAB_800177ac
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null) {
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tempTick();
       }
     }
   }
 
-  private void executeScriptRenderers() {
+  private void executeScriptRenderers(final boolean isScriptFrame) {
     if(this.stopped) {
       return;
     }
@@ -243,7 +245,9 @@ public class ScriptManager {
     //LAB_80017854
     for(int i = 0; i < 72; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null) {
+      // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
+      // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.render();
       }
     }

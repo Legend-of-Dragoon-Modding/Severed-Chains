@@ -1,8 +1,10 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.gpu.GpuCommandPoly;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Math;
@@ -10,14 +12,16 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
-public class AdditionStarburstEffect10 implements Effect {
+public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.VoidType> {
   private static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {
     new Vector3i(360, 210, 210),
     new Vector3i(210,  60, 210),
@@ -31,6 +35,7 @@ public class AdditionStarburstEffect10 implements Effect {
     new Vector3f(0, MathHelper.psxDegToRad(16), 0),
   };
 
+  private final int type;
   private final int parentIndex_00;
   /** ushort */
   private final int rayCount_04;
@@ -44,14 +49,17 @@ public class AdditionStarburstEffect10 implements Effect {
    *   <li>{@link #renderAdditionCompletedStarburst}</li>
    * </ol>
    */
-  public final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
+  public final Consumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>>[] additionStarburstRenderers_800c6dc4 = new Consumer[3];
   {
     this.additionStarburstRenderers_800c6dc4[0] = this::renderAdditionHitStarburst;
     this.additionStarburstRenderers_800c6dc4[1] = this::renderAdditionCompletedStarburst;
     this.additionStarburstRenderers_800c6dc4[2] = this::renderAdditionCompletedStarburst;
   }
 
-  public AdditionStarburstEffect10(final int parentIndex, final int rayCount) {
+  private final MV transforms = new MV();
+
+  public AdditionStarburstEffect10(final int type, final int parentIndex, final int rayCount) {
+    this.type = type;
     this.parentIndex_00 = parentIndex;
     this.rayCount_04 = rayCount;
     this.rayArray_0c = new AdditionStarburstEffectRay10[rayCount];
@@ -60,6 +68,21 @@ public class AdditionStarburstEffect10 implements Effect {
     for(int rayNum = 0; rayNum < rayCount; rayNum++) {
       this.rayArray_0c[rayNum] = new AdditionStarburstEffectRay10(seed_800fa754.nextFloat(MathHelper.TWO_PI), (short)(seed_800fa754.nextInt(31)), (short)(seed_800fa754.nextInt(21) + 10), MathHelper.psxDegToRad(seed_800fa754.nextInt(11) - 5));
     }
+  }
+
+  @Override
+  public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
+  }
+
+  @Override
+  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    this.additionStarburstRenderers_800c6dc4[this.type].accept(state);
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+
   }
 
   /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
@@ -79,13 +102,16 @@ public class AdditionStarburstEffect10 implements Effect {
   }
 
   @Method(0x800d1220L)
-  public void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
+  public void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     final float[] baseAngle = {MathHelper.psxDegToRad(-16), MathHelper.psxDegToRad(16)};
-    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
+
+    final PolyBuilder builder = new PolyBuilder("Addition starburst", GL_TRIANGLES)
+      .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d128c
-    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
-      final AdditionStarburstEffectRay10 ray = starburstEffect.rayArray_0c[rayNum];
+    for(int rayNum = 0; rayNum < this.rayCount_04; rayNum++) {
+      final AdditionStarburstEffectRay10 ray = this.rayArray_0c[rayNum];
 
       //LAB_800d12a4
       for(int i = 0; i < 2; i++) {
@@ -118,46 +144,55 @@ public class AdditionStarburstEffect10 implements Effect {
         final float y1 = sin2 * translationScale;
 
         final Vector2f translation = new Vector2f();
-        this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+        this.modifyAdditionStarburstTranslation(manager, this, translation);
         x2 += translation.x;
         y2 += translation.y;
         x3 += translation.x;
         y3 += translation.y;
 
-        GPU.queueCommand(30, new GpuCommandPoly(4)
-          .translucent(Translucency.B_PLUS_F)
-          .monochrome(0, 0)
-          .rgb(1, manager.params_10.colour_1c)
-          .monochrome(2, 0)
-          .rgb(3, 0)
-          .pos(0, x0, y0)
-          .pos(1, x1, y1)
-          .pos(2, x2, y2)
-          .pos(3, x3, y3)
-        );
+        builder
+          .addVertex(x0, y0, 0.0f)
+          .monochrome(0.0f)
+          .addVertex(x1, y1, 0.0f)
+          .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
+          .addVertex(x2, y2, 0.0f)
+          .monochrome(0.0f)
+          .addVertex(x1, y1, 0.0f)
+          .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
+          .addVertex(x2, y2, 0.0f)
+          .monochrome(0.0f)
+          .addVertex(x3, y3, 0.0f)
+          .monochrome(0.0f);
       }
-      //LAB_800d1538
     }
-    //LAB_800d1558
+
+    final Obj obj = builder.build();
+    obj.delete();
+
+    this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
+    RENDERER.queueOrthoModel(obj, this.transforms);
   }
 
   @Method(0x800d15d8L)
-  public void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
+  public void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     final float[] xArray = new float[3];
     final float[] yArray = new float[3];
 
+    final PolyBuilder builder = new PolyBuilder("Addition completed starburst", GL_TRIANGLES)
+      .translucency(Translucency.B_PLUS_F);
+
     //LAB_800d16fc
-    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
-      final AdditionStarburstEffectRay10 ray = starburstEffect.rayArray_0c[rayNum];
+    for(int rayNum = 0; rayNum < this.rayCount_04; rayNum++) {
+      final AdditionStarburstEffectRay10 ray = this.rayArray_0c[rayNum];
 
       ray.endpointTranslationMagnitude_06 += ray.endpointTranslationMagnitudeVelocity_08;
 
       //LAB_800d1728
       for(int i = 0; i < 4; i++) {
         final Vector2f translation = new Vector2f();
-        this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+        this.modifyAdditionStarburstTranslation(manager, this, translation);
 
         //LAB_800d174c
         for(int j = 0; j < 3; j++) {
@@ -171,18 +206,20 @@ public class AdditionStarburstEffect10 implements Effect {
           yArray[j] = sin * translationScale + translation.y;
         }
 
-        GPU.queueCommand(30, new GpuCommandPoly(3)
-          .translucent(Translucency.B_PLUS_F)
-          .monochrome(0, 0)
-          .monochrome(1, 0)
-          .rgb(2, manager.params_10.colour_1c)
-          .pos(0, xArray[0], yArray[0])
-          .pos(1, xArray[1], yArray[1])
-          .pos(2, xArray[2], yArray[2])
-        );
+        builder
+          .addVertex(xArray[0], yArray[0], 0.0f)
+          .monochrome(0.0f)
+          .addVertex(xArray[1], yArray[1], 0.0f)
+          .monochrome(0.0f)
+          .addVertex(xArray[2], yArray[2], 0.0f)
+          .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f);
       }
-      //LAB_800d190c
     }
-    //LAB_800d1940
+
+    final Obj obj = builder.build();
+    obj.delete();
+
+    this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
+    RENDERER.queueOrthoModel(obj, this.transforms);
   }
 }

@@ -50,7 +50,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
+import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -74,7 +74,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -270,7 +269,7 @@ public class RetailSubmap extends Submap {
   public void startMusic() {
     final int musicIndex = this.getSubmapMusicChange();
     if(musicIndex == -1) {
-      FUN_8001ae90();
+      stopCurrentMusicSequence();
       musicLoaded_800bd782 = true;
     } else if(musicIndex == -2) {
       startCurrentMusicSequence();
@@ -1327,7 +1326,7 @@ public class RetailSubmap extends Submap {
   @Method(0x8001b3e4L)
   private int getSoundCharId() {
     if(soundFiles_800bcf80[11].used_00) {
-      return soundFiles_800bcf80[11].charId_02;
+      return soundFiles_800bcf80[11].id_02;
     }
 
     //LAB_8001b408
@@ -1402,7 +1401,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(currentSequenceData_800bd0f8 == null || !currentSequenceData_800bd0f8.musicPlaying_028) {
+    if(AUDIO_THREAD.isMusicPlaying()) {
       return -2;
     }
 

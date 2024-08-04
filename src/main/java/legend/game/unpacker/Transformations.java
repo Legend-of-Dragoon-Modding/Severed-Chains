@@ -1,17 +1,16 @@
 package legend.game.unpacker;
 
 import java.util.Queue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Transformations {
   private final PathNode root;
   private final Queue<PathNode> transformationQueue;
-  private final AtomicInteger remaining = new AtomicInteger();
+  private int remaining;
 
   public Transformations(final PathNode root, final Queue<PathNode> transformationQueue) {
     this.root = root;
     this.transformationQueue = transformationQueue;
-    this.remaining.set(transformationQueue.size());
+    this.remaining = transformationQueue.size();
   }
 
   public PathNode poll() {
@@ -21,15 +20,21 @@ public class Transformations {
   }
 
   public int getRemaining() {
-    return this.remaining.get();
+    synchronized(this.transformationQueue) {
+      return this.remaining;
+    }
   }
 
   public void decrementRemaining() {
-    this.remaining.decrementAndGet();
+    synchronized(this.transformationQueue) {
+      this.remaining--;
+    }
   }
 
   public boolean isEmpty() {
-    return this.remaining.get() == 0;
+    synchronized(this.transformationQueue) {
+      return this.remaining == 0;
+    }
   }
 
   public void addNode(final PathNode node) {
@@ -37,9 +42,9 @@ public class Transformations {
   }
 
   public void addNode(final String fullPath, final FileData data) {
-    this.remaining.incrementAndGet();
-
     synchronized(this.transformationQueue) {
+      this.remaining++;
+
       final PathNode node = this.insert(fullPath, data);
       this.transformationQueue.add(node);
     }
@@ -50,19 +55,12 @@ public class Transformations {
   }
 
   public PathNode addChild(final PathNode parent, final String pathSegment, final FileData data) {
-    this.remaining.incrementAndGet();
-
     synchronized(this.transformationQueue) {
+      this.remaining++;
+
       final PathNode node = this.insert(parent.fullPath + '/' + pathSegment, data);
       this.transformationQueue.add(node);
       return node;
-    }
-  }
-
-  /** File will not be placed into the transformation queue */
-  public void addUntransformableChild(final PathNode parent, final String pathSegment, final FileData data) {
-    synchronized(this.transformationQueue) {
-      this.insert(parent.fullPath + '/' + pathSegment, data);
     }
   }
 
