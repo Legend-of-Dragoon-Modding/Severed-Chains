@@ -71,9 +71,9 @@ public class ScriptPatcher {
 
       if(cachedPatch == null || crc32(this.cacheDir.resolve(cachedPatch.patchFile)) != crc32(this.patchesDir.resolve(patch.patchFile))) {
         LOGGER.info("Patching %s...", patch.sourceFile);
-        try{
+        try {
           this.patchFile(patch);
-        }catch(final PatchFailedException error){
+        } catch(final PatchFailedException error) {
           throw new Exception("Patch failed for script: " + patch.patchFile, error);
         }
         changed = true;
