@@ -74,9 +74,9 @@ public class ScriptPatcher {
 
       if(cachedPatch == null || crc32(this.cacheDir.resolve(cachedPatch.patchFile)) != crc32(this.patchesDir.resolve(patch.patchFile))) {
         LOGGER.info("Patching %s...", patch.sourceFile);
-        try{
+        try {
           this.patchFile(patch);
-        }catch(final PatchFailedException error){
+        } catch(final PatchFailedException error) {
           LOGGER.error("Patch failed for script: %s", patch.patchFile);
           failedPatches.add(patch);
         }
@@ -98,18 +98,18 @@ public class ScriptPatcher {
       FileUtils.copyDirectory(this.patchesDir.toFile(), this.cacheDir.toFile());
     }
 
-    if(!failedPatches.isEmpty()){
+    if(!failedPatches.isEmpty()) {
       final Path scriptsPath = this.cacheDir.resolve("scripts.csv");
       final List<String> lines = Files.readAllLines(scriptsPath);
 
       final Iterator<String> lineIterator = lines.iterator();
-      while (lineIterator.hasNext()) {
+      while(lineIterator.hasNext()) {
         final String line = lineIterator.next();
         final Iterator<ScriptPatch> patchIterator = failedPatches.iterator();
-        while (patchIterator.hasNext()) {
+        while(patchIterator.hasNext()) {
           final ScriptPatch patch = patchIterator.next();
           final String targetText = patch.sourceFile + ',' + patch.patchFile;
-          if (Objects.equals(line, targetText)) {
+          if(Objects.equals(line, targetText)) {
             patchIterator.remove();
             lineIterator.remove();
             break;
@@ -141,24 +141,20 @@ public class ScriptPatcher {
 
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
-  private void restoreAllFiles(final List<ScriptPatch> successfulPatches) throws IOException{
-    for(final ScriptPatch patch : successfulPatches){
-      this.backupFile(patch.sourceFile);
-    }
-  }
+
   private void backupFile(final String scriptPath) throws IOException {
     final Path sourcePath = this.filesDir.resolve(scriptPath);
     final Path destPath = this.cacheDir.resolve("backups").resolve(scriptPath);
     if(!Files.exists(destPath.getParent())) {
       Files.createDirectories(destPath.getParent());
     }
-    Files.copy(sourcePath,destPath);
+    Files.copy(sourcePath, destPath);
   }
 
   private void restoreFile(final ScriptPatch cachedPatch) throws IOException {
     final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
     final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
-    Files.move(backupPath,sourcePath,StandardCopyOption.REPLACE_EXISTING);
+    Files.move(backupPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
 
     Path currentPath = backupPath.getParent();
     while(!currentPath.equals(this.cacheDir.resolve("backups"))) {
