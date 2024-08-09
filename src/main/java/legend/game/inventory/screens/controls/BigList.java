@@ -236,6 +236,80 @@ public class BigList<T> extends Control {
           return InputPropagation.HANDLED;
         }
       }
+
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        playMenuSound(1);
+        if(this.scroll == 0) {
+          this.slot = 0;
+        } else {
+          this.slot = this.scroll;
+        }
+        this.highlight(this.slot);
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        if(this.visibleEntries() >= MAX_VISIBLE_ENTRIES) {
+          if(this.scroll == 0) {
+            playMenuSound(1);
+            this.slot = MAX_VISIBLE_ENTRIES - 1;
+          } else {
+            playMenuSound(1);
+            this.slot = this.scroll + MAX_VISIBLE_ENTRIES - 1;
+          }
+          this.highlight(this.slot);
+          return InputPropagation.HANDLED;
+        }
+
+        playMenuSound(1);
+        this.slot = this.entries.size() - 1;
+        this.highlight(this.slot);
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_1 -> {
+        if(this.entries.size() > MAX_VISIBLE_ENTRIES) {
+          if(this.slot - MAX_VISIBLE_ENTRIES > 0) {
+            playMenuSound(1);
+            this.slot -= MAX_VISIBLE_ENTRIES;
+            this.scroll = Math.max(0, this.slot - MAX_VISIBLE_ENTRIES);
+            this.updateEntries();
+            this.highlight(this.slot);
+            return InputPropagation.HANDLED;
+          }
+
+          if(this.slot != 0) {
+            playMenuSound(1);
+            this.slot = 0;
+            this.scroll = 0;
+            this.updateEntries();
+            this.highlight(this.slot);
+            return InputPropagation.HANDLED;
+          }
+        }
+      }
+
+      case BUTTON_SHOULDER_RIGHT_2 -> {
+        if(this.entries.size() > MAX_VISIBLE_ENTRIES) {
+          if(this.slot + MAX_VISIBLE_ENTRIES < this.entries.size()) {
+            playMenuSound(1);
+            this.slot += MAX_VISIBLE_ENTRIES;
+            this.scroll = this.slot - MAX_VISIBLE_ENTRIES + 1;
+            this.updateEntries();
+            this.highlight(this.slot);
+            return InputPropagation.HANDLED;
+          }
+
+          if(this.slot != this.entries.size() - 1) {
+            playMenuSound(1);
+            this.slot = this.entries.size() - 1;
+            this.scroll = this.entries.size() - MAX_VISIBLE_ENTRIES;
+            this.updateEntries();
+            this.highlight(this.slot);
+            return InputPropagation.HANDLED;
+          }
+        }
+      }
     }
 
     return InputPropagation.PROPAGATE;

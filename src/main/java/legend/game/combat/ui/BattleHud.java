@@ -49,6 +49,7 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -2362,6 +2363,36 @@ public class BattleHud {
           }
         }
 
+        // Dragoon
+        if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_UP))) {
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[4]) ? iconFlags_800c7194[4] : 0;
+          this.checkInvalidSelectedAction(selectedAction);
+        }
+
+        // Special
+        if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_DOWN))) {
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[7]) ? iconFlags_800c7194[7] : 0;
+          this.checkInvalidSelectedAction(selectedAction);
+        }
+
+        // Escape
+        if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_LEFT_1))) {
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[3]) ? iconFlags_800c7194[3] : 0;
+          this.checkInvalidSelectedAction(selectedAction);
+        }
+
+        // Guard
+        if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_RIGHT_1))) {
+          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[1]) ? iconFlags_800c7194[1] : 0;
+          this.checkInvalidSelectedAction(selectedAction);
+        }
+
+        // Item Menu | Dragoon Spells
+        if(Input.pressedThisFrame((InputAction.BUTTON_WEST))) {
+          selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(iconFlags_800c7194[2], iconFlags_800c7194[6]);
+          this.checkInvalidSelectedAction(selectedAction);
+        }
+
         // Input for pressing X on menu bar
         //LAB_800f671c
         if((press_800bee94 & 0x20) != 0) {
@@ -2475,6 +2506,12 @@ public class BattleHud {
 
     //LAB_800f6aec
     return selectedAction;
+  }
+
+  private void checkInvalidSelectedAction(final int selectedAction) {
+    if(selectedAction == 0) {
+      playMenuSound(40);
+    }
   }
 
   @Method(0x800f6b04L)

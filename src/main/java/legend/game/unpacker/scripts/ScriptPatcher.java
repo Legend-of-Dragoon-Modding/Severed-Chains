@@ -74,7 +74,8 @@ public class ScriptPatcher {
         try {
           this.patchFile(patch);
         } catch(final PatchFailedException error) {
-          throw new Exception("Patch failed for script: " + patch.patchFile, error);
+          LOGGER.error("Patch failed for script: %s", patch.patchFile);
+          throw error;
         }
         changed = true;
       }
@@ -122,13 +123,13 @@ public class ScriptPatcher {
     if(!Files.exists(destPath.getParent())) {
       Files.createDirectories(destPath.getParent());
     }
-    Files.copy(sourcePath,destPath);
+    Files.copy(sourcePath, destPath);
   }
 
   private void restoreFile(final ScriptPatch cachedPatch) throws IOException {
     final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
     final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
-    Files.move(backupPath,sourcePath,StandardCopyOption.REPLACE_EXISTING);
+    Files.move(backupPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
 
     Path currentPath = backupPath.getParent();
     while(!currentPath.equals(this.cacheDir.resolve("backups"))) {

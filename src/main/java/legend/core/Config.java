@@ -75,6 +75,7 @@ public final class Config {
   }
 
   private static int gameSpeedMultiplier = 1;
+  private static int loadedGameSpeedMultiplier = 1;
 
   public static boolean lowMemoryUnpacker() {
     return readBool("low_memory_unpacker", false);
@@ -135,6 +136,14 @@ public final class Config {
   public static void setGameSpeedMultiplier(final int multiplier) {
     gameSpeedMultiplier = multiplier;
     properties.setProperty("game_speed_multiplier", String.valueOf(multiplier));
+  }
+
+  public static int getLoadedGameSpeedMultiplier() {
+    return loadedGameSpeedMultiplier;
+  }
+
+  public static void setLoadedGameSpeedMultiplier(final int multiplier) {
+    loadedGameSpeedMultiplier = multiplier;
   }
 
   public static Vector3f getBattleRgb() {
@@ -301,6 +310,7 @@ public final class Config {
   public static void load() throws IOException {
     properties.load(Files.newInputStream(path, StandardOpenOption.READ));
     gameSpeedMultiplier = readInt("game_speed_multiplier", 1, 1, 16);
+    loadedGameSpeedMultiplier = gameSpeedMultiplier;
   }
 
   public static void save() throws IOException {
