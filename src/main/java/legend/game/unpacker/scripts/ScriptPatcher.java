@@ -59,7 +59,7 @@ public class ScriptPatcher {
     }
   }
 
-  public void apply() throws Exception {
+  public void apply() throws IOException, PatchFailedException {
     LOGGER.info("Applying script patches");
 
     final ScriptPatchList cacheList = this.loadPatchList(this.cacheDir.resolve("scripts.csv"));
