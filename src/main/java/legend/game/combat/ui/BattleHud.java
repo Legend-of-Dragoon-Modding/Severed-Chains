@@ -2365,31 +2365,31 @@ public class BattleHud {
           }
         }
 
+        // Dragoon
         if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_UP))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[4]) ? iconFlags_800c7194[4] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
+        // Special
         if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_DOWN))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[7]) ? iconFlags_800c7194[7] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
-        if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_RIGHT))) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[6]) ? iconFlags_800c7194[2] : iconFlags_800c7194[6];
-          playSound(0, 40, 0, 0, (short)0, (short)0);
-        }
-
+        // Escape
         if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_LEFT_1))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[3]) ? iconFlags_800c7194[3] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
+        // Guard
         if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_RIGHT_1))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[1]) ? iconFlags_800c7194[1] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
+        // Item Menu | Dragoon Spells
         if(Input.pressedThisFrame((InputAction.BUTTON_WEST))) {
           selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(iconFlags_800c7194[2], iconFlags_800c7194[6]);
           this.checkInvalidSelectedAction(selectedAction);
