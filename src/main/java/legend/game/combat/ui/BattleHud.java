@@ -49,6 +49,7 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -2509,7 +2510,7 @@ public class BattleHud {
 
   private void checkInvalidSelectedAction(final int selectedAction) {
     if(selectedAction == 0) {
-      playSound(0, 40, 0, 0, (short)0, (short)0);
+      playMenuSound(40);
     }
   }
 
