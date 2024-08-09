@@ -45,29 +45,27 @@ public abstract class AudioSource {
       return false;
     }
 
-    return this.bufferIndex >= 0;
+    synchronized(this) {
+      return this.bufferIndex >= 0;
+    }
   }
 
-  public void processBuffers() {
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+  public void handleProcessedBuffers() {
+    synchronized(this) {
+      final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 
-    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-
-      synchronized(this) {
-        this.buffers[++this.bufferIndex] = processedBufferName;
+      for(int buffer = 0; buffer < processedBufferCount; buffer++) {
+        this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
       }
     }
   }
 
   protected void bufferOutput(final int format, final short[] buffer, final int sampleRate) {
-    final int bufferId;
     synchronized(this) {
-      bufferId = this.buffers[this.bufferIndex--];
+      final int bufferId = this.buffers[this.bufferIndex--];
+      alBufferData(bufferId, format, buffer, sampleRate);
+      alSourceQueueBuffers(this.sourceId, bufferId);
     }
-
-    alBufferData(bufferId, format, buffer, sampleRate);
-    alSourceQueueBuffers(this.sourceId, bufferId);
   }
 
   protected void play() {
