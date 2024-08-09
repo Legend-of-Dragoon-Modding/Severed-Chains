@@ -419,6 +419,44 @@ public class UseItemScreen extends MenuScreen {
     }
   }
 
+  private void menuStage2NavigateTop() {
+    if(this.selectedSlot != 0) {
+      playMenuSound(1);
+      this.selectedSlot = 0;
+      this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
+    }
+  }
+
+  private void menuStage2NavigateBottom() {
+    if(this.selectedSlot != 4) {
+      playMenuSound(1);
+      this.selectedSlot = 4;
+      this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
+    }
+  }
+
+  private void menuStage2NavigatePageUp() {
+    if(this.slotScroll - 4 >= 0) {
+      playMenuSound(1);
+      this.scroll(this.slotScroll - 4);
+    } else {
+      if(this.slotScroll != 0) {
+        this.scroll(0);
+      }
+    }
+  }
+
+  private void menuStage2NavigatePageDown() {
+    if(this.slotScroll + 4 <= this.itemCount - 5) {
+      playMenuSound(1);
+      this.scroll(this.slotScroll + 4);
+    } else {
+      if(this.itemCount > 5 && this.slotScroll != this.itemCount - 5) {
+        this.scroll(this.itemCount - 5);
+      }
+    }
+  }
+
   private void menuStage2Select() {
     if(this.slotScroll + this.selectedSlot >= this.itemCount) {
       playMenuSound(40);
@@ -565,6 +603,26 @@ public class UseItemScreen extends MenuScreen {
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage2NavigateDown();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_1) {
+        this.menuStage2NavigateTop();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_2) {
+        this.menuStage2NavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
+        this.menuStage2NavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
+        this.menuStage2NavigatePageDown();
         return InputPropagation.HANDLED;
       }
     }

@@ -208,6 +208,77 @@ public class VerticalLayoutScreen extends MenuScreen {
           return InputPropagation.HANDLED;
         }
       }
+
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        playMenuSound(1);
+        if(this.scroll == 0) {
+          this.highlightRow(0);
+        } else {
+          this.highlightRow(this.scroll);
+        }
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        if(this.visibleEntries() >= MAX_VISIBLE_ENTRIES) {
+          if(this.scroll == 0) {
+            playMenuSound(1);
+            this.highlightRow(MAX_VISIBLE_ENTRIES - 1);
+          } else {
+            playMenuSound(1);
+            this.highlightRow(this.scroll + MAX_VISIBLE_ENTRIES - 1);
+          }
+          return InputPropagation.HANDLED;
+        }
+
+        playMenuSound(1);
+        this.highlightRow(this.rows.size() - 1);
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_1 ->  {
+        if(this.rows.size() > MAX_VISIBLE_ENTRIES) {
+          if(this.highlightedRow - MAX_VISIBLE_ENTRIES > 0) {
+            playMenuSound(1);
+            this.highlightedRow -= MAX_VISIBLE_ENTRIES;
+            this.scroll = Math.max(0, this.highlightedRow - MAX_VISIBLE_ENTRIES);
+            this.updateEntries();
+            this.highlightRow(this.highlightedRow);
+            return InputPropagation.HANDLED;
+          }
+
+          if(this.highlightedRow != 0) {
+            playMenuSound(1);
+            this.highlightedRow = 0;
+            this.scroll = 0;
+            this.updateEntries();
+            this.highlightRow(this.highlightedRow);
+            return InputPropagation.HANDLED;
+          }
+        }
+      }
+
+      case BUTTON_SHOULDER_RIGHT_2 -> {
+        if(this.rows.size() > MAX_VISIBLE_ENTRIES) {
+          if(this.highlightedRow + MAX_VISIBLE_ENTRIES < this.rows.size()) {
+            playMenuSound(1);
+            this.highlightedRow += MAX_VISIBLE_ENTRIES;
+            this.scroll = this.highlightedRow - MAX_VISIBLE_ENTRIES + 1;
+            this.updateEntries();
+            this.highlightRow(this.highlightedRow);
+            return InputPropagation.HANDLED;
+          }
+
+          if(this.highlightedRow != this.rows.size() - 1) {
+            playMenuSound(1);
+            this.highlightedRow = this.rows.size() - 1;
+            this.scroll = this.rows.size() - MAX_VISIBLE_ENTRIES;
+            this.updateEntries();
+            this.highlightRow(this.highlightedRow);
+            return InputPropagation.HANDLED;
+          }
+        }
+      }
     }
 
     return InputPropagation.PROPAGATE;

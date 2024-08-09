@@ -377,15 +377,59 @@ public class TooManyItemsScreen extends MenuScreen {
   private void inventoryNavigateDown() {
     playMenuSound(1);
     this.handleInventoryScrollDown();
-    this.invIndex = this.invIndex < 6 ? ++this.invIndex : 6;
+    this.invIndex = Math.min(this.invIndex + 1, 6);
     this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
   private void inventoryNavigateUp() {
     playMenuSound(1);
     this.handleInventoryScrollUp();
-    this.invIndex = this.invIndex > 0 ? --this.invIndex : 0;
+    this.invIndex = Math.max(this.invIndex - 1, 0);
     this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+  }
+
+  private void inventoryNavigateTop() {
+    if(this.invIndex != 0) {
+      playMenuSound(1);
+      this.invIndex = 0;
+      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+    }
+  }
+
+  private void inventoryNavigateBottom() {
+    if(this.invIndex != 6) {
+      playMenuSound(1);
+      this.invIndex = 6;
+      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+    }
+  }
+
+  private void inventoryNavigatePageUp() {
+    if(this.invScroll - 6 >= 0) {
+      playMenuSound(1);
+      this.invScroll -= 6;
+      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+    } else {
+      if(this.invScroll != 0) {
+        this.invScroll = 0;
+        this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+      }
+    }
+  }
+
+  private void inventoryNavigatePageDown() {
+    final int slotCount = gameState_800babc8.items_2e9.size();
+
+    if(this.invScroll + 6 < slotCount - 6) {
+      playMenuSound(1);
+      this.invScroll += 6;
+      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+    } else {
+      if(slotCount > 7 && this.invScroll != slotCount - 7) {
+        this.invScroll = slotCount - 7;
+        this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+      }
+    }
   }
 
   private void escapeMenuState8() {
@@ -515,6 +559,26 @@ public class TooManyItemsScreen extends MenuScreen {
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.inventoryNavigateDown();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_1) {
+        this.inventoryNavigateTop();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_2) {
+        this.inventoryNavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
+        this.inventoryNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
+        this.inventoryNavigatePageDown();
         return InputPropagation.HANDLED;
       }
     }
