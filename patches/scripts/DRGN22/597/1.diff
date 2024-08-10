@@ -1,10 +1,10 @@
 --- original
 +++ modified
-@@ -1150,6 +1150,7 @@
+@@ -1042,6 +1042,7 @@
  data 0xc000
  data 0x8000
  data 0x9000
 +data 0xffffffff
- LABEL_27:
+ LABEL_97:
  rel :PTR_23a8_0
  rel :PTR_23a8_1
