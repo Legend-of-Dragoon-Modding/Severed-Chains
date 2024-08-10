@@ -515,8 +515,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c894L)
   public static void setMainVolume(final int left, final int right) {
-    AUDIO_THREAD.setMainVolume(left, right);
-
     final int l;
     if((left & 0x80) != 0) {
       l = (left << 7) + 0x7fff;
@@ -621,6 +619,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     setMainVolume(0, 0);
+    AUDIO_THREAD.setMainVolume(0, 0);
     soundEnv.fadingIn_2a = true;
     soundEnv.fadeTime_2c = fadeTime;
     soundEnv.fadeInVol_2e = maxVol;
