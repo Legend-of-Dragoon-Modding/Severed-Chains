@@ -333,8 +333,6 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuSelect() {
-    playMenuSound(2);
-
     final int itemIndex = this.selectedSlot + this.slotScroll;
 
     if(itemIndex < this.menuItems.size()) {
