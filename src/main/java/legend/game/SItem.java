@@ -1207,9 +1207,25 @@ public final class SItem {
   }
 
   public static void renderFraction(final int x, final int y, final int numerator, final int denominator) {
-    final int width = renderRightAlignedNumber(x, y, denominator);
+    final int width = renderRightAlignedNumber(x, y, denominator, 0);
     allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-    renderRightAlignedNumber(x - width - 5, y, numerator);
+    renderRightAlignedNumber(x - width - 5, y, numerator, 0);
+  }
+
+  public static void renderHp(final int x, final int y, final int numerator, final int denominator) {
+    final int clut;
+    if(numerator < denominator / 4) {
+      clut = 0x7c2b;
+      //LAB_80105090
+    } else if(numerator < denominator / 2) {
+      clut = 0x7cab;
+    } else {
+      clut = 0;
+    }
+
+    final int width = renderRightAlignedNumber(x, y, denominator, 0);
+    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    renderRightAlignedNumber(x - width - 5, y, numerator, clut);
   }
 
   @Method(0x80105350L)
@@ -1217,11 +1233,16 @@ public final class SItem {
     renderNumber(x, y, value, 0, 4);
   }
 
-  /** Does something different with CLUT */
   @Method(0x8010568cL)
   public static void renderFourDigitNumber(final int x, final int y, int value, final int max) {
+    renderFourDigitNumber(x, y, value, max, 0);
+  }
+
+  /** Does something different with CLUT */
+  @Method(0x8010568cL)
+  public static void renderFourDigitNumber(final int x, final int y, int value, final int max, final int renderableFlags) {
     int clut = 0;
-    long flags = 0;
+    int flags = 0;
 
     if(value >= 9999) {
       value = 9999;
@@ -1238,7 +1259,7 @@ public final class SItem {
     }
 
     //LAB_801056f0
-    if(value < max / 10) {
+    if(value < max / 4) {
       clut = 0x7c2b;
     }
 
@@ -1249,13 +1270,13 @@ public final class SItem {
       renderable.glyph_04 = s0;
       //LAB_80105784
       //LAB_80105788
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
+      renderable.flags_00 |= renderableFlags | Renderable58.FLAG_NO_ANIMATION;
       renderable.tpage_2c = 0x19;
       renderable.x_40 = x;
       renderable.y_44 = y;
       renderable.clut_30 = clut;
       renderable.z_3c = 0x21;
-      flags |= 0x1L;
+      flags |= 0x1;
     }
 
     //LAB_801057c0
@@ -1267,13 +1288,13 @@ public final class SItem {
       renderable.glyph_04 = s0;
       //LAB_80105860
       //LAB_80105864
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
+      renderable.flags_00 |= renderableFlags | Renderable58.FLAG_NO_ANIMATION;
       renderable.tpage_2c = 0x19;
       renderable.x_40 = x + 6;
       renderable.y_44 = y;
       renderable.clut_30 = clut;
       renderable.z_3c = 0x21;
-      flags |= 0x1L;
+      flags |= 0x1;
     }
 
     //LAB_801058a0
@@ -1285,7 +1306,7 @@ public final class SItem {
       renderable.glyph_04 = s0;
       //LAB_80105938
       //LAB_8010593c
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
+      renderable.flags_00 |= renderableFlags | Renderable58.FLAG_NO_ANIMATION;
       renderable.tpage_2c = 0x19;
       renderable.x_40 = x + 12;
       renderable.y_44 = y;
@@ -1300,7 +1321,7 @@ public final class SItem {
     renderable.glyph_04 = s0;
     //LAB_801059e8
     //LAB_801059ec
-    renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
+    renderable.flags_00 |= renderableFlags | Renderable58.FLAG_NO_ANIMATION;
     renderable.tpage_2c = 0x19;
     renderable.x_40 = x + 18;
     renderable.y_44 = y;
@@ -1423,7 +1444,7 @@ public final class SItem {
     renderNumber(x, y, value, 0x2, 5);
   }
 
-  public static int renderRightAlignedNumber(final int x, final int y, final int value) {
+  public static int renderRightAlignedNumber(final int x, final int y, final int value, final int clut) {
     final int digitCount = MathHelper.digitCount(value);
 
     int totalWidth = 0;
@@ -1434,7 +1455,7 @@ public final class SItem {
       struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
       struct.glyph_04 = digit;
       struct.tpage_2c = 0x19;
-      struct.clut_30 = 0;
+      struct.clut_30 = clut;
       struct.z_3c = 0x21;
       struct.x_40 = x - (i + 1) * 6;
       totalWidth += 6;
