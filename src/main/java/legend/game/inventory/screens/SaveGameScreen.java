@@ -13,8 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-
 import java.io.IOException;
+import java.util.List;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
@@ -32,6 +32,7 @@ public class SaveGameScreen extends MenuScreen {
   private static final String Overwrite_save_8011c9e8 = "Overwrite save?";
 
   private final BigList<SavedGame> saveList;
+  private final List<SavedGame> saves;
 
   private final Runnable unload;
 
@@ -59,7 +60,8 @@ public class SaveGameScreen extends MenuScreen {
 
     this.saveList.addEntry(null);
 
-    for(final SavedGame save : SAVES.loadAllSaves(gameState_800babc8.campaignName)) {
+    this.saves = SAVES.loadAllSaves(gameState_800babc8.campaignName);
+    for(final SavedGame save : this.saves) {
       this.saveList.addEntry(save);
     }
   }
@@ -74,7 +76,7 @@ public class SaveGameScreen extends MenuScreen {
     playMenuSound(2);
 
     if(save == null) {
-      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), this::onNewSaveResult));
+      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(this.saves, gameState_800babc8), this::onNewSaveResult));
     } else {
       menuStack.pushScreen(new MessageBoxScreen(Overwrite_save_8011c9e8, 2, result -> this.onOverwriteResult(result, save)));
     }
@@ -128,6 +130,7 @@ public class SaveGameScreen extends MenuScreen {
         if(result == MessageBoxResult.YES) {
           try {
             SAVES.deleteSave(this.saveList.getSelected().state.campaignName, this.saveList.getSelected().fileName);
+            this.saves.removeIf(save -> save.fileName.equals(this.saveList.getSelected().fileName));
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
