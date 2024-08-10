@@ -87,6 +87,14 @@ public class ItemList<T> extends Control {
     return this.items.isEmpty();
   }
 
+  public void select(final int index) {
+    this.items.select(index);
+  }
+
+  public int getSelectedIndex() {
+    return this.items.getSelectedIndex();
+  }
+
   public MenuEntryStruct04<T> getSelectedItem() {
     return this.items.getSelectedEntry();
   }

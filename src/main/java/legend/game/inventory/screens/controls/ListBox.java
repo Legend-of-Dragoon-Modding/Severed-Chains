@@ -146,14 +146,14 @@ public class ListBox<T> extends Control {
     this.highlight.hide();
   }
 
-  private void select(final int index) {
+  public void select(final int index) {
     if(index < 0) {
       throw new IllegalArgumentException("Index must be > 0");
     }
 
-    this.slot = index;
+    this.slot = Math.min(index, Math.max(0, this.entries.size() - this.scroll - 1));
 
-    this.highlight.setPos(34, index * this.entryHeight + 1);
+    this.highlight.setPos(34, this.slot * this.entryHeight + 1);
 
     if(this.highlightHandler != null) {
       final T entry = this.getSelectedEntry();
@@ -162,6 +162,10 @@ public class ListBox<T> extends Control {
         this.highlightHandler.highlight(entry);
       }
     }
+  }
+
+  public int getSelectedIndex() {
+    return this.slot;
   }
 
   private void updateEntries() {
