@@ -79,6 +79,7 @@ import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.setTextAndTextboxesToUninitialized;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
@@ -704,6 +705,7 @@ public class WMap extends EngineState {
   private void transitionToTitle() {
     this.handleAndRenderMapAndPlayer();
     this.deallocate();
+    resetSubmapToNewGame();
 
     this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;

@@ -84,7 +84,7 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
+import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
@@ -3910,7 +3910,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e6458
-        FUN_8002a9c0();
+        resetSubmapToNewGame();
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         pregameLoadingStage_800bb10c = 0;
 

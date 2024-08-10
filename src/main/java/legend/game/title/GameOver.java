@@ -21,7 +21,7 @@ import static legend.core.GameEngine.bootMods;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
+import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -70,7 +70,7 @@ public class GameOver extends EngineState {
         if(Unpacker.getLoadingFileCount() == 0) {
           bootMods(MODS.getAllModIds());
 
-          FUN_8002a9c0();
+          resetSubmapToNewGame();
           resizeDisplay(640, 240);
           this.loadingStage = 1;
         }

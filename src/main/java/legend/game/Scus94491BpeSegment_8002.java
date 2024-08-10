@@ -4033,7 +4033,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a9c0L)
-  public static void FUN_8002a9c0() {
+  public static void resetSubmapToNewGame() {
     submapCut_80052c30 = 675; // Opening
     submapScene_80052c34 = 4;
     collidedPrimitiveIndex_80052c38 = 0;
