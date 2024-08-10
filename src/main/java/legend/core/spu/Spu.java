@@ -193,8 +193,10 @@ public class Spu implements Runnable {
         this.spuOutput[dataIndex++] = (short)sumRight;
       }
 
-      if(this.source.canBuffer()) {
-        this.source.bufferOutput(this.spuOutput);
+      synchronized(this.source) {
+        if(this.source.canBuffer()) {
+          this.source.bufferOutput(this.spuOutput);
+        }
       }
     }
   }

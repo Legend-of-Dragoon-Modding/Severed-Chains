@@ -209,14 +209,16 @@ public final class AudioThread implements Runnable {
         for(int i = 0; i < this.sources.size(); i++) {
           final AudioSource source = this.sources.get(i);
 
-          final boolean sourceCanBuffer = source.canBuffer();
-          canBuffer = canBuffer || sourceCanBuffer;
+          synchronized(source) {
+            final boolean sourceCanBuffer = source.canBuffer();
+            canBuffer = canBuffer || sourceCanBuffer;
 
-          if(sourceCanBuffer) {
-            source.tick();
+            if(sourceCanBuffer) {
+              source.tick();
+            }
+
+            source.handleProcessedBuffers();
           }
-
-          source.handleProcessedBuffers();
         }
       }
 

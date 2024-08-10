@@ -45,18 +45,14 @@ public abstract class AudioSource {
       return false;
     }
 
-    synchronized(this) {
-      return this.bufferIndex >= 0;
-    }
+    return this.bufferIndex >= 0;
   }
 
   public void handleProcessedBuffers() {
-    synchronized(this) {
-      final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 
-      for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-        this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
-      }
+    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
+      this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
     }
   }
 
