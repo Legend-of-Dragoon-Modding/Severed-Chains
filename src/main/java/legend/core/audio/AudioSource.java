@@ -1,5 +1,9 @@
 package legend.core.audio;
 
+import org.lwjgl.system.MemoryUtil;
+
+import java.nio.IntBuffer;
+
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
 import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
@@ -13,6 +17,7 @@ import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public abstract class AudioSource {
   private final int[] buffers;
@@ -20,6 +25,8 @@ public abstract class AudioSource {
   private int sourceId;
 
   private boolean playing;
+
+  private final IntBuffer tmp = MemoryUtil.memAllocInt(1);
 
   public AudioSource(final int bufferCount) {
     this.buffers = new int[bufferCount];
@@ -49,10 +56,13 @@ public abstract class AudioSource {
   }
 
   public void handleProcessedBuffers() {
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+    if(this.bufferIndex < this.buffers.length - 1) {
+      alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
+      final int processedBufferCount = this.tmp.get(0);
 
-    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-      this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
+      for(int buffer = 0; buffer < processedBufferCount; buffer++) {
+        this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
+      }
     }
   }
 
@@ -65,7 +75,8 @@ public abstract class AudioSource {
   }
 
   protected void play() {
-    if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) != AL_PLAYING) {
+    alGetSourcei(this.sourceId, AL_SOURCE_STATE, this.tmp);
+    if(this.tmp.get(0) != AL_PLAYING) {
       alSourcePlay(this.sourceId);
     }
   }
@@ -87,7 +98,8 @@ public abstract class AudioSource {
     this.playing = false;
     alSourceStop(this.sourceId);
 
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+    alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
+    final int processedBufferCount = this.tmp.get(0);
 
     for(int buffer = 0; buffer < processedBufferCount; buffer++) {
       final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
@@ -96,5 +108,7 @@ public abstract class AudioSource {
 
     alDeleteBuffers(this.buffers);
     alDeleteSources(this.sourceId);
+
+    memFree(this.tmp);
   }
 }
