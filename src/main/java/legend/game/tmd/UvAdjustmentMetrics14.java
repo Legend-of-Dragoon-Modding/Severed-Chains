@@ -4,12 +4,12 @@ import legend.core.MathHelper;
 import legend.core.gte.TmdObjTable1c;
 
 public class UvAdjustmentMetrics14 {
-  public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0, 0, 0, 0) {
+  public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0, 0, 0, 0, false) {
     @Override
     public void apply(final TmdObjTable1c.Primitive primitive) { }
   };
 
-  public static final UvAdjustmentMetrics14 PNG = new UvAdjustmentMetrics14(0, 0, 0, 0, 0) {
+  public static final UvAdjustmentMetrics14 PNG = new UvAdjustmentMetrics14(0, 0, 0, 0, 0, false) {
     @Override
     public void apply(final TmdObjTable1c.Primitive primitive) {
       for(final byte[] data : primitive.data()) {
@@ -31,11 +31,11 @@ public class UvAdjustmentMetrics14 {
   public final int tpageMaskAnd_0c;
   public final int uvOffset_10;
 
-  public UvAdjustmentMetrics14(final int index, final int x, final int y) {
-    this(index, x, y + 112, x, y);
+  public UvAdjustmentMetrics14(final int index, final int x, final int y, final boolean ignoreClutX) {
+    this(index, x, y + 112, x, y, ignoreClutX);
   }
 
-  public UvAdjustmentMetrics14(final int index, final int clutX, final int clutY, final int tpageX, final int tpageY) {
+  public UvAdjustmentMetrics14(final int index, final int clutX, final int clutY, final int tpageX, final int tpageY, final boolean ignoreClutX) {
     final int u = tpageX % 64 * 4;
     final int v = tpageY % 256;
     final int clut = clutX / 16 | clutY << 6;
@@ -49,7 +49,7 @@ public class UvAdjustmentMetrics14 {
 
     this.index = index;
     this.clutMaskOr_00 = clut << 16;
-    this.clutMaskAnd_04 = 0x3c3ffff;
+    this.clutMaskAnd_04 = ignoreClutX ? 0x3c0ffff : 0x3c3ffff;
     this.tpageMaskOr_08 = tpage << 16;
     this.tpageMaskAnd_0c = 0xffe0ffff;
     this.uvOffset_10 = uv;
