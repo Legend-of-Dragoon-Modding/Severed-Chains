@@ -144,7 +144,7 @@ public class ScriptPatcher {
     //TODO add support for explicit branches #1269
     final int[] arr = {};
     final Script script = this.disassembler.disassemble(data, arr);
-    final String decompiledOutput = this.translator.translate(script, this.meta);
+    final String decompiledOutput = this.translator.translate(script, this.meta, true, true);
     return decompiledOutput.lines().toList();
   }
 
