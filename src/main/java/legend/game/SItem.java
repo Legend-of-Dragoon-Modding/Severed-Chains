@@ -1214,10 +1214,10 @@ public final class SItem {
 
   public static void renderHp(final int x, final int y, final int numerator, final int denominator) {
     final int clut;
-    if(numerator < denominator / 4) {
+    if(numerator <= denominator / 4) {
       clut = 0x7c2b;
       //LAB_80105090
-    } else if(numerator < denominator / 2) {
+    } else if(numerator <= denominator / 2) {
       clut = 0x7cab;
     } else {
       clut = 0;
@@ -1234,13 +1234,12 @@ public final class SItem {
   }
 
   @Method(0x8010568cL)
-  public static void renderFourDigitNumber(final int x, final int y, int value, final int max) {
-    renderFourDigitNumber(x, y, value, max, 0);
+  public static void renderFourDigitHp(final int x, final int y, final int value, final int max) {
+    renderFourDigitHp(x, y, value, max, 0);
   }
 
-  /** Does something different with CLUT */
   @Method(0x8010568cL)
-  public static void renderFourDigitNumber(final int x, final int y, int value, final int max, final int renderableFlags) {
+  public static void renderFourDigitHp(final int x, final int y, int value, final int max, final int renderableFlags) {
     int clut = 0;
     int flags = 0;
 
@@ -1254,12 +1253,12 @@ public final class SItem {
     }
 
     //LAB_801056e0
-    if(value < max / 2) {
+    if(value <= max / 2) {
       clut = 0x7cab;
     }
 
     //LAB_801056f0
-    if(value < max / 4) {
+    if(value <= max / 4) {
       clut = 0x7c2b;
     }
 
@@ -1625,7 +1624,7 @@ public final class SItem {
         renderTwoDigitNumber(x + 154, y + 6, stats.level_0e);
         renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f);
         renderThreeDigitNumber(x + 148, y + 17, stats.sp_08);
-        renderFourDigitNumber(x + 100, y + 28, stats.hp_04, stats.maxHp_66);
+        renderFourDigitHp(x + 100, y + 28, stats.hp_04, stats.maxHp_66);
         renderCharacter(x + 124, y + 28, 11);
         renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66);
         renderThreeDigitNumber(x + 106, y + 39, stats.mp_06);

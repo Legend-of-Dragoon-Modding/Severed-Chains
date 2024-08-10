@@ -13,6 +13,7 @@ import static legend.game.SItem.charSwapGlyphs_80114160;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.renderCharacterSlot;
+import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -112,7 +113,7 @@ public class CharSwapScreen extends MenuScreen {
       final ActiveStatsa0 stats = stats_800be5f8[charIndex];
       renderFourDigitNumber(x + 25, y + 57, stats.level_0e);
       renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f);
-      renderFourDigitNumber(x + 25, y + 79, stats.hp_04, stats.maxHp_66);
+      renderFourDigitHp(x + 25, y + 79, stats.hp_04, stats.maxHp_66);
       renderFourDigitNumber(x + 25, y + 90, stats.mp_06);
     }
   }
