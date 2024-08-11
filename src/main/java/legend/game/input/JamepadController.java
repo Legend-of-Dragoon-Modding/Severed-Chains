@@ -47,6 +47,12 @@ public class JamepadController extends Controller {
     this.addBinding(ControllerAxis.LEFTY, InputAction.JOYSTICK_LEFT_BUTTON_DOWN, InputType.GAMEPAD_AXIS_BUTTON_POSITIVE);
     this.addBinding(ControllerAxis.LEFTX, InputAction.JOYSTICK_LEFT_BUTTON_LEFT, InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE);
     this.addBinding(ControllerAxis.LEFTX, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT, InputType.GAMEPAD_AXIS_BUTTON_POSITIVE);
+    this.addBinding(ControllerAxis.RIGHTX, InputAction.JOYSTICK_RIGHT_X, InputType.GAMEPAD_AXIS);
+    this.addBinding(ControllerAxis.RIGHTY, InputAction.JOYSTICK_RIGHT_Y, InputType.GAMEPAD_AXIS);
+    this.addBinding(ControllerAxis.RIGHTY, InputAction.JOYSTICK_RIGHT_BUTTON_UP, InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE);
+    this.addBinding(ControllerAxis.RIGHTY, InputAction.JOYSTICK_RIGHT_BUTTON_DOWN, InputType.GAMEPAD_AXIS_BUTTON_POSITIVE);
+    this.addBinding(ControllerAxis.RIGHTX, InputAction.JOYSTICK_RIGHT_BUTTON_LEFT, InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE);
+    this.addBinding(ControllerAxis.RIGHTX, InputAction.JOYSTICK_RIGHT_BUTTON_RIGHT, InputType.GAMEPAD_AXIS_BUTTON_POSITIVE);
   }
 
   private void addBinding(final ControllerButton button, final InputAction action, final InputType type) {
