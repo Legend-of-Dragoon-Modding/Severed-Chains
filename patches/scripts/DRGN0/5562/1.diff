@@ -1,0 +1,33 @@
+--- original
++++ modified
+@@ -121,6 +121,10 @@
+ data 0x2
+ data 0x0
+ data 0xf1
++data 0x2
++data 0xc
++data 0xdb
++data 0xd6
+ data 0x0
+ data 0x0
+ data 0x0
+@@ -141,10 +145,6 @@
+ data 0x0
+ data 0x0
+ data 0x0
+-data 0x0
+-data 0x0
+-data 0x0
+-data 0x0
+ data 0x3
+ data 0xd
+ data 0xe5
+@@ -508,7 +508,7 @@
+ LABEL_1:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+-mov 0x2, stor[stor[stor[0], 23], 24]
++mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_2:
