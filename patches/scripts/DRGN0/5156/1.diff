@@ -1,0 +1,29 @@
+--- original
++++ modified
+@@ -2372,9 +2372,12 @@
+ mov var[34][0], stor[28]
+ call 128, stor[28], stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26]
+ mov var[34][1], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_0]
+ call 128, stor[28], stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26]
+ mov var[34][2], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_0]
+ call 128, stor[28], stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26]
++SKIP_0:
+ mov 0x4, stor[23]
+ wait stor[23]
+ call 33, 0x0, 0x2fe200, 0xffe58600, 0xffed3a00, 0x0
+@@ -2428,10 +2431,13 @@
+ add 0x100, stor[24]
+ add 0x880, stor[26]
+ mov var[34][1], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_1]
+ call 128, stor[28], stor[24], 0x0, stor[26]
+ sub 0x1100, stor[26]
+ mov var[34][2], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_1]
+ call 128, stor[28], stor[24], 0x0, stor[26]
++SKIP_1:
+ rewind
+ LABEL_86:
+ call 600, stor[18]
