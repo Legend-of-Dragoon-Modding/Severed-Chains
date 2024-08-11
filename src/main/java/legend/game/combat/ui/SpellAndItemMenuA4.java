@@ -3,9 +3,9 @@ package legend.game.combat.ui;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
-import legend.game.types.Translucency;
 
 public class SpellAndItemMenuA4 {
   private static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = new BattleMenuBackgroundUvMetrics04(224, 8, 16, 8);
@@ -77,10 +77,11 @@ public class SpellAndItemMenuA4 {
   public int selectionState_a0;
 
   public final MV transforms = new MV();
-  public final Obj[] arrowObj = new Obj[8];
-  public Obj mpObj;
-  public Obj upArrow;
-  public Obj downArrow;
+  public Obj menuObj;
+  public int arrowObjOffset;
+  public int mpObjOffset;
+  public int upObjOffset;
+  public int downObjOffset;
 
   private final BattleHud hud;
 
@@ -93,41 +94,30 @@ public class SpellAndItemMenuA4 {
   }
 
   public void init() {
-    if(this.arrowObj[0] == null) {
+    if(this.menuObj == null) {
+      final QuadBuilder builder = new QuadBuilder("Spell/item menu");
+
+      this.arrowObjOffset = builder.currentQuadIndex() * 4;
       for(int i = 0; i < 8; i++) {
-        this.arrowObj[i] = this.hud.buildBattleMenuElement("Spell/Item Selection Arrow " + i, 0, 0, i % 4 * 16 + 192 & 0xf0, i / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
+        this.hud.buildBattleMenuElement(builder, 0, 0, i % 4 * 16 + 192 & 0xf0, i / 4 * 8 + 32 & 0xf8, 15, 8, 0xd);
       }
 
-      this.mpObj = this.hud.buildBattleMenuElement("Spell/Item MP", 0, 0, 16, 128, 24, 16, 0x2c, null);
+      this.mpObjOffset = builder.currentQuadIndex() * 4;
+      this.hud.buildBattleMenuElement(builder, 0, 0, 16, 128, 24, 16, 0x2c);
 
-      this.upArrow = this.hud.buildBattleMenuBackground("Spell/Item Up Arrow", battleItemMenuScrollArrowUvMetrics_800c7190, 0, 0, battleItemMenuScrollArrowUvMetrics_800c7190.w_02, battleItemMenuScrollArrowUvMetrics_800c7190.h_03, 0xd, null, (short)0);
-      this.downArrow = this.hud.buildBattleMenuBackground("Spell/Item Down Arrow", battleItemMenuScrollArrowUvMetrics_800c7190, 0, 0, battleItemMenuScrollArrowUvMetrics_800c7190.w_02, battleItemMenuScrollArrowUvMetrics_800c7190.h_03, 0xd, null, (short)1);
+      this.upObjOffset = builder.currentQuadIndex() * 4;
+      this.hud.buildBattleMenuBackground(builder, battleItemMenuScrollArrowUvMetrics_800c7190, 0, 0, battleItemMenuScrollArrowUvMetrics_800c7190.w_02, battleItemMenuScrollArrowUvMetrics_800c7190.h_03, 0xd, (short)0);
+      this.downObjOffset = builder.currentQuadIndex() * 4;
+      this.hud.buildBattleMenuBackground(builder, battleItemMenuScrollArrowUvMetrics_800c7190, 0, 0, battleItemMenuScrollArrowUvMetrics_800c7190.w_02, battleItemMenuScrollArrowUvMetrics_800c7190.h_03, 0xd, (short)1);
+
+      this.menuObj = builder.build();
     }
   }
 
   public void delete() {
-    if(this.arrowObj[0] != null) {
-      for(int i = 0; i < 8; i++) {
-        if(this.arrowObj[i] != null) {
-          this.arrowObj[i].delete();
-          this.arrowObj[i] = null;
-        }
-      }
-
-      if(this.mpObj != null) {
-        this.mpObj.delete();
-        this.mpObj = null;
-      }
-
-      if(this.upArrow != null) {
-        this.upArrow.delete();
-        this.upArrow = null;
-      }
-
-      if(this.downArrow != null) {
-        this.downArrow.delete();
-        this.downArrow = null;
-      }
+    if(this.menuObj != null) {
+      this.menuObj.delete();
+      this.menuObj = null;
     }
   }
 
