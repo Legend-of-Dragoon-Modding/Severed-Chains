@@ -94,7 +94,7 @@ public class ScriptLiveDebuggerController {
   private void displayCode(final int offset) {
     final Script line = new Script(1);
     line.entries[0] = this.tokens.entries[offset];
-    this.txtCode.setText(Integer.toHexString(offset) + ": " + this.translator.translate(line, this.meta));
+    this.txtCode.setText(Integer.toHexString(offset) + ": " + this.translator.translate(line, this.meta, false, false));
   }
 
   private void clear() {

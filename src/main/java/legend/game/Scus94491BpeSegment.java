@@ -447,7 +447,6 @@ public final class Scus94491BpeSegment {
 
     RENDERER.events().onShutdown(() -> {
       stopSound();
-      SPU.stop();
       AUDIO_THREAD.stop();
       Platform.exit();
     });
@@ -459,7 +458,9 @@ public final class Scus94491BpeSegment {
 
   public static void startSound() {
     soundRunning = true;
-    new Thread(Scus94491BpeSegment::soundLoop).start();
+    final Thread sfx = new Thread(Scus94491BpeSegment::soundLoop);
+    sfx.setName("SFX");
+    sfx.start();
   }
 
   private static void stopSound() {
@@ -472,6 +473,7 @@ public final class Scus94491BpeSegment {
     while(soundRunning) {
       try {
         SEQUENCER.tick();
+        SPU.tick();
       } catch(final Throwable t) {
         LOGGER.error("Sound thread crashed!", t);
       }

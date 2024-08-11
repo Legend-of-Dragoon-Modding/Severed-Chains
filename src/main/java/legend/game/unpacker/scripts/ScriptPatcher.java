@@ -17,6 +17,7 @@ import org.legendofdragoon.scripting.tokens.Script;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
@@ -54,7 +55,12 @@ public class ScriptPatcher {
     try {
       return ScriptPatchList.load(file);
     } catch(final InvalidPatchListException e) {
-      LOGGER.warn("Failed to load patch list", e);
+      if(e.getCause() instanceof NoSuchFileException) {
+        LOGGER.warn("Patch cache does not exist");
+      } else {
+        LOGGER.warn("Failed to load patch list", e);
+      }
+
       return ScriptPatchList.empty();
     }
   }
@@ -144,7 +150,7 @@ public class ScriptPatcher {
     //TODO add support for explicit branches #1269
     final int[] arr = {};
     final Script script = this.disassembler.disassemble(data, arr);
-    final String decompiledOutput = this.translator.translate(script, this.meta);
+    final String decompiledOutput = this.translator.translate(script, this.meta, true, true);
     return decompiledOutput.lines().toList();
   }
 
