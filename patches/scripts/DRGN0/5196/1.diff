@@ -5,7 +5,7 @@
  call 144, stor[30]
  mov 0x2, stor[8]
 +mov 0x2, stor[17]
-+add var[35], stor[17];
++add var[35], stor[17]
  LABEL_20:
  mov var[36][stor[8]], stor[18]
  fork_reenter stor[18], 0x10, stor[8]
