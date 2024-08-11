@@ -82,7 +82,7 @@ public class ScriptManager {
   }
 
   public void clear() {
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       scriptStatePtrArr_800bc1c0[i] = null;
     }
   }
@@ -90,13 +90,13 @@ public class ScriptManager {
   private int findFreeScriptState() {
     this.upperBound++;
 
-    if(this.upperBound >= 72) {
+    if(this.upperBound >= scriptStatePtrArr_800bc1c0.length) {
       this.upperBound = 9;
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = this.upperBound; i < 72; i++) {
+    for(int i = this.upperBound; i < scriptStatePtrArr_800bc1c0.length; i++) {
       if(scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
         this.upperBound = i;
@@ -172,7 +172,7 @@ public class ScriptManager {
     }
 
     //LAB_80015fd8
-    for(int index = 0; index < 72; index++) {
+    for(int index = 0; index < scriptStatePtrArr_800bc1c0.length; index++) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
 
       if(state != null) {
@@ -219,7 +219,7 @@ public class ScriptManager {
     }
 
     //LAB_80017750
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
       // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
@@ -229,7 +229,7 @@ public class ScriptManager {
     }
 
     //LAB_800177ac
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tempTick();
@@ -243,7 +243,7 @@ public class ScriptManager {
     }
 
     //LAB_80017854
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
       // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)

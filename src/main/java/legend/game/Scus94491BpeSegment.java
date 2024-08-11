@@ -217,7 +217,7 @@ public final class Scus94491BpeSegment {
     new TextboxBorderMetrics0c(2, 3, 16, 32, -4, 8),
   };
 
-  public static boolean[] scriptLog = new boolean[0x48];
+  public static boolean[] scriptLog = new boolean[scriptStatePtrArr_800bc1c0.length];
 
   public static final Map<OpType, Function<RunningScript<?>, String>> scriptFunctionDescriptions = new EnumMap<>(OpType.class);
 
