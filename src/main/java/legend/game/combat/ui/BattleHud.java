@@ -1400,17 +1400,13 @@ public class BattleHud {
     this.spellAndItemMenu_800c6b60.y_06 = 144;
     this.spellAndItemMenu_800c6b60.player_08 = player;
     this.spellAndItemMenu_800c6b60.menuType_0a = (short)menuType;
-    this.spellAndItemMenu_800c6b60._0c = 0x20;
-    this.spellAndItemMenu_800c6b60._0e = 0x2b;
     this.spellAndItemMenu_800c6b60.width_10 = 0;
     this.spellAndItemMenu_800c6b60.height_12 = 0;
-    this.spellAndItemMenu_800c6b60._14 = 0x1;
-    this.spellAndItemMenu_800c6b60._16 = 0x1000;
     this.spellAndItemMenu_800c6b60.textX_18 = 0;
-    this.spellAndItemMenu_800c6b60._1a = 0;
+    this.spellAndItemMenu_800c6b60.listStartY_1a = 0;
     this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = -1;
-    this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
-    this.spellAndItemMenu_800c6b60._20 = 0;
+    this.spellAndItemMenu_800c6b60.listScroll_1e = 0;
+    this.spellAndItemMenu_800c6b60.listOffsetY_20 = 0;
 
     //LAB_800f4a58
     if(menuType == 0) {
@@ -1440,15 +1436,11 @@ public class BattleHud {
     //LAB_800f4b50
     //LAB_800f4b54
     //LAB_800f4b60
-    this.spellAndItemMenu_800c6b60._7c = 0;
-    this.spellAndItemMenu_800c6b60._80 = 0;
+    this.spellAndItemMenu_800c6b60.lastListOffset_7c = 0;
+    this.spellAndItemMenu_800c6b60.scrollAmount_80 = 0;
     this.spellAndItemMenu_800c6b60.selectionArrowFrame_84 = 0;
-    this.spellAndItemMenu_800c6b60._88 = 0;
-    this.spellAndItemMenu_800c6b60._8c = 0;
-    this.spellAndItemMenu_800c6b60._90 = 0;
-    this.spellAndItemMenu_800c6b60._94 = 0;
-    this.spellAndItemMenu_800c6b60._98 = 0;
-    this.spellAndItemMenu_800c6b60._9c = 0;
+    this.spellAndItemMenu_800c6b60.scrollCounter_90 = 0;
+    this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = 0;
     this.spellAndItemMenu_800c6b60.selectionState_a0 = 0;
   }
 
@@ -1458,41 +1450,37 @@ public class BattleHud {
       return;
     }
 
-    int v0;
-    final int a1;
-    int s0;
-
     //LAB_800f4bc0
     switch(this.spellAndItemMenu_800c6b60.menuState_00) {
       case 1 -> {
-        this.spellAndItemMenu_800c6b60._90 = 0;
+        this.spellAndItemMenu_800c6b60.scrollCounter_90 = 0;
         this.spellAndItemMenu_800c6b60.selectionState_a0 = 0;
         this.spellAndItemMenu_800c6b60.height_12 = 0;
         this.spellAndItemMenu_800c6b60.width_10 = 0;
 
         if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
-          this.spellAndItemMenu_800c6b60.listScroll_24 = this.spellAndItemMenu_800c6b60._26;
+          this.spellAndItemMenu_800c6b60.listIndex_24 = this.spellAndItemMenu_800c6b60.lastListIndex_26;
           this.spellAndItemMenu_800c6b60.flags_02 |= 0x20;
-          this.spellAndItemMenu_800c6b60.listIndex_1e = this.spellAndItemMenu_800c6b60._28;
-          this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._2a;
-          this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._2c;
+          this.spellAndItemMenu_800c6b60.listScroll_1e = this.spellAndItemMenu_800c6b60.lastListScroll_28;
+          this.spellAndItemMenu_800c6b60.listOffsetY_20 = this.spellAndItemMenu_800c6b60.lastListOffsetY_2a;
+          this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = this.spellAndItemMenu_800c6b60.lastOffsetFromStartOfListY_2c;
 
-          if(this.spellAndItemMenu_800c6b60.count_22 - 1 < this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e) {
-            this.spellAndItemMenu_800c6b60.listScroll_24--;
+          if(this.spellAndItemMenu_800c6b60.count_22 - 1 < this.spellAndItemMenu_800c6b60.listIndex_24 + this.spellAndItemMenu_800c6b60.listScroll_1e) {
+            this.spellAndItemMenu_800c6b60.listIndex_24--;
 
-            if(this.spellAndItemMenu_800c6b60.listScroll_24 < 0) {
-              this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
-              this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
-              this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._1a;
-              this.spellAndItemMenu_800c6b60._94 = 0; // This was a3.1a - a3.1a
+            if(this.spellAndItemMenu_800c6b60.listIndex_24 < 0) {
+              this.spellAndItemMenu_800c6b60.listIndex_24 = 0;
+              this.spellAndItemMenu_800c6b60.listScroll_1e = 0;
+              this.spellAndItemMenu_800c6b60.listOffsetY_20 = this.spellAndItemMenu_800c6b60.listStartY_1a;
+              this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = 0; // This was a3.1a - a3.1a
             }
           }
         } else {
           //LAB_800f4ca0
-          this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
-          this.spellAndItemMenu_800c6b60._20 = 0;
-          this.spellAndItemMenu_800c6b60._94 = 0;
-          this.spellAndItemMenu_800c6b60.listScroll_24 = this.spellAndItemMenu_800c6b60._30;
+          this.spellAndItemMenu_800c6b60.listScroll_1e = 0;
+          this.spellAndItemMenu_800c6b60.listOffsetY_20 = 0;
+          this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = 0;
+          this.spellAndItemMenu_800c6b60.listIndex_24 = this.spellAndItemMenu_800c6b60.lastSpellIndex_30;
         }
 
         //LAB_800f4cb4
@@ -1502,13 +1490,12 @@ public class BattleHud {
       }
 
       case 2 -> {
-        this.spellAndItemMenu_800c6b60.flags_02 &= 0xfcff;
+        this.spellAndItemMenu_800c6b60.flags_02 &= ~0x300;
         this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
 
         if((press_800bee94 & 0x4) != 0) { // L1
-          if(this.spellAndItemMenu_800c6b60.listScroll_24 != 0) {
-            this.spellAndItemMenu_800c6b60._88 = 2;
-            this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
+          if(this.spellAndItemMenu_800c6b60.listIndex_24 != 0) {
+            this.spellAndItemMenu_800c6b60.listIndex_24 = 0;
             this.spellAndItemMenu_800c6b60.menuState_00 = 5;
             playSound(0, 1, (short)0, (short)0);
           }
@@ -1518,20 +1505,19 @@ public class BattleHud {
 
         //LAB_800f4d54
         if((press_800bee94 & 0x1) != 0) { // L2
-          final int oldScroll = this.spellAndItemMenu_800c6b60.listScroll_24;
+          final int oldScroll = this.spellAndItemMenu_800c6b60.listIndex_24;
 
-          if(this.spellAndItemMenu_800c6b60.count_22 - 1 >= this.spellAndItemMenu_800c6b60.listIndex_1e + 6) {
-            this.spellAndItemMenu_800c6b60.listScroll_24 = 6;
+          if(this.spellAndItemMenu_800c6b60.count_22 - 1 >= this.spellAndItemMenu_800c6b60.listScroll_1e + 6) {
+            this.spellAndItemMenu_800c6b60.listIndex_24 = 6;
           } else {
             //LAB_800f4d8c
-            this.spellAndItemMenu_800c6b60.listScroll_24 = (short)(this.spellAndItemMenu_800c6b60.count_22 - (this.spellAndItemMenu_800c6b60.listIndex_1e + 1));
+            this.spellAndItemMenu_800c6b60.listIndex_24 = (short)(this.spellAndItemMenu_800c6b60.count_22 - (this.spellAndItemMenu_800c6b60.listScroll_1e + 1));
           }
 
           //LAB_800f4d90
-          this.spellAndItemMenu_800c6b60._88 = 2;
           this.spellAndItemMenu_800c6b60.menuState_00 = 5;
 
-          if(oldScroll != this.spellAndItemMenu_800c6b60.listScroll_24) {
+          if(oldScroll != this.spellAndItemMenu_800c6b60.listIndex_24) {
             playSound(0, 1, (short)0, (short)0);
           }
 
@@ -1540,67 +1526,64 @@ public class BattleHud {
 
         //LAB_800f4dc4
         if((press_800bee94 & 0x8) != 0) { // R1
-          if(this.spellAndItemMenu_800c6b60.listIndex_1e == 0) {
+          if(this.spellAndItemMenu_800c6b60.listScroll_1e == 0) {
             break;
           }
 
-          if(this.spellAndItemMenu_800c6b60.listIndex_1e < 7) {
-            this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
-            this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
-            this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._1a;
+          if(this.spellAndItemMenu_800c6b60.listScroll_1e < 7) {
+            this.spellAndItemMenu_800c6b60.listIndex_24 = 0;
+            this.spellAndItemMenu_800c6b60.listScroll_1e = 0;
+            this.spellAndItemMenu_800c6b60.listOffsetY_20 = this.spellAndItemMenu_800c6b60.listStartY_1a;
           } else {
             //LAB_800f4df4
-            this.spellAndItemMenu_800c6b60.listIndex_1e -= 7;
-            this.spellAndItemMenu_800c6b60._20 += 98;
+            this.spellAndItemMenu_800c6b60.listScroll_1e -= 7;
+            this.spellAndItemMenu_800c6b60.listOffsetY_20 += 98;
           }
 
           //LAB_800f4e00
-          this.spellAndItemMenu_800c6b60._88 = 2;
           this.spellAndItemMenu_800c6b60.menuState_00 = 5;
-          this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+          this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = this.spellAndItemMenu_800c6b60.listStartY_1a - this.spellAndItemMenu_800c6b60.listOffsetY_20;
           playSound(0, 1, (short)0, (short)0);
           break;
         }
 
         //LAB_800f4e40
         if((press_800bee94 & 0x2) != 0) { // R2
-          if(this.spellAndItemMenu_800c6b60.listIndex_1e + 6 >= this.spellAndItemMenu_800c6b60.count_22 - 1) {
+          if(this.spellAndItemMenu_800c6b60.listScroll_1e + 6 >= this.spellAndItemMenu_800c6b60.count_22 - 1) {
             break;
           }
 
-          this.spellAndItemMenu_800c6b60.listIndex_1e += 7;
-          this.spellAndItemMenu_800c6b60._20 -= 98;
+          this.spellAndItemMenu_800c6b60.listScroll_1e += 7;
+          this.spellAndItemMenu_800c6b60.listOffsetY_20 -= 98;
 
-          if(this.spellAndItemMenu_800c6b60.listIndex_1e + 6 >= this.spellAndItemMenu_800c6b60.count_22 - 1) {
-            this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
+          if(this.spellAndItemMenu_800c6b60.listScroll_1e + 6 >= this.spellAndItemMenu_800c6b60.count_22 - 1) {
+            this.spellAndItemMenu_800c6b60.listIndex_24 = 0;
           }
 
           //LAB_800f4e98
-          this.spellAndItemMenu_800c6b60._88 = 2;
           this.spellAndItemMenu_800c6b60.menuState_00 = 5;
-          this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+          this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = this.spellAndItemMenu_800c6b60.listStartY_1a - this.spellAndItemMenu_800c6b60.listOffsetY_20;
           playSound(0, 1, (short)0, (short)0);
           break;
         }
 
         //LAB_800f4ecc
         if((input_800bee90 & 0x1000) != 0) { // Up
-          if(this.spellAndItemMenu_800c6b60.listScroll_24 != 0) {
+          if(this.spellAndItemMenu_800c6b60.listIndex_24 != 0) {
             this.spellAndItemMenu_800c6b60.menuState_00 = 5;
-            this.spellAndItemMenu_800c6b60.listScroll_24--;
-            this.spellAndItemMenu_800c6b60._88 = 2;
+            this.spellAndItemMenu_800c6b60.listIndex_24--;
           } else {
             //LAB_800f4f18
-            if(this.spellAndItemMenu_800c6b60.listIndex_1e == 0) {
+            if(this.spellAndItemMenu_800c6b60.listScroll_1e == 0) {
               break;
             }
 
             this.spellAndItemMenu_800c6b60.menuState_00 = 3;
             this.spellAndItemMenu_800c6b60.flags_02 |= 0x200;
-            this.spellAndItemMenu_800c6b60._80 = 5;
-            this.spellAndItemMenu_800c6b60._7c = this.spellAndItemMenu_800c6b60._20;
-            this.spellAndItemMenu_800c6b60._20 += 5;
-            this.spellAndItemMenu_800c6b60.listIndex_1e--;
+            this.spellAndItemMenu_800c6b60.scrollAmount_80 = 5;
+            this.spellAndItemMenu_800c6b60.lastListOffset_7c = this.spellAndItemMenu_800c6b60.listOffsetY_20;
+            this.spellAndItemMenu_800c6b60.listOffsetY_20 += 5;
+            this.spellAndItemMenu_800c6b60.listScroll_1e--;
           }
 
           playSound(0, 1, (short)0, (short)0);
@@ -1609,21 +1592,20 @@ public class BattleHud {
 
         //LAB_800f4f74
         if((input_800bee90 & 0x4000) != 0) { // Down
-          if(this.spellAndItemMenu_800c6b60.listScroll_24 != this.spellAndItemMenu_800c6b60.count_22 - 1) {
-            if(this.spellAndItemMenu_800c6b60.listIndex_1e + this.spellAndItemMenu_800c6b60.listScroll_24 + 1 < this.spellAndItemMenu_800c6b60.count_22) {
+          if(this.spellAndItemMenu_800c6b60.listIndex_24 != this.spellAndItemMenu_800c6b60.count_22 - 1) {
+            if(this.spellAndItemMenu_800c6b60.listScroll_1e + this.spellAndItemMenu_800c6b60.listIndex_24 + 1 < this.spellAndItemMenu_800c6b60.count_22) {
               playSound(0, 1, (short)0, (short)0);
 
-              if(this.spellAndItemMenu_800c6b60.listScroll_24 != 6) {
-                this.spellAndItemMenu_800c6b60.listScroll_24++;
-                this.spellAndItemMenu_800c6b60._88 = 2;
+              if(this.spellAndItemMenu_800c6b60.listIndex_24 != 6) {
+                this.spellAndItemMenu_800c6b60.listIndex_24++;
                 this.spellAndItemMenu_800c6b60.menuState_00 = 5;
               } else {
                 //LAB_800f4ff8
-                this.spellAndItemMenu_800c6b60._80 = -5;
+                this.spellAndItemMenu_800c6b60.scrollAmount_80 = -5;
                 this.spellAndItemMenu_800c6b60.menuState_00 = 4;
-                this.spellAndItemMenu_800c6b60._7c = this.spellAndItemMenu_800c6b60._20;
-                this.spellAndItemMenu_800c6b60._20 -= 5;
-                this.spellAndItemMenu_800c6b60.listIndex_1e++;
+                this.spellAndItemMenu_800c6b60.lastListOffset_7c = this.spellAndItemMenu_800c6b60.listOffsetY_20;
+                this.spellAndItemMenu_800c6b60.listOffsetY_20 -= 5;
+                this.spellAndItemMenu_800c6b60.listScroll_1e++;
                 this.spellAndItemMenu_800c6b60.flags_02 |= 0x100;
               }
             }
@@ -1633,7 +1615,7 @@ public class BattleHud {
         }
 
         //LAB_800f5044
-        this.spellAndItemMenu_800c6b60._90 = 0;
+        this.spellAndItemMenu_800c6b60.scrollCounter_90 = 0;
 
         if((press_800bee94 & 0x20) != 0) { // X
           //LAB_800f5078
@@ -1679,21 +1661,20 @@ public class BattleHud {
             loadAdditions();
             this.battle.loadAttackAnimations(player.combatant_144);
             this.spellAndItemMenu_800c6b60.menuState_00 = 8;
-            this.spellAndItemMenu_800c6b60.flags_02 &= 0xfff7;
+            this.spellAndItemMenu_800c6b60.flags_02 &= ~0x8;
             break;
           }
 
           //LAB_800f5190
           playSound(0, 2, (short)0, (short)0);
-          this.spellAndItemMenu_800c6b60._8c = 0;
           this.spellAndItemMenu_800c6b60.flags_02 |= 0x4;
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
-            this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+            this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = this.spellAndItemMenu_800c6b60.listStartY_1a - this.spellAndItemMenu_800c6b60.listOffsetY_20;
           }
 
           //LAB_800f51e8
           this.spellAndItemMenu_800c6b60.menuState_00 = 6;
-          this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffd;
+          this.spellAndItemMenu_800c6b60.flags_02 &= ~0x2;
           break;
         }
 
@@ -1701,52 +1682,48 @@ public class BattleHud {
         if((press_800bee94 & 0x40) != 0) { // O
           playSound(0, 3, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60.menuState_00 = 8;
-          this.spellAndItemMenu_800c6b60.flags_02 &= 0xfff7;
+          this.spellAndItemMenu_800c6b60.flags_02 &= ~0x8;
         }
       }
 
       case 3 -> {
-        s0 = this.spellAndItemMenu_800c6b60._80;
-        this.spellAndItemMenu_800c6b60._90++;
-        if(this.spellAndItemMenu_800c6b60._90 >= 3) {
-          s0 *= 2;
+        int scrollAmount = this.spellAndItemMenu_800c6b60.scrollAmount_80;
+        this.spellAndItemMenu_800c6b60.scrollCounter_90++;
+        if(this.spellAndItemMenu_800c6b60.scrollCounter_90 >= 3) {
+          scrollAmount *= 2;
         }
 
         //LAB_800f5278
-        a1 = this.spellAndItemMenu_800c6b60._7c + 14;
-        this.spellAndItemMenu_800c6b60._20 += s0;
-        if(this.spellAndItemMenu_800c6b60._20 >= a1) {
-          this.spellAndItemMenu_800c6b60._20 = (short)a1;
+        final int a1 = this.spellAndItemMenu_800c6b60.lastListOffset_7c + 14;
+        this.spellAndItemMenu_800c6b60.listOffsetY_20 += scrollAmount;
+        if(this.spellAndItemMenu_800c6b60.listOffsetY_20 >= a1) {
+          this.spellAndItemMenu_800c6b60.listOffsetY_20 = (short)a1;
           this.spellAndItemMenu_800c6b60.menuState_00 = 2;
         }
       }
 
       case 4 -> {
-        s0 = this.spellAndItemMenu_800c6b60._80;
-        this.spellAndItemMenu_800c6b60._90++;
-        if(this.spellAndItemMenu_800c6b60._90 >= 3) {
+        int s0 = this.spellAndItemMenu_800c6b60.scrollAmount_80;
+        this.spellAndItemMenu_800c6b60.scrollCounter_90++;
+        if(this.spellAndItemMenu_800c6b60.scrollCounter_90 >= 3) {
           s0 = s0 * 2;
         }
 
         //LAB_800f52d4
-        a1 = this.spellAndItemMenu_800c6b60._7c - 14;
-        this.spellAndItemMenu_800c6b60._20 += s0;
-        if(this.spellAndItemMenu_800c6b60._20 <= a1) {
+        final int a1 = this.spellAndItemMenu_800c6b60.lastListOffset_7c - 14;
+        this.spellAndItemMenu_800c6b60.listOffsetY_20 += s0;
+        if(this.spellAndItemMenu_800c6b60.listOffsetY_20 <= a1) {
           //LAB_800f5300
-          this.spellAndItemMenu_800c6b60._20 = (short)a1;
+          this.spellAndItemMenu_800c6b60.listOffsetY_20 = (short)a1;
           this.spellAndItemMenu_800c6b60.menuState_00 = 2;
         }
       }
 
       case 5 -> {
-        s0 = this.spellAndItemMenu_800c6b60._88;
-        this.spellAndItemMenu_800c6b60._90++;
-        if(this.spellAndItemMenu_800c6b60._90 >= 3) {
-          s0 = s0 / 2;
-        }
+        this.spellAndItemMenu_800c6b60.scrollCounter_90++;
 
         //LAB_800f5338
-        if(s0 <= 1) {
+        if(this.spellAndItemMenu_800c6b60.scrollCounter_90 >= 3) {
           this.spellAndItemMenu_800c6b60.menuState_00 = 2;
         }
       }
@@ -1809,30 +1786,30 @@ public class BattleHud {
           //LAB_800f54b4
           playSound(0, 0, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60.menuState_00 = 7;
-          this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffb;
+          this.spellAndItemMenu_800c6b60.flags_02 &= ~0x4;
           this.spellAndItemMenu_800c6b60.flags_02 |= 0x20;
         }
       }
 
       case 7 -> {
+        final int width;
         if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
-          s0 = 128;
+          width = 128;
         } else {
-          s0 = 186;
+          width = 186;
         }
 
         this.spellAndItemMenu_800c6b60.menuState_00 = 2;
         playSound(0, 4, (short)0, (short)0);
-        this.spellAndItemMenu_800c6b60.width_10 = s0;
+        this.spellAndItemMenu_800c6b60.width_10 = width;
         this.spellAndItemMenu_800c6b60.height_12 = 82;
-        this.spellAndItemMenu_800c6b60.textX_18 = (short)(this.spellAndItemMenu_800c6b60.x_04 - s0 / 2 + 9);
-        v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60.height_12) - 16;
-        this.spellAndItemMenu_800c6b60._1a = (short)v0;
-        this.spellAndItemMenu_800c6b60._20 = (short)v0;
+        this.spellAndItemMenu_800c6b60.textX_18 = (short)(this.spellAndItemMenu_800c6b60.x_04 - width / 2 + 9);
+        final int v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60.height_12) - 16;
+        this.spellAndItemMenu_800c6b60.listStartY_1a = (short)v0;
+        this.spellAndItemMenu_800c6b60.listOffsetY_20 = (short)v0;
         this.spellAndItemMenu_800c6b60.flags_02 |= 0xb;
         if((this.spellAndItemMenu_800c6b60.flags_02 & 0x20) != 0) {
-          v0 = v0 - this.spellAndItemMenu_800c6b60._94;
-          this.spellAndItemMenu_800c6b60._20 = (short)v0;
+          this.spellAndItemMenu_800c6b60.listOffsetY_20 = (short)(v0 - this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94);
         }
 
         //LAB_800f5588
@@ -1850,18 +1827,18 @@ public class BattleHud {
         this.spellAndItemMenu_800c6b60.menuState_00 = 9;
         this.spellAndItemMenu_800c6b60.height_12 = 0;
         this.spellAndItemMenu_800c6b60.width_10 = 0;
-        this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffc;
+        this.spellAndItemMenu_800c6b60.flags_02 &= ~0x3;
         this.clearFloatingNumber(0);
       }
 
       case 9 -> {
         if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
-          v0 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
-          this.spellAndItemMenu_800c6b60._26 = this.spellAndItemMenu_800c6b60.listScroll_24;
-          this.spellAndItemMenu_800c6b60._28 = this.spellAndItemMenu_800c6b60.listIndex_1e;
-          this.spellAndItemMenu_800c6b60._2a = this.spellAndItemMenu_800c6b60._20;
-          this.spellAndItemMenu_800c6b60._94 = v0;
-          this.spellAndItemMenu_800c6b60._2c = v0;
+          final int v0 = this.spellAndItemMenu_800c6b60.listStartY_1a - this.spellAndItemMenu_800c6b60.listOffsetY_20;
+          this.spellAndItemMenu_800c6b60.lastListIndex_26 = this.spellAndItemMenu_800c6b60.listIndex_24;
+          this.spellAndItemMenu_800c6b60.lastListScroll_28 = this.spellAndItemMenu_800c6b60.listScroll_1e;
+          this.spellAndItemMenu_800c6b60.lastListOffsetY_2a = this.spellAndItemMenu_800c6b60.listOffsetY_20;
+          this.spellAndItemMenu_800c6b60.offsetFromStartOfListY_94 = v0;
+          this.spellAndItemMenu_800c6b60.lastOffsetFromStartOfListY_2c = v0;
         }
 
         //LAB_800f568c
@@ -1885,14 +1862,14 @@ public class BattleHud {
   private int getItemOrSpellId() {
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
       //LAB_800f56f0
-      return LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId());
+      return LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listIndex_24 + this.spellAndItemMenu_800c6b60.listScroll_1e).item.getRegistryId());
     }
 
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
       //LAB_800f5718
       //LAB_800f5740
       //LAB_800f5778
-      int spellIndex = this.battle.dragoonSpells_800c6960[this.spellAndItemMenu_800c6b60.player_08.charSlot_276].spellIndex_01[this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e];
+      int spellIndex = this.battle.dragoonSpells_800c6960[this.spellAndItemMenu_800c6b60.player_08.charSlot_276].spellIndex_01[this.spellAndItemMenu_800c6b60.listIndex_24 + this.spellAndItemMenu_800c6b60.listScroll_1e];
       if(this.spellAndItemMenu_800c6b60.player_08.charId_272 == 8) { // Miranda
         if(spellIndex == 65) {
           spellIndex = 10;
@@ -1913,7 +1890,7 @@ public class BattleHud {
     }
 
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 2) {
-      return this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e;
+      return this.spellAndItemMenu_800c6b60.listIndex_24 + this.spellAndItemMenu_800c6b60.listScroll_1e;
     }
 
     throw new RuntimeException("Undefined a0");
@@ -1928,8 +1905,8 @@ public class BattleHud {
 
     final SpellAndItemMenuA4 menu = this.spellAndItemMenu_800c6b60;
 
-    int y1 = menu._20;
-    final int y2 = menu._1a;
+    int y1 = menu.listOffsetY_20;
+    final int y2 = menu.listStartY_1a;
     final int sp68 = menu.y_06;
 
     //LAB_800f5860
@@ -1984,17 +1961,13 @@ public class BattleHud {
       //LAB_800f5af0
       if(y1 >= y2) {
         //LAB_800f5b90
-        if(sp68 >= y1 + 12) {
+        if(sp68 >= y1 + 12 || (menu.flags_02 & 0x4) != 0) {
           trim = 0;
         } else {
           trim = y1 - (sp68 - 12);
         }
 
         //LAB_800f5bb4
-        if((menu.flags_02 & 0x4) != 0) {
-          trim = (short)menu._8c;
-        }
-
         //LAB_800f5bd8
         Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y1, textColour, trim);
 
@@ -2003,7 +1976,7 @@ public class BattleHud {
         }
       } else if(y2 < y1 + 12) {
         if((menu.flags_02 & 0x4) != 0) {
-          trim = menu._8c;
+          trim = 0;
         } else {
           trim = y1 - y2;
         }
@@ -2054,7 +2027,7 @@ public class BattleHud {
         if((menu.flags_02 & 0x8) != 0) {
           //LAB_800f5d78
           //LAB_800f5d90
-          menu.transforms.transfer.set(menu.textX_18 - 16, menu._1a + menu.listScroll_24 * 14 + 2, 124.0f);
+          menu.transforms.transfer.set(menu.textX_18 - 16, menu.listStartY_1a + menu.listIndex_24 * 14 + 2, 124.0f);
           RENDERER.queueOrthoModel(menu.arrowObj[menu.selectionArrowFrame_84], menu.transforms);
 
           final int s0;
@@ -2081,13 +2054,13 @@ public class BattleHud {
           }
 
           //LAB_800f5e24
-          if(menu.listIndex_1e > 0) {
+          if(menu.listScroll_1e > 0) {
             menu.transforms.transfer.set(menu.x_04 + s0 + 56, menu.y_06 + t0 - 100, 124.0f);
             RENDERER.queueOrthoModel(menu.upArrow, menu.transforms);
           }
 
           //LAB_800f5e7c
-          if(menu.listIndex_1e + 6 < menu.count_22 - 1) {
+          if(menu.listScroll_1e + 6 < menu.count_22 - 1) {
             menu.transforms.transfer.set(menu.x_04 + s0 + 56, menu.y_06 + s1 - 7, 124.0f);
             RENDERER.queueOrthoModel(menu.downArrow, menu.transforms);
           }

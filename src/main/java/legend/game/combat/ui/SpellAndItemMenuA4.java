@@ -25,40 +25,48 @@ public class SpellAndItemMenuA4 {
    * </ol>
    */
   public short menuType_0a;
-  /** ushort */
-  public int _0c;
-  /** ushort */
-  public int _0e;
+//  /** ushort */
+//  public int _0c;
+//  /** ushort */
+//  public int _0e;
   /** ushort */
   public int width_10;
   /** ushort */
   public int height_12;
-  /** ushort */
-  public int _14;
-  /** ushort */
-  public int _16;
+//  /** ushort */
+//  public int _14;
+//  /** ushort */
+//  public int _16;
   public short textX_18;
-  public short _1a;
+  public short listStartY_1a;
   public short itemOrSpellId_1c;
-  public short listIndex_1e;
-  public short _20;
+  public short listScroll_1e;
+  /** Decreases as you scroll down the list */
+  public short listOffsetY_20;
   public short count_22;
-  public short listScroll_24;
-  public short _26;
-  public short _28;
-  public short _2a;
-  public int _2c;
-  public short _30;
+  /** Selected item relative to listScroll */
+  public short listIndex_24;
+  /** Used to select the same item when the list is opened next time */
+  public short lastListIndex_26;
+  /** Used to select the same item when the list is opened next time */
+  public short lastListScroll_28;
+  /** Used to select the same item when the list is opened next time */
+  public short lastListOffsetY_2a;
+  public int lastOffsetFromStartOfListY_2c;
+  /** Not actually set */
+  public short lastSpellIndex_30;
 
-  public int _7c;
-  public int _80;
+  public int lastListOffset_7c;
+  /** +5 for up, -5 for down*/
+  public int scrollAmount_80;
   public int selectionArrowFrame_84;
-  public int _88;
-  public int _8c;
-  public int _90;
-  public int _94;
-  public int _98;
-  public int _9c;
+//  public int _88;
+//  public int _8c;
+  /** Used to speed up scrolling after holding up or down for 3 items */
+  public int scrollCounter_90;
+  public int offsetFromStartOfListY_94;
+//  public int _98;
+//  public int _9c;
   /**
    * <ul>
    *   <li>0 - nothing selected</li>
@@ -131,17 +139,13 @@ public class SpellAndItemMenuA4 {
     this.y_06 = 0;
     this.player_08 = null;
     this.menuType_0a = 0;
-    this._0c = 0;
-    this._0e = 0;
     this.width_10 = 0;
     this.height_12 = 0;
-    this._14 = 0;
-    this._16 = 0x1000;
     this.textX_18 = 0;
-    this._1a = 0;
+    this.listStartY_1a = 0;
     this.itemOrSpellId_1c = -1;
     this.count_22 = 0;
-    this.listScroll_24 = 0;
+    this.listIndex_24 = 0;
 
     this.itemTargetAll_800c69c8 = false;
     this.itemTargetType_800c6b68 = 0;
