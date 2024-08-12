@@ -15,6 +15,7 @@ import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.TemporaryMagicStats;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
@@ -39,7 +40,6 @@ import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.legendofdragoon.modloader.events.Event;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,7 +48,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -197,7 +196,7 @@ public class BattleHud {
   private UiBox battleUiItemSpellList;
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
-  private ArrayList<ArrayList<Obj>> spBars = new ArrayList<>();
+  private Obj spBars;
   private final MV spBarTransforms = new MV();
   private final MV lineTransforms = new MV();
 
@@ -704,21 +703,6 @@ public class BattleHud {
             }
           }
 
-          if(player.charSlot_276 + 1 > this.spBars.size()) {
-            final ArrayList<Obj> characterSpBars = new ArrayList<>();
-            for(int x = 0; x < CoreMod.MAX_DRAGOON_LEVEL + 2; x++) {
-              final int[] spBarColoursInit = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[x];
-              characterSpBars.add(new QuadBuilder("SPBar" + player.charSlot_276 + "-" + spBarIndex)
-                .rgb(0, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
-                .rgb(1, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
-                .rgb(2, spBarColoursInit[0] / 255.0f, spBarColoursInit[1] / 255.0f, spBarColoursInit[2] / 255.0f)
-                .rgb(3, spBarColoursInit[3] / 255.0f, spBarColoursInit[4] / 255.0f, spBarColoursInit[5] / 255.0f)
-                .size(1, 1)
-                .build());
-            }
-            this.spBars.add(characterSpBars);
-          }
-
           if(canTransform) {
             final int sp = player.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
             final int fullLevels = sp / 100;
@@ -747,11 +731,22 @@ public class BattleHud {
               final int top = displayStats.y_02 - centreScreenY_1f8003de + 8;
               final int right = left + spBarW;
               final int bottom = top + 3;
+              final int[] spBarColours = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[spBarIndex];
 
-              spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
-              spBarTransforms.scaling(right - left, bottom - top, 1.0f);
+              if(this.spBars == null) {
+                this.spBars = new QuadBuilder("SPBar")
+                  .monochrome(0, 229.0f / 255.0f)
+                  .monochrome(1, 133.0f / 255.0f)
+                  .monochrome(2, 229.0f / 255.0f)
+                  .monochrome(3, 133.0f / 255.0f)
+                  .size(1, 1)
+                  .build();
+              }
 
-              RENDERER.queueOrthoModel(this.spBars.get(player.charSlot_276).get(spBarIndex), spBarTransforms);
+              this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
+              this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
+
+              RENDERER.queueOrthoModel(this.spBars, this.spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
             }
 
             //SP border
@@ -1651,7 +1646,7 @@ public class BattleHud {
           //LAB_800f50b8
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
             player.itemId_52 = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
-            player.setTempItemMagicStats(5);
+            player.setTempItemMagicStats(TemporaryMagicStats.SPELL_ITEM_MENU);
 
             if((player.item_d4.target_00 & 0x4) != 0) {
               this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 1;
@@ -1782,8 +1777,7 @@ public class BattleHud {
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
             this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = EVENTS.postEvent(new SelectedItemEvent(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c, lastItemSelected)).itemId;
             final int itemId = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c + 192;
-            final Item item = lastItemSelected;
-            takeItemId(item);
+            takeItemId(lastItemSelected);
 
             boolean returnItem = false;
             for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
@@ -1800,7 +1794,7 @@ public class BattleHud {
             final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
 
             if(repeatItemReturnEvent.returnItem) {
-              this.battle.usedRepeatItems_800c6c3c.add(item);
+              this.battle.usedRepeatItems_800c6c3c.add(lastItemSelected);
             }
           }
 
@@ -1894,7 +1888,7 @@ public class BattleHud {
   private int getItemOrSpellId() {
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
       //LAB_800f56f0
-      ItemIdEvent itemId = EVENTS.postEvent(new ItemIdEvent(LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()), this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()));
+      final ItemIdEvent itemId = EVENTS.postEvent(new ItemIdEvent(LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()), this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId()));
       lastItemSelected = this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item;
       return itemId.itemId;
     }
@@ -3025,12 +3019,7 @@ public class BattleHud {
     }
 
     if(this.spBars != null) {
-      for(int i = 0; i < spBars.size(); i++) {
-        ArrayList<Obj> barObj = spBars.get(i);
-        for(Obj bar : barObj) {
-          bar.delete();
-        }
-      }
+      this.spBars.delete();
       this.spBars = null;
     }
   }

@@ -253,7 +253,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final int hitPropertyValue;
     if(autoCompleteType == 1 || autoCompleteType == 3) {
       //LAB_80106274
-      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].get(hitPropertyIndex);
+      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].getHitProperty(hitPropertyIndex);
     } else {
       //LAB_8010628c
       hitPropertyValue = battlePreloadedEntities_1f8003f4.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;

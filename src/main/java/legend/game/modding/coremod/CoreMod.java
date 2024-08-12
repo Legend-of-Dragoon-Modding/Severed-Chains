@@ -184,16 +184,9 @@ public class CoreMod {
       final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
       final Addition04[] multipliers = new Addition04[6];
       for(int x = 0; x < 8; x++) {
-        hits[x] = new AdditionHitProperties10();
-        for(int y = 0; y < 16; y++) {
-          if(y == 8) {
-            final int panDistance = hit.readUByte((i * 128) + (x * 16) + y);
-            hits[x].set(y, panDistance > 127 ? panDistance - 255 : panDistance);
-          } else {
-            hits[x].set(y, hit.readUByte((i * 128) + (x * 16) + y));
-          }
-        }
+        hits[x] = AdditionHitProperties10.fromFile(i, x, hit);
       }
+
       for(int y = 0; y < 6; y++) {
         multipliers[y] = new Addition04();
         multipliers[y]._00 = multiplier.readUByte((i * 24) + (y * 4));
@@ -207,24 +200,18 @@ public class CoreMod {
     if(charIndex != 2 && charIndex != 8) {
       final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
       for(int x = 0; x < 8; x++) {
-        hits[x] = new AdditionHitProperties10();
-        for(int y = 0; y < 16; y++) {
-          hits[x].set(y, hit.readByte((additions * 128) + (x * 16) + y));
-        }
+        hits[x] = AdditionHitProperties10.fromFile(additions, x, hit);
       }
       CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
     } else {
       CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(new AdditionHitProperties10[8]));
     }
 
-    if(charIndex == 0) {
+    if(charIndex == 0) { //Divine Dragoon Dart has 2x on his hit multipliers
       final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
       for(int x = 0; x < 8; x++) {
-        hits[x] = new AdditionHitProperties10();
-        for(int y = 0; y < 16; y++) {
-          hits[x].set(y, hit.readByte((additions * 128) + (x * 16) + y));
-        }
-        hits[x].set(4, hits[x].get(4) * 2);
+        hits[x] = AdditionHitProperties10.fromFile(additions, x, hit);
+        hits[x].damageMultiplier_04 = hits[x].damageMultiplier_04 * 2;
       }
       CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
     }

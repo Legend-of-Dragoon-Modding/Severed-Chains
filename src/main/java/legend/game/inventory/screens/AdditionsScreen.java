@@ -130,7 +130,7 @@ public class AdditionsScreen extends MenuScreen {
             final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
             renderThreeDigitNumber(197, y, level); // Addition level
             renderThreeDigitNumber(230, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionHitCount(i)); // Number of attacks
-            renderThreeDigitNumber(263, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionLevelSP(i, level)); // SP
+            renderThreeDigitNumber(263, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionLevelSp(i, level)); // SP
             renderThreeDigitNumber(297, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionDamage(i, level)); // Damage
             renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 

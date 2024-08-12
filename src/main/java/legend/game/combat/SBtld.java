@@ -2,8 +2,6 @@ package legend.game.combat;
 
 import legend.core.memory.Method;
 import legend.game.combat.environment.EncounterData38;
-import legend.game.combat.types.AdditionHitProperties10;
-import legend.game.combat.types.AdditionHits80;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.modding.coremod.CoreMod;
 
@@ -21,7 +19,7 @@ public class SBtld {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex >= 0) {
-        int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
+        final int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
 
         //LAB_801092dc
         final int activeDragoonAdditionIndex;
@@ -46,8 +44,6 @@ public class SBtld {
 
     loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8 * 0x38));
   }
-
-  public static final int[] dragoonAdditionIndices_801134e8 = {7, 13, -1, 18, 35, 41, 28, 22, -1, 42};
 
   public static final StageDeffThing08[] _8011517c = {
     new StageDeffThing08(0, 0, 0),

@@ -16,7 +16,6 @@ import legend.game.types.Translucency;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadAdditions;
@@ -490,21 +489,21 @@ public class PostBattleScreen extends MenuScreen {
         gameState_800babc8.charData_32c[charId].xp_00 = xp;
         this.pendingXp_8011e180[charId] -= cappedPendingXp;
 
-    //LAB_8010cd30
-    while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < CoreMod.MAX_CHARACTER_LEVEL) {
-      gameState_800babc8.charData_32c[charId].level_12++;
+      //LAB_8010cd30
+      while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < CoreMod.MAX_CHARACTER_LEVEL) {
+        gameState_800babc8.charData_32c[charId].level_12++;
 
-      this.levelsGained_8011e1c8[charSlot]++;
-      if(this.additionsUnlocked_8011e1b8[charSlot] == 0) {
-        this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charId, null);
-      }
+        this.levelsGained_8011e1c8[charSlot]++;
+        if(this.additionsUnlocked_8011e1b8[charSlot] == 0) {
+          this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charId, null);
+        }
 
-      //LAB_8010cd9c
-    }
-      } else {
-        pendingXpCleared++;
+        //LAB_8010cd9c
       }
-    }
+        } else {
+          pendingXpCleared++;
+        }
+      }
 
     //LAB_8010cdb0
     //LAB_8010cdcc

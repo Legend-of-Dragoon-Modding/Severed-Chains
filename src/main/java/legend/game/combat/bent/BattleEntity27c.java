@@ -10,6 +10,7 @@ import legend.game.characters.ElementSet;
 import legend.game.characters.StatCollection;
 import legend.game.characters.StatType;
 import legend.game.combat.Battle;
+import legend.game.combat.TemporaryMagicStats;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -685,7 +686,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setTempItemMagicStats(int attackType) {
+  public void setTempItemMagicStats(final TemporaryMagicStats attackType) {
     //LAB_800f7a98
     if(this.itemId_52 >= 64) {
       this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[0], attackType, this)).itemStats;

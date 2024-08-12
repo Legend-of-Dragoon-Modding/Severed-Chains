@@ -11,7 +11,7 @@ public class SelectedItemEvent extends BattleEvent {
   public short itemId;
   public Item item;
 
-  public SelectedItemEvent(final short itemId, Item item) {
+  public SelectedItemEvent(final short itemId, final Item item) {
     this.itemId = itemId;
     this.item = item;
   }

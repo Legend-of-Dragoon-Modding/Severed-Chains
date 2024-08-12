@@ -108,7 +108,7 @@ public class StatusScreen extends MenuScreen {
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
-      for(int i = 0; i < 7; i++) {
+      for(int i = 0; i < unlockedSpellCount; i++) {
         renderCharacter(200, 127 + i * 14, i + 1);
       }
 
