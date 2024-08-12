@@ -32,6 +32,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
@@ -50,6 +51,7 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
+import static org.lwjgl.glfw.GLFW.glfwGetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -254,12 +256,20 @@ public class Window {
     glfwSetWindowShouldClose(this.window, true);
   }
 
-  public void hideCursor() {
+  public void disableCursor() {
     glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   }
 
   public void showCursor() {
     glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
+
+  public void hideCursor() {
+    glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+  }
+
+  public boolean isCursorVisible() {
+    return glfwGetInputMode(this.window, GLFW_CURSOR) != GLFW_CURSOR_HIDDEN;
   }
 
   public void setCursorPos(final double x, final double y) {
