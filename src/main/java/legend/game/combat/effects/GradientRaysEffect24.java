@@ -84,7 +84,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)manager.effect_44;
 
       //LAB_8010afcc
-      for(int i = 0; i < 1; i++) {
+      for(int i = 0; i < rayEffect.count_04; i++) {
         this.renderGradientRay(manager, rayEffect.rays_00[i]);
       }
     }

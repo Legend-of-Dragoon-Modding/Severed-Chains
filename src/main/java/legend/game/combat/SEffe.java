@@ -1807,18 +1807,18 @@ public final class SEffe {
       //LAB_8010a770
       effect.rays_00[i].angle_00 = MathHelper.psxDegToRad((short)(rand() % 0x1000));
 
-      final int v0;
+      final int vertColourAndYModifier;
       if((effect.flags_18 & 0x2) == 0) {
         //LAB_8010a7a8
-        v0 = rand() % 0x80;
+        vertColourAndYModifier = rand() % 0x80;
       } else {
         //LAB_8010a7b4
         //LAB_8010a7d0
-        v0 = rand() % 0x10;
+        vertColourAndYModifier = rand() % 0x10;
       }
 
       //LAB_8010a7d4
-      effect.rays_00[i].vertColourAndYModifier_02 = (short)v0;
+      effect.rays_00[i].vertColourAndYModifier_02 = vertColourAndYModifier;
       if((effect.flags_18 & 0x1) != 0) {
         effect.rays_00[i].vertColourAndYModifier_02 += 0x70;
       }
