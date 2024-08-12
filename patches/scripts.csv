@@ -11,6 +11,7 @@ SECT/DRGN0.BIN/5072/1,scripts/DRGN0/5072/1.diff,"Shirley transform, fix extremel
 SECT/DRGN0.BIN/5078/1,scripts/DRGN0/5078/1.diff,"Lenus I AOE attack, fix character count crash"
 SECT/DRGN0.BIN/5152/1,scripts/DRGN0/5152/1.diff,"Virage II Magic AOE, fix character count crash"
 SECT/DRGN0.BIN/5156/1,scripts/DRGN0/5156/1.diff,"Virage II Can't Combat, fix character count crash"
+SECT/DRGN0.BIN/5184/1,scripts/DRGN0/5184/1.diff,"Virage IV Planet Attack, fix character count crash"
 SECT/DRGN0.BIN/5196/1,scripts/DRGN0/5196/1.diff,"Drake Bombs, scale bomb count according to character count"
 SECT/DRGN0.BIN/5204/1,scripts/DRGN0/5204/1.diff,"Jiango Falling rocks, fix character count crash"
 SECT/DRGN0.BIN/5254/1,scripts/DRGN0/5254/1.diff,"Faust Tornado, fix character count crash"
