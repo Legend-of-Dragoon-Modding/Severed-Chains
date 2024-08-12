@@ -15,6 +15,8 @@ SECT/DRGN0.BIN/5196/1,scripts/DRGN0/5196/1.diff,"Drake Bombs, scale bomb count a
 SECT/DRGN0.BIN/5204/1,scripts/DRGN0/5204/1.diff,"Jiango Falling rocks, fix character count crash"
 SECT/DRGN0.BIN/5254/1,scripts/DRGN0/5254/1.diff,"Faust Tornado, fix character count crash"
 SECT/DRGN0.BIN/5268/1,scripts/DRGN0/5268/1.diff,"Polter helm command block, fix character count crash"
+SECT/DRGN0.BIN/5312/1,scripts/DRGN0/5312/1.diff,"Selebus singing, fix character count crash"
+SECT/DRGN0.BIN/5326/1,scripts/DRGN0/5326/1.diff,"Kubila Froggy, fix character count crash"
 SECT/DRGN0.BIN/5520/1,scripts/DRGN0/5520/1.diff,"Hoax Cutscene, force-load Dart and Lavitz"
 SECT/DRGN0.BIN/5524/1,scripts/DRGN0/5524/1.diff,"Doel Death Cutscene, force-load Dart"
 SECT/DRGN0.BIN/5528/1,scripts/DRGN0/5528/1.diff,"Lloyd Flanvel Cutscene, force-load Dart"
