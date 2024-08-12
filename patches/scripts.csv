@@ -13,6 +13,7 @@ SECT/DRGN0.BIN/5152/1,scripts/DRGN0/5152/1.diff,"Virage II Magic AOE, fix charac
 SECT/DRGN0.BIN/5156/1,scripts/DRGN0/5156/1.diff,"Virage II Can't Combat, fix character count crash"
 SECT/DRGN0.BIN/5196/1,scripts/DRGN0/5196/1.diff,"Drake Bombs, scale bomb count according to character count"
 SECT/DRGN0.BIN/5204/1,scripts/DRGN0/5204/1.diff,"Jiango Falling rocks, fix character count crash"
+SECT/DRGN0.BIN/5254/1,scripts/DRGN0/5254/1.diff,"Faust Tornado, fix character count crash"
 SECT/DRGN0.BIN/5520/1,scripts/DRGN0/5520/1.diff,"Hoax Cutscene, force-load Dart and Lavitz"
 SECT/DRGN0.BIN/5524/1,scripts/DRGN0/5524/1.diff,"Doel Death Cutscene, force-load Dart"
 SECT/DRGN0.BIN/5528/1,scripts/DRGN0/5528/1.diff,"Lloyd Flanvel Cutscene, force-load Dart"
