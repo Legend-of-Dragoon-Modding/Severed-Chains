@@ -28,6 +28,7 @@ import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.Battle;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
+import legend.game.input.Input;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix3f;
@@ -1303,9 +1304,13 @@ public class RenderEngine {
       LOGGER.info("Allow movement: %b", this.allowMovement);
 
       if(this.allowMovement) {
-        this.window.hideCursor();
+        this.window.disableCursor();
       } else {
-        this.window.showCursor();
+        if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+          this.window.hideCursor();
+        } else {
+          this.window.showCursor();
+        }
       }
     }
   }

@@ -383,7 +383,7 @@ public class GuiManager {
 
     final NkMouse mouse = this.ctx.input().mouse();
     if(mouse.grab()) {
-      this.window.hideCursor();
+      this.window.disableCursor();
     } else if(mouse.grabbed()) {
       final float prevX = mouse.prev().x();
       final float prevY = mouse.prev().y();
