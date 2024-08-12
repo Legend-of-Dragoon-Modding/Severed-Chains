@@ -268,10 +268,6 @@ public class Window {
     glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
   }
 
-  public boolean isCursorVisible() {
-    return glfwGetInputMode(this.window, GLFW_CURSOR) != GLFW_CURSOR_HIDDEN;
-  }
-
   public void setCursorPos(final double x, final double y) {
     glfwSetCursorPos(this.window, x, y);
   }
