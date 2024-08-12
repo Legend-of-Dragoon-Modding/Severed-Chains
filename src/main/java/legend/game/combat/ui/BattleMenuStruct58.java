@@ -10,9 +10,6 @@ import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
 import legend.game.combat.environment.BattleMenuHighlightMetrics12;
 import legend.game.combat.environment.BattleMenuIconMetrics08;
 import legend.game.combat.environment.BattleMenuTextMetrics08;
-import legend.game.types.Translucency;
-
-import javax.annotation.Nullable;
 
 import java.util.Arrays;
 
@@ -235,7 +232,6 @@ public class BattleMenuStruct58 {
         builder
           .add()
           .bpp(Bpp.BITS_4)
-          .translucency(Translucency.HALF_B_PLUS_HALF_F)
           .vramPos(704, 256)
           .monochrome(0.5f)
           .size(16, 24)

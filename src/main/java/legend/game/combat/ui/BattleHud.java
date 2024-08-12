@@ -347,7 +347,8 @@ public class BattleHud {
     this.battleMenu_800c6c34.transforms.identity();
     this.battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188[tickCount_800bb0fc & 0x7], 112.0f);
     RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
-      .vertices(this.battleMenu_800c6c34.targetArrowsObjOffset + colour * 4, 4);
+      .vertices(this.battleMenu_800c6c34.targetArrowsObjOffset + colour * 4, 4)
+      .translucency(Translucency.HALF_B_PLUS_HALF_F);
   }
 
   @Method(0x800ef7c4L)
