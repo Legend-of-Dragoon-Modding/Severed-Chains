@@ -1,0 +1,21 @@
+--- original
++++ modified
+@@ -1284,14 +1284,18 @@
+ mov stor[27], stor[stor[stor[0], 18], 27]
+ mov stor[11], stor[stor[stor[0], 18], 28]
+ call 618, stor[18], inl[:LABEL_18]
++jmp_cmp ==, stor[12], 0xffffffff, inl[:SKIP_0]
+ call 600, stor[18]
+ mov stor[27], stor[stor[stor[0], 18], 27]
+ mov stor[12], stor[stor[stor[0], 18], 28]
+ call 618, stor[18], inl[:LABEL_18]
++SKIP_0:
++jmp_cmp ==, stor[13], 0xffffffff, inl[:SKIP_1]
+ call 600, stor[18]
+ mov stor[27], stor[stor[stor[0], 18], 27]
+ mov stor[13], stor[stor[stor[0], 18], 28]
+ call 618, stor[18], inl[:LABEL_18]
++SKIP_1:
+ mov 0x32, stor[23]
+ wait stor[23]
+ call 576, stor[19], 0xffffffff, 0x14, 0x0, 0x0, 0x1000
