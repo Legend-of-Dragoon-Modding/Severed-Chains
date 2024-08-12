@@ -1,8 +1,9 @@
 package legend.game.combat.effects;
 
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Vector2f;
@@ -12,20 +13,27 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 
 public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType> {
   public final GradientRaysEffectInstance04[] rays_00;
   public final int count_04;
-  public int _08;
-  public int _0c;
-  public int _10;
-  public int _14;
+  /** Y values when rays are in the center cluster of the effect */
+  public int yInner_08;
+  /** Z value of the two edge vertices of the rays */
+  public int midVertZ_0c;
+  /** Y values when rays are in the outer part of the effect */
+  public int yOuter_10;
+  public int stepVertColourAndYModifier_14;
   public int flags_18;
   public int type_1c;
   public float projectionPlaneDistanceDiv4_20;
+
+  final MV transforms = new MV();
 
   public GradientRaysEffect24(final int count) {
     this.rays_00 = new GradientRaysEffectInstance04[count];
@@ -43,30 +51,28 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
 
       if((this.flags_18 & 0x1) == 0) {
         //LAB_8010aee8
-        ray._02 += (short)this._14;
+        ray.vertColourAndYModifier_02 += (short)this.stepVertColourAndYModifier_14;
 
-        if((this.flags_18 & 0x2) != 0 && ray._02 >= 0x80) {
-          ray._02 = 0x80;
+        if((this.flags_18 & 0x2) != 0 && ray.vertColourAndYModifier_02 >= 0x80) {
+          ray.vertColourAndYModifier_02 = 0x80;
         } else {
           //LAB_8010af28
           //LAB_8010af3c
-          ray._02 %= 0x80;
+          ray.vertColourAndYModifier_02 %= 0x80;
         }
       } else {
-        ray._02 -= (short)this._14;
+        ray.vertColourAndYModifier_02 -= (short)this.stepVertColourAndYModifier_14;
 
-        if((this.flags_18 & 0x2) != 0 && ray._02 <= 0) {
-          ray._02 = 0;
+        if((this.flags_18 & 0x2) != 0 && ray.vertColourAndYModifier_02 <= 0) {
+          ray.vertColourAndYModifier_02 = 0;
         } else {
           //LAB_8010aecc
-          ray._02 += 0x80;
-          ray._02 %= 0x80;
+          ray.vertColourAndYModifier_02 += 0x80;
+          ray.vertColourAndYModifier_02 %= 0x80;
         }
       }
-
       //LAB_8010af4c
     }
-
     //LAB_8010af64
   }
 
@@ -78,11 +84,10 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)manager.effect_44;
 
       //LAB_8010afcc
-      for(int i = 0; i < rayEffect.count_04; i++) {
+      for(int i = 0; i < 1; i++) {
         this.renderGradientRay(manager, rayEffect.rays_00[i]);
       }
     }
-
     //LAB_8010aff0
   }
 
@@ -94,129 +99,149 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
   /** Used in Rose transform */
   @Method(0x8010a860L)
   private void renderGradientRay(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final GradientRaysEffectInstance04 gradientRay) {
-    final Vector3f sp0x38 = new Vector3f();
-    final Vector3f sp0x40 = new Vector3f();
-    final Vector3f sp0x48 = new Vector3f();
-    final Vector3f sp0x50 = new Vector3f();
+    final Vector3f vert0 = new Vector3f();
+    final Vector3f vert1 = new Vector3f();
+    final Vector3f vert2 = new Vector3f();
+    final Vector3f vert3 = new Vector3f();
     final Vector2f xy0 = new Vector2f();
     final Vector2f xy1 = new Vector2f();
     final Vector2f xy2 = new Vector2f();
     final Vector2f xy3 = new Vector2f();
 
-    final MV sp0x80 = new MV();
-    final MV sp0xa0 = new MV();
-    final MV sp0xc0 = new MV();
-
     final GradientRaysEffect24 effect = (GradientRaysEffect24)manager.effect_44;
 
     //LAB_8010a968
     if((effect.flags_18 & 0x4) == 0) {
-      if(effect._10 * 2 < gradientRay._02 * effect._08) {
-        sp0x40.y = -effect._10;
-        sp0x48.y = -effect._10;
-        sp0x50.y = -effect._10 * 2.0f;
+      if(effect.yOuter_10 * 2 < gradientRay.vertColourAndYModifier_02 * effect.yInner_08) {
+        vert1.y = -effect.yOuter_10;
+        vert2.y = -effect.yOuter_10;
+        vert3.y = -effect.yOuter_10 * 2.0f;
       } else {
         //LAB_8010a9ec
-        sp0x40.y = gradientRay._02 * -effect._08 / 2.0f;
-        sp0x48.y = gradientRay._02 * -effect._08 / 2.0f;
-        sp0x50.y = gradientRay._02 * -effect._08;
+        vert1.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08 / 2.0f;
+        vert2.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08 / 2.0f;
+        vert3.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08;
       }
 
       //LAB_8010aa34
-      sp0x40.z = effect._0c;
-      sp0x48.z = -effect._0c;
+      vert1.z = effect.midVertZ_0c;
+      vert2.z = -effect.midVertZ_0c;
     }
 
     //LAB_8010aa54
-    final Vector3f translation = new Vector3f(0.0f, gradientRay._02 * effect._08, 0.0f);
+    final MV rotationMatrix = new MV();
+    final MV translationMatrix = new MV();
+    final MV effectTransforms = new MV();
+    final MV compositionMatrix = new MV();
+    final MV worldMatrix = new MV();
+    final MV transformMatrix = new MV();
+
+    final Vector3f translation = new Vector3f(0.0f, gradientRay.vertColourAndYModifier_02 * effect.yInner_08, 0.0f);
     final Vector3f rotation = new Vector3f(gradientRay.angle_00, 0.0f, 0.0f);
-    sp0xa0.rotationXYZ(rotation);
-    sp0x80.transfer.set(translation);
-    sp0x80.compose(sp0xa0, sp0xc0);
-    calculateEffectTransforms(sp0x80, manager);
+    rotationMatrix.rotationXYZ(rotation);
+    translationMatrix.transfer.set(translation);
+    translationMatrix.compose(rotationMatrix, compositionMatrix);
+    calculateEffectTransforms(effectTransforms, manager);
 
     if((manager.params_10.flags_00 & 0x400_0000) == 0) {
-      sp0x80.compose(worldToScreenMatrix_800c3548, sp0xa0);
-      sp0xa0.rotationXYZ(manager.params_10.rot_10);
-      sp0xc0.compose(sp0xa0, sp0xc0);
-      GTE.setTransforms(sp0xc0);
+      rotationMatrix.rotationXYZ(manager.params_10.rot_10);
+      effectTransforms.compose(rotationMatrix, transformMatrix);
+      GTE.setTransforms(transformMatrix);
     } else {
       //LAB_8010ab10
-      sp0xc0.compose(sp0x80, sp0xa0);
-      sp0xa0.compose(worldToScreenMatrix_800c3548, sp0x80);
-      GTE.setTransforms(sp0x80);
+      compositionMatrix.compose(effectTransforms, worldMatrix);
+      worldMatrix.compose(worldToScreenMatrix_800c3548, transformMatrix);
+      GTE.setTransforms(transformMatrix);
     }
 
     //LAB_8010ab34
-    final float z = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, xy0, xy1, xy2, xy3);
+    final float z = RotTransPers4(vert0, vert1, vert2, vert3, xy0, xy1, xy2, xy3);
     if(z >= effect.projectionPlaneDistanceDiv4_20) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .translucent(Translucency.B_PLUS_F);
-
+      final float r, g, b;
       if(effect.type_1c == 1) {
         //LAB_8010abf4
-        final int v0 = (0x80 - gradientRay._02) * manager.params_10.colour_1c.x / 0x80;
-        final int v1 = (short)v0 / 2;
-
-        cmd
-          .monochrome(0, 0)
-          .monochrome(1, 0)
-          .rgb(2, v0, v1, v1)
-          .rgb(3, v0, v1, v1);
+        r = ((128.0f - gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.x / 128.0f) / 256.0f;
+        g = r / 2.0f;
+        b = 0.0f;
       } else if(effect.type_1c == 2) {
         //LAB_8010ac68
-        final short s3 = (short)(this.FUN_8010b058(gradientRay._02) * manager.params_10.colour_1c.x * 8 / 0x80);
-        final short s2 = (short)(this.FUN_8010b0dc(gradientRay._02) * manager.params_10.colour_1c.y * 8 / 0x80);
-        final short a2 = (short)(this.FUN_8010b160(gradientRay._02) * manager.params_10.colour_1c.z * 8 / 0x80);
-
-        cmd
-          .monochrome(0, 0)
-          .rgb(1, s3 / 2, s2 / 2, a2 / 2)
-          .rgb(2, s3 / 2, s2 / 2, a2 / 2)
-          .rgb(3, s3, s2, a2);
+        r = (this.getModifierR(gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.x * 8 / 128.0f) / 256.0f;
+        g = (this.getModifierG(gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.y * 8 / 128.0f) / 256.0f;
+        b = (this.getModifierB(gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.z * 8 / 128.0f) / 256.0f;
+      } else {
+        r = g = b = 0.0f;
       }
 
       //LAB_8010ad68
       //LAB_8010ad6c
-      cmd
-        .pos(0, xy0.x, xy0.y)
-        .pos(1, xy1.x, xy1.y)
-        .pos(2, xy2.x, xy2.y)
-        .pos(3, xy3.x, xy3.y);
+      final PolyBuilder builder = new PolyBuilder("GradientRay", GL_TRIANGLE_STRIP)
+        .translucency(Translucency.B_PLUS_F)
+        .addVertex(xy0.x, xy0.y, 0)
+        .monochrome(0);
 
-      GPU.queueCommand(z / 4.0f, cmd);
+      if(effect.type_1c == 1) {
+        builder
+          .addVertex(xy1.x, xy1.y, 0)
+          .monochrome(0)
+          .addVertex(xy2.x, xy2.y, 0)
+          .rgb(r, g, g)
+          .addVertex(xy3.x, xy3.y, 0)
+          .rgb(r, g, g);
+      } else if(effect.type_1c == 2) {
+        builder
+          .addVertex(xy1.x, xy1.y, 0)
+          .rgb(r / 2, g / 2, b / 2)
+          .addVertex(xy2.x, xy2.y, 0)
+          .rgb(r / 2, g / 2, b / 2)
+          .addVertex(xy3.x, xy3.y, 0)
+          .rgb(r, g, b);
+      } else {
+        // I don't think there is another type in the scripts, but just to be sure.
+        builder
+          .addVertex(xy1.x, xy1.y, 0)
+          .monochrome(0)
+          .addVertex(xy2.x, xy2.y, 0)
+          .monochrome(0)
+          .addVertex(xy3.x, xy3.y, 0)
+          .monochrome(0);
+      }
+
+      final Obj obj = builder.build();
+      obj.delete();
+
+      this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z * 4);
+      RENDERER.queueOrthoModel(obj, this.transforms);
     }
-
     //LAB_8010ae18
   }
 
   @Method(0x8010b058L)
-  private short FUN_8010b058(final short a0) {
+  private int getModifierR(final int inModifier) {
     //LAB_8010b06c
-    return (short)switch(a0 / 0x10) {
+    return switch(inModifier / 0x10) {
       case 0, 1, 6 -> 0x10;
-      case 2, 7 -> 0x10 - a0 % 0x10;
-      case 5 -> a0 % 0x10;
+      case 2, 7 -> 0x10 - inModifier % 0x10;
+      case 5 -> inModifier % 0x10;
       default -> 0;
     };
   }
 
   @Method(0x8010b0dcL)
-  private short FUN_8010b0dc(final short a0) {
+  private int getModifierG(final int inModifier) {
     //LAB_8010b0f0
-    return (short)switch(a0 / 0x10) {
+    return (short)switch(inModifier / 0x10) {
       case 0, 4, 5 -> 0x10;
-      case 1, 6 -> 0x10 - a0 % 0x10;
-      case 3 -> a0 % 0x10;
+      case 1, 6 -> 0x10 - inModifier % 0x10;
+      case 3 -> inModifier % 0x10;
       default -> 0;
     };
   }
 
   @Method(0x8010b160L)
-  private short FUN_8010b160(final short a0) {
-    return (short)switch(a0 / 0x10) {
-      case 0, 1, 2, 3 -> 0x10L;
-      case 4 -> 0x10 - a0 % 0x10;
+  private int getModifierB(final int inModifier) {
+    return (short)switch(inModifier / 0x10) {
+      case 0, 1, 2, 3 -> 0x10;
+      case 4 -> 0x10 - inModifier % 0x10;
       default -> 0;
     };
   }
