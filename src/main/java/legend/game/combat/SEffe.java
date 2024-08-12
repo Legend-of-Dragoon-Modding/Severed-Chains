@@ -1781,10 +1781,10 @@ public final class SEffe {
   @ScriptDescription("Allocates a gradient rays effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The ray count")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "innerY", description = "Untransformed y values when rays are in the center cluster of the effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "midVertZ", description = "World space z value for the middle vertices of a ray")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "outerY", description = "Untransformed y values when rays are in the outer part of the effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "step", description = "Step size for the colour and Y modifier")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The effect flags")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010a610L)
@@ -1794,10 +1794,10 @@ public final class SEffe {
     final GradientRaysEffect24 effect = new GradientRaysEffect24(count);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GradientRaysEffect24", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    effect._08 = script.params_20[2].get();
-    effect._0c = script.params_20[3].get();
-    effect._10 = script.params_20[4].get();
-    effect._14 = script.params_20[5].get();
+    effect.yInner_08 = script.params_20[2].get();
+    effect.midVertZ_0c = script.params_20[3].get();
+    effect.yOuter_10 = script.params_20[4].get();
+    effect.stepVertColourAndYModifier_14 = script.params_20[5].get();
     effect.flags_18 = script.params_20[6].get();
     effect.type_1c = script.params_20[7].get();
     effect.projectionPlaneDistanceDiv4_20 = getProjectionPlaneDistance() / 4.0f;
@@ -1807,20 +1807,20 @@ public final class SEffe {
       //LAB_8010a770
       effect.rays_00[i].angle_00 = MathHelper.psxDegToRad((short)(rand() % 0x1000));
 
-      final int v0;
+      final int vertColourAndYModifier;
       if((effect.flags_18 & 0x2) == 0) {
         //LAB_8010a7a8
-        v0 = rand() % 0x80;
+        vertColourAndYModifier = rand() % 0x80;
       } else {
         //LAB_8010a7b4
         //LAB_8010a7d0
-        v0 = rand() % 0x10;
+        vertColourAndYModifier = rand() % 0x10;
       }
 
       //LAB_8010a7d4
-      effect.rays_00[i]._02 = (short)v0;
+      effect.rays_00[i].vertColourAndYModifier_02 = vertColourAndYModifier;
       if((effect.flags_18 & 0x1) != 0) {
-        effect.rays_00[i]._02 += 0x70;
+        effect.rays_00[i].vertColourAndYModifier_02 += 0x70;
       }
       //LAB_8010a800
     }
