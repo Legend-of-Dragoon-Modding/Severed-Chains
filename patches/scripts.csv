@@ -21,6 +21,8 @@ SECT/DRGN0.BIN/5274/1,scripts/DRGN0/5274/1.diff,"DD Spirit Leg Swipe, fix charac
 SECT/DRGN0.BIN/5288/1,scripts/DRGN0/5288/1.diff,"Regole Spirit Tsunami, fix character count crash"
 SECT/DRGN0.BIN/5312/1,scripts/DRGN0/5312/1.diff,"Selebus singing, fix character count crash"
 SECT/DRGN0.BIN/5326/1,scripts/DRGN0/5326/1.diff,"Kubila Froggy, fix character count crash"
+SECT/DRGN0.BIN/5334/1,scripts/DRGN0/5334/1.diff,"Zackwell Skeleton, fix character count crash"
+SECT/DRGN0.BIN/5344/1,scripts/DRGN0/5344/1.diff,"Zackwell - Lavitz (weird move), fix character count crash"
 SECT/DRGN0.BIN/5520/1,scripts/DRGN0/5520/1.diff,"Hoax Cutscene, force-load Dart and Lavitz"
 SECT/DRGN0.BIN/5524/1,scripts/DRGN0/5524/1.diff,"Doel Death Cutscene, force-load Dart"
 SECT/DRGN0.BIN/5528/1,scripts/DRGN0/5528/1.diff,"Lloyd Flanvel Cutscene, force-load Dart"
