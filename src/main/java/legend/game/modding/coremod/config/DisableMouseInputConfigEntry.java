@@ -10,7 +10,7 @@ import static legend.core.GameEngine.RENDERER;
 
 public class DisableMouseInputConfigEntry extends BoolConfigEntry {
   public DisableMouseInputConfigEntry() {
-    super(true, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS);
+    super(false, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS);
   }
 
   @Override
