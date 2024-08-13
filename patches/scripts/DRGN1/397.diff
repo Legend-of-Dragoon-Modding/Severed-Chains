@@ -1,0 +1,28 @@
+--- original
++++ modified
+@@ -3615,17 +3615,25 @@
+ mov var[34][0], stor[8]
+ call 158, stor[8]
+ mov var[34][1], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_UNK_LOADER_0]
+ call 158, stor[8]
++SKIP_UNK_LOADER_0:
+ mov var[34][2], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_UNK_LOADER_1]
+ call 158, stor[8]
++SKIP_UNK_LOADER_1:
+ return
+ LABEL_194:
+ mov var[34][0], stor[8]
+ call 159, stor[8]
+ mov var[34][1], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_ATT_LOADER_0]
+ call 159, stor[8]
++SKIP_ATT_LOADER_0:
+ mov var[34][2], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_ATT_LOADER_1]
+ call 159, stor[8]
++SKIP_ATT_LOADER_1:
+ return
+ data 0x49
+ ENTRYPOINT_1:

@@ -1,18 +1,18 @@
 --- original
 +++ modified
-@@ -1964,13 +1964,13 @@
- call SEffe::scriptSetRelativePosition, stor[19], stor[18], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
- call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
- call SEffe::scriptAddScaleScalerMultiplicativeAttachmentTicks, stor[19], 0xffffffff, 0x14, 0x1000, 0x1000, 0x1000 ; effectIndex, parentIndex, ticks, x, y, z
--call SEffe::scriptAddRotationScalerAttachment, stor[19], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0x12caba, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
-+call SEffe::scriptAddRotationScalerAttachment, stor[19], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0xfffffaba, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
- call SEffe::scriptSetEffectZ, stor[19], 0xfffffe00 ; effectIndex, z
- call SEffe::allocateDeffTmd, stor[20], 0xd202 ; effectIndex, flags
- call SEffe::scriptSetRelativePosition, stor[20], stor[18], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
- call SEffe::scriptSetRelativeScale, stor[20], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
- call SEffe::scriptAddScaleScalerMultiplicativeAttachmentTicks, stor[20], 0xffffffff, 0x14, 0x1000, 0x1000, 0x1000 ; effectIndex, parentIndex, ticks, x, y, z
--call SEffe::scriptAddRotationScalerAttachment, stor[20], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0x12caba, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
-+call SEffe::scriptAddRotationScalerAttachment, stor[20], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0xfffffaba, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
- call SEffe::scriptSetEffectZ, stor[20], 0xfffffe00 ; effectIndex, z
- call Battle::scriptAllocateEmptyEffectManagerChild, stor[21] ; effectIndex
- call SEffe::scriptSetRelativePosition, stor[21], stor[18], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+@@ -1866,13 +1866,13 @@
+ call 545, stor[19], stor[18], 0x0, 0x0, 0x0
+ call 549, stor[19], 0xffffffff, 0x0, 0x0, 0x0
+ call 576, stor[19], 0xffffffff, 0x14, 0x1000, 0x1000, 0x1000
+-call 567, stor[19], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0x12caba, 0x0
++call 567, stor[19], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0xfffffaba, 0x0
+ call 627, stor[19], 0xfffffe00
+ call 606, stor[20], 0xd202
+ call 545, stor[20], stor[18], 0x0, 0x0, 0x0
+ call 549, stor[20], 0xffffffff, 0x0, 0x0, 0x0
+ call 576, stor[20], 0xffffffff, 0x14, 0x1000, 0x1000, 0x1000
+-call 567, stor[20], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0x12caba, 0x0
++call 567, stor[20], 0xffffffff, 0x0, 0x0, 0x0, 0x0, 0xfffffaba, 0x0
+ call 627, stor[20], 0xfffffe00
+ call 600, stor[21]
+ call 545, stor[21], stor[18], 0x0, 0x0, 0x0

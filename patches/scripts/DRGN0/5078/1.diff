@@ -1,0 +1,37 @@
+--- original
++++ modified
+@@ -1528,6 +1528,8 @@
+ call 144, stor[27]
+ mov 0xe, stor[23]
+ wait stor[23]
++jmp_cmp ==, var[35], 0x1, inl[:END_ATTACK]
++jmp_cmp ==, var[35], 0x2, inl[:ATTACK_BOBJ_1]
+ call 33, 0x6, 0xfff57400, 0xfffe7000, 0xfffce000, stor[13]
+ call 34, 0x6, 0x38400, 0xfffb5000, 0x25800, stor[13]
+ call 600, stor[18]
+@@ -1536,6 +1538,7 @@
+ call 618, stor[18], inl[:LABEL_32]
+ mov 0xe, stor[23]
+ wait stor[23]
++ATTACK_BOBJ_1:
+ call 33, 0x6, 0xfff95c00, 0xfffed400, 0x8fc00, stor[12]
+ call 34, 0x6, 0x2bc00, 0xfffa8800, 0x0, stor[12]
+ call 134, stor[12], stor[stor[stor[0], 12], 8], stor[stor[stor[0], 12], 9], stor[stor[stor[0], 12], 10]
+@@ -1552,6 +1555,7 @@
+ mov stor[27], stor[stor[stor[0], 18], 27]
+ mov stor[12], stor[stor[stor[0], 18], 28]
+ call 618, stor[18], inl[:LABEL_32]
++END_ATTACK:
+ call 544, stor[20], 0xffffffff, stor[24], stor[25], stor[26]
+ sub 0x7d0, stor[25]
+ call 545, stor[20], 0xffffffff, stor[24], stor[25], stor[26]
+@@ -1577,7 +1581,9 @@
+ call 239, 0x2, stor[27], 0x7, 0x3
+ mov 0xf, stor[23]
+ wait stor[23]
++jmp_cmp ==, var[35], 0x1, inl[:WHY_IS_THIS_HERE]
+ call 130, stor[12], stor[stor[stor[0], 12], 8], stor[stor[stor[0], 12], 9], stor[stor[stor[0], 12], 10]
++WHY_IS_THIS_HERE:
+ call 238, 0x2, stor[27], 0x5, 0x0, 0x0, 0x0, 0x0
+ call 600, stor[18]
+ call 618, stor[18], inl[:LABEL_14]

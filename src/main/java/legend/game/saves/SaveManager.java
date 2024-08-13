@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,12 +96,33 @@ public final class SaveManager {
     return Files.exists(this.dir.resolve(campaign).resolve(this.slugName(saveName) + ".dsav"));
   }
 
-  public String generateSaveName(final String campaign) {
-    for(int i = 1; ; i++) {
-      if(!this.saveExists(campaign, "Save " + i)) {
-        return "Save " + i;
+  private static final Pattern SAVE_NUMBER_PATTERN = Pattern.compile("^(.+?)\\s(\\d+)$");
+
+  public String generateSaveName(final List<SavedGame> existingSaves, final GameState52c state) {
+    final String location;
+    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
+      location = worldMapNames_8011c1ec[continentIndex_800bf0b0];
+    } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
+      location = chapterNames_80114248[state.chapterIndex_98];
+    } else {
+      location = submapNames_8011c108[submapId_800bd808];
+    }
+
+    int highestSaveNumber = 0;
+
+    for(final SavedGame save : existingSaves) {
+      final Matcher matcher = SAVE_NUMBER_PATTERN.matcher(save.saveName);
+
+      if(matcher.matches() && matcher.group(1).equals(location)) {
+        final int saveNumber = Integer.parseInt(matcher.group(2));
+
+        if(highestSaveNumber < saveNumber) {
+          highestSaveNumber = saveNumber;
+        }
       }
     }
+
+    return location + ' ' + (highestSaveNumber + 1);
   }
 
   /** Look for saves from before campaigns were a thing */

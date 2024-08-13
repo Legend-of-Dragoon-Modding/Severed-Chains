@@ -146,14 +146,14 @@ public class ListBox<T> extends Control {
     this.highlight.hide();
   }
 
-  private void select(final int index) {
+  public void select(final int index) {
     if(index < 0) {
       throw new IllegalArgumentException("Index must be > 0");
     }
 
-    this.slot = index;
+    this.slot = Math.min(index, Math.max(0, this.entries.size() - this.scroll - 1));
 
-    this.highlight.setPos(34, index * this.entryHeight + 1);
+    this.highlight.setPos(34, this.slot * this.entryHeight + 1);
 
     if(this.highlightHandler != null) {
       final T entry = this.getSelectedEntry();
@@ -162,6 +162,10 @@ public class ListBox<T> extends Control {
         this.highlightHandler.highlight(entry);
       }
     }
+  }
+
+  public int getSelectedIndex() {
+    return this.slot;
   }
 
   private void updateEntries() {
@@ -315,6 +319,54 @@ public class ListBox<T> extends Control {
           this.select(this.slot);
           return InputPropagation.HANDLED;
         }
+      }
+
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        if(this.slot > 0) {
+          playMenuSound(1);
+          this.select(0);
+          return InputPropagation.HANDLED;
+        }
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        if(this.entries.size() > this.maxVisibleEntries - 1 && this.slot != this.maxVisibleEntries - 1) {
+          playMenuSound(1);
+          this.select(this.maxVisibleEntries - 1);
+          return InputPropagation.HANDLED;
+        }
+      }
+
+      case BUTTON_SHOULDER_RIGHT_1 -> {
+        if(this.scroll - this.maxVisibleEntries - 1 >= 0) {
+          playMenuSound(1);
+          this.scroll -= this.maxVisibleEntries - 1;
+          this.updateEntries();
+          this.select(this.slot);
+        } else {
+          if(this.scroll != 0) {
+            this.scroll = 0;
+            this.updateEntries();
+            this.select(this.slot);
+          }
+        }
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_2 -> {
+        if(this.scroll + this.maxVisibleEntries - 1 < this.entries.size() - this.maxVisibleEntries) {
+          playMenuSound(1);
+          this.scroll += this.maxVisibleEntries - 1;
+          this.updateEntries();
+          this.select(this.slot);
+        } else {
+          if(this.entries.size() > this.maxVisibleEntries && this.scroll != this.entries.size() - this.maxVisibleEntries) {
+            this.scroll = this.entries.size() - this.maxVisibleEntries;
+            this.updateEntries();
+            this.select(this.slot);
+          }
+        }
+        return InputPropagation.HANDLED;
       }
     }
 

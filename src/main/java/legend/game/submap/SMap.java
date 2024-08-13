@@ -87,7 +87,7 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
+import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
@@ -3918,7 +3918,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e6458
-        FUN_8002a9c0();
+        resetSubmapToNewGame();
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         pregameLoadingStage_800bb10c = 0;
 
@@ -4864,7 +4864,7 @@ public class SMap extends EngineState {
     this.savePoint_800d5598[0].rotation_28 = 0.0f;
     this.savePoint_800d5598[0].colour_34 = 0.3125f;
     this.savePoint_800d5598[1].rotation_28 = 0.0f;
-    this.savePoint_800d5598[1].fadeAmount_2c = 0.0077f;
+    this.savePoint_800d5598[1].fadeAmount_2c = 0.0077f / (3 - vsyncMode_8007a3b8);
     this.savePoint_800d5598[1].colour_34 = 0.0f;
     this.savePoint_800d5598[1].fadeState_38 = 0;
 
@@ -4875,7 +4875,7 @@ public class SMap extends EngineState {
       final SavePointRenderData44 struct2 = this.savePoint_800d5630[i * 4 + 2];
       final SavePointRenderData44 struct3 = this.savePoint_800d5630[i * 4 + 3];
       struct0.colour_34 = 0.5f;
-      struct0.fadeAmount_2c = 0.0078f;
+      struct0.fadeAmount_2c = 0.0078f / (3 - vsyncMode_8007a3b8);
       struct0.fadeState_38 = 0;
       struct0.rotation_28 = MathHelper.psxDegToRad(this._800d6c58[i]);
       struct1.colour_34 = 0.375f;
@@ -4996,7 +4996,7 @@ public class SMap extends EngineState {
       //LAB_800f2f50
       //LAB_800f2f78
       for(int s4 = 0; s4 < 4; s4++) {
-        final SavePointRenderData44 struct = this.savePoint_800d5630[fp + s4];
+        final SavePointRenderData44 struct = this.savePoint_800d5630[fp * 4 + s4];
 
         struct.transforms.transfer.set(GPU.getOffsetX() + struct.vert0_00.x, GPU.getOffsetY() + struct.vert0_00.y, 164.0f);
         final RenderEngine.QueuedModel<?> queuedModel = RENDERER.queueOrthoModel(this.savepointObj, struct.transforms)
@@ -5008,7 +5008,7 @@ public class SMap extends EngineState {
         }
       }
 
-      struct0.rotation_28 += MathHelper.psxDegToRad(this.savePointFloatiesRotations_800d6c88[fp]);
+      struct0.rotation_28 += MathHelper.psxDegToRad(this.savePointFloatiesRotations_800d6c88[fp]) / (3 - vsyncMode_8007a3b8);
       struct0.rotation_28 %= MathHelper.TWO_PI;
     }
   }

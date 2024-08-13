@@ -24,6 +24,7 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
 
+  private final Campaign campaign;
   private final BigList<SavedGame> saveList;
   private final Consumer<SavedGame> saveSelected;
   private final Runnable closed;
@@ -31,6 +32,7 @@ public class LoadGameScreen extends MenuScreen {
   public LoadGameScreen(final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
     this.saveSelected = saveSelected;
     this.closed = closed;
+    this.campaign = campaign;
 
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
@@ -90,7 +92,7 @@ public class LoadGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteSave(this.saveList.getSelected().state.campaignName, this.saveList.getSelected().fileName);
+            SAVES.deleteSave(this.campaign.filename(), this.saveList.getSelected().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);

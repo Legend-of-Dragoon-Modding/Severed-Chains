@@ -1,19 +1,19 @@
 --- original
 +++ modified
-@@ -514,12 +514,16 @@
- call SMap::scriptScaleUniform, stor[0], 0x500 ; sobjIndex, scale
- call SMap::scriptReadModelPosition, var[64][0], stor[8], stor[9], stor[10] ; scriptIndex, x, y, z
- jmp_cmp ==, stor[8], 0xffffff52, inl[:LABEL_63] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0xffffff51, inl[:LABEL_63] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffffaf, inl[:LABEL_64] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff0d, inl[:LABEL_65] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x72, inl[:LABEL_66] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x73, inl[:LABEL_66] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x15, inl[:LABEL_67] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x16, inl[:LABEL_67] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x92, inl[:LABEL_68] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x103, inl[:LABEL_69] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x104, inl[:LABEL_69] ; operand, left, right, addr
- LABEL_72:
- jmp inl[:LABEL_29] ; addr
- LABEL_22:
+@@ -486,12 +486,16 @@
+ call 292, stor[0], 0x500
+ call 102, var[64][0], stor[8], stor[9], stor[10]
+ jmp_cmp ==, stor[8], 0xffffff52, inl[:LABEL_52]
++jmp_cmp ==, stor[8], 0xffffff51, inl[:LABEL_52]
+ jmp_cmp ==, stor[8], 0xffffffaf, inl[:LABEL_53]
+ jmp_cmp ==, stor[8], 0xffffff0d, inl[:LABEL_54]
+ jmp_cmp ==, stor[8], 0x72, inl[:LABEL_55]
++jmp_cmp ==, stor[8], 0x73, inl[:LABEL_55]
+ jmp_cmp ==, stor[8], 0x15, inl[:LABEL_56]
++jmp_cmp ==, stor[8], 0x16, inl[:LABEL_56]
+ jmp_cmp ==, stor[8], 0x92, inl[:LABEL_57]
+ jmp_cmp ==, stor[8], 0x103, inl[:LABEL_58]
++jmp_cmp ==, stor[8], 0x104, inl[:LABEL_58]
+ LABEL_38:
+ jmp inl[:LABEL_36]
+ LABEL_39:

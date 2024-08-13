@@ -2882,8 +2882,13 @@ public class Battle extends EngineState {
     final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
 
     if((s2.storage_44[7] & 0x1) == 0) {
-      final int newAnim = script.params_20[1].get();
+      int newAnim = script.params_20[1].get();
       final int currentAnim = s0.currentAnimIndex_270;
+
+      // GH#1550 Fix Shana softlock trying to load finisher
+      if(s0 instanceof PlayerBattleEntity && s0.combatant_144.assets_14[newAnim] == null) {
+        newAnim = 1;
+      }
 
       if(currentAnim >= 0) {
         if(currentAnim != newAnim) {

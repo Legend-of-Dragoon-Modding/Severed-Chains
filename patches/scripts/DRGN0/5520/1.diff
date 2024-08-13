@@ -1,0 +1,38 @@
+--- original
++++ modified
+@@ -282,6 +282,14 @@
+ data 0xa
+ data 0x0
+ data 0x16a
++data 0x2
++data 0xc
++data 0x13d
++data 0x13b
++data 0x4
++data 0xe
++data 0x14b
++data 0x149
+ LABEL_10:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+@@ -375,12 +383,20 @@
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_206]
+ return
++LOAD_ALLIES:
++call 600, stor[23]
++mov 0x25, stor[stor[stor[0], 23], 14]
++mov 0x2, stor[stor[stor[0], 23], 24]
++call 618, stor[23], inl[:LABEL_206]
++return
+ LABEL_25:
+ mov var[36][0], stor[23]
+ call 370, stor[23], stor[8]
+ mov stor[8], var[45][1]
+ mov stor[23], var[45][11]
+ call 138, stor[23], 0x0
++gosub inl[:LOAD_ALLIES]
++return
+ mov var[34][0], stor[27]
+ call 370, stor[27], stor[8]
+ mov stor[8], var[45][2]

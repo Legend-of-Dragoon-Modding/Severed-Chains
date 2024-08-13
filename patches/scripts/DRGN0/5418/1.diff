@@ -1,0 +1,16 @@
+--- original
++++ modified
+@@ -1755,9 +1755,13 @@
+ LABEL_62:
+ call 48, 0x140
+ mov var[34][1], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_0]
+ call 132, stor[28], 0x300
++SKIP_0:
+ mov var[34][2], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_1]
+ call 132, stor[28], 0x500
++SKIP_1:
+ gosub inl[:LABEL_17]
+ call 600, stor[18]
+ call 545, stor[18], stor[28], 0x428, 0xfffff5d9, 0xab8

@@ -99,7 +99,6 @@ public final class GameEngine {
   public static final AudioThread AUDIO_THREAD;
 
   public static final Thread hardwareThread;
-  public static final Thread spuThread;
   public static final Thread openalThread;
 
   public static boolean legacyUi;
@@ -122,8 +121,6 @@ public final class GameEngine {
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
-    spuThread = new Thread(SPU);
-    spuThread.setName("SPU");
     openalThread = new Thread(AUDIO_THREAD);
     openalThread.setName("OPEN_AL");
   }
@@ -371,7 +368,6 @@ public final class GameEngine {
     }
 
     RENDERER.usePs1Gpu = true;
-    spuThread.start();
     openalThread.start();
 
     synchronized(LOCK) {

@@ -16,7 +16,9 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.openal.ALUtil;
+import org.lwjgl.system.MemoryUtil;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +27,12 @@ import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
-import static org.lwjgl.openal.ALC10.alcGetInteger;
+import static org.lwjgl.openal.ALC10.alcGetIntegerv;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 import static org.lwjgl.openal.ALC11.ALC_ALL_DEVICES_SPECIFIER;
 import static org.lwjgl.openal.EXTDisconnect.ALC_CONNECTED;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public final class AudioThread implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AudioThread.class);
@@ -56,6 +59,8 @@ public final class AudioThread implements Runnable {
 
   private ALCapabilities alCapabilities;
   private ALCCapabilities alcCapabilities;
+
+  private final IntBuffer tmp = MemoryUtil.memAllocInt(1);
 
   public static List<String> getDevices() {
     if(ALC.getCapabilities().ALC_ENUMERATE_ALL_EXT) {
@@ -136,6 +141,8 @@ public final class AudioThread implements Runnable {
 
     alcDestroyContext(this.audioContext);
     alcCloseDevice(this.audioDevice);
+
+    memFree(this.tmp);
   }
 
   private void openDevice() {
@@ -198,7 +205,8 @@ public final class AudioThread implements Runnable {
 
       synchronized(this) {
         if(this.alcCapabilities.ALC_EXT_disconnect) {
-          final int connected = alcGetInteger(this.audioDevice, ALC_CONNECTED);
+          alcGetIntegerv(this.audioDevice, ALC_CONNECTED, this.tmp);
+          final int connected = this.tmp.get(0);
 
           if(connected == 0) {
             LOGGER.warn("Audio device lost");
@@ -208,13 +216,16 @@ public final class AudioThread implements Runnable {
 
         for(int i = 0; i < this.sources.size(); i++) {
           final AudioSource source = this.sources.get(i);
-          source.processBuffers();
 
-          final boolean sourceCanBuffer = source.canBuffer();
-          canBuffer = canBuffer || sourceCanBuffer;
+          synchronized(source) {
+            final boolean sourceCanBuffer = source.canBuffer();
+            canBuffer = canBuffer || sourceCanBuffer;
 
-          if(sourceCanBuffer) {
-            source.tick();
+            if(sourceCanBuffer) {
+              source.tick();
+            }
+
+            source.handleProcessedBuffers();
           }
         }
       }

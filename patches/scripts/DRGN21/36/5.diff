@@ -1,11 +1,11 @@
 --- original
 +++ modified
-@@ -451,7 +451,7 @@
- mov 0xa, stor[31] ; source, dest
- wait stor[31] ; frames
- call SMap::scriptSelfToggleAnimationDisabled, 0x0 ; disabled
--call SMap::scriptSelfLoadSobjAnimation, 0x5 ; animIndex
-+call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
- LABEL_73:
- call SMap::scriptSelfIsAnimationFinished, stor[30] ; value
- call Scus94491BpeSegment_8002::scriptIsTextboxInitialized, stor[24], stor[31] ; index, initialized
+@@ -433,7 +433,7 @@
+ mov 0xa, stor[31]
+ wait stor[31]
+ call 99, 0x0
+-call 97, 0x5
++call 97, 0x0
+ LABEL_42:
+ call 100, stor[30]
+ call 195, stor[24], stor[31]

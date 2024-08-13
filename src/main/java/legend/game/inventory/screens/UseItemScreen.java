@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
+import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
@@ -18,6 +19,7 @@ import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacterStatusEffect;
+import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
@@ -176,7 +178,7 @@ public class UseItemScreen extends MenuScreen {
 
         //LAB_80108544
         final ActiveStatsa0 stats = stats_800be5f8[charIndex];
-        renderFourDigitNumber(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
+        renderFourDigitHp(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
         renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66);
         renderFourDigitNumber(x + 25, y + 79, stats.mp_06);
         renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e);
@@ -419,6 +421,44 @@ public class UseItemScreen extends MenuScreen {
     }
   }
 
+  private void menuStage2NavigateTop() {
+    if(this.selectedSlot != 0) {
+      playMenuSound(1);
+      this.selectedSlot = 0;
+      this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
+    }
+  }
+
+  private void menuStage2NavigateBottom() {
+    if(this.selectedSlot != 4) {
+      playMenuSound(1);
+      this.selectedSlot = 4;
+      this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
+    }
+  }
+
+  private void menuStage2NavigatePageUp() {
+    if(this.slotScroll - 4 >= 0) {
+      playMenuSound(1);
+      this.scroll(this.slotScroll - 4);
+    } else {
+      if(this.slotScroll != 0) {
+        this.scroll(0);
+      }
+    }
+  }
+
+  private void menuStage2NavigatePageDown() {
+    if(this.slotScroll + 4 <= this.itemCount - 5) {
+      playMenuSound(1);
+      this.scroll(this.slotScroll + 4);
+    } else {
+      if(this.itemCount > 5 && this.slotScroll != this.itemCount - 5) {
+        this.scroll(this.itemCount - 5);
+      }
+    }
+  }
+
   private void menuStage2Select() {
     if(this.slotScroll + this.selectedSlot >= this.itemCount) {
       playMenuSound(40);
@@ -565,6 +605,26 @@ public class UseItemScreen extends MenuScreen {
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage2NavigateDown();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_1) {
+        this.menuStage2NavigateTop();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_2) {
+        this.menuStage2NavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
+        this.menuStage2NavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
+        this.menuStage2NavigatePageDown();
         return InputPropagation.HANDLED;
       }
     }

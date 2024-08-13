@@ -1,0 +1,61 @@
+--- original
++++ modified
+@@ -2022,6 +2022,7 @@
+ call 549, stor[18], 0xffffffff, 0x400, 0x400, 0x400
+ call 545, stor[18], var[34][0], 0x0, 0xfffffd00, 0x0
+ yield
++jmp_cmp ==, var[34][1], 0xffffffff, inl[:SKIP_CHAR_1]
+ yield
+ call 746, stor[18], 0xffffffff, 0x200006, 0x1e, 0x50, 0x28, 0x400, 0x404ff00, 0x2f
+ call 549, stor[18], 0xffffffff, 0x400, 0x400, 0x400
+@@ -2035,6 +2036,8 @@
+ call 549, stor[18], 0xffffffff, 0x400, 0x400, 0x400
+ call 545, stor[18], var[34][1], 0x0, 0xfffffd00, 0x0
+ yield
++SKIP_CHAR_1:
++jmp_cmp ==, var[34][2], 0xffffffff, inl[:SKIP_CHAR_2]
+ yield
+ call 746, stor[18], 0xffffffff, 0x200006, 0x1e, 0x50, 0x28, 0x400, 0x404ff00, 0x2f
+ call 549, stor[18], 0xffffffff, 0x400, 0x400, 0x400
+@@ -2048,6 +2051,7 @@
+ call 549, stor[18], 0xffffffff, 0x400, 0x400, 0x400
+ call 545, stor[18], var[34][2], 0x0, 0xfffffd00, 0x0
+ yield
++SKIP_CHAR_2:
+ gosub inl[:LABEL_44]
+ mov 0x3c, stor[23]
+ wait stor[23]
+@@ -2180,23 +2184,33 @@
+ call 600, stor[18]
+ call 545, stor[18], var[34][0], 0x0, 0xfffffc00, 0x0
+ call 746, stor[19], stor[18], 0xe802, 0x28, 0x1388, 0x3c, 0x100, 0x1c105000, 0x19
++jmp_cmp ==, var[34][1], 0xffffffff, inl[:SKIP_P_1]
+ call 600, stor[18]
+ call 545, stor[18], var[34][1], 0x0, 0xfffffc00, 0x0
++SKIP_P_1:
++jmp_cmp ==, var[34][2], 0xffffffff, inl[:SKIP_P_2]
+ call 746, stor[20], stor[18], 0xe802, 0x28, 0x1388, 0x3c, 0x100, 0x1c105000, 0x19
+ call 600, stor[18]
+ call 545, stor[18], var[34][2], 0x0, 0xfffffc00, 0x0
++SKIP_P_2:
+ call 746, stor[21], stor[18], 0xe802, 0x28, 0x1388, 0x3c, 0x100, 0x1c105000, 0x19
+ call 553, stor[19], 0x0, 0x1
++jmp_cmp ==, var[34][2], 0xffffffff, inl[:SKIP_T_0]
+ call 553, stor[20], 0x0, 0x1
++SKIP_T_0:
+ call 553, stor[21], 0x0, 0x1
+ call 549, stor[19], 0xffffffff, 0x100, 0x100, 0x100
++jmp_cmp ==, var[34][2], 0xffffffff, inl[:SKIP_T_1]
+ call 549, stor[20], 0xffffffff, 0x100, 0x100, 0x100
++SKIP_T_1:
+ call 549, stor[21], 0xffffffff, 0x100, 0x100, 0x100
+ mov 0x3c, stor[23]
+ LABEL_74:
+ call 620, stor[29], 0x26, stor[24], stor[25], stor[26]
+ call 545, stor[19], 0xffffffff, stor[24], stor[25], stor[26]
++jmp_cmp ==, var[34][2], 0xffffffff, inl[:SKIP_T_2]
+ call 545, stor[20], 0xffffffff, stor[24], stor[25], stor[26]
++SKIP_T_2:
+ call 545, stor[21], 0xffffffff, stor[24], stor[25], stor[26]
+ yield
+ while stor[23], inl[:LABEL_74]
