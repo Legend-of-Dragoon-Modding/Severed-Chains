@@ -1,0 +1,47 @@
+--- original
++++ modified
+@@ -9,7 +9,10 @@
+ call 647, 0xfffffffb
+ call 372
+ yield
+-gosub inl[:LABEL_15]
++call 358, 0x0
++call 358, 0x1
++call 358, 0x2
++call 358, 0x3
+ yield
+ call 714
+ yield
+@@ -1022,6 +1025,10 @@
+ data 0x0
+ data 0xa1
+ data 0x2
++data 0xc
++data 0x9c
++data 0x97
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x99
+@@ -1062,18 +1069,18 @@
+ LABEL_11:
+ call 600, stor[23]
+ mov 0x6, stor[stor[stor[0], 23], 14]
+-mov 0x6, stor[stor[stor[0], 23], 24]
++mov 0x7, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_12:
+ call 600, stor[23]
+-mov 0xc, stor[stor[stor[0], 23], 14]
++mov 0xd, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_13:
+ call 600, stor[23]
+-mov 0xe, stor[stor[stor[0], 23], 14]
++mov 0xf, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
