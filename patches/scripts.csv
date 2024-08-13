@@ -1,3 +1,4 @@
+SECT/DRGN1.BIN/263,scripts/DRGN1/263.diff,"Fruegel II, Fix for finisher crash"
 SECT/DRGN1.BIN/266,scripts/DRGN1/266.diff,"Kongol I, Fix for failed addition counter crash when below 3 characters"
 SECT/DRGN1.BIN/294,scripts/DRGN1/294.diff,"Lenus I, Fix for hardcoded character count"
 SECT/DRGN1.BIN/330,scripts/DRGN1/330.diff,"Jiango, Remove code that freezes script when dart is not in party"
