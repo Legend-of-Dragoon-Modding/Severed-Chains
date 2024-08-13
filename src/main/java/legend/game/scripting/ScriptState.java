@@ -4,14 +4,12 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
-import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -115,16 +113,6 @@ public class ScriptState<T> {
    */
   public final int[] storage_44 = new int[33];
   public final RegistryId[] registryIds = new RegistryId[100];
-  public ScriptState<BattleEntity27c> scriptState_c8;
-  public int ticks_cc;
-  /** Was .8 */
-  public final Vector3f _d0 = new Vector3f();
-  /** Was .8 */
-  public final Vector3f _dc = new Vector3f();
-  public final Vector3f _e8 = new Vector3f();
-  /** Was .8 */
-  public float _f4;
-  public int ui_fc;
 
   private boolean paused;
   private int ticks;
@@ -350,7 +338,7 @@ public class ScriptState<T> {
       //LAB_80016018
       do {
         final int opCommand = this.context.getOp();
-        this.context.opIndex_10 = opCommand & 0xff;
+        this.context.opIndex_10 = OpType.byOpcode(opCommand & 0xff);
         this.context.paramCount_14 = opCommand >>> 8 & 0xff;
         this.context.opParam_18 = opCommand >>> 16;
 
@@ -487,18 +475,16 @@ public class ScriptState<T> {
 
         EVENTS.postEvent(new ScriptTickEvent(this.index));
 
-        final int opIndex = this.context.opIndex_10;
-
         if(scriptLog[this.index]) {
-          if(scriptFunctionDescriptions.containsKey(opIndex)) {
-            LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(opIndex).apply(this.context));
+          if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
+            LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
           } else {
-            LOGGER.info(SCRIPT_MARKER, "Running callback %d", opIndex);
+            LOGGER.info(SCRIPT_MARKER, "Running callback %d", this.context.opIndex_10);
           }
         }
 
         //LAB_80016598
-        ret = this.runOp(opIndex, this.context);
+        ret = this.runOp(this.context.opIndex_10, this.context);
 
         if(scriptLog[this.index]) {
           if(ret == FlowControl.PAUSE) {
@@ -524,79 +510,79 @@ public class ScriptState<T> {
     }
   }
 
-  private FlowControl runOp(final int opIndex, final RunningScript<?> script) {
-    return switch(opIndex) {
-      case 0 -> this.scriptPause();
-      case 1 -> this.scriptRewindAndPause();
-      case 2 -> this.scriptWait();
-      case 3 -> this.scriptCompare();
-      case 4 -> this.scriptCompare0();
+  private FlowControl runOp(final OpType op, final RunningScript<?> script) {
+    return switch(op) {
+      case YIELD -> this.scriptPause();
+      case REWIND -> this.scriptRewindAndPause();
+      case WAIT -> this.scriptWait();
+      case WAIT_CMP -> this.scriptCompare();
+      case WAIT_CMP_0 -> this.scriptCompare0();
 
-      case 8 -> this.scriptMove();
-      case 9 -> this.FUN_80016790();
-      case 10 -> this.scriptMemCopy();
+      case MOV -> this.scriptMove();
+      case SWAP_BROKEN -> this.FUN_80016790();
+      case MEMCPY -> this.scriptMemCopy();
 
-      case 12 -> this.scriptSetZero();
+      case MOV_0 -> this.scriptSetZero();
 
-      case 16 -> this.scriptAnd(script);
-      case 17 -> this.scriptOr(script);
-      case 18 -> this.scriptXor();
-      case 19 -> this.scriptAndOr();
-      case 20 -> this.scriptNot();
-      case 21 -> this.scriptShiftLeft(script);
-      case 22 -> this.scriptShiftRightArithmetic();
+      case AND -> this.scriptAnd(script);
+      case OR -> this.scriptOr(script);
+      case XOR -> this.scriptXor();
+      case ANDOR -> this.scriptAndOr();
+      case NOT -> this.scriptNot();
+      case SHL -> this.scriptShiftLeft(script);
+      case SHR -> this.scriptShiftRightArithmetic();
 
-      case 24 -> this.scriptAdd();
-      case 25 -> this.scriptSubtract();
-      case 26 -> this.scriptSubtract2();
-      case 27 -> this.scriptIncrementBy1();
-      case 28 -> this.scriptDecrementBy1();
-      case 29 -> this.scriptNegate();
-      case 30 -> this.scriptAbs();
+      case ADD -> this.scriptAdd();
+      case SUB -> this.scriptSubtract();
+      case SUB_REV -> this.scriptSubtract2();
+      case INCR -> this.scriptIncrementBy1();
+      case DECR -> this.scriptDecrementBy1();
+      case NEG -> this.scriptNegate();
+      case ABS -> this.scriptAbs();
 
-      case 32 -> this.scriptMultiply();
-      case 33 -> this.scriptDivide();
-      case 34 -> this.scriptDivide2();
-      case 35, 43 -> this.scriptMod();
-      case 36, 44 -> this.scriptMod2();
+      case MUL -> this.scriptMultiply();
+      case DIV -> this.scriptDivide();
+      case DIV_REV -> this.scriptDivide2();
+      case MOD, MOD43 -> this.scriptMod();
+      case MOD_REV, MOD_REV44 -> this.scriptMod2();
 
-      case 40 -> this.scriptMultiply12();
-      case 41 -> this.scriptDivide12();
-      case 42 -> this.scriptDivide2_12();
+      case MUL_12 -> this.scriptMultiply12();
+      case DIV_12 -> this.scriptDivide12();
+      case DIV_12_REV -> this.scriptDivide2_12();
 
-      case 48 -> this.scriptSquareRoot();
-      case 49 -> this.scriptRandom();
-      case 50 -> this.scriptSin();
-      case 51 -> this.scriptCos();
-      case 52 -> this.scriptRatan2();
+      case SQRT -> this.scriptSquareRoot();
+      case RAND -> this.scriptRandom();
+      case SIN_12 -> this.scriptSin();
+      case COS_12 -> this.scriptCos();
+      case ATAN2_12 -> this.scriptRatan2();
 
-      case 56 -> this.scriptExecuteSubFunc();
+      case CALL -> this.scriptExecuteSubFunc();
 
-      case 64 -> this.scriptJump();
-      case 65 -> this.scriptConditionalJump();
-      case 66 -> this.scriptConditionalJump0();
-      case 67 -> this.scriptWhile();
-      case 68 -> this.scriptJumpTable();
+      case JMP -> this.scriptJump();
+      case JMP_CMP -> this.scriptConditionalJump();
+      case JMP_CMP_0 -> this.scriptConditionalJump0();
+      case WHILE -> this.scriptWhile();
+      case JMP_TABLE -> this.scriptJumpTable();
 
-      case 72 -> this.scriptJumpAndLink();
-      case 73 -> this.scriptJumpReturn();
-      case 74 -> this.scriptJumpAndLinkTable();
+      case GOSUB -> this.scriptJumpAndLink();
+      case RETURN -> this.scriptJumpReturn();
+      case GOSUB_TABLE -> this.scriptJumpAndLinkTable();
 
-      case 80 -> this.scriptDeallocateSelf();
+      case DEALLOCATE -> this.scriptDeallocateSelf();
 
-      case 82 -> this.scriptDeallocateChildren();
-      case 83 -> this.scriptDeallocateOther();
+      case DEALLOCATE82 -> this.scriptDeallocateChildren();
+      case DEALLOCATE_OTHER -> this.scriptDeallocateOther();
 
-      case 86 -> this.scriptForkAndJump();
-      case 87 -> this.scriptForkAndReenter();
-      case 88 -> this.scriptConsumeChild();
+      case FORK -> this.scriptForkAndJump();
+      case FORK_REENTER -> this.scriptForkAndReenter();
+      case CONSUME -> this.scriptConsumeChild();
 
-      case 96 -> this.FUN_800172f4();
-      case 97 -> this.FUN_800172fc();
-      case 98 -> this.FUN_80017304();
-      case 99 -> this.scriptGetCallStackDepth();
+      case NOOP_96 -> this.FUN_800172f4();
+      case NOOP_97 -> this.FUN_800172fc();
+      case NOOP_98 -> this.FUN_80017304();
+      case DEPTH -> this.scriptGetCallStackDepth();
 
-      default -> throw new IllegalArgumentException("Unknown script op " + opIndex);
+      default -> throw new IllegalArgumentException("Unknown script op " + op);
     };
   }
 
