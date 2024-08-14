@@ -18,6 +18,7 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
+import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
@@ -399,7 +400,10 @@ public class RetailSubmap extends Submap {
 
   @Override
   public int getEncounterRate() {
-    return encounterData_800f64c4[this.cut].rate_02;
+    final var encounterRate = encounterData_800f64c4[this.cut].rate_02;
+    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(encounterRate, this.cut));
+
+    return encounterRateEvent.encounterRate;
   }
 
   @Override
