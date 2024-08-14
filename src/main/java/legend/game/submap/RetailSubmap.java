@@ -20,6 +20,7 @@ import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
+import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
@@ -408,8 +409,14 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void generateEncounter() {
-    encounterId_800bb0f8 = sceneEncounterIds_800f74c4[encounterData_800f64c4[this.cut].scene_00][this.randomEncounterIndex()];
-    battleStage_800bb0f4 = encounterData_800f64c4[this.cut].stage_03;
+    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final var scene = sceneEncounterIds_800f74c4[sceneId];
+    final var encounterId = scene[this.randomEncounterIndex()];
+    final var battleStageId = encounterData_800f64c4[this.cut].stage_03;
+
+    final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
+    encounterId_800bb0f8 = generateEncounterEvent.encounterId;
+    battleStage_800bb0f4 = generateEncounterEvent.battleStageId;
   }
 
   @Override
