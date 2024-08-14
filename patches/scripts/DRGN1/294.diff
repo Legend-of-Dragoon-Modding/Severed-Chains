@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -2435,7 +2435,7 @@
+ jmp_cmp &, 0x2, stor[stor[stor[0], 9], 7], inl[:LABEL_163]
+ yield
+ incr stor[8]
+-jmp_cmp !=, 0x3, stor[8], inl[:LABEL_161]
++jmp_cmp !=, var[35], stor[8], inl[:LABEL_161]
+ gosub inl[:LABEL_3]
+ jmp_cmp <=, stor[8], 0x3c, inl[:LABEL_162]
+ gosub inl[:LABEL_4]

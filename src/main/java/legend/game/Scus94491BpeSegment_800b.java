@@ -52,7 +52,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static int drgnBinIndex_800bc058;
 
-  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
+  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[108];
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
   public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;

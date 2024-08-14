@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -2119,13 +2119,17 @@
+ mov 0x3, stor[23]
+ wait stor[23]
+ mov var[34][1], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_P1]
+ gosub inl[:LABEL_70]
+ call 611, stor[18], stor[0], 0xffffffff
++SKIP_P1:
+ mov 0x2, stor[23]
+ wait stor[23]
+ mov var[34][2], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_P2]
+ gosub inl[:LABEL_70]
+ call 611, stor[18], stor[0], 0xffffffff
++SKIP_P2:
+ rewind
+ LABEL_82:
+ call 600, stor[18]
