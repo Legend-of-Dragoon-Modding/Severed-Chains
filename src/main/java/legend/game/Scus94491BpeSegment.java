@@ -161,6 +161,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
+import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
@@ -2356,7 +2357,7 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8];
+    final StageData2c stageData = getEncounterStageData(encounterId_800bb0f8);
 
     if(stageData.musicIndex_04 != 0xff) {
       stopMusicSequence();

@@ -1,5 +1,9 @@
 package legend.game.combat.environment;
 
+import legend.game.modding.events.battle.BattleEncounterStageDataEvent;
+
+import static legend.core.GameEngine.EVENTS;
+
 public final class StageData {
   private StageData() { }
 
@@ -517,4 +521,11 @@ public final class StageData {
     new StageData2c(255, 224, 10, 255, 4, 4, 8, 8, 8, 8, 0xffff),
     new StageData2c(255, 224, 10, 255, 4, 4, 8, 8, 8, 8, 0xffff),
   };
+
+  public static StageData2c getEncounterStageData(final int encounterId) {
+    final var encounterStageData = stageData_80109a98[encounterId];
+    final var encounterStageDataEvent = EVENTS.postEvent(new BattleEncounterStageDataEvent(encounterStageData));
+
+    return encounterStageDataEvent.stageData;
+  }
 }
