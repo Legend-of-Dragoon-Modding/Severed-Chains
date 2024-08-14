@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import static legend.core.IoHelper.crc32;
 import static legend.core.IoHelper.intsToBytes;
+import static legend.core.IoHelper.loadCsvFile;
 
 public class ScriptPatcher {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatch.class);
@@ -115,7 +116,15 @@ public class ScriptPatcher {
 
   public void patchFile(final Path sourceFile, final Path backupFile, final Path patchFile) throws IOException, PatchFailedException {
     final List<String> patchLines = Files.readAllLines(patchFile);
-
+    final Path branchFile = patchFile.resolveSibling(patchFile.getFileName() + ".branches");
+    if(Files.exists(patchFile.resolve(".branches"))){
+      try {
+        final List<String[]> branches = loadCsvFile(branchFile);
+        branches.getFirst();
+      }catch (final CsvException err){
+        LOGGER.error("Branch CSV file error for script: " + patchFile);
+      }
+    }
     final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile));
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
     final byte[] recompiledSource = this.recompile(patched);
