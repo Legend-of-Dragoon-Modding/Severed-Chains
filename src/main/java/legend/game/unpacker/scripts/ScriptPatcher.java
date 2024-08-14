@@ -21,6 +21,8 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -116,16 +118,30 @@ public class ScriptPatcher {
 
   public void patchFile(final Path sourceFile, final Path backupFile, final Path patchFile) throws IOException, PatchFailedException {
     final List<String> patchLines = Files.readAllLines(patchFile);
-    final Path branchFile = patchFile.resolveSibling(patchFile.getFileName() + ".branches");
-    if(Files.exists(patchFile.resolve(".branches"))){
+
+    final Path configPath = this.resolvePatchConfigPath(patchFile);
+    List<String[]> patchConfig = new ArrayList<>();
+    final ArrayList<Integer> branchList = new ArrayList<>();
+
+    if(Files.exists(configPath)) {
       try {
-        final List<String[]> branches = loadCsvFile(branchFile);
-        branches.getFirst();
-      }catch (final CsvException err){
-        LOGGER.error("Branch CSV file error for script: " + patchFile);
+        patchConfig = loadCsvFile(configPath);
+      } catch(final CsvException err) {
+        LOGGER.error("Patch config error for patch: " + patchFile);
       }
     }
-    final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile));
+
+    for(final String[] strings : patchConfig) {
+      switch(strings[0]) {
+        case "branch":
+          branchList.add(Integer.parseInt(strings[1].trim(),16));
+          break;
+        default:
+          throw new IllegalArgumentException("Invalid patch config option: " + strings[0]);
+      }
+    }
+    final int[] branches = Arrays.stream(branchList.toArray()).mapToInt(i -> (int)i).toArray();
+    final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile), branches);
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
     final byte[] recompiledSource = this.recompile(patched);
 
@@ -155,10 +171,8 @@ public class ScriptPatcher {
     }
   }
 
-  private List<String> decompile(final byte[] data) {
-    //TODO add support for explicit branches #1269
-    final int[] arr = {};
-    final Script script = this.disassembler.disassemble(data, arr);
+  private List<String> decompile(final byte[] data, final int[] branches) {
+    final Script script = this.disassembler.disassemble(data, branches);
     final String decompiledOutput = this.translator.translate(script, this.meta, true, true);
     return decompiledOutput.lines().toList();
   }
@@ -166,5 +180,11 @@ public class ScriptPatcher {
   private byte[] recompile(final String patched) {
     final Script lexedDecompiledSource = this.lexer.lex(patched);
     return intsToBytes(this.compiler.compile(lexedDecompiledSource));
+  }
+
+  private Path resolvePatchConfigPath(final Path diffPath) {
+    final String patchLocationStr = diffPath.getFileName().toString();
+    final String patchName = patchLocationStr.substring(0, patchLocationStr.lastIndexOf('.')) + ".config.csv";
+    return diffPath.resolveSibling(patchName);
   }
 }
