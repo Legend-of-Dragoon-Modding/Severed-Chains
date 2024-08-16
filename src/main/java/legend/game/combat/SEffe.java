@@ -4005,7 +4005,7 @@ public final class SEffe {
 
   @ScriptDescription("Loads this script into another script state and jumps to a script address")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "address", description = "The script address", branch = ScriptParam.Branch.REENTRY)
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "address", description = "The script address", branch = ScriptParam.Branch.FORK_JUMP)
   @Method(0x80115690L)
   public static FlowControl scriptLoadSameScriptAndJump(final RunningScript<?> script) {
     final ScriptState<?> state = SCRIPTS.getState(script.params_20[0].get());
