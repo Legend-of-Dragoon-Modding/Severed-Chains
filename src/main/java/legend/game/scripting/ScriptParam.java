@@ -39,5 +39,7 @@ public @interface ScriptParam {
     JUMP,
     SUBROUTINE,
     REENTRY,
+    FORK_JUMP,
+    FORK_REENTRY,
   }
 }
