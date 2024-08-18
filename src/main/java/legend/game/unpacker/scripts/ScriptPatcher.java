@@ -159,6 +159,8 @@ public class ScriptPatcher {
   private List<String> decompile(final byte[] data, final List<Integer> branches, final Map<Integer, Integer> tableLengths) {
     this.disassembler.tableLengths.putAll(tableLengths);
     this.disassembler.extraBranches.addAll(branches);
+    this.translator.stripComments = true;
+    this.translator.stripNames = true;
     final Script script = this.disassembler.disassemble(data);
     final String decompiledOutput = this.translator.translate(script, this.meta);
     return decompiledOutput.lines().toList();

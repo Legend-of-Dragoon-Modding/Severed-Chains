@@ -86,15 +86,14 @@ public class ScriptLiveDebuggerController {
         this.btnStep.setDisable(true);
       }
 
-      final int[] arr = {};
-      this.tokens = this.disassembler.disassemble(state.scriptPtr_14.data, arr);
+      this.tokens = this.disassembler.disassemble(state.scriptPtr_14.data);
     }
   }
 
   private void displayCode(final int offset) {
     final Script line = new Script(1);
     line.entries[0] = this.tokens.entries[offset];
-    this.txtCode.setText(Integer.toHexString(offset) + ": " + this.translator.translate(line, this.meta, false, false));
+    this.txtCode.setText(Integer.toHexString(offset) + ": " + this.translator.translate(line, this.meta));
   }
 
   private void clear() {
