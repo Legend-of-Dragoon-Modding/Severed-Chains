@@ -11,8 +11,9 @@ public class RenderTextProperties {
   private final float scaleX;
   private final float scaleY;
   private final float scaleZ;
+  private final float scaleTextSpacing;
 
-  public RenderTextProperties(final String text, final float x, final float y, final TextColour colour, final int trim, float scaleX, float scaleY, float scaleZ) {
+  public RenderTextProperties(final String text, final float x, final float y, final TextColour colour, final int trim, final float scaleX, final float scaleY, final float scaleZ, final float scaleTextSpacing) {
     this.text = text;
     this.x = x;
     this.y = y;
@@ -21,6 +22,7 @@ public class RenderTextProperties {
     this.scaleX = scaleX;
     this.scaleY = scaleY;
     this.scaleZ = scaleZ;
+    this.scaleTextSpacing = scaleTextSpacing;
   }
 
   public String getText() {
@@ -53,5 +55,9 @@ public class RenderTextProperties {
 
   public float getScaleZ() {
     return this.scaleZ;
+  }
+
+  public float getScaleTextSpacing() {
+    return this.scaleTextSpacing;
   }
 }

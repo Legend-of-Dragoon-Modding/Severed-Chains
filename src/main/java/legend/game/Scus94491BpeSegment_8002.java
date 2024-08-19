@@ -178,6 +178,8 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
 
 public final class Scus94491BpeSegment_8002 {
+  private static float scaleTextSpacing = 1.0f;
+
   private Scus94491BpeSegment_8002() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8002.class);
@@ -3578,7 +3580,9 @@ public final class Scus94491BpeSegment_8002 {
 
   public static void renderText(RenderTextProperties textProperties) {
     textTransforms.scale(textProperties.getScaleX(), textProperties.getScaleY(), textProperties.getScaleZ());
+    scaleTextSpacing = textProperties.getScaleTextSpacing();
     renderText(textProperties.getText(), textProperties.getX(), textProperties.getY(), textProperties.getColour(), textProperties.getTrim());
+    scaleTextSpacing = 1.0f;
     textTransforms.identity();
   }
 
@@ -3975,7 +3979,7 @@ public final class Scus94491BpeSegment_8002 {
       default -> 0;
     };
 
-    return 8 - nudge;
+    return (int)((8 - nudge) * scaleTextSpacing);
   }
 
   public static int textHeight(final String text) {
