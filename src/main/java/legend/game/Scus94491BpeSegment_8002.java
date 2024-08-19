@@ -45,6 +45,7 @@ import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Model124;
+import legend.game.types.RenderTextProperties;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.SmallerStruct;
@@ -3411,6 +3412,12 @@ public final class Scus94491BpeSegment_8002 {
     renderText(text, x - textWidth(text), y, colour, trim);
   }
 
+  public static void renderText(RenderTextProperties textProperties) {
+    textTransforms.scale(textProperties.getScaleX(), textProperties.getScaleY(), textProperties.getScaleZ());
+    renderText(textProperties.getText(), textProperties.getX(), textProperties.getY(), textProperties.getColour(), textProperties.getTrim());
+    textTransforms.identity();
+  }
+
   @Method(0x80029920L)
   public static void setTextboxArrowPosition(final int textboxIndex, final boolean visible) {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
@@ -3811,7 +3818,6 @@ public final class Scus94491BpeSegment_8002 {
 
     return 8 - nudge;
   }
-
 
   public static int textHeight(final String text) {
     return 12;

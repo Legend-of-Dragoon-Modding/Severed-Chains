@@ -175,6 +175,8 @@ public class BattleHud {
   private final MV uiTransforms = new MV();
   private final Vector3f colourTemp = new Vector3f();
 
+  private final BattleControllerInputControl battleControllerInputControl = new BattleControllerInputControl();
+
   private final Obj[] floatingTextType1Digits = new Obj[10];
   private final Obj[] type1FloatingDigits = new Obj[10];
   private final Obj[] type3FloatingDigits = new Obj[10];
@@ -812,6 +814,8 @@ public class BattleHud {
         Scus94491BpeSegment_8002.renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }
+
+    this.battleControllerInputControl.render();
     //LAB_800f0f2c
   }
 
