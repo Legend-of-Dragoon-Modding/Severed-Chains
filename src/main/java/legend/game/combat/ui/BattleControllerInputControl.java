@@ -21,21 +21,27 @@ public class BattleControllerInputControl {
   private static final float scaleTextModifier = 0.7f;
   private static final float dpadBaselinePositionX = 290.0f;
   private static final float dpadBaselinePositionY = 15.0f;
+  private static final float cardinalBaselinePositionX = 290.0f;
+  private static final float cardinalBaselinePositionY = 50.0f;
 
   static {
-    createIcon(Icon.UP_ARROW, 0, -10, " UP ", labelLeft, labelAbove, dpadBaselinePositionX, dpadBaselinePositionY);
-    createIcon(Icon.DOWN_ARROW_2, 0, 10, "DOWN", labelLeft, labelBelow, dpadBaselinePositionX, dpadBaselinePositionY);
-    createIcon(Icon.LEFT_ARROW_2, -10, 0, "LEFT", labelLeft, 0, dpadBaselinePositionX, dpadBaselinePositionY);
-    createIcon(Icon.RIGHT_ARROW, 10, 0, "RIGHT", labelRight, 0, dpadBaselinePositionX, dpadBaselinePositionY);
+    createIcon(Icon.UP_ARROW, 0, -10, -1," UP ", labelLeft, labelAbove, dpadBaselinePositionX, dpadBaselinePositionY);
+    createIcon(Icon.DOWN_ARROW, 0, 10, -1, "DOWN", labelLeft, labelBelow, dpadBaselinePositionX, dpadBaselinePositionY);
+    createIcon(Icon.LEFT_ARROW, -10, 0, -1, "LEFT", labelLeft, 0, dpadBaselinePositionX, dpadBaselinePositionY);
+    createIcon(Icon.RIGHT_ARROW, 10, 0, -1, "RIGHT", labelRight, 0, dpadBaselinePositionX, dpadBaselinePositionY);
+
+    createIcon(Icon.TRIANGLE, 0, -10, -1, " ADDITION", labelLeft, labelAbove, cardinalBaselinePositionX, cardinalBaselinePositionY);
+    createIcon(Icon.X_THIN, 0, 10, -1, " SELECT", labelLeft, labelBelow, cardinalBaselinePositionX, cardinalBaselinePositionY);
+    createIcon(Icon.SQUARE, -10, 0, 42, "SPELLS", labelLeft, 0, cardinalBaselinePositionX, cardinalBaselinePositionY);
+    createIcon(Icon.CIRCLE, 10, 0, -1, "CANCEL", labelRight, 0, cardinalBaselinePositionX, cardinalBaselinePositionY);
   }
 
-  private static void createIcon(char text, final float x, final float y, String label, final float labelXSign, final float labelYSign, final float baselinePositionX, final float baselinePositionY) {
+  private static void createIcon(char text, final float x, final float y, final int labelWidth, String label, final float labelXSign, final float labelYSign, final float baselinePositionX, final float baselinePositionY) {
     final var iconLength = Scus94491BpeSegment_8002.charWidth(text);
 
-    var labelLength = 0.0f;
-    for(char chr : label.toCharArray()) {
-      labelLength += Scus94491BpeSegment_8002.charWidth(chr);
-    }
+    var labelLength = (labelWidth == -1)
+      ? label.chars().map(chr -> Scus94491BpeSegment_8002.charWidth((char) chr)).sum()
+      : labelWidth;
 
     final var isTop = (labelXSign < 0 && labelYSign < 0);
     final var isBottom = (labelXSign < 0 && labelYSign > 0);
@@ -47,7 +53,7 @@ public class BattleControllerInputControl {
 
     if(isTop || isBottom) {
       labelX = (iconLength) - (labelLength / 2.0f);
-      labelY = (labelYSign) * 8.0f;
+      labelY = (labelYSign) * 10.0f;
     }
 
     if(isLeft) {
