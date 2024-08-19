@@ -40,6 +40,7 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.Icon;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
@@ -3801,15 +3802,16 @@ public final class Scus94491BpeSegment_8002 {
       case ',', '·', ':', '\'', '1', 'i', 'l' -> 4;
       case 'I' -> 5;
       case '\n' -> 8;
-      case '\u0101', '\u0102', '\u0103', '\u0104', '\u0111', '\u0112', '\u0113', '\u0114' -> 0;
-      case '\u0116' -> -8;
-      case '\u0105', '\u0106', '\u0107', '\u0108', '\u0109', '\u010a', '\u010b', '\u010c', '\u010d', '\u010e', '\u010f', '\u0110', '\u0115', '\u0117', '\u0118', '\u0119', '\u011d','\u011e', '\u011f', '\u0120' -> -2;
-      case '\u011a','\u011b', '\u011c' -> -4;
-        default -> 0;
+      case Icon.UP_ARROW, Icon.DOWN_ARROW, Icon.LEFT_ARROW, Icon.RIGHT_ARROW, Icon.UP_ARROW_2, Icon.DOWN_ARROW_2, Icon.LEFT_ARROW_2, Icon.RIGHT_ARROW_2 -> 0;
+      case Icon.SELECT -> -8;
+      case Icon.MENU, Icon.COPY, Icon.LEFT_BUMPER, Icon.LEFT_TRIGGER, Icon.LEFT_JOYSTICK, Icon.RIGHT_BUMPER, Icon.RIGHT_TRIGGER, Icon.RIGHT_JOYSTICK, Icon.A, Icon.B, Icon.X_THICK, Icon.Y, Icon.START, Icon.LEFT_BUTTON_1, Icon.LEFT_BUTTON_2, Icon.LEFT_BUTTON_3, Icon.X_THIN, Icon.CIRCLE, Icon.SQUARE, Icon.TRIANGLE -> -2;
+      case Icon.RIGHT_BUTTON_1, Icon.RIGHT_BUTTON_2, Icon.RIGHT_BUTTON_3 -> -4;
+      default -> 0;
     };
 
     return 8 - nudge;
   }
+
 
   public static int textHeight(final String text) {
     return 12;
