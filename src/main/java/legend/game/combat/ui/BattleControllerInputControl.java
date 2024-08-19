@@ -28,6 +28,8 @@ public class BattleControllerInputControl {
   private static final float joystickBaseLinePositionX = 290.0f;
   private static final float joystickBaseLinePositionY = 112.0f;
 
+  private static boolean isRendering = false;
+
   static {
     createIcon(Icon.UP_ARROW, 0, -10, -1," UP ", labelLeft, labelAbove, dpadBaselinePositionX, dpadBaselinePositionY);
     createIcon(Icon.DOWN_ARROW, 0, 10, -1, "DOWN", labelLeft, labelBelow, dpadBaselinePositionX, dpadBaselinePositionY);
@@ -85,5 +87,13 @@ public class BattleControllerInputControl {
     for(RenderTextProperties properties : defaultControllerInputControl) {
       Scus94491BpeSegment_8002.renderText(properties);
     }
+  }
+
+  public boolean isRendering() {
+    return this.isRendering;
+  }
+
+  public void toggleRendering() {
+    this.isRendering = !this.isRendering;
   }
 }

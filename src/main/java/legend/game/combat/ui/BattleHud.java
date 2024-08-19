@@ -815,7 +815,9 @@ public class BattleHud {
       }
     }
 
-    this.battleControllerInputControl.render();
+    if(this.battleControllerInputControl.isRendering()) {
+      this.battleControllerInputControl.render();
+    }
     //LAB_800f0f2c
   }
 
@@ -1511,6 +1513,11 @@ public class BattleHud {
           this.toggleHighlight(false);
           break;
         }
+
+        // Input for BattleControllerInputControl UI control
+        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) {
+          this.battleControllerInputControl.toggleRendering();
+          }
 
         // Input for cycling right on menu bar
         //LAB_800f65b8

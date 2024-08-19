@@ -101,7 +101,7 @@ public class LegacyTextBuilder {
   }
 
   private float getSelectionWidth(int chr) {
-    if (chr > 223 && chr <= 256) {
+    if(chr > 223 && chr <= 256) {
       return 15.0f;
     } else {
       return 8.0f;
