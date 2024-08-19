@@ -20,9 +20,13 @@ public class BattleControllerInputControl {
   private static final float scaleTextSpacing = 0.4f;
   private static final float scaleTextModifier = 0.7f;
   private static final float dpadBaselinePositionX = 290.0f;
-  private static final float dpadBaselinePositionY = 15.0f;
+  private static final float dpadBaselinePositionY = 47.0f;
   private static final float cardinalBaselinePositionX = 290.0f;
-  private static final float cardinalBaselinePositionY = 50.0f;
+  private static final float cardinalBaselinePositionY = 15.0f;
+  private static final float backButtonsBaselinePositionX = 299.0f;
+  private static final float backButtonsBaselinePositionY = 77.0f;
+  private static final float joystickBaseLinePositionX = 290.0f;
+  private static final float joystickBaseLinePositionY = 112.0f;
 
   static {
     createIcon(Icon.UP_ARROW, 0, -10, -1," UP ", labelLeft, labelAbove, dpadBaselinePositionX, dpadBaselinePositionY);
@@ -34,6 +38,15 @@ public class BattleControllerInputControl {
     createIcon(Icon.X_THIN, 0, 10, -1, " SELECT", labelLeft, labelBelow, cardinalBaselinePositionX, cardinalBaselinePositionY);
     createIcon(Icon.SQUARE, -10, 0, 42, "SPELLS", labelLeft, 0, cardinalBaselinePositionX, cardinalBaselinePositionY);
     createIcon(Icon.CIRCLE, 10, 0, -1, "CANCEL", labelRight, 0, cardinalBaselinePositionX, cardinalBaselinePositionY);
+
+    createIcon(Icon.LEFT_BUTTON_2, 0, -10, 60, "CONTROLS", labelLeft, 0, backButtonsBaselinePositionX, backButtonsBaselinePositionY);
+    createIcon(Icon.RIGHT_BUTTON_2, 0, 0, 48, "CAMERA", labelLeft, 0, backButtonsBaselinePositionX, backButtonsBaselinePositionY);
+    createIcon(Icon.LEFT_BUTTON_1, 0, 10, 48, "ESCAPE", labelLeft, 0, backButtonsBaselinePositionX, backButtonsBaselinePositionY);
+    createIcon(Icon.RIGHT_BUTTON_1, 0, 20, 44, "GUARD", labelLeft, 0, backButtonsBaselinePositionX, backButtonsBaselinePositionY);
+
+    createIcon(Icon.RIGHT_JOYSTICK, -1, 0, -1, "", 0, 0, joystickBaseLinePositionX, joystickBaseLinePositionY);
+    createIcon(Icon.UP_ARROW, 0, -9, -1, " DRAGOON", labelLeft, labelAbove, joystickBaseLinePositionX, joystickBaseLinePositionY);
+    createIcon(Icon.DOWN_ARROW, 0, 9, -1, " SPECIAL", labelLeft, labelBelow, joystickBaseLinePositionX, joystickBaseLinePositionY);
   }
 
   private static void createIcon(char text, final float x, final float y, final int labelWidth, String label, final float labelXSign, final float labelYSign, final float baselinePositionX, final float baselinePositionY) {
