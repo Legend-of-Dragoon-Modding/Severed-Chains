@@ -57,7 +57,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 @Mod(id = CoreMod.MOD_ID)
 @EventListener
 public class CoreMod {
-  public static final String MOD_ID = "lod-core";
+  public static final String MOD_ID = "lod_core";
 
   private static final Registrar<ConfigEntry<?>, ConfigRegistryEvent> CONFIG_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.config, MOD_ID);
 

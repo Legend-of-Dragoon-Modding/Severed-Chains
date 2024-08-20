@@ -118,7 +118,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
             config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
             help.hide();
           } else {
-            this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod-core.keybind.duplicate_input"), 2, result -> {
+            this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.keybind.duplicate_input"), 2, result -> {
               if(result == MessageBoxResult.YES) {
                 for(final ControllerKeybindConfigEntry dupe : dupes) {
                   config.getConfig(dupe).removeAll(keycodes);
