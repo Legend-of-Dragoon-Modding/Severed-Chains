@@ -1,6 +1,6 @@
 --- original
 +++ modified
-@@ -924,7 +924,9 @@
+@@ -923,7 +923,9 @@
  mov var[34][0], stor[28]
  call 138, stor[28], 0x1
  mov var[34][1], stor[28]
