@@ -40,7 +40,6 @@ import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
@@ -55,7 +54,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.util.Locale;
 import java.util.Map;
 
-import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.itemDescriptions_80117a10;
 import static legend.game.SItem.itemNames_8011972c;
 import static legend.game.SItem.itemPrices_80114310;
@@ -143,12 +141,8 @@ public class LodMod {
     equipmentIdMap.clear();
     idEquipmentMap.clear();
 
-    for(int equipmentId = 0; equipmentId < equipmentStats_80111ff0.length; equipmentId++) {
+    for(int equipmentId = 0; equipmentId < 192; equipmentId++) {
       final String name = itemNames_8011972c[equipmentId];
-
-      if(equipmentStats_80111ff0[equipmentId] == null) {
-        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
-      }
 
       if(!name.isEmpty()) {
         final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId], itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
