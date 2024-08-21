@@ -7808,7 +7808,7 @@ public class Battle extends EngineState {
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
       player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
       player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
-      player.escapeBonus_132 = stats.equipmentScapeBonus_56;
+      player.escapeBonus_132 = stats.equipmentEscapeBonus_56;
       player.hpRegen_134 = stats.equipmentHpRegen_58;
       player.mpRegen_136 = stats.equipmentMpRegen_5a;
       player.spRegen_138 = stats.equipmentSpRegen_5c;

@@ -2176,7 +2176,7 @@ public final class SItem {
         characterStats.equipmentHpRegen_58 += equipment.hpRegen;
         characterStats.equipmentMpRegen_5a += equipment.mpRegen;
         characterStats.equipmentSpRegen_5c += equipment.spRegen;
-        characterStats.equipmentScapeBonus_56 += equipment.escapeBonus;
+        characterStats.equipmentEscapeBonus_56 += equipment.escapeBonus;
       }
     }
   }
