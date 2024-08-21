@@ -191,10 +191,10 @@ public class ScriptPatcher {
     for(final String[] strings : patchConfig) {
       switch(strings[0]) {
         case "branch":
-          branchList.add(Integer.parseInt(strings[1].trim(),16));
+          branchList.add(Integer.parseInt(strings[1].trim(), 16));
           break;
         case "table_length":
-          tableLengthList.put(Integer.parseInt(strings[1].trim(),16), Integer.parseInt(strings[2].trim()));
+          tableLengthList.put(Integer.parseInt(strings[1].trim(), 16), Integer.parseInt(strings[2].trim()));
           break;
         default:
           throw new IllegalArgumentException("Invalid patch config option: " + strings[0]);
