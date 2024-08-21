@@ -2,15 +2,20 @@ package legend.lodmod.items;
 
 import legend.core.memory.Method;
 import legend.game.characters.Element;
+import legend.game.characters.UnaryStatModConfig;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodItems;
+import legend.lodmod.LodMod;
 
 import java.util.EnumSet;
 import java.util.Set;
 
 import static legend.game.SItem.characterCount_8011d7c4;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_8002.addSp;
@@ -25,6 +30,7 @@ public class FileBasedItem extends Item {
    *   <li>0x2 - target all</li>
    *   <li>0x4 - target monsters</li>
    *   <li>0x10 - can be used in menu</li>
+   *   <li>0x80 - total vanishing</li>
    * </ul>
    */
   private final Set<TargetType> target_00 = EnumSet.noneOf(TargetType.class);
@@ -71,7 +77,9 @@ public class FileBasedItem extends Item {
    *
    * ubyte
    */
-  public final int type_0b;
+  private final int type_0b;
+
+  private final boolean instakill;
 
   public static FileBasedItem fromFile(final String name, final String description, final String combatDescription, final int price, final FileData data) {
     final int target = data.readUByte(0x0);
@@ -88,6 +96,8 @@ public class FileBasedItem extends Item {
     } else {
       targets.add(TargetType.ALLIES);
     }
+
+    final boolean instakill = (target & 0x80) != 0;
 
     final Set<UsageLocation> usage = EnumSet.noneOf(UsageLocation.class);
 
@@ -128,10 +138,10 @@ public class FileBasedItem extends Item {
     final int percentage = data.readUByte(0x9);
     final int uu2 = data.readUByte(0xa);
     final int type = data.readUByte(0xb);
-    return new FileBasedItem(name, description, combatDescription, price, targets, usage, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type);
+    return new FileBasedItem(name, description, combatDescription, price, targets, usage, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type, instakill);
   }
 
-  public FileBasedItem(final String name, final String description, final String combatDescription, final int price, final Set<TargetType> target, final Set<UsageLocation> usage, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type) {
+  public FileBasedItem(final String name, final String description, final String combatDescription, final int price, final Set<TargetType> target, final Set<UsageLocation> usage, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type, final boolean instakill) {
     super(name, description, combatDescription, icon, price);
 
     this.target_00.addAll(target);
@@ -161,10 +171,17 @@ public class FileBasedItem extends Item {
     this.percentage_09 = percentage;
     this.uu2_0a = uu2;
     this.type_0b = type;
+
+    this.instakill = instakill;
   }
 
   @Override
   public boolean isProtected() {
+    return this.isRepeat();
+  }
+
+  @Override
+  public boolean isRepeat() {
     return
       this == LodItems.PANDEMONIUM.get() ||
       this == LodItems.MAGIC_SHIELD.get() ||
@@ -282,5 +299,185 @@ public class FileBasedItem extends Item {
       //LAB_800230ec
       response._00 = 7;
     }
+  }
+
+  @Override
+  public boolean isStatMod() {
+    return this.type_0b != 0;
+  }
+
+  @Override
+  public int calculateStatMod(final BattleEntity27c user, final BattleEntity27c target) {
+    //LAB_800f2404
+    //LAB_800f2410
+    int s1;
+    // HP, MP, SP, revive, cure status, cause status
+    for(s1 = 0; s1 < 8; s1++) {
+      if((this.type_0b & 0x80 >> s1) != 0) {
+        break;
+      }
+    }
+
+    //LAB_800f2430
+    final int value = switch(s1) {
+      case 0 -> {
+        //LAB_800f2454
+        user.status_0e |= 0x800;
+        yield target.stats.getStat(LodMod.HP_STAT.get()).getMax();
+      }
+
+      case 1 -> {
+        //LAB_800f2464
+        user.status_0e |= 0x800;
+        yield target.stats.getStat(LodMod.MP_STAT.get()).getMax();
+      }
+
+      //LAB_800f2478
+      case 6 -> target.stats.getStat(LodMod.HP_STAT.get()).getMax();
+
+      //LAB_800f2484
+      case 7 -> target.stats.getStat(LodMod.MP_STAT.get()).getMax();
+
+      //LAB_800f2490
+      default -> 0;
+    };
+
+    //LAB_800f2494
+    //LAB_800f24bc
+    return value * this.percentage_09 / 100;
+  }
+
+  @Override
+  public boolean alwaysHits() {
+    return (this.type_0b & 0xe0) != 0;
+  }
+
+  @Override
+  public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
+    int effect = -1;
+    if(simpleRand() * 101 >> 16 < 101) {
+      final int statusType = this.status_08;
+
+      if((statusType & 0xff) != 0) {
+        int statusIndex;
+        for(statusIndex = 0; statusIndex < 8; statusIndex++) {
+          if((statusType & (0x80 >> statusIndex)) != 0) {
+            break;
+          }
+        }
+
+        effect = 0x80 >> statusIndex;
+      }
+
+      if(this.instakill) {
+        effect = 0;
+
+        if((target.specialEffectFlag_14 & 0x80) != 0) { // Resistance
+          effect = -1;
+        }
+      }
+    }
+
+    return effect;
+  }
+
+  @Override
+  public void applyBuffs(final BattleEntity27c user, final BattleEntity27c target) {
+    final int turnCount = user != target ? 3 : 4;
+
+    if(this.powerDefence != 0) {
+      target.powerDefence_b8 = this.powerDefence;
+      target.powerDefenceTurns_b9 = turnCount;
+    }
+
+    if(this.powerMagicDefence != 0) {
+      target.powerMagicDefence_ba = this.powerMagicDefence;
+      target.powerMagicDefenceTurns_bb = turnCount;
+    }
+
+    if(this.powerAttack != 0) {
+      target.powerAttack_b4 = this.powerAttack;
+      target.powerAttackTurns_b5 = turnCount;
+    }
+
+    if(this.powerMagicAttack != 0) {
+      target.powerMagicAttack_b6 = this.powerMagicAttack;
+      target.powerMagicAttackTurns_b7 = turnCount;
+    }
+
+    if(this.powerAttackHit != 0) {
+      target.tempAttackHit_bc = this.powerAttackHit;
+      target.tempAttackHitTurns_bd = turnCount;
+    }
+
+    if(this.powerMagicAttackHit != 0) {
+      target.tempMagicHit_be = this.powerMagicAttackHit;
+      target.tempMagicHitTurns_bf = turnCount;
+    }
+
+    if(this.powerAttackAvoid != 0) {
+      target.tempAttackAvoid_c0 = this.powerAttackAvoid;
+      target.tempAttackAvoidTurns_c1 = turnCount;
+    }
+
+    if(this.powerMagicAttackAvoid != 0) {
+      target.tempMagicAvoid_c2 = this.powerMagicAttackAvoid;
+      target.tempMagicAvoidTurns_c3 = turnCount;
+    }
+
+    if(this.physicalImmunity) {
+      target.tempPhysicalImmunity_c4 = 1;
+      target.tempPhysicalImmunityTurns_c5 = turnCount;
+    }
+
+    if(this.magicalImmunity) {
+      target.tempMagicalImmunity_c6 = 1;
+      target.tempMagicalImmunityTurns_c7 = turnCount;
+    }
+
+    if(this.speedDown != 0) {
+      target.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_down"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().percent(this.speedDown).turns(turnCount)));
+    }
+
+    if(this.speedUp != 0) {
+      target.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_up"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().percent(this.speedUp).turns(turnCount)));
+    }
+
+    if(target instanceof final PlayerBattleEntity playerDefender) {
+      if(this.spPerPhysicalHit != 0) {
+        playerDefender.tempSpPerPhysicalHit_cc = this.spPerPhysicalHit;
+        playerDefender.tempSpPerPhysicalHitTurns_cd = turnCount;
+      }
+
+      if(this.mpPerPhysicalHit != 0) {
+        playerDefender.tempMpPerPhysicalHit_ce = this.mpPerPhysicalHit;
+        playerDefender.tempMpPerPhysicalHitTurns_cf = turnCount;
+      }
+
+      if(this.spPerMagicalHit != 0) {
+        playerDefender.tempSpPerMagicalHit_d0 = this.spPerMagicalHit;
+        playerDefender.tempSpPerMagicalHitTurns_d1 = turnCount;
+      }
+
+      if(this.mpPerMagicalHit != 0) {
+        playerDefender.tempMpPerMagicalHit_d2 = this.mpPerMagicalHit;
+        playerDefender.tempMpPerMagicalHitTurns_d3 = turnCount;
+      }
+    }
+  }
+
+  @Override
+  public Element getAttackElement() {
+    return this.element_01;
+  }
+
+  @Override
+  public int getAttackDamageMultiplier(final BattleEntity27c user, final BattleEntity27c target) {
+    return this.damageMultiplier_02;
+  }
+
+  @Override
+  public int calculateAttackDamage(final BattleEntity27c user, final BattleEntity27c target) {
+    return this.damage_05;
   }
 }

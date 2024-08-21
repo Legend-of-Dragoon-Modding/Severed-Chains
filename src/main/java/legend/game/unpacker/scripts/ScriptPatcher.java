@@ -32,7 +32,7 @@ import static legend.core.IoHelper.intsToBytes;
 import static legend.core.IoHelper.loadCsvFile;
 
 public class ScriptPatcher {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatch.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatcher.class);
 
   private final Meta meta;
   private final Disassembler disassembler;

@@ -3566,6 +3566,14 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  public static void renderCentredText(final String text, final float x, final float y, final TextColour colour, final int trim) {
+    renderText(text, x - textWidth(text) / 2.0f, y, colour, trim);
+  }
+
+  public static void renderRightText(final String text, final float x, final float y, final TextColour colour, final int trim) {
+    renderText(text, x - textWidth(text), y, colour, trim);
+  }
+
   @Method(0x80029920L)
   public static void setTextboxArrowPosition(final int textboxIndex, final boolean visible) {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];

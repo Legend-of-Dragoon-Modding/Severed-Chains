@@ -1,0 +1,21 @@
+--- original
++++ modified
+@@ -138,9 +138,8 @@
+ call 371, stor[28], stor[10], 0x0
+ mov stor[8], var[128 + stor[10]][5]
+ mov 0x3, var[128 + stor[10]][0]
+-call 168, stor[30], stor[8], ITEM_ID
++call 168, stor[30], reg[0], ITEM_ID
+ mov stor[8], var[45][119]
+-call 496, stor[30]
+ call 495, stor[30], stor[28], stor[8], stor[8], stor[10]
+ mov stor[10], var[45][119]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_7]
+@@ -1909,6 +1908,7 @@
+ rewind
+ ENTRYPOINT_0:
+ call 592, stor[30], stor[28]
++mov id[lod:moon_serenade], reg[0]
+ mov 0x2a, stor[29]
+ mov 0x0, stor[27]
+ LABEL_37:

@@ -25,7 +25,6 @@ import legend.game.scripting.ScriptParam;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
@@ -144,7 +143,6 @@ public final class SItem {
     {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 66, 255, 200, 150, 200, 200), new MagicStuff08(40, 65, 255, 205, 155, 210, 210), new MagicStuff08(60, 67, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 13, 255, 220, 170, 250, 250), },
   };
 
-  public static final EquipmentStats1c[] equipmentStats_80111ff0 = new EquipmentStats1c[192];
   public static final int[] kongolXpTable_801134f0 = new int[61];
   public static final int[] dartXpTable_801135e4 = new int[61];
   public static final int[] haschelXpTable_801136d8 = new int[61];
