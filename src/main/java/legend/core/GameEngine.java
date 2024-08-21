@@ -22,6 +22,7 @@ import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.character.CharacterData;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -33,7 +34,6 @@ import legend.game.saves.serializers.V3Serializer;
 import legend.game.saves.serializers.V4Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
-import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
@@ -54,17 +54,9 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Set;
 
-import static legend.game.SItem.albertXpTable_801138c0;
-import static legend.game.SItem.dartXpTable_801135e4;
-import static legend.game.SItem.haschelXpTable_801136d8;
-import static legend.game.SItem.kongolXpTable_801134f0;
-import static legend.game.SItem.lavitzXpTable_801138c0;
-import static legend.game.SItem.meruXpTable_801137cc;
-import static legend.game.SItem.mirandaXpTable_80113aa8;
-import static legend.game.SItem.roseXpTable_801139b4;
-import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.gameLoop;
+import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.startSound;
 import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
@@ -221,7 +213,7 @@ public final class GameEngine {
 
           new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches")).apply();
 
-          loadXpTables();
+          loadCharacterData();
 
           Scus94491BpeSegment_8002.start();
           loading = false;
@@ -285,52 +277,17 @@ public final class GameEngine {
     REGISTRY_ACCESS.initializeRemaining();
   }
 
-  private static void loadXpTables() throws IOException {
-    final FileData dart = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
-    final FileData lavitz = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
-    final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
-    final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
-    final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
-    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
-    final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
-    final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
-    final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
-
-    for(int i = 0; i < dartXpTable_801135e4.length; i++) {
-      dartXpTable_801135e4[i] = dart.readInt(i * 4);
+  private static void loadCharacterData() throws IOException {
+    final int[] additions = {7, 5, 1, 4, 6, 5, 5, 3, 1};
+    for(int i = 0; i < 9; i++) {
+      CoreMod.CHARACTER_DATA[i] = new CharacterData();
+      CoreMod.loadCharacterXp(i, getCharacterName(i).toLowerCase());
+      CoreMod.loadCharacterStats(i, getCharacterName(i).toLowerCase());
+      CoreMod.loadCharacterDragoonXp(i, getCharacterName(i).toLowerCase());
+      CoreMod.loadCharacterDragoonStats(i, getCharacterName(i).toLowerCase());
+      CoreMod.loadCharacterAdditions(i, getCharacterName(i).toLowerCase(), additions[i]);
     }
-
-    for(int i = 0; i < lavitzXpTable_801138c0.length; i++) {
-      lavitzXpTable_801138c0[i] = lavitz.readInt(i * 4);
-    }
-
-    for(int i = 0; i < albertXpTable_801138c0.length; i++) {
-      albertXpTable_801138c0[i] = albert.readInt(i * 4);
-    }
-
-    for(int i = 0; i < shanaXpTable_80113aa8.length; i++) {
-      shanaXpTable_80113aa8[i] = shana.readInt(i * 4);
-    }
-
-    for(int i = 0; i < mirandaXpTable_80113aa8.length; i++) {
-      mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
-    }
-
-    for(int i = 0; i < roseXpTable_801139b4.length; i++) {
-      roseXpTable_801139b4[i] = rose.readInt(i * 4);
-    }
-
-    for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
-      haschelXpTable_801136d8[i] = haschel.readInt(i * 4);
-    }
-
-    for(int i = 0; i < kongolXpTable_801134f0.length; i++) {
-      kongolXpTable_801134f0[i] = kongol.readInt(i * 4);
-    }
-
-    for(int i = 0; i < meruXpTable_801137cc.length; i++) {
-      meruXpTable_801137cc[i] = meru.readInt(i * 4);
-    }
+    LOGGER.info("CoreMod Character Data Loaded");
   }
 
   private static void transitionToGame() {

@@ -93,11 +93,15 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.AttackSpGainEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SpellItemDeffEvent;
+import legend.game.modding.events.inventory.MaxAdditionXpOverride;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -133,6 +137,7 @@ import org.joml.Math;
 import org.joml.Matrix3f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.events.Event;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -200,7 +205,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
@@ -539,7 +543,7 @@ public class Battle extends EngineState {
   private int deffLoadingStage_800fafe8;
   public static final int[] dragoonDeffFlags_800fafec = {
     112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 20, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112,
+    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 20, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112
   };
   public static final int[] dragoonDeffsWithExtraTims_800fb040 = {4, 9, 10, 11, 11, 13, 20, 22, 27, 28, 30, 36, 40, 42, 44, 46, 65, 66, 70, 71, 73, 75, 78, 82};
   /**
@@ -963,6 +967,7 @@ public class Battle extends EngineState {
 
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
+    functions[950] = this::scriptArcherSp;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -3645,39 +3650,25 @@ public class Battle extends EngineState {
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final int additionXp = Math.min(EVENTS.postEvent(new MaxAdditionXpOverride()).bypassOverride ? 999 : 99, charData.additionXp_22[additionIndex] + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
+      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= (charData.additionLevels_1a[additionIndex]) * CoreMod.ADDITIONS_PER_LEVEL) {
         charData.additionLevels_1a[additionIndex]++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
-      int lastNonMaxAdditionIndex = -1;
-
-      // Find the first addition that isn't already maxed out
-      //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
-          nonMaxedAdditions--;
-        } else {
-          //LAB_800cd308
-          lastNonMaxAdditionIndex = additionIndex2;
-        }
-
-        //LAB_800cd30c
-      }
+      final int nonMaxedAdditions = CoreMod.CHARACTER_DATA[charIndex].getNonMaxedAdditions(charIndex);
+      final int lastNonMaxAdditionIndex = -1;
 
       // If there's only one addition that isn't maxed (the ultimate addition), unlock it
       //LAB_800cd31c
       if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
         charData.partyFlags_04 |= 0x40;
 
-        if(lastNonMaxAdditionIndex >= 0) {
-          charData.additionLevels_1a[lastNonMaxAdditionIndex] = 1;
-        }
+        charData.additionLevels_1a[lastNonMaxAdditionIndex] = 1;
+
 
         //LAB_800cd36c
         unlockedUltimateAddition_800bc910[bent.charSlot_276] = true;
@@ -5017,6 +5008,25 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Replaces Shana/???'s SP Table")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "sp")
+  public FlowControl scriptArcherSp(final RunningScript<?> script) {
+    final PlayerBattleEntity bent = (PlayerBattleEntity)script.scriptState_04.innerStruct_00;
+
+    final int sp = switch(bent.dlevel_06) {
+      case 1 -> 35;
+      case 2 -> 50;
+      case 3 -> 70;
+      case 4 -> 100;
+      case 5 -> 150;
+      default -> 0;
+    };
+
+    script.params_20[0].set(EVENTS.postEvent(new AttackSpGainEvent(bent, sp)).sp);
+
+    return FlowControl.CONTINUE;
+  }
+
   @Method(0x800ddac8L)
   public void loadModelTmd(final Model124 model, final CContainer extTmd) {
     final Vector3f sp0x18 = new Vector3f(model.coord2_14.coord.transfer);
@@ -5879,7 +5889,7 @@ public class Battle extends EngineState {
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
     final DeffManager7cc deffManager = deffManager_800c693c;
-    deffManager.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
+    deffManager.flags_20 |= index < 84 ? dragoonDeffFlags_800fafec[index] : 0x70 << 16;
     this.scriptAllocateDeffEffectManager(script, effect);
 
     final LoadedDeff24 battle24 = this.loadedDeff_800c6938;
@@ -5908,6 +5918,7 @@ public class Battle extends EngineState {
     }
 
     //LAB_800e67b0
+    EVENTS.postEvent(new DragoonDeffEvent(4139 + index * 2));
     loadDrgnDir(0, 4139 + index * 2, this::uploadTims);
     loadDrgnDir(0, 4140 + index * 2 + "/0", files -> {
       this.loadDeffPackage(files, battle24.managerState_18);
@@ -5930,6 +5941,7 @@ public class Battle extends EngineState {
   public void loadSpellItemDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
     final int id = script.params_20[0].get() & 0xffff;
     final int s0 = (id - 192) * 2;
+    final SpellItemDeffEvent event = EVENTS.postEvent(new SpellItemDeffEvent(4307, s0));
 
     LOGGER.info(DEFF, "Loading spell item DEFF (ID: %d, flags: %x)", id, script.params_20[0].get() & 0xffff_0000);
 
@@ -5943,14 +5955,14 @@ public class Battle extends EngineState {
     }
 
     t0.type_00 |= 0x200_0000;
-    loadDrgnDir(0, 4307 + s0, this::uploadTims);
-    loadDrgnDir(0, 4308 + s0 + "/0", files -> {
+    loadDrgnDir(0, event.scriptId + event.s0, this::uploadTims);
+    loadDrgnDir(0, event.scriptId + 1 + event.s0 + "/0", files -> {
       this.loadDeffPackage(files, t0.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 4308 + s0 + "/1", file -> {
+      loadDrgnFile(0, event.scriptId + 1 + event.s0 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(event.scriptId + 1 + event.s0 + "/1", file.getBytes());
       });
     });
     this.deffLoadingStage_800fafe8 = 1;

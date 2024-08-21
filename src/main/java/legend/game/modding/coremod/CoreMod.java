@@ -1,9 +1,13 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.game.characters.Addition04;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
+import legend.game.combat.types.AdditionHitProperties10;
+import legend.game.combat.types.AdditionHits80;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.character.CharacterData;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AllowWidescreenConfigEntry;
@@ -27,12 +31,18 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.types.LevelStuff08;
+import legend.game.types.MagicStuff08;
+import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -97,6 +107,11 @@ public class CoreMod {
     KEYBIND_CONFIGS.put(InputAction.BUTTON_THUMB_1, CONFIG_REGISTRAR.register("keybind_l3", () -> new ControllerKeybindConfigEntry(GLFW_KEY_Z)));
     KEYBIND_CONFIGS.put(InputAction.BUTTON_THUMB_2, CONFIG_REGISTRAR.register("keybind_r3", () -> new ControllerKeybindConfigEntry(GLFW_KEY_C)));
   }
+  public static int MAX_CHARACTER_LEVEL = 60;
+  public static int MAX_DRAGOON_LEVEL = 5;
+  public static int MAX_ADDITION_LEVEL = 5;
+  public static int ADDITIONS_PER_LEVEL = 20;
+  public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
 
   // Per-campaign config
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
@@ -133,5 +148,74 @@ public class CoreMod {
   @EventListener
   public static void registerConfig(final ConfigRegistryEvent event) {
     CONFIG_REGISTRAR.registryEvent(event);
+  }
+
+  public static void loadCharacterXp(final int charIndex, final String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/xp")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].xpTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].xpTable[i] = file.readInt(i * 4);
+    }
+  }
+
+  public static void loadCharacterStats(final int charIndex, final String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/stats")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].statsTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].statsTable[i] = new LevelStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
+    }
+  }
+
+  public static void loadCharacterDragoonXp(final int charIndex, final String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dxp")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dxpTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].dxpTable[i] = file.readUShort(i * 2);
+    }
+  }
+
+  public static void loadCharacterDragoonStats(final int charIndex, final String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dstats")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i] = new MagicStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
+    }
+  }
+
+  public static void loadCharacterAdditions(final int charIndex, final String charName, final int additions) throws IOException {
+    final FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName +"/additionhit")));
+    final FileData multiplier = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionmultipler")));
+
+    for(int i = 0; i < additions; i++) {
+      final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
+      final Addition04[] multipliers = new Addition04[6];
+      for(int x = 0; x < 8; x++) {
+        hits[x] = AdditionHitProperties10.fromFile(i, x, hit);
+      }
+
+      for(int y = 0; y < 6; y++) {
+        multipliers[y] = new Addition04();
+        multipliers[y]._00 = multiplier.readUByte((i * 24) + (y * 4));
+        multipliers[y].spMultiplier_02 = multiplier.readUByte((i * 24) + (y * 4) + 2);
+        multipliers[y].damageMultiplier_03 = multiplier.readUByte((i * 24) + (y * 4) + 3);
+      }
+      CoreMod.CHARACTER_DATA[charIndex].additions.add(new AdditionHits80(hits));
+      CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(multipliers);
+    }
+
+    if(charIndex != 2 && charIndex != 8) {
+      final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
+      for(int x = 0; x < 8; x++) {
+        hits[x] = AdditionHitProperties10.fromFile(additions, x, hit);
+      }
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
+    } else {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(new AdditionHitProperties10[8]));
+    }
+
+    if(charIndex == 0) { //Divine Dragoon Dart has 2x on his hit multipliers
+      final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
+      for(int x = 0; x < 8; x++) {
+        hits[x] = AdditionHitProperties10.fromFile(additions, x, hit);
+        hits[x].damageMultiplier_04 = hits[x].damageMultiplier_04 * 2;
+      }
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
+    }
   }
 }

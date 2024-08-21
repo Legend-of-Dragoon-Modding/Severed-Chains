@@ -3,11 +3,11 @@ package legend.game.title;
 import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.CharacterData2c;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
-import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -26,9 +26,9 @@ public class NewGame extends EngineState {
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
       final int level = characterStartingLevels[charIndex];
-      charData.xp_00 = xpTables[charIndex][level];
-      charData.hp_08 = levelStuff_80111cfc[charIndex][level].hp_00;
-      charData.mp_0a = magicStuff_80111d20[charIndex][1].mp_00;
+      charData.xp_00 = CoreMod.CHARACTER_DATA[charIndex].xpTable[level];
+      charData.hp_08 = CoreMod.CHARACTER_DATA[charIndex].statsTable[level].hp_00;
+      charData.mp_0a = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[1].mp_00;
       charData.sp_0c = 0;
       charData.dlevelXp_0e = 0;
       charData.status_10 = 0;
@@ -41,17 +41,9 @@ public class NewGame extends EngineState {
         charData.additionXp_22[additionIndex] = 0;
       }
 
-      charData.additionLevels_1a[0] = 1;
-
       //LAB_800c72d4
-      for(int i = 1; i < level; i++) {
-        final int index = levelStuff_80111cfc[charIndex][i].addition_02;
-
-        if(index != -1) {
-          final int offset = additionOffsets_8004f5ac[charIndex];
-          charData.additionLevels_1a[index - offset] = 1;
-        }
-
+      for(int i = 0; i < 8; i++) {
+        charData.additionLevels_1a[i] = 1;
         //LAB_800c72fc
       }
 
