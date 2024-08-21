@@ -38,9 +38,11 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
 import legend.game.scripting.FlowControl;
+import legend.game.scripting.NotImplementedException;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
+import legend.game.scripting.ScriptReadable;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.submap.SubmapEnvState;
@@ -77,6 +79,9 @@ import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.legendofdragoon.modloader.registries.Registry;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -1723,6 +1728,28 @@ public final class Scus94491BpeSegment_8002 {
       script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()) ? 0 : 0xff);
     } else {
       script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()) ? 0 : 0xff);
+    }
+
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Reads a value from a registry entry")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "registryId", description = "The registry to read from")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "entryId", description = "The entry to access from the registry")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entryVar", description = "The var to read from the entry")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.ANY, name = "value", description = "The value read from the entry")
+  public static FlowControl scriptReadRegistryEntryVar(final RunningScript<?> script) {
+    final RegistryId registryId = script.params_20[0].getRegistryId();
+    final RegistryId entryId = script.params_20[1].getRegistryId();
+    final int entryVar = script.params_20[2].get();
+
+    final Registry<?> registry = REGISTRIES.get(registryId);
+    final RegistryEntry entry = registry.getEntry(entryId).get();
+
+    if(entry instanceof final ScriptReadable readable) {
+      readable.read(entryVar, script.params_20[3]);
+    } else {
+      throw new NotImplementedException("Registry %s entry %s is not script-readable".formatted(registryId, entryId));
     }
 
     return FlowControl.CONTINUE;
