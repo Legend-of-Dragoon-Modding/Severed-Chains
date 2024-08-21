@@ -49,7 +49,7 @@ public class DeffManager7cc {
   public DeffPart[] deffPackage_5a8;
 //  public DeffFile deff_5ac; // No longer needed
 
-  public final BattleStruct24_2 _5b8 = new BattleStruct24_2();
+  public final LoadedDeff24 _5b8 = new LoadedDeff24();
   public final BattleLightStruct64 _5dc = new BattleLightStruct64();
   public final BttlLightStruct84[] _640 = {new BttlLightStruct84(), new BttlLightStruct84(), new BttlLightStruct84()};
 

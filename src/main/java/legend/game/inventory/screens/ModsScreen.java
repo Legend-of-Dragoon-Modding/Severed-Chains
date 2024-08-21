@@ -32,13 +32,17 @@ public class ModsScreen extends VerticalLayoutScreen {
     final List<String> modIds = MODS.getAllModIds().stream().sorted(Comparator.comparing(o -> I18n.translate(o + ".name"))).toList();
 
     for(final String modId : modIds) {
-      final Checkbox checkbox = new Checkbox();
-      checkbox.setChecked(enabledMods.contains(modId));
-      checkbox.setHorizontalAlign(Label.HorizontalAlign.RIGHT);
-      checkbox.setDisabled(this.isRequired(modId));
+      final Checkbox checkbox;
+      if(!this.isRequired(modId)) {
+        checkbox = new Checkbox();
+        checkbox.setChecked(enabledMods.contains(modId));
+        checkbox.setHorizontalAlign(Label.HorizontalAlign.RIGHT);
 
-      checkbox.onChecked(() -> enabledMods.add(modId));
-      checkbox.onUnchecked(() -> enabledMods.remove(modId));
+        checkbox.onChecked(() -> enabledMods.add(modId));
+        checkbox.onUnchecked(() -> enabledMods.remove(modId));
+      } else {
+        checkbox = null;
+      }
 
       this.addRow(I18n.translate(modId + ".name"), checkbox);
     }

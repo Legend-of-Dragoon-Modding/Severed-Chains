@@ -40,6 +40,6 @@ public class ScriptInlineParam extends Param {
 
   @Override
   public String toString() {
-    return "script[0x%x] 0x%x".formatted(this.offset, this.get());
+    return "script[%d].inl[0x%x] 0x%x".formatted(this.state.index, this.offset * 4, this.get());
   }
 }

@@ -14,13 +14,13 @@ import legend.game.combat.TemporaryMagicStats;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.inventory.Item;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.modding.events.battle.TemporaryItemStatsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
-import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
 import legend.lodmod.LodMod;
@@ -42,7 +42,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
@@ -145,7 +144,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int turnValue_4c;
   public int spellId_4e;
 
-  public int itemId_52;
+//  public int itemId_52;
   public int guard_54;
 
   /** Enemy aggressiveness with counters; lower means it can counter tighter timings; 0 = cannot counter */
@@ -182,11 +181,11 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
 
-  public ItemStats0c item_d4;
-  public int _ec;
-  public int _ee;
-  public int _f0;
-  public int _f2;
+  public Item item_d4;
+//  public int _ec;
+//  public int _ee;
+//  public int _f0;
+//  public int _f2;
 
   public boolean physicalImmunity_110;
   public boolean magicalImmunity_112;
@@ -260,7 +259,7 @@ public abstract class BattleEntity27c extends BattleObject {
    */
   public abstract int calculateMagicDamage(final BattleEntity27c target, final int magicType);
 
-  public int applyPhysicalDamageMultipliers(final int damage) {
+  public int applyPhysicalDamageMultipliers(final BattleEntity27c target, final int damage) {
     return damage;
   }
 
@@ -369,7 +368,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case TURN_VALUE -> this.turnValue_4c;
       case SPELL_ID -> this.spellId_4e;
 
-      case ITEM_ID -> this.itemId_52;
+//      case ITEM_ID -> this.itemId_52;
       case GUARD -> this.guard_54;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e;
@@ -404,21 +403,21 @@ public abstract class BattleEntity27c extends BattleObject {
       case TEMP_PHYSICAL_IMMUNITY -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
       case TEMP_MAGICAL_IMMUNITY -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
 
-      case ITEM_TARGET -> this.item_d4.target_00;
-      case ITEM_ELEMENT -> this.item_d4.element_01.flag;
-      case ITEM_DAMAGE_MULTIPLIER -> this.item_d4.damageMultiplier_02;
+//      case ITEM_TARGET -> this.item_d4.target_00;
+//      case ITEM_ELEMENT -> this.item_d4.element_01.flag;
+//      case ITEM_DAMAGE_MULTIPLIER -> this.item_d4.damageMultiplier_02;
 
-      case ITEM_DAMAGE -> this.item_d4.damage_05;
+//      case ITEM_DAMAGE -> this.item_d4.damage_05;
 
-      case ITEM_ICON -> this.item_d4.icon_07;
-      case ITEM_STATUS -> this.item_d4.status_08;
-      case ITEM_PERCENTAGE -> this.item_d4.percentage_09;
-      case ITEM_UU2 -> this.item_d4.uu2_0a;
-      case ITEM_TYPE -> this.item_d4.type_0b;
-      case _116 -> this._ec;
-      case _117 -> this._ee;
-      case _118 -> this._f0;
-      case _119 -> this._f2;
+//      case ITEM_ICON -> this.item_d4.icon_07;
+//      case ITEM_STATUS -> this.item_d4.status_08;
+//      case ITEM_PERCENTAGE -> this.item_d4.percentage_09;
+//      case ITEM_UU2 -> this.item_d4.uu2_0a;
+//      case ITEM_TYPE -> this.item_d4.type_0b;
+//      case _116 -> this._ec;
+//      case _117 -> this._ee;
+//      case _118 -> this._f0;
+//      case _119 -> this._f2;
 
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 ? 1 : 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 ? 1 : 0;
@@ -467,7 +466,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case TURN_VALUE -> this.turnValue_4c = value;
       case SPELL_ID -> this.spellId_4e = value;
 
-      case ITEM_ID -> this.itemId_52 = value;
+//      case ITEM_ID -> this.itemId_52 = value;
       case GUARD -> this.guard_54 = value;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
@@ -519,10 +518,10 @@ public abstract class BattleEntity27c extends BattleObject {
         this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
       }
 
-      case _116 -> this._ec = value;
-      case _117 -> this._ee = value;
-      case _118 -> this._f0 = value;
-      case _119 -> this._f2 = value;
+//      case _116 -> this._ec = value;
+//      case _117 -> this._ee = value;
+//      case _118 -> this._f0 = value;
+//      case _119 -> this._f2 = value;
 
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value != 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value != 0;
@@ -697,17 +696,13 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setTempItemMagicStats(final TemporaryMagicStats attackType) {
+  public void setActiveItem(final Item item) {
     //LAB_800f7a98
-    if(this.itemId_52 >= 64) {
-      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[0], attackType, this)).itemStats;
-    } else {
-      this.item_d4 = EVENTS.postEvent(new TemporaryItemStatsEvent(this.itemId_52, itemStats_8004f2ac[this.itemId_52], attackType, this)).itemStats;
-    }
-    this._ec = 0;
-    this._ee = 0;
-    this._f0 = 0;
-    this._f2 = 0;
+    this.item_d4 = item;
+//    this._ec = 0;
+//    this._ee = 0;
+//    this._f0 = 0;
+//    this._f2 = 0;
   }
 
   @Method(0x800f7b68L)

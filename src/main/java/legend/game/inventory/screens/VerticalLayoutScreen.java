@@ -8,6 +8,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,19 +38,22 @@ public class VerticalLayoutScreen extends MenuScreen {
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));
   }
 
-  public <T extends Control> T addRow(final String name, final T control) {
+  public <T extends Control> T addRow(final String name, @Nullable final T control) {
     final Label label = this.addControl(new Label(name));
     label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     label.setSize(this.getWidth() - 64, 16);
     label.setPos(32, 32 + this.rows.size() * 20);
 
-    label.onGotFocus(() -> this.setFocus(control));
+    if(control != null) {
+      label.onGotFocus(() -> this.setFocus(control));
 
-    control.setSize(140, 16);
-    control.setPos(label.getWidth() - control.getWidth(), 0);
-    label.addControl(control);
+      control.setSize(140, 16);
+      control.setPos(label.getWidth() - control.getWidth(), 0);
+      label.addControl(control);
+      this.configControls.add(control);
+    }
+
     this.rows.add(label);
-    this.configControls.add(control);
     this.updateEntries();
 
     if(this.rows.size() == 1) {
@@ -61,20 +65,22 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void highlightRow(final int index) {
     if(this.highlightedRow != index) {
-      if(this.highlightedRow != -1 && this.configControls.get(this.highlightedRow).isHovered()) {
+      if(this.highlightedRow != -1 && !this.configControls.isEmpty() && this.configControls.get(this.highlightedRow).isHovered()) {
         this.configControls.get(this.highlightedRow).hoverOut();
       }
 
       this.highlightedRow = index;
       this.highlight.setY(this.rows.get(index).getY() - 2);
 
-      final Control current = this.configControls.get(this.highlightedRow);
-      current.hoverIn();
+      if(!this.configControls.isEmpty()) {
+        final Control current = this.configControls.get(this.highlightedRow);
+        current.hoverIn();
 
-      if(!(current instanceof Textbox)) {
-        current.focus();
-      } else {
-        this.setFocus(null);
+        if(!(current instanceof Textbox)) {
+          current.focus();
+        } else {
+          this.setFocus(null);
+        }
       }
     }
   }
@@ -159,7 +165,7 @@ public class VerticalLayoutScreen extends MenuScreen {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+    if(inputAction == InputAction.BUTTON_SOUTH && !this.configControls.isEmpty()) {
       final Control control = this.configControls.get(this.highlightedRow);
 
       if(control instanceof final Button button) {

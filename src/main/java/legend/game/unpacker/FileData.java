@@ -158,7 +158,8 @@ public class FileData {
   }
 
   public RegistryId readRegistryId(final int offset) {
-    return RegistryId.of(this.readAscii(offset));
+    // Replace the old core mod ID with the new one. Dunno how long we'll keep this. Maybe forever.
+    return new RegistryId(this.readAscii(offset).replace("lod-core", "lod_core"));
   }
 
   public Rect4i readRect(final int offset, final Rect4i rect) {

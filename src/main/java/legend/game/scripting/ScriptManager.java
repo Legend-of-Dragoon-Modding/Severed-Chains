@@ -182,7 +182,7 @@ public class ScriptManager {
           final RunningScript<?> context = state.context;
 
           LOGGER.error("Script %d crashed!", index);
-          LOGGER.error("File %s[addr 0x%x]", state.scriptPtr_14.name, state.offset_18 * 4);
+          LOGGER.error("File %s %s @ 0x%x", state.scriptPtr_14.name, context.opIndex_10, context.opOffset_08 * 4);
           LOGGER.error("Parameters:");
           LOGGER.error("  Op param: 0x%x", context.opParam_18);
           for(int i = 0; i < context.paramCount_14; i++) {
@@ -194,13 +194,20 @@ public class ScriptManager {
             LOGGER.error("  %d: 0x%x", i + 1, state.storage_44[i]);
           }
 
+          LOGGER.error("Registry IDs:");
+          for(int i = 0; i < state.registryIds.length; i++) {
+            if(state.registryIds[i] != null) {
+              LOGGER.error("  %d: %s", i + 1, state.registryIds[i]);
+            }
+          }
+
           LOGGER.error("Call stack:");
           for(int i = 0; i < state.callStack_1c.length; i++) {
             if(state.callStack_1c[i] == -1) {
               break;
             }
 
-            LOGGER.error("  %d: %d", i + 1, state.callStack_1c[i]);
+            LOGGER.error("  %d: 0x%x", i + 1, state.callStack_1c[i] * 4);
           }
 
           throw new RuntimeException("An error occurred while ticking script " + index, t);

@@ -6,7 +6,7 @@ import legend.game.combat.effects.EffectManagerParams;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 
-public class BattleStruct24_2 {
+public class LoadedDeff24 {
   /**
    * Flags:
    * <ul>

@@ -32,6 +32,7 @@ public @interface ScriptParam {
     STRING,
     REG,
     ENUM,
+    ANY,
   }
 
   enum Branch {

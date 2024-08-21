@@ -21,14 +21,18 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static legend.core.IoHelper.crc32;
 import static legend.core.IoHelper.intsToBytes;
+import static legend.core.IoHelper.loadCsvFile;
 
 public class ScriptPatcher {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatch.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatcher.class);
 
   private final Meta meta;
   private final Disassembler disassembler;
@@ -116,7 +120,13 @@ public class ScriptPatcher {
   public void patchFile(final Path sourceFile, final Path backupFile, final Path patchFile) throws IOException, PatchFailedException {
     final List<String> patchLines = Files.readAllLines(patchFile);
 
-    final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile));
+    final Path configPath = this.resolvePatchConfigPath(patchFile);
+    final List<Integer> branchList = new ArrayList<>();
+    final Map<Integer, Integer> tableLengths = new HashMap<>();
+
+    this.getPatchConfigs(configPath, branchList, tableLengths);
+
+    final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile), branchList, tableLengths);
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
     final byte[] recompiledSource = this.recompile(patched);
 
@@ -146,16 +156,49 @@ public class ScriptPatcher {
     }
   }
 
-  private List<String> decompile(final byte[] data) {
-    //TODO add support for explicit branches #1269
-    final int[] arr = {};
-    final Script script = this.disassembler.disassemble(data, arr);
-    final String decompiledOutput = this.translator.translate(script, this.meta, true, true);
+  private List<String> decompile(final byte[] data, final List<Integer> branches, final Map<Integer, Integer> tableLengths) {
+    this.disassembler.tableLengths.putAll(tableLengths);
+    this.disassembler.extraBranches.addAll(branches);
+    this.translator.stripComments = true;
+    this.translator.stripNames = true;
+    final Script script = this.disassembler.disassemble(data);
+    final String decompiledOutput = this.translator.translate(script, this.meta);
     return decompiledOutput.lines().toList();
   }
 
   private byte[] recompile(final String patched) {
     final Script lexedDecompiledSource = this.lexer.lex(patched);
     return intsToBytes(this.compiler.compile(lexedDecompiledSource));
+  }
+
+  private Path resolvePatchConfigPath(final Path diffPath) {
+    final String patchLocationStr = diffPath.getFileName().toString();
+    final String patchName = patchLocationStr.substring(0, patchLocationStr.lastIndexOf('.')) + ".config.csv";
+    return diffPath.resolveSibling(patchName);
+  }
+
+  private void getPatchConfigs(final Path configPath, final List<Integer> branchList, final Map<Integer, Integer> tableLengthList) {
+    List<String[]> patchConfig = new ArrayList<>();
+
+    if(Files.exists(configPath)) {
+      try {
+        patchConfig = loadCsvFile(configPath);
+      } catch(final CsvException | IOException err) {
+        LOGGER.error("Patch config error for config: " + configPath);
+      }
+    }
+
+    for(final String[] strings : patchConfig) {
+      switch(strings[0]) {
+        case "branch":
+          branchList.add(Integer.parseInt(strings[1].trim(), 16));
+          break;
+        case "table_length":
+          tableLengthList.put(Integer.parseInt(strings[1].trim(), 16), Integer.parseInt(strings[2].trim()));
+          break;
+        default:
+          throw new IllegalArgumentException("Invalid patch config option: " + strings[0]);
+      }
+    }
   }
 }
