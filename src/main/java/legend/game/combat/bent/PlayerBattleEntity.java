@@ -59,7 +59,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int mpPerPhysicalHit_12c;
   public int spPerMagicalHit_12e;
   public int mpPerMagicalHit_130;
-  public int _132;
+  public int escapeBonus_132;
   public int hpRegen_134;
   public int mpRegen_136;
   public int spRegen_138;
@@ -278,7 +278,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c;
       case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e;
       case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130;
-      case _151 -> this._132;
+      case ESCAPE_BONUS_151 -> this.escapeBonus_132;
       case HP_REGEN -> this.hpRegen_134;
       case MP_REGEN -> this.mpRegen_136;
       case SP_REGEN -> this.spRegen_138;
@@ -333,7 +333,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c = value;
       case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e = value;
       case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130 = value;
-      case _151 -> this._132 = value;
+      case ESCAPE_BONUS_151 -> this.escapeBonus_132 = value;
       case HP_REGEN -> this.hpRegen_134 = value;
       case MP_REGEN -> this.mpRegen_136 = value;
       case SP_REGEN -> this.spRegen_138 = value;

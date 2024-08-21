@@ -3966,7 +3966,7 @@ public final class Scus94491BpeSegment_8002 {
       stats.equipmentMpPerPhysicalHit_50 = 0;
       stats.equipmentSpPerMagicalHit_52 = 0;
       stats.equipmentMpPerMagicalHit_54 = 0;
-      stats.equipmentSpecial2Flag80_56 = 0;
+      stats.equipmentScapeBonus_56 = 0;
       stats.equipmentHpRegen_58 = 0;
       stats.equipmentMpRegen_5a = 0;
       stats.equipmentSpRegen_5c = 0;
