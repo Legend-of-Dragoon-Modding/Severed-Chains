@@ -59,6 +59,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int mpPerPhysicalHit_12c;
   public int spPerMagicalHit_12e;
   public int mpPerMagicalHit_130;
+  /** Extra percent chance to run away */
   public int escapeBonus_132;
   public int hpRegen_134;
   public int mpRegen_136;
