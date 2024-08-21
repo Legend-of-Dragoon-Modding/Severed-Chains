@@ -397,7 +397,9 @@ public class Battle extends EngineState {
   public int _800c67cc;
   public int _800c67d0;
 
+  /** script using attack item? */
   public ScriptState<? extends BattleEntity27c> scriptState_800c6914;
+  /** bent index, used in pcs and possibly elsewhere */
   public int _800c6918;
 
   private int lightTicks_800c6928;
@@ -707,7 +709,7 @@ public class Battle extends EngineState {
     functions[371] = this::scriptGetBentSlot;
     functions[372] = this::scriptDisableCombat;
 
-    functions[416] = this::FUN_800e6fb4;
+    functions[416] = this::scriptLoadDragoonDeffSync;
 
     functions[419] = this::scriptResetLights;
     functions[420] = this::scriptSetLightDirection;
@@ -756,7 +758,7 @@ public class Battle extends EngineState {
     functions[496] = this::scriptSetTempItemMagicStats;
     functions[497] = this::scriptTakeItem;
     functions[498] = this::scriptGiveItem;
-    functions[499] = this::FUN_800f9a50;
+    functions[499] = this::scriptSetHudTargetBobj;
     functions[500] = this::scriptIsFloatingNumberOnScreen;
     functions[501] = this::scriptSetDragoonSpaceElementIndex;
     functions[502] = this::FUN_800f9b94;
@@ -3340,7 +3342,7 @@ public class Battle extends EngineState {
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "displayableIconsBitset", description = "A bitset of which icons are displayed")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "disabledIconsBitset", description = "A bitset of which icons are disabled")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
     if(this.hud.spellAndItemMenu_800c6b60.menuType_0a == 2) {
@@ -6162,31 +6164,29 @@ public class Battle extends EngineState {
     return flow;
   }
 
-  @ScriptDescription("Unknown, can allocate a DEFF and effect manager child for a battle entity")
+  @ScriptDescription("Waits for any currently-loading DEFFs to finish loading, loads a DEFF, and waits for it to finish loading")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6fb4L)
-  public FlowControl FUN_800e6fb4(final RunningScript<? extends BattleObject> script) {
+  public FlowControl scriptLoadDragoonDeffSync(final RunningScript<? extends BattleObject> script) {
     if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this.loadedDeff_800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800e6fec
     //LAB_800e6ff0
-    final long v1 = this.deffLoadingStage_800fafe8;
-
     //LAB_800e7014
-    if(v1 == 0) {
+    if(this.deffLoadingStage_800fafe8 == 0) {
       this.loadDragoonDeff(script, new ScriptDeffEffect());
     }
 
-    if(v1 < 4) {
+    if(this.deffLoadingStage_800fafe8 < 4) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    if(v1 == 4) {
+    if(this.deffLoadingStage_800fafe8 == 4) {
       //LAB_800e702c
       this.deffLoadingStage_800fafe8 = 0;
       this.loadedDeff_800c6938.managerState_18 = null;
@@ -8673,7 +8673,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetType", description = "0 = characters, 1 = monsters, 2 = any")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index")
   @Method(0x800f9a50L)
-  public FlowControl FUN_800f9a50(final RunningScript<?> script) {
+  public FlowControl scriptSetHudTargetBobj(final RunningScript<?> script) {
     final int targetType = script.params_20[0].get();
     final int targetBent = script.params_20[1].get();
 
@@ -8697,10 +8697,10 @@ public class Battle extends EngineState {
     for(int i = 0; i < count; i++) {
       if(targetBent == bents[i].index) {
         if(targetType == 0) {
-          this.hud.battleMenu_800c6c34._800c6980 = i;
+          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = i;
         } else if(targetType == 1) {
           //LAB_800f9b0c
-          this.hud.battleMenu_800c6c34._800c697e = i;
+          this.hud.battleMenu_800c6c34.targetedMonsterSlot_800c697e = i;
         }
 
         break;
