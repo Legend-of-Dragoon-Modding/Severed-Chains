@@ -8837,15 +8837,15 @@ public class Battle extends EngineState {
     this.scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", null);
     this.scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
-    final int v1;
+    final int openingCamera;
     if((simpleRand() & 0x8000) == 0) {
-      v1 = this.currentStageData_800c6718._14;
+      openingCamera = this.currentStageData_800c6718.monsterOpeningCamera_14;
     } else {
-      v1 = this.currentStageData_800c6718._10;
+      openingCamera = this.currentStageData_800c6718.playerOpeningCamera_10;
     }
 
     //LAB_801091dc
-    this.cameraScriptMainTableJumpIndex_800c6748 = v1 + 1;
+    this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
     this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
     this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
     battleFlags_800bc960 |= 0x2;

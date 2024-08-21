@@ -181,15 +181,15 @@ public class GameVarArrayParam extends Param {
       case 66 -> Scus94491BpeSegment_8006.battleState_8006e398.counterAttackStage_288;
       case 67 -> Scus94491BpeSegment_8006.battleState_8006e398._28c;
       case 68 -> Scus94491BpeSegment_8006.battleState_8006e398._290;
-      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398._294[0];
-      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398._294[1];
-      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398._294[2];
+      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[0];
+      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[1];
+      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[2];
       case 72 -> Scus94491BpeSegment_8006.battleState_8006e398._2a0;
       case 73 -> Scus94491BpeSegment_8006.battleState_8006e398._2a4;
       case 74 -> Scus94491BpeSegment_8006.battleState_8006e398._2a8;
       case 75 -> Scus94491BpeSegment_8006.battleState_8006e398._2ac;
       case 76 -> Scus94491BpeSegment_8006.battleState_8006e398.specialFlag_2b0;
-      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398._2b4;
+      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398.runAwayFlags_2b4;
       case 78 -> Scus94491BpeSegment_8006.battleState_8006e398._2b8;
       case 79 -> Scus94491BpeSegment_8006.battleState_8006e398._2bc;
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0;
@@ -340,7 +340,7 @@ public class GameVarArrayParam extends Param {
       case 225 -> Scus94491BpeSegment_8006.battleState_8006e398._504;
       case 226 -> Scus94491BpeSegment_8006.battleState_8006e398._508;
       case 227 -> Scus94491BpeSegment_8006.battleState_8006e398._50c;
-      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398._510;
+      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398.globalMenuBlocks_510;
       case 229 -> Scus94491BpeSegment_8006.battleState_8006e398._514;
       case 230 -> Scus94491BpeSegment_8006.battleState_8006e398._518;
       case 231 -> Scus94491BpeSegment_8006.battleState_8006e398._51c;
@@ -356,7 +356,7 @@ public class GameVarArrayParam extends Param {
       case 241 -> Scus94491BpeSegment_8006.battleState_8006e398._544;
       case 242 -> Scus94491BpeSegment_8006.battleState_8006e398._548;
       case 243 -> Scus94491BpeSegment_8006.battleState_8006e398._54c;
-      case 244 -> Scus94491BpeSegment_8006.battleState_8006e398.dragonBlockStaff_550;
+      case 244 -> Scus94491BpeSegment_8006.battleState_8006e398.fieldFlags_550;
       case 245 -> Scus94491BpeSegment_8006.battleState_8006e398._554;
       case 246 -> Scus94491BpeSegment_8006.battleState_8006e398.attackTargets_558;
       case 247 -> Scus94491BpeSegment_8006.battleState_8006e398._55c;
@@ -444,15 +444,15 @@ public class GameVarArrayParam extends Param {
       case 66 -> Scus94491BpeSegment_8006.battleState_8006e398.counterAttackStage_288 = val;
       case 67 -> Scus94491BpeSegment_8006.battleState_8006e398._28c = val;
       case 68 -> Scus94491BpeSegment_8006.battleState_8006e398._290 = val;
-      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398._294[0] = val;
-      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398._294[1] = val;
-      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398._294[2] = val;
+      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[0] = val;
+      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[1] = val;
+      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[2] = val;
       case 72 -> Scus94491BpeSegment_8006.battleState_8006e398._2a0 = val;
       case 73 -> Scus94491BpeSegment_8006.battleState_8006e398._2a4 = val;
       case 74 -> Scus94491BpeSegment_8006.battleState_8006e398._2a8 = val;
       case 75 -> Scus94491BpeSegment_8006.battleState_8006e398._2ac = val;
       case 76 -> Scus94491BpeSegment_8006.battleState_8006e398.specialFlag_2b0 = val;
-      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398._2b4 = val;
+      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398.runAwayFlags_2b4 = val;
       case 78 -> Scus94491BpeSegment_8006.battleState_8006e398._2b8 = val;
       case 79 -> Scus94491BpeSegment_8006.battleState_8006e398._2bc = val;
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0 = val;
@@ -603,7 +603,7 @@ public class GameVarArrayParam extends Param {
       case 225 -> Scus94491BpeSegment_8006.battleState_8006e398._504 = val;
       case 226 -> Scus94491BpeSegment_8006.battleState_8006e398._508 = val;
       case 227 -> Scus94491BpeSegment_8006.battleState_8006e398._50c = val;
-      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398._510 = val;
+      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398.globalMenuBlocks_510 = val;
       case 229 -> Scus94491BpeSegment_8006.battleState_8006e398._514 = val;
       case 230 -> Scus94491BpeSegment_8006.battleState_8006e398._518 = val;
       case 231 -> Scus94491BpeSegment_8006.battleState_8006e398._51c = val;
@@ -620,7 +620,7 @@ public class GameVarArrayParam extends Param {
       case 242 -> Scus94491BpeSegment_8006.battleState_8006e398._548 = val;
       case 243 -> Scus94491BpeSegment_8006.battleState_8006e398._54c = val;
       case 244 -> {
-        Scus94491BpeSegment_8006.battleState_8006e398.dragonBlockStaff_550 = val;
+        Scus94491BpeSegment_8006.battleState_8006e398.fieldFlags_550 = val;
         if (val == 1) {
           EVENTS.postEvent(new DragonBlockStaffOnEvent());
         } else {
