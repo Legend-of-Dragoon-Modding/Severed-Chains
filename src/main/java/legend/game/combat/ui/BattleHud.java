@@ -92,7 +92,16 @@ public class BattleHud {
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
   private static final int[] floatingTextType3DigitUs_800c70e0 = {16, 24, 32, 40, 48, 56, 64, 72, 80, 88};
   private static final Vector2i[] battleUiElementClutVramXy_800c7114 = {new Vector2i(0x2c0, 0x1f0), new Vector2i(0x380, 0x130)};
-  private static final int[] iconFlags_800c7194 = {4, 1, 5, 6, 2, 9, 3, 7};
+  private static final int[] iconFlags_800c7194 = {
+    4, // Attack
+    1, // Defend
+    5, // Item
+    6, // Run
+    2, // Transform
+    9, // D-Attack
+    3, // D-Magic
+    7, // Special
+  };
   private static final int[] battleMenuIconStates_800c71e4 = {0, 1, 2, 1};
   private static final int[] uiTextureElementBrightness_800c71ec = {96, 64, -128};
   private static final int[] targetArrowOffsetY_800fb188 = {-20, -18, -16, -14, -12, -14, -16, -18};
@@ -1623,7 +1632,7 @@ public class BattleHud {
         if((press_800bee94 & 0x20) != 0) { // X
           //LAB_800f5078
           final PlayerBattleEntity player = this.spellAndItemMenu_800c6b60.player_08;
-          this.battleMenu_800c6c34._800c6980 = this.spellAndItemMenu_800c6b60.player_08.charSlot_276;
+          this.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.spellAndItemMenu_800c6b60.player_08.charSlot_276;
 
           //LAB_800f50b8
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
@@ -2211,7 +2220,7 @@ public class BattleHud {
         this.battleMenu_800c6c34.targetType_50 = 0;
         this.battleMenu_800c6c34.combatantIndex_54 = 0;
 
-        this.battleMenu_800c6c34._800c697c = 0;
+        this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
         this.currentCameraPositionIndicesIndicesIndex_800c6ba1 = 0;
         this.countCameraPositionIndicesIndices_800c6ba0 = 0;
 
@@ -2680,11 +2689,11 @@ public class BattleHud {
       count = battleState_8006e398.getAliveMonsterCount();
 
       //LAB_800f77e8
-      this.battleMenu_800c6c34._800c697c = this.battleMenu_800c6c34._800c697e;
+      this.battleMenu_800c6c34.targetedSlot_800c697c = this.battleMenu_800c6c34.targetedMonsterSlot_800c697e;
     } else {
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = true;
       if(targetType == 0) {
-        this.battleMenu_800c6c34._800c697c = this.battleMenu_800c6c34._800c6980;
+        this.battleMenu_800c6c34.targetedSlot_800c697c = this.battleMenu_800c6c34.targetedPlayerSlot_800c6980;
         count = battleState_8006e398.getPlayerCount();
       } else {
         //LAB_800f77f0
@@ -2694,26 +2703,26 @@ public class BattleHud {
 
     //LAB_800f77f4
     if((press_800bee94 & 0x3000) != 0) {
-      this.battleMenu_800c6c34._800c697c++;
-      if(this.battleMenu_800c6c34._800c697c >= count) {
-        this.battleMenu_800c6c34._800c697c = 0;
+      this.battleMenu_800c6c34.targetedSlot_800c697c++;
+      if(this.battleMenu_800c6c34.targetedSlot_800c697c >= count) {
+        this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       }
     }
 
     //LAB_800f7830
     if((press_800bee94 & 0xc000) != 0) {
-      this.battleMenu_800c6c34._800c697c--;
-      if(this.battleMenu_800c6c34._800c697c < 0) {
-        this.battleMenu_800c6c34._800c697c = count - 1;
+      this.battleMenu_800c6c34.targetedSlot_800c697c--;
+      if(this.battleMenu_800c6c34.targetedSlot_800c697c < 0) {
+        this.battleMenu_800c6c34.targetedSlot_800c697c = count - 1;
       }
       t3 = -1;
     }
 
     //LAB_800f786c
     //LAB_800f7880
-    if(this.battleMenu_800c6c34._800c697c < 0 || this.battleMenu_800c6c34._800c697c >= count) {
+    if(this.battleMenu_800c6c34.targetedSlot_800c697c < 0 || this.battleMenu_800c6c34.targetedSlot_800c697c >= count) {
       //LAB_800f78a0
-      this.battleMenu_800c6c34._800c697c = 0;
+      this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       t3 = 1;
     }
 
@@ -2722,21 +2731,21 @@ public class BattleHud {
     int v1;
     ScriptState<BattleEntity27c> target = null;
     for(v1 = 0; v1 < count; v1++) {
-      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
+      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34.targetedSlot_800c697c];
 
       if(target != null && (target.storage_44[7] & 0x4000) == 0) {
         break;
       }
 
-      this.battleMenu_800c6c34._800c697c += t3;
+      this.battleMenu_800c6c34.targetedSlot_800c697c += t3;
 
-      if(this.battleMenu_800c6c34._800c697c >= count) {
-        this.battleMenu_800c6c34._800c697c = 0;
+      if(this.battleMenu_800c6c34.targetedSlot_800c697c >= count) {
+        this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       }
 
       //LAB_800f792c
-      if(this.battleMenu_800c6c34._800c697c < 0) {
-        this.battleMenu_800c6c34._800c697c = count - 1;
+      if(this.battleMenu_800c6c34.targetedSlot_800c697c < 0) {
+        this.battleMenu_800c6c34.targetedSlot_800c697c = count - 1;
       }
 
       //LAB_800f7948
@@ -2744,14 +2753,14 @@ public class BattleHud {
 
     //LAB_800f7960
     if(v1 == count) {
-      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
-      this.battleMenu_800c6c34._800c697c = 0;
+      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34.targetedSlot_800c697c];
+      this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
     }
 
     //LAB_800f7998
     this.battleMenu_800c6c34.targetType_50 = targetType;
     if(!targetAll) {
-      this.battleMenu_800c6c34.combatantIndex_54 = this.battleMenu_800c6c34._800c697c;
+      this.battleMenu_800c6c34.combatantIndex_54 = this.battleMenu_800c6c34.targetedSlot_800c697c;
     } else {
       //LAB_800f79b4
       this.battleMenu_800c6c34.combatantIndex_54 = -1;
@@ -2762,9 +2771,9 @@ public class BattleHud {
 
     if(targetType == 1) {
       //LAB_800f79fc
-      this.battleMenu_800c6c34._800c697e = this.battleMenu_800c6c34._800c697c;
+      this.battleMenu_800c6c34.targetedMonsterSlot_800c697e = this.battleMenu_800c6c34.targetedSlot_800c697c;
     } else if(targetType == 0) {
-      this.battleMenu_800c6c34._800c6980 = this.battleMenu_800c6c34._800c697c;
+      this.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.battleMenu_800c6c34.targetedSlot_800c697c;
     }
 
     //LAB_800f7a0c
@@ -2772,14 +2781,14 @@ public class BattleHud {
     int ret = 0;
     if((press_800bee94 & 0x20) != 0) { // Cross
       ret = 1;
-      this.battleMenu_800c6c34._800c697c = 0;
+      this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
     }
 
     //LAB_800f7a38
     if((press_800bee94 & 0x40) != 0) { // Circle
       ret = -1;
-      this.battleMenu_800c6c34._800c697c = 0;
+      this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.target_48 = -1;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
     }

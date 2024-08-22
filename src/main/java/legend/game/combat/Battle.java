@@ -33,7 +33,7 @@ import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.Anim;
-import legend.game.combat.deff.BattleStruct24_2;
+import legend.game.combat.deff.LoadedDeff24;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.AdditionCharEffectData0c;
@@ -397,14 +397,16 @@ public class Battle extends EngineState {
   public int _800c67cc;
   public int _800c67d0;
 
+  /** script using attack item? */
   public ScriptState<? extends BattleEntity27c> scriptState_800c6914;
+  /** bent index, used in pcs and possibly elsewhere */
   public int _800c6918;
 
   private int lightTicks_800c6928;
   public BttlLightStruct84[] lights_800c692c;
   public BattleLightStruct64 _800c6930;
 
-  private BattleStruct24_2 _800c6938;
+  private LoadedDeff24 loadedDeff_800c6938;
   public static DeffManager7cc deffManager_800c693c;
 
   public static BattleStageDarkening1800 stageDarkening_800c6958;
@@ -707,7 +709,7 @@ public class Battle extends EngineState {
     functions[371] = this::scriptGetBentSlot;
     functions[372] = this::scriptDisableCombat;
 
-    functions[416] = this::FUN_800e6fb4;
+    functions[416] = this::scriptLoadDragoonDeffSync;
 
     functions[419] = this::scriptResetLights;
     functions[420] = this::scriptSetLightDirection;
@@ -756,7 +758,7 @@ public class Battle extends EngineState {
     functions[496] = this::scriptSetTempItemMagicStats;
     functions[497] = this::scriptTakeItem;
     functions[498] = this::scriptGiveItem;
-    functions[499] = this::FUN_800f9a50;
+    functions[499] = this::scriptSetHudTargetBobj;
     functions[500] = this::scriptIsFloatingNumberOnScreen;
     functions[501] = this::scriptSetDragoonSpaceElementIndex;
     functions[502] = this::FUN_800f9b94;
@@ -3340,7 +3342,7 @@ public class Battle extends EngineState {
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "displayableIconsBitset", description = "A bitset of which icons are displayed")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "disabledIconsBitset", description = "A bitset of which icons are disabled")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
     if(this.hud.spellAndItemMenu_800c6b60.menuType_0a == 2) {
@@ -5781,7 +5783,7 @@ public class Battle extends EngineState {
     this.deffLoadingStage_800fafe8 = 4;
 
     if((struct7cc.flags_20 & 0x4_0000) != 0) {
-      loadDeffSounds(this._800c6938.bentState_04, 1);
+      loadDeffSounds(this.loadedDeff_800c6938.bentState_04, 1);
     }
 
     if((struct7cc.flags_20 & 0x10_0000) != 0) {
@@ -5837,7 +5839,7 @@ public class Battle extends EngineState {
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0400;
 
-    final BattleStruct24_2 v0 = this._800c6938;
+    final LoadedDeff24 v0 = this.loadedDeff_800c6938;
     v0.type_00 = flags & 0xffff;
     v0.bentState_04 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
     v0._08 = script.params_20[2].get();
@@ -5865,7 +5867,7 @@ public class Battle extends EngineState {
     deffManager.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
     this.scriptAllocateDeffEffectManager(script, effect);
 
-    final BattleStruct24_2 battle24 = this._800c6938;
+    final LoadedDeff24 battle24 = this.loadedDeff_800c6938;
     battle24.type_00 |= 0x100_0000;
 
     if((deffManager.flags_20 & 0x4_0000) != 0) {
@@ -5898,7 +5900,7 @@ public class Battle extends EngineState {
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
       loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this._800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
       });
     });
     this.deffLoadingStage_800fafe8 = 1;
@@ -5919,7 +5921,7 @@ public class Battle extends EngineState {
     deffManager_800c693c.flags_20 |= 0x40_0000;
     this.scriptAllocateDeffEffectManager(script, effect);
 
-    final BattleStruct24_2 t0 = this._800c6938;
+    final LoadedDeff24 t0 = this.loadedDeff_800c6938;
 
     if(t0.script_14 != null) {
       t0.script_14 = null;
@@ -5933,7 +5935,7 @@ public class Battle extends EngineState {
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
       loadDrgnFile(0, 4308 + s0 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this._800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
       });
     });
     this.deffLoadingStage_800fafe8 = 1;
@@ -5961,7 +5963,7 @@ public class Battle extends EngineState {
     deffManager_800c693c.flags_20 |= s1 & 0x10_0000;
     this.scriptAllocateDeffEffectManager(script, effect);
 
-    final BattleStruct24_2 v1 = this._800c6938;
+    final LoadedDeff24 v1 = this.loadedDeff_800c6938;
 
     if(v1.script_14 != null) {
       v1.script_14 = null;
@@ -5978,7 +5980,7 @@ public class Battle extends EngineState {
         // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
         loadDrgnFile(0, 4434 + finalMonsterIndex * 2 + "/1", file -> {
           LOGGER.info(DEFF, "Loading DEFF script");
-          this._800c6938.script_14 = new ScriptFile(4434 + finalMonsterIndex * 2 + "/1", file.getBytes());
+          this.loadedDeff_800c6938.script_14 = new ScriptFile(4434 + finalMonsterIndex * 2 + "/1", file.getBytes());
         });
       });
     } else {
@@ -6000,7 +6002,7 @@ public class Battle extends EngineState {
         // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
         loadDrgnFile(0, 4946 + finalFileIndex + "/1", file -> {
           LOGGER.info(DEFF, "Loading DEFF script");
-          this._800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes());
+          this.loadedDeff_800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes());
         });
       });
     }
@@ -6023,7 +6025,7 @@ public class Battle extends EngineState {
 
     this.scriptAllocateDeffEffectManager(script, effect);
 
-    final BattleStruct24_2 a0_0 = this._800c6938;
+    final LoadedDeff24 a0_0 = this.loadedDeff_800c6938;
 
     if(a0_0.script_14 != null) {
       a0_0.script_14 = null;
@@ -6050,7 +6052,7 @@ public class Battle extends EngineState {
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
       loadDrgnFile(0, 5512 + cutsceneIndex * 2 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this._800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes());
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes());
       });
     });
 
@@ -6099,7 +6101,7 @@ public class Battle extends EngineState {
           }
 
           //LAB_800e6eb0
-          final BattleStruct24_2 struct24 = this._800c6938;
+          final LoadedDeff24 struct24 = this.loadedDeff_800c6938;
           struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptEntrypoint_10);
           struct24.init_1c = false;
           struct24.frameCount_20 = 0;
@@ -6140,11 +6142,11 @@ public class Battle extends EngineState {
 
           case 2:
           case 3:
-            this._800c6938.managerState_18.deallocateWithChildren();
+            this.loadedDeff_800c6938.managerState_18.deallocateWithChildren();
 
           case 4:
             this.deffLoadingStage_800fafe8 = 0;
-            this._800c6938.managerState_18 = null;
+            this.loadedDeff_800c6938.managerState_18 = null;
             flow = FlowControl.CONTINUE;
             break;
 
@@ -6162,34 +6164,32 @@ public class Battle extends EngineState {
     return flow;
   }
 
-  @ScriptDescription("Unknown, can allocate a DEFF and effect manager child for a battle entity")
+  @ScriptDescription("Waits for any currently-loading DEFFs to finish loading, loads a DEFF, and waits for it to finish loading")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6fb4L)
-  public FlowControl FUN_800e6fb4(final RunningScript<? extends BattleObject> script) {
-    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this._800c6938.scriptIndex_0c) {
+  public FlowControl scriptLoadDragoonDeffSync(final RunningScript<? extends BattleObject> script) {
+    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this.loadedDeff_800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800e6fec
     //LAB_800e6ff0
-    final long v1 = this.deffLoadingStage_800fafe8;
-
     //LAB_800e7014
-    if(v1 == 0) {
+    if(this.deffLoadingStage_800fafe8 == 0) {
       this.loadDragoonDeff(script, new ScriptDeffEffect());
     }
 
-    if(v1 < 4) {
+    if(this.deffLoadingStage_800fafe8 < 4) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    if(v1 == 4) {
+    if(this.deffLoadingStage_800fafe8 == 4) {
       //LAB_800e702c
       this.deffLoadingStage_800fafe8 = 0;
-      this._800c6938.managerState_18 = null;
+      this.loadedDeff_800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -6207,7 +6207,7 @@ public class Battle extends EngineState {
 
   @Method(0x800e70bcL)
   public void scriptDeffTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> struct) {
-    final BattleStruct24_2 a0 = this._800c6938;
+    final LoadedDeff24 a0 = this.loadedDeff_800c6938;
 
     if(a0.frameCount_20 != -1) {
       a0.frameCount_20 += vsyncMode_8007a3b8;
@@ -6245,7 +6245,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e71e4L)
   public FlowControl scriptLoadSpellOrItemDeff(final RunningScript<? extends BattleObject> script) {
-    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this._800c6938.scriptIndex_0c) {
+    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this.loadedDeff_800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -6256,7 +6256,7 @@ public class Battle extends EngineState {
     if(deffStage == 4) {
       //LAB_800e725c
       this.deffLoadingStage_800fafe8 = 0;
-      this._800c6938.managerState_18 = null;
+      this.loadedDeff_800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -6276,7 +6276,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e727cL)
   public FlowControl scriptLoadEnemyOrBossDeff(final RunningScript<? extends BattleObject> script) {
-    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this._800c6938.scriptIndex_0c) {
+    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this.loadedDeff_800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -6287,7 +6287,7 @@ public class Battle extends EngineState {
     if(deffStage == 4) {
       //LAB_800e72f4
       this.deffLoadingStage_800fafe8 = 0;
-      this._800c6938.managerState_18 = null;
+      this.loadedDeff_800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -6307,7 +6307,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e7314L)
   public FlowControl scriptLoadCutsceneDeff(final RunningScript<? extends BattleObject> script) {
-    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this._800c6938.scriptIndex_0c) {
+    if(this.deffLoadingStage_800fafe8 != 0 && script.scriptState_04.index != this.loadedDeff_800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -6318,7 +6318,7 @@ public class Battle extends EngineState {
     if(deffStage == 4) {
       //LAB_800e738c
       this.deffLoadingStage_800fafe8 = 0;
-      this._800c6938.managerState_18 = null;
+      this.loadedDeff_800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -6370,7 +6370,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800e74acL)
   public FlowControl FUN_800e74ac(final RunningScript<?> script) {
-    final BattleStruct24_2 struct24 = this._800c6938;
+    final LoadedDeff24 struct24 = this.loadedDeff_800c6938;
     script.params_20[0].set(struct24.bentState_04.index);
     script.params_20[1].set(struct24._08);
     return FlowControl.CONTINUE;
@@ -6378,7 +6378,7 @@ public class Battle extends EngineState {
 
   @Method(0x800e74e0L)
   public void FUN_800e74e0(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final BattleStruct24_2 struct24 = this._800c6938;
+    final LoadedDeff24 struct24 = this.loadedDeff_800c6938;
 
     final int deffStage = this.deffLoadingStage_800fafe8;
     if(deffStage == 1) {
@@ -6404,7 +6404,7 @@ public class Battle extends EngineState {
     }
 
     final DeffManager7cc deffManager = new DeffManager7cc();
-    this._800c6938 = deffManager._5b8;
+    this.loadedDeff_800c6938 = deffManager._5b8;
     this._800c6930 = deffManager._5dc;
     this.lights_800c692c = deffManager._640;
     deffManager.flags_20 = 0x4;
@@ -7808,7 +7808,7 @@ public class Battle extends EngineState {
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
       player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
       player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
-      player._132 = stats.equipmentSpecial2Flag80_56;
+      player.escapeBonus_132 = stats.equipmentEscapeBonus_56;
       player.hpRegen_134 = stats.equipmentHpRegen_58;
       player.mpRegen_136 = stats.equipmentMpRegen_5a;
       player.spRegen_138 = stats.equipmentSpRegen_5c;
@@ -8673,7 +8673,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetType", description = "0 = characters, 1 = monsters, 2 = any")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index")
   @Method(0x800f9a50L)
-  public FlowControl FUN_800f9a50(final RunningScript<?> script) {
+  public FlowControl scriptSetHudTargetBobj(final RunningScript<?> script) {
     final int targetType = script.params_20[0].get();
     final int targetBent = script.params_20[1].get();
 
@@ -8697,10 +8697,10 @@ public class Battle extends EngineState {
     for(int i = 0; i < count; i++) {
       if(targetBent == bents[i].index) {
         if(targetType == 0) {
-          this.hud.battleMenu_800c6c34._800c6980 = i;
+          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = i;
         } else if(targetType == 1) {
           //LAB_800f9b0c
-          this.hud.battleMenu_800c6c34._800c697e = i;
+          this.hud.battleMenu_800c6c34.targetedMonsterSlot_800c697e = i;
         }
 
         break;
@@ -8837,15 +8837,15 @@ public class Battle extends EngineState {
     this.scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", null);
     this.scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
-    final int v1;
+    final int openingCamera;
     if((simpleRand() & 0x8000) == 0) {
-      v1 = this.currentStageData_800c6718._14;
+      openingCamera = this.currentStageData_800c6718.monsterOpeningCamera_14;
     } else {
-      v1 = this.currentStageData_800c6718._10;
+      openingCamera = this.currentStageData_800c6718.playerOpeningCamera_10;
     }
 
     //LAB_801091dc
-    this.cameraScriptMainTableJumpIndex_800c6748 = v1 + 1;
+    this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
     this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
     this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
     battleFlags_800bc960 |= 0x2;

@@ -152,7 +152,7 @@ public enum BattleEntityStat {
   MP_PER_PHYSICAL_HIT,
   SP_PER_MAGICAL_HIT,
   MP_PER_MAGICAL_HIT,
-  _151,
+  ESCAPE_BONUS_151,
   HP_REGEN,
   MP_REGEN,
   SP_REGEN,

@@ -84,6 +84,7 @@ public class BattleMenuStruct58 {
   public short iconCount_0e;
   /**
    * <ul>
+   *   <li>Lower 4 bits are selected action - defend, transform, d-magic, attack, item, run, special, ?, d-attack</li>
    *   <li>0x80 - disabled</li>
    * </ul>
    */
@@ -117,10 +118,9 @@ public class BattleMenuStruct58 {
   public int highlightObjOffset;
   public int targetArrowsObjOffset;
 
-  /** These three are related to targeting */
-  public int _800c697c;
-  public int _800c697e;
-  public int _800c6980;
+  public int targetedSlot_800c697c;
+  public int targetedMonsterSlot_800c697e;
+  public int targetedPlayerSlot_800c6980;
 
   private final BattleHud hud;
 
@@ -161,8 +161,8 @@ public class BattleMenuStruct58 {
     this.targetType_50 = 0;
     this.combatantIndex_54 = 0;
 
-    this._800c697e = 0;
-    this._800c6980 = 0;
+    this.targetedMonsterSlot_800c697e = 0;
+    this.targetedPlayerSlot_800c6980 = 0;
   }
 
   public void initIconObjs() {
