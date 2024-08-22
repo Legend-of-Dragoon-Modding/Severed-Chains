@@ -1,5 +1,7 @@
 package legend.game.combat.ui;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
@@ -151,6 +153,7 @@ public class BattleHud {
 
   public final BattleMenuStruct58 battleMenu_800c6c34 = new BattleMenuStruct58(this);
   public ListMenu listMenu_800c6b60;
+  private final Int2ObjectMap<ListPosition> lastListPositions = new Int2ObjectOpenHashMap<>();
 
   public int currentCameraPositionIndicesIndex_800c66b0;
 
@@ -1351,10 +1354,12 @@ public class BattleHud {
   }
 
   public void initListMenu(final PlayerBattleEntity player, final int menuType) {
+    final ListPosition lastPosition = this.lastListPositions.computeIfAbsent(menuType, i -> new ListPosition());
+
     this.listMenu_800c6b60 = switch(menuType) {
-      case 0 -> new ItemListMenu(this, player, this::onListClose);
-      case 1 -> new SpellListMenu(this, player, this::onListClose);
-      case 2 -> new AdditionListMenu(this, player, this::onListClose);
+      case 0 -> new ItemListMenu(this, player, lastPosition, this::onListClose);
+      case 1 -> new SpellListMenu(this, player, lastPosition, this::onListClose);
+      case 2 -> new AdditionListMenu(this, player, lastPosition, this::onListClose);
       default -> throw new RuntimeException("Not implemented");
     };
   }

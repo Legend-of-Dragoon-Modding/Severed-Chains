@@ -21,8 +21,8 @@ public class SpellListMenu extends ListMenu {
 
   private final int listCount;
 
-  public SpellListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final Runnable onClose) {
-    super(hud, activePlayer, 186, onClose);
+  public SpellListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
+    super(hud, activePlayer, 186, modifyLastPosition(lastPosition), onClose);
 
     int spellIndex;
     for(spellIndex = 0; spellIndex < 8; spellIndex++) {
@@ -32,6 +32,12 @@ public class SpellListMenu extends ListMenu {
     }
 
     this.listCount = spellIndex;
+  }
+
+  private static ListPosition modifyLastPosition(final ListPosition lastPosition) {
+    lastPosition.lastListIndex_26 = 0;
+    lastPosition.lastListScroll_28 = 0;
+    return lastPosition;
   }
 
   @Override

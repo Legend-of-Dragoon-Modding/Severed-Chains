@@ -33,11 +33,26 @@ public class AdditionListMenu extends ListMenu {
   private final List<String> additions = new ArrayList<>();
   private final MenuAdditionInfo[] menuAdditions = new MenuAdditionInfo[9];
 
-  public AdditionListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final Runnable onClose) {
-    super(hud, activePlayer, 186, onClose);
+  public AdditionListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
+    super(hud, activePlayer, 186, modifyLastPosition(activePlayer, lastPosition), onClose);
     this.prepareAdditionList(activePlayer.charId_272);
     Arrays.setAll(this.menuAdditions, i -> new MenuAdditionInfo());
     loadAdditions(activePlayer.charId_272, this.menuAdditions);
+  }
+
+  private static ListPosition modifyLastPosition(final PlayerBattleEntity player, final ListPosition lastPosition) {
+    final CharacterData2c charData = gameState_800babc8.charData_32c[player.charId_272];
+    final int index = charData.selectedAddition_19 - additionOffsets_8004f5ac[player.charId_272];
+
+    if(index > 6) {
+      lastPosition.lastListIndex_26 = 6;
+      lastPosition.lastListScroll_28 = index - 6;
+    } else {
+      lastPosition.lastListIndex_26 = index;
+      lastPosition.lastListScroll_28 = 0;
+    }
+
+    return lastPosition;
   }
 
   @Override
