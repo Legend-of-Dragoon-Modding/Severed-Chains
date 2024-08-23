@@ -1,22 +1,24 @@
 --- original
 +++ modified
-@@ -1324,6 +1324,7 @@
+@@ -1323,7 +1323,7 @@
+ data 0x49
  ENTRYPOINT_0:
  mov var[36][0], stor[30]
- mov var[34][0], stor[28]
-+gosub inl[:NO_DART_CHECK]
+-mov var[34][0], stor[28]
++mov var[45][12], stor[28]
  gosub inl[:LABEL_0]
  call 33, 0x0, 0xfffbb400, 0xfff99800, 0x1e000, 0x0
  call 34, 0x0, 0x90000, 0xfffc4a00, 0x0, 0x0
-@@ -1579,6 +1580,7 @@
+@@ -1578,7 +1578,7 @@
+ deallocate
  ENTRYPOINT_1:
  mov var[36][0], stor[30]
- mov var[34][0], stor[28]
-+gosub inl[:NO_DART_CHECK]
+-mov var[34][0], stor[28]
++mov var[45][12], stor[28]
  gosub inl[:LABEL_0]
  call 33, 0x0, 0xfffbb400, 0xfff99800, 0x1e000, 0x0
  call 34, 0x0, 0x90000, 0xfffc4a00, 0x0, 0x0
-@@ -2239,7 +2241,7 @@
+@@ -2239,7 +2239,7 @@
  mov var[34][stor[9]], stor[10]
  call 138, stor[10], 0x1
  incr stor[9]
@@ -25,7 +27,7 @@
  return
  LABEL_37:
  mov 0x0, stor[9]
-@@ -2247,7 +2249,7 @@
+@@ -2247,7 +2247,7 @@
  mov var[34][stor[9]], stor[10]
  call 138, stor[10], 0x0
  incr stor[9]
@@ -34,13 +36,3 @@
  return
  LABEL_39:
  call 600, stor[8]
-@@ -2293,3 +2295,9 @@
- call 519, 0x10
- mov 0x80, var[109]
- return
-+NO_DART_CHECK:
-+call 167, stor[28], stor[23]
-+jmp_cmp !=, stor[23], 0x0, inl[:DEALLOC]
-+return
-+DEALLOC:
-+deallocate

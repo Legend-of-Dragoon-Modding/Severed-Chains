@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -2201,7 +2201,7 @@
+ mov var[34][stor[9]], stor[10]
+ call 138, stor[10], 0x1
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_41]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_41]
+ return
+ LABEL_42:
+ mov 0x0, stor[9]
+@@ -2209,7 +2209,7 @@
+ mov var[34][stor[9]], stor[10]
+ call 138, stor[10], 0x0
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_43]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_43]
+ return
+ LABEL_44:
+ call 600, stor[8]
