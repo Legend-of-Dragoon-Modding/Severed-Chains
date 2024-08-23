@@ -5,7 +5,7 @@
  mov stor[8], var[128 + stor[10]][5]
  mov 0x3, var[128 + stor[10]][0]
 -call 168, stor[30], stor[8], ITEM_ID
-+call 168, stor[30], var[0], ITEM_ID
++call 168, stor[30], reg[0], ITEM_ID
  mov stor[8], var[45][119]
  call 496, stor[30]
  call 508, stor[30], stor[28], stor[9]
