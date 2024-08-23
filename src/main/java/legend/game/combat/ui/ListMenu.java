@@ -131,10 +131,11 @@ public abstract class ListMenu {
         this.listScroll_1e = this.lastPosition.lastListScroll_28;
 
         if(this.listIndex_24 + this.listScroll_1e > this.getListCount() - 1) {
-          this.listIndex_24 = this.getListCount() - 1;
+          final int delta = this.listIndex_24 + this.listScroll_1e - (this.getListCount() - 1);
+          this.listScroll_1e -= delta;
 
-          if(this.listIndex_24 < 0) {
-            this.listIndex_24 = 0;
+          if(this.listScroll_1e < 0) {
+            this.listIndex_24 += this.listScroll_1e;
             this.listScroll_1e = 0;
           }
         }
