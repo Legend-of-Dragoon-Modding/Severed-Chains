@@ -1,11 +1,10 @@
 package legend.game.unpacker.scripts;
 
-import com.opencsv.exceptions.CsvException;
-
-import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import static legend.core.IoHelper.loadCsvFile;
@@ -21,14 +20,19 @@ public class ScriptPatchList implements Iterable<ScriptPatch> {
     return new ScriptPatchList(new HashMap<>());
   }
 
-  public static ScriptPatchList load(final Path file) throws InvalidPatchListException {
+  public static ScriptPatchList load(final Path filesDir, final Path patchListFile) throws InvalidPatchListException {
     final Map<String, ScriptPatch> patches = new HashMap<>();
 
     try {
-      for(final String[] patch : loadCsvFile(file)) {
-        patches.put(patch[0], new ScriptPatch(patch[0], patch[1]));
+      for(final String[] patch : loadCsvFile(patchListFile)) {
+        if(Files.exists(filesDir.resolve(patch[0]))) {
+          // Old patch without type
+          patches.put(patch[0], new ScriptPatch(PatchType.DIFF, patch[0], patch[1]));
+        } else {
+          patches.put(patch[1], new ScriptPatch(PatchType.valueOf(patch[0].toUpperCase(Locale.US)), patch[1], patch[2]));
+        }
       }
-    } catch(final IOException | CsvException e) {
+    } catch(final Throwable e) {
       throw new InvalidPatchListException("Failed to load script patches", e);
     }
 
