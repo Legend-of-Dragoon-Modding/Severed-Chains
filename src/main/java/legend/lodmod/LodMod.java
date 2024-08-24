@@ -40,7 +40,6 @@ import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.ItemStats0c;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.items.CharmPotionItem;
@@ -57,7 +56,6 @@ import java.util.Map;
 import static legend.game.SItem.itemDescriptions_80117a10;
 import static legend.game.SItem.itemNames_8011972c;
 import static legend.game.SItem.itemPrices_80114310;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005.itemCombatDescriptions_80051758;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
@@ -108,14 +106,10 @@ public class LodMod {
 
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
-    for(int itemId = 0; itemId < itemStats_8004f2ac.length; itemId++) {
+    for(int itemId = 0; itemId < 64; itemId++) {
       String name = itemNames_8011972c[itemId + 0xc0];
       if(name.isEmpty()) {
         name = "Item " + itemId;
-      }
-
-      if(itemStats_8004f2ac[itemId] == null) {
-        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0], itemCombatDescriptions_80051758[itemId], Unpacker.loadFile("items/" + itemId + ".ditm"));
       }
 
       final Item item;

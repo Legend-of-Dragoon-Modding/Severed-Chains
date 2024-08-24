@@ -58,6 +58,10 @@ lod_core.config.auto_text.label=Automatic Text Advance
 lod_core.config.save_anywhere.label=Save Anywhere
 lod_core.config.disable_status_effects.label=Disable Status Effects
 lod_core.config.enemy_hp_bars.label=Enemy HP Bars
+lod_core.config.mash_mode.label=Button Mash Mode
+lod_core.config.mash_mode.MASH=Mash
+lod_core.config.mash_mode.HOLD=Hold
+lod_core.config.mash_mode.AUTO=Automatic
 
 lod_core.keybind.help=Press DEL when done
 lod_core.keybind.missing_input=Missing required input

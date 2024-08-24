@@ -3566,6 +3566,14 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  public static void renderCentredText(final String text, final float x, final float y, final TextColour colour, final int trim) {
+    renderText(text, x - textWidth(text) / 2.0f, y, colour, trim);
+  }
+
+  public static void renderRightText(final String text, final float x, final float y, final TextColour colour, final int trim) {
+    renderText(text, x - textWidth(text), y, colour, trim);
+  }
+
   @Method(0x80029920L)
   public static void setTextboxArrowPosition(final int textboxIndex, final boolean visible) {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
@@ -3592,7 +3600,7 @@ public final class Scus94491BpeSegment_8002 {
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
-        textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c);
+        textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c * 4.0f);
         RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
       }
     }

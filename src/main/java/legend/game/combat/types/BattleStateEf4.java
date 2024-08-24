@@ -5,8 +5,8 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
-import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.combat.types.battlestate.Status04;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.scripting.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
@@ -507,6 +507,30 @@ public class BattleStateEf4 {
 
   public boolean hasAliveMonsters() {
     return this.aliveMonsterCount_800c6758 != 0;
+  }
+
+  public ScriptState<? extends BattleEntity27c>[] getBentsForTargetType(final int targetType) {
+    if(targetType == 0) {
+      return this.playerBents_e40;
+    }
+
+    if(targetType == 1) {
+      return this.aliveMonsterBents_ebc;
+    }
+
+    return this.aliveBents_e78;
+  }
+
+  public int getBentCountForTargetType(final int targetType) {
+    if(targetType == 0) {
+      return this.getPlayerCount();
+    }
+
+    if(targetType == 1) {
+      return this.getAliveMonsterCount();
+    }
+
+    return this.getAliveBentCount();
   }
 
   public void disableBents() {
