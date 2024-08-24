@@ -5,8 +5,8 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
-import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.combat.types.battlestate.Status04;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.scripting.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
@@ -122,7 +122,7 @@ public class BattleStateEf4 {
   /** Used in player combat script */
   public int _290;
   /** Indexed by char slot */
-  public final int[] _294 = new int[3];
+  public final int[] dragoonTurnsRemaining_294 = new int[3];
   public int _2a0;
   public int _2a4;
   public int _2a8;
@@ -141,8 +141,15 @@ public class BattleStateEf4 {
    * </ul>
    */
   public int specialFlag_2b0;
-  /** Used in player combat script */
-  public int _2b4;
+  /**
+   * Used in player combat script, targeting with items, bitset
+   * <ul>
+   *   <li>0x1 - smoke bomb was used</li>
+   *   <li>0x2 - unknown, used in main loop of player combat script</li>
+   *   <li>0x8 - failed to escape (smoke bomb on stage with 0% escape rate)</li>
+   * </ul>
+   */
+  public int runAwayFlags_2b4;
   public int _2b8;
   public int _2bc;
   public int _2c0;
@@ -194,6 +201,7 @@ public class BattleStateEf4 {
   public final int[] _34c = new int[3];
   /** Sequence volume is stored in here when player combat script is initialized */
   public int sequenceVolume_358;
+  /** Set to item ID in attack item DEFFs, maybe just a temporary var so it can restore the value after registers are overwritten */
   public int _35c;
   public int _360;
   public int _364;
@@ -259,7 +267,7 @@ public class BattleStateEf4 {
   public final int[] _460 = new int[3];
   /** Combat stage ID is stored here when player combat script is initialized */
   public int _46c;
-  /** Used in player combat script */
+  /** Used in player combat script, one bit for each player bent slot */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];
   public int _494;
@@ -301,7 +309,8 @@ public class BattleStateEf4 {
   public int _504;
   public int _508;
   public int _50c;
-  public int _510;
+  /** Menu blocks that apply to all chars */
+  public int globalMenuBlocks_510;
   public int _514;
   public int _518;
   public int _51c;
@@ -317,7 +326,14 @@ public class BattleStateEf4 {
   public int _544;
   public int _548;
   public int _54c;
-  public int dragonBlockStaff_550;
+  /**
+   * Flags that have an effect on multiple combatants
+   * <ul>
+   *   <li>0x1 - Dragon block staff</li>
+   *   <li>0x2 - When players select a target to attack, the targeting arrow will start on a random enemy (used by Sandora Elite when he creates duplicates)</li>
+   * </ul>
+   */
+  public int fieldFlags_550;
   /**
    * <ul>
    *   <li>0x1 - causes the player combat script to rewind and yield in its main loop</li>
@@ -491,6 +507,30 @@ public class BattleStateEf4 {
 
   public boolean hasAliveMonsters() {
     return this.aliveMonsterCount_800c6758 != 0;
+  }
+
+  public ScriptState<? extends BattleEntity27c>[] getBentsForTargetType(final int targetType) {
+    if(targetType == 0) {
+      return this.playerBents_e40;
+    }
+
+    if(targetType == 1) {
+      return this.aliveMonsterBents_ebc;
+    }
+
+    return this.aliveBents_e78;
+  }
+
+  public int getBentCountForTargetType(final int targetType) {
+    if(targetType == 0) {
+      return this.getPlayerCount();
+    }
+
+    if(targetType == 1) {
+      return this.getAliveMonsterCount();
+    }
+
+    return this.getAliveBentCount();
   }
 
   public void disableBents() {

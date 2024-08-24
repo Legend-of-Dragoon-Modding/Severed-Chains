@@ -1,0 +1,87 @@
+# Mod metadata
+lod_core.name=Legend of Dragoon (core)
+
+# Config categories
+lod_core.config.category.configure=Configure
+lod_core.config.category.gameplay.label=Gameplay
+lod_core.config.category.graphics.label=Graphics
+lod_core.config.category.audio.label=Audio
+lod_core.config.category.controls.label=Controls
+lod_core.config.category.other.label=Other
+
+# Global config
+lod_core.config.render_scale.label=Render Scale
+lod_core.config.controller.label=Controller
+lod_core.config.controller_keybinds.label=Controller Keybinds
+lod_core.config.controller_keybinds.configure=Configure...
+lod_core.config.controller_deadzone.label=Controller Deadzone
+lod_core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
+lod_core.config.rumble.label=Rumble
+lod_core.config.allow_widescreen.label=Allow Widescreen When Possible
+lod_core.config.high_quality_projection.label=Use High Quality Projection When Possible
+lod_core.config.fullscreen.label=Fullscreen
+lod_core.config.resolution.label=Resolution
+lod_core.config.resolution.ORIGINAL=240p (original)
+lod_core.config.resolution._480=480p
+lod_core.config.resolution._720=720p
+lod_core.config.resolution._1080=1080p
+lod_core.config.resolution._4K=4K
+lod_core.config.resolution._8K=8K
+lod_core.config.resolution.NATIVE=Native (window size)
+lod_core.config.audio_device.label=Audio Device
+lod_core.config.music_volume.label=Music Volume
+
+# Campaign config
+lod_core.config.indicator_mode.label=Indicator Mode
+lod_core.config.indicator_mode.OFF=Off
+lod_core.config.indicator_mode.MOMENTARY=Momentary
+lod_core.config.indicator_mode.ON=On
+lod_core.config.inventory_size.label=Inventory Size
+lod_core.config.encounter_rate.label=Encounter Rate
+lod_core.config.encounter_rate.RETAIL=Retail
+lod_core.config.encounter_rate.AVERAGE=Average
+lod_core.config.encounter_rate.INTENDED=Intended
+lod_core.config.encounter_rate.NONE=None
+lod_core.config.addition_mode.label=Addition Mode
+lod_core.config.addition_mode.NORMAL=Normal
+lod_core.config.addition_mode.AUTOMATIC=Automatic
+lod_core.config.auto_dragoon_addition.label=Automatic Dragoon Addition
+lod_core.config.addition_overlay_mode.label=Addition Overlay Mode
+lod_core.config.addition_overlay_mode.FULL=Normal
+lod_core.config.addition_overlay_mode.PARTIAL=No reticule
+lod_core.config.addition_overlay_mode.OFF=No HUD
+lod_core.config.transformation_mode.label=Transformation Mode
+lod_core.config.transformation_mode.NORMAL=Normal
+lod_core.config.transformation_mode.SHORT=Short
+lod_core.config.quick_text.label=Quick Text
+lod_core.config.auto_text.label=Automatic Text Advance
+lod_core.config.save_anywhere.label=Save Anywhere
+lod_core.config.disable_status_effects.label=Disable Status Effects
+lod_core.config.enemy_hp_bars.label=Enemy HP Bars
+lod_core.config.mash_mode.label=Button Mash Mode
+lod_core.config.mash_mode.MASH=Mash
+lod_core.config.mash_mode.HOLD=Hold
+lod_core.config.mash_mode.AUTO=Automatic
+
+lod_core.keybind.help=Press DEL when done
+lod_core.keybind.missing_input=Missing required input
+lod_core.keybind.duplicate_input=Duplicate found, remove?
+lod_core.keybind.BUTTON_NORTH=Triangle
+lod_core.keybind.BUTTON_EAST=Circle
+lod_core.keybind.BUTTON_SOUTH=Cross
+lod_core.keybind.BUTTON_WEST=Square
+lod_core.keybind.BUTTON_CENTER_1=Select
+lod_core.keybind.BUTTON_CENTER_2=Start
+lod_core.keybind.BUTTON_THUMB_1=L3
+lod_core.keybind.BUTTON_THUMB_2=R3
+lod_core.keybind.BUTTON_SHOULDER_LEFT_1=L1
+lod_core.keybind.BUTTON_SHOULDER_LEFT_2=L2
+lod_core.keybind.BUTTON_SHOULDER_RIGHT_1=R1
+lod_core.keybind.BUTTON_SHOULDER_RIGHT_2=R2
+lod_core.keybind.DPAD_UP=Up
+lod_core.keybind.DPAD_RIGHT=Right
+lod_core.keybind.DPAD_DOWN=Down
+lod_core.keybind.DPAD_LEFT=Left
+lod_core.keybind.pause=Pause
+lod_core.keybind.debugger=Debugger
+lod_core.keybind.kill_sound=Kill Stuck Sounds

@@ -18,6 +18,7 @@ import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
+import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -25,7 +26,6 @@ import legend.game.scripting.ScriptParam;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
@@ -144,7 +144,6 @@ public final class SItem {
     {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 66, 255, 200, 150, 200, 200), new MagicStuff08(40, 65, 255, 205, 155, 210, 210), new MagicStuff08(60, 67, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 13, 255, 220, 170, 250, 250), },
   };
 
-  public static final EquipmentStats1c[] equipmentStats_80111ff0 = new EquipmentStats1c[192];
   public static final int[] kongolXpTable_801134f0 = new int[61];
   public static final int[] dartXpTable_801135e4 = new int[61];
   public static final int[] haschelXpTable_801136d8 = new int[61];
@@ -429,7 +428,7 @@ public final class SItem {
     "Rave Twister", "Total Vanishing", "Angel's Prayer", "Charm Potion", "Pandemonium",
     "Recovery Ball", "", "Magic Shield", "Material Shield", "Sun Rhapsody",
     "Smoke Ball", "Healing Fog", "Magic Sig Stone", "Healing Rain", "Moon Serenade",
-    "Power Up", "Power Down", "Speed Up", "Speed Down", "",
+    "Power Up", "Power Down", "Speed Up", "Speed Down", "Enemy Healing Potion",
     "Sachet", "Psyche Bomb", "Burning Wave", "Frozen Jet", "Down Burst",
     "Gravity Grabber", "Spectral Flash", "Night Raid", "Flash Hall", "Healing Breeze",
     "Psyche Bomb X", "", "", "", "",
@@ -2119,64 +2118,48 @@ public final class SItem {
       final Equipment equipment = stats_800be5f8[charId].equipment_30.get(equipmentSlot);
 
       if(equipment != null) {
-        //TODO
-//        final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipment, equipmentStats_80111ff0[equipment]));
+        final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipment));
 
-        characterStats.specialEffectFlag_76 |= equipment.flags_00;
-//        characterStats.equipmentType_77 |= equipment.type_01;
-        characterStats.equipment_02_78 |= equipment._02;
-        characterStats.equipmentEquipableFlags_79 |= equipment.equipableFlags_03;
-        characterStats.equipmentAttackElements_7a.addAll(equipment.attackElement_04);
-        characterStats.equipment_05_7b |= equipment._05;
-        characterStats.equipmentElementalResistance_7c.addAll(equipment.elementalResistance_06);
-        characterStats.equipmentElementalImmunity_7d.addAll(equipment.elementalImmunity_07);
-        characterStats.equipmentStatusResist_7e |= equipment.statusResist_08;
-        characterStats.equipment_09_7f |= equipment._09;
-        characterStats.equipmentAttack1_80 += equipment.attack1_0a;
-        characterStats.equipmentIcon_84 += equipment.icon_0e;
-        characterStats.equipmentSpeed_86 += equipment.speed_0f;
-        characterStats.equipmentAttack_88 += equipment.attack2_10 + equipment.attack1_0a;
-        characterStats.equipmentMagicAttack_8a += equipment.magicAttack_11;
-        characterStats.equipmentDefence_8c += equipment.defence_12;
-        characterStats.equipmentMagicDefence_8e += equipment.magicDefence_13;
-        characterStats.equipmentAttackHit_90 += equipment.attackHit_14;
-        characterStats.equipmentMagicHit_92 += equipment.magicHit_15;
-        characterStats.equipmentAttackAvoid_94 += equipment.attackAvoid_16;
-        characterStats.equipmentMagicAvoid_96 += equipment.magicAvoid_17;
-        characterStats.equipmentOnHitStatusChance_98 += equipment.onHitStatusChance_18;
-        characterStats.equipment_19_99 += equipment._19;
-        characterStats.equipment_1a_9a += equipment._1a;
-        characterStats.equipmentOnHitStatus_9b |= equipment.onHitStatus_1b;
-
-        characterStats.equipmentMpPerMagicalHit_54 += equipment.mpPerMagicalHit;
-        characterStats.equipmentSpPerMagicalHit_52 += equipment.spPerMagicalHit;
-        characterStats.equipmentMpPerPhysicalHit_50 += equipment.mpPerPhysicalHit;
-        characterStats.equipmentSpPerPhysicalHit_4e += equipment.spPerPhysicalHit;
-        characterStats.equipmentHpMulti_62 += equipment.hpMultiplier;
-        characterStats.equipmentMpMulti_64 += equipment.mpMultiplier;
-        characterStats.equipmentSpMultiplier_4c += equipment.spMultiplier;
-
-        if(equipment.magicalResistance) {
-          characterStats.equipmentMagicalResistance_60 = true;
-        }
-
-        if(equipment.physicalResistance) {
-          characterStats.equipmentPhysicalResistance_4a = true;
-        }
-
-        if(equipment.magicalImmunity) {
-          characterStats.equipmentMagicalImmunity_48 = true;
-        }
-
-        if(equipment.physicalImmunity) {
-          characterStats.equipmentPhysicalImmunity_46 = true;
-        }
-
-        characterStats.equipmentRevive_5e += equipment.revive;
-        characterStats.equipmentHpRegen_58 += equipment.hpRegen;
-        characterStats.equipmentMpRegen_5a += equipment.mpRegen;
-        characterStats.equipmentSpRegen_5c += equipment.spRegen;
-        characterStats.equipmentSpecial2Flag80_56 += equipment.special2Flag80;
+        characterStats.specialEffectFlag_76 |= event.flags_00;
+        characterStats.equipment_02_78 |= event._02;
+        characterStats.equipmentEquipableFlags_79 |= event.equipableFlags_03;
+        characterStats.equipmentAttackElements_7a.addAll(event.attackElement_04);
+        characterStats.equipment_05_7b |= event._05;
+        characterStats.equipmentElementalResistance_7c.addAll(event.elementalResistance_06);
+        characterStats.equipmentElementalImmunity_7d.addAll(event.elementalImmunity_07);
+        characterStats.equipmentStatusResist_7e |= event.statusResist_08;
+        characterStats.equipment_09_7f |= event._09;
+        characterStats.equipmentAttack1_80 += event.attack1_0a;
+        characterStats.equipmentIcon_84 += event.icon_0e;
+        characterStats.equipmentSpeed_86 += event.speed_0f;
+        characterStats.equipmentAttack_88 += event.attack2_10 + event.attack1_0a;
+        characterStats.equipmentMagicAttack_8a += event.magicAttack_11;
+        characterStats.equipmentDefence_8c += event.defence_12;
+        characterStats.equipmentMagicDefence_8e += event.magicDefence_13;
+        characterStats.equipmentAttackHit_90 += event.attackHit_14;
+        characterStats.equipmentMagicHit_92 += event.magicHit_15;
+        characterStats.equipmentAttackAvoid_94 += event.attackAvoid_16;
+        characterStats.equipmentMagicAvoid_96 += event.magicAvoid_17;
+        characterStats.equipmentOnHitStatusChance_98 += event.onHitStatusChance_18;
+        characterStats.equipment_19_99 += event._19;
+        characterStats.equipment_1a_9a += event._1a;
+        characterStats.equipmentOnHitStatus_9b |= event.onHitStatus_1b;
+        characterStats.equipmentMpPerMagicalHit_54 += event.mpPerMagicalHit;
+        characterStats.equipmentSpPerMagicalHit_52 += event.spPerMagicalHit;
+        characterStats.equipmentMpPerPhysicalHit_50 += event.mpPerPhysicalHit;
+        characterStats.equipmentSpPerPhysicalHit_4e += event.spPerPhysicalHit;
+        characterStats.equipmentHpMulti_62 += event.hpMultiplier;
+        characterStats.equipmentMpMulti_64 += event.mpMultiplier;
+        characterStats.equipmentSpMultiplier_4c += event.spMultiplier;
+        characterStats.equipmentMagicalResistance_60 |= event.magicalResistance;
+        characterStats.equipmentPhysicalResistance_4a |= event.physicalResistance;
+        characterStats.equipmentMagicalImmunity_48 |= event.magicalImmunity;
+        characterStats.equipmentPhysicalImmunity_46 |= event.physicalImmunity;
+        characterStats.equipmentRevive_5e += event.revive;
+        characterStats.equipmentHpRegen_58 += event.hpRegen;
+        characterStats.equipmentMpRegen_5a += event.mpRegen;
+        characterStats.equipmentSpRegen_5c += event.spRegen;
+        characterStats.equipmentEscapeBonus_56 += event.escapeBonus;
       }
     }
   }

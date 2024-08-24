@@ -4,12 +4,14 @@ package legend.game.combat.types.battlestate;
  * One for each ally and enemy
  */
 public class StatusConditions20 {
+  /** maybe attack type, set to 3 when using an attack item */
   public int _00;
   public int _04;
   public int _08;
   public int _0c;
   /** something to do with bewitched status (set to -1 if not bewitched) */
   public int _10;
+  /** Sometimes a spell ID, sometimes other values. 32 when idle, 33 when guarding, various other values when using items. Set to rose storm when used. */
   public int _14;
   /**
    * <ul>

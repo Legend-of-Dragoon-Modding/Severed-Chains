@@ -50,4 +50,9 @@ public class ScriptStateRegistryIdParam extends Param {
     this.state.registryIds[this.index] = id;
     return this;
   }
+
+  @Override
+  public String toString() {
+    return "script[%d].reg[%d] %s".formatted(this.state.index, this.index, this.getRegistryId());
+  }
 }

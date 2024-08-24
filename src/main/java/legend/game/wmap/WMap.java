@@ -441,16 +441,19 @@ public class WMap extends EngineState {
         if(this.startLocationLabelsActive_800c68a8 && this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.WORLD_3) {
           for(int i = 0; i < 8; i++) {
             if(this.startLabelNames[i] != null) {
+              textZ_800bdf00 = textboxes_800be358[i].z_0c - 1;
               this.renderCenteredShadowedText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], TextColour.WHITE, 0);
             }
           }
         }
 
         if(this.destLabelName != null) {
+          textZ_800bdf00 = textboxes_800be358[7].z_0c - 1;
           this.renderCenteredShadowedText(this.destLabelName, this.destLabelX, this.destLabelY, TextColour.WHITE, 0);
         }
 
         if(this.coolonWarpDestLabelName != null && this.destinationLabelStage_800c86f0 != 0) {
+          textZ_800bdf00 = textboxes_800be358[7].z_0c - 1;
           this.renderCenteredShadowedText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, TextColour.WHITE, 0);
         }
 
@@ -1453,8 +1456,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800d4aec
-          textZ_800bdf00 = 26;
-          textboxes_800be358[7].z_0c = 26;
+          textboxes_800be358[7].z_0c = 27;
 
           if(this.shouldSetDestLabelMetrics) {
             this.shouldSetDestLabelMetrics = false;
@@ -2256,7 +2258,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9ccc
-    this.mcqTransforms.transfer.set(0.0f, -8.0f, 101);
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 121);
     RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
       .monochrome(this.mcqBrightness_800ef1a4);
 
@@ -2851,8 +2853,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800dcb48
-      textZ_800bdf00 = 18;
-      textboxes_800be358[7].z_0c = 18;
+      textboxes_800be358[7].z_0c = 19;
       if(this.shouldSetCoolonWarpDestLabelMetrics) {
         this.coolonWarpDestLabelName = coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].placeName_1c;
         this.coolonWarpDestLabelX = x;
@@ -4426,8 +4427,7 @@ public class WMap extends EngineState {
         textboxes_800be358[i].y_16 = y - 2;
 
         //LAB_800e74d8
-        textZ_800bdf00 = i + 119;
-        textboxes_800be358[i].z_0c = i + 119;
+        textboxes_800be358[i].z_0c = i + 120;
 
         if(this.startLocationLabelsActive_800c68a8) {
           this.startLabelNames[i] = placeName;
