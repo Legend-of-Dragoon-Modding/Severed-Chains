@@ -15,6 +15,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
+import legend.game.i18n.I18n;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
@@ -1324,7 +1325,7 @@ public final class Scus94491BpeSegment_8002 {
   public static <T> Comparator<MenuEntryStruct04<T>> menuItemComparator() {
     return Comparator
       .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon())
-      .thenComparing(MenuEntryStruct04::getName);
+      .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
   }
 
   @Method(0x80023a88L)

@@ -5,6 +5,7 @@ import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
@@ -323,116 +324,6 @@ public final class SItem {
     new MenuGlyph06(152, 16, 134),
     new MenuGlyph06(85, 194, 16),
     new MenuGlyph06(91, 194, 164),
-  };
-
-  public static final String[] itemDescriptions_80117a10 = {
-    " ", " ", "Fire-based attack.", " ", "Confuses Enemy \nwith given\nprobability.",
-    "Gives 50% more SP.", " ", "Powerful but\nHP decays  \neach turn.", " ", " ",
-    " ", "Stuns enemy, with\na given \nprobability.", "Instantly kills \nenemy with given\nprobability.", " ", "Darkness-based \nattack.",
-    " ", "Stuns enemy, with a\ngiven probability.", "Instantly kills \nenemy with given\nprobability.", " ", "Frightens enemy \nwith a given\nprobability.",
-    " ", " ", " ", "Frightens enemy\nwith a given \nprobability.", " ",
-    " ", "Wind-based attack.", " ", "Light-based attack.", " ",
-    "Confuses enemy \nwith a given \nprobability.", "Poisons enemy\nwith a given \nprobability.", "Can attack all.", "Gives 50% more SP.", " ",
-    " ", " ", "Stuns enemy, with \na given \nprobability.", " ", "Gives twice as \nmuch SP but not \npowerful.",
-    " ", "Stuns enemy, with\na given \nprobability.", " ", "Thunder-based \nattack.", "Becomes powerful \ninversely to HP.",
-    "Instantly kills \nenemy with given\nprobability.", " ", " ", " ", " ",
-    "When physically \nattacked SP is \naccumulated.", "Nullifies damage\ndue to fire-based\nattacks.", "Nullifies damage\ndue to wind-based\nattacks.", " ", " ",
-    "When physically \nattacked SP is \naccumulated.", "Nullifies damage\ndue to earth-\nbased attacks.", " ", " ", "When physically \nattacked SP is \naccumulated.",
-    "Gives 50% more SP", "Nullifies damage\ndue to thunder-\nbased attacks.", " ", " ", " ",
-    "When attacked \nphysically, SP is \naccumulated.", "When attacked \nmagically, SP is \naccumulated.", "Nullifies damage\ndue to light-\nbased attacks.", "Nullifies damage\ndue to darkness-\nbased attacks.", "Nullifies damage\ndue to water-\nbased attack.",
-    "Avoids \npoison/stun/arm\nblocking.", "Avoids \npoison/stun/arm\nblocking.", "Avoids \npoison/stun/arm\nblocking.", "Revives from \ndeath with a \ngiven probability.", "Greatly reduces \ndamage from \nphysical attacks.",
-    " ", " ", "Increases hit \nrate of physical\nattacks by 10%.", " ", "When magically \nattacked, SP is \naccumulated.",
-    "When magically \nattacked, SP is \naccumulated.", "When magically \nattacked, SP is \naccumulated.", " ", " ", "Increases hit\nrate of magical\nattacks by 10%.",
-    "When magically \nattacked, SP is \naccumulated.", "Avoids instant \ndeath.", " ", "Avoids bewitching,\nconfusion, fear \nand dispiriting.", "Reduces damage\ndue to magical\nattacks.",
-    "Raises maximum\nHP 50%.", "Raises maximum\nMP 50%.", " ", " ", " ",
-    "Increases escape\nrate from physical\nattacks by 5 pts.", " ", " ", "Increases escape\nrate from magical\nattacks by 5 pts.", "Increases escape\nrate of magi/physi\nattacks by 5 pts.",
-    "Gives 20 pts. \nmore agility.", "Gives 20 pts.\nmore agility.", " ", "Avoids the\nabnormal status\npoison.", "Avoids the\nabnormal status\ndispiriting.",
-    "Avoids the\nabnormal status\narm blocking.", "Avoids the\nabnormal status\nconfusion.", "Avoids abnormal \nstatus from\nbeing stunned.", "Avoids the\nabnormal status\nfear.", "Avoids the \nabnormal status\nbewitchment.",
-    "Avoids the\nabnormal status\npetrification.", "Raises physical \nattack ability\nslightly.", "Raises physical\ndefense power\nslightly.", "Raises magical\nattacking power.", "Raises magical\ndefense power.",
-    "Raises physical\n& magical \nattacking power.", "Raises physical\n& magical\ndefense power.", "Raises physical \nattack & defense \npower.", "Increases escape\nrate from physical\nattack by 20 pts.", "Increases escape\nrate from magical\nattack by 20 pts.",
-    "Increases A-AV\nand M-AV by\nby 20 pts.", "Raises maximum\nHP 50%.", "Doubles \nmaximum MP.", "Raises SP 50%.", "Recovers SP \neach turn.",
-    "Recovers HP  \neach turn.", "Recovers MP \neach turn.", "Increases hit \nrate for attacking\nall by 20%.", "Avoids instant\ndeath.", " ",
-    "Revives from \ndeath with a \ngiven probability.", "Increases agility\nby 20 pts.", " ", "Increases agility\nby 20 pts.", "Reduces damage\nfrom fire-based \nattack by half.",
-    "Reduces damage\nfrom wind-based\nattack by half.", "Reduces damage\nfrom light-based\nattack by half.", "Reduces damage\nfrom darkness-based\nattacks by half.", "Reduces damage\nfrom water-based\nattack by half.", "Reduces damage\nfrom thunder-based\nattack by half.",
-    "Reduces damage\nfrom earth-based\nattack by half.", " ", "When damaged by\nmagic SP is \naccumulated.", "When damaged by\nmagic MP is \naccumulated.", "Avoids all\nabnormal status.",
-    " ", "When physically\ndamaged SP is\naccumulated.", " ", "When physically\ndamaged MP is\naccumulated.", "Reduces damage\nfrom all attacks \nby half.",
-    "Reduces physical\ndamage by half.", "Reduces damage\nfrom magic\nby half.", " ", "May slightly\nincrease physical \nattack power.", "May slightly\nincrease physical\ndefense power.",
-    " ", "Automatic Addition:\nHalf Damage and SP.", "Makes Addition\ncompletely\nsuccessful.", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", " ", " ",
-    " ", " ", " ", "Detonates and\nattacks all.", "Thunder-based\nindividual attack\n(multi).",
-    "Fire-based\nindividual attack\n(multi).", " ", "Earth-based\nindividual attack\n(multi).", "Water-based\nindividual attack\n(multi).", "Wind-based\nindividual attack\n(multi).",
-    "Generates one of \nthe attack items.", "Light-based\nindividual attack\n(multi).", "Darkness-based\nindividual attack\n(multi).", "Recovers half of\nmaximum value\nof HP.", "Dissolves\npetrification.",
-    "Dissolves fear,\nbewitchment, \nconfusion dispirit.", "Nullifies poison/\nstunning/arm \nblocking.", "Thunder-based\nattack for all\n(multi).", "Earth-based\nattack for all\n(multi).", "Fire-based\nattack for all\n(multi).",
-    "Light-based\nattack for all\n(multi).", "Recovers 100 pts.\nof SP during \ncombat.", "Confuses minor\nenemies.", " ", "Water-based\nattack for all\n(multi).",
-    "Stuns minor\nenemies.", "Darkness-based\nattack for all\n(multi).", "Poisons minor\nenemies.", "Frightens minor\nenemies.", " ",
-    "Wind-based\nattack for all\n(multi).", "Destroys \nminor enemies.", "Revitalizes and \nrecovers half of\nHP.", "Reduces risk of\nencounter.", "Minor enemy only\nattacks one ally\n3 turns (repeat).",
-    "Generates a\nrecovery item.", " ", "Nullifies magical\nattack for 3 turns\n(repeat).", "Nullifies physical \nattack for 3 turns \n(repeat).", "Completely\nrecovers MP.",
-    "100% sure escape \nfrom minor enemy\n(repeat).", "Completely \nrecovers HP.", "Blocks enemy's\nmove for 3 turns\n(repeat).", "Completely \nrecovers HP\nfor all.", "Completely \nrecovers MP\nfor all.",
-    "Strength increase\nfor 3 turns\n(repeat).", "Becomes weak\nfor 3 turns\n(repeat).", "Doubles agility\nfor 3 turns\n(repeat).", "Halves agility\nfor 3 turns\n(repeat).", " ",
-    "Gives subtle\ngood aroma.", "Unbased\nattack for all\n(multi).", "Fire-based\npowerful attack \nfor all.", "Water-based\npowerful attack\nfor all.", "Wind-based\npowerful attack\nfor all.",
-    "Earth-based\npowerful attack\nfor all.", "Light-based\npowerful attack\nfor all.", "Darkness-based\npowerful attack\nfor all.", "Thunder-based\npowerful attack\nfor all.", "Recover half of\nHP for all.",
-    "Unbased attack\nfor all (multi) \n(repeat).", " ", " ", " ", " ",
-    " ",
-  };
-
-  public static final String[] itemNames_8011972c = {
-    "Broad Sword", "Bastard Sword", "Heat Blade", "Falchion", "Mind Crush",
-    "Fairy Sword", "Claymore", "Soul Eater", "Axe", "Tomahawk",
-    "Battle Axe", "Great Axe", "Indora's Axe", "Rapier", "Shadow Cutter",
-    "Dancing Dagger", "Flamberge", "Gladius", "Dragon Buster", "Demon Stiletto",
-    "Spear", "Lance", "Glaive", "Spear Of Terror", "Partisan",
-    "Halberd", "Twister Glaive", "Short Bow", "Sparkle Arrow", "Long Bow",
-    "Bemusing Arrow", "Virulent Arrow", "Detonate Arrow", "Arrow Of Force", "Mace",
-    "Morning Star", "War Hammer", "Heavy Mace", "Basher", "Pretty Hammer",
-    "Iron Knuckle", "Beast Fang", "Diamond Claw", "Thunder Fist", "Destroyer Mace",
-    "Brass Knuckle", "Leather Armor", "Scale Armor", "Chain Mail", "Plate Mail",
-    "Saint Armor", "Red DG Armor", "Jade DG Armor", "Lion Fur", "Breast Plate",
-    "Giganto Armor", "Gold DG Armor", "Disciple Vest", "Warrior Dress", "Master's Vest",
-    "Energy Girdle", "Violet DG Armor", "Clothes", "Leather Jacket", "Silver Vest",
-    "Sparkle Dress", "Robe", "Silver DG Armor", "Dark DG Armor", "Blue DG Armor",
-    "Armor of Yore", "Satori Vest", "Rainbow Dress", "Angel Robe", "Armor Of Legend",
-    "", "Bandana", "Sallet", "Armet", "Knight Helm",
-    "Giganto Helm", "Soul Headband", "Felt Hat", "Cape", "Tiara",
-    "Jeweled Crown", "Rose's Hair Band", "", "Phoenix Plume", "Legend Casque",
-    "Dragon Helm", "Magical Hat", "", "Leather Boots", "Iron Kneepiece",
-    "Combat Shoes", "Leather Shoes", "Soft Boots", "Stardust Boots", "Magical Greaves",
-    "Dancer's Shoes", "Bandit's Shoes", "", "Poison Guard", "Active Ring",
-    "Protector", "Panic Guard", "Stun Guard", "Bravery Amulet", "Magic Ego Bell",
-    "Destone Amulet", "Power Wrist", "Knight Shield", "Magical Ring", "Spiritual Ring",
-    "Attack Badge", "Guard Badge", "Giganto Ring", "Elude Cloak", "Spirit Cloak",
-    "Sage's Cloak", "Physical Ring", "Amulet", "Wargod's Sash", "Spirit Ring",
-    "Therapy Ring", "Mage Ring", "Wargod's Amulet", "Talisman", "",
-    "Holy Ankh", "Dancer's Ring", "", "Bandit's Ring", "Red-Eye Stone",
-    "Jade Stone", "Silver Stone", "Darkness Stone", "Blue Sea Stone", "Violet Stone",
-    "Golden Stone", "", "Ruby Ring", "Sapphire Pin", "Rainbow Earring",
-    "", "Emerald Earring", "", "Platinum Collar", "Phantom Shield",
-    "Dragon Shield", "Angel Scarf", "Bracelet", "Fake Power Wrist", "Fake Shield",
-    "", "Wargod Calling", "Ultimate Wargod", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "Detonate Rock", "Spark Net",
-    "Burn Out", "", "Pellet", "Spear Frost", "Spinning Gale",
-    "Attack Ball", "Trans Light", "Dark Mist", "Healing Potion", "Depetrifier",
-    "Mind Purifier", "Body Purifier", "Thunderbolt", "Meteor Fall", "Gushing Magma",
-    "Dancing Ray", "Spirit Potion", "Panic Bell", "", "Fatal Blizzard",
-    "Stunning Hammer", "Black Rain", "Poison Needle", "Midnight Terror", "",
-    "Rave Twister", "Total Vanishing", "Angel's Prayer", "Charm Potion", "Pandemonium",
-    "Recovery Ball", "", "Magic Shield", "Material Shield", "Sun Rhapsody",
-    "Smoke Ball", "Healing Fog", "Magic Sig Stone", "Healing Rain", "Moon Serenade",
-    "Power Up", "Power Down", "Speed Up", "Speed Down", "Enemy Healing Potion",
-    "Sachet", "Psyche Bomb", "Burning Wave", "Frozen Jet", "Down Burst",
-    "Gravity Grabber", "Spectral Flash", "Night Raid", "Flash Hall", "Healing Breeze",
-    "Psyche Bomb X", "", "", "", "",
-    "",
   };
 
   public static final String[] additions_8011a064 = {
@@ -1756,7 +1647,7 @@ public final class SItem {
     //LAB_80108f98
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       if(charData.equipment_14.get(slot) != null) {
-        renderText(charData.equipment_14.get(slot).name, 220, 19 + slot.ordinal() * 14, TextColour.BROWN);
+        renderText(I18n.translate(charData.equipment_14.get(slot)), 220, 19 + slot.ordinal() * 14, TextColour.BROWN);
       }
     }
 
@@ -1790,7 +1681,7 @@ public final class SItem {
       final MenuEntryStruct04<?> menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(menuItem.getName(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+      renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
       renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
 
       final int s0 = menuItem.flags_02;

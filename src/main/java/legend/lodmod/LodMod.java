@@ -1,6 +1,5 @@
 package legend.lodmod;
 
-import com.github.slugify.Slugify;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -50,13 +49,9 @@ import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.util.Locale;
 import java.util.Map;
 
-import static legend.game.SItem.itemDescriptions_80117a10;
-import static legend.game.SItem.itemNames_8011972c;
 import static legend.game.SItem.itemPrices_80114310;
-import static legend.game.Scus94491BpeSegment_8005.itemCombatDescriptions_80051758;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -66,8 +61,6 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 @EventListener
 public class LodMod {
   public static final String MOD_ID = "lod";
-
-  private static final Slugify slug = Slugify.builder().locale(Locale.US).underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
@@ -104,22 +97,33 @@ public class LodMod {
   @Deprecated
   public static final Object2IntMap<RegistryId> idItemMap = new Object2IntOpenHashMap<>();
 
+  private static final String[] ITEM_IDS = {
+    "", "detonate_rock", "spark_net", "burn_out", "", "pellet", "spear_frost", "spinning_gale",
+    "attack_ball", "trans_light", "dark_mist", "healing_potion", "depetrifier", "mind_purifier", "body_purifier", "thunderbolt",
+    "meteor_fall", "gushing_magma", "dancing_ray", "spirit_potion", "panic_bell", "", "fatal_blizzard", "stunning_hammer",
+    "black_rain", "poison_needle", "midnight_terror", "", "rave_twister", "total_vanishing", "angels_prayer", "charm_potion",
+    "pandemonium", "recovery_ball", "", "magic_shield", "material_shield", "sun_rhapsody", "smoke_ball", "healing_fog",
+    "magic_sig_stone", "healing_rain", "moon_serenade", "power_up", "power_down", "speed_up", "speed_down", "enemy_healing_potion",
+    "sachet", "psyche_bomb", "burning_wave", "frozen_jet", "down_burst", "gravity_grabber", "spectral_flash", "night_raid",
+    "flash_hall", "healing_breeze", "psyche_bomb_x", "", "", "", "", ""
+  };
+
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     for(int itemId = 0; itemId < 64; itemId++) {
-      String name = itemNames_8011972c[itemId + 0xc0];
+      String name = ITEM_IDS[itemId];
       if(name.isEmpty()) {
-        name = "Item " + itemId;
+        name = "item_" + itemId;
       }
 
       final Item item;
       if(itemId != 0x1f) { // Charm Potion
-        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0], itemCombatDescriptions_80051758[itemId], itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/" + itemId + ".ditm"));
+        item = FileBasedItem.fromFile(itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/" + itemId + ".ditm"));
       } else {
-        item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0], itemCombatDescriptions_80051758[itemId], itemPrices_80114310[itemId + 192]);
+        item = new CharmPotionItem(itemPrices_80114310[itemId + 192]);
       }
 
-      event.register(id(slug.slugify(name)), item);
+      event.register(id(name), item);
       itemIdMap.put(itemId, item.getRegistryId());
       idItemMap.put(item.getRegistryId(), itemId);
     }
@@ -130,16 +134,18 @@ public class LodMod {
   @Deprecated
   public static final Object2IntMap<RegistryId> idEquipmentMap = new Object2IntOpenHashMap<>();
 
+  private static final String[] EQUIPMENT_IDS = {"broad_sword", "bastard_sword", "heat_blade", "falchion", "mind_crush", "fairy_sword", "claymore", "soul_eater", "axe", "tomahawk", "battle_axe", "great_axe", "indoras_axe", "rapier", "shadow_cutter", "dancing_dagger", "flamberge", "gladius", "dragon_buster", "demon_stiletto", "spear", "lance", "glaive", "spear_of_terror", "partisan", "halberd", "twister_glaive", "short_bow", "sparkle_arrow", "long_bow", "bemusing_arrow", "virulent_arrow", "detonate_arrow", "arrow_of_force", "mace", "morning_star", "war_hammer", "heavy_mace", "basher", "pretty_hammer", "iron_knuckle", "beast_fang", "diamond_claw", "thunder_fist", "destroyer_mace", "brass_knuckle", "leather_armor", "scale_armor", "chain_mail", "plate_mail", "saint_armor", "red_dg_armor", "jade_dg_armor", "lion_fur", "breast_plate", "giganto_armor", "gold_dg_armor", "disciple_vest", "warrior_dress", "masters_vest", "energy_girdle", "violet_dg_armor", "clothes", "leather_jacket", "silver_vest", "sparkle_dress", "robe", "silver_dg_armor", "dark_dg_armor", "blue_dg_armor", "armor_of_yore", "satori_vest", "rainbow_dress", "angel_robe", "armor_of_legend", "", "bandana", "sallet", "armet", "knight_helm", "giganto_helm", "soul_headband", "felt_hat", "cape", "tiara", "jeweled_crown", "roses_hair_band", "", "phoenix_plume", "legend_casque", "dragon_helm", "magical_hat", "", "leather_boots", "iron_kneepiece", "combat_shoes", "leather_shoes", "soft_boots", "stardust_boots", "magical_greaves", "dancers_shoes", "bandits_shoes", "", "poison_guard", "active_ring", "protector", "panic_guard", "stun_guard", "bravery_amulet", "magic_ego_bell", "destone_amulet", "power_wrist", "knight_shield", "magical_ring", "spiritual_ring", "attack_badge", "guard_badge", "giganto_ring", "elude_cloak", "spirit_cloak", "sages_cloak", "physical_ring", "amulet", "wargods_sash", "spirit_ring", "therapy_ring", "mage_ring", "wargods_amulet", "talisman", "", "holy_ankh", "dancers_ring", "", "bandits_ring", "red_eye_stone", "jade_stone", "silver_stone", "darkness_stone", "blue_sea_stone", "violet_stone", "golden_stone", "", "ruby_ring", "sapphire_pin", "rainbow_earring", "", "emerald_earring", "", "platinum_collar", "phantom_shield", "dragon_shield", "angel_scarf", "bracelet", "fake_power_wrist", "fake_shield", "", "wargod_calling", "ultimate_wargod", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
+
   @EventListener
   public static void registerEquipment(final EquipmentRegistryEvent event) {
     equipmentIdMap.clear();
     idEquipmentMap.clear();
 
     for(int equipmentId = 0; equipmentId < 192; equipmentId++) {
-      final String name = itemNames_8011972c[equipmentId];
+      final String name = EQUIPMENT_IDS[equipmentId];
 
       if(!name.isEmpty()) {
-        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId], itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
+        final Equipment equipment = event.register(id(name), Equipment.fromFile(itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }

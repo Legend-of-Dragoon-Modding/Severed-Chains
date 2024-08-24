@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
@@ -153,7 +154,7 @@ public class EquipmentScreen extends MenuScreen {
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
 
     if(slotIndex + slotScroll < this.menuItems.size()) {
-      renderString(194, 178, this.menuItems.get(slotIndex + slotScroll).item_00.description, allocate);
+      renderString(194, 178, I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
     }
   }
 

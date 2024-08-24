@@ -3,6 +3,7 @@ package legend.game.combat.ui;
 import legend.core.Config;
 import legend.core.memory.Method;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -38,7 +39,7 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
-    renderText(this.combatItems_800c6988.get(index).item.getName(), x, y, TextColour.WHITE, trim);
+    renderText(I18n.translate(this.combatItems_800c6988.get(index).item), x, y, TextColour.WHITE, trim);
     renderText("\u011d", x + 143, y, TextColour.WHITE, trim);
     renderRightText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 168, y, TextColour.WHITE, trim);
   }
@@ -132,7 +133,7 @@ public class ItemListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getCombatDescription(), 160, 157, TextColour.WHITE, 0);
+        renderCentredText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getBattleDescriptionTranslationKey()), 160, 157, TextColour.WHITE, 0);
       }
     }
   }
