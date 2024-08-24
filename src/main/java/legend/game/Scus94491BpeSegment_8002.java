@@ -3600,7 +3600,7 @@ public final class Scus94491BpeSegment_8002 {
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
-        textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c);
+        textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c * 4.0f);
         RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
       }
     }
