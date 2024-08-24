@@ -159,7 +159,7 @@ public class AdditionListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText("Hits: " + additionData.attacks_01 + ", damage: " + damage + ", SP: " + sp, 160, 157, TextColour.WHITE, 0);
+        renderCentredText("Hits: " + additionData.attacks_01 + ", Damage: " + damage + ", SP: " + sp, 160, 157, TextColour.WHITE, 0);
       }
     }
   }
