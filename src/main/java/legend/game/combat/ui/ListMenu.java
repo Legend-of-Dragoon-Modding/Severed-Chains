@@ -33,22 +33,15 @@ public abstract class ListMenu {
   /** ushort */
   protected int height_12;
 
-  protected short textX_18;
-  protected short listStartY_1a;
+  protected int textX_18;
+  protected int listStartY_1a;
 
-  protected short listScroll_1e;
+  protected int listScroll_1e;
   /** Decreases as you scroll down the list */
-  protected short listOffsetY_20;
+  protected int listOffsetY_20;
 
   /** Selected item relative to listScroll */
-  protected short listIndex_24;
-  /** Used to select the same item when the list is opened next time */
-  protected short lastListIndex_26;
-  /** Used to select the same item when the list is opened next time */
-  protected short lastListScroll_28;
-  /** Used to select the same item when the list is opened next time */
-  protected short lastListOffsetY_2a;
-  protected int lastOffsetFromStartOfListY_2c;
+  protected int listIndex_24;
 
   protected int lastListOffset_7c;
   /** +5 for up, -5 for down*/
@@ -57,7 +50,6 @@ public abstract class ListMenu {
 
   /** Used to speed up scrolling after holding up or down for 3 items */
   protected int scrollCounter_90;
-  protected int offsetFromStartOfListY_94;
 
   /**
    * <ul>
@@ -78,24 +70,26 @@ public abstract class ListMenu {
   protected int upObjOffset;
   protected int downObjOffset;
 
+  private final ListPosition lastPosition;
   private final Runnable onClose;
 
-  public ListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final int width, final Runnable onClose) {
+  public ListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final int width, final ListPosition lastPosition, final Runnable onClose) {
     this.hud = hud;
+    this.lastPosition = lastPosition;
     this.onClose = onClose;
 
-    this.menuState_00 = 2;
+    this.menuState_00 = 1;
     this.flags_02 |= 0x1 | 0x2 | 0x8 | 0x40;
     this.x_04 = 160;
     this.y_06 = 144;
     this.player_08 = activePlayer;
     this.width_10 = width;
     this.height_12 = 82;
-    this.textX_18 = (short)(this.x_04 - width / 2 + 9);
+    this.textX_18 = this.x_04 - width / 2 + 9;
 
     final int y = (this.y_06 - this.height_12) - 16;
-    this.listStartY_1a = (short)y;
-    this.listOffsetY_20 = (short)y;
+    this.listStartY_1a = y;
+    this.listOffsetY_20 = y;
   }
 
   protected abstract int getListCount();
@@ -131,6 +125,25 @@ public abstract class ListMenu {
   public void tick() {
     //LAB_800f4bc0
     switch(this.menuState_00) {
+      // Restore position
+      case 1 -> {
+        this.listIndex_24 = this.lastPosition.lastListIndex_26;
+        this.listScroll_1e = this.lastPosition.lastListScroll_28;
+
+        if(this.listIndex_24 + this.listScroll_1e > this.getListCount() - 1) {
+          final int delta = this.listIndex_24 + this.listScroll_1e - (this.getListCount() - 1);
+          this.listScroll_1e -= delta;
+
+          if(this.listScroll_1e < 0) {
+            this.listIndex_24 += this.listScroll_1e;
+            this.listScroll_1e = 0;
+          }
+        }
+
+        this.listOffsetY_20 = (short)(this.y_06 - this.height_12 - 16 - this.listScroll_1e * 14);
+        this.menuState_00 = 2;
+      }
+
       case 2 -> {
         this.flags_02 &= ~(0x100 | 0x200);
 
@@ -152,7 +165,7 @@ public abstract class ListMenu {
             this.listIndex_24 = 6;
           } else {
             //LAB_800f4d8c
-            this.listIndex_24 = (short)(this.getListCount() - (this.listScroll_1e + 1));
+            this.listIndex_24 = this.getListCount() - (this.listScroll_1e + 1);
           }
 
           //LAB_800f4d90
@@ -183,7 +196,6 @@ public abstract class ListMenu {
 
           //LAB_800f4e00
           this.menuState_00 = 5;
-          this.offsetFromStartOfListY_94 = this.listStartY_1a - this.listOffsetY_20;
           playMenuSound(1);
           break;
         }
@@ -203,7 +215,6 @@ public abstract class ListMenu {
 
           //LAB_800f4e98
           this.menuState_00 = 5;
-          this.offsetFromStartOfListY_94 = this.listStartY_1a - this.listOffsetY_20;
           playMenuSound(1);
           break;
         }
@@ -290,10 +301,10 @@ public abstract class ListMenu {
         }
 
         //LAB_800f5278
-        final int a1 = this.lastListOffset_7c + 14;
+        final int scrollDest = this.lastListOffset_7c + 14;
         this.listOffsetY_20 += scrollAmount;
-        if(this.listOffsetY_20 >= a1) {
-          this.listOffsetY_20 = (short)a1;
+        if(this.listOffsetY_20 >= scrollDest) {
+          this.listOffsetY_20 = scrollDest;
           this.menuState_00 = 2;
         }
       }
@@ -307,11 +318,11 @@ public abstract class ListMenu {
         }
 
         //LAB_800f52d4
-        final int a1 = this.lastListOffset_7c - 14;
+        final int scrollDest = this.lastListOffset_7c - 14;
         this.listOffsetY_20 += scrollAmount;
-        if(this.listOffsetY_20 <= a1) {
+        if(this.listOffsetY_20 <= scrollDest) {
           //LAB_800f5300
-          this.listOffsetY_20 = (short)a1;
+          this.listOffsetY_20 = scrollDest;
           this.menuState_00 = 2;
         }
       }
@@ -357,13 +368,13 @@ public abstract class ListMenu {
       case 8 -> {
         this.selectionState_a0 = -1;
         this.menuState_00 = 9;
-        this.height_12 = 0;
-        this.width_10 = 0;
         this.flags_02 &= ~(0x1 | 0x2);
       }
 
       // Deallocate list
       case 9 -> {
+        this.lastPosition.lastListIndex_26 = this.listIndex_24;
+        this.lastPosition.lastListScroll_28 = this.listScroll_1e;
         this.onClose();
         this.delete();
         this.onClose.run();

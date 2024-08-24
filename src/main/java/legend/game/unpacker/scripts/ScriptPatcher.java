@@ -49,15 +49,15 @@ public class ScriptPatcher {
     this.meta = new MetaManager(null, patchDir).loadMeta("meta");
     this.disassembler = new Disassembler(this.meta);
     this.lexer = new Lexer(this.meta);
-    this.patches = this.loadPatchList(patchDir.resolve("scripts.csv"));
+    this.patches = this.loadPatchList(filesDir, patchDir.resolve("scripts.csv"));
     this.patchesDir = patchDir;
     this.filesDir = filesDir;
     this.cacheDir = cacheDir;
   }
 
-  private ScriptPatchList loadPatchList(final Path file) {
+  private ScriptPatchList loadPatchList(final Path filesDir, final Path patchListFile) {
     try {
-      return ScriptPatchList.load(file);
+      return ScriptPatchList.load(filesDir, patchListFile);
     } catch(final InvalidPatchListException e) {
       if(e.getCause() instanceof NoSuchFileException) {
         LOGGER.warn("Patch cache does not exist");
@@ -72,7 +72,7 @@ public class ScriptPatcher {
   public void apply() throws IOException, PatchFailedException {
     LOGGER.info("Applying script patches");
 
-    final ScriptPatchList cacheList = this.loadPatchList(this.cacheDir.resolve("scripts.csv"));
+    final ScriptPatchList cacheList = this.loadPatchList(this.filesDir, this.cacheDir.resolve("scripts.csv"));
 
     boolean changed = false;
     // Apply new or changed patches
@@ -110,7 +110,14 @@ public class ScriptPatcher {
     if(!Files.exists(this.cacheDir.resolve("backups").resolve(patch.sourceFile))) {
       this.backupFile(patch.sourceFile);
     }
-    this.patchFile(patch.sourceFile, patch.patchFile);
+
+    if(patch.type == PatchType.DIFF) {
+      this.patchFile(patch.sourceFile, patch.patchFile);
+    } else if(patch.type == PatchType.REPLACEMENT) {
+      this.replaceFile(patch.sourceFile, patch.patchFile);
+    } else {
+      throw new RuntimeException("Unsupported patch type " + patch.type);
+    }
   }
 
   public void patchFile(final String source, final String patch) throws IOException, PatchFailedException {
@@ -130,6 +137,16 @@ public class ScriptPatcher {
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
     final byte[] recompiledSource = this.recompile(patched);
 
+    Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+  }
+
+  public void replaceFile(final String source, final String patch) throws IOException {
+    this.replaceFile(this.filesDir.resolve(source), this.patchesDir.resolve(patch));
+  }
+
+  public void replaceFile(final Path sourceFile, final Path patchFile) throws IOException {
+    final String patchContents = Files.readString(patchFile);
+    final byte[] recompiledSource = this.recompile(patchContents);
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 

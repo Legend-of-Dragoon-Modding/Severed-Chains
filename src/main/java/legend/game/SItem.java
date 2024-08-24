@@ -366,7 +366,7 @@ public final class SItem {
     "Rave Twister", "Total Vanishing", "Angel's Prayer", "Charm Potion", "Pandemonium",
     "Recovery Ball", "", "Magic Shield", "Material Shield", "Sun Rhapsody",
     "Smoke Ball", "Healing Fog", "Magic Sig Stone", "Healing Rain", "Moon Serenade",
-    "Power Up", "Power Down", "Speed Up", "Speed Down", "",
+    "Power Up", "Power Down", "Speed Up", "Speed Down", "Enemy Healing Potion",
     "Sachet", "Psyche Bomb", "Burning Wave", "Frozen Jet", "Down Burst",
     "Gravity Grabber", "Spectral Flash", "Night Raid", "Flash Hall", "Healing Breeze",
     "Psyche Bomb X", "", "", "", "",

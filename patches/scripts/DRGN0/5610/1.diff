@@ -1,0 +1,71 @@
+--- original
++++ modified
+@@ -9,7 +9,7 @@
+ call 647, 0xfffffffb
+ call 372
+ yield
+-gosub inl[:LABEL_15]
++gosub inl[:FREE_UP_SLOTS]
+ yield
+ call 714
+ yield
+@@ -1022,6 +1022,10 @@
+ data 0x0
+ data 0xa1
+ data 0x2
++data 0xc
++data 0x9c
++data 0x97
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x99
+@@ -1062,18 +1066,18 @@
+ LABEL_11:
+ call 600, stor[23]
+ mov 0x6, stor[stor[stor[0], 23], 14]
+-mov 0x6, stor[stor[stor[0], 23], 24]
++mov 0x7, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_12:
+ call 600, stor[23]
+-mov 0xc, stor[stor[stor[0], 23], 14]
++mov 0xd, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_13:
+ call 600, stor[23]
+-mov 0xe, stor[stor[stor[0], 23], 14]
++mov 0xf, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+@@ -2098,3 +2102,26 @@
+ data 0xe
+ LABEL_69:
+ data 0x1
++FREE_UP_SLOTS:
++mov var[36][0], stor[27]
++call 370, stor[27], stor[8]
++call 358, stor[8]
++mov var[34][2], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_SLOT_2]
++call 370, stor[27], stor[8]
++call 358, stor[8]
++deallocate_other stor[27]
++SKIP_SLOT_2:
++mov var[34][1], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_SLOT_1]
++call 370, stor[27], stor[8]
++call 358, stor[8]
++deallocate_other stor[27]
++SKIP_SLOT_1:
++mov var[34][0], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_SLOT_0]
++call 370, stor[27], stor[8]
++call 358, stor[8]
++deallocate_other stor[27]
++SKIP_SLOT_0:
++return

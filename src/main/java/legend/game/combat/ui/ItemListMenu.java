@@ -24,26 +24,11 @@ public class ItemListMenu extends ListMenu {
 
   private final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
 
-  public ItemListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final Runnable onClose) {
-    super(hud, activePlayer, 186, onClose);
+  public ItemListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
+    super(hud, activePlayer, 186, lastPosition, onClose);
     this.cacheItems();
 
     this.flags_02 |= 0x20;
-    this.listIndex_24 = this.lastListIndex_26;
-    this.listScroll_1e = this.lastListScroll_28;
-    this.offsetFromStartOfListY_94 = this.lastOffsetFromStartOfListY_2c;
-
-    if(this.combatItems_800c6988.size() - 1 < this.listIndex_24 + this.listScroll_1e) {
-      this.listIndex_24--;
-
-      if(this.listIndex_24 < 0) {
-        this.listIndex_24 = 0;
-        this.listScroll_1e = 0;
-        this.offsetFromStartOfListY_94 = 0;
-      }
-    }
-
-    this.listOffsetY_20 = (short)(this.y_06 - this.height_12 - 16 - this.offsetFromStartOfListY_94);
   }
 
   @Override
@@ -62,7 +47,6 @@ public class ItemListMenu extends ListMenu {
   protected void onSelection(final int index) {
     //LAB_800f50b8
     this.player_08.setActiveItem(this.combatItems_800c6988.get(index).item);
-    this.offsetFromStartOfListY_94 = this.listStartY_1a - this.listOffsetY_20;
   }
 
   @Override
@@ -79,12 +63,7 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected void onClose() {
-    final int offset = this.listStartY_1a - this.listOffsetY_20;
-    this.lastListIndex_26 = this.listIndex_24;
-    this.lastListScroll_28 = this.listScroll_1e;
-    this.lastListOffsetY_2a = this.listOffsetY_20;
-    this.offsetFromStartOfListY_94 = offset;
-    this.lastOffsetFromStartOfListY_2c = offset;
+
   }
 
   @Override
