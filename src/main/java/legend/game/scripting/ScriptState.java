@@ -280,6 +280,7 @@ public class ScriptState<T> {
 
     //LAB_80015e0c
     System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, 25);
+    System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, childScript.registryIds.length);
 
     childScript.storage_44[5] = this.index;
     childScript.storage_44[6] = this.storage_44[6];
@@ -1149,6 +1150,7 @@ public class ScriptState<T> {
 
   @Method(0x80017304L)
   public FlowControl FUN_80017304() {
+    LOGGER.error("DEBUG: %s", this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 

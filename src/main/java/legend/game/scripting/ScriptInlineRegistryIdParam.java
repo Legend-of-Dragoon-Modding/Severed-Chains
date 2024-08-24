@@ -47,4 +47,9 @@ public class ScriptInlineRegistryIdParam extends Param {
   public Param set(final RegistryId id) {
     throw new IllegalStateException(this.getClass().getSimpleName() + " is immutable");
   }
+
+  @Override
+  public String toString() {
+    return "script[%d].inl[0x%x] %s".formatted(this.state.index, this.offset * 4, this.getRegistryId());
+  }
 }

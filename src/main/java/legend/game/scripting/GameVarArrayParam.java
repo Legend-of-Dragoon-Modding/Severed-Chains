@@ -669,7 +669,7 @@ public class GameVarArrayParam extends Param {
       case 2 -> conditions._08 = val;
       case 3 -> conditions._0c = val;
       case 4 -> conditions._10 = val;
-      case 5 -> conditions._14 = val; // Move ID? (0x20 is pre-move, other values are SpellIDs)
+      case 5 -> conditions._14 = val; // Move ID? (0x20 is pre-move, other values are spell/item IDs)
       case 6 -> conditions.menuBlockFlag_18 = val;
       case 7 -> {
         conditions.shieldsSigStoneCharmTurns_1c = val & 0xff;

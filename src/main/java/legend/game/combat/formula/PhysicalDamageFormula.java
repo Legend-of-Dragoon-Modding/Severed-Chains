@@ -45,7 +45,7 @@ public final class PhysicalDamageFormula {
   }
 
   public static int applyDamageMultipliers(final State<Integer> state) {
-    return state.bents.get(Side.ATTACKER).applyPhysicalDamageMultipliers(state.value());
+    return state.bents.get(Side.ATTACKER).applyPhysicalDamageMultipliers(state.bents.get(Side.DEFENDER), state.value());
   }
 
   public static int applyAttackEffects(final State<Integer> state) {

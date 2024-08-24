@@ -58,8 +58,8 @@ public class MonsterBattleEntity extends BattleEntity27c {
   }
 
   @Override
-  public int applyPhysicalDamageMultipliers(final int damage) {
-    return applyMagicDamageMultiplier(this, damage, 0);
+  public int applyPhysicalDamageMultipliers(final BattleEntity27c target, final int damage) {
+    return applyMagicDamageMultiplier(this, target, damage, 0);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
     } else {
       //LAB_800f87c4
-      matk += this.item_d4.damage_05;
+      matk += this.item_d4.calculateAttackDamage(this, target);
     }
 
     //LAB_800f87d0
