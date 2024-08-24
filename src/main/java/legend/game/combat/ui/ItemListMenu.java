@@ -39,8 +39,8 @@ public class ItemListMenu extends ListMenu {
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     renderText(I18n.translate(this.combatItems_800c6988.get(index).item), x, y, TextColour.WHITE, trim);
-    renderText("\u011d", x + 143, y, TextColour.WHITE, trim);
-    renderRightText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 168, y, TextColour.WHITE, trim);
+    renderText("\u011d", x + 141, y, TextColour.WHITE, trim);
+    renderRightText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 166, y, TextColour.WHITE, trim);
   }
 
   @Override
