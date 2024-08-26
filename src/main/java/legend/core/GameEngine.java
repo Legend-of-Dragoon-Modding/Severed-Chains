@@ -92,7 +92,7 @@ public final class GameEngine {
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
   public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
 
-  public static final ScriptManager SCRIPTS = new ScriptManager();
+  public static final ScriptManager SCRIPTS = new ScriptManager(Path.of("./patches"));
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();

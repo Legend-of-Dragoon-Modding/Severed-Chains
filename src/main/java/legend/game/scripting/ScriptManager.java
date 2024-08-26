@@ -1,14 +1,25 @@
 package legend.game.scripting;
 
+import com.opencsv.exceptions.CsvException;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.legendofdragoon.scripting.Compiler;
+import org.legendofdragoon.scripting.Lexer;
+import org.legendofdragoon.scripting.meta.Meta;
+import org.legendofdragoon.scripting.meta.MetaManager;
+import org.legendofdragoon.scripting.meta.NoSuchVersionException;
+import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.IoHelper.intsToBytes;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
@@ -17,6 +28,10 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
+
+  public final Meta meta;
+  private final Compiler compiler = new Compiler();
+  private final Lexer lexer;
 
   private boolean stopped;
   private boolean paused;
@@ -31,6 +46,16 @@ public class ScriptManager {
   public int joypadPress;
   /** Accumulates joypad repeat on script engine off frames */
   public int joypadRepeat;
+
+  public ScriptManager(final Path patchDir) {
+    try {
+      this.meta = new MetaManager(null, patchDir).loadMeta("meta");
+    } catch(final IOException | CsvException | NoSuchVersionException e) {
+      throw new RuntimeException("Failed to load script patches", e);
+    }
+
+    this.lexer = new Lexer(this.meta);
+  }
 
   public boolean tick() {
     boolean ticked = false;
@@ -179,36 +204,7 @@ public class ScriptManager {
         try {
           state.executeFrame();
         } catch(final Throwable t) {
-          final RunningScript<?> context = state.context;
-
-          LOGGER.error("Script %d crashed!", index);
-          LOGGER.error("File %s %s @ 0x%x", state.scriptPtr_14.name, context.opIndex_10, context.opOffset_08 * 4);
-          LOGGER.error("Parameters:");
-          LOGGER.error("  Op param: 0x%x", context.opParam_18);
-          for(int i = 0; i < context.paramCount_14; i++) {
-            LOGGER.error("  %d: %s", i + 1, context.params_20[i]);
-          }
-
-          LOGGER.error("Storage:");
-          for(int i = 0; i < state.storage_44.length; i++) {
-            LOGGER.error("  %d: 0x%x", i + 1, state.storage_44[i]);
-          }
-
-          LOGGER.error("Registry IDs:");
-          for(int i = 0; i < state.registryIds.length; i++) {
-            if(state.registryIds[i] != null) {
-              LOGGER.error("  %d: %s", i + 1, state.registryIds[i]);
-            }
-          }
-
-          LOGGER.error("Call stack:");
-          for(int i = 0; i < state.callStack_1c.length; i++) {
-            if(state.callStack_1c[i] == -1) {
-              break;
-            }
-
-            LOGGER.error("  %d: 0x%x", i + 1, state.callStack_1c[i] * 4);
-          }
+          state.dump();
 
           throw new RuntimeException("An error occurred while ticking script " + index, t);
         }
@@ -258,5 +254,10 @@ public class ScriptManager {
         scriptState.render();
       }
     }
+  }
+
+  public byte[] compile(final String source) {
+    final Script lexed = this.lexer.lex(source);
+    return intsToBytes(this.compiler.compile(lexed));
   }
 }

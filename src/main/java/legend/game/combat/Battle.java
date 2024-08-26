@@ -32,9 +32,9 @@ import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.Anim;
-import legend.game.combat.deff.LoadedDeff24;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
+import legend.game.combat.deff.LoadedDeff24;
 import legend.game.combat.effects.AdditionCharEffectData0c;
 import legend.game.combat.effects.AdditionNameTextEffect1c;
 import legend.game.combat.effects.AdditionSparksEffect08;
@@ -3766,7 +3766,7 @@ public class Battle extends EngineState {
     script.params_20[2].set(state.index);
     state.setTicker(bent::bentLoadingTicker);
     state.setDestructor(bent::bentDestructor);
-    state.loadScriptFile(script.scriptState_04.scriptPtr_14, script.params_20[0].get());
+    state.loadScriptFile(script.scriptState_04.frame().file, script.params_20[0].get());
     state.storage_44[7] |= 0x804;
 
     final CombatantStruct1a8 combatant = this.getCombatant(script.params_20[1].get());
