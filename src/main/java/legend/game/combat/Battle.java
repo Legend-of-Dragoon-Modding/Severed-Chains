@@ -89,6 +89,7 @@ import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
@@ -3574,9 +3575,9 @@ public class Battle extends EngineState {
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
                 if(drop.item() instanceof final Equipment equipment) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), equipment.getName(), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), I18n.translate(equipment), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
                 } else if(drop.item() instanceof final Item item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), item.getName(), () -> giveItem(item), () -> itemOverflow.add(item)));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item), () -> giveItem(item), () -> itemOverflow.add(item)));
                 }
 
                 flags |= 0x2000;

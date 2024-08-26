@@ -2,7 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.game.SItem;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
@@ -154,7 +154,7 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      renderString(194, 16, this.menuItems.get(selectedSlot + slotScroll).item_00.getDescription(), allocate);
+      renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
     }
   }
 
@@ -280,12 +280,12 @@ public class UseItemScreen extends MenuScreen {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
         if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           if(!this.itemTargetAll) {
-            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
+            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
           } else {
             int responseValue = -2;
 
             for(int i = 0; i < characterCount_8011d7c4; i++) {
-              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
+              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[i]);
 
               if(this.useItemResponse.value_04 != -2) {
                 responseValue = 0;
@@ -526,12 +526,12 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage3Select() {
     if(!this.itemTargetAll) {
-      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
+      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
     } else {
       int responseValue = -2;
 
       for(int i = 0; i < characterCount_8011d7c4; i++) {
-        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
+        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[i]);
 
         if(this.useItemResponse.value_04 != -2) {
           responseValue = 0;

@@ -38,7 +38,7 @@ public class EnabledModsConfigEntry extends ConfigEntry<String[]> {
       int offset = 2;
 
       for(int i = 0; i < length; i++) {
-        ids[i] = data.readAscii(offset, 1);
+        ids[i] = data.readAscii(offset, 1).replace("lod-core", "lod_core");
         offset += ids[i].length() + 1;
       }
 

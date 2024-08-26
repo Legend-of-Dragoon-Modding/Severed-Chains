@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
@@ -213,7 +214,7 @@ public class TooManyItemsScreen extends MenuScreen {
     renderMenuItems(16, 33, this.droppedItems, 0, Math.min(5, this.droppedItems.size()), saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if((a4 & 0x1) != 0 && !allocate) {
-      renderString(16, 164, inv.getDescription(), false);
+      renderString(16, 164, I18n.translate(inv.getDescriptionTranslationKey()), false);
     }
 
     renderText(Acquired_item_8011c2f8, 32, 22, TextColour.BROWN);
@@ -226,7 +227,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       if((a4 & 0x2) != 0) {
-        renderString(194, 164, this.items.get(slotScroll + slotIndex).getDescription(), allocate);
+        renderString(194, 164, I18n.translate(this.items.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
         renderable.clut_30 = 0x7ceb;
@@ -240,7 +241,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       if((a4 & 0x2) != 0) {
-        renderString(194, 164, this.equipment.get(slotScroll + slotIndex).getDescription(), allocate);
+        renderString(194, 164, I18n.translate(this.equipment.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
         renderable.clut_30 = 0x7ceb;

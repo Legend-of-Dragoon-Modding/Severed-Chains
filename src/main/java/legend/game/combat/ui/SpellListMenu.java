@@ -159,7 +159,7 @@ public class SpellListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText(spell.combatDescription, 160, 157, TextColour.WHITE, 0);
+        renderCentredText(spell.battleDescription, 160, 157, TextColour.WHITE, 0);
       }
     }
   }
