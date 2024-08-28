@@ -38,7 +38,7 @@ public class ScriptPatcher {
   private final Path cacheDir;
 
   public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir) {
-    this.disassembler = new Disassembler(SCRIPTS.meta);
+    this.disassembler = new Disassembler(SCRIPTS.meta());
     this.patches = this.loadPatchList(filesDir, patchDir.resolve("scripts.csv"));
     this.patchesDir = patchDir;
     this.filesDir = filesDir;
@@ -169,7 +169,7 @@ public class ScriptPatcher {
     this.translator.stripComments = true;
     this.translator.stripNames = true;
     final Script script = this.disassembler.disassemble(data);
-    final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta);
+    final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta());
     return decompiledOutput.lines().toList();
   }
 

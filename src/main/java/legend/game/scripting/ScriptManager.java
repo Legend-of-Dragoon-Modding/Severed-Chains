@@ -14,7 +14,6 @@ import org.legendofdragoon.scripting.meta.NoSuchVersionException;
 import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
-
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -29,9 +28,10 @@ public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public final Meta meta;
+  private Meta meta;
   private final Compiler compiler = new Compiler();
-  private final Lexer lexer;
+  private Lexer lexer;
+  private final Path patchDir;
 
   private boolean stopped;
   private boolean paused;
@@ -48,13 +48,7 @@ public class ScriptManager {
   public int joypadRepeat;
 
   public ScriptManager(final Path patchDir) {
-    try {
-      this.meta = new MetaManager(null, patchDir).loadMeta("meta");
-    } catch(final IOException | CsvException | NoSuchVersionException e) {
-      throw new RuntimeException("Failed to load script patches", e);
-    }
-
-    this.lexer = new Lexer(this.meta);
+    this.patchDir = patchDir;
   }
 
   public boolean tick() {
@@ -256,7 +250,22 @@ public class ScriptManager {
     }
   }
 
+  public Meta meta() {
+    if(this.meta == null) {
+      try {
+        this.meta = new MetaManager(null, this.patchDir).loadMeta("meta");
+      } catch(final IOException | CsvException | NoSuchVersionException e) {
+        throw new RuntimeException("Failed to load script patches", e);
+      }
+
+      this.lexer = new Lexer(this.meta);
+    }
+
+    return this.meta;
+  }
+
   public byte[] compile(final String source) {
+    this.meta();
     final Script lexed = this.lexer.lex(source);
     return intsToBytes(this.compiler.compile(lexed));
   }
