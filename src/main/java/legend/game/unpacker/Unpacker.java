@@ -160,14 +160,32 @@ public final class Unpacker {
     EXECUTOR.shutdown();
   }
 
-  public static FileData loadFile(final String name) {
-    LOGGER.info("Loading file %s", name);
+  public static FileData loadFile(final Path path) {
+    LOGGER.info("Loading file %s", path);
 
     try {
-      return new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name))));
+      return new FileData(Files.readAllBytes(path));
     } catch(final IOException e) {
-      throw new RuntimeException("Failed to load file " + name, e);
+      throw new RuntimeException("Failed to load file " + path, e);
     }
+  }
+
+  public static Path resolve(final String name) {
+    return ROOT.resolve(fixPath(name));
+  }
+
+  public static FileData loadFile(final String name) {
+    return loadFile(ROOT.resolve(fixPath(name)));
+  }
+
+  public static void loadFile(final Path path, final Consumer<FileData> onCompletion) {
+    final int total = loadingCount.incrementAndGet();
+    LOGGER.info("Queueing file %s (total queued: %d)", path, total);
+    EXECUTOR.execute(() -> {
+      onCompletion.accept(loadFile(path));
+      final int remaining = loadingCount.decrementAndGet();
+      LOGGER.info("File %s loaded (remaining queued: %d)", path, remaining);
+    });
   }
 
   public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
@@ -207,10 +225,23 @@ public final class Unpacker {
     });
   }
 
-  public static List<FileData> loadDirectory(final String name) {
-    LOGGER.info("Loading directory %s", name);
+  public static void loadDirectory(final Path dir, final Consumer<List<FileData>> onCompletion) {
+    final int total = loadingCount.incrementAndGet();
+    LOGGER.info("Queueing directory %s (total queued: %d)", dir, total);
+    EXECUTOR.execute(() -> {
+      onCompletion.accept(loadDirectory(dir));
+      final int remaining = loadingCount.decrementAndGet();
+      LOGGER.info("Directory %s loaded (remaining queued: %d)", dir, remaining);
+    });
+  }
 
-    final Path dir = ROOT.resolve(fixPath(name));
+  public static List<FileData> loadDirectory(final String name) {
+    return loadDirectory(ROOT.resolve(fixPath(name)));
+  }
+
+  public static List<FileData> loadDirectory(final Path dir) {
+    LOGGER.info("Loading directory %s", dir);
+
     final Path mrg = dir.resolve("mrg");
 
     if(Files.exists(mrg)) {
@@ -264,7 +295,7 @@ public final class Unpacker {
               files.add(new FileData(new byte[0]));
             }
           } catch(final IOException e) {
-            throw new RuntimeException("Failed to load directory " + name, e);
+            throw new RuntimeException("Failed to load directory " + dir, e);
           }
         }
 
@@ -290,10 +321,10 @@ public final class Unpacker {
 
         return files;
       } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + name, e);
+        throw new RuntimeException("Failed to load directory " + dir, e);
       }
     } else {
-      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
+      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(dir)) {
         final List<FileData> files = new ArrayList<>();
 
         StreamSupport.stream(ds.spliterator(), false)
@@ -312,13 +343,13 @@ public final class Unpacker {
             try {
               files.add(new FileData(Files.readAllBytes(child)));
             } catch(final IOException e) {
-              throw new RuntimeException("Failed to load directory " + name, e);
+              throw new RuntimeException("Failed to load directory " + dir, e);
             }
           });
 
         return files;
       } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + name, e);
+        throw new RuntimeException("Failed to load directory " + dir, e);
       }
     }
   }

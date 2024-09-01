@@ -125,7 +125,7 @@ public class ScriptPatcher {
 
     final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile), branchList, tableLengths);
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
-    final byte[] recompiledSource = this.recompile(patched);
+    final byte[] recompiledSource = this.recompile(sourceFile, patched);
 
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
@@ -136,7 +136,7 @@ public class ScriptPatcher {
 
   public void replaceFile(final Path sourceFile, final Path patchFile) throws IOException {
     final String patchContents = Files.readString(patchFile);
-    final byte[] recompiledSource = this.recompile(patchContents);
+    final byte[] recompiledSource = this.recompile(sourceFile, patchContents);
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 
@@ -173,8 +173,8 @@ public class ScriptPatcher {
     return decompiledOutput.lines().toList();
   }
 
-  private byte[] recompile(final String patched) {
-    return SCRIPTS.compile(patched);
+  private byte[] recompile(final Path path, final String patched) throws IOException {
+    return SCRIPTS.compile(path, patched);
   }
 
   private Path resolvePatchConfigPath(final Path diffPath) {

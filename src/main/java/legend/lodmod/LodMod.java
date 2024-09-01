@@ -24,7 +24,6 @@ import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.coremod.elements.DarkElement;
@@ -38,11 +37,11 @@ import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
+import legend.game.modding.events.inventory.GatherAttackItemsEvent;
+import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
-import legend.lodmod.items.CharmPotionItem;
-import legend.lodmod.items.FileBasedItem;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -97,7 +96,7 @@ public class LodMod {
   @Deprecated
   public static final Object2IntMap<RegistryId> idItemMap = new Object2IntOpenHashMap<>();
 
-  private static final String[] ITEM_IDS = {
+  public static final String[] ITEM_IDS = {
     "", "detonate_rock", "spark_net", "burn_out", "", "pellet", "spear_frost", "spinning_gale",
     "attack_ball", "trans_light", "dark_mist", "healing_potion", "depetrifier", "mind_purifier", "body_purifier", "thunderbolt",
     "meteor_fall", "gushing_magma", "dancing_ray", "spirit_potion", "panic_bell", "", "fatal_blizzard", "stunning_hammer",
@@ -110,6 +109,9 @@ public class LodMod {
 
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
+    LodItems.register(event);
+
+/*
     for(int itemId = 0; itemId < 64; itemId++) {
       String name = ITEM_IDS[itemId];
       if(name.isEmpty()) {
@@ -127,6 +129,7 @@ public class LodMod {
       itemIdMap.put(itemId, item.getRegistryId());
       idItemMap.put(item.getRegistryId(), itemId);
     }
+*/
   }
 
   @Deprecated
@@ -193,6 +196,46 @@ public class LodMod {
     }
 
     event.addStat(SPEED_STAT.get());
+  }
+
+  @EventListener
+  public static void gatherAttackItems(final GatherAttackItemsEvent event) {
+    event.add(LodItems.SPARK_NET.get());
+    event.add(LodItems.BURN_OUT.get());
+    event.add(LodItems.PELLET.get());
+    event.add(LodItems.SPEAR_FROST.get());
+    event.add(LodItems.SPINNING_GALE.get());
+    event.add(LodItems.TRANS_LIGHT.get());
+    event.add(LodItems.DARK_MIST.get());
+    event.add(LodItems.PANIC_BELL.get());
+    event.add(LodItems.STUNNING_HAMMER.get());
+    event.add(LodItems.POISON_NEEDLE.get());
+    event.add(LodItems.MIDNIGHT_TERROR.get());
+    event.add(LodItems.THUNDERBOLT.get());
+    event.add(LodItems.METEOR_FALL.get());
+    event.add(LodItems.GUSHING_MAGMA.get());
+    event.add(LodItems.DANCING_RAY.get());
+    event.add(LodItems.FATAL_BLIZZARD.get());
+    event.add(LodItems.BLACK_RAIN.get());
+    event.add(LodItems.RAVE_TWISTER.get());
+    event.add(LodItems.BURNING_WAVE.get());
+    event.add(LodItems.FROZEN_JET.get());
+    event.add(LodItems.DOWN_BURST.get());
+    event.add(LodItems.GRAVITY_GRABBER.get());
+    event.add(LodItems.SPECTRAL_FLASH.get());
+    event.add(LodItems.NIGHT_RAID.get());
+    event.add(LodItems.FLASH_HALL.get());
+  }
+
+  @EventListener
+  public static void gatherRecoveryItems(final GatherRecoveryItemsEvent event) {
+    event.add(LodItems.SPIRIT_POTION.get());
+    event.add(LodItems.SUN_RHAPSODY.get());
+    event.add(LodItems.HEALING_POTION.get());
+    event.add(LodItems.HEALING_FOG.get());
+    event.add(LodItems.MOON_SERENADE.get());
+    event.add(LodItems.HEALING_RAIN.get());
+    event.add(LodItems.HEALING_BREEZE.get());
   }
 
   @EventListener

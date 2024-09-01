@@ -11,6 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.legendofdragoon.scripting.Disassembler;
+import org.legendofdragoon.scripting.Translator;
+import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -18,6 +21,7 @@ import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
@@ -1197,24 +1201,58 @@ public class ScriptState<T> {
     LOGGER.error("Parameters:");
     LOGGER.error("  Op param: 0x%x", this.context.opParam_18);
     for(int i = 0; i < this.context.paramCount_14; i++) {
-      LOGGER.error("  %d: %s", i + 1, this.context.params_20[i]);
+      LOGGER.error("  %d: %s", i, this.context.params_20[i]);
     }
 
     LOGGER.error("Storage:");
     for(int i = 0; i < this.storage_44.length; i++) {
-      LOGGER.error("  %d: 0x%x", i + 1, this.storage_44[i]);
+      LOGGER.error("  %d: 0x%x", i, this.storage_44[i]);
     }
 
     LOGGER.error("Registry IDs:");
     for(int i = 0; i < this.registryIds.length; i++) {
       if(this.registryIds[i] != null) {
-        LOGGER.error("  %d: %s", i + 1, this.registryIds[i]);
+        LOGGER.error("  %d: %s", i, this.registryIds[i]);
       }
     }
 
     LOGGER.error("Call stack:");
     for(int i = 0; i < this.callStack.size(); i++) {
-      LOGGER.error("  %d: %s 0x%x", i + 1, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+      LOGGER.error("  %d: %s 0x%x", i, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+    }
+
+    LOGGER.error("Disassembly:");
+    try {
+      this.dumpDisassembly();
+    } catch(final Throwable t) {
+      LOGGER.warn("Failed to disassemble script");
+    }
+  }
+
+  private void dumpDisassembly() {
+    final Disassembler disassembler = new Disassembler(SCRIPTS.meta());
+    final Script tokens = disassembler.disassemble(this.frame().file.data);
+
+    final Translator translator = new Translator();
+    translator.lineNumbers = true;
+    final String decompiled = translator.translate(tokens, SCRIPTS.meta());
+
+    final String[] split = decompiled.split("\n");
+    for(int i = 0; i < split.length; i++) {
+      if(split[i].startsWith(Integer.toHexString(this.context.opOffset_08 * 4))) {
+        for(int n = Math.max(0, i - 5); n < i; n++) {
+          LOGGER.error("  %s", split[n]);
+        }
+
+        LOGGER.error("  %s", split[i]);
+        LOGGER.error("  %s", "~".repeat(split[i].length()));
+
+        for(int n = i + 1; n < Math.min(split.length - 1, i + 6); n++) {
+          LOGGER.error("  %s", split[n]);
+        }
+
+        break;
+      }
     }
   }
 

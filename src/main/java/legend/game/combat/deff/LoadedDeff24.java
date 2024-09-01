@@ -7,16 +7,6 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 
 public class LoadedDeff24 {
-  /**
-   * Flags:
-   * <ul>
-   *   <li>0x100_0000 - dragoon attack/spell/transformation DEFF</li>
-   *   <li>0x200_0000 - item magic DEFF</li>
-   *   <li>0x300_0000 - enemy/boss DEFF</li>
-   *   <li>0x500_0000 - cutscene DEFF</li>
-   * </ul>
-   */
-  public int type_00;
   public ScriptState<BattleEntity27c> bentState_04;
   public int _08;
   public int scriptIndex_0c;

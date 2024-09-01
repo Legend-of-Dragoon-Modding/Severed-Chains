@@ -138,6 +138,7 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -972,6 +973,8 @@ public class Battle extends EngineState {
     functions[1004] = this::scriptUpdateStatModParams;
     functions[1005] = this::scriptGetStatModParams;
 
+    functions[1010] = this::scriptUseItem;
+
     return functions;
   }
 
@@ -1076,6 +1079,16 @@ public class Battle extends EngineState {
     statModType.writeConfigToScript(config, params);
 
     return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Calls the use method for the given item")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "itemId", description = "The ID of the item being used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The ID of the bent being targeted")
+  private FlowControl scriptUseItem(final RunningScript<BattleEntity27c> script) {
+    final Item item = REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get();
+    final int targetIndex = script.params_20[1].get();
+
+    return item.useInBattle(script.scriptState_04, targetIndex);
   }
 
   @Method(0x80018744L)
@@ -2872,40 +2885,40 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb84cL)
   public FlowControl scriptSetLoadingBentAnimationIndex(final RunningScript<?> script) {
-    final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c bent = state.innerStruct_00;
 
-    if((s2.storage_44[7] & 0x1) == 0) {
+    if((state.storage_44[7] & 0x1) == 0) {
       int newAnim = script.params_20[1].get();
-      final int currentAnim = s0.currentAnimIndex_270;
+      final int currentAnim = bent.currentAnimIndex_270;
 
       // GH#1550 Fix Shana softlock trying to load finisher
-      if(s0 instanceof PlayerBattleEntity && s0.combatant_144.assets_14[newAnim] == null) {
+      if(bent instanceof PlayerBattleEntity && bent.combatant_144.assets_14[newAnim] == null) {
         newAnim = 1;
       }
 
       if(currentAnim >= 0) {
         if(currentAnim != newAnim) {
-          FUN_800ca194(s0.combatant_144.assets_14[currentAnim]);
+          FUN_800ca194(bent.combatant_144.assets_14[currentAnim]);
         }
 
         //LAB_800cb8d0
-        s0.currentAnimIndex_270 = -1;
+        bent.currentAnimIndex_270 = -1;
       }
 
       //LAB_800cb8d4
-      if(s0.combatant_144.isAssetLoaded(newAnim)) {
-        FUN_800ca194(s0.combatant_144.assets_14[s0.loadingAnimIndex_26e]);
-        this.loadAnimationAssetIntoModel(s0.model_148, s0.combatant_144, newAnim);
-        s2.storage_44[7] &= 0xffff_ff6f;
-        s0.model_148.animationState_9c = 1;
-        s0.loadingAnimIndex_26e = newAnim;
-        s0.currentAnimIndex_270 = -1;
+      if(bent.combatant_144.isAssetLoaded(newAnim)) {
+        FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
+        this.loadAnimationAssetIntoModel(bent.model_148, bent.combatant_144, newAnim);
+        state.storage_44[7] &= 0xffff_ff6f;
+        bent.model_148.animationState_9c = 1;
+        bent.loadingAnimIndex_26e = newAnim;
+        bent.currentAnimIndex_270 = -1;
         return FlowControl.CONTINUE;
       }
 
       //LAB_800cb934
-      this.FUN_800c9e10(s0.combatant_144, newAnim);
+      this.FUN_800c9e10(bent.combatant_144, newAnim);
     }
 
     //LAB_800cb944
@@ -5823,19 +5836,11 @@ public class Battle extends EngineState {
     struct7cc.flags_20 &= 0xff80_ffff;
   }
 
-  @ScriptDescription("Allocates an effect manager child for a battle entity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6470L)
-  public ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> scriptAllocateDeffEffectManager(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
-    final DeffManager7cc struct7cc = deffManager_800c693c;
+  public ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateDeffEffectManager(final ScriptState<? extends BattleObject> parent, final int flags, final int bentIndex, final int _08, final int entrypoint, final ScriptDeffEffect effect) {
+    deffManager_800c693c.flags_20 |= flags & 0x1_0000 | flags & 0x2_0000 | flags & 0x10_0000;
 
-    final int flags = script.params_20[0].get();
-    struct7cc.flags_20 |= flags & 0x1_0000 | flags & 0x2_0000 | flags & 0x10_0000;
-
-    if((struct7cc.flags_20 & 0x10_0000) != 0) {
+    if((deffManager_800c693c.flags_20 & 0x10_0000) != 0) {
       //LAB_800e651c
       for(int i = 0; i < this.combatantCount_800c66a0; i++) {
         final CombatantStruct1a8 combatant = this.getCombatant(i);
@@ -5848,7 +5853,7 @@ public class Battle extends EngineState {
       }
     }
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("DEFF ticker for script %d (%s)".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, effect);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("DEFF ticker for script %d (%s)".formatted(parent.index, parent.name), parent, effect);
 
     LOGGER.info(DEFF, "Allocated DEFF script state %d", state.index);
 
@@ -5856,22 +5861,16 @@ public class Battle extends EngineState {
     manager.flags_04 = 0x600_0400;
 
     final LoadedDeff24 v0 = this.loadedDeff_800c6938;
-    v0.type_00 = flags & 0xffff;
-    v0.bentState_04 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-    v0._08 = script.params_20[2].get();
-    v0.scriptIndex_0c = script.scriptState_04.index;
-    v0.scriptEntrypoint_10 = script.params_20[3].get() & 0xff;
+    v0.bentState_04 = SCRIPTS.getState(bentIndex, BattleEntity27c.class);
+    v0._08 = _08;
+    v0.scriptIndex_0c = parent.index;
+    v0.scriptEntrypoint_10 = entrypoint & 0xff;
     v0.managerState_18 = state;
     v0.init_1c = true;
     v0.frameCount_20 = -1;
     return state;
   }
 
-  @ScriptDescription("Allocates a DEFF and effect manager child for a battle entity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e665cL)
   public void loadDragoonDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
     final int index = script.params_20[0].get() & 0xffff;
@@ -5879,159 +5878,77 @@ public class Battle extends EngineState {
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
-    final DeffManager7cc deffManager = deffManager_800c693c;
-    deffManager.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
-    this.scriptAllocateDeffEffectManager(script, effect);
+    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
+    this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
-    final LoadedDeff24 battle24 = this.loadedDeff_800c6938;
-    battle24.type_00 |= 0x100_0000;
-
-    if((deffManager.flags_20 & 0x4_0000) != 0) {
-      //LAB_800e66fc
-      //LAB_800e670c
-      loadDeffSounds(battle24.bentState_04, index != 0x2e || scriptEntrypoint != 0 ? 0 : 2);
+    if((deffManager_800c693c.flags_20 & 0x4_0000) != 0) {
+      loadDeffSounds(this.loadedDeff_800c6938.bentState_04, index != 0x2e || scriptEntrypoint != 0 ? 0 : 2);
     }
 
-    //LAB_800e6714
-    if(battle24.script_14 != null) {
-      battle24.script_14 = null;
-    }
-
-    //LAB_800e6738
     for(int i = 0; i < dragoonDeffsWithExtraTims_800fb040.length; i++) {
       if(dragoonDeffsWithExtraTims_800fb040[i] == index) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
           loadDrgnDir(0, 4115 + i, this::uploadTims);
         }
       }
-
-      //LAB_800e679c
     }
 
-    //LAB_800e67b0
-    loadDrgnDir(0, 4139 + index * 2, this::uploadTims);
-    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> {
-      this.loadDeffPackage(files, battle24.managerState_18);
-
-      // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
-        LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
-      });
-    });
-    this.deffLoadingStage_800fafe8 = 1;
+    this.loadDeff(
+      Unpacker.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
+      Unpacker.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
+    );
   }
 
-  @ScriptDescription("Allocates a DEFF and effect manager child for a spell or item")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6844L)
   public void loadSpellItemDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
-    final int id = script.params_20[0].get() & 0xffff;
-    final int s0 = (id - 192) * 2;
-
-    LOGGER.info(DEFF, "Loading spell item DEFF (ID: %d, flags: %x)", id, script.params_20[0].get() & 0xffff_0000);
-
-    deffManager_800c693c.flags_20 |= 0x40_0000;
-    this.scriptAllocateDeffEffectManager(script, effect);
-
-    final LoadedDeff24 t0 = this.loadedDeff_800c6938;
-
-    if(t0.script_14 != null) {
-      t0.script_14 = null;
-    }
-
-    t0.type_00 |= 0x200_0000;
-    loadDrgnDir(0, 4307 + s0, this::uploadTims);
-    loadDrgnDir(0, 4308 + s0 + "/0", files -> {
-      this.loadDeffPackage(files, t0.managerState_18);
-
-      // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 4308 + s0 + "/1", file -> {
-        LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
-      });
-    });
-    this.deffLoadingStage_800fafe8 = 1;
+    this.loadSpellItemDeff(script.scriptState_04, script.params_20[0].get() & 0xffff, script.params_20[0].get() & 0xffff_0000, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
   }
 
-  @ScriptDescription("Allocates a DEFF and effect manager child for an enemy or boss")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
+  public void loadSpellItemDeff(final ScriptState<? extends BattleObject> parent, final int id, final int flags, final int bentIndex, final int _08, final int entrypoint, final ScriptDeffEffect effect) {
+    final int s0 = (id - 192) * 2;
+
+    LOGGER.info(DEFF, "Loading spell item DEFF (ID: %d, flags: %x)", id, flags);
+
+    deffManager_800c693c.flags_20 |= 0x40_0000;
+    this.allocateDeffEffectManager(parent, flags, bentIndex, _08, entrypoint, effect);
+
+    this.loadDeff(
+      Unpacker.resolve("SECT/DRGN0.BIN/" + (4307 + s0)),
+      Unpacker.resolve("SECT/DRGN0.BIN/" + (4308 + s0))
+    );
+  }
+
   @Method(0x800e6920L)
   public void loadEnemyOrBossDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
-    final int s1 = script.params_20[0].get() & 0xff_0000;
-    int monsterIndex = (short)script.params_20[0].get();
+    final int flags = script.params_20[0].get() & 0xff_0000;
+    final int monsterIndex = script.params_20[0].get() & 0xffff;
 
-    if(monsterIndex == -1) {
-      final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
-      assert false : "?"; //script.params_20.get(0).set(sp0x20);
-      monsterIndex = bent.combatant_144.charIndex_1a2;
-    }
+    LOGGER.info(DEFF, "Loading enemy/boss DEFF (ID: %d, flags: %x)", monsterIndex, flags);
 
-    LOGGER.info(DEFF, "Loading enemy/boss DEFF (ID: %d, flags: %x)", monsterIndex, s1 & 0xffff_0000);
-
-    //LAB_800e69a8
-    deffManager_800c693c.flags_20 |= s1 & 0x10_0000;
-    this.scriptAllocateDeffEffectManager(script, effect);
-
-    final LoadedDeff24 v1 = this.loadedDeff_800c6938;
-
-    if(v1.script_14 != null) {
-      v1.script_14 = null;
-    }
-
-    v1.type_00 |= 0x300_0000;
+    deffManager_800c693c.flags_20 |= flags & 0x10_0000;
+    this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
     if(monsterIndex < 256) {
-      final int finalMonsterIndex = monsterIndex;
-      loadDrgnDir(0, 4433 + monsterIndex * 2, this::uploadTims);
-      loadDrgnDir(0, 4434 + monsterIndex * 2 + "/0", files -> {
-        this.loadDeffPackage(files, v1.managerState_18);
-
-        // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-        loadDrgnFile(0, 4434 + finalMonsterIndex * 2 + "/1", file -> {
-          LOGGER.info(DEFF, "Loading DEFF script");
-          this.loadedDeff_800c6938.script_14 = new ScriptFile(4434 + finalMonsterIndex * 2 + "/1", file.getBytes());
-        });
-      });
+      this.loadDeff(
+        Unpacker.resolve("SECT/DRGN0.BIN/" + (4433 + monsterIndex * 2)),
+        Unpacker.resolve("SECT/DRGN0.BIN/" + (4434 + monsterIndex * 2))
+      );
     } else {
-      //LAB_800e6a30
       final int a0_0 = monsterIndex >>> 4;
       int fileIndex = enemyDeffFileIndices_800faec4[a0_0 - 0x100] + (monsterIndex & 0xf);
       if(a0_0 >= 320) {
         fileIndex += 117;
       }
 
-      //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
-      final int finalFileIndex = fileIndex;
 
-      loadDrgnDir(0, 4945 + fileIndex, this::uploadTims);
-      loadDrgnDir(0, 4946 + fileIndex + "/0", files -> {
-        this.loadDeffPackage(files, v1.managerState_18);
-
-        // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-        loadDrgnFile(0, 4946 + finalFileIndex + "/1", file -> {
-          LOGGER.info(DEFF, "Loading DEFF script");
-          this.loadedDeff_800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes());
-        });
-      });
+      this.loadDeff(
+        Unpacker.resolve("SECT/DRGN0.BIN/" + (5511 + fileIndex)),
+        Unpacker.resolve("SECT/DRGN0.BIN/" + (5512 + fileIndex))
+      );
     }
-
-    //LAB_800e6a9c
-    this.deffLoadingStage_800fafe8 = 1;
   }
 
-  @ScriptDescription("Allocates a DEFF and effect manager child for a cutscene")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6aecL)
   public void loadCutsceneDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
     final int v1 = script.params_20[0].get();
@@ -6039,41 +5956,36 @@ public class Battle extends EngineState {
 
     LOGGER.info(DEFF, "Loading cutscene DEFF (ID: %d, flags: %x)", cutsceneIndex, v1 & 0xffff_0000);
 
-    this.scriptAllocateDeffEffectManager(script, effect);
+    this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
-    final LoadedDeff24 a0_0 = this.loadedDeff_800c6938;
-
-    if(a0_0.script_14 != null) {
-      a0_0.script_14 = null;
-    }
-
-    a0_0.type_00 |= 0x500_0000;
-
-    //LAB_800e6b5c
     for(int i = 0; i < cutsceneDeffsWithExtraTims_800fb05c.length; i++) {
       if(cutsceneDeffsWithExtraTims_800fb05c[i] == cutsceneIndex) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
           loadDrgnDir(0, 5505 + i, this::uploadTims);
         }
       }
-
-      //LAB_800e6bc0
     }
 
-    //LAB_800e6bd4
-    loadDrgnDir(0, 5511 + cutsceneIndex * 2, this::uploadTims);
-    loadDrgnDir(0, 5512 + cutsceneIndex * 2 + "/0", files -> {
-      this.loadDeffPackage(files, a0_0.managerState_18);
+    this.loadDeff(
+      Unpacker.resolve("SECT/DRGN0.BIN/" + (5511 + cutsceneIndex * 2)),
+      Unpacker.resolve("SECT/DRGN0.BIN/" + (5512 + cutsceneIndex * 2))
+    );
+  }
+
+  public void loadDeff(final Path tims, final Path deff) {
+    this.loadedDeff_800c6938.script_14 = null;
+    this.deffLoadingStage_800fafe8 = 1;
+
+    Unpacker.loadDirectory(tims, this::uploadTims);
+    Unpacker.loadDirectory(deff.resolve("0"), files -> {
+      this.loadDeffPackage(files, this.loadedDeff_800c6938.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      loadDrgnFile(0, 5512 + cutsceneIndex * 2 + "/1", file -> {
+      Unpacker.loadFile(deff.resolve("1"), file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes());
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
       });
     });
-
-    //LAB_800e6d7c
-    this.deffLoadingStage_800fafe8 = 1;
   }
 
   @ScriptDescription("Ticks the DEFF loader for DEFFs that are not set up to tick themselves. May pause and rewind if the DEFF is not yet ready for that stage.")
@@ -6459,7 +6371,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e93e0L)
   public FlowControl scriptAllocateEmptyEffectManagerChild(final RunningScript<? extends BattleObject> script) {
-    script.params_20[0].set(allocateEffectManager("Empty EffectManager child, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, null).index);
+    script.params_20[0].set(allocateEffectManager("Empty EffectManager child, allocated by script %d (%s) from scriptAllocateEmptyEffectManagerChild".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -8703,8 +8615,8 @@ public class Battle extends EngineState {
     final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
 
     combatant.drops.clear();
-    if(rewards.itemDrop_05 != 0xff) {
-      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04, rewards.itemDrop_05 < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(rewards.itemDrop_05)).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(rewards.itemDrop_05 - 192)).get()));
+    if(rewards.itemDrop_05 != null) {
+      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04, rewards.itemDrop_05.get()));
     }
 
     final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00, rewards.gold_02, combatant.drops));

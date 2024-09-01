@@ -97,10 +97,6 @@ public class ScriptDebuggerController {
       return cell;
     });
 
-    for(int i = 0; i < 10; i++) {
-      this.stack.add(new ListItem(stackIndex -> this.getCommandStack(this.scriptSelector.getValue().index, stackIndex), i));
-    }
-
     this.commandStack.setItems(this.stack);
     this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
 
@@ -168,8 +164,9 @@ public class ScriptDebuggerController {
       this.stackTop.setText("0x%08x".formatted(state.frame().offset));
     }
 
-    for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
-      this.stack.get(stackIndex).update();
+    this.stack.clear();
+    for(int stackIndex = 0; stackIndex < state.callStackDepth(); stackIndex++) {
+      this.stack.add(new ListItem(i -> this.getCommandStack(this.scriptSelector.getValue().index, i), stackIndex));
     }
 
     if(state.ticker_04 != null) {

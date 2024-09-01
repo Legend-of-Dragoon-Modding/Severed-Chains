@@ -168,9 +168,6 @@ public class PlayerBattleEntity extends BattleEntity27c {
     int matk = this.magicAttack_36;
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
-    } else {
-      //LAB_800f2ef8
-      matk += this.item_d4.calculateAttackDamage(this, target);
     }
 
     //LAB_800f2f04

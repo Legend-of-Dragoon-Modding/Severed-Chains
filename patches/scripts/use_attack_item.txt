@@ -1,0 +1,35 @@
+entrypoint :DO_NOTHING
+entrypoint :USE_ATTACK_ITEM
+
+
+
+DO_NOTHING:
+rewind
+
+
+
+; @param int s29 item id (indexed from 0, not 0xc0)
+USE_ATTACK_ITEM:
+gosub inl[:LABEL_124] ; addr
+mov stor[29], stor[8] ; source, dest
+add 0xc0, stor[8] ; amount, operand
+; load item deff
+call Battle::scriptLoadDeff, stor[8], stor[0], stor[28], 0x0, 0x2000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
+
+; pull element colour out of element registry
+call Battle::scriptGetBentStat, stor[0], ITEM_ELEMENT, reg[0] ; r0 = item element
+call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:elements], reg[0], 0, stor[8] ; s8 = packed element rgb
+
+gosub inl[:THROW_ATTACK_ITEM] ; addr
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:LABEL_128] ; addr
+gosub inl[:LABEL_436] ; addr
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+#include player_combat_script2.txt

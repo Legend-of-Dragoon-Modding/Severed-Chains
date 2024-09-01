@@ -55,16 +55,12 @@ public class FileBasedItem extends Item {
   private final int mpPerPhysicalHit;
   private final int spPerMagicalHit;
   private final int mpPerMagicalHit;
-  /** ubyte */
-  private final int damage_05;
-  /** byte */
-  private final int icon_07;
+
   /** ubyte */
   private final int status_08;
   /** ubyte */
   private final int percentage_09;
-  /** ubyte */
-  private final int uu2_0a;
+
   /**
    * <ul>
    *   <li>0x04 - cause status</li>
@@ -132,16 +128,16 @@ public class FileBasedItem extends Item {
     final int spPerMagicalHit = (special2 & 0x2) != 0 ? specialAmount : 0;
     final int mpPerMagicalHit = (special2 & 0x1) != 0 ? specialAmount : 0;
 
-    final int damage = data.readUByte(0x5);
     final int icon = data.readByte(0x7);
     final int status = data.readUByte(0x8);
     final int percentage = data.readUByte(0x9);
-    final int uu2 = data.readUByte(0xa);
+
     final int type = data.readUByte(0xb);
-    return new FileBasedItem(price, targets, usage, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type, instakill);
+
+    return new FileBasedItem(price, targets, usage, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, icon, status, percentage, type, instakill);
   }
 
-  public FileBasedItem(final int price, final Set<TargetType> target, final Set<UsageLocation> usage, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type, final boolean instakill) {
+  public FileBasedItem(final int price, final Set<TargetType> target, final Set<UsageLocation> usage, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int icon, final int status, final int percentage, final int type, final boolean instakill) {
     super(icon, price);
 
     this.target_00.addAll(target);
@@ -165,11 +161,8 @@ public class FileBasedItem extends Item {
     this.mpPerPhysicalHit = mpPerPhysicalHit;
     this.spPerMagicalHit = spPerMagicalHit;
     this.mpPerMagicalHit = mpPerMagicalHit;
-    this.damage_05 = damage;
-    this.icon_07 = icon;
     this.status_08 = status;
     this.percentage_09 = percentage;
-    this.uu2_0a = uu2;
     this.type_0b = type;
 
     this.instakill = instakill;
@@ -225,7 +218,7 @@ public class FileBasedItem extends Item {
 
   @Override
   @Method(0x80022d88L)
-  public void use(final UsageLocation location, final UseItemResponse response, final int charIndex) {
+  public void useInMenu(final UseItemResponse response, final int charIndex) {
     response._00 = 0;
     response.value_04 = 0;
 
@@ -473,10 +466,5 @@ public class FileBasedItem extends Item {
   @Override
   public int getAttackDamageMultiplier(final BattleEntity27c user, final BattleEntity27c target) {
     return this.damageMultiplier_02;
-  }
-
-  @Override
-  public int calculateAttackDamage(final BattleEntity27c user, final BattleEntity27c target) {
-    return this.damage_05;
   }
 }
