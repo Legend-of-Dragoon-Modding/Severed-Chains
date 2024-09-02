@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.DabasManager;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
@@ -609,7 +610,7 @@ public class DabasScreen extends MenuScreen {
 
     if(this.specialItem != null) {
       renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8);
-      renderText(this.specialItem.getName(), 214, 194, TextColour.BROWN);
+      renderText(I18n.translate(this.specialItem.getNameTranslationKey()), 214, 194, TextColour.BROWN);
     }
 
     //LAB_80103390

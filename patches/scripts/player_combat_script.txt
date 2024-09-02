@@ -1382,31 +1382,31 @@ jmp_table stor[29], inl[:USE_ITEM_SUBS] ; index, table
 
 ; TODO
 ATTACK_ITEM_IDS:
-data 0xc2
-data 0xc3
-data 0xc5
-data 0xc6
-data 0xc7
-data 0xc9
-data 0xca
-data 0xd4
-data 0xd7
-data 0xd9
-data 0xda
-data 0xcf
-data 0xd0
-data 0xd1
-data 0xd2
-data 0xd6
-data 0xd8
-data 0xdc
-data 0xf2
-data 0xf3
-data 0xf4
-data 0xf5
-data 0xf6
-data 0xf7
-data 0xf8
+data 0xc2 ; spark net
+data 0xc3 ; burn out
+data 0xc5 ; pellet
+data 0xc6 ; spear frost
+data 0xc7 ; spinning gale
+data 0xc9 ; trans light
+data 0xca ; dark mist
+data 0xd4 ; panic bell
+data 0xd7 ; stunning hammer
+data 0xd9 ; poison needle
+data 0xda ; midnight terror
+data 0xcf ; thunderbolt
+data 0xd0 ; meteor fall
+data 0xd1 ; gushing magma
+data 0xd2 ; dancing ray
+data 0xd6 ; fatal blizzard
+data 0xd8 ; black rain
+data 0xdc ; rave twister
+data 0xf2 ; burning wave
+data 0xf3 ; frozen jet
+data 0xf4 ; down burst
+data 0xf5 ; gravity grabber
+data 0xf6 ; spectral flash
+data 0xf7 ; night raid
+data 0xf8 ; flash hall
 
 
 

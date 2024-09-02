@@ -31,14 +31,14 @@
  mov stor[10], var[45][stor[18]]
  jmp inl[:LABEL_159]
 +ASSETS:
-+data 0x2
-+data 0xc
++data 0x3
++data 0xd
 +data 0x79
 +data 0x70
 +DEALLOC_DART:
 +jmp_cmp ==, inl[:SLOT_0_CHAR], 0x0, inl[:END_DEALLOC]
-+call 358, var[45][2]
-+deallocate_other var[45][12]
++call 358, var[45][3]
++deallocate_other var[45][13]
 +jmp_cmp ==, var[35], 0x2, inl[:END_DEALLOC]
 +call 128, var[34][0], 0x900, 0x0, 0x0
 +END_DEALLOC:
@@ -46,8 +46,8 @@
 +LOAD_DART:
 +gosub inl[:LOAD_DART_ASSETS]
 +gosub inl[:WAIT_ASSET_LOAD]
-+call 132, var[45][12], 0x400
-+call 128, var[45][12], 0x900, 0x0, 0x0
++call 132, var[45][13], 0x400
++call 128, var[45][13], 0x900, 0x0, 0x0
 +jmp_cmp ==, var[35], 0x2, inl[:END_LOAD]
 +call 128, var[34][0], 0x1000, 0x0, 0x0
 +END_LOAD:
@@ -118,9 +118,9 @@
 +jmp_cmp !=, var[45][17], 0x4, inl[:WAIT_ASSET_LOAD]
 +return
 +SET_SLOT_0_CHAR:
-+call 167, stor[0], var[45][18]
++call 167, var[34][0], inl[:SLOT_0_CHAR]
 +jmp_cmp !=, inl[:SLOT_0_CHAR], 0x0, inl[:END_SLOT_0_CHAR]
-+mov stor[0], var[45][12]
++mov var[34][0], var[45][13]
 +END_SLOT_0_CHAR:
 +return
 +SLOT_0_CHAR:

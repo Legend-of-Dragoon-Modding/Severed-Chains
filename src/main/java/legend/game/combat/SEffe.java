@@ -3992,7 +3992,7 @@ public final class SEffe {
 
     final ScriptFile file;
     if(deffScriptIndex == -1) {
-      file = script.scriptState_04.scriptPtr_14;
+      file = script.scriptState_04.frame().file;
     } else {
       //LAB_80115654
       file = deffManager_800c693c.scripts_2c[deffScriptIndex];
@@ -4009,7 +4009,7 @@ public final class SEffe {
   @Method(0x80115690L)
   public static FlowControl scriptLoadSameScriptAndJump(final RunningScript<?> script) {
     final ScriptState<?> state = SCRIPTS.getState(script.params_20[0].get());
-    state.loadScriptFile(script.scriptState_04.scriptPtr_14, 0);
+    state.loadScriptFile(script.scriptState_04.frame().file, 0);
     script.params_20[1].jump(state);
     return FlowControl.CONTINUE;
   }

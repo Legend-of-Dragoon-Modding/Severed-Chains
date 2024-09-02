@@ -5,14 +5,9 @@ import com.opencsv.exceptions.CsvException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.legendofdragoon.scripting.Compiler;
 import org.legendofdragoon.scripting.Disassembler;
-import org.legendofdragoon.scripting.Lexer;
 import org.legendofdragoon.scripting.Patcher;
 import org.legendofdragoon.scripting.Translator;
-import org.legendofdragoon.scripting.meta.Meta;
-import org.legendofdragoon.scripting.meta.MetaManager;
-import org.legendofdragoon.scripting.meta.NoSuchVersionException;
 import org.legendofdragoon.scripting.tokens.Script;
 
 import java.io.IOException;
@@ -27,28 +22,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.IoHelper.crc32;
-import static legend.core.IoHelper.intsToBytes;
 import static legend.core.IoHelper.loadCsvFile;
 
 public class ScriptPatcher {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatcher.class);
 
-  private final Meta meta;
   private final Disassembler disassembler;
   private final Translator translator = new Translator();
-  private final Compiler compiler = new Compiler();
-  private final Lexer lexer;
 
   private final ScriptPatchList patches;
   private final Path patchesDir;
   private final Path filesDir;
   private final Path cacheDir;
 
-  public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir) throws NoSuchVersionException, IOException, CsvException {
-    this.meta = new MetaManager(null, patchDir).loadMeta("meta");
-    this.disassembler = new Disassembler(this.meta);
-    this.lexer = new Lexer(this.meta);
+  public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir) {
+    this.disassembler = new Disassembler(SCRIPTS.meta());
     this.patches = this.loadPatchList(filesDir, patchDir.resolve("scripts.csv"));
     this.patchesDir = patchDir;
     this.filesDir = filesDir;
@@ -179,13 +169,12 @@ public class ScriptPatcher {
     this.translator.stripComments = true;
     this.translator.stripNames = true;
     final Script script = this.disassembler.disassemble(data);
-    final String decompiledOutput = this.translator.translate(script, this.meta);
+    final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta());
     return decompiledOutput.lines().toList();
   }
 
   private byte[] recompile(final String patched) {
-    final Script lexedDecompiledSource = this.lexer.lex(patched);
-    return intsToBytes(this.compiler.compile(lexedDecompiledSource));
+    return SCRIPTS.compile(patched);
   }
 
   private Path resolvePatchConfigPath(final Path diffPath) {

@@ -162,10 +162,10 @@ public class ScriptDebuggerController {
       this.storage.get(storageIndex).update();
     }
 
-    if(state.offset_18 == -1) {
+    if(state.frame().offset == -1) {
       this.stackTop.setText("null");
     } else {
-      this.stackTop.setText("0x%08x".formatted(state.offset_18));
+      this.stackTop.setText("0x%08x".formatted(state.frame().offset));
     }
 
     for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
@@ -196,8 +196,8 @@ public class ScriptDebuggerController {
       this.destructor.setText("null");
     }
 
-    if(state.scriptPtr_14 != null) {
-      this.filePtr.setText(state.scriptPtr_14.name);
+    if(state.callStackDepth() != 0) {
+      this.filePtr.setText(state.frame().file.name);
     } else {
       this.filePtr.setText("<none>");
     }
@@ -215,13 +215,13 @@ public class ScriptDebuggerController {
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
-    final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex] : -1;
+    final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].frame(stackIndex).offset : -1;
 
     if(val == -1) {
       return "null";
-    } else {
-      return "0x%08x".formatted(val);
     }
+
+    return "0x%08x".formatted(val);
   }
 
   @EventListener

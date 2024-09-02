@@ -8,8 +8,8 @@ import legend.game.wmap.WMap;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class CharmPotionItem extends Item {
-  public CharmPotionItem(final String name, final String description, final String combatDescription, final int price) {
-    super(name, description, combatDescription, 45, price);
+  public CharmPotionItem(final int price) {
+    super(45, price);
   }
 
   @Override
@@ -23,7 +23,7 @@ public class CharmPotionItem extends Item {
   }
 
   @Override
-  public void useItemInMenu(final UseItemResponse response, final int charIndex) {
+  public void use(final UsageLocation location, final UseItemResponse response, final int charIndex) {
     if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       //LAB_80022e40
       response._00 = 8;

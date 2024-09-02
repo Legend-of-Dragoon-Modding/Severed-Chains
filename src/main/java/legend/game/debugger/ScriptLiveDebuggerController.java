@@ -86,7 +86,7 @@ public class ScriptLiveDebuggerController {
         this.btnStep.setDisable(true);
       }
 
-      this.tokens = this.disassembler.disassemble(state.scriptPtr_14.data);
+      this.tokens = this.disassembler.disassemble(state.frame().file.data);
     }
   }
 

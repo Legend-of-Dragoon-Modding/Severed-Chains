@@ -81,7 +81,7 @@ public class FileBasedItem extends Item {
 
   private final boolean instakill;
 
-  public static FileBasedItem fromFile(final String name, final String description, final String combatDescription, final int price, final FileData data) {
+  public static FileBasedItem fromFile(final int price, final FileData data) {
     final int target = data.readUByte(0x0);
 
     final Set<TargetType> targets = EnumSet.noneOf(TargetType.class);
@@ -138,11 +138,11 @@ public class FileBasedItem extends Item {
     final int percentage = data.readUByte(0x9);
     final int uu2 = data.readUByte(0xa);
     final int type = data.readUByte(0xb);
-    return new FileBasedItem(name, description, combatDescription, price, targets, usage, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type, instakill);
+    return new FileBasedItem(price, targets, usage, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type, instakill);
   }
 
-  public FileBasedItem(final String name, final String description, final String combatDescription, final int price, final Set<TargetType> target, final Set<UsageLocation> usage, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type, final boolean instakill) {
-    super(name, description, combatDescription, icon, price);
+  public FileBasedItem(final int price, final Set<TargetType> target, final Set<UsageLocation> usage, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type, final boolean instakill) {
+    super(icon, price);
 
     this.target_00.addAll(target);
     this.usage_00.addAll(usage);
@@ -223,10 +223,9 @@ public class FileBasedItem extends Item {
     return this.target_00.contains(type);
   }
 
-  /** TODO refactor, use UsageLocation */
   @Override
   @Method(0x80022d88L)
-  public void useItemInMenu(final UseItemResponse response, final int charIndex) {
+  public void use(final UsageLocation location, final UseItemResponse response, final int charIndex) {
     response._00 = 0;
     response.value_04 = 0;
 
