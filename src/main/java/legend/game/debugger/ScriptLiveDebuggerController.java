@@ -17,10 +17,13 @@ import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.meta.Meta;
 import org.legendofdragoon.scripting.meta.MetaManager;
 import org.legendofdragoon.scripting.meta.NoSuchVersionException;
+import org.legendofdragoon.scripting.tokens.Entry;
+import org.legendofdragoon.scripting.tokens.Param;
 import org.legendofdragoon.scripting.tokens.Script;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
@@ -50,6 +53,7 @@ public class ScriptLiveDebuggerController {
     this.meta = new MetaManager(null, Path.of("./patches")).loadMeta("meta");
     this.disassembler = new Disassembler(this.meta);
     this.translator = new Translator();
+    this.translator.lineNumbers = true;
   }
 
   public void initialize() {
@@ -91,9 +95,36 @@ public class ScriptLiveDebuggerController {
   }
 
   private void displayCode(final int offset) {
-    final Script line = new Script(1);
-    line.entries[0] = this.tokens.entries[offset];
-    this.txtCode.setText("0x" + Integer.toHexString(offset * 0x4) + ": " + this.translator.translate(line, this.meta));
+    int start = offset;
+    int end = offset + 1;
+
+    for(int backtrack = 0; start >= 0 && backtrack < 5; start--) {
+      if(!(this.tokens.entries[start] instanceof Param)) {
+        backtrack++;
+      }
+    }
+
+    for(int lookahead = 0; end < this.tokens.entries.length && lookahead < 5; end++) {
+      if(!(this.tokens.entries[end] instanceof Param)) {
+        lookahead++;
+      }
+    }
+
+    final Script script = new Script(end - start);
+    System.arraycopy(this.tokens.entries, start, script.entries, 0, script.entries.length);
+
+    final String[] lines = this.translator.translate(script, this.meta).split("\n");
+    final StringBuilder out = new StringBuilder();
+
+    for(int i = 0; i < lines.length; i++) {
+      out.append(lines[i]).append('\n');
+
+      if(lines[i].startsWith(Integer.toHexString(offset * 4))) {
+        out.append("~".repeat(lines[i].length())).append('\n');
+      }
+    }
+
+    this.txtCode.setText(out.toString());
   }
 
   private void clear() {
