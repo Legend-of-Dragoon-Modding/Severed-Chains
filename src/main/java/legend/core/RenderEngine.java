@@ -1241,7 +1241,7 @@ public class RenderEngine {
 
   private boolean isMac() {
     final String os = System.getProperty("os.name").toLowerCase(Locale.US);
-    return os.contains("mac os x") && os.contains("darwin") && os.contains("osx");
+    return os.contains("mac os x") || os.contains("darwin") || os.contains("osx");
   }
 
   private void onMouseMove(final Window window, final double x, final double y) {
