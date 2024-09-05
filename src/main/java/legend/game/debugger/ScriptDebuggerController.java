@@ -20,6 +20,7 @@ import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
 
@@ -67,7 +68,7 @@ public class ScriptDebuggerController {
   public void initialize() {
     INSTANCES.add(this);
 
-    for(int i = 0; i < 0x48; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       this.scripts.add(new ListItem(this::getScriptName, i));
     }
 
@@ -97,7 +98,7 @@ public class ScriptDebuggerController {
       return cell;
     });
 
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 20; i++) {
       this.stack.add(new ListItem(stackIndex -> this.getCommandStack(this.scriptSelector.getValue().index, stackIndex), i));
     }
 
@@ -165,7 +166,7 @@ public class ScriptDebuggerController {
     if(state.frame().offset == -1) {
       this.stackTop.setText("null");
     } else {
-      this.stackTop.setText("0x%08x".formatted(state.frame().offset));
+      this.stackTop.setText("0x%x".formatted(state.frame().offset * 0x4));
     }
 
     for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
@@ -215,13 +216,14 @@ public class ScriptDebuggerController {
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
-    final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].frame(stackIndex).offset : -1;
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
 
-    if(val == -1) {
-      return "null";
+    if(state == null || stackIndex >= state.callStackDepth()) {
+      return "";
     }
 
-    return "0x%08x".formatted(val);
+    final ScriptStackFrame frame = state.frame(stackIndex);
+    return "0x%x %s".formatted(frame.offset * 0x4, frame.file.name);
   }
 
   @EventListener

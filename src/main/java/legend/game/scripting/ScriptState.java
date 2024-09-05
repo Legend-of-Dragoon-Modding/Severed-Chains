@@ -333,12 +333,12 @@ public class ScriptState<T> {
   public ScriptStackFrame replaceFrame(final ScriptStackFrame frame) {
     this.callStack.pop();
     this.callStack.push(frame);
-    return this.callStack.peek();
+    return frame;
   }
 
   public ScriptStackFrame pushFrame(final ScriptStackFrame frame) {
     this.callStack.push(frame);
-    return this.callStack.peek();
+    return frame;
   }
 
   public ScriptStackFrame pushFrame() {
