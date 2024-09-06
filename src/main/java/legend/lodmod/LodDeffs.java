@@ -33,6 +33,7 @@ public final class LodDeffs {
   public static final RegistryDelegate<DeffPackage> MIDNIGHT_TERROR = REGISTRAR.register("midnight_terror", () -> new RetailDeffPackage(4359));
   public static final RegistryDelegate<DeffPackage> RAVE_TWISTER = REGISTRAR.register("rave_twister", () -> new RetailDeffPackage(4363));
   public static final RegistryDelegate<DeffPackage> ANGELS_PRAYER = REGISTRAR.register("angels_prayer", () -> new RetailDeffPackage(4367));
+  public static final RegistryDelegate<DeffPackage> CHARM_POTION = REGISTRAR.register("charm_potion", () -> new RetailDeffPackage(4369));
   public static final RegistryDelegate<DeffPackage> PANDEMONIUM = REGISTRAR.register("pandemonium", () -> new RetailDeffPackage(4371));
   public static final RegistryDelegate<DeffPackage> SUN_RHAPSODY = REGISTRAR.register("sun_rhapsody", () -> new RetailDeffPackage(4381));
   public static final RegistryDelegate<DeffPackage> HEALING_POTION = REGISTRAR.register("healing_potion", () -> new RetailDeffPackage(4385));
@@ -45,7 +46,7 @@ public final class LodDeffs {
   public static final RegistryDelegate<DeffPackage> SPEED_DOWN = REGISTRAR.register("speed_down", () -> new RetailDeffPackage(4399));
   public static final RegistryDelegate<DeffPackage> ENEMY_HEALING_POTION = REGISTRAR.register("enemy_healing_potion", () -> new RetailDeffPackage(4401));
   public static final RegistryDelegate<DeffPackage> SACHET = REGISTRAR.register("sachet", () -> new RetailDeffPackage(4403));
-  public static final RegistryDelegate<DeffPackage> ENEMY_PSYCHE_BOMB = REGISTRAR.register("enemy_psyche_bomb", () -> new RetailDeffPackage(4405));
+  public static final RegistryDelegate<DeffPackage> PSYCHE_BOMB = REGISTRAR.register("psyche_bomb", () -> new RetailDeffPackage(4405));
   public static final RegistryDelegate<DeffPackage> BURNING_WAVE = REGISTRAR.register("burning_wave", () -> new RetailDeffPackage(4407));
   public static final RegistryDelegate<DeffPackage> FROZEN_JET = REGISTRAR.register("frozen_jet", () -> new RetailDeffPackage(4409));
   public static final RegistryDelegate<DeffPackage> DOWN_BURST = REGISTRAR.register("down_burst", () -> new RetailDeffPackage(4411));
@@ -54,7 +55,7 @@ public final class LodDeffs {
   public static final RegistryDelegate<DeffPackage> NIGHT_RAID = REGISTRAR.register("night_raid", () -> new RetailDeffPackage(4417));
   public static final RegistryDelegate<DeffPackage> FLASH_HALL = REGISTRAR.register("flash_hall", () -> new RetailDeffPackage(4419));
   public static final RegistryDelegate<DeffPackage> HEALING_BREEZE = REGISTRAR.register("healing_breeze", () -> new RetailDeffPackage(4421));
-  public static final RegistryDelegate<DeffPackage> PSYCHE_BOMB = REGISTRAR.register("psyche_bomb", () -> new RetailDeffPackage(4423));
+  public static final RegistryDelegate<DeffPackage> PSYCHE_BOMB_X = REGISTRAR.register("psyche_bomb_x", () -> new RetailDeffPackage(4423));
 
   static void register(final RegisterDeffsEvent event) {
     REGISTRAR.registryEvent(event);
