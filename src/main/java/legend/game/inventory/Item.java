@@ -95,7 +95,9 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
   }
 
   public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
-    throw new IllegalStateException(this + " is not an attack item");
+    //TODO should we update the DEFFs to not call these?
+    //throw new IllegalStateException(this + " is not an attack item");
+    return 0;
   }
 
   public Element getAttackElement() {
@@ -103,7 +105,9 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
   }
 
   public int getAttackDamageMultiplier(final BattleEntity27c user, final BattleEntity27c target) {
-    throw new IllegalStateException(this + " is not an attack item");
+    //TODO should we update the DEFFs to not call these?
+    //throw new IllegalStateException(this + " is not an attack item");
+    return 0;
   }
 
   public enum UsageLocation {

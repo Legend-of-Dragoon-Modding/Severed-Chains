@@ -2,19 +2,9 @@ package legend.lodmod.items;
 
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.inventory.Item;
-import legend.game.scripting.FlowControl;
-import legend.game.scripting.ScriptFile;
-import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
-import legend.game.unpacker.Unpacker;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
-import static legend.core.GameEngine.SCRIPTS;
-
-public class AttackItem extends Item {
+public class AttackItem extends BattleItem {
   private final boolean targetAll;
   private final Element element;
   private final int damageMultiplier;
@@ -48,41 +38,18 @@ public class AttackItem extends Item {
   }
 
   @Override
-  public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
-    return switch(this.loadingStage) {
-      // Initial load
-      case 0 -> {
-        this.loadingStage = 1;
-        final Path path = Path.of("./patches/scripts/use_attack_item.txt");
+  public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
+    return -1;
+  }
 
-        Unpacker.loadFile(path, data -> {
-          try {
-            final String source = data.readFixedLengthAscii(0, data.size());
-            final byte[] compiled = SCRIPTS.compile(path, source);
-            final ScriptFile file = new ScriptFile("use_attack_item", compiled);
+  @Override
+  protected int getUseItemScriptEntrypoint() {
+    return 1;
+  }
 
-            user.storage_44[28] = targetBentIndex;
-            user.storage_44[29] = 3;
-            user.storage_44[30] = user.index;
-            user.pushFrame(new ScriptStackFrame(file, file.getEntry(1)));
-            user.context.commandOffset_0c = user.frame().offset;
-            this.loadingStage = 2;
-          } catch(final IOException e) {
-            throw new RuntimeException("Failed to load use_attack_item", e);
-          }
-        });
-
-        yield FlowControl.PAUSE_AND_REWIND;
-      }
-
-      // Wait for load
-      case 1 -> FlowControl.PAUSE_AND_REWIND;
-
-      // Loaded, carry on
-      default -> {
-        this.loadingStage = 0;
-        yield FlowControl.CONTINUE;
-      }
-    };
+  @Override
+  protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    user.storage_44[28] = targetBentIndex;
+    user.storage_44[30] = user.index;
   }
 }

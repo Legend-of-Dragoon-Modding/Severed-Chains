@@ -8,7 +8,7 @@ import legend.game.scripting.ScriptState;
 
 public class LoadedDeff24 {
   public ScriptState<BattleEntity27c> bentState_04;
-  public int _08;
+  public int param_08;
   public int scriptIndex_0c;
   public int scriptEntrypoint_10;
   public ScriptFile script_14;

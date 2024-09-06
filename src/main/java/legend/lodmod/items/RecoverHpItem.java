@@ -2,16 +2,17 @@ package legend.lodmod.items;
 
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
-public class RecoverHpItem extends Item {
+public class RecoverHpItem extends BattleItem {
   private final boolean targetAll;
   private final int percentage;
+
+  private int loadingStage;
 
   public RecoverHpItem(final int price, final boolean targetAll, final int percentage) {
     super(33, price);

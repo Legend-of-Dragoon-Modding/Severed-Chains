@@ -9,6 +9,7 @@ import legend.lodmod.items.AttackItem;
 import legend.lodmod.items.BuffItem;
 import legend.lodmod.items.CauseStatusItem;
 import legend.lodmod.items.CharmPotionItem;
+import legend.lodmod.items.HealingPotionItem;
 import legend.lodmod.items.PandemoniumItem;
 import legend.lodmod.items.RecoverHpItem;
 import legend.lodmod.items.RecoverMpItem;
@@ -29,7 +30,7 @@ public final class LodItems {
 
   // Recovery items
   public static final RegistryDelegate<Item> ANGELS_PRAYER = ITEM_REGISTRAR.register("angels_prayer", AngelsPrayerItem::new);
-  public static final RegistryDelegate<Item> HEALING_POTION = ITEM_REGISTRAR.register("healing_potion", () -> new RecoverHpItem(5, false, 50));
+  public static final RegistryDelegate<Item> HEALING_POTION = ITEM_REGISTRAR.register("healing_potion", HealingPotionItem::new);
   public static final RegistryDelegate<Item> HEALING_FOG = ITEM_REGISTRAR.register("healing_fog", () -> new RecoverHpItem(15, false, 100));
   public static final RegistryDelegate<Item> HEALING_BREEZE = ITEM_REGISTRAR.register("healing_breeze", () -> new RecoverHpItem(25, true, 50));
   public static final RegistryDelegate<Item> HEALING_RAIN = ITEM_REGISTRAR.register("healing_rain", () -> new RecoverHpItem(60, true, 100));

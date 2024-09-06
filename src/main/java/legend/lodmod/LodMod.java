@@ -22,6 +22,7 @@ import legend.game.characters.UnaryStatModType;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.ItemRegistryEvent;
@@ -196,6 +197,11 @@ public class LodMod {
     }
 
     event.addStat(SPEED_STAT.get());
+  }
+
+  @EventListener
+  public static void registerDeffs(final RegisterDeffsEvent event) {
+    LodDeffs.register(event);
   }
 
   @EventListener

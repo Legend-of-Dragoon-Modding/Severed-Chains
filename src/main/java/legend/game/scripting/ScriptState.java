@@ -286,8 +286,8 @@ public class ScriptState<T> {
     this.storage_44[6] = childScript.index;
 
     childScript.callStack.clear();
-    for(final ScriptStackFrame frame : this.callStack) {
-      childScript.pushFrame(frame.copy());
+    for(int i = this.callStack.size() - 1; i >= 0; i--) {
+      childScript.pushFrame(this.callStack.get(i).copy());
     }
 
     //LAB_80015e4c
@@ -337,12 +337,12 @@ public class ScriptState<T> {
   public ScriptStackFrame replaceFrame(final ScriptStackFrame frame) {
     this.callStack.pop();
     this.callStack.push(frame);
-    return this.callStack.peek();
+    return frame;
   }
 
   public ScriptStackFrame pushFrame(final ScriptStackFrame frame) {
     this.callStack.push(frame);
-    return this.callStack.peek();
+    return frame;
   }
 
   public ScriptStackFrame pushFrame() {

@@ -264,7 +264,7 @@ public class ScriptManager {
     return this.meta;
   }
 
-  public byte[] compile(final Path path, final String source) throws IOException {
+  public byte[] compile(final Path path, final String source) {
     this.meta();
     final Script lexed = this.lexer.lex(path, source);
     return intsToBytes(this.compiler.compile(lexed));

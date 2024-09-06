@@ -13,6 +13,7 @@ import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Translator;
+import org.legendofdragoon.scripting.tokens.Param;
 import org.legendofdragoon.scripting.tokens.Script;
 
 import static legend.core.GameEngine.EVENTS;
@@ -41,6 +42,7 @@ public class ScriptLiveDebuggerController {
   public ScriptLiveDebuggerController() {
     this.disassembler = new Disassembler(SCRIPTS.meta());
     this.translator = new Translator();
+    this.translator.lineNumbers = true;
   }
 
   public void initialize() {
@@ -82,9 +84,36 @@ public class ScriptLiveDebuggerController {
   }
 
   private void displayCode(final int offset) {
-    final Script line = new Script(1);
-    line.entries[0] = this.tokens.entries[offset];
-    this.txtCode.setText(Integer.toHexString(offset) + ": " + this.translator.translate(line, SCRIPTS.meta()));
+    int start = offset;
+    int end = offset + 1;
+
+    for(int backtrack = 0; start >= 0 && backtrack < 5; start--) {
+      if(!(this.tokens.entries[start] instanceof Param)) {
+        backtrack++;
+      }
+    }
+
+    for(int lookahead = 0; end < this.tokens.entries.length && lookahead < 5; end++) {
+      if(!(this.tokens.entries[end] instanceof Param)) {
+        lookahead++;
+      }
+    }
+
+    final Script script = new Script(end - start);
+    System.arraycopy(this.tokens.entries, start, script.entries, 0, script.entries.length);
+
+    final String[] lines = this.translator.translate(script, SCRIPTS.meta()).split("\n");
+    final StringBuilder out = new StringBuilder();
+
+    for(int i = 0; i < lines.length; i++) {
+      out.append(lines[i]).append('\n');
+
+      if(lines[i].startsWith(Integer.toHexString(offset * 4))) {
+        out.append("~".repeat(lines[i].length())).append('\n');
+      }
+    }
+
+    this.txtCode.setText(out.toString());
   }
 
   private void clear() {

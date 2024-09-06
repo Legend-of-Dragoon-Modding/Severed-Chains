@@ -173,7 +173,7 @@ public class ScriptPatcher {
     return decompiledOutput.lines().toList();
   }
 
-  private byte[] recompile(final Path path, final String patched) throws IOException {
+  private byte[] recompile(final Path path, final String patched) {
     return SCRIPTS.compile(path, patched);
   }
 

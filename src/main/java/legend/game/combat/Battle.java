@@ -5837,7 +5837,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e6470L)
-  public ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateDeffEffectManager(final ScriptState<? extends BattleObject> parent, final int flags, final int bentIndex, final int _08, final int entrypoint, final ScriptDeffEffect effect) {
+  public ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateDeffEffectManager(final ScriptState<? extends BattleObject> parent, final int flags, final int bentIndex, final int param, final int entrypoint, final ScriptDeffEffect effect) {
     deffManager_800c693c.flags_20 |= flags & 0x1_0000 | flags & 0x2_0000 | flags & 0x10_0000;
 
     if((deffManager_800c693c.flags_20 & 0x10_0000) != 0) {
@@ -5855,14 +5855,14 @@ public class Battle extends EngineState {
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("DEFF ticker for script %d (%s)".formatted(parent.index, parent.name), parent, effect);
 
-    LOGGER.info(DEFF, "Allocated DEFF script state %d", state.index);
+    LOGGER.info(DEFF, "Allocated DEFF script state %d for bent %d, param %d, parent %d, entrypoint %d", state.index, bentIndex, param, parent.index, entrypoint);
 
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0400;
 
     final LoadedDeff24 v0 = this.loadedDeff_800c6938;
     v0.bentState_04 = SCRIPTS.getState(bentIndex, BattleEntity27c.class);
-    v0._08 = _08;
+    v0.param_08 = param;
     v0.scriptIndex_0c = parent.index;
     v0.scriptEntrypoint_10 = entrypoint & 0xff;
     v0.managerState_18 = state;
@@ -6300,7 +6300,7 @@ public class Battle extends EngineState {
   public FlowControl FUN_800e74ac(final RunningScript<?> script) {
     final LoadedDeff24 struct24 = this.loadedDeff_800c6938;
     script.params_20[0].set(struct24.bentState_04.index);
-    script.params_20[1].set(struct24._08);
+    script.params_20[1].set(struct24.param_08);
     return FlowControl.CONTINUE;
   }
 
