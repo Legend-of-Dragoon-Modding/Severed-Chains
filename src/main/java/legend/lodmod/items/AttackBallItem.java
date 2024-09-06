@@ -5,11 +5,15 @@ import legend.game.inventory.Item;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.combat.Battle.seed_800fa754;
 
 public class AttackBallItem extends Item {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(AttackBallItem.class);
+
   public AttackBallItem() {
     super(46, 50);
   }
@@ -28,8 +32,11 @@ public class AttackBallItem extends Item {
   public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
     final Item[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getItems();
     final Item item = items[seed_800fa754.nextInt(items.length)];
+    LOGGER.info("%s has selected %s", this, item);
+
     user.innerStruct_00.item_d4 = item;
     user.registryIds[0] = item.getRegistryId();
+
     return item.useInBattle(user, item.canTarget(TargetType.ALL) ? -1 : targetBentIndex);
   }
 }
