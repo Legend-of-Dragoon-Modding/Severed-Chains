@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -1190,7 +1191,10 @@ public class RenderEngine {
       this.height = res.verticalResolution;
     }
 
-    glLineWidth(Math.max(1, this.height / 480.0f));
+    // glLineWidth has been removed on M3 macs
+    if(!this.isMac()) {
+      glLineWidth(Math.max(1, this.height / 480.0f));
+    }
 
     // Projections
     this.updateProjections();
@@ -1233,6 +1237,11 @@ public class RenderEngine {
         builder.attachment(this.depthTexture, GL_DEPTH_ATTACHMENT);
       });
     }
+  }
+
+  private boolean isMac() {
+    final String os = System.getProperty("os.name").toLowerCase(Locale.US);
+    return os.contains("mac os x") || os.contains("darwin") || os.contains("osx");
   }
 
   private void onMouseMove(final Window window, final double x, final double y) {
