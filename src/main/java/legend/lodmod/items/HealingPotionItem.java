@@ -5,7 +5,7 @@ import legend.game.scripting.ScriptState;
 
 public class HealingPotionItem extends RecoverHpItem {
   public HealingPotionItem() {
-    super(5, false, 50);
+    super(33, 5, false, 50);
   }
 
   @Override

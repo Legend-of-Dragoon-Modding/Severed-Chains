@@ -7,7 +7,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class HealingBreezeItem extends RecoverHpItem {
   public HealingBreezeItem() {
-    super(25, true, 50);
+    super(33, 25, true, 50);
   }
 
   @Override

@@ -7,7 +7,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class HealingFogItem extends RecoverHpItem {
   public HealingFogItem() {
-    super(15, false, 100);
+    super(33, 15, false, 100);
   }
 
   @Override

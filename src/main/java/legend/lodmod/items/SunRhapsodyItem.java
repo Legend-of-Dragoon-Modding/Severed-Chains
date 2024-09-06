@@ -5,7 +5,7 @@ import legend.game.scripting.ScriptState;
 
 public class SunRhapsodyItem extends RecoverHpItem {
   public SunRhapsodyItem() {
-    super(25, false, 100);
+    super(34, 25, false, 100);
   }
 
   @Override

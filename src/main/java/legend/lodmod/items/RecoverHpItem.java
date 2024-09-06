@@ -12,10 +12,8 @@ public class RecoverHpItem extends BattleItem {
   private final boolean targetAll;
   private final int percentage;
 
-  private int loadingStage;
-
-  public RecoverHpItem(final int price, final boolean targetAll, final int percentage) {
-    super(33, price);
+  public RecoverHpItem(final int icon, final int price, final boolean targetAll, final int percentage) {
+    super(icon, price);
     this.targetAll = targetAll;
     this.percentage = percentage;
   }
