@@ -1,15 +1,17 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.inventory.Item;
+import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment.simpleRand;
 
-public class CauseStatusItem extends Item {
+public class CauseStatusItem extends BattleItem {
+  private final int useItemColour;
   private final int status;
 
-  public CauseStatusItem(final int icon, final int price, final int status) {
+  public CauseStatusItem(final int useItemColour, final int icon, final int price, final int status) {
     super(icon, price);
+    this.useItemColour = useItemColour;
     this.status = status;
   }
 
@@ -52,5 +54,17 @@ public class CauseStatusItem extends Item {
     }
 
     return effect;
+  }
+
+  @Override
+  protected int getUseItemScriptEntrypoint() {
+    return 11;
+  }
+
+  @Override
+  protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    user.storage_44[8] = this.useItemColour;
+    user.storage_44[28] = targetBentIndex;
+    user.storage_44[30] = user.index;
   }
 }

@@ -898,7 +898,7 @@ data 0x900ffff
 data 0x49
 
 ; SUBROUTINE
-LABEL_60:
+GET_BENT_SPECIAL_EFFECT_FLAGS:
 call Battle::scriptGetBentStat, stor[28], SPECIAL_EFFECT_FLAGS, stor[8] ; bentIndex, statIndex, value
 and 0x80, stor[8] ; right, left
 return
@@ -1226,7 +1226,7 @@ rel :USE_POISON_NEEDLE ; poison needle
 rel :USE_MIDNIGHT_TERROR ; midnight terror
 rel :USE_NOTHING_ITEM ; nothing
 rel :USE_ATTACK_ITEM2 ; rave twister
-rel :USE_TOTAL_VANISHING ; total vanishing
+rel :USE_TOTAL_VANISHING2 ; total vanishing
 rel :USE_PRAYER_CHARM_PANDEMONIUM ; angel's prayer
 rel :USE_PRAYER_CHARM_PANDEMONIUM ; charm potion
 rel :USE_PRAYER_CHARM_PANDEMONIUM ; pandemonium
@@ -1235,7 +1235,7 @@ rel :USE_NOTHING_ITEM ; nothing
 rel :USE_MAGIC_SHIELD2 ; magic shield
 rel :USE_MATERIAL_SHIELD2 ; material shield
 rel :USE_RHAPSODY_SERENADE ; sun rhapsody
-rel :USE_SMOKE_BALL ; smoke ball
+rel :USE_SMOKE_BALL2 ; smoke ball
 rel :USE_HEALING_FOG ; healing fog
 rel :USE_ATTACK_ITEM2 ; magic sig stone
 rel :USE_GROUP_HEAL ; healing rain
@@ -1259,12 +1259,12 @@ rel :USE_ATTACK_ITEM2 ; psyche bomb x
 
 
 
-USE_TOTAL_VANISHING:
+USE_TOTAL_VANISHING2:
 mov 0x8, stor[8] ; source, dest
 gosub inl[:THROW_ATTACK_ITEM] ; addr
 mov stor[29], stor[8] ; source, dest
 mov stor[0], stor[30] ; source, dest
-gosub inl[:LABEL_60] ; addr
+gosub inl[:GET_BENT_SPECIAL_EFFECT_FLAGS] ; addr
 jmp_cmp !=, 0x0, stor[8], inl[:LABEL_102] ; operand, left, right, addr
 call Battle::scriptSetBentRawStat, stor[28], 0x0, CURRENT_HP ; bentIndex, value, statIndex
 fork_reenter stor[28], 0x4, 0x0 ; index, entrypoint, p2
@@ -1279,9 +1279,9 @@ return
 
 
 
-USE_SMOKE_BALL:
+USE_SMOKE_BALL2:
 mov 0xcd, stor[8] ; source, dest
-gosub inl[:LABEL_139] ; addr
+gosub inl[:LOAD_SOUNDS] ; addr
 call Scus94491BpeSegment::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:LABEL_105] ; addr
 call Scus94491BpeSegment::scriptUnloadSoundFile, 0x6 ; soundType
@@ -1294,6 +1294,8 @@ LABEL_104:
 or 0x1, var[45][77] ; right, left
 or 0x8, var[45][77] ; right, left
 return
+
+
 
 ; SUBROUTINE
 LABEL_105:
@@ -1732,7 +1734,7 @@ call SEffe::scriptAddLifespanAttachment, stor[19], 0x18 ; effectIndex, ticks
 return
 
 ; SUBROUTINE
-LABEL_139:
+LOAD_SOUNDS:
 call Scus94491BpeSegment::scriptLoadMonsterAttackSounds, stor[8] ; monsterIndex
 LABEL_140:
 yield

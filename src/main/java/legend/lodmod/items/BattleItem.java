@@ -39,7 +39,6 @@ public abstract class BattleItem extends Item {
       case 0 -> {
         this.deffLoadingStage = 1;
         this.loadDeff(user, this.getDeffEntrypoint(), this.getDeffParam(targetBentIndex));
-        deffManager_800c693c.flags_20 |= 0x40_0000;
 
         this.injectScript(user, this.getUseItemScriptPath(), this.getUseItemScriptEntrypoint(), () -> {
           this.useItemScriptLoaded(user, targetBentIndex);
@@ -95,6 +94,8 @@ public abstract class BattleItem extends Item {
 
     ((Battle)currentEngineState_8004dd04).allocateDeffEffectManager(user, 0, user.index, param, entrypoint, new ScriptDeffManualLoadingEffect());
     deff.get().load();
+
+    deffManager_800c693c.flags_20 |= 0x40_0000;
   }
 
   protected void injectScript(final ScriptState<? extends BattleEntity27c> user, final Path path, final int entrypoint, final Runnable onLoad) {

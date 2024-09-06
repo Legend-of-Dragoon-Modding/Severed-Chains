@@ -1,9 +1,9 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.inventory.Item;
+import legend.game.scripting.ScriptState;
 
-public class TotalVanishingItem extends Item {
+public class TotalVanishingItem extends BattleItem {
   public TotalVanishingItem() {
     super(46, 10);
   }
@@ -25,5 +25,21 @@ public class TotalVanishingItem extends Item {
     }
 
     return 0;
+  }
+
+  @Override
+  protected int getUseItemScriptEntrypoint() {
+    return 10;
+  }
+
+  @Override
+  protected void loadDeff(final ScriptState<? extends BattleEntity27c> user, final int entrypoint, final int param) {
+    // no-op
+  }
+
+  @Override
+  protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    user.storage_44[28] = targetBentIndex;
+    user.storage_44[30] = user.index;
   }
 }

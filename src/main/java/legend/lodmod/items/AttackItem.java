@@ -8,7 +8,6 @@ public class AttackItem extends BattleItem {
   private final boolean targetAll;
   private final Element element;
   private final int damageMultiplier;
-  private int loadingStage;
 
   public AttackItem(final int icon, final int price, final boolean targetAll, final Element element, final int damageMultiplier) {
     super(icon, price);

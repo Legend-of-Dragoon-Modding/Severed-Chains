@@ -88,13 +88,13 @@ public final class LodItems {
   // Status items
   public static final RegistryDelegate<Item> CHARM_POTION = ITEM_REGISTRAR.register("charm_potion", CharmPotionItem::new);
   public static final RegistryDelegate<Item> MAGIC_SIG_STONE = ITEM_REGISTRAR.register("magic_sig_stone", SignetStoneItem::new);
-  public static final RegistryDelegate<Item> MIDNIGHT_TERROR = ITEM_REGISTRAR.register("midnight_terror", () -> new CauseStatusItem(39, 10, 0x8));
+  public static final RegistryDelegate<Item> MIDNIGHT_TERROR = ITEM_REGISTRAR.register("midnight_terror", () -> new CauseStatusItem(-12, 39, 10, 0x8));
   public static final RegistryDelegate<Item> PANDEMONIUM = ITEM_REGISTRAR.register("pandemonium", PandemoniumItem::new);
-  public static final RegistryDelegate<Item> PANIC_BELL = ITEM_REGISTRAR.register("panic_bell", () -> new CauseStatusItem(39, 10, 0x4));
-  public static final RegistryDelegate<Item> POISON_NEEDLE = ITEM_REGISTRAR.register("poison_needle", () -> new CauseStatusItem(39, 10, 0x80));
+  public static final RegistryDelegate<Item> PANIC_BELL = ITEM_REGISTRAR.register("panic_bell", () -> new CauseStatusItem(-11, 39, 10, 0x4));
+  public static final RegistryDelegate<Item> POISON_NEEDLE = ITEM_REGISTRAR.register("poison_needle", () -> new CauseStatusItem(-16, 39, 10, 0x80));
   public static final RegistryDelegate<Item> SACHET = ITEM_REGISTRAR.register("sachet", SachetItem::new);
   public static final RegistryDelegate<Item> SMOKE_BALL = ITEM_REGISTRAR.register("smoke_ball", SmokeBallItem::new);
-  public static final RegistryDelegate<Item> STUNNING_HAMMER = ITEM_REGISTRAR.register("stunning_hammer", () -> new CauseStatusItem(39, 10, 0x10));
+  public static final RegistryDelegate<Item> STUNNING_HAMMER = ITEM_REGISTRAR.register("stunning_hammer", () -> new CauseStatusItem(-13, 39, 10, 0x10));
   public static final RegistryDelegate<Item> TOTAL_VANISHING = ITEM_REGISTRAR.register("total_vanishing", TotalVanishingItem::new);
 
   static void register(final ItemRegistryEvent event) {
