@@ -4,6 +4,9 @@ entrypoint :USE_HEALING_POTION
 entrypoint :USE_DEPETRIFIER
 entrypoint :USE_BODY_PURIFIER
 entrypoint :USE_MIND_PURIFIER
+entrypoint :USE_POWER_SPEED_UP
+entrypoint :USE_MAGIC_SHIELD
+entrypoint :USE_MATERIAL_SHIELD
 
 
 
@@ -16,7 +19,7 @@ USE_ATTACK_ITEM:
 gosub inl[:LABEL_124] ; addr
 
 ; pull element colour out of element registry
-call Battle::scriptGetBentStat, stor[0], ITEM_ELEMENT, reg[1] ; r0 = item element
+call Battle::scriptGetBentStat, stor[0], ITEM_ELEMENT, reg[1] ; r1 = item element
 call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:elements], reg[1], 0, stor[8] ; s8 = packed element rgb
 
 gosub inl[:THROW_ATTACK_ITEM] ; addr
@@ -100,6 +103,43 @@ wait stor[23] ; frames
 
 gosub inl[:SET_BENT_ANIMATION] ; addr
 gosub inl[:CLEAR_MENU_BLOCK]
+gosub inl[:LABEL_128] ; addr
+return
+
+
+
+USE_POWER_SPEED_UP:
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:LABEL_128] ; addr
+gosub inl[:SET_BENT_ANIMATION] ; addr
+return
+
+
+
+USE_MAGIC_SHIELD:
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+or 0xc, var[128 + stor[8]][7] ; right, left
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+gosub inl[:ALLOCATE_MAGICAL_SHIELD_EFFECT] ; addr
+mov 0x18, stor[23] ; source, dest
+wait stor[23] ; frames
+gosub inl[:LABEL_128] ; addr
+return
+
+
+
+USE_MATERIAL_SHIELD:
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+or 0x3, var[128 + stor[8]][7] ; right, left
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+gosub inl[:ALLOCATE_MATERIAL_SHIELD_EFFECT] ; addr
+mov 0x18, stor[23] ; source, dest
+wait stor[23] ; frames
 gosub inl[:LABEL_128] ; addr
 return
 

@@ -1232,17 +1232,17 @@ rel :USE_PRAYER_CHARM_PANDEMONIUM ; charm potion
 rel :USE_PRAYER_CHARM_PANDEMONIUM ; pandemonium
 rel :USE_RECOVERY_BALL ; recovery ball
 rel :USE_NOTHING_ITEM ; nothing
-rel :USE_MAGIC_SHIELD ; magic shield
-rel :USE_MATERIAL_SHIELD ; material shield
+rel :USE_MAGIC_SHIELD2 ; magic shield
+rel :USE_MATERIAL_SHIELD2 ; material shield
 rel :USE_RHAPSODY_SERENADE ; sun rhapsody
 rel :USE_SMOKE_BALL ; smoke ball
 rel :USE_HEALING_FOG ; healing fog
 rel :USE_ATTACK_ITEM2 ; magic sig stone
 rel :USE_GROUP_HEAL ; healing rain
 rel :USE_RHAPSODY_SERENADE ; moon serenade
-rel :USE_POWER_SPEED_UP ; power up
+rel :USE_POWER_SPEED_UP2 ; power up
 rel :USE_ATTACK_ITEM2 ; power down
-rel :USE_POWER_SPEED_UP ; speed up
+rel :USE_POWER_SPEED_UP2 ; speed up
 rel :USE_ATTACK_ITEM2 ; speed down
 rel :USE_NOTHING_ITEM_2 ; nothing
 rel :USE_ATTACK_ITEM2 ; sachet
@@ -1435,7 +1435,7 @@ return
 
 
 
-USE_MAGIC_SHIELD:
+USE_MAGIC_SHIELD2:
 gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
 or 0xc, var[128 + stor[8]][7] ; right, left
@@ -1448,7 +1448,7 @@ return
 
 
 
-USE_MATERIAL_SHIELD:
+USE_MATERIAL_SHIELD2:
 gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
 or 0x3, var[128 + stor[8]][7] ; right, left
@@ -1461,7 +1461,7 @@ return
 
 
 
-USE_POWER_SPEED_UP:
+USE_POWER_SPEED_UP2:
 add 0xc0, stor[29] ; amount, operand
 call Battle::scriptLoadDeff, stor[29], stor[0], stor[28], 0x0, 0x2000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
 gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr

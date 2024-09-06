@@ -20,6 +20,7 @@ import legend.lodmod.items.MoonSerenadeItem;
 import legend.lodmod.items.PandemoniumItem;
 import legend.lodmod.items.RecoveryBallItem;
 import legend.lodmod.items.SachetItem;
+import legend.lodmod.items.ShieldItem;
 import legend.lodmod.items.SignetStoneItem;
 import legend.lodmod.items.SmokeBallItem;
 import legend.lodmod.items.SpiritPotionItem;
@@ -77,12 +78,12 @@ public final class LodItems {
   public static final RegistryDelegate<Item> ATTACK_BALL = ITEM_REGISTRAR.register("attack_ball", AttackBallItem::new);
 
   // Buffs/debuffs
-  public static final RegistryDelegate<Item> POWER_DOWN = ITEM_REGISTRAR.register("power_down", () -> new BuffItem(41, 200, Item.TargetType.ENEMIES, -50, -50, -50, -50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> POWER_UP = ITEM_REGISTRAR.register("power_up", () -> new BuffItem(40, 200, Item.TargetType.ALLIES, 50, 50, 50, 50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> SPEED_DOWN = ITEM_REGISTRAR.register("speed_down", () -> new BuffItem(41, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, -50, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> SPEED_UP = ITEM_REGISTRAR.register("speed_up", () -> new BuffItem(40, 200, Item.TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 100, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> MAGIC_SHIELD = ITEM_REGISTRAR.register("magic_shield", () -> new BuffItem(42, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, true, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> MATERIAL_SHIELD = ITEM_REGISTRAR.register("material_shield", () -> new BuffItem(42, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, true, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> POWER_DOWN = ITEM_REGISTRAR.register("power_down", () -> new BuffItem(1, 41, 200, Item.TargetType.ENEMIES, -50, -50, -50, -50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> POWER_UP = ITEM_REGISTRAR.register("power_up", () -> new BuffItem(6, 40, 200, Item.TargetType.ALLIES, 50, 50, 50, 50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> SPEED_DOWN = ITEM_REGISTRAR.register("speed_down", () -> new BuffItem(1, 41, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, -50, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> SPEED_UP = ITEM_REGISTRAR.register("speed_up", () -> new BuffItem(6, 40, 200, Item.TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 100, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> MAGIC_SHIELD = ITEM_REGISTRAR.register("magic_shield", () -> new ShieldItem(7, false, true));
+  public static final RegistryDelegate<Item> MATERIAL_SHIELD = ITEM_REGISTRAR.register("material_shield", () -> new ShieldItem(8, true, false));
 
   // Status items
   public static final RegistryDelegate<Item> CHARM_POTION = ITEM_REGISTRAR.register("charm_potion", CharmPotionItem::new);

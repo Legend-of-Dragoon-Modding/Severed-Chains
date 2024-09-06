@@ -1,12 +1,14 @@
 package legend.lodmod.items;
 
+import legend.game.characters.Element;
 import legend.game.characters.UnaryStatModConfig;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.inventory.Item;
+import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
 
-public class BuffItem extends Item {
+public class BuffItem extends BattleItem {
+  private final int useItemEntrypoint;
   private final TargetType target;
   private final int powerDefence;
   private final int powerMagicDefence;
@@ -25,8 +27,9 @@ public class BuffItem extends Item {
   private final int spPerMagicalHit;
   private final int mpPerMagicalHit;
 
-  public BuffItem(final int icon, final int price, final TargetType target, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit) {
+  public BuffItem(final int useItemEntrypoint, final int icon, final int price, final TargetType target, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit) {
     super(icon, price);
+    this.useItemEntrypoint = useItemEntrypoint;
     this.target = target;
     this.powerDefence = powerDefence;
     this.powerMagicDefence = powerMagicDefence;
@@ -139,5 +142,22 @@ public class BuffItem extends Item {
         playerTarget.tempMpPerMagicalHitTurns_d3 = turnCount;
       }
     }
+  }
+
+  @Override
+  public Element getAttackElement() {
+    return LodMod.NO_ELEMENT.get();
+  }
+
+  @Override
+  protected int getUseItemScriptEntrypoint() {
+    return this.useItemEntrypoint;
+  }
+
+  @Override
+  protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    user.storage_44[8] = 0xffffff; // Colour
+    user.storage_44[28] = targetBentIndex;
+    user.storage_44[30] = user.index;
   }
 }
