@@ -15,7 +15,7 @@ public class PandemoniumItem extends BattleItem {
 
   @Override
   public boolean canTarget(final TargetType type) {
-    return type == TargetType.ENEMIES;
+    return type == TargetType.ALLIES;
   }
 
   @Override
