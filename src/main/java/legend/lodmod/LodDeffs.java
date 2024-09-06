@@ -24,6 +24,7 @@ public final class LodDeffs {
   public static final RegistryDelegate<DeffPackage> METEOR_FALL = REGISTRAR.register("meteor_fall", () -> new RetailDeffPackage(4339));
   public static final RegistryDelegate<DeffPackage> GUSHING_MAGMA = REGISTRAR.register("gushing_magma", () -> new RetailDeffPackage(4341));
   public static final RegistryDelegate<DeffPackage> DANCING_RAY = REGISTRAR.register("dancing_ray", () -> new RetailDeffPackage(4343));
+  public static final RegistryDelegate<DeffPackage> SPIRIT_POTION = REGISTRAR.register("spirit_potion", () -> new RetailDeffPackage(4345));
   public static final RegistryDelegate<DeffPackage> PANIC_BELL = REGISTRAR.register("panic_bell", () -> new RetailDeffPackage(4347));
   public static final RegistryDelegate<DeffPackage> FATAL_BLIZZARD = REGISTRAR.register("fatal_blizzard", () -> new RetailDeffPackage(4351));
   public static final RegistryDelegate<DeffPackage> STUNNING_HAMMER = REGISTRAR.register("stunning_hammer", () -> new RetailDeffPackage(4353));
@@ -31,10 +32,12 @@ public final class LodDeffs {
   public static final RegistryDelegate<DeffPackage> POISON_NEEDLE = REGISTRAR.register("poison_needle", () -> new RetailDeffPackage(4357));
   public static final RegistryDelegate<DeffPackage> MIDNIGHT_TERROR = REGISTRAR.register("midnight_terror", () -> new RetailDeffPackage(4359));
   public static final RegistryDelegate<DeffPackage> RAVE_TWISTER = REGISTRAR.register("rave_twister", () -> new RetailDeffPackage(4363));
+  public static final RegistryDelegate<DeffPackage> ANGELS_PRAYER = REGISTRAR.register("angels_prayer", () -> new RetailDeffPackage(4367));
   public static final RegistryDelegate<DeffPackage> PANDEMONIUM = REGISTRAR.register("pandemonium", () -> new RetailDeffPackage(4371));
+  public static final RegistryDelegate<DeffPackage> SUN_RHAPSODY = REGISTRAR.register("sun_rhapsody", () -> new RetailDeffPackage(4381));
   public static final RegistryDelegate<DeffPackage> HEALING_POTION = REGISTRAR.register("healing_potion", () -> new RetailDeffPackage(4385));
   public static final RegistryDelegate<DeffPackage> MAGIC_SIG_STONE = REGISTRAR.register("magic_sig_stone", () -> new RetailDeffPackage(4387));
-  public static final RegistryDelegate<DeffPackage> HEALING_FOG = REGISTRAR.register("healing_fog", () -> new RetailDeffPackage(4389));
+  public static final RegistryDelegate<DeffPackage> HEALING_RAIN = REGISTRAR.register("healing_rain", () -> new RetailDeffPackage(4389));
   public static final RegistryDelegate<DeffPackage> MOON_SERENADE = REGISTRAR.register("moon_serenade", () -> new RetailDeffPackage(4391));
   public static final RegistryDelegate<DeffPackage> POWER_UP = REGISTRAR.register("power_up", () -> new RetailDeffPackage(4393));
   public static final RegistryDelegate<DeffPackage> POWER_DOWN = REGISTRAR.register("power_down", () -> new RetailDeffPackage(4395));

@@ -1,13 +1,14 @@
 package legend.lodmod.items;
 
-import legend.game.inventory.Item;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.UseItemResponse;
+import legend.game.scripting.ScriptState;
 import legend.game.submap.SMap;
 import legend.game.wmap.WMap;
 
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
-public class CharmPotionItem extends Item {
+public class CharmPotionItem extends BattleItem {
   public CharmPotionItem() {
     super(45, 2);
   }
@@ -37,5 +38,17 @@ public class CharmPotionItem extends Item {
     }
 
     response.value_04 = 0;
+  }
+
+  @Override
+  protected int getUseItemScriptEntrypoint() {
+    return 2;
+  }
+
+  @Override
+  protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    user.storage_44[8] = 0xffffff; // Colour
+    user.storage_44[28] = targetBentIndex;
+    user.storage_44[30] = user.index;
   }
 }

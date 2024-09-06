@@ -10,6 +10,8 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import legend.game.unpacker.Unpacker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -22,6 +24,8 @@ import static legend.game.combat.Battle.deffManager_800c693c;
 
 /** Convenience class for easily using vanilla item effects */
 public abstract class BattleItem extends Item {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(BattleItem.class);
+
   private int deffLoadingStage;
 
   public BattleItem(final int icon, final int price) {
@@ -81,6 +85,8 @@ public abstract class BattleItem extends Item {
   }
 
   protected void loadDeff(final ScriptState<? extends BattleEntity27c> user, final int entrypoint, final int param) {
+    LOGGER.info("%s loading deff %s", this, this.getDeffId());
+
     final RegistryDelegate<DeffPackage> deff = REGISTRIES.deff.getEntry(this.getDeffId());
 
     if(!deff.isValid()) {

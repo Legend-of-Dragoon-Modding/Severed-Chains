@@ -1,6 +1,9 @@
 entrypoint :DO_NOTHING
 entrypoint :USE_ATTACK_ITEM
 entrypoint :USE_HEALING_POTION
+entrypoint :USE_DEPETRIFIER
+entrypoint :USE_BODY_PURIFIER
+entrypoint :USE_MIND_PURIFIER
 
 
 
@@ -30,6 +33,75 @@ return
 
 USE_HEALING_POTION:
 jmp inl[:LABEL_143] ; addr
+
+
+
+USE_PURIFIER_STATUS:
+data 0
+
+; @param int s8 status effect cure bitset
+; @param int s28 bent index
+; @return int s9 bitset of status effects that were cleared
+USE_PURIFIER:
+mov stor[8], inl[:USE_PURIFIER_STATUS] ; back up statuses that are cured
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
+add 0x81, stor[9] ; amount, operand
+mov var[45][stor[9]], stor[9] ; s9 = status
+and 0xf, stor[9] ; mask status effect index
+mov inl[:LABEL_122[stor[9]]], stor[9] ; s9 = status flag for status effect index
+and inl[:USE_PURIFIER_STATUS], stor[9] ; mask status effect that this item cures
+gosub inl[:CLEAR_BENT_STATUS] ; addr
+return;
+
+
+
+; @param int s28 bent index
+CLEAR_MENU_BLOCK:
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
+mov 0x0, var[128 + stor[9]][6] ; source, dest
+
+
+
+USE_DEPETRIFIER:
+gosub inl[:USE_PURIFIER]
+
+mov 20, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:LABEL_128] ; addr
+return
+
+
+
+USE_BODY_PURIFIER:
+gosub inl[:USE_PURIFIER]
+
+mov 20, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SET_BENT_ANIMATION] ; addr
+gosub inl[:LABEL_128] ; addr
+return
+
+
+
+USE_MIND_PURIFIER:
+gosub inl[:USE_PURIFIER]
+
+jmp_cmp ==, 0x0, stor[9], inl[:SKIP_CLEAR_MENU_BLOCK_EFFECT] ; nothing was cured
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
+jmp_cmp ==, 0x0, var[128 + stor[9]][6], inl[:LABEL_118] ; operand, left, right, addr
+gosub inl[:LABEL_121] ; addr
+SKIP_CLEAR_MENU_BLOCK_EFFECT:
+
+mov 20, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SET_BENT_ANIMATION] ; addr
+gosub inl[:CLEAR_MENU_BLOCK]
+gosub inl[:LABEL_128] ; addr
+return
 
 
 
