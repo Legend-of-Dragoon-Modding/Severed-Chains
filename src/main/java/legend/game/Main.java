@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.GameEngine;
+import legend.core.Version;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +28,7 @@ public final class Main {
 
       LOGGER.error("----------------------------------------------------------------------------");
       LOGGER.error("Crash detected");
+      LOGGER.error("Severed Chains %s commit %s", Version.VERSION, Version.HASH);
 
       for(final String message : messages) {
         LOGGER.error("Message: %s", message);

@@ -354,7 +354,7 @@ public class RenderEngine {
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
-    this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
+    this.window = new Window("Severed Chains", Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
 
     glEnable(GL_LINE_SMOOTH);
