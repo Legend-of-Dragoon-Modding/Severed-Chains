@@ -4507,8 +4507,7 @@ gosub inl[:LABEL_344] ; addr
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_321] ; operand, left, right, addr
 mov 0x0, var[45][248] ; source, dest
 mov 0x0, var[45][249] ; source, dest
-call Battle::scriptSetBentStat, stor[0], 0x1, ITEM_ID ; bentIndex, value, statIndex
-call Battle::scriptSetTempItemMagicStats, stor[0] ; bentIndex
+call Battle::scriptSetBentStat, stor[0], id[lod:detonate_rock], ITEM_ID ; bentIndex, value, statIndex
 call Battle::scriptLoadDeff, 0xc1, stor[0], 0xffffffff, 0x1, 0x2000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
 LABEL_321:
 gosub inl[:LABEL_348] ; addr
