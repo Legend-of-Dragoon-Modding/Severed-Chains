@@ -1705,9 +1705,9 @@ public final class Scus94491BpeSegment_8002 {
         final int itemId = script.params_20[0].get();
 
         if(itemId < 0xc0) {
-          yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()) ? 0 : 0xff;
+          yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff;
         }
-        yield giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()) ? 0 : 0xff;
+        yield giveItem(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff;
       }
     };
 
@@ -1726,9 +1726,9 @@ public final class Scus94491BpeSegment_8002 {
     final int itemId = script.params_20[0].get() & 0xff;
 
     if(itemId < 0xc0) {
-      script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()) ? 0 : 0xff);
+      script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff);
     } else {
-      script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()) ? 0 : 0xff);
+      script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff);
     }
 
     return FlowControl.CONTINUE;

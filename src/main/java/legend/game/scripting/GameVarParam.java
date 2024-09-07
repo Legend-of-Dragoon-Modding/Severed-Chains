@@ -215,7 +215,7 @@ public class GameVarParam extends Param {
         // size and simply add the drop to the list if var[41] is set.
       }
       case 41 -> {
-        final InventoryEntry invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(val)).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(val - 192)).get();
+        final InventoryEntry invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[val])).get() : REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[val - 192])).get();
 
         if(invEntry instanceof final Equipment equipment) {
           equipmentOverflow.add(equipment);
