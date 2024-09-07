@@ -4503,7 +4503,7 @@ gosub inl[:LABEL_348] ; addr
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x0, 0x0, 0x0, inl[:LABEL_352[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x4, 0x0, 0x0, inl[:LABEL_353[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x5, 0x0, 0x0, inl[:LABEL_354[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-gosub inl[:LABEL_344] ; addr
+gosub inl[:IS_DETONATE_ARROW] ; addr
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_321] ; operand, left, right, addr
 mov 0x0, var[45][248] ; source, dest
 mov 0x0, var[45][249] ; source, dest
@@ -4520,7 +4520,7 @@ mov 0x0, stor[11] ; source, dest
 gosub inl[:LABEL_404] ; addr
 mov 0x6, stor[23] ; source, dest
 wait stor[23] ; frames
-gosub inl[:LABEL_344] ; addr
+gosub inl[:IS_DETONATE_ARROW] ; addr
 jmp_cmp !=, 0x0, stor[8], inl[:LABEL_337] ; operand, left, right, addr
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
@@ -4736,11 +4736,9 @@ wait stor[23] ; frames
 deallocate
 
 ; SUBROUTINE
-LABEL_344:
-call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, stor[8] ; bentIndex, statIndex, value
-jmp_cmp ==, 0x20, stor[8], inl[:LABEL_345] ; operand, left, right, addr
-mov 0x0, stor[8] ; source, dest
-LABEL_345:
+IS_DETONATE_ARROW:
+call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, reg[0] ; bentIndex, statIndex, value
+call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:equipment], reg[0], 1000, stor[8]
 return
 
 ; SUBROUTINE

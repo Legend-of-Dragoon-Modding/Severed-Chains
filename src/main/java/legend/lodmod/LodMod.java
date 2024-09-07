@@ -44,6 +44,7 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.equipment.DestroyerMaceEquipment;
+import legend.lodmod.equipment.DetonateArrowEquipment;
 import legend.lodmod.equipment.UltimateWargodEquipment;
 import legend.lodmod.equipment.WargodCallingEquipment;
 import org.legendofdragoon.modloader.Mod;
@@ -122,6 +123,7 @@ public class LodMod {
 
       if(!name.isEmpty()) {
         final Equipment equipment = switch(equipmentId) {
+          case 0x20 -> event.register(id(name), new DetonateArrowEquipment(itemPrices_80114310[equipmentId]));
           case 0x2c -> event.register(id(name), new DestroyerMaceEquipment(itemPrices_80114310[equipmentId]));
           case 0x9c -> event.register(id(name), new WargodCallingEquipment(itemPrices_80114310[equipmentId]));
           case 0x9d -> event.register(id(name), new UltimateWargodEquipment(itemPrices_80114310[equipmentId]));
