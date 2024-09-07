@@ -18,6 +18,7 @@ import org.legendofdragoon.scripting.tokens.Script;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
@@ -561,6 +562,14 @@ public class ScriptState<T> {
       return param;
     }
 
+    if(paramType == 0x22) { // Null
+      return new ScriptStateNullRegistryIdParam();
+    }
+
+    if(paramType == 0x23) { // Var registry ID
+      return new ScriptStateVarRegistryIdParam(this, cmd0);
+    }
+
     // Treated as an immediate if not a valid op
     return new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
   }
@@ -664,8 +673,8 @@ public class ScriptState<T> {
     // Compare registry IDs
     if(operandA.isRegistryId() && operandB.isRegistryId()) {
       return switch(op) {
-        case 2 -> operandA.getRegistryId().equals(operandB.getRegistryId());
-        case 3 -> !operandA.getRegistryId().equals(operandB.getRegistryId());
+        case 2 -> Objects.equals(operandA.getRegistryId(), operandB.getRegistryId());
+        case 3 -> !Objects.equals(operandA.getRegistryId(), operandB.getRegistryId());
         default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
       };
     }

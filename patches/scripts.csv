@@ -1,5 +1,6 @@
 replacement,SECT/DRGN1.BIN/40,scripts/DRGN1/40.txt,"Spring Hitter steal item registry"
 replacement,SECT/DRGN1.BIN/84,scripts/DRGN1/84.txt,"Crafty Thief steal item registry and return stolen gold instead of Bastard Sword"
+replacement,SECT/DRGN1.BIN/254,scripts/DRGN1/254.txt,"Item tutorial item registry"
 replacement,player_combat_script,scripts/player_combat_script.txt,"Registry-aware battle menu"
 diff,SECT/DRGN1.BIN/263,scripts/DRGN1/263.diff,"Fruegel II, Fix for finisher crash"
 diff,SECT/DRGN1.BIN/266,scripts/DRGN1/266.diff,"Kongol I, Fix for failed addition counter crash when below 3 characters"

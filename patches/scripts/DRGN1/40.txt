@@ -1721,11 +1721,11 @@ call Battle::scriptGetBentSlot, stor[0], stor[9], 0x0 ; bentIndex, charOrBentSlo
 mov var[128 + stor[9]][7], stor[10] ; source, dest
 shr 0x18, stor[10] ; shift, val
 jmp_cmp !=, 0x0, stor[10], inl[:JMP_7d70_0] ; operand, left, right, addr
+jmp_cmp !=, 0x0, reg[10], inl[:JMP_7d70_0] ; operand, left, right, addr
 gosub inl[:LABEL_82] ; addr
 rand 0x64, stor[8] ; bound, dest
 jmp_cmp <, 0x64, stor[8], inl[:LABEL_76] ; operand, left, right, addr
-mov 0, reg[0] ; null item, select a random one to steal
-call Battle::scriptTakeItem, reg[0], reg[10] ; itemId, itemTaken
+call Battle::scriptTakeItem, null, reg[10] ; itemId, itemTaken
 jmp_cmp ==, 0, reg[10], inl[:LABEL_76] ; operand, left, right, addr
 mov 0x0, stor[8] ; source, dest
 mov 0x1e, stor[9] ; source, dest

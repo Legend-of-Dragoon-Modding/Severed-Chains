@@ -1776,8 +1776,7 @@ call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x12 ; bentIndex, anim
 call Battle::scriptPlayBentSound, 0x2, stor[0], 0x1, 0x0, 0x0, 0x0, 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 rand 0x64, stor[8] ; bound, dest
 jmp_cmp <, 0x64, stor[8], inl[:LABEL_77] ; operand, left, right, addr
-mov 0, reg[0]
-call Battle::scriptTakeItem, reg[0], reg[10] ; itemId, itemTaken
+call Battle::scriptTakeItem, null, reg[10] ; itemId, itemTaken
 jmp_cmp ==, 0, stor[10], inl[:LABEL_77] ; operand, left, right, addr
 mov 0x0, stor[8] ; source, dest
 mov 0x1e, stor[9] ; source, dest
