@@ -101,7 +101,7 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
-    // Item, equipment, spells, XP, and TIMs from lod_engine
+    // Equipment, spells, XP, and TIMs from lod_engine
     transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
     transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
@@ -1491,10 +1491,6 @@ public final class Unpacker {
   }
 
   private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    for(int i = 0; i < 64; i++) {
-      transformations.addNode("items/" + i + ".ditm", node.data.slice(0x3f2ac + i * 0xc, 0xc));
-    }
-
     transformations.addNode("shadow.ctmd", node.data.slice(0x3d0, 0x14c));
     transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
     transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));
