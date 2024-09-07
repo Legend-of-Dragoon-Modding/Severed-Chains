@@ -45,6 +45,8 @@ public class StatusConditions20 {
    */
   public int pandemoniumTurnsDiedAsDragoon_1d;
   public int chargingSpirit_1e;
-  /** Item stolen by Crafty Thief or Spring Hitter */
+  /**
+   * Item stolen by Crafty Thief or Spring Hitter. SC uses reg[10] instead. Flag 0x1 means stole gold.
+   */
   public int stolenItem_1f;
 }
