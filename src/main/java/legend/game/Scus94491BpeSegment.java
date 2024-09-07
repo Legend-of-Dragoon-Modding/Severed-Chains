@@ -33,6 +33,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptTempParam;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -234,37 +235,37 @@ public final class Scus94491BpeSegment {
       }
     });
     scriptFunctionDescriptions.put(OpType.WAIT_CMP, r -> {
-      final int operandA = r.params_20[0].get();
-      final int operandB = r.params_20[1].get();
+      final Param operandA = r.params_20[0];
+      final Param operandB = r.params_20[1];
       final int op = r.opParam_18;
 
       return (switch(op) {
-        case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
-        case 1 -> "if 0x%x (p0) < 0x%x (p1)? %s;";
-        case 2 -> "if 0x%x (p0) == 0x%x (p1)? %s;";
-        case 3 -> "if 0x%x (p0) != 0x%x (p1)? %s;";
-        case 4 -> "if 0x%x (p0) > 0x%x (p1)? %s;";
-        case 5 -> "if 0x%x (p0) >= 0x%x (p1)? %s;";
-        case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
-        case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
+        case 0 -> "if %s (p0) <= %s (p1)? %s;";
+        case 1 -> "if %s (p0) < %s (p1)? %s;";
+        case 2 -> "if %s (p0) == %s (p1)? %s;";
+        case 3 -> "if %s (p0) != %s (p1)? %s;";
+        case 4 -> "if %s (p0) > %s (p1)? %s;";
+        case 5 -> "if %s (p0) >= %s (p1)? %s;";
+        case 6 -> "if %s (p0) & %s (p1)? %s;";
+        case 7 -> "if %s (p0) !& %s (p1)? %s;";
         default -> "illegal cmp 3";
       }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(OpType.WAIT_CMP_0, r -> {
-      final int operandB = r.params_20[0].get();
+      final Param operandB = r.params_20[0];
       final int op = r.opParam_18;
 
       return (switch(op) {
-        case 0 -> "if 0 <= 0x%x (p0)? %s;";
-        case 1 -> "if 0 < 0x%x (p0)? %s;";
-        case 2 -> "if 0 == 0x%x (p0)? %s;";
-        case 3 -> "if 0 != 0x%x (p0)? %s;";
-        case 4 -> "if 0 > 0x%x (p0)? %s;";
-        case 5 -> "if 0 >= 0x%x (p0)? %s;";
-        case 6 -> "if 0 & 0x%x (p0)? %s;";
-        case 7 -> "if 0 !& 0x%x (p0)? %s;";
+        case 0 -> "if 0 <= %s (p0)? %s;";
+        case 1 -> "if 0 < %s (p0)? %s;";
+        case 2 -> "if 0 == %s (p0)? %s;";
+        case 3 -> "if 0 != %s (p0)? %s;";
+        case 4 -> "if 0 > %s (p0)? %s;";
+        case 5 -> "if 0 >= %s (p0)? %s;";
+        case 6 -> "if 0 & %s (p0)? %s;";
+        case 7 -> "if 0 !& %s (p0)? %s;";
         default -> "illegal cmp 4";
-      }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - continue" : "no - rewind");
+      }).formatted(operandB, r.scriptState_04.scriptCompare(ScriptTempParam.ZERO, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(OpType.MOV, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(OpType.SWAP_BROKEN, r -> "tmp = 0x%x (p0); *%s (p1) = tmp; *%s (p0) = tmp; // Broken swap".formatted(r.params_20[0].get(), r.params_20[1], r.params_20[0]));
@@ -276,7 +277,7 @@ public final class Scus94491BpeSegment {
     scriptFunctionDescriptions.put(OpType.ANDOR, r -> "*%s (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
     scriptFunctionDescriptions.put(OpType.NOT, r -> "~*%s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(OpType.SHL, r -> "*%s (p1) <<= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
-    scriptFunctionDescriptions.put(OpType.SHL, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SHR, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(OpType.ADD, r -> "*%s (p1) += 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(OpType.SUB, r -> "*%s (p1) -= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(OpType.SUB_REV, r -> "*%s (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
@@ -298,39 +299,39 @@ public final class Scus94491BpeSegment {
     scriptFunctionDescriptions.put(OpType.CALL, r -> "subfunc(%d (pp));".formatted(r.opParam_18));
     scriptFunctionDescriptions.put(OpType.JMP, r -> "jmp %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(OpType.JMP_CMP, r -> {
-      final int operandA = r.params_20[0].get();
-      final int operandB = r.params_20[1].get();
+      final Param operandA = r.params_20[0];
+      final Param operandB = r.params_20[1];
       final int op = r.opParam_18;
       final Param dest = r.params_20[2];
 
       return (switch(op) {
-        case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
-        case 1 -> "if 0x%x (p0) < 0x%x (p1)? %s;";
-        case 2 -> "if 0x%x (p0) == 0x%x (p1)? %s;";
-        case 3 -> "if 0x%x (p0) != 0x%x (p1)? %s;";
-        case 4 -> "if 0x%x (p0) > 0x%x (p1)? %s;";
-        case 5 -> "if 0x%x (p0) >= 0x%x (p1)? %s;";
-        case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
-        case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
+        case 0 -> "if %s (p0) <= %s (p1)? %s;";
+        case 1 -> "if %s (p0) < %s (p1)? %s;";
+        case 2 -> "if %s (p0) == %s (p1)? %s;";
+        case 3 -> "if %s (p0) != %s (p1)? %s;";
+        case 4 -> "if %s (p0) > %s (p1)? %s;";
+        case 5 -> "if %s (p0) >= %s (p1)? %s;";
+        case 6 -> "if %s (p0) & %s (p1)? %s;";
+        case 7 -> "if %s (p0) !& %s (p1)? %s;";
         default -> "illegal cmp 65";
       }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
     });
     scriptFunctionDescriptions.put(OpType.JMP_CMP_0, r -> {
-      final int operandB = r.params_20[0].get();
+      final Param operandB = r.params_20[0];
       final int op = r.opParam_18;
       final Param dest = r.params_20[1];
 
       return (switch(op) {
-        case 0 -> "if 0 <= 0x%x (p0)? %s;";
-        case 1 -> "if 0 < 0x%x (p0)? %s;";
-        case 2 -> "if 0 == 0x%x (p0)? %s;";
-        case 3 -> "if 0 != 0x%x (p0)? %s;";
-        case 4 -> "if 0 > 0x%x (p0)? %s;";
-        case 5 -> "if 0 >= 0x%x (p0)? %s;";
-        case 6 -> "if 0 & 0x%x (p0)? %s;";
-        case 7 -> "if 0 !& 0x%x (p0)? %s;";
+        case 0 -> "if 0 <= %s (p0)? %s;";
+        case 1 -> "if 0 < %s (p0)? %s;";
+        case 2 -> "if 0 == %s (p0)? %s;";
+        case 3 -> "if 0 != %s (p0)? %s;";
+        case 4 -> "if 0 > %s (p0)? %s;";
+        case 5 -> "if 0 >= %s (p0)? %s;";
+        case 6 -> "if 0 & %s (p0)? %s;";
+        case 7 -> "if 0 !& %s (p0)? %s;";
         default -> "illegal cmp 66";
-      }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
+      }).formatted(operandB, r.scriptState_04.scriptCompare(ScriptTempParam.ZERO, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
     });
     scriptFunctionDescriptions.put(OpType.WHILE, r -> "if(--%s (p0) != 0) jmp %s (p1)".formatted(r.params_20[0], r.params_20[1]));
     scriptFunctionDescriptions.put(OpType.GOSUB, r -> "gosub %s (p0);".formatted(r.params_20[0]));

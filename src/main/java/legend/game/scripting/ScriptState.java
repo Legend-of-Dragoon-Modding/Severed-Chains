@@ -642,16 +642,36 @@ public class ScriptState<T> {
   }
 
   @Method(0x8001664cL)
-  public boolean scriptCompare(final int operandA, final int operandB, final int op) {
+  public boolean scriptCompare(final Param operandA, final Param operandB, final int op) {
+    // Check A for null
+    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandA.getRegistryId() == null && operandB.get() == 0) {
+      return true;
+    }
+
+    // Check B for null
+    if(!operandA.isRegistryId() && operandB.isRegistryId() && operandA.get() == 0 && operandB.getRegistryId() == null) {
+      return true;
+    }
+
+    // Compare registry IDs
+    if(operandA.isRegistryId() && operandB.isRegistryId()) {
+      return switch(op) {
+        case 2 -> operandA.getRegistryId().equals(operandB.getRegistryId());
+        case 3 -> !operandA.getRegistryId().equals(operandB.getRegistryId());
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Standard compare
     return switch(op) {
-      case 0 -> operandA <= operandB;
-      case 1 -> operandA < operandB;
-      case 2 -> operandA == operandB;
-      case 3 -> operandA != operandB;
-      case 4 -> operandA > operandB;
-      case 5 -> operandA >= operandB;
-      case 6 -> (operandA & operandB) != 0;
-      case 7 -> (operandA & operandB) == 0;
+      case 0 -> operandA.get() <= operandB.get();
+      case 1 -> operandA.get() < operandB.get();
+      case 2 -> operandA.get() == operandB.get();
+      case 3 -> operandA.get() != operandB.get();
+      case 4 -> operandA.get() > operandB.get();
+      case 5 -> operandA.get() >= operandB.get();
+      case 6 -> (operandA.get() & operandB.get()) != 0;
+      case 7 -> (operandA.get() & operandB.get()) == 0;
       default -> false;
     };
   }
@@ -704,13 +724,13 @@ public class ScriptState<T> {
    */
   @Method(0x8001670cL)
   public FlowControl scriptCompare() {
-    return this.scriptCompare(this.context.params_20[0].get(), this.context.params_20[1].get(), this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
+    return this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /** Same as {@link #scriptCompare()} with first param set to 0 */
   @Method(0x80016744L)
   public FlowControl scriptCompare0() {
-    return this.scriptCompare(0, this.context.params_20[0].get(), this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
+    return this.scriptCompare(ScriptTempParam.ZERO, this.context.params_20[0], this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /**
@@ -1030,7 +1050,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016d4cL)
   public FlowControl scriptConditionalJump() {
-    if(this.scriptCompare(this.context.params_20[0].get(), this.context.params_20[1].get(), this.context.opParam_18)) {
+    if(this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18)) {
       this.context.params_20[2].jump(this.context);
     }
 
@@ -1060,7 +1080,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016da0L)
   public FlowControl scriptConditionalJump0() {
-    if(this.scriptCompare(0, this.context.params_20[0].get(), this.context.opParam_18)) {
+    if(this.scriptCompare(ScriptTempParam.ZERO, this.context.params_20[0], this.context.opParam_18)) {
       this.context.params_20[1].jump(this.context);
     }
 
