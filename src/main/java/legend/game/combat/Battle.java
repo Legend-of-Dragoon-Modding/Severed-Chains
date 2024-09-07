@@ -8408,15 +8408,17 @@ public class Battle extends EngineState {
       return FlowControl.CONTINUE;
     }
 
-    Item item = null;
+    Item item;
     if(itemId == -1) {
       item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
-      itemId = LodMod.idItemMap.getInt(item.getRegistryId());
+      itemId = LodMod.idItemMap.getInt(item.getRegistryId()) + 192;
 
       if(item.isProtected()) {
         item = null;
         itemId = -1;
       }
+    } else {
+      item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get();
     }
 
     //LAB_800f9988
@@ -8426,7 +8428,7 @@ public class Battle extends EngineState {
     }
 
     //LAB_800f99c0
-    script.params_20[1].set(itemId + 192);
+    script.params_20[1].set(itemId);
     return FlowControl.CONTINUE;
   }
 
