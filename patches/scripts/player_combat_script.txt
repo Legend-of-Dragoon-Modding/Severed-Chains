@@ -8826,6 +8826,19 @@ data 0x49
 CACHE_SPECIAL_EQUIPMENT_FLAGS:
 call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, reg[0]
 call Battle::scriptApplyEquipmentEffect, reg[0], stor[0]
+
+call Battle::scriptGetBentStat, stor[0], EQUIPMENT_HELMET_SLOT, reg[0]
+call Battle::scriptApplyEquipmentEffect, reg[0], stor[0]
+
+call Battle::scriptGetBentStat, stor[0], EQUIPMENT_ARMOUR_SLOT, reg[0]
+call Battle::scriptApplyEquipmentEffect, reg[0], stor[0]
+
+call Battle::scriptGetBentStat, stor[0], EQUIPMENT_BOOTS_SLOT, reg[0]
+call Battle::scriptApplyEquipmentEffect, reg[0], stor[0]
+
+call Battle::scriptGetBentStat, stor[0], EQUIPMENT_ACCESSORY_SLOT, reg[0]
+call Battle::scriptApplyEquipmentEffect, reg[0], stor[0]
+
 return
 
 
