@@ -8397,64 +8397,52 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Takes a specific (or random) item from the player")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID (or -1 to take a random item)")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID that was taken (or -1 if none could be taken)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "itemId", description = "The item ID (or null to take a random item)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "itemTaken", description = "The item ID that was taken (or null if none could be taken)")
   @Method(0x800f98b0L)
   public FlowControl scriptTakeItem(final RunningScript<?> script) {
-    int itemId = script.params_20[0].get();
+    final RegistryId itemId = script.params_20[0].getRegistryId();
 
     if(gameState_800babc8.items_2e9.isEmpty()) {
-      script.params_20[1].set(-1);
+      script.params_20[1].set(0);
       return FlowControl.CONTINUE;
     }
 
     Item item;
-    if(itemId == -1) {
+    if(itemId == null) {
       item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
-      itemId = LodMod.idItemMap.getInt(item.getRegistryId()) + 192;
 
       if(item.isProtected()) {
         item = null;
-        itemId = -1;
       }
     } else {
-      item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get();
+      item = REGISTRIES.items.getEntry(itemId).get();
     }
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(item != null && !takeItemId(item)) {
-      itemId = -1;
+    if(item == null || !takeItemId(item)) {
+      script.params_20[1].set(0);
+    } else {
+      script.params_20[1].set(item.getRegistryId());
     }
 
-    //LAB_800f99c0
-    script.params_20[1].set(itemId);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Gives a specific item to the player")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID that was given (or -1 if none could be given)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "itemId", description = "The item ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "itemGiven", description = "The item ID that was given (or null if none could be given)")
   @Method(0x800f99ecL)
   public FlowControl scriptGiveItem(final RunningScript<?> script) {
-    final int givenItem;
+    final RegistryId itemId = script.params_20[0].getRegistryId();
 
-    final int itemId = script.params_20[0].get();
-    final boolean given;
-    if(itemId < 192) {
-      given = giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
+    if(giveItem(REGISTRIES.items.getEntry(itemId).get())) {
+      script.params_20[1].set(itemId);
     } else {
-      given = giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get());
+      script.params_20[1].set(0);
     }
 
-    if(given) {
-      givenItem = itemId;
-    } else {
-      givenItem = -1;
-    }
-
-    //LAB_800f9a2c
-    script.params_20[1].set(givenItem);
     return FlowControl.CONTINUE;
   }
 
