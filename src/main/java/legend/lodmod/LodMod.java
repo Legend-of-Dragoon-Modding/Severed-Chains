@@ -43,6 +43,9 @@ import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.equipment.DestroyerMaceEquipment;
+import legend.lodmod.equipment.UltimateWargodEquipment;
+import legend.lodmod.equipment.WargodCallingEquipment;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -97,40 +100,9 @@ public class LodMod {
   @Deprecated
   public static final Object2IntMap<RegistryId> idItemMap = new Object2IntOpenHashMap<>();
 
-  public static final String[] ITEM_IDS = {
-    "", "detonate_rock", "spark_net", "burn_out", "", "pellet", "spear_frost", "spinning_gale",
-    "attack_ball", "trans_light", "dark_mist", "healing_potion", "depetrifier", "mind_purifier", "body_purifier", "thunderbolt",
-    "meteor_fall", "gushing_magma", "dancing_ray", "spirit_potion", "panic_bell", "", "fatal_blizzard", "stunning_hammer",
-    "black_rain", "poison_needle", "midnight_terror", "", "rave_twister", "total_vanishing", "angels_prayer", "charm_potion",
-    "pandemonium", "recovery_ball", "", "magic_shield", "material_shield", "sun_rhapsody", "smoke_ball", "healing_fog",
-    "magic_sig_stone", "healing_rain", "moon_serenade", "power_up", "power_down", "speed_up", "speed_down", "enemy_healing_potion",
-    "sachet", "psyche_bomb", "burning_wave", "frozen_jet", "down_burst", "gravity_grabber", "spectral_flash", "night_raid",
-    "flash_hall", "healing_breeze", "psyche_bomb_x", "", "", "", "", ""
-  };
-
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     LodItems.register(event);
-
-/*
-    for(int itemId = 0; itemId < 64; itemId++) {
-      String name = ITEM_IDS[itemId];
-      if(name.isEmpty()) {
-        name = "item_" + itemId;
-      }
-
-      final Item item;
-      if(itemId != 0x1f) { // Charm Potion
-        item = FileBasedItem.fromFile(itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/" + itemId + ".ditm"));
-      } else {
-        item = new CharmPotionItem(itemPrices_80114310[itemId + 192]);
-      }
-
-      event.register(id(name), item);
-      itemIdMap.put(itemId, item.getRegistryId());
-      idItemMap.put(item.getRegistryId(), itemId);
-    }
-*/
   }
 
   @Deprecated
@@ -149,7 +121,13 @@ public class LodMod {
       final String name = EQUIPMENT_IDS[equipmentId];
 
       if(!name.isEmpty()) {
-        final Equipment equipment = event.register(id(name), Equipment.fromFile(itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
+        final Equipment equipment = switch(equipmentId) {
+          case 0x2c -> event.register(id(name), new DestroyerMaceEquipment(itemPrices_80114310[equipmentId]));
+          case 0x9c -> event.register(id(name), new WargodCallingEquipment(itemPrices_80114310[equipmentId]));
+          case 0x9d -> event.register(id(name), new UltimateWargodEquipment(itemPrices_80114310[equipmentId]));
+          default -> event.register(id(name), Equipment.fromFile(itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
+        };
+
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }

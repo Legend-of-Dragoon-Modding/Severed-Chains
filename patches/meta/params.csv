@@ -1509,3 +1509,6 @@
 "Battle::scriptGetStatModParams","in","reg","statType","The stat type to mod","none"
 "Battle::scriptGetStatModParams","out","int_array","statModParams","The implementation-specific configuration for the stat mod type","none"
 "Battle::scriptUseItem","in","reg","itemId","The ID of the item being used","none"
+"Battle::scriptUseItem","in","int","targetBentIndex","The ID of the bent being targeted","none"
+"Battle::scriptApplyEquipmentEffect","in","reg","equipmentId","The ID of the equipment","none"
+"Battle::scriptApplyEquipmentEffect","in","int","wearerBentIndex","The ID of the bent wearing the equipment","none"

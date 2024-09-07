@@ -8823,29 +8823,9 @@ data 0x49
 
 
 ; SUBROUTINE
-; TODO hardcoded equipment ids
-; @param int s9 special weapon flags
 CACHE_SPECIAL_EQUIPMENT_FLAGS:
-
-; if weapon is destroyer mace, set get stronger with lower HP flag
-call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !=, 0x2c, stor[8], inl[:NO_DESTROYER_MACE] ; operand, left, right, addr
-or 0x1, var[45][stor[9]] ; right, left
-NO_DESTROYER_MACE:
-
-; if weapon is wargod calling, set set automatic additions flag
-call Battle::scriptGetBentStat, stor[0], EQUIPMENT_ACCESSORY_SLOT, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !=, 0x9c, stor[8], inl[:NO_WARGOD_CALLING] ; operand, left, right, addr
-or 0x2, var[45][stor[9]] ; right, left
-NO_WARGOD_CALLING:
-
-; if weapon is ultimate wargod, set set automatic additions and full damage flags
-call Battle::scriptGetBentStat, stor[0], EQUIPMENT_ACCESSORY_SLOT, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !=, 0x9d, stor[8], inl[:NO_ULTIMATE_WARGOD] ; operand, left, right, addr
-or 0x2, var[45][stor[9]] ; right, left
-or 0x4, var[45][stor[9]] ; right, left
-NO_ULTIMATE_WARGOD:
-
+call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, reg[0]
+call Battle::scriptApplyEquipmentEffect, reg[0], stor[0]
 return
 
 

@@ -117,6 +117,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
@@ -974,6 +975,7 @@ public class Battle extends EngineState {
     functions[1005] = this::scriptGetStatModParams;
 
     functions[1010] = this::scriptUseItem;
+    functions[1011] = this::scriptApplyEquipmentEffect;
 
     return functions;
   }
@@ -1089,6 +1091,17 @@ public class Battle extends EngineState {
     final int targetIndex = script.params_20[1].get();
 
     return item.useInBattle(script.scriptState_04, targetIndex);
+  }
+
+  @ScriptDescription("Calls the applyEffect method for the given equipment")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "equipmentId", description = "The ID of the equipment")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "wearerBentIndex", description = "The ID of the bent wearing the equipment")
+  private FlowControl scriptApplyEquipmentEffect(final RunningScript<BattleEntity27c> script) {
+    final Equipment equipment = REGISTRIES.equipment.getEntry(script.params_20[0].getRegistryId()).get();
+    final BattleEntity27c wearer = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
+
+    equipment.applyEffect(wearer);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80018744L)
@@ -3520,6 +3533,11 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(script.params_20[1].get());
 
     switch(stat) {
+      case EQUIPMENT_WEAPON_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId());
+      case EQUIPMENT_HELMET_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.HELMET).getRegistryId());
+      case EQUIPMENT_ARMOUR_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
+      case EQUIPMENT_BOOTS_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
+      case EQUIPMENT_ACCESSORY_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
       case ITEM_ID -> script.params_20[2].set(bent.item_d4.getRegistryId());
       case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
       default -> script.params_20[2].set(bent.getStat(stat));

@@ -8,7 +8,6 @@ import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
-import legend.lodmod.LodMod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,11 +80,8 @@ public class ItemListMenu extends ListMenu {
       return;
     }
 
-    // > 64 will make the script do nothing
-    final int retailId = LodMod.idItemMap.getOrDefault(this.player_08.item_d4.getRegistryId(), 65); //TODO
-
     script.params_20[1].set(this.hud.battleMenu_800c6c34.target_48);
-    script.params_20[2].set(retailId);
+    script.params_20[2].set(-1); // Used to be item ID
     script.params_20[3].set(this.player_08.item_d4.getRegistryId());
 
     // If it's a target all item, -1 the target

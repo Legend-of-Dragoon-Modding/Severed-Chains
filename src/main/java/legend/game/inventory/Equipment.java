@@ -2,6 +2,7 @@ package legend.game.inventory;
 
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.types.EquipmentSlot;
 import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
@@ -193,5 +194,9 @@ public class Equipment extends RegistryEntry implements InventoryEntry {
   @Override
   public int getPrice() {
     return this.price;
+  }
+
+  public void applyEffect(final BattleEntity27c wearer) {
+
   }
 }
