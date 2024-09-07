@@ -38,11 +38,13 @@ public class StatusConditions20 {
   public int shieldsSigStoneCharmTurns_1c;
   /**
    * <ul>
-   *   <li>0 - 1 Pandemonium turns</li>
-   *   <li>2     Died as dragoon</li>
+   *   <li>0x0 - 0x1 Pandemonium turns</li>
+   *   <li>0x2       Died as dragoon</li>
+   *   <li>0x4       Unknown, used by Spring Hitter</li>
    * </ul>
    */
   public int pandemoniumTurnsDiedAsDragoon_1d;
   public int chargingSpirit_1e;
-  public int unknown_1f;
+  /** Item stolen by Crafty Thief or Spring Hitter */
+  public int stolenItem_1f;
 }

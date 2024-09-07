@@ -108,15 +108,12 @@ public class LodMod {
 
   @Deprecated
   public static final Int2ObjectMap<RegistryId> equipmentIdMap = new Int2ObjectOpenHashMap<>();
-  @Deprecated
-  public static final Object2IntMap<RegistryId> idEquipmentMap = new Object2IntOpenHashMap<>();
 
   private static final String[] EQUIPMENT_IDS = {"broad_sword", "bastard_sword", "heat_blade", "falchion", "mind_crush", "fairy_sword", "claymore", "soul_eater", "axe", "tomahawk", "battle_axe", "great_axe", "indoras_axe", "rapier", "shadow_cutter", "dancing_dagger", "flamberge", "gladius", "dragon_buster", "demon_stiletto", "spear", "lance", "glaive", "spear_of_terror", "partisan", "halberd", "twister_glaive", "short_bow", "sparkle_arrow", "long_bow", "bemusing_arrow", "virulent_arrow", "detonate_arrow", "arrow_of_force", "mace", "morning_star", "war_hammer", "heavy_mace", "basher", "pretty_hammer", "iron_knuckle", "beast_fang", "diamond_claw", "thunder_fist", "destroyer_mace", "brass_knuckle", "leather_armor", "scale_armor", "chain_mail", "plate_mail", "saint_armor", "red_dg_armor", "jade_dg_armor", "lion_fur", "breast_plate", "giganto_armor", "gold_dg_armor", "disciple_vest", "warrior_dress", "masters_vest", "energy_girdle", "violet_dg_armor", "clothes", "leather_jacket", "silver_vest", "sparkle_dress", "robe", "silver_dg_armor", "dark_dg_armor", "blue_dg_armor", "armor_of_yore", "satori_vest", "rainbow_dress", "angel_robe", "armor_of_legend", "", "bandana", "sallet", "armet", "knight_helm", "giganto_helm", "soul_headband", "felt_hat", "cape", "tiara", "jeweled_crown", "roses_hair_band", "", "phoenix_plume", "legend_casque", "dragon_helm", "magical_hat", "", "leather_boots", "iron_kneepiece", "combat_shoes", "leather_shoes", "soft_boots", "stardust_boots", "magical_greaves", "dancers_shoes", "bandits_shoes", "", "poison_guard", "active_ring", "protector", "panic_guard", "stun_guard", "bravery_amulet", "magic_ego_bell", "destone_amulet", "power_wrist", "knight_shield", "magical_ring", "spiritual_ring", "attack_badge", "guard_badge", "giganto_ring", "elude_cloak", "spirit_cloak", "sages_cloak", "physical_ring", "amulet", "wargods_sash", "spirit_ring", "therapy_ring", "mage_ring", "wargods_amulet", "talisman", "", "holy_ankh", "dancers_ring", "", "bandits_ring", "red_eye_stone", "jade_stone", "silver_stone", "darkness_stone", "blue_sea_stone", "violet_stone", "golden_stone", "", "ruby_ring", "sapphire_pin", "rainbow_earring", "", "emerald_earring", "", "platinum_collar", "phantom_shield", "dragon_shield", "angel_scarf", "bracelet", "fake_power_wrist", "fake_shield", "", "wargod_calling", "ultimate_wargod", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
 
   @EventListener
   public static void registerEquipment(final EquipmentRegistryEvent event) {
     equipmentIdMap.clear();
-    idEquipmentMap.clear();
 
     for(int equipmentId = 0; equipmentId < 192; equipmentId++) {
       final String name = EQUIPMENT_IDS[equipmentId];
@@ -131,7 +128,6 @@ public class LodMod {
         };
 
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
-        idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }
     }
   }
