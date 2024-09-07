@@ -160,6 +160,8 @@ public class GameVarParam extends Param {
 //      case 135 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[7]._00.get();
 //      case 136 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[8]._00.get();
 //      case 137 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[9]._00.get();
+      case 138 -> Scus94491BpeSegment_800b.gameState_800babc8.items_2e9.size();
+      case 139 -> Scus94491BpeSegment_800b.gameState_800babc8.equipment_1e8.size();
 
       default -> throw new IllegalArgumentException("Unknown game data index " + this.index);
     };
