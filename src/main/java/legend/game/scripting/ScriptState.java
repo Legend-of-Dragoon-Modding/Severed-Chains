@@ -644,13 +644,21 @@ public class ScriptState<T> {
   @Method(0x8001664cL)
   public boolean scriptCompare(final Param operandA, final Param operandB, final int op) {
     // Check A for null
-    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandA.getRegistryId() == null && operandB.get() == 0) {
-      return true;
+    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandB.get() == 0) {
+      return switch(op) {
+        case 2 -> operandA.getRegistryId() == null;
+        case 3 -> operandA.getRegistryId() != null;
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
     }
 
     // Check B for null
-    if(!operandA.isRegistryId() && operandB.isRegistryId() && operandA.get() == 0 && operandB.getRegistryId() == null) {
-      return true;
+    if(operandB.isRegistryId() && !operandA.isRegistryId() && operandA.get() == 0) {
+      return switch(op) {
+        case 2 -> operandB.getRegistryId() == null;
+        case 3 -> operandB.getRegistryId() != null;
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
     }
 
     // Compare registry IDs
