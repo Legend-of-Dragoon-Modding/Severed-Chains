@@ -180,7 +180,9 @@ public final class Unpacker {
 
   public static void loadFile(final Path path, final Consumer<FileData> onCompletion) {
     final int total = loadingCount.incrementAndGet();
-    LOGGER.info("Queueing file %s (total queued: %d)", path, total);
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Queueing file %s (total queued: %d) from %s.%s(%s:%d)", path, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
     EXECUTOR.execute(() -> {
       onCompletion.accept(loadFile(path));
       final int remaining = loadingCount.decrementAndGet();
@@ -227,7 +229,10 @@ public final class Unpacker {
 
   public static void loadDirectory(final Path dir, final Consumer<List<FileData>> onCompletion) {
     final int total = loadingCount.incrementAndGet();
-    LOGGER.info("Queueing directory %s (total queued: %d)", dir, total);
+
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Queueing directory %s (total queued: %d) from %s.%s(%s:%d)", dir, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
     EXECUTOR.execute(() -> {
       onCompletion.accept(loadDirectory(dir));
       final int remaining = loadingCount.decrementAndGet();
