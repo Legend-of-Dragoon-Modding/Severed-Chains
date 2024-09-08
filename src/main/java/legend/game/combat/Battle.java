@@ -5961,8 +5961,8 @@ public class Battle extends EngineState {
       fileIndex = (fileIndex - 1) * 2;
 
       this.loadDeff(
-        Unpacker.resolve("SECT/DRGN0.BIN/" + (5511 + fileIndex)),
-        Unpacker.resolve("SECT/DRGN0.BIN/" + (5512 + fileIndex))
+        Unpacker.resolve("SECT/DRGN0.BIN/" + (4945 + fileIndex)),
+        Unpacker.resolve("SECT/DRGN0.BIN/" + (4946 + fileIndex))
       );
     }
   }
