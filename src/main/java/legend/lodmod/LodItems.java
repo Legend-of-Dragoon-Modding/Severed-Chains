@@ -97,6 +97,9 @@ public final class LodItems {
   public static final RegistryDelegate<Item> STUNNING_HAMMER = ITEM_REGISTRAR.register("stunning_hammer", () -> new CauseStatusItem(-13, 39, 10, 0x10));
   public static final RegistryDelegate<Item> TOTAL_VANISHING = ITEM_REGISTRAR.register("total_vanishing", TotalVanishingItem::new);
 
+  // Misc
+  public static final RegistryDelegate<Item> ENEMY_HEALING_POTION = ITEM_REGISTRAR.register("enemy_healing_potion", HealingPotionItem::new);
+
   static void register(final ItemRegistryEvent event) {
     ITEM_REGISTRAR.registryEvent(event);
   }
