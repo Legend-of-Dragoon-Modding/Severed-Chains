@@ -188,7 +188,7 @@ public final class GameEngine {
   public static void start() throws IOException {
     final Thread thread = new Thread(() -> {
       try {
-        LOGGER.info("--- Legend start ---");
+        LOGGER.info("Severed Chains %s commit %s starting", Version.VERSION, Version.HASH);
 
         loading = true;
         RENDERER.setRenderCallback(GameEngine::loadGfx);
