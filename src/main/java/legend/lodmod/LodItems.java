@@ -70,7 +70,7 @@ public final class LodItems {
   public static final RegistryDelegate<Item> SPEAR_FROST = ITEM_REGISTRAR.register("spear_frost", () -> new AttackItem(38, 5, false, LodMod.WATER_ELEMENT.get(), 0x40));
   public static final RegistryDelegate<Item> SPECTRAL_FLASH = ITEM_REGISTRAR.register("spectral_flash", () -> new AttackItem(38, 10, true, LodMod.LIGHT_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> SPINNING_GALE = ITEM_REGISTRAR.register("spinning_gale", () -> new AttackItem(38, 5, false, LodMod.WIND_ELEMENT.get(), 0x40));
-  public static final RegistryDelegate<Item> THUNDERBOLT = ITEM_REGISTRAR.register("thunderbolt", () -> new AttackItem(38, 10, true, LodMod.THUNDER_ELEMENT.get(), 0x10));
+  public static final RegistryDelegate<Item> THUNDERBOLT = ITEM_REGISTRAR.register("thunderbolt", () -> new AttackItem(38, 10, true, LodMod.THUNDER_ELEMENT.get(), 0));
   public static final RegistryDelegate<Item> TRANS_LIGHT = ITEM_REGISTRAR.register("trans_light", () -> new AttackItem(38, 5, false, LodMod.LIGHT_ELEMENT.get(), 0x40));
 
   // Random items
