@@ -9,6 +9,8 @@ entrypoint :USE_MAGIC_SHIELD
 entrypoint :USE_MATERIAL_SHIELD
 entrypoint :USE_SMOKE_BALL
 entrypoint :USE_TOTAL_VANISHING
+;TODO temporary; pcs forks into entrypoint 11 if char using attack item has status affliction
+entrypoint :ENTRYPOINT_11_RENDER_TICK_STATUS
 entrypoint :USE_CAUSE_STATUS
 
 
@@ -66,6 +68,7 @@ return;
 CLEAR_MENU_BLOCK:
 call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
 mov 0x0, var[128 + stor[9]][6] ; source, dest
+return
 
 
 
