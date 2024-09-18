@@ -2,8 +2,6 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.scripting.ScriptState;
-import legend.lodmod.LodDeffs;
-import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class HealingBreezeItem extends RecoverHpItem {
   public HealingBreezeItem() {
@@ -13,11 +11,6 @@ public class HealingBreezeItem extends RecoverHpItem {
   @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;
-  }
-
-  @Override
-  protected RegistryId getDeffId() {
-    return LodDeffs.HEALING_RAIN.getId();
   }
 
   @Override
