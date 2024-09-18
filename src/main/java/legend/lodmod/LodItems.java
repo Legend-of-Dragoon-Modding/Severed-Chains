@@ -18,6 +18,7 @@ import legend.lodmod.items.HealingRainItem;
 import legend.lodmod.items.MindPurifierItem;
 import legend.lodmod.items.MoonSerenadeItem;
 import legend.lodmod.items.PandemoniumItem;
+import legend.lodmod.items.PsycheBombXItem;
 import legend.lodmod.items.RecoveryBallItem;
 import legend.lodmod.items.SachetItem;
 import legend.lodmod.items.ShieldItem;
@@ -64,7 +65,7 @@ public final class LodItems {
   public static final RegistryDelegate<Item> NIGHT_RAID = ITEM_REGISTRAR.register("night_raid", () -> new AttackItem(38, 10, true, LodMod.DARK_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> PELLET = ITEM_REGISTRAR.register("pellet", () -> new AttackItem(38, 5, false, LodMod.EARTH_ELEMENT.get(), 0x40));
   public static final RegistryDelegate<Item> PSYCHE_BOMB = ITEM_REGISTRAR.register("psyche_bomb", () -> new AttackItem(38, 10, true, LodMod.NO_ELEMENT.get(), 0x8));
-  public static final RegistryDelegate<Item> PSYCHE_BOMB_X = ITEM_REGISTRAR.register("psyche_bomb_x", () -> new AttackItem(38, 200, true, LodMod.NO_ELEMENT.get(), 0x20));
+  public static final RegistryDelegate<Item> PSYCHE_BOMB_X = ITEM_REGISTRAR.register("psyche_bomb_x", PsycheBombXItem::new);
   public static final RegistryDelegate<Item> RAVE_TWISTER = ITEM_REGISTRAR.register("rave_twister", () -> new AttackItem(38, 10, true, LodMod.WIND_ELEMENT.get(), 0));
   public static final RegistryDelegate<Item> SPARK_NET = ITEM_REGISTRAR.register("spark_net", () -> new AttackItem(38, 5, false, LodMod.THUNDER_ELEMENT.get(), 0x40));
   public static final RegistryDelegate<Item> SPEAR_FROST = ITEM_REGISTRAR.register("spear_frost", () -> new AttackItem(38, 5, false, LodMod.WATER_ELEMENT.get(), 0x40));

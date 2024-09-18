@@ -50,6 +50,16 @@ public class BuffItem extends BattleItem {
   }
 
   @Override
+  public boolean isRepeat() {
+    return true;
+  }
+
+  @Override
+  public boolean isProtected() {
+    return true;
+  }
+
+  @Override
   public boolean canBeUsed(final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }

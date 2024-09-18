@@ -9,6 +9,16 @@ public class ShieldItem extends BuffItem {
   }
 
   @Override
+  public boolean isRepeat() {
+    return true;
+  }
+
+  @Override
+  public boolean isProtected() {
+    return true;
+  }
+
+  @Override
   protected void loadDeff(final ScriptState<? extends BattleEntity27c> user, final int entrypoint, final int param) {
     // no-op
   }
