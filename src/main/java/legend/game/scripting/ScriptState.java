@@ -402,7 +402,7 @@ public class ScriptState<T> {
           if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
             LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
           } else {
-            LOGGER.info(SCRIPT_MARKER, "Running callback %d", this.context.opIndex_10);
+            LOGGER.info(SCRIPT_MARKER, "Running callback %s", this.context.opIndex_10);
           }
         }
 
