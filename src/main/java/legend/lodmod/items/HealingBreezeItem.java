@@ -17,7 +17,7 @@ public class HealingBreezeItem extends RecoverHpItem {
 
   @Override
   protected RegistryId getDeffId() {
-    return LodDeffs.HEALING_RAIN.get().getRegistryId();
+    return LodDeffs.HEALING_RAIN.getId();
   }
 
   @Override

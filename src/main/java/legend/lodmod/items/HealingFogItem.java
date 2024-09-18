@@ -17,7 +17,7 @@ public class HealingFogItem extends RecoverHpItem {
 
   @Override
   protected RegistryId getDeffId() {
-    return LodDeffs.HEALING_POTION.get().getRegistryId();
+    return LodDeffs.HEALING_POTION.getId();
   }
 
   @Override
