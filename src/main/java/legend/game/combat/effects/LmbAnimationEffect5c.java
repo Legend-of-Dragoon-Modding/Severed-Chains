@@ -203,8 +203,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   @Method(0x8011619cL)
   private void FUN_8011619c(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final MV matrix) {
     final MV sp0x10 = new MV();
-    sp0x10.scaling(manager.params_10.scale_16);
-    sp0x10.rotateZYX(manager.params_10.rot_10);
+    sp0x10.rotationZYX(manager.params_10.rot_10);
+    sp0x10.scale(manager.params_10.scale_16);
     sp0x10.transfer.set(manager.params_10.trans_04);
     sp0x10.compose(matrix, sp0x10);
     final float scale = manager.params_10.scale_28 / (float)0x1000;

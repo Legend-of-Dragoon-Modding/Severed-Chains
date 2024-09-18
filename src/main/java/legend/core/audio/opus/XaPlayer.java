@@ -75,9 +75,11 @@ public final class XaPlayer extends AudioSource {
       throw new RuntimeException("XA file is less than 4 buffers in length (40ms)");
     }
 
-    for(int i = 0; i < 4; i++) {
-      this.readFile();
-      this.bufferOutput(this.format, this.pcm, 48_000);
+    if(this.canBuffer()) {
+      for(int i = 0; i < 4; i++) {
+        this.readFile();
+        this.bufferOutput(this.format, this.pcm, 48_000);
+      }
     }
 
     if(this.isPlaying()) {
