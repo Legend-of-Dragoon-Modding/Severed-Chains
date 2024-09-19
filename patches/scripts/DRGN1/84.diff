@@ -1,0 +1,42 @@
+--- original
++++ modified
+@@ -1704,11 +1704,8 @@
+ call 238, 0x2, stor[0], 0x1, 0x0, 0x0, 0x0, 0x0
+ rand 0x64, stor[8]
+ jmp_cmp <, 0x64, stor[8], inl[:LABEL_77]
+-call 497, 0xffffffff, stor[8]
+-jmp_cmp ==, 0xffffffff, stor[8], inl[:LABEL_77]
+-shl 0x18, stor[8]
+-call 371, stor[0], stor[9], 0x0
+-or stor[8], var[128 + stor[9]][7]
++call 497, null, reg[10]
++jmp_cmp ==, 0, stor[10], inl[:LABEL_77]
+ mov 0x0, stor[8]
+ mov 0x1e, stor[9]
+ mov 0x0, stor[10]
+@@ -3588,18 +3585,14 @@
+ mov var[128 + stor[25]][7], stor[26]
+ shr 0x18, stor[26]
+ and 0xff, stor[26]
+-jmp_cmp ==, 0x0, stor[26], inl[:LABEL_246]
+-call 498, stor[26], stor[8]
++jmp_cmp ==, 0x1, stor[26], inl[:RETURN_STOLEN_GOLD]
++jmp_cmp ==, 0x0, reg[10], inl[:LABEL_246]
++call 498, reg[10], reg[10]
+ jmp inl[:LABEL_245]
+-data 0x208
+-data 0x5000005
+-data 0x2000008
+-data 0x218
+-data 0x32
+-data 0x2000008
+-data 0x208
+-data 0x2000008
+-data 0x5000005
++RETURN_STOLEN_GOLD:
++mov var[5], stor[8]
++add 50, stor[8]
++mov stor[8], var[5]
+ LABEL_245:
+ mov 0x3, stor[8]
+ mov 0x1e, stor[9]
