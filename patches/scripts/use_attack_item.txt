@@ -31,7 +31,7 @@ gosub inl[:THROW_ATTACK_ITEM] ; addr
 call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 gosub inl[:LABEL_436] ; addr
 mov 0xa, stor[23] ; source, dest
 wait stor[23] ; frames
@@ -40,7 +40,14 @@ return
 
 
 USE_HEALING_POTION:
-jmp inl[:LABEL_143] ; addr
+gosub inl[:THROW_POTION] ; addr
+mov 0x8, stor[23] ; source, dest
+wait stor[23] ; frames
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
 
 
 
@@ -57,10 +64,20 @@ call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSl
 add 0x81, stor[9] ; amount, operand
 mov var[45][stor[9]], stor[9] ; s9 = status
 and 0xf, stor[9] ; mask status effect index
-mov inl[:LABEL_122[stor[9]]], stor[9] ; s9 = status flag for status effect index
+mov inl[:STATUS_AFFLICTION_FLAGS[stor[9]]], stor[9] ; s9 = status flag for status effect index
 and inl[:USE_PURIFIER_STATUS], stor[9] ; mask status effect that this item cures
 gosub inl[:CLEAR_BENT_STATUS] ; addr
 return;
+
+STATUS_AFFLICTION_FLAGS:
+data 0x1
+data 0x2
+data 0x4
+data 0x8
+data 0x10
+data 0x20
+data 0x40
+data 0x80
 
 
 
@@ -78,7 +95,7 @@ gosub inl[:USE_PURIFIER]
 mov 20, stor[23] ; source, dest
 wait stor[23] ; frames
 
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
 
@@ -90,7 +107,7 @@ mov 20, stor[23] ; source, dest
 wait stor[23] ; frames
 
 gosub inl[:SET_BENT_ANIMATION] ; addr
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
 
@@ -99,8 +116,8 @@ USE_MIND_PURIFIER:
 gosub inl[:USE_PURIFIER]
 
 jmp_cmp ==, 0x0, stor[9], inl[:SKIP_CLEAR_MENU_BLOCK_EFFECT] ; nothing was cured
-call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
-jmp_cmp ==, 0x0, var[128 + stor[9]][6], inl[:LABEL_118] ; operand, left, right, addr
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; s9 = my char id
+jmp_cmp ==, 0x0, var[128 + stor[9]][6], inl[:LABEL_118] ; if I'm not menu blocked
 gosub inl[:LABEL_121] ; addr
 SKIP_CLEAR_MENU_BLOCK_EFFECT:
 
@@ -109,7 +126,9 @@ wait stor[23] ; frames
 
 gosub inl[:SET_BENT_ANIMATION] ; addr
 gosub inl[:CLEAR_MENU_BLOCK]
-gosub inl[:LABEL_128] ; addr
+
+LABEL_118:
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
 
@@ -119,7 +138,7 @@ gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
 call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 gosub inl[:SET_BENT_ANIMATION] ; addr
 return
 
@@ -133,7 +152,7 @@ call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; sound
 gosub inl[:ALLOCATE_MAGICAL_SHIELD_EFFECT] ; addr
 mov 0x18, stor[23] ; source, dest
 wait stor[23] ; frames
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
 
@@ -146,7 +165,7 @@ call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; sound
 gosub inl[:ALLOCATE_MATERIAL_SHIELD_EFFECT] ; addr
 mov 0x18, stor[23] ; source, dest
 wait stor[23] ; frames
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
 
@@ -155,7 +174,7 @@ USE_SMOKE_BALL:
 mov 0xcd, stor[8] ; source, dest
 gosub inl[:LOAD_SOUNDS] ; addr
 call Scus94491BpeSegment::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
-gosub inl[:LABEL_105] ; addr
+gosub inl[:ALLOCATE_SMOKE_BALL_PARTICLES] ; addr
 call Scus94491BpeSegment::scriptUnloadSoundFile, 0x6 ; soundType
 mov 0x20, stor[23] ; source, dest
 wait stor[23] ; frames
@@ -165,6 +184,48 @@ return
 SMOKE_BALL_NO_ESCAPE_CHANCE:
 or 0x1, var[45][77] ; right, left
 or 0x8, var[45][77] ; right, left
+return
+
+; SUBROUTINE
+ALLOCATE_SMOKE_BALL_PARTICLES:
+call SEffe::scriptAllocateParticleEffect, stor[18], 0xffffffff, 0xfff03, 0x8, 0x7d0, 0x3, 0x100, 0x4204000, 0x0 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+gosub inl[:SET_SMOKE_CLOUD_PARAMS] ; addr
+yield
+call SEffe::scriptAllocateParticleEffect, stor[18], 0xffffffff, 0xfff03, 0x8, 0x320, 0x3, 0x100, 0x4204000, 0x0 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+gosub inl[:SET_SMOKE_CLOUD_PARAMS] ; addr
+return
+
+; SUBROUTINE
+SET_SMOKE_CLOUD_PARAMS:
+gosub inl[:GET_AVERAGE_PLAYER_POSITION] ; returns s10, s11, s12
+call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0xa00, 0xa00, 0xa00 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, 0x4f, 0x45, 0x38 ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetGenericEffectValue, stor[18], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x20 ; effectIndex, ticks
+return
+
+; SUBROUTINE
+; @return int s10 average X
+; @return int s11 average Y
+; @return int s12 average Z
+GET_AVERAGE_PLAYER_POSITION:
+mov var[35], stor[19] ; s19 = player count
+mov 0x0, stor[8] ; source, dest
+mov 0x0, stor[10] ; source, dest
+mov 0x0, stor[11] ; source, dest
+mov 0x0, stor[12] ; source, dest
+GET_AVERAGE_PLAYER_POSITION_LOOP:
+mov var[34][stor[8]], stor[9] ; source, dest
+call Battle::scriptGetBentPos, stor[9], stor[20], stor[21], stor[22] ; bentIndex, x, y, z
+add stor[20], stor[10] ; amount, operand
+add stor[21], stor[11] ; amount, operand
+add stor[22], stor[12] ; amount, operand
+incr stor[8] ; operand
+jmp_cmp >, stor[19], stor[8], inl[:GET_AVERAGE_PLAYER_POSITION_LOOP] ; operand, left, right, addr
+div stor[19], stor[10] ; amount, operand
+div stor[19], stor[11] ; amount, operand
+div stor[19], stor[12] ; amount, operand
 return
 
 
@@ -184,7 +245,7 @@ TOTAL_VANISHING_HAS_RESISTANCE:
 call Battle::scriptRenderDamage, stor[28], 0xffffffff ; bentIndex, damage
 
 TOTAL_VANISHING_FINISH:
-gosub inl[:LABEL_128] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
 
@@ -192,7 +253,31 @@ return
 ; @param int s8 colour index (weird negative numbers)
 USE_CAUSE_STATUS:
 gosub inl[:LABEL_124] ; addr
-jmp inl[:LABEL_113] ; addr
+gosub inl[:THROW_ATTACK_ITEM] ; addr
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+gosub inl[:LABEL_436] ; addr
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+; SUBROUTINE
+LABEL_124:
+gosub inl[:LABEL_471] ; addr
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+; SUBROUTINE
+SWITCH_TO_USE_ITEM_CAMERA:
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+mov 0x21, var[44] ; source, dest
+return
 
 
 
