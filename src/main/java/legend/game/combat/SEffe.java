@@ -583,8 +583,8 @@ public final class SEffe {
     }
 
     manager.flags_04 = 0xff00_0000;
-    manager.scriptIndex_0c = -1;
-    manager.coord2Index_0d = -1;
+    manager.parentBobjIndex_0c = -1;
+    manager.parentPartIndex_0d = -1;
     manager.myScriptState_0e = state;
     manager.params_10.flags_00 = 0x5400_0000;
     manager.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
@@ -652,7 +652,7 @@ public final class SEffe {
     transformMatrix.transfer.set(manager.params_10.trans_04);
 
     EffectManagerData6c<?> currentManager = manager;
-    int scriptIndex = manager.scriptIndex_0c;
+    int scriptIndex = manager.parentBobjIndex_0c;
 
     //LAB_800e8604
     while(scriptIndex >= 0) {
@@ -672,21 +672,21 @@ public final class SEffe {
         baseTransformMatrix.scale(baseManager.params_10.scale_16);
         baseTransformMatrix.transfer.set(baseManager.params_10.trans_04);
 
-        if(currentManager.coord2Index_0d != -1) {
+        if(currentManager.parentPartIndex_0d != -1) {
           //LAB_800e866c
-          FUN_800ea0f4(baseManager, currentManager.coord2Index_0d).coord.compose(baseTransformMatrix, baseTransformMatrix);
+          getEffectModelPartTransforms(baseManager, currentManager.parentPartIndex_0d).coord.compose(baseTransformMatrix, baseTransformMatrix);
         }
 
         //LAB_800e86ac
         transformMatrix.compose(baseTransformMatrix);
         currentManager = baseManager;
-        scriptIndex = currentManager.scriptIndex_0c;
+        scriptIndex = currentManager.parentBobjIndex_0c;
         //LAB_800e86c8
       } else if(BattleObject.BOBJ.equals(base.magic_00)) {
         final BattleEntity27c bent = (BattleEntity27c)base;
         final Model124 model = bent.model_148;
         applyModelRotationAndScale(model);
-        final int coord2Index = currentManager.coord2Index_0d;
+        final int coord2Index = currentManager.parentPartIndex_0d;
 
         final MV transforms = new MV();
         if(coord2Index == -1) {
@@ -748,7 +748,7 @@ public final class SEffe {
   }
 
   @Method(0x800ea0f4L)
-  public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c<?> effectManager, final int coord2Index) {
+  public static GsCOORDINATE2 getEffectModelPartTransforms(final EffectManagerData6c<?> effectManager, final int coord2Index) {
     final Model124 model = ((ModelEffect13c)effectManager.effect_44).model_10;
     applyModelRotationAndScale(model);
     return model.modelParts_00[coord2Index].coord2_04;
@@ -4014,15 +4014,15 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, possibly something to do with effect manager parents")
+  @ScriptDescription("Attaches an effect to a bobj (effect's transforms are not updated so it will jump to a new position relative to its parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "coord2Index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBobjIndex", description = "The bobj to attach to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentPartIndex", description = "The model part of the bobj to attach to")
   @Method(0x801156f8L)
-  public static FlowControl FUN_801156f8(final RunningScript<?> script) {
+  public static FlowControl scriptAttachEffectToBobj(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    manager.scriptIndex_0c = script.params_20[1].get();
-    manager.coord2Index_0d = script.params_20[2].get();
+    manager.parentBobjIndex_0c = script.params_20[1].get();
+    manager.parentPartIndex_0d = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
@@ -4051,14 +4051,14 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
+  @ScriptDescription("Attaches an effect to a bobj and relativizes its transforms (effect will be in the same position it was, but is now attached)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "coord2Index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBobjIndex", description = "The bobj to attach to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentPartIndex", description = "The model part of the bobj to attach to")
   @Method(0x801157d0L)
-  public static FlowControl FUN_801157d0(final RunningScript<?> script) {
-    final int scriptIndex = script.params_20[1].get();
-    final int coord2Index = script.params_20[2].get();
+  public static FlowControl scriptAttackEffectToBobjRelative(final RunningScript<?> script) {
+    final int parentBobjIndex = script.params_20[1].get();
+    final int parentPartIndex = script.params_20[2].get();
 
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
 
@@ -4066,7 +4066,7 @@ public final class SEffe {
     final MV sp0x30 = new MV();
     calculateEffectTransforms(sp0x10, manager);
 
-    if(scriptIndex == -1) {
+    if(parentBobjIndex == -1) {
       sp0x30.set(sp0x10);
     } else {
       //LAB_8011588c
@@ -4076,8 +4076,8 @@ public final class SEffe {
       sp0x50.params_10.rot_10.zero();
       sp0x50.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
 
-      sp0x50.scriptIndex_0c = scriptIndex;
-      sp0x50.coord2Index_0d = coord2Index;
+      sp0x50.parentBobjIndex_0c = parentBobjIndex;
+      sp0x50.parentPartIndex_0d = parentPartIndex;
 
       final MV transforms = new MV();
       calculateEffectTransforms(transforms, sp0x50);
@@ -4098,8 +4098,8 @@ public final class SEffe {
     //LAB_801159cc
     getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, sp0x30);
     manager.params_10.trans_04.set(sp0x30.transfer);
-    manager.scriptIndex_0c = scriptIndex;
-    manager.coord2Index_0d = coord2Index;
+    manager.parentBobjIndex_0c = parentBobjIndex;
+    manager.parentPartIndex_0d = parentPartIndex;
     return FlowControl.CONTINUE;
   }
 

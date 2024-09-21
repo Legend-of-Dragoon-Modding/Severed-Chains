@@ -60,7 +60,7 @@ public abstract class BattleItem extends Item {
   }
 
   protected Path getUseItemScriptPath() {
-    return Path.of("./patches/scripts/use_attack_item.txt");
+    return Path.of("./patches/scripts/throw_item.txt");
   }
 
   protected int getUseItemScriptEntrypoint() {
@@ -102,7 +102,7 @@ public abstract class BattleItem extends Item {
     Unpacker.loadFile(path, data -> {
       final String source = data.readFixedLengthAscii(0, data.size());
       final byte[] compiled = SCRIPTS.compile(path, source);
-      final ScriptFile file = new ScriptFile("use_attack_item", compiled);
+      final ScriptFile file = new ScriptFile("throw_item", compiled);
       user.pushFrame(new ScriptStackFrame(file, file.getEntry(entrypoint)));
       user.context.commandOffset_0c = user.frame().offset;
       onLoad.run();

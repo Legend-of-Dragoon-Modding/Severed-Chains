@@ -852,7 +852,7 @@ public class Battle extends EngineState {
     functions[608] = SEffe::FUN_801181a8;
 
     functions[610] = this::scriptLoadCmbAnimation;
-    functions[611] = SEffe::FUN_801156f8;
+    functions[611] = SEffe::scriptAttachEffectToBobj;
     functions[612] = this::scriptHideEffectModelPart;
     functions[613] = this::scriptShowEffectModelPart;
     functions[614] = this::scriptAddRedEyeDragoonTransformationFlameArmorEffectAttachment;
@@ -870,7 +870,7 @@ public class Battle extends EngineState {
     functions[626] = SEffe::scriptGetEffectZ;
     functions[627] = SEffe::scriptSetEffectZ;
     functions[628] = SEffe::allocateDeffTmdRenderer;
-    functions[629] = SEffe::FUN_801157d0;
+    functions[629] = SEffe::scriptAttackEffectToBobjRelative;
     functions[630] = SEffe::scriptGetEffectRotation;
     functions[631] = SEffe::FUN_801181f0;
     functions[632] = SEffe::scriptAllocateBuggedEffect;

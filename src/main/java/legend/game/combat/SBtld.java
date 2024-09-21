@@ -20,7 +20,7 @@ public class SBtld {
 
       if(charIndex >= 0) {
         int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
-        if(charIndex == 5) {
+        if(charIndex == 5) { // Albert
           activeAdditionIndex += 28;
         }
 

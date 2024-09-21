@@ -136,7 +136,7 @@ public class ScriptPatcher {
 
   public void replaceFile(final Path sourceFile, final Path patchFile) throws IOException {
     final String patchContents = Files.readString(patchFile);
-    final byte[] recompiledSource = this.recompile(sourceFile, patchContents);
+    final byte[] recompiledSource = this.recompile(patchFile, patchContents);
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 

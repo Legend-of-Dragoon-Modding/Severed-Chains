@@ -40,7 +40,7 @@ return
 
 
 USE_HEALING_POTION:
-gosub inl[:THROW_POTION] ; addr
+gosub inl[:ALLOCATE_THROW_POTION_EFFECT] ; addr
 mov 0x8, stor[23] ; source, dest
 wait stor[23] ; frames
 call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
@@ -68,16 +68,6 @@ mov inl[:STATUS_AFFLICTION_FLAGS[stor[9]]], stor[9] ; s9 = status flag for statu
 and inl[:USE_PURIFIER_STATUS], stor[9] ; mask status effect that this item cures
 gosub inl[:CLEAR_BENT_STATUS] ; addr
 return;
-
-STATUS_AFFLICTION_FLAGS:
-data 0x1
-data 0x2
-data 0x4
-data 0x8
-data 0x10
-data 0x20
-data 0x40
-data 0x80
 
 
 
@@ -129,6 +119,13 @@ gosub inl[:CLEAR_MENU_BLOCK]
 
 LABEL_118:
 gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+; SUBROUTINE
+LABEL_121:
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
+mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
+call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:LABEL_592] ; scriptIndex, address
 return
 
 
@@ -281,4 +278,51 @@ return
 
 
 
+; SUBROUTINE
+; @param int s8 rgb
+THROW_ATTACK_ITEM:
+gosub inl[:SET_ATTACK_ITEM_TARGETING_INFO] ; addr
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x7 ; bentIndex, animIndex
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+
+mov 0x10, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:ALLOCATE_USE_ATTACK_ITEM_EFFECT] ; addr
+mov 0x3, stor[8] ; source, dest
+gosub_table stor[8], inl[:LABEL_90] ; index, table
+gosub inl[:SET_IDLE_AND_RESET_ROTATION] ; addr
+return
+
+; SUBROUTINE
+SET_ATTACK_ITEM_TARGETING_INFO:
+mov stor[0], var[80] ; source, dest
+mov stor[28], var[81] ; source, dest
+return
+
+SET_IDLE_AND_RESET_ROTATION:
+gosub inl[:WAIT_FOR_ANIMATION_TO_FINISH] ; addr
+gosub inl[:SET_IDLE_ANIMATION] ; addr
+call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+; SUBROUTINE
+THROW_SHIELD_BUFF_PURIFIER:
+mov 0xffffff, stor[8] ; effect colour
+gosub inl[:ALLOCATE_THROW_POTION_EFFECT] ; addr
+mov 0x8, stor[23] ; source, dest
+wait stor[23] ; frames
+mov 0xd7fff5, stor[8] ; source, dest
+gosub inl[:ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT] ; addr
+mov 0x10, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+#include throw_item_effects.txt
 #include player_combat_script.txt
