@@ -50,6 +50,7 @@ diff,SECT/DRGN0.BIN/5006/1,scripts/DRGN0/5006/1.diff,"Lloyd Dome Attack, fix cha
 diff,SECT/DRGN0.BIN/5036/1,scripts/DRGN0/5036/1.diff,"Regole Tsunami, fix character count crash"
 diff,SECT/DRGN0.BIN/5044/1,scripts/DRGN0/5044/1.diff,"Divine Dragon Leg Swipe, fix character count crash"
 diff,SECT/DRGN0.BIN/5054/1,scripts/DRGN0/5054/1.diff,"Dragon Block Staff, fix NoDart and char count crash"
+diff,SECT/DRGN0.BIN/5056/1,scripts/DRGN0/5056/1.diff,"Divine Dragon Cannon, dynamic position checking"
 diff,SECT/DRGN0.BIN/5068/1,scripts/DRGN0/5068/1.diff,"Shirley transform, fix extremely huge parameter"
 diff,SECT/DRGN0.BIN/5072/1,scripts/DRGN0/5072/1.diff,"Shirley transform, fix extremely huge parameter"
 diff,SECT/DRGN0.BIN/5078/1,scripts/DRGN0/5078/1.diff,"Lenus I AOE attack, fix character count crash"
