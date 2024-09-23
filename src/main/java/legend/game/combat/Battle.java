@@ -3540,6 +3540,7 @@ public class Battle extends EngineState {
       case EQUIPMENT_ACCESSORY_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
       case ITEM_ID -> script.params_20[2].set(bent.item_d4.getRegistryId());
       case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
+      case ELEMENT -> script.params_20[2].set(bent.getElement().getRegistryId());
       default -> script.params_20[2].set(bent.getStat(stat));
     }
 
@@ -8177,7 +8178,7 @@ public class Battle extends EngineState {
 //    monster.equipmentType_16 = 0;
     monster.equipment_02_18 = 0;
     monster.equipmentEquipableFlags_1a = 0;
-    monster.displayElement_1c = statsEvent.elementFlag;
+    monster.element = statsEvent.elementFlag;
     monster.equipment_05_1e = monsterStats._0e;
     monster.equipmentElementalImmunity_22.set(statsEvent.elementalImmunityFlag);
     monster.equipmentStatusResist_24 = statsEvent.statusResistFlag;
@@ -8209,7 +8210,6 @@ public class Battle extends EngineState {
 
     monster.damageReductionFlags_6e = monster.specialEffectFlag_14;
     monster._70 = monster.equipment_05_1e;
-    monster.monsterElement_72 = monster.displayElement_1c;
     monster.monsterElementalImmunity_74.set(monster.equipmentElementalImmunity_22);
     monster.monsterStatusResistFlag_76 = monster.equipmentStatusResist_24;
 

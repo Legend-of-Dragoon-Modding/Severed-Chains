@@ -18,7 +18,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.nio.file.Path;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.deffManager_800c693c;
 
@@ -60,7 +59,7 @@ public abstract class BattleItem extends Item {
   }
 
   protected Path getUseItemScriptPath() {
-    return Path.of("./patches/scripts/throw_item.txt");
+    return Unpacker.resolve("throw_item");
   }
 
   protected int getUseItemScriptEntrypoint() {
@@ -100,9 +99,7 @@ public abstract class BattleItem extends Item {
 
   protected void injectScript(final ScriptState<? extends BattleEntity27c> user, final Path path, final int entrypoint, final Runnable onLoad) {
     Unpacker.loadFile(path, data -> {
-      final String source = data.readFixedLengthAscii(0, data.size());
-      final byte[] compiled = SCRIPTS.compile(path, source);
-      final ScriptFile file = new ScriptFile("throw_item", compiled);
+      final ScriptFile file = new ScriptFile("throw_item", data.getBytes());
       user.pushFrame(new ScriptStackFrame(file, file.getEntry(entrypoint)));
       user.context.commandOffset_0c = user.frame().offset;
       onLoad.run();

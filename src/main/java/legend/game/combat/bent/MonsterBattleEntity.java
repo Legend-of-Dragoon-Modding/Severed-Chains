@@ -21,8 +21,6 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.transformToScreenSpace;
 
 public class MonsterBattleEntity extends BattleEntity27c {
-  public Element displayElement_1c;
-
   /**
    * <ul>
    *   <li>0x1 - special enemy - takes one damage from magical attacks</li>
@@ -33,7 +31,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
    */
   public int damageReductionFlags_6e;
   public int _70;
-  public Element monsterElement_72;
+
   public final ElementSet monsterElementalImmunity_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
   public final Vector3f targetArrowPos_78 = new Vector3f();
@@ -50,11 +48,6 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   public ElementSet getAttackElements() {
     return new ElementSet().add(spellStats_800fa0b8[this.spellId_4e].element_08);
-  }
-
-  @Override
-  public Element getElement() {
-    return this.monsterElement_72;
   }
 
   @Override
@@ -156,11 +149,10 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   public int getStat(final BattleEntityStat statIndex) {
     return switch(statIndex) {
-      case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT -> this.displayElement_1c.flag;
+      case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT, MONSTER_ELEMENT -> this.element.flag;
 
       case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e;
       case _54 -> this._70;
-      case MONSTER_ELEMENT -> this.monsterElement_72.flag;
       case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.pack();
       case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76;
       case MONSTER_TARGET_ARROW_POSITION_X -> Math.round(this.targetArrowPos_78.x);
@@ -176,7 +168,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
     switch(statIndex) {
       case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value;
       case _54 -> this._70 = value;
-      case MONSTER_ELEMENT -> this.monsterElement_72 = Element.fromFlag(value);
+      case MONSTER_ELEMENT -> this.element = Element.fromFlag(value);
       case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value);
       case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value;
       case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.x = value;

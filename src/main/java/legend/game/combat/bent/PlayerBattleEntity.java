@@ -26,8 +26,6 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
 
-  public Element element;
-
   public int level_04;
   public int dlevel_06;
 
@@ -116,7 +114,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       return LodMod.DIVINE_ELEMENT.get();
     }
 
-    return this.element;
+    return super.getElement();
   }
 
   @Override
@@ -227,6 +225,147 @@ public class PlayerBattleEntity extends BattleEntity27c {
     }
   }
 
+  protected boolean hasWeaponTrail() {
+    return this.charId_272 != 4; // Haschel
+  }
+
+  protected int getWeaponTrailColour() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x2068e8 : 0x808080;
+      case 1, 5 -> 0x20a878;
+      case 2, 6, 8 -> 0x808080;
+      case 3 -> 0x1090d8;
+      case 4 -> 0x88d4d8;
+      case 7 -> 0x90d0f0;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getSpellRingColour() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x201996 : 0x808080;
+      case 1, 5 -> 0x297231;
+      case 2, 8 -> 0x6c8283;
+      case 3 -> 0x5e263a;
+      case 4 -> 0x6c306c;
+      case 6 -> 0x78462c;
+      case 7 -> 0x286499;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getHandModelPart() {
+    return switch(this.charId_272) {
+      case 0, 7 -> 5;
+      case 1, 4, 5, 6 -> 6;
+      case 2 -> 11;
+      case 3 -> 8;
+      case 8 -> 10;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getFootModelPart() {
+    if(this.isDragoon()) {
+      return switch(this.charId_272) {
+        case 0 -> (this.status_0e & 0x4000) == 0 ? 8 : 7;
+        case 1, 5 -> 9;
+        case 2, 3, 8 -> 11;
+        case 4, 7 -> 8;
+        case 6 -> 12;
+        default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+      };
+    }
+
+    return switch(this.charId_272) {
+      case 0, 7 -> 8;
+      case 1, 5 -> 9;
+      case 2 -> 13;
+      case 3 -> 11;
+      case 4 -> 10;
+      case 6, 8 -> 12;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getWeaponModelPart() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 14 : 0;
+      case 1, 5 -> 3;
+      case 2, 8 -> 0;
+      case 3 -> 18;
+      case 4 -> 5;
+      case 6 -> 21;
+      case 7 -> 9;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getWeaponTrailVertexComponent() {
+    return switch(this.charId_272) {
+      case 0, 2, 6, 8 -> 0;
+      case 1, 3, 4, 5, 7 -> 2;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getShadowSize() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x1800 : 0x1500;
+      case 1 -> 0x1800;
+      case 2 -> 0x1000;
+      case 3, 6 -> 0xe00;
+      case 4 -> 0x1600;
+      case 5, 8 -> 0x1300;
+      case 7 -> 0x2000;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getDragoonTransformDeff() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x20 : 0x2e;
+      case 1 -> 0x22;
+      case 2 -> 0x24;
+      case 3 -> 0x26;
+      case 4 -> 0x28;
+      case 5 -> 0x2f;
+      case 6 -> 0x2a;
+      case 7 -> 0x2c;
+      case 8 -> 0x40;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getDragoonAttackDeff() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x30 : 0x39;
+      case 1 -> 0x31;
+      case 2, 8 -> -1;
+      case 3 -> 0x33;
+      case 4 -> 0x34;
+      case 5 -> 0x35;
+      case 6 -> 0x36;
+      case 7 -> 0x37;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getDragoonAttackSounds() {
+    return switch(this.charId_272) {
+      case 0 -> 0x68;
+      case 1 -> 0x69;
+      case 2 -> 0x6a;
+      case 3 -> 0x6b;
+      case 4 -> 0x6c;
+      case 5 -> 0x6d;
+      case 6 -> 0x6e;
+      case 7 -> 0x6f;
+      case 8 -> 0x70;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
   @Override
   public int getStat(final BattleEntityStat statIndex) {
     int disableStatusFlag = 0x0;
@@ -279,6 +418,18 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case REVIVE -> this.revive_13a;
       case HP_MULTI -> this.hpMulti_13c;
       case MP_MULTI -> this.mpMulti_13e;
+
+      case HAS_WEAPON_TRAIL -> this.hasWeaponTrail() ? 1 : 0;
+      case WEAPON_TRAIL_COLOUR -> this.getWeaponTrailColour();
+      case SPELL_RING_COLOUR -> this.getSpellRingColour();
+      case HAND_MODEL_PART -> this.getHandModelPart();
+      case FOOT_MODEL_PART -> this.getFootModelPart();
+      case WEAPON_MODEL_PART -> this.getWeaponModelPart();
+      case WEAPON_TRAIL_VERTEX_COMPONENT -> this.getWeaponTrailVertexComponent();
+      case SHADOW_SIZE -> this.getShadowSize();
+      case DRAGOON_TRANSFORM_DEFF -> this.getDragoonTransformDeff();
+      case DRAGOON_ATTACK_DEFF -> this.getDragoonAttackDeff();
+      case DRAGOON_ATTACK_SOUNDS -> this.getDragoonAttackSounds();
 
       default -> super.getStat(statIndex);
     };

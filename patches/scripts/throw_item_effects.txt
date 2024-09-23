@@ -5,7 +5,8 @@ call Battle::scriptGetCharOrMonsterId, stor[30], stor[22] ; bentIndex, id
 call Battle::scriptSetLoadingBentAnimationIndex, stor[30], 0x3 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[30], 0x0 ; bentIndex, loop
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
-call SEffe::scriptAttachEffectToBobj, stor[18], stor[30], inl[:HAND_MODEL_PART_INDICES[stor[22]]] ; effectIndex, scriptIndex, coord2Index
+call Battle::scriptGetBentStat, stor[30], HAND_MODEL_PART, inl[:ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX]
+call SEffe::scriptAttachEffectToBobj, stor[18], stor[30], inl[:ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX] ; effectIndex, scriptIndex, coord2Index
 call SEffe::scriptSetRelativePosition, stor[18], stor[1], 0x20, 0x90, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeRotation, stor[18], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
@@ -23,6 +24,9 @@ call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:ALLOCATE_THROW_POTION_EF
 mov 0x2, stor[23] ; source, dest
 wait stor[23] ; frames
 return
+
+ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX:
+data 0
 
 ; For some reason different characters have different wait times
 ALLOCATE_THROW_POTION_EFFECT_CHAR_WAITS:

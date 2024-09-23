@@ -634,6 +634,7 @@ public final class Scus94491BpeSegment {
       return 0;
     }
 
+    //TODO what is this doing? More readable: a1 / a2 - a0 * (a2 - 1) / 2
     return (a1 * 2 + a0 * a2 * (1 - a2)) / a2 / 2;
   }
 
