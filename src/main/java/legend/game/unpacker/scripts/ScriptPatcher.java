@@ -10,6 +10,7 @@ import org.legendofdragoon.scripting.Patcher;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Script;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -21,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.IoHelper.crc32;
@@ -59,24 +63,82 @@ public class ScriptPatcher {
     }
   }
 
+  private boolean needsUpdate(@Nullable final ScriptPatch cachedPatch, final ScriptPatch newPatch) throws IOException {
+    // Patch isn't cached, definitely needs update
+    if(cachedPatch == null) {
+      return true;
+    }
+
+    final Map<String, Integer> cachedCrc32s = this.getCrc32s(this.cacheDir, cachedPatch);
+    final Map<String, Integer> newCrc32s = this.getCrc32s(this.patchesDir, newPatch);
+
+    for(final var entry : newCrc32s.entrySet()) {
+      if(!Objects.equals(cachedCrc32s.get(entry.getKey()), entry.getValue())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private Map<String, Integer> getCrc32s(final Path baseBath, final ScriptPatch patch) throws IOException {
+    final Map<String, Integer> crc32s = new HashMap<>();
+    this.getCrc32s(baseBath, patch.patchFile, crc32s);
+    return crc32s;
+  }
+
+  private static final Pattern INCLUDE_FILE = Pattern.compile("^\\s*#include\\s+(.+?)\\s*$");
+
+  private void getCrc32s(final Path basePath, final String path, final Map<String, Integer> crc32s) throws IOException {
+    // We've already checked this file
+    if(crc32s.containsKey(path)) {
+      return;
+    }
+
+    final Path fullPath = basePath.resolve(path);
+
+    // Insert nulls for missing files
+    if(!Files.exists(fullPath)) {
+      crc32s.put(path, null);
+    }
+
+    // CRC32 for this file
+    crc32s.put(path, crc32(fullPath));
+
+    // Parse out includes and CRC32 each of those
+    try(final Stream<String> stream = Files.lines(fullPath)) {
+      final List<String> includePaths = stream
+        .map(INCLUDE_FILE::matcher)
+        .filter(Matcher::matches)
+        .map(matcher -> matcher.group(1))
+        .toList();
+
+      for(final String includePath : includePaths) {
+        this.getCrc32s(basePath, basePath.relativize(fullPath.getParent().resolve(includePath)).toString(), crc32s);
+      }
+    }
+  }
+
   public void apply() throws IOException, PatchFailedException {
     LOGGER.info("Applying script patches");
 
     final ScriptPatchList cacheList = this.loadPatchList(this.filesDir, this.cacheDir.resolve("scripts.csv"));
 
-    boolean changed = false;
     // Apply new or changed patches
+    boolean changed = false;
     for(final ScriptPatch patch : this.patches) {
       final ScriptPatch cachedPatch = cacheList.getPatchForScript(patch.sourceFile);
 
-      if(cachedPatch == null || crc32(this.cacheDir.resolve(cachedPatch.patchFile)) != crc32(this.patchesDir.resolve(patch.patchFile))) {
+      if(this.needsUpdate(cachedPatch, patch)) {
         LOGGER.info("Patching %s...", patch.sourceFile);
+
         try {
           this.patchFile(patch);
         } catch(final PatchFailedException error) {
           LOGGER.error("Patch failed for script: %s", patch.patchFile);
           throw error;
         }
+
         changed = true;
       }
     }
@@ -97,7 +159,8 @@ public class ScriptPatcher {
   }
 
   public void patchFile(final ScriptPatch patch) throws IOException, PatchFailedException {
-    if(!Files.exists(this.cacheDir.resolve("backups").resolve(patch.sourceFile))) {
+    // Back up the original file (if we're doing a replacement and the original doesn't exist, that's fine)
+    if(!Files.exists(this.cacheDir.resolve("backups").resolve(patch.sourceFile)) && (patch.type != PatchType.REPLACEMENT || Files.exists(this.filesDir.resolve(patch.sourceFile)))) {
       this.backupFile(patch.sourceFile);
     }
 
