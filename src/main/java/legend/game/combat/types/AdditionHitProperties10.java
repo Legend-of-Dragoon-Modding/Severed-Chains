@@ -16,10 +16,11 @@ public class AdditionHitProperties10 {
   public int hitDistanceFromTarget_0b;
   public int framesToHitPosition_0c;
   public int _0d; // always 32 (except for a few for Haschel), could be length of properties array
-  public int framesPostFailure_0e;
+  /** Used in player_combat_script as an index into an animation table, 18 -> 24, 19 -> 25, all other values are 0 */
+  public int _0e;
   public int overlayStartingFrameOffset_0f;
 
-  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int framesPostFailure, final int overlayStartingFrameOffset) {
+  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
     this.flags_00 = flags;
     this.totalFrames_01 = totalFrames;
     this.overlayHitFrameOffset_02 = overlayHitFrameOffset;
@@ -34,7 +35,7 @@ public class AdditionHitProperties10 {
     this.hitDistanceFromTarget_0b = hitDistanceFromTarget;
     this.framesToHitPosition_0c = framesToHitPosition;
     this._0d = _0d;
-    this.framesPostFailure_0e = framesPostFailure;
+    this._0e = _0e;
     this.overlayStartingFrameOffset_0f = overlayStartingFrameOffset;
   }
 
@@ -54,7 +55,7 @@ public class AdditionHitProperties10 {
       case 11 -> this.hitDistanceFromTarget_0b;
       case 12 -> this.framesToHitPosition_0c;
       case 13 -> this._0d;
-      case 14 -> this.framesPostFailure_0e;
+      case 14 -> this._0e;
       case 15 -> this.overlayStartingFrameOffset_0f;
       default -> throw new IllegalArgumentException("Invalid property index " + index);
     };

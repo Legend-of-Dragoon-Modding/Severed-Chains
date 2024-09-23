@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
@@ -123,7 +124,7 @@ public class ItemListScreen extends MenuScreen {
       return;
     }
 
-    this.description.setText(item.getDescription());
+    this.description.setText(I18n.translate(item.getDescriptionTranslationKey()));
   }
 
   @Override

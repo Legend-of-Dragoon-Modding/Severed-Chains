@@ -64,22 +64,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
 
-  public static final String[] itemCombatDescriptions_80051758 = {
-    " ", "Detonates & attacks all.", "S attack(thunder, multi).", "S attack(flame, multi).", " ",
-    "S attack(earth, multi).", "S attack(water, multi).", "S attack(wind, multi).", "Generates 1 attack item.", "S attack(light, multi).",
-    "S attack(dark, multi).", "Recovers 1/2 of max HP.", "Dissolves petrification.", "Dissolves B, C, F, D.", "Dissolves P, S, A-block.",
-    "A attack(thndr, multi).", "A attack(earth, multi).", "A attack(flame, multi).", "A attack(light, multi).", "Recovers 100SP in combat.",
-    "Confuses minor enemy.", " ", "A attack(water, multi).", "Stuns minor enemy.", "A attack(dark, multi).",
-    "Poisons minor enemy.", "Frightens minor enemy.", " ", "A attack (wind, multi).", "Eliminates minor enemy.",
-    "Revitalize & Recover 1/2HP.", "Avoids minor enemy 3x.", "Allow minor enemy attack 3x.", "Generates 1 recovery item.", " ",
-    "Nullify magic attack 3x.", "Nullify phys attack 3x.", "Completely recovers MP.", "Escape a minor enemy.", "Completely recovers HP.",
-    "Blocks enemy move 3x (rep).", "Recovers 100% HP for all.", "Recovers 100% MP for all.", "3 turns powerful (rep).", "3 turns weak (rep).",
-    "Double agility 3x (rep).", "Halves agility 3x(rep).", " ", "Gives subtle good aroma.", "A attack(non, multi).",
-    "Powerful A attack(Flame).", "Powerful A attack(Water).", "Powerful A attack(Wind).", "Powerful A attack(Earth).", "Powerful A attack(Light).",
-    "Powerful A attack(Dark).", "Powerful A attack(Thndr).", "Recovers 1/2 HP for all.", "A attack (non, multi, rep).", " ",
-    " ", " ", " ", " ",
-  };
-
   public static final String[] spellCombatDescriptions_80052018 = {
     "Fire STR 50% Single", "Fire STR 25% All", "Fire STR 75% Single", "Fire STR 175% All", "STR 100% Single",
     "Wind STR 25% All", "Wind STR 75% Single", "Damage Resist 50% Dur 3", "Wind STR 75% All", "STR 50% All",

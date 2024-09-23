@@ -3,11 +3,11 @@ package legend.game.combat.ui;
 import legend.core.Config;
 import legend.core.memory.Method;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
-import legend.lodmod.LodMod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
-    renderText(this.combatItems_800c6988.get(index).item.getName(), x, y, TextColour.WHITE, trim);
+    renderText(I18n.translate(this.combatItems_800c6988.get(index).item), x, y, TextColour.WHITE, trim);
     renderText("\u011d", x + 141, y, TextColour.WHITE, trim);
     renderRightText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 166, y, TextColour.WHITE, trim);
   }
@@ -80,11 +80,8 @@ public class ItemListMenu extends ListMenu {
       return;
     }
 
-    // > 64 will make the script do nothing
-    final int retailId = LodMod.idItemMap.getOrDefault(this.player_08.item_d4.getRegistryId(), 65); //TODO
-
     script.params_20[1].set(this.hud.battleMenu_800c6c34.target_48);
-    script.params_20[2].set(retailId);
+    script.params_20[2].set(-1); // Used to be item ID
     script.params_20[3].set(this.player_08.item_d4.getRegistryId());
 
     // If it's a target all item, -1 the target
@@ -132,7 +129,7 @@ public class ItemListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getCombatDescription(), 160, 157, TextColour.WHITE, 0);
+        renderCentredText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getBattleDescriptionTranslationKey()), 160, 157, TextColour.WHITE, 0);
       }
     }
   }

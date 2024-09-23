@@ -283,7 +283,9 @@ public class BattleStateEf4 {
   public int _4b4;
   public int _4b8;
   public int _4bc;
+  /** Used in merchant item tutorial. Script state index of temporary script allocated to back up player's original item list. No longer used in SC - we have enough registry IDs to not allocate extra states. */
   public int _4c0;
+  /** Used in merchant item tutorial. Script state index of temporary script allocated to back up player's original item list. No longer used in SC - we have enough registry IDs to not allocate extra states. */
   public int _4c4;
   public int _4c8;
   public int _4cc;

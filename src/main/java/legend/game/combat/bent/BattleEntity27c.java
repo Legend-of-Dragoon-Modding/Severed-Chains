@@ -55,6 +55,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
   public final BattleEntityType type;
 
+  public Element element;
+
   public final StatCollection stats;
 
   /**
@@ -249,7 +251,10 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract ElementSet getAttackElements();
-  public abstract Element getElement();
+
+  public Element getElement() {
+    return this.element;
+  }
 
   public abstract int calculatePhysicalDamage(final BattleEntity27c target);
   /**

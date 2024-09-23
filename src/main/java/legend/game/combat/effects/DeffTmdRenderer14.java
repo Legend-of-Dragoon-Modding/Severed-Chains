@@ -70,8 +70,8 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
       }
 
       //LAB_80118314
-      if(manager.scriptIndex_0c < -2) {
-        if(manager.scriptIndex_0c == -4) {
+      if(manager.parentBobjIndex_0c < -2) {
+        if(manager.parentBobjIndex_0c == -4) {
           sp0x10.transfer.z = projectionPlaneDistance_1f8003f8;
         }
 

@@ -17,6 +17,6 @@ public class RunningScript<T> {
   }
 
   public int getOp() {
-    return this.scriptState_04.scriptPtr_14.getOp(this.commandOffset_0c);
+    return this.scriptState_04.frame().file.getOp(this.commandOffset_0c);
   }
 }

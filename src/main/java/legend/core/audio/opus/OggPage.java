@@ -1,14 +1,11 @@
 package legend.core.audio.opus;
 
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static legend.core.IoHelper.crc32;
 
 /**
  * Ogg Page as defined by <a href="https://datatracker.ietf.org/doc/html/rfc3533#section-6">RFC3533</a>

@@ -51,6 +51,8 @@ import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEquipment;
+import legend.lodmod.LodItems;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -84,7 +86,6 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
@@ -95,6 +96,7 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8002.textboxFits;
@@ -284,70 +286,70 @@ public class SMap extends EngineState {
   private final String smoke2_800d9060 = "smoke_2.tim";
 
   public static final ShopStruct40[] shops_800f4930 = {
-    new ShopStruct40(0, 1, 28, 47, 63, 77, 103, 106, 107, 108, 112, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 222, 205, 206, 198, 208, 223, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 21, 83, 89, 104, 105, 106, 111, 156, 149, 150, 151, 157, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 229, 222, 205, 206, 199, 209, 223, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 2, 29, 78, 94, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 229, 222, 202, 214, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 14, 48, 97, 103, 104, 105, 106, 107, 108, 109, 111, 112, 156, 255, 255, 255),
-    new ShopStruct40(1, 203, 249, 229, 222, 205, 206, 201, 216, 223, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 64, 84, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 229, 222, 205, 206, 220, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 22, 41, 58, 107, 109, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 249, 229, 222, 205, 206, 201, 210, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 3, 30, 35, 49, 65, 79, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 249, 229, 222, 205, 223, 195, 209, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 15, 80, 95, 110, 115, 118, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 229, 222, 204, 207, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 9, 23, 42, 54, 59, 81, 85, 98, 105, 108, 110, 74, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 249, 229, 222, 204, 205, 206, 194, 207, 223, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 36, 113, 114, 119, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 229, 249, 222, 205, 206, 202, 216, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 24, 37, 55, 60, 117, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 249, 229, 222, 205, 206, 223, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 5, 33, 43, 99, 113, 114, 118, 119, 120, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 249, 229, 222, 223, 212, 215, 217, 218, 200, 225, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 115, 116, 117, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 249, 229, 222, 205, 206, 212, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 6, 25, 38, 44, 51, 52, 56, 61, 67, 68, 69, 113, 114, 115, 116, 117),
-    new ShopStruct40(1, 231, 249, 229, 222, 204, 205, 206, 212, 217, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(3, 203, 222, 194, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 4, 10, 16, 31, 50, 66, 116, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 249, 229, 222, 206, 223, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 142, 143, 146, 148, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 206, 195, 223, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 153, 154, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 203, 229, 222, 205, 206, 210, 197, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 11, 17, 51, 52, 68, 69, 106, 108, 110, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(1, 231, 229, 249, 222, 204, 205, 206, 223, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(3, 203, 229, 222, 205, 218, 207, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 203, 229, 222, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-    new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
+    new ShopStruct40(0, LodEquipment.BASTARD_SWORD::get, LodEquipment.SPARKLE_ARROW::get, LodEquipment.SCALE_ARMOR::get, LodEquipment.LEATHER_JACKET::get, LodEquipment.SALLET::get, LodEquipment.POISON_GUARD::get, LodEquipment.PANIC_GUARD::get, LodEquipment.STUN_GUARD::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.KNIGHT_SHIELD::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.SPEAR_FROST::get, LodItems.METEOR_FALL::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.LANCE::get, LodEquipment.CAPE::get, LodEquipment.LEGEND_CASQUE::get, LodEquipment.ACTIVE_RING::get, LodEquipment.PROTECTOR::get, LodEquipment.PANIC_GUARD::get, LodEquipment.POWER_WRIST::get, LodEquipment.WARGOD_CALLING::get, LodEquipment.PHANTOM_SHIELD::get, LodEquipment.DRAGON_SHIELD::get, LodEquipment.ANGEL_SCARF::get, LodEquipment.ULTIMATE_WARGOD::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.SPINNING_GALE::get, LodItems.GUSHING_MAGMA::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.HEAT_BLADE::get, LodEquipment.LONG_BOW::get, LodEquipment.ARMET::get, LodEquipment.IRON_KNEEPIECE::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DARK_MIST::get, LodItems.FATAL_BLIZZARD::get),
+    new ShopStruct40(0, LodEquipment.SHADOW_CUTTER::get, LodEquipment.CHAIN_MAIL::get, LodEquipment.SOFT_BOOTS::get, LodEquipment.POISON_GUARD::get, LodEquipment.ACTIVE_RING::get, LodEquipment.PROTECTOR::get, LodEquipment.PANIC_GUARD::get, LodEquipment.STUN_GUARD::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.MAGIC_EGO_BELL::get, LodEquipment.POWER_WRIST::get, LodEquipment.KNIGHT_SHIELD::get, LodEquipment.WARGOD_CALLING::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.TRANS_LIGHT::get, LodItems.BLACK_RAIN::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.SILVER_VEST::get, LodEquipment.TIARA::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.RAVE_TWISTER::get),
+    new ShopStruct40(0, LodEquipment.GLAIVE::get, LodEquipment.BEAST_FANG::get, LodEquipment.WARRIOR_DRESS::get, LodEquipment.STUN_GUARD::get, LodEquipment.MAGIC_EGO_BELL::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.TRANS_LIGHT::get, LodItems.DANCING_RAY::get),
+    new ShopStruct40(0, LodEquipment.FALCHION::get, LodEquipment.BEMUSING_ARROW::get, LodEquipment.MORNING_STAR::get, LodEquipment.PLATE_MAIL::get, LodEquipment.SPARKLE_DRESS::get, LodEquipment.KNIGHT_HELM::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.CHARM_POTION::get, LodItems.BURN_OUT::get, LodItems.GUSHING_MAGMA::get),
+    new ShopStruct40(0, LodEquipment.DANCING_DAGGER::get, LodEquipment.GIGANTO_HELM::get, LodEquipment.COMBAT_SHOES::get, LodEquipment.DESTONE_AMULET::get, LodEquipment.ATTACK_BADGE::get, LodEquipment.ELUDE_CLOAK::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.THUNDERBOLT::get),
+    new ShopStruct40(0, LodEquipment.TOMAHAWK::get, LodEquipment.SPEAR_OF_TERROR::get, LodEquipment.DIAMOND_CLAW::get, LodEquipment.BREAST_PLATE::get, LodEquipment.MASTERS_VEST::get, LodEquipment.SOUL_HEADBAND::get, LodEquipment.JEWELED_CROWN::get, LodEquipment.STARDUST_BOOTS::get, LodEquipment.PROTECTOR::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.DESTONE_AMULET::get, LodEquipment.ARMOR_OF_LEGEND::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.SPARK_NET::get, LodItems.THUNDERBOLT::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.WAR_HAMMER::get, LodEquipment.MAGICAL_RING::get, LodEquipment.SPIRITUAL_RING::get, LodEquipment.SPIRIT_CLOAK::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.SUN_RHAPSODY::get, LodItems.HEALING_BREEZE::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.DARK_MIST::get, LodItems.BLACK_RAIN::get),
+    new ShopStruct40(0, LodEquipment.PARTISAN::get, LodEquipment.HEAVY_MACE::get, LodEquipment.GIGANTO_ARMOR::get, LodEquipment.ENERGY_GIRDLE::get, LodEquipment.GIGANTO_RING::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.FAIRY_SWORD::get, LodEquipment.ARROW_OF_FORCE::get, LodEquipment.THUNDER_FIST::get, LodEquipment.MAGICAL_GREAVES::get, LodEquipment.MAGICAL_RING::get, LodEquipment.SPIRITUAL_RING::get, LodEquipment.ELUDE_CLOAK::get, LodEquipment.SPIRIT_CLOAK::get, LodEquipment.SAGES_CLOAK::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.CHARM_POTION::get, LodItems.PANIC_BELL::get, LodItems.STUNNING_HAMMER::get, LodItems.POISON_NEEDLE::get, LodItems.MIDNIGHT_TERROR::get, LodItems.ATTACK_BALL::get, LodItems.RECOVERY_BALL::get),
+    new ShopStruct40(0, LodEquipment.ATTACK_BADGE::get, LodEquipment.GUARD_BADGE::get, LodEquipment.GIGANTO_RING::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.PANIC_BELL::get),
+    new ShopStruct40(0, LodEquipment.CLAYMORE::get, LodEquipment.HALBERD::get, LodEquipment.BASHER::get, LodEquipment.DESTROYER_MACE::get, LodEquipment.RED_DG_ARMOR::get, LodEquipment.JADE_DG_ARMOR::get, LodEquipment.GOLD_DG_ARMOR::get, LodEquipment.VIOLET_DG_ARMOR::get, LodEquipment.SILVER_DG_ARMOR::get, LodEquipment.DARK_DG_ARMOR::get, LodEquipment.BLUE_DG_ARMOR::get, LodEquipment.MAGICAL_RING::get, LodEquipment.SPIRITUAL_RING::get, LodEquipment.ATTACK_BADGE::get, LodEquipment.GUARD_BADGE::get, LodEquipment.GIGANTO_RING::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.PANIC_BELL::get, LodItems.POISON_NEEDLE::get),
+    new ShopStruct40(3, LodItems.HEALING_POTION::get, LodItems.ANGELS_PRAYER::get, LodItems.SPARK_NET::get),
+    new ShopStruct40(0, LodEquipment.MIND_CRUSH::get, LodEquipment.BATTLE_AXE::get, LodEquipment.FLAMBERGE::get, LodEquipment.VIRULENT_ARROW::get, LodEquipment.SAINT_ARMOR::get, LodEquipment.ROBE::get, LodEquipment.GUARD_BADGE::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.BODY_PURIFIER::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.RUBY_RING::get, LodEquipment.SAPPHIRE_PIN::get, LodEquipment.EMERALD_EARRING::get, LodEquipment.PLATINUM_COLLAR::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.BODY_PURIFIER::get, LodItems.BURN_OUT::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(0, LodEquipment.FAKE_POWER_WRIST::get, LodEquipment.FAKE_SHIELD::get),
+    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.DANCING_RAY::get, LodItems.PELLET::get),
+    new ShopStruct40(0, LodEquipment.GREAT_AXE::get, LodEquipment.GLADIUS::get, LodEquipment.RED_DG_ARMOR::get, LodEquipment.JADE_DG_ARMOR::get, LodEquipment.DARK_DG_ARMOR::get, LodEquipment.BLUE_DG_ARMOR::get, LodEquipment.PANIC_GUARD::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.DESTONE_AMULET::get),
+    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.SUN_RHAPSODY::get, LodItems.HEALING_BREEZE::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.CHARM_POTION::get),
+    new ShopStruct40(3, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.MIDNIGHT_TERROR::get, LodItems.THUNDERBOLT::get),
+    new ShopStruct40(0, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
+    new ShopStruct40(0),
   };
 
   /** Related to indicator being disabled for cutscenes/conversations */

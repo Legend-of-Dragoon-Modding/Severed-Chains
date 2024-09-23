@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.DabasManager;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
@@ -119,9 +120,9 @@ public class DabasScreen extends MenuScreen {
 
           if(itemId != 0) {
             if(itemId > 192) {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()));
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()));
             } else {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()));
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()));
             }
 
             this.hasItems = true;
@@ -130,7 +131,7 @@ public class DabasScreen extends MenuScreen {
 
         final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
-          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(specialItemId)).get());
+          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get());
           this.hasItems = true;
         }
 
@@ -609,7 +610,7 @@ public class DabasScreen extends MenuScreen {
 
     if(this.specialItem != null) {
       renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8);
-      renderText(this.specialItem.getName(), 214, 194, TextColour.BROWN);
+      renderText(I18n.translate(this.specialItem.getNameTranslationKey()), 214, 194, TextColour.BROWN);
     }
 
     //LAB_80103390

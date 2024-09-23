@@ -13,8 +13,10 @@ public class EffectManagerData6c<T extends EffectManagerParams<T>> extends Battl
 
   /** The first 11 (or more?) bits denote which attachments this effect has */
   public int flags_04;
-  public int scriptIndex_0c;
-  public int coord2Index_0d;
+  /** The bobj that this effect is visually attached to */
+  public int parentBobjIndex_0c;
+  /** The bobj part that this effect is visually attached to */
+  public int parentPartIndex_0d;
   public ScriptState<EffectManagerData6c<T>> myScriptState_0e;
 
   public final T params_10;
@@ -43,8 +45,8 @@ public class EffectManagerData6c<T extends EffectManagerParams<T>> extends Battl
 
   public void set(final EffectManagerData6c<T> other) {
     this.flags_04 = other.flags_04;
-    this.scriptIndex_0c = other.scriptIndex_0c;
-    this.coord2Index_0d = other.coord2Index_0d;
+    this.parentBobjIndex_0c = other.parentBobjIndex_0c;
+    this.parentPartIndex_0d = other.parentPartIndex_0d;
     this.myScriptState_0e = other.myScriptState_0e;
     this.params_10.set(other.params_10);
     this.effect_44 = other.effect_44;

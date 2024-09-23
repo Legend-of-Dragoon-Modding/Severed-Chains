@@ -5,7 +5,7 @@
  ENTRYPOINT_0:
  mov var[36][0], stor[30]
 -mov var[34][0], stor[28]
-+mov var[45][12], stor[28]
++mov var[45][13], stor[28]
  gosub inl[:LABEL_0]
  call 33, 0x0, 0xfffbb400, 0xfff99800, 0x1e000, 0x0
  call 34, 0x0, 0x90000, 0xfffc4a00, 0x0, 0x0
@@ -14,7 +14,7 @@
  ENTRYPOINT_1:
  mov var[36][0], stor[30]
 -mov var[34][0], stor[28]
-+mov var[45][12], stor[28]
++mov var[45][13], stor[28]
  gosub inl[:LABEL_0]
  call 33, 0x0, 0xfffbb400, 0xfff99800, 0x1e000, 0x0
  call 34, 0x0, 0x90000, 0xfffc4a00, 0x0, 0x0

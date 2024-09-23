@@ -2,7 +2,7 @@ package legend.game.inventory;
 
 public interface InventoryEntry {
   int getIcon();
-  String getName();
-  String getDescription();
+  String getNameTranslationKey();
+  String getDescriptionTranslationKey();
   int getPrice();
 }

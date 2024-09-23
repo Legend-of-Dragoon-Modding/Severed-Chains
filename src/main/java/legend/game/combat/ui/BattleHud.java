@@ -736,7 +736,7 @@ public class BattleHud {
         this.drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
         final int targetCombatant = menu.combatantIndex_54;
         String str;
-        Element element;
+        final Element element;
         if(targetCombatant == -1) {  // Target all
           str = targeting_800fb36c[menu.targetType_50];
           element = LodMod.DIVINE_ELEMENT.get();
@@ -758,34 +758,23 @@ public class BattleHud {
 
             //LAB_800f0d10
             str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
-            element = monsterBent.displayElement_1c;
             targetBent = monsterBent;
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378[targetBent.charId_272];
-            element = targetBent.getElement();
-
-            if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-              element = LodMod.DIVINE_ELEMENT.get();
-            }
           } else {
             //LAB_800f0d58
             //LAB_800f0d5c
-            final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[targetCombatant];
-            targetBent = state.innerStruct_00;
+            targetBent = battleState_8006e398.allBents_e0c[targetCombatant].innerStruct_00;
             if(targetBent instanceof final MonsterBattleEntity monsterBent) {
               //LAB_800f0e24
               str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[targetCombatant]);
-              element = monsterBent.displayElement_1c;
             } else {
               str = playerNames_800fb378[targetBent.charId_272];
-              element = targetBent.getElement();
-
-              if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-                element = LodMod.DIVINE_ELEMENT.get();
-              }
             }
           }
+
+          element = targetBent.getElement();
 
           //LAB_800f0e60
           final int status = targetBent.status_0e;

@@ -225,6 +225,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[909] = SItem::scriptGiveEquipment;
     scriptSubFunctions_8004e29c[910] = SItem::scriptTakeItem;
     scriptSubFunctions_8004e29c[911] = SItem::scriptTakeEquipment;
+    scriptSubFunctions_8004e29c[912] = SItem::scriptGenerateAttackItem;
+    scriptSubFunctions_8004e29c[913] = SItem::scriptGenerateRecoveryItem;
   }
   // 8004f29c end of jump table
 

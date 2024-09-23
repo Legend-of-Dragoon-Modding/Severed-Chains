@@ -20,6 +20,7 @@ import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
 
@@ -67,7 +68,7 @@ public class ScriptDebuggerController {
   public void initialize() {
     INSTANCES.add(this);
 
-    for(int i = 0; i < 0x48; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       this.scripts.add(new ListItem(this::getScriptName, i));
     }
 
@@ -83,7 +84,7 @@ public class ScriptDebuggerController {
         return null;
       }
     });
-    this.scriptSelector.setValue(this.scripts.get(0));
+    this.scriptSelector.setValue(this.scripts.getFirst());
     this.scriptSelector.onActionProperty().set(event -> this.updateScriptVars());
 
     for(int i = 0; i < 33; i++) {
@@ -96,10 +97,6 @@ public class ScriptDebuggerController {
       cell.setConverter(this.scriptSelector.getConverter());
       return cell;
     });
-
-    for(int i = 0; i < 10; i++) {
-      this.stack.add(new ListItem(stackIndex -> this.getCommandStack(this.scriptSelector.getValue().index, stackIndex), i));
-    }
 
     this.commandStack.setItems(this.stack);
     this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
@@ -162,14 +159,15 @@ public class ScriptDebuggerController {
       this.storage.get(storageIndex).update();
     }
 
-    if(state.offset_18 == -1) {
+    if(state.frame().offset == -1) {
       this.stackTop.setText("null");
     } else {
-      this.stackTop.setText("0x%08x".formatted(state.offset_18));
+      this.stackTop.setText("0x%x".formatted(state.frame().offset * 0x4));
     }
 
-    for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
-      this.stack.get(stackIndex).update();
+    this.stack.clear();
+    for(int stackIndex = 0; stackIndex < state.callStackDepth(); stackIndex++) {
+      this.stack.add(new ListItem(i -> this.getCommandStack(this.scriptSelector.getValue().index, i), stackIndex));
     }
 
     if(state.ticker_04 != null) {
@@ -196,8 +194,8 @@ public class ScriptDebuggerController {
       this.destructor.setText("null");
     }
 
-    if(state.scriptPtr_14 != null) {
-      this.filePtr.setText(state.scriptPtr_14.name);
+    if(state.callStackDepth() != 0) {
+      this.filePtr.setText(state.frame().file.name);
     } else {
       this.filePtr.setText("<none>");
     }
@@ -215,13 +213,14 @@ public class ScriptDebuggerController {
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
-    final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex] : -1;
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
 
-    if(val == -1) {
-      return "null";
-    } else {
-      return "0x%08x".formatted(val);
+    if(state == null || stackIndex >= state.callStackDepth()) {
+      return "";
     }
+
+    final ScriptStackFrame frame = state.frame(stackIndex);
+    return "0x%x %s".formatted(frame.offset * 0x4, frame.file.name);
   }
 
   @EventListener

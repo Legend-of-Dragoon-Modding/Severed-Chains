@@ -203,8 +203,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   @Method(0x8011619cL)
   private void FUN_8011619c(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final MV matrix) {
     final MV sp0x10 = new MV();
-    sp0x10.scaling(manager.params_10.scale_16);
-    sp0x10.rotateZYX(manager.params_10.rot_10);
+    sp0x10.rotationZYX(manager.params_10.rot_10);
+    sp0x10.scale(manager.params_10.scale_16);
     sp0x10.transfer.set(manager.params_10.trans_04);
     sp0x10.compose(matrix, sp0x10);
     final float scale = manager.params_10.scale_28 / (float)0x1000;
@@ -313,10 +313,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       manager.params_10.trans_04.set(sp0x10.transfer);
       getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, sp0x10);
 
-      final int oldScriptIndex = manager2.scriptIndex_0c;
-      final int oldCoord2Index = manager2.coord2Index_0d;
-      manager2.scriptIndex_0c = manager.myScriptState_0e.index;
-      manager2.coord2Index_0d = -1;
+      final int oldParentBobjIndex = manager2.parentBobjIndex_0c;
+      final int oldParentPartIndex = manager2.parentPartIndex_0d;
+      manager2.parentBobjIndex_0c = manager.myScriptState_0e.index;
+      manager2.parentPartIndex_0d = -1;
       final int r = manager2.params_10.colour_1c.x;
       final int g = manager2.params_10.colour_1c.y;
       final int b = manager2.params_10.colour_1c.z;
@@ -328,8 +328,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       manager2.params_10.colour_1c.x = r;
       manager2.params_10.colour_1c.y = g;
       manager2.params_10.colour_1c.z = b;
-      manager2.scriptIndex_0c = oldScriptIndex;
-      manager2.coord2Index_0d = oldCoord2Index;
+      manager2.parentBobjIndex_0c = oldParentBobjIndex;
+      manager2.parentPartIndex_0d = oldParentPartIndex;
     }
 
     //LAB_801168b8

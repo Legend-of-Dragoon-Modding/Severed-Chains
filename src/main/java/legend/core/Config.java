@@ -28,8 +28,8 @@ public final class Config {
 
   static {
     properties.setProperty("low_memory_unpacker", "false");
-    properties.setProperty("window_width", "640");
-    properties.setProperty("window_height", "480");
+    properties.setProperty("window_width", "960");
+    properties.setProperty("window_height", "720");
     properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
