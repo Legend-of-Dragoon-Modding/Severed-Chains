@@ -3,6 +3,8 @@ package legend.game.inventory;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.scripting.FlowControl;
+import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 public abstract class Item extends RegistryEntry implements InventoryEntry {
@@ -58,9 +60,22 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
 
   public abstract boolean canTarget(final TargetType type);
 
-  /** TODO refactor, use UsageLocation */
   @Method(0x80022d88L)
-  public abstract void use(final UsageLocation location, final UseItemResponse response, final int charIndex);
+  public void useInMenu(final UseItemResponse response, final int charId) {
+    if(!this.canBeUsed(UsageLocation.MENU)) {
+      throw new RuntimeException(this + " cannot be used in menu");
+    }
+
+    throw new RuntimeException(this + " usage in menu has yet been implemented");
+  }
+
+  public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    if(!this.canBeUsed(UsageLocation.BATTLE)) {
+      throw new RuntimeException(this + " cannot be used in battle");
+    }
+
+    throw new RuntimeException(this + " usage in battle has yet been implemented");
+  }
 
   /** If you implement this, you have to implement {@link #calculateStatMod} */
   public boolean isStatMod() {
@@ -80,7 +95,9 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
   }
 
   public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
-    throw new IllegalStateException(this + " is not an attack item");
+    //TODO should we update the DEFFs to not call these?
+    //throw new IllegalStateException(this + " is not an attack item");
+    return 0;
   }
 
   public Element getAttackElement() {
@@ -88,11 +105,9 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
   }
 
   public int getAttackDamageMultiplier(final BattleEntity27c user, final BattleEntity27c target) {
-    throw new IllegalStateException(this + " is not an attack item");
-  }
-
-  public int calculateAttackDamage(final BattleEntity27c user, final BattleEntity27c target) {
-    throw new IllegalStateException(this + " is not an attack item");
+    //TODO should we update the DEFFs to not call these?
+    //throw new IllegalStateException(this + " is not an attack item");
+    return 0;
   }
 
   public enum UsageLocation {

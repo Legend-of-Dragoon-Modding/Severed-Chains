@@ -11,13 +11,18 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.legendofdragoon.scripting.Disassembler;
+import org.legendofdragoon.scripting.Translator;
+import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
@@ -397,7 +402,7 @@ public class ScriptState<T> {
           if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
             LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
           } else {
-            LOGGER.info(SCRIPT_MARKER, "Running callback %d", this.context.opIndex_10);
+            LOGGER.info(SCRIPT_MARKER, "Running callback %s", this.context.opIndex_10);
           }
         }
 
@@ -557,6 +562,14 @@ public class ScriptState<T> {
       return param;
     }
 
+    if(paramType == 0x22) { // Null
+      return new ScriptStateNullRegistryIdParam();
+    }
+
+    if(paramType == 0x23) { // Var registry ID
+      return new ScriptStateVarRegistryIdParam(this, cmd0);
+    }
+
     // Treated as an immediate if not a valid op
     return new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
   }
@@ -638,16 +651,44 @@ public class ScriptState<T> {
   }
 
   @Method(0x8001664cL)
-  public boolean scriptCompare(final int operandA, final int operandB, final int op) {
+  public boolean scriptCompare(final Param operandA, final Param operandB, final int op) {
+    // Check A for null
+    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandB.get() == 0) {
+      return switch(op) {
+        case 2 -> operandA.getRegistryId() == null;
+        case 3 -> operandA.getRegistryId() != null;
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Check B for null
+    if(operandB.isRegistryId() && !operandA.isRegistryId() && operandA.get() == 0) {
+      return switch(op) {
+        case 2 -> operandB.getRegistryId() == null;
+        case 3 -> operandB.getRegistryId() != null;
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Compare registry IDs
+    if(operandA.isRegistryId() && operandB.isRegistryId()) {
+      return switch(op) {
+        case 2 -> Objects.equals(operandA.getRegistryId(), operandB.getRegistryId());
+        case 3 -> !Objects.equals(operandA.getRegistryId(), operandB.getRegistryId());
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Standard compare
     return switch(op) {
-      case 0 -> operandA <= operandB;
-      case 1 -> operandA < operandB;
-      case 2 -> operandA == operandB;
-      case 3 -> operandA != operandB;
-      case 4 -> operandA > operandB;
-      case 5 -> operandA >= operandB;
-      case 6 -> (operandA & operandB) != 0;
-      case 7 -> (operandA & operandB) == 0;
+      case 0 -> operandA.get() <= operandB.get();
+      case 1 -> operandA.get() < operandB.get();
+      case 2 -> operandA.get() == operandB.get();
+      case 3 -> operandA.get() != operandB.get();
+      case 4 -> operandA.get() > operandB.get();
+      case 5 -> operandA.get() >= operandB.get();
+      case 6 -> (operandA.get() & operandB.get()) != 0;
+      case 7 -> (operandA.get() & operandB.get()) == 0;
       default -> false;
     };
   }
@@ -700,13 +741,13 @@ public class ScriptState<T> {
    */
   @Method(0x8001670cL)
   public FlowControl scriptCompare() {
-    return this.scriptCompare(this.context.params_20[0].get(), this.context.params_20[1].get(), this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
+    return this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /** Same as {@link #scriptCompare()} with first param set to 0 */
   @Method(0x80016744L)
   public FlowControl scriptCompare0() {
-    return this.scriptCompare(0, this.context.params_20[0].get(), this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
+    return this.scriptCompare(ScriptTempParam.ZERO, this.context.params_20[0], this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /**
@@ -1026,7 +1067,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016d4cL)
   public FlowControl scriptConditionalJump() {
-    if(this.scriptCompare(this.context.params_20[0].get(), this.context.params_20[1].get(), this.context.opParam_18)) {
+    if(this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18)) {
       this.context.params_20[2].jump(this.context);
     }
 
@@ -1056,7 +1097,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016da0L)
   public FlowControl scriptConditionalJump0() {
-    if(this.scriptCompare(0, this.context.params_20[0].get(), this.context.opParam_18)) {
+    if(this.scriptCompare(ScriptTempParam.ZERO, this.context.params_20[0], this.context.opParam_18)) {
       this.context.params_20[1].jump(this.context);
     }
 
@@ -1197,24 +1238,58 @@ public class ScriptState<T> {
     LOGGER.error("Parameters:");
     LOGGER.error("  Op param: 0x%x", this.context.opParam_18);
     for(int i = 0; i < this.context.paramCount_14; i++) {
-      LOGGER.error("  %d: %s", i + 1, this.context.params_20[i]);
+      LOGGER.error("  %d: %s", i, this.context.params_20[i]);
     }
 
     LOGGER.error("Storage:");
     for(int i = 0; i < this.storage_44.length; i++) {
-      LOGGER.error("  %d: 0x%x", i + 1, this.storage_44[i]);
+      LOGGER.error("  %d: 0x%x", i, this.storage_44[i]);
     }
 
     LOGGER.error("Registry IDs:");
     for(int i = 0; i < this.registryIds.length; i++) {
       if(this.registryIds[i] != null) {
-        LOGGER.error("  %d: %s", i + 1, this.registryIds[i]);
+        LOGGER.error("  %d: %s", i, this.registryIds[i]);
       }
     }
 
     LOGGER.error("Call stack:");
     for(int i = 0; i < this.callStack.size(); i++) {
-      LOGGER.error("  %d: %s 0x%x", i + 1, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+      LOGGER.error("  %d: %s 0x%x", i, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+    }
+
+    LOGGER.error("Disassembly:");
+    try {
+      this.dumpDisassembly();
+    } catch(final Throwable t) {
+      LOGGER.warn("Failed to disassemble script");
+    }
+  }
+
+  private void dumpDisassembly() {
+    final Disassembler disassembler = new Disassembler(SCRIPTS.meta());
+    final Script tokens = disassembler.disassemble(this.frame().file.data);
+
+    final Translator translator = new Translator();
+    translator.lineNumbers = true;
+    final String decompiled = translator.translate(tokens, SCRIPTS.meta());
+
+    final String[] split = decompiled.split("\n");
+    for(int i = 0; i < split.length; i++) {
+      if(split[i].startsWith(Integer.toHexString(this.context.opOffset_08 * 4))) {
+        for(int n = Math.max(0, i - 5); n < i; n++) {
+          LOGGER.error("  %s", split[n]);
+        }
+
+        LOGGER.error("  %s", split[i]);
+        LOGGER.error("  %s", "~".repeat(split[i].length()));
+
+        for(int n = i + 1; n < Math.min(split.length - 1, i + 6); n++) {
+          LOGGER.error("  %s", split[n]);
+        }
+
+        break;
+      }
     }
   }
 
