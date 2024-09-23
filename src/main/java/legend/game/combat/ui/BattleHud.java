@@ -50,8 +50,6 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
@@ -1495,7 +1493,7 @@ public class BattleHud {
         this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 0;
 
         // Input for changing camera angles
-        if(countCameraPositionIndicesIndices >= 2 && (input_800bee90 & 0x2) != 0) {
+        if(countCameraPositionIndicesIndices >= 2 && Input.getButtonState(InputAction.BUTTON_SHOULDER_RIGHT_2)) {
           this.currentCameraPositionIndicesIndicesIndex_800c6ba1++;
           if(this.currentCameraPositionIndicesIndicesIndex_800c6ba1 >= countCameraPositionIndicesIndices) {
             this.currentCameraPositionIndicesIndicesIndex_800c6ba1 = 0;
@@ -1512,7 +1510,7 @@ public class BattleHud {
 
         // Input for cycling right on menu bar
         //LAB_800f65b8
-        if((input_800bee90 & 0x2000) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_RIGHT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
           playSound(0, 1, (short)0, (short)0);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.iconCount_0e - 1) {
@@ -1541,7 +1539,7 @@ public class BattleHud {
 
         // Input for cycling left on menu bar
         //LAB_800f6664
-        if((input_800bee90 & 0x8000) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_LEFT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
           playSound(0, 1, (short)0, (short)0);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
@@ -1611,7 +1609,7 @@ public class BattleHud {
 
         // Input for pressing X on menu bar
         //LAB_800f671c
-        if((press_800bee94 & 0x20) != 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
           if((selectedIconFlag & 0x80) != 0) {
             playSound(0, 3, (short)0, (short)0);
@@ -1652,7 +1650,7 @@ public class BattleHud {
           }
           //LAB_800f6898
           // Input for pressing circle on menu bar
-        } else if((press_800bee94 & 0x40) != 0) {
+        } else if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
           //LAB_800f68a4
           //LAB_800f68bc
           playSound(0, 3, (short)0, (short)0);
@@ -1923,7 +1921,7 @@ public class BattleHud {
     }
 
     //LAB_800f77f4
-    if((press_800bee94 & 0x3000) != 0) {
+    if(Input.pressedWithRepeatPulse(InputAction.DPAD_UP) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c++;
       if(this.battleMenu_800c6c34.targetedSlot_800c697c >= count) {
         this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
@@ -1932,7 +1930,7 @@ public class BattleHud {
 
     //LAB_800f7830
     short t3 = 1;
-    if((press_800bee94 & 0xc000) != 0) {
+    if(Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN) || Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c--;
       if(this.battleMenu_800c6c34.targetedSlot_800c697c < 0) {
         this.battleMenu_800c6c34.targetedSlot_800c697c = count - 1;
@@ -2000,14 +1998,14 @@ public class BattleHud {
 
     //LAB_800f7a0c
     //LAB_800f7a10
-    if((press_800bee94 & 0x20) != 0) { // Cross
+    if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
       return 1;
     }
 
     //LAB_800f7a38
-    if((press_800bee94 & 0x40) != 0) { // Circle
+    if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.target_48 = -1;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;

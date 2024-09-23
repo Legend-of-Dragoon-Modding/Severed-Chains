@@ -79,6 +79,8 @@ import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.PerfectDragoonAdditionEffect30;
 import legend.game.combat.types.PerfectDragoonAdditionEffectGlyph06;
 import legend.game.combat.types.VertexDifferenceAnimation18;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -133,7 +135,6 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -1399,7 +1400,7 @@ public final class SEffe {
         daddy.ticksRemainingToBeginAddition_12--;
         if(daddy.ticksRemainingToBeginAddition_12 == 0) {
           state.deallocateWithChildren();
-        } else if(((press_800bee94 >>> 4 & 0x2) != 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
+        } else if((Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
           daddy.meterSpinning_10 = 1;
           daddyMeterSpinning_80119f42 = 1;
         }
@@ -1435,7 +1436,7 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || (press_800bee94 >>> 4 & 0x2) != 0 && daddy.inputMode_13 == 0) {
+          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || Input.pressedThisFrame(InputAction.BUTTON_SOUTH) && daddy.inputMode_13 == 0) {
             //LAB_8010870c
             daddy.buttonPressGlowBrightnessFactor_11 = 4;
             daddy.countEyeFlashTicks_0d = 0;

@@ -107,9 +107,7 @@ import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -133,7 +131,6 @@ import static legend.game.wmap.WMapModelAndAnimData258.ZoomState;
 import static legend.game.wmap.WmapStatics.coolonWarpDest_800ef228;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
-import static legend.game.wmap.WmapStatics.inputAngleModifierAtPathIntersection_800f021c;
 import static legend.game.wmap.WmapStatics.loadWait;
 import static legend.game.wmap.WmapStatics.locations_800f0e34;
 import static legend.game.wmap.WmapStatics.mapPositions_800ef1a8;
@@ -496,29 +493,27 @@ public class WMap extends EngineState {
   private void handleInventoryTransition() {
     if(Unpacker.getLoadingFileCount() == 0) {
       if(this.tickMainMenuOpenTransition_800c6690 == 0) {
-        if((input_800bee90 & 0x1af) == 0) {
-          final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
+        final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
 
-          if(cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
-            if(cameraAndLights.zoomStateIsLocal_c4) {
-              final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
+        if(cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
+          if(cameraAndLights.zoomStateIsLocal_c4) {
+            final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
-              if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL_0) {
-                if(modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE_0) {
-                  if(
-                    this.worldMapState_800c6698.state >= WorldMapState.INIT_MAP_ANIM_3.state ||
-                      this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state
-                  ) {
-                    //LAB_800cc900
-                    if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
-                      if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
-                        if(modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
-                          if(this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
-                            if(modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
-                              startFadeEffect(1, 15);
-                              this.mapState_800c6798.disableInput_d0 = true;
-                              this.tickMainMenuOpenTransition_800c6690 = 1;
-                            }
+            if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL_0) {
+              if(modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE_0) {
+                if(
+                  this.worldMapState_800c6698.state >= WorldMapState.INIT_MAP_ANIM_3.state ||
+                    this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state
+                ) {
+                  //LAB_800cc900
+                  if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
+                    if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
+                      if(modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
+                        if(this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
+                          if(modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
+                            startFadeEffect(1, 15);
+                            this.mapState_800c6798.disableInput_d0 = true;
+                            this.tickMainMenuOpenTransition_800c6690 = 1;
                           }
                         }
                       }
@@ -2768,7 +2763,7 @@ public class WMap extends EngineState {
     modelAndAnimData.models_0c[2].coord2_14.transforms.rotate.y += (modelAndAnimData.playerRotation_a4.y - modelAndAnimData.models_0c[2].coord2_14.transforms.rotate.y) / 8 / (3.0f / vsyncMode_8007a3b8);
 
     if(enableInput) {
-      if((repeat_800bee98 & 0x6000) != 0) {
+      if(Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) || Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
         playSound(0, 1, (short)0, (short)0);
 
         if(modelAndAnimData.coolonDestIndex_222 > 0) {
@@ -2779,7 +2774,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800dc384
-      if((repeat_800bee98 & 0x9000) != 0) {
+      if(Input.pressedWithRepeatPulse(InputAction.DPAD_UP) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
         playSound(0, 1, (short)0, (short)0);
 
         modelAndAnimData.coolonDestIndex_222++;
@@ -4905,22 +4900,25 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e91cc
-    final int directionInput = (input_800bee90 & 0xffff) >>> 12;
-
     // Calculates Dart's orientation on the map, reducing it to 8 headings, counting counter-clockwise.
     // This is used to index 2 arrays, one for input values counting from N and the other counting from S.
     // Whichever mask gives a non-zero result determines whether the movement direction is positive or
     // negative. If both are zero or both are non-zero, Dart moves whichever way he is facing.
-    if(directionInput != 0) {
+    if(
+      Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
+      Input.getButtonState(InputAction.DPAD_RIGHT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) ||
+      Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN) ||
+      Input.getButtonState(InputAction.DPAD_LEFT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)
+    ) {
       final int directionMaskIndex = MathHelper.radToPsxDeg(MathHelper.floorMod(this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y - this.mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
-      final int positiveDirectionMask = directionInput & positiveDirectionMovementMask_800f0204[directionMaskIndex];
-      final int negativeDirectionMask = directionInput & negativeDirectionMovementMask_800f0210[directionMaskIndex];
+      final boolean positiveDirection = Arrays.stream(positiveDirectionMovementMask_800f0204[directionMaskIndex]).anyMatch(Input::getButtonState);
+      final boolean negativeDirection = Arrays.stream(negativeDirectionMovementMask_800f0210[directionMaskIndex]).anyMatch(Input::getButtonState);
 
       int movement;
-      if(positiveDirectionMask != 0 && negativeDirectionMask == 0) {
+      if(positiveDirection && !negativeDirection) {
         movement = 1;
         //LAB_800e92d0
-      } else if(positiveDirectionMask == 0 && negativeDirectionMask != 0) {
+      } else if(!positiveDirection && negativeDirection) {
         movement = -1;
       } else {
         //LAB_800e9300
@@ -5064,13 +5062,6 @@ public class WMap extends EngineState {
       return;
     }
 
-    final Vector3f playerOffsetFromPathStart = new Vector3f();
-    int playerAngleRelativeToPath;
-
-    int newPathIndex = 0;
-    boolean newPathSelected = false;
-    int currentMovementToPathAngle = 0x1000;
-
     //LAB_800e9da0
     // Transition to Queen Fury deck for Shana scene
     if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
@@ -5091,9 +5082,32 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e9e20
-    final int movementInput = (input_800bee90 & 0xffff) >>> 12;
+    int movementX = 0;
+    int movementY = 0;
+
+    if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+      movementY++;
+    }
+
+    if(Input.getButtonState(InputAction.DPAD_LEFT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
+      movementX--;
+    }
+
+    if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+      movementY--;
+    }
+
+    if(Input.getButtonState(InputAction.DPAD_RIGHT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
+      movementX++;
+    }
+
+    final float angle = MathHelper.atan2(movementX, movementY);
 
     //LAB_800e9e90
+    final Vector3f playerOffsetFromPathStart = new Vector3f();
+    int newPathIndex = 0;
+    boolean newPathSelected = false;
+    float currentMovementToPathAngle = MathHelper.TWO_PI;
     for(int i = 0; i < 7; i++) {
       //LAB_800e9eac
       if(this.mapState_800c6798.tempPathSegmentIndices_dc[i] < 0) {
@@ -5103,13 +5117,13 @@ public class WMap extends EngineState {
       //LAB_800e9edc
       playerOffsetFromPathStart.set(this.modelAndAnimData_800c66a8.currPlayerPos_94).sub(this.mapState_800c6798.tempPathSegmentStartOffsets_40[i]);
 
-      playerAngleRelativeToPath = MathHelper.radToPsxDeg(this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y - MathHelper.atan2(playerOffsetFromPathStart.x, playerOffsetFromPathStart.z) + MathHelper.PI) & 0xfff;
+      final float playerAngleRelativeToPath = (this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y - MathHelper.atan2(playerOffsetFromPathStart.x, playerOffsetFromPathStart.z) + MathHelper.PI) % MathHelper.TWO_PI;
 
-      final int movementMaskIndex = (playerAngleRelativeToPath + 0x100 & 0xfff) >> 9;
-      if((movementInput & positiveDirectionMovementMask_800f0204[movementMaskIndex]) != 0) {
-        final int smallestMovementToPathAngle = currentMovementToPathAngle;
-        final int pathAngleCwFromMovement = Math.abs(playerAngleRelativeToPath - inputAngleModifierAtPathIntersection_800f021c[movementInput - 1]);
-        final int pathAngleCcwFromMovement = Math.abs(playerAngleRelativeToPath - inputAngleModifierAtPathIntersection_800f021c[movementInput - 1] - 0x1000);
+      final int movementMaskIndex = (MathHelper.radToPsxDeg(playerAngleRelativeToPath) + 0x100 & 0xfff) >> 9;
+      if(Arrays.stream(positiveDirectionMovementMask_800f0204[movementMaskIndex]).anyMatch(Input::getButtonState)) {
+        final float smallestMovementToPathAngle = currentMovementToPathAngle;
+        final float pathAngleCwFromMovement = Math.abs(playerAngleRelativeToPath - angle);
+        final float pathAngleCcwFromMovement = Math.abs(playerAngleRelativeToPath - angle - MathHelper.TWO_PI);
 
         currentMovementToPathAngle = Math.min(pathAngleCcwFromMovement, pathAngleCwFromMovement);
 
