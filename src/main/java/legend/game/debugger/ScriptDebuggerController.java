@@ -84,7 +84,7 @@ public class ScriptDebuggerController {
         return null;
       }
     });
-    this.scriptSelector.setValue(this.scripts.get(0));
+    this.scriptSelector.setValue(this.scripts.getFirst());
     this.scriptSelector.onActionProperty().set(event -> this.updateScriptVars());
 
     for(int i = 0; i < 33; i++) {
@@ -97,10 +97,6 @@ public class ScriptDebuggerController {
       cell.setConverter(this.scriptSelector.getConverter());
       return cell;
     });
-
-    for(int i = 0; i < 20; i++) {
-      this.stack.add(new ListItem(stackIndex -> this.getCommandStack(this.scriptSelector.getValue().index, stackIndex), i));
-    }
 
     this.commandStack.setItems(this.stack);
     this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
@@ -169,8 +165,9 @@ public class ScriptDebuggerController {
       this.stackTop.setText("0x%x".formatted(state.frame().offset * 0x4));
     }
 
-    for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
-      this.stack.get(stackIndex).update();
+    this.stack.clear();
+    for(int stackIndex = 0; stackIndex < state.callStackDepth(); stackIndex++) {
+      this.stack.add(new ListItem(i -> this.getCommandStack(this.scriptSelector.getValue().index, i), stackIndex));
     }
 
     if(state.ticker_04 != null) {

@@ -17,8 +17,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
-import legend.lodmod.LodMod;
-import org.legendofdragoon.modloader.registries.RegistryId;
+import legend.game.types.ShopStruct40;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.Objects;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
@@ -139,19 +137,15 @@ public class ShopScreen extends MenuScreen {
 
         startFadeEffect(2, 10);
 
-        this.shopType = shops_800f4930[shopId_8007a3b4].shopType_00 & 1;
+        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];
+        this.shopType = shop.shopType_00 & 1;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < 16; i++) {
-            final int id = shops_800f4930[shopId_8007a3b4].item_00[i];
-
-            if(id != 0xff) {
-              final RegistryId registryId = LodMod.equipmentIdMap.get(id);
-              final Equipment equipment = REGISTRIES.equipment.getEntry(registryId).get();
-              shopEntries.add(new ShopEntry<>(equipment, equipment.getPrice() * 2));
-            }
+          for(int i = 0; i < shop.items_00.length; i++) {
+            final Equipment equipment = (Equipment)shop.items_00[i].get();
+            shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2));
           }
 
           final ShopEquipmentEvent event = EVENTS.postEvent(new ShopEquipmentEvent(shopId_8007a3b4, shopEntries));
@@ -159,14 +153,9 @@ public class ShopScreen extends MenuScreen {
         } else {
           final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < 16; i++) {
-            final int id = shops_800f4930[shopId_8007a3b4].item_00[i];
-
-            if(id != 0xff) {
-              final RegistryId registryId = LodMod.itemIdMap.get(id - 192);
-              final Item item = REGISTRIES.items.getEntry(registryId).get();
-              shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
-            }
+          for(int i = 0; i < shop.items_00.length; i++) {
+            final Item item = (Item)shop.items_00[i].get();
+            shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
           }
 
           final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4, shopEntries));
