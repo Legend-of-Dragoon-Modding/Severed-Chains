@@ -7,13 +7,13 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.scripting.RunningScript;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 
 public abstract class ListMenu {
@@ -147,7 +147,7 @@ public abstract class ListMenu {
       case 2 -> {
         this.flags_02 &= ~(0x100 | 0x200);
 
-        if((press_800bee94 & 0x4) != 0) { // L1
+        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) {
           if(this.listIndex_24 != 0) {
             this.listIndex_24 = 0;
             this.menuState_00 = 5;
@@ -158,7 +158,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4d54
-        if((press_800bee94 & 0x1) != 0) { // L2
+        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) {
           final int oldScroll = this.listIndex_24;
 
           if(this.getListCount() - 1 >= this.listScroll_1e + 6) {
@@ -179,7 +179,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4dc4
-        if((press_800bee94 & 0x8) != 0) { // R1
+        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) {
           if(this.listScroll_1e == 0) {
             break;
           }
@@ -201,7 +201,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4e40
-        if((press_800bee94 & 0x2) != 0) { // R2
+        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) {
           if(this.listScroll_1e + 6 >= this.getListCount() - 1) {
             break;
           }
@@ -220,7 +220,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4ecc
-        if((input_800bee90 & 0x1000) != 0) { // Up
+        if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
           if(this.listIndex_24 != 0) {
             this.menuState_00 = 5;
             this.listIndex_24--;
@@ -243,7 +243,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4f74
-        if((input_800bee90 & 0x4000) != 0) { // Down
+        if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
           if(this.listIndex_24 != this.getListCount() - 1) {
             if(this.listScroll_1e + this.listIndex_24 + 1 < this.getListCount()) {
               playMenuSound(1);
@@ -269,7 +269,7 @@ public abstract class ListMenu {
         //LAB_800f5044
         this.scrollCounter_90 = 0;
 
-        if((press_800bee94 & 0x20) != 0) { // X
+        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           //LAB_800f5078
 //          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
@@ -285,7 +285,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f5208
-        if((press_800bee94 & 0x40) != 0) { // O
+        if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
           playMenuSound(3);
           this.menuState_00 = 8;
           this.flags_02 &= ~0x8;
