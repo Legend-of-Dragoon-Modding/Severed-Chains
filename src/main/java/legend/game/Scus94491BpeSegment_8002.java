@@ -128,6 +128,7 @@ import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
@@ -3775,6 +3776,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a0e4L)
   public static void renderTextboxes() {
+    final int oldZOffset = zOffset_1f8003e8;
+    zOffset_1f8003e8 = 0;
+
     for(int i = 0; i < 8; i++) {
       //LAB_8002a10c
       final Textbox4c textbox4c = textboxes_800be358[i];
@@ -3792,6 +3796,8 @@ public final class Scus94491BpeSegment_8002 {
         renderTextboxOverlays(i);
       }
     }
+
+    zOffset_1f8003e8 = oldZOffset;
   }
 
   private static void renderTextboxOverlays(final int textboxIndex) {
