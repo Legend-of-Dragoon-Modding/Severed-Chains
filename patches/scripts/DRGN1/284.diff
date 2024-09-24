@@ -26,7 +26,7 @@
  jmp_cmp &, 0x40, stor[stor[stor[0], 9], 7], inl[:LABEL_146]
  gosub inl[:LABEL_54]
  return
-@@ -2719,3 +2724,98 @@
+@@ -2719,3 +2724,100 @@
  add 0xa, stor[18]
  mov stor[10], var[45][stor[18]]
  jmp inl[:LABEL_159]
@@ -89,6 +89,8 @@
 +call 360, 0x10, stor[8], stor[10]
 +call 138, stor[10], 0x0
 +yield
++call 524, stor[10], 0x8
++call 517, stor[10], 0x1800, 0x1800
 +mov stor[8], var[45][stor[19]]
 +mov stor[10], var[45][stor[13]]
 +decr stor[24]
