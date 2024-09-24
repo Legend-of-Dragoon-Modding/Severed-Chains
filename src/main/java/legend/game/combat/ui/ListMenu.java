@@ -271,7 +271,7 @@ public abstract class ListMenu {
 
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           //LAB_800f5078
-//          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
+          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
 
           //LAB_800f5190
