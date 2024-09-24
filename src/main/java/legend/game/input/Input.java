@@ -30,7 +30,7 @@ public final class Input {
   public static final ControllerManager controllerManager = new JamepadControllerManager("./gamecontrollerdb.txt", Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;
 
-  private static final Object2BooleanMap<InputAction> held = new Object2BooleanOpenHashMap<>();
+  private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
   private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
 
   private Input() { }
@@ -51,13 +51,13 @@ public final class Input {
       final InputBinding binding = activeController.bindings.get(i);
 
       if(binding.getState().pressed) {
-        if(!held.containsKey(binding.getInputAction())) {
+        if(!held.containsKey(binding)) {
           pressedThisFrame.put(binding, true);
-          held.put(binding.getInputAction(), true);
+          held.put(binding, true);
           EVENTS.postEvent(new InputPressedEvent(binding.getInputAction()));
         }
-      } else if(held.containsKey(binding.getInputAction())) {
-        held.removeBoolean(binding.getInputAction());
+      } else if(held.containsKey(binding)) {
+        held.removeBoolean(binding);
         EVENTS.postEvent(new InputReleasedEvent(binding.getInputAction()));
       }
     }
@@ -80,7 +80,7 @@ public final class Input {
 
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {
-        final InputAction inputAction = entry.getKey();
+        final InputAction inputAction = entry.getKey().getInputAction();
 
         if(inputAction.hexCode != -1) {
           input_800bee90 |= inputAction.hexCode;
@@ -205,6 +205,13 @@ public final class Input {
   }
 
   public static void useController(@Nullable final Controller controller) {
+    if(activeController != null) {
+      for(final InputBinding binding : activeController.bindings) {
+        held.removeBoolean(binding);
+        pressedThisFrame.removeBoolean(binding);
+      }
+    }
+
     if(controller != null) {
       activeController = controller;
     } else {
