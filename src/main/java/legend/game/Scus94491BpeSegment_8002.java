@@ -2205,7 +2205,7 @@ public final class Scus94491BpeSegment_8002 {
     if(textbox.type_04 != TextboxType.NO_BACKGROUND) {
       if(textbox.state_00 != TextboxState._1) {
         if(textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
-          textbox.backgroundTransforms.transfer.set(textbox.x_14, textbox.y_16, textbox.z_0c * 4.0f);
+          textbox.backgroundTransforms.transfer.set(textbox.x_14, textbox.y_16, textbox.z_0c * 4.0f + 1.0f);
           textbox.backgroundTransforms.scaling(textbox.width_1c, textbox.height_1e, 1.0f);
 
           textbox.oldX = textbox.x_14;
