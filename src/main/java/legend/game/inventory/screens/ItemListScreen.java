@@ -151,6 +151,7 @@ public class ItemListScreen extends MenuScreen {
   }
 
   private void menuEscape() {
+    playMenuSound(3);
     this.unload.run();
   }
 
