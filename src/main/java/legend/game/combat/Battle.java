@@ -3062,7 +3062,7 @@ public class Battle extends EngineState {
     final float x = script.params_20[3].get() - vec.x;
     final float y = script.params_20[4].get() - vec.y;
     final float z = script.params_20[5].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, x, y, z, 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
     state.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
