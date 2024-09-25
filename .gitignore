@@ -57,3 +57,6 @@ gradle-app.setting
 
 # Mac
 .DS_STORE
+
+# JDK files
+/jdk*
