@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -56,18 +57,25 @@ import java.util.Map;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
+import static legend.game.Scus94491BpeSegment.musicPackageLoadedCallback;
+import static legend.game.Scus94491BpeSegment.playMusicPackage;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
+import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.loadMenuTexture;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
@@ -77,13 +85,17 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
+import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
+import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
@@ -98,6 +110,7 @@ public final class SItem {
   private SItem() { }
 
   public static final MenuStack menuStack = new MenuStack();
+  private static BackgroundMusic menuMusic;
 
   public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
   public static final MenuStatus08[] menuStatus_800fba7c = {
@@ -558,10 +571,11 @@ public final class SItem {
   public static void loadMenuAssets() {
     loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
     loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
+    loadDrgnDir(0, 5815, SItem::menuMusicLoaded);
   }
 
   @Method(0x800fc944L)
-  public static void menuAssetsLoaded(final FileData data, final int whichFile) {
+  private static void menuAssetsLoaded(final FileData data, final int whichFile) {
     if(whichFile == 0) {
       //LAB_800fc98c
       loadMenuTexture(data.slice(0x83e0)); // Character textures
@@ -579,6 +593,48 @@ public final class SItem {
     }
 
     //LAB_800fc9fc
+  }
+
+  private static void menuMusicLoaded(final List<FileData> files) {
+    menuMusic = new BackgroundMusic(files, 5815);
+  }
+
+  /** FUN_8001e010 with param 0 */
+  @Method(0x8001e010L)
+  public static void startMenuMusic() {
+    //LAB_8001e054
+    copyPlayingSounds(queuedSounds_800bd110, playingSoundsBackup_800bca78);
+    stopAndResetSoundsAndSequences();
+    unloadSoundFile(8);
+    unloadSoundFile(8);
+
+    playMusicPackage(menuMusic, true);
+  }
+
+  /** FUN_8001e010 with param -1 */
+  @Method(0x8001e010L)
+  public static void stopMenuMusic() {
+    //LAB_8001e044
+    //LAB_8001e0f8
+    if(loadingNewGameState_800bdc34) {
+      if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
+        sssqResetStuff();
+        unloadSoundFile(8);
+        loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
+        loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
+      }
+    } else {
+      //LAB_8001e160
+      stopMusicSequence();
+      unloadSoundFile(8);
+
+      currentEngineState_8004dd04.restoreMusicAfterMenu();
+    }
+
+    //LAB_8001e26c
+    stopAndResetSoundsAndSequences();
+    copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
+    playingSoundsBackup_800bca78.clear();
   }
 
   @Method(0x800fcad4L)

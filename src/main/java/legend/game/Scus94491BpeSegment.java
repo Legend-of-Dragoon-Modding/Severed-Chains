@@ -74,7 +74,6 @@ import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
-import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -149,9 +148,7 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
-import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
-import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
@@ -2319,7 +2316,12 @@ public final class Scus94491BpeSegment {
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
-    AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
+    playMusicPackage(new BackgroundMusic(files, fileIndex), startSequence);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
+  }
+
+  public static void playMusicPackage(final BackgroundMusic music,  final boolean startSequence) {
+    AUDIO_THREAD.loadBackgroundMusic(music);
     AUDIO_THREAD.setSequenceVolume(40);
 
     if(startSequence) {
@@ -2327,8 +2329,6 @@ public final class Scus94491BpeSegment {
     }
 
     musicLoaded_800bd782 = true;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
-
     _800bd0f0 = 2;
   }
 
@@ -2404,45 +2404,6 @@ public final class Scus94491BpeSegment {
       case 9, 10 -> "Divine";
       default -> throw new IllegalArgumentException("Invalid character ID " + id);
     };
-  }
-
-  /** FUN_8001e010 with param 0 */
-  @Method(0x8001e010L)
-  public static void startMenuMusic() {
-    //LAB_8001e054
-    copyPlayingSounds(queuedSounds_800bd110, playingSoundsBackup_800bca78);
-    stopAndResetSoundsAndSequences();
-    unloadSoundFile(8);
-    unloadSoundFile(8);
-
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    loadDrgnDir(0, 5815, files -> musicPackageLoadedCallback(files, 5815, true));
-  }
-
-  /** FUN_8001e010 with param -1 */
-  @Method(0x8001e010L)
-  public static void stopMenuMusic() {
-    //LAB_8001e044
-    //LAB_8001e0f8
-    if(loadingNewGameState_800bdc34) {
-      if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
-        sssqResetStuff();
-        unloadSoundFile(8);
-        loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-        loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
-      }
-    } else {
-      //LAB_8001e160
-      stopMusicSequence();
-      unloadSoundFile(8);
-
-      currentEngineState_8004dd04.restoreMusicAfterMenu();
-    }
-
-    //LAB_8001e26c
-    stopAndResetSoundsAndSequences();
-    copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
-    playingSoundsBackup_800bca78.clear();
   }
 
   /**

@@ -101,17 +101,19 @@ public final class Scus94491BpeSegment_800b {
   public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
-   * 0x1 - menu sounds
-   * 0x2 - submap sounds
-   * 0x4 - battle cutscene sounds
-   * 0x8 - battle character sounds
-   * 0x10 - battle phase sounds
-   * 0x20 - battle monster sounds
-   * 0x40 - battle DEFF sounds
-   * 0x80 - music
-   * 0x4000 - victory music
-   * 0x8000 - world map destination sounds
-   * 0x10000 - different battle character attack sounds?
+   * <ul>
+   *   <li>0x1 - menu sounds</li>
+   *   <li>0x2 - submap sounds</li>
+   *   <li>0x4 - battle cutscene sounds</li>
+   *   <li>0x8 - battle character sounds</li>
+   *   <li>0x10 - battle phase sounds</li>
+   *   <li>0x20 - battle monster sounds</li>
+   *   <li>0x40 - battle DEFF sounds</li>
+   *   <li>0x80 - music</li>
+   *   <li>0x4000 - victory music</li>
+   *   <li>0x8000 - world map destination sounds</li>
+   *   <li>0x10000 - different battle character attack sounds?</li>
+   * </ul>
    */
   public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 

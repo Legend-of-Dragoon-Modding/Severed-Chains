@@ -69,7 +69,7 @@ public final class Unpacker {
     System.setProperty("log4j2.configurationFile", "log4j2.xml");
   }
 
-  public static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
 
   public static Path ROOT = Path.of(".", "files");
 

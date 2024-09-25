@@ -21,23 +21,10 @@ import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.inventory.screens.CampaignSelectionScreen;
-import legend.game.inventory.screens.CharSwapScreen;
-import legend.game.inventory.screens.FullScreenInputScreen;
 import legend.game.inventory.screens.MenuScreen;
-import legend.game.inventory.screens.MessageBoxScreen;
-import legend.game.inventory.screens.NewCampaignScreen;
-import legend.game.inventory.screens.OptionsCategoryScreen;
-import legend.game.inventory.screens.PostBattleScreen;
-import legend.game.inventory.screens.SaveGameScreen;
-import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
-import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.TakeItemEvent;
-import legend.game.saves.ConfigStorageLocation;
-import legend.game.saves.InvalidSaveException;
-import legend.game.saves.SaveFailedException;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
 import legend.game.scripting.RunningScript;
@@ -56,7 +43,6 @@ import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
-import legend.game.types.MessageBoxResult;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
@@ -85,14 +71,12 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -102,17 +86,16 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
+import static legend.game.SItem.startMenuMusic;
+import static legend.game.SItem.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.monsterSoundLoaded;
@@ -120,10 +103,8 @@ import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.startMenuMusic;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
@@ -792,101 +773,27 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022510
   }
 
-  private static WhichMenu destMenu;
-  private static Supplier<MenuScreen> destScreen;
+  public static void initMenu(final WhichMenu destMenu, @Nullable final Supplier<MenuScreen> destScreen) {
+    inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
+    startMenuMusic();
+    SCRIPTS.stop();
 
-  private static void initMenu(final WhichMenu destMenu, final Supplier<MenuScreen> destScreen) {
-    if((getLoadedDrgnFiles() & 0x80) == 0) {
-      inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
-      whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
-      startMenuMusic();
-      SCRIPTS.stop();
-      Scus94491BpeSegment_8002.destMenu = destMenu;
-      Scus94491BpeSegment_8002.destScreen = destScreen;
+    renderablePtr_800bdc5c = null;
+    resizeDisplay(384, 240);
+    textZ_800bdf00 = 33;
+
+    whichMenu_800bdc38 = destMenu;
+
+    if(destScreen != null) {
+      menuStack.pushScreen(destScreen.get());
     }
   }
 
   @Method(0x80022590L)
   public static void loadAndRenderMenus() {
     switch(whichMenu_800bdc38) {
-      case INIT_INVENTORY_MENU_1 -> initMenu(WhichMenu.RENDER_INVENTORY_MENU_4, null);
-      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, ShopScreen::new);
-      case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, CampaignSelectionScreen::new);
-      case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
-      case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
-      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
-
-      case INIT_CATEGORIZE_SAVE_MENU -> initMenu(WhichMenu.RENDER_CATEGORIZE_SAVE_MENU, () -> new FullScreenInputScreen("Uncategorized saves found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
-        if(result == MessageBoxResult.YES) {
-          if(SAVES.campaignExists(name)) {
-            menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
-            return;
-          }
-
-          try {
-            SAVES.moveCategorizedSaves(name);
-          } catch(final IOException e) {
-            LOGGER.error("Failed to categorize saves", e);
-          }
-        }
-
-        whichMenu_800bdc38 = WhichMenu.UNLOAD_CATEGORIZE_SAVE_MENU;
-      }));
-
-      case INIT_MEMCARD_MENU -> initMenu(WhichMenu.RENDER_MEMCARD_MENU, () -> new FullScreenInputScreen("PS1 memory card found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
-        if(result == MessageBoxResult.YES) {
-          if(SAVES.campaignExists(name)) {
-            menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
-            return;
-          }
-
-          try {
-            SAVES.splitMemcards(name);
-          } catch(final IOException | InvalidSaveException | SaveFailedException e) {
-            LOGGER.error("Failed to convert memcard", e);
-          }
-        }
-
-        whichMenu_800bdc38 = WhichMenu.UNLOAD_MEMCARD_MENU;
-      }));
-
-      case INIT_CHAR_SWAP_MENU_21 -> {
-        loadCharacterStats();
-        cacheCharacterSlots();
-        initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
-      }
-      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, TooManyItemsScreen::new);
-
-      case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
-          renderablePtr_800bdc5c = null;
-          resizeDisplay(384, 240);
-          textZ_800bdf00 = 33;
-
-          whichMenu_800bdc38 = destMenu;
-
-          if(destScreen != null) {
-            menuStack.pushScreen(destScreen.get());
-            destScreen = null;
-          }
-        }
-      }
-
-      case INIT_POST_COMBAT_REPORT_26 -> {
-        if((getLoadedDrgnFiles() & 0x80) == 0) {
-          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
-        }
-      }
-
-      case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
-          whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29;
-          menuStack.pushScreen(new PostBattleScreen());
-        }
-      }
-
-      case RENDER_SHOP_MENU_9, RENDER_CAMPAIGN_SELECTION_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_POST_COMBAT_REPORT_29, RENDER_TOO_MANY_ITEMS_MENU_34, RENDER_NEW_CAMPAIGN_MENU, RENDER_OPTIONS_MENU, RENDER_CATEGORIZE_SAVE_MENU, RENDER_MEMCARD_MENU -> menuStack.render();
-      case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
+      case RENDER_NEW_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24 -> menuStack.render();
+      case RENDER_OLD_MENU -> renderMenus();
 
       case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU, UNLOAD_CATEGORIZE_SAVE_MENU, UNLOAD_MEMCARD_MENU -> {
         menuStack.reset();

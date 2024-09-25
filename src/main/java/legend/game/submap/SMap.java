@@ -22,6 +22,10 @@ import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.CharSwapScreen;
+import legend.game.inventory.screens.SaveGameScreen;
+import legend.game.inventory.screens.ShopScreen;
+import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -75,6 +79,7 @@ import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
+import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
@@ -91,6 +96,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
+import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
@@ -3609,7 +3615,9 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3fa) {
       SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
+      loadCharacterStats();
+      cacheCharacterSlots();
+      initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       submapCutForSave_800cb450 = submapCut_80052c30;
       return;
@@ -3623,7 +3631,7 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3fc) {
       SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
+      initMenu(WhichMenu.RENDER_NEW_MENU, TooManyItemsScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3634,14 +3642,14 @@ public class SMap extends EngineState {
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
       this.mapTransitionData_800cab24.clear();
-      whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
+      initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3fe) {
       SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
+      initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3649,7 +3657,7 @@ public class SMap extends EngineState {
     if(newScene == 0x3ff) {
       SCRIPTS.pause();
       submapCutForSave_800cb450 = submapCut_80052c30;
-      whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
+      initMenu(WhichMenu.RENDER_OLD_MENU, null);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
