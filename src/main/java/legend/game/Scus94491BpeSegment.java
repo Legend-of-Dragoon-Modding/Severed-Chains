@@ -412,6 +412,7 @@ public final class Scus94491BpeSegment {
 
       EVENTS.postEvent(RENDER_EVENT);
 
+      loadAndRenderMenus();
       SCREENS.render(RENDERER, matrixStack, scissorStack);
 
       final boolean scriptsTicked = SCRIPTS.tick();
@@ -1140,10 +1141,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018508L)
   public static void renderPostCombatScreen() {
-    if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
-      loadAndRenderMenus();
-    }
-
     // There used to be code to preload SMAP while the post-combat screen is still up. I removed it because it only takes a few milliseconds to load in SC.
 
     //LAB_8001852c

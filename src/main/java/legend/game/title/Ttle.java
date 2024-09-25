@@ -69,7 +69,6 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
-import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -439,8 +438,6 @@ public class Ttle extends EngineState {
     }
 
     //LAB_800c8038
-    loadAndRenderMenus();
-
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(this.menuTransitionState_800c6728 == 3) {
         if(!transition.getAsBoolean()) {

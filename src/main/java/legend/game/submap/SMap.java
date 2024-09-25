@@ -100,7 +100,6 @@ import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
@@ -3821,37 +3820,25 @@ public class SMap extends EngineState {
       }
 
       case RENDER_MENU_14 -> {
-        final WhichMenu menu = whichMenu_800bdc38; // copy menu state since some of these functions may change it
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
 
-        if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
-          loadAndRenderMenus();
-
-          if(whichMenu_800bdc38 == WhichMenu.QUIT) {
-            this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-            this._800f7e4c = false;
-            this.mapTransition(-1, 0x3fb);
-            drgnBinIndex_800bc058 = 1;
-            break;
-          }
-
-          if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
-            break;
-          }
-        }
-
         //LAB_800e6018
-        switch(menu) {
-          case UNLOAD:
-            this.smapLoadingStage_800cb430 = SubmapState.UNLOAD_MENU_15;
-            break;
+        switch(whichMenu_800bdc38) {
+          case UNLOAD -> this.smapLoadingStage_800cb430 = SubmapState.UNLOAD_MENU_15;
 
-          case UNLOAD_SAVE_GAME_MENU_20: // Chapter transition
+          case UNLOAD_SAVE_GAME_MENU_20 -> {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
             this._800f7e4c = false;
             this.mapTransition(this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00, this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04);
             collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[0].submapScene_04;
-            break;
+          }
+
+          case QUIT -> {
+            this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+            this._800f7e4c = false;
+            this.mapTransition(-1, 0x3fb);
+            drgnBinIndex_800bc058 = 1;
+          }
         }
       }
 

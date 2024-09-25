@@ -73,11 +73,9 @@ import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
-import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.isTextboxInState6;
-import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
@@ -464,8 +462,6 @@ public class WMap extends EngineState {
   /** Just the inventory menu right now, but we might add more later */
   @Method(0x800cc758L)
   private void renderWmapScreens() {
-    loadAndRenderMenus();
-
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(loadingNewGameState_800bdc34) { // This is part of a cut load game menu
         final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
