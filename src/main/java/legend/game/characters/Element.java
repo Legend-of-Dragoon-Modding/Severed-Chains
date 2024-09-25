@@ -6,6 +6,7 @@ import legend.game.scripting.Param;
 import legend.game.scripting.ScriptReadable;
 import legend.lodmod.LodMod;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -17,15 +18,15 @@ public abstract class Element extends RegistryEntry implements ScriptReadable {
   public final Vector3f colour;
 
   @Deprecated
-  public static Element fromFlag(final int flag) {
+  public static RegistryDelegate<Element> fromFlag(final int flag) {
     if(flag == 0) {
-      return LodMod.NO_ELEMENT.get();
+      return LodMod.NO_ELEMENT;
     }
 
     for(final RegistryId elementId : GameEngine.REGISTRIES.elements) {
-      final Element element = GameEngine.REGISTRIES.elements.getEntry(elementId).get();
+      final RegistryDelegate<Element> element = GameEngine.REGISTRIES.elements.getEntry(elementId);
 
-      if((flag & element.flag) != 0) {
+      if((flag & element.get().flag) != 0) {
         return element;
       }
     }

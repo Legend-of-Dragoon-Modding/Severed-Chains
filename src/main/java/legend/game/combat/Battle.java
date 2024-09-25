@@ -7888,7 +7888,7 @@ public class Battle extends EngineState {
       //LAB_800f2224
       attacker.status_0e |= 0x800;
     } else {
-      final Element attackElement = magicType == 1 ? attacker.spell_94.element_08 : attacker.item_d4.getAttackElement();
+      final Element attackElement = magicType == 1 ? attacker.spell_94.element_08.get() : attacker.item_d4.getAttackElement();
       final AttackType attackType = magicType == 1 ? AttackType.DRAGOON_MAGIC_STATUS_ITEMS : AttackType.ITEM_MAGIC;
 
       //LAB_800f2238
@@ -7953,7 +7953,7 @@ public class Battle extends EngineState {
       attacker.status_0e &= 0xf7ff;
     } else {
       damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.DRAGOON_MAGIC_STATUS_ITEMS);
-      damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08);
+      damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08.get());
     }
 
     damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;

@@ -72,7 +72,7 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
     final int type = data.readUByte(0x1);
     final int _02 = data.readUByte(0x2);
     final int equipableFlags = data.readUByte(0x3);
-    final Element element = Element.fromFlag(data.readUByte(0x4));
+    final Element element = Element.fromFlag(data.readUByte(0x4)).get();
     final int _05 = data.readUByte(0x5);
     final ElementSet elementalResistance = new ElementSet().unpack(data.readUByte(0x6));
     final ElementSet elementalImmunity = new ElementSet().unpack(data.readUByte(0x7));
