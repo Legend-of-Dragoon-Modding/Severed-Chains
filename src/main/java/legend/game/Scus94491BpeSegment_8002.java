@@ -21,6 +21,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -39,7 +40,6 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
@@ -90,7 +90,6 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.startMenuMusic;
 import static legend.game.SItem.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -130,7 +129,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.previousEngineState_800bdb88;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
@@ -774,7 +772,6 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static void initMenu(final WhichMenu destMenu, @Nullable final Supplier<MenuScreen> destScreen) {
-    inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
     startMenuMusic();
     SCRIPTS.stop();
 
@@ -789,16 +786,29 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  public static void initInventoryMenu() {
+    initMenu(WhichMenu.RENDER_NEW_MENU, () -> new MainMenuScreen(() -> {
+      menuStack.popScreen();
+
+      if(whichMenu_800bdc38 == WhichMenu.QUIT) {
+        deallocateRenderables(0xff);
+        startFadeEffect(2, 10);
+        textZ_800bdf00 = 13;
+      }
+
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
+    }));
+  }
+
   @Method(0x80022590L)
   public static void loadAndRenderMenus() {
     switch(whichMenu_800bdc38) {
-      case RENDER_NEW_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24 -> menuStack.render();
-      case RENDER_OLD_MENU -> renderMenus();
+      case RENDER_NEW_MENU, RENDER_SAVE_GAME_MENU_19 -> menuStack.render();
 
-      case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU, UNLOAD_CATEGORIZE_SAVE_MENU, UNLOAD_MEMCARD_MENU -> {
+      case UNLOAD, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_POST_COMBAT_REPORT_30 -> {
         menuStack.reset();
 
-        if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
+        if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20 && whichMenu_800bdc38 != WhichMenu.UNLOAD_POST_COMBAT_REPORT_30) {
           stopMenuMusic();
         }
 
@@ -809,20 +819,7 @@ public final class Scus94491BpeSegment_8002 {
 
         startFadeEffect(2, 10);
 
-        currentEngineState_8004dd04.menuClosed();
-
         textZ_800bdf00 = 13;
-      }
-
-      case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        stopMenuMusic();
-        SCRIPTS.start();
-        whichMenu_800bdc38 = WhichMenu.NONE_0;
-      }
-
-      case UNLOAD_POST_COMBAT_REPORT_30 -> {
-        SCRIPTS.start();
-        whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
     }
   }
@@ -1132,69 +1129,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80023870L)
   public static void playMenuSound(final int soundIndex) {
     playSound(0, soundIndex, (short)0, (short)0);
-  }
-
-  /**
-   * Gets the highest priority button on the joypad that is currently pressed. "Priority" is likely arbitrary.
-   */
-  @Method(0x800238a4L)
-  public static int getJoypadInputByPriority() {
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_LEFT_1)) {
-      return 0x4;
-    }
-
-    //LAB_800238c4
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_RIGHT_1)) {
-      return 0x8;
-    }
-
-    //LAB_800238d4
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_LEFT_2)) {
-      return 0x1;
-    }
-
-    //LAB_800238e4
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_RIGHT_2)) {
-      return 0x2;
-    }
-
-    //LAB_800238f4
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_UP) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-      return 0x1000;
-    }
-
-    //LAB_80023904
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-      return 0x4000;
-    }
-
-    //LAB_80023914
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
-      return 0x8000;
-    }
-
-    //LAB_80023924
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
-      return 0x2000;
-    }
-
-    //LAB_80023934
-    if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
-      return 0x10;
-    }
-
-    //LAB_80023950
-    if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
-      return 0x40;
-    }
-
-    //LAB_80023960
-    if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
-      return 0x80;
-    }
-
-    //LAB_80023970
-    return Input.pressedThisFrame(InputAction.BUTTON_SOUTH) ? 0x20 : 0;
   }
 
   @Method(0x800239e0L)

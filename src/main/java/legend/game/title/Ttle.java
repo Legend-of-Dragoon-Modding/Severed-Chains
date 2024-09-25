@@ -379,7 +379,7 @@ public class Ttle extends EngineState {
   }
 
   private void fadeOutForOptions() {
-    this.fadeOutToMenu(() -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU), () -> {
+    this.fadeOutToMenu(() -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD), () -> {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       return false;
     });
@@ -400,7 +400,7 @@ public class Ttle extends EngineState {
         }
       }
 
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_CATEGORIZE_SAVE_MENU;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }), () -> false);
   }
 
@@ -419,7 +419,7 @@ public class Ttle extends EngineState {
         }
       }
 
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_MEMCARD_MENU;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }), () -> false);
   }
 

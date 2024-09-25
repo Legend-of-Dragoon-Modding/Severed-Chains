@@ -17,7 +17,6 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.FullScreenEffect;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
@@ -170,8 +169,6 @@ public final class Scus94491BpeSegment_800b {
   public static final int[] characterIndices_800bdbb8 = new int[9];
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
-  public static InventoryMenuState inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
-
   public static boolean loadingNewGameState_800bdc34;
   /**
    * 0xe - load game
@@ -184,24 +181,6 @@ public final class Scus94491BpeSegment_800b {
   public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static McqHeader gameOverMcq_800bdc3c;
-
-  /**
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int inventoryJoypadInput_800bdc44;
 
   public static Renderable58 renderablePtr_800bdc5c;
 

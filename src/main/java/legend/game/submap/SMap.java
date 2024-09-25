@@ -96,6 +96,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
+import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -3617,7 +3618,7 @@ public class SMap extends EngineState {
       SCRIPTS.pause();
       loadCharacterStats();
       cacheCharacterSlots();
-      initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
+      initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       submapCutForSave_800cb450 = submapCut_80052c30;
       return;
@@ -3657,7 +3658,7 @@ public class SMap extends EngineState {
     if(newScene == 0x3ff) {
       SCRIPTS.pause();
       submapCutForSave_800cb450 = submapCut_80052c30;
-      initMenu(WhichMenu.RENDER_OLD_MENU, null);
+      initInventoryMenu();
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3841,22 +3842,11 @@ public class SMap extends EngineState {
 
         //LAB_800e6018
         switch(menu) {
-          case UNLOAD_INVENTORY_MENU_5:
-            if(gameState_800babc8.isOnWorldMap_4e4) {
-              this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_WORLD_MAP_18;
-              this._800f7e4c = false;
-              break;
-            }
-
-            // Fall through
-
-          case UNLOAD_CHAR_SWAP_MENU_25:
-          case UNLOAD_TOO_MANY_ITEMS_MENU_35:
-          case UNLOAD_SHOP_MENU_10:
+          case UNLOAD:
             this.smapLoadingStage_800cb430 = SubmapState.UNLOAD_MENU_15;
             break;
 
-          case UNLOAD_SAVE_GAME_MENU_20:
+          case UNLOAD_SAVE_GAME_MENU_20: // Chapter transition
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
             this._800f7e4c = false;
             this.mapTransition(this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00, this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04);

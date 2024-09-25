@@ -7,12 +7,12 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.i18n.I18n;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
-import legend.game.inventory.WhichMenu;
-import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -30,7 +30,6 @@ import legend.game.scripting.ScriptParam;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuAdditionInfo;
@@ -62,15 +61,12 @@ import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.musicPackageLoadedCallback;
 import static legend.game.Scus94491BpeSegment.playMusicPackage;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
 import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.loadMenuTexture;
@@ -87,11 +83,8 @@ import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
-import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
-import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
@@ -103,7 +96,6 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.combat.Battle.seed_800fa754;
 
 public final class SItem {
@@ -635,64 +627,6 @@ public final class SItem {
     stopAndResetSoundsAndSequences();
     copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
     playingSoundsBackup_800bca78.clear();
-  }
-
-  @Method(0x800fcad4L)
-  public static void renderMenus() {
-    inventoryJoypadInput_800bdc44 = getJoypadInputByPriority();
-
-    switch(inventoryMenuState_800bdc28) {
-      case INIT_0 -> { // Initialize, loads some files (unknown contents)
-        loadingNewGameState_800bdc34 = false;
-        loadCharacterStats();
-
-        if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-          gameState_800babc8.isOnWorldMap_4e4 = true;
-          canSave_8011dc88 = true;
-        } else {
-          gameState_800babc8.isOnWorldMap_4e4 = false;
-          canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
-        }
-
-        inventoryMenuState_800bdc28 = InventoryMenuState._2;
-      }
-
-      case _2 -> {
-        menuStack.pushScreen(new MainMenuScreen(() -> {
-          menuStack.popScreen();
-          inventoryMenuState_800bdc28 = InventoryMenuState.UNLOAD_125;
-        }));
-
-        inventoryMenuState_800bdc28 = InventoryMenuState.MAIN_MENU_4;
-      }
-
-      case MAIN_MENU_4 -> menuStack.render();
-
-      case UNLOAD_125 -> {
-        deallocateRenderables(0xff);
-
-        switch(whichMenu_800bdc38) {
-          case RENDER_SAVE_GAME_MENU_19 ->
-            whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
-
-          case RENDER_CHAR_SWAP_MENU_24 -> {
-            startFadeEffect(2, 10);
-            whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
-          }
-
-          case QUIT -> startFadeEffect(2, 10);
-
-          default -> {
-            startFadeEffect(2, 10);
-            whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;
-          }
-        }
-
-        currentEngineState_8004dd04.menuClosed();
-
-        textZ_800bdf00 = 13;
-      }
-    }
   }
 
   @Method(0x801033ccL)
@@ -1856,7 +1790,7 @@ public final class SItem {
 
         if(messageBox.type_15 == 0) {
           //LAB_8010eed8
-          if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44 & 0x60) != 0) {
+          if(!messageBox.ignoreInput && Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
             playMenuSound(2);
             messageBox.state_0c = 4;
             messageBox.result = MessageBoxResult.YES;

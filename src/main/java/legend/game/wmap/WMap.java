@@ -72,6 +72,7 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
+import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initTextbox;
@@ -539,7 +540,7 @@ public class WMap extends EngineState {
       this.tickMainMenuOpenTransition_800c6690++;
       if(this.tickMainMenuOpenTransition_800c6690 >= 45.0f / vsyncMode_8007a3b8) {
         this.wmapState_800bb10c = WmapState.TRANSITION_TO_SCREENS_4;
-        initMenu(WhichMenu.RENDER_OLD_MENU, null);
+        initInventoryMenu();
 
         this.modelAndAnimData_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
         this.modelAndAnimData_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);

@@ -32,7 +32,6 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
@@ -42,7 +41,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
@@ -82,8 +80,6 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010d614L)
   @Override
   protected void render() {
-    inventoryJoypadInput_800bdc44 = getJoypadInputByPriority();
-
     switch(this.inventoryMenuState_800bdc28) {
       case INIT_0:
         renderablePtr_800bdc5c = null;
@@ -398,15 +394,9 @@ public class PostBattleScreen extends MenuScreen {
         break;
 
       case UNLOAD_18:
-        startFadeEffect(2, 10);
-        deallocateRenderables(0xff);
-
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
-        textZ_800bdf00 = 13;
-
-        this.deleteResultsScreenObjects();
-
         menuStack.popScreen();
+        this.deleteResultsScreenObjects();
         break;
     }
 
