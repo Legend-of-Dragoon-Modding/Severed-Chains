@@ -1921,7 +1921,7 @@ public class BattleHud {
     }
 
     //LAB_800f77f4
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_UP) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
+    if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c++;
       if(this.battleMenu_800c6c34.targetedSlot_800c697c >= count) {
         this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
@@ -1930,7 +1930,7 @@ public class BattleHud {
 
     //LAB_800f7830
     short t3 = 1;
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN) || Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
+    if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN) || Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c--;
       if(this.battleMenu_800c6c34.targetedSlot_800c697c < 0) {
         this.battleMenu_800c6c34.targetedSlot_800c697c = count - 1;
