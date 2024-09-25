@@ -51,6 +51,8 @@ public class VerticalLayoutScreen extends MenuScreen {
       control.setPos(label.getWidth() - control.getWidth(), 0);
       label.addControl(control);
       this.configControls.add(control);
+    } else {
+      this.configControls.add(null);
     }
 
     this.rows.add(label);
@@ -65,21 +67,21 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void highlightRow(final int index) {
     if(this.highlightedRow != index) {
-      if(this.highlightedRow != -1 && !this.configControls.isEmpty() && this.configControls.get(this.highlightedRow).isHovered()) {
+      if(this.highlightedRow != -1 && this.configControls.get(this.highlightedRow) != null && this.configControls.get(this.highlightedRow).isHovered()) {
         this.configControls.get(this.highlightedRow).hoverOut();
       }
 
       this.highlightedRow = index;
       this.highlight.setY(this.rows.get(index).getY() - 2);
+      this.setFocus(null);
 
-      if(!this.configControls.isEmpty()) {
-        final Control current = this.configControls.get(this.highlightedRow);
+      final Control current = this.configControls.get(this.highlightedRow);
+
+      if(current != null) {
         current.hoverIn();
 
         if(!(current instanceof Textbox)) {
           current.focus();
-        } else {
-          this.setFocus(null);
         }
       }
     }
@@ -127,7 +129,8 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox(x, y, 34, 30 + i * 20, 320, 20)) {
+      if(MathHelper.inBox(x, y, 34, 30 + i * 20, 320, 20) && this.highlightedRow != this.scroll + i) {
+        playMenuSound(1);
         this.highlightRow(this.scroll + i);
         return InputPropagation.HANDLED;
       }
@@ -165,13 +168,15 @@ public class VerticalLayoutScreen extends MenuScreen {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH && !this.configControls.isEmpty()) {
+    if(inputAction == InputAction.BUTTON_SOUTH) {
       final Control control = this.configControls.get(this.highlightedRow);
 
-      if(control instanceof final Button button) {
-        this.deferAction(button::press);
-      } else {
-        this.deferAction(control::focus);
+      if(control != null) {
+        if(control instanceof final Button button) {
+          this.deferAction(button::press);
+        } else {
+          this.deferAction(control::focus);
+        }
       }
 
       return InputPropagation.HANDLED;
@@ -192,7 +197,9 @@ public class VerticalLayoutScreen extends MenuScreen {
           playMenuSound(1);
           this.highlightRow(Math.floorMod(this.highlightedRow - 1, this.rows.size()));
           return InputPropagation.HANDLED;
-        } else if(this.scroll > 0) {
+        }
+
+        if(this.scroll > 0) {
           playMenuSound(1);
           this.scroll--;
           this.updateEntries();
@@ -206,7 +213,9 @@ public class VerticalLayoutScreen extends MenuScreen {
           playMenuSound(1);
           this.highlightRow(this.highlightedRow + 1);
           return InputPropagation.HANDLED;
-        } else if(this.scroll < this.rows.size() - MAX_VISIBLE_ENTRIES) {
+        }
+
+        if(this.scroll < this.rows.size() - MAX_VISIBLE_ENTRIES) {
           playMenuSound(1);
           this.scroll++;
           this.updateEntries();
