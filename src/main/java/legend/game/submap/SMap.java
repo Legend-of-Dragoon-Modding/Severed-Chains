@@ -1447,18 +1447,51 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    sobj.finishInterpolatedRotation();
+    if(!flEq(model.coord2_14.transforms.rotate.x, x)) {
+      sobj.finishInterpolatedRotationX();
 
-    if(sobj.lastRotationTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
-      model.coord2_14.transforms.rotate.set(x, y, z);
-    } else {
-      sobj.interpRotationTicksTotal = 2 / vsyncMode_8007a3b8;
-      sobj.interpRotationTicks = 0;
-      sobj.interpRotationStart.set(model.coord2_14.transforms.rotate);
-      sobj.interpRotationDest.set(x, y, z);
+      if((this.smapTicks_800c6ae0 - sobj.lastRotationTickX) >= 2 / vsyncMode_8007a3b8) {
+        model.coord2_14.transforms.rotate.x = x;
+      } else {
+        sobj.interpRotationTicksTotalX = 2 / vsyncMode_8007a3b8;
+        sobj.interpRotationTicksX = 0;
+        sobj.interpRotationStartX = model.coord2_14.transforms.rotate.x;
+        sobj.interpRotationDestX = x;
+      }
+
+      sobj.lastRotationTickX = this.smapTicks_800c6ae0;
     }
 
-    sobj.lastRotationTick = this.smapTicks_800c6ae0;
+    if(!flEq(model.coord2_14.transforms.rotate.y, y)) {
+      sobj.finishInterpolatedRotationY();
+
+      if((this.smapTicks_800c6ae0 - sobj.lastRotationTickY) >= 2 / vsyncMode_8007a3b8) {
+        model.coord2_14.transforms.rotate.y = y;
+      } else {
+        sobj.interpRotationTicksTotalY = 2 / vsyncMode_8007a3b8;
+        sobj.interpRotationTicksY = 0;
+        sobj.interpRotationStartY = model.coord2_14.transforms.rotate.y;
+        sobj.interpRotationDestY = y;
+      }
+
+      sobj.lastRotationTickY = this.smapTicks_800c6ae0;
+    }
+
+    if(!flEq(model.coord2_14.transforms.rotate.z, z)) {
+      sobj.finishInterpolatedRotationZ();
+
+      if((this.smapTicks_800c6ae0 - sobj.lastRotationTickZ) >= 2 / vsyncMode_8007a3b8) {
+        model.coord2_14.transforms.rotate.z = z;
+      } else {
+        sobj.interpRotationTicksTotalZ = 2 / vsyncMode_8007a3b8;
+        sobj.interpRotationTicksZ = 0;
+        sobj.interpRotationStartZ = model.coord2_14.transforms.rotate.z;
+        sobj.interpRotationDestZ = z;
+      }
+
+      sobj.lastRotationTickZ = this.smapTicks_800c6ae0;
+    }
+
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1657,7 +1690,9 @@ public class SMap extends EngineState {
       return FlowControl.CONTINUE;
     }
 
-    sobj.finishInterpolatedRotation();
+    sobj.finishInterpolatedRotationX();
+    sobj.finishInterpolatedRotationY();
+    sobj.finishInterpolatedRotationZ();
     sobj.rotationAmount_17c.set(
       MathHelper.psxDegToRad(script.params_20[1].get()) / frames,
       MathHelper.psxDegToRad(script.params_20[2].get()) / frames,
@@ -1681,7 +1716,9 @@ public class SMap extends EngineState {
   private FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-    sobj.finishInterpolatedRotation();
+    sobj.finishInterpolatedRotationX();
+    sobj.finishInterpolatedRotationY();
+    sobj.finishInterpolatedRotationZ();
     sobj.rotationAmount_17c.set(
       MathHelper.psxDegToRad(script.params_20[1].get()) / (2.0f / vsyncMode_8007a3b8),
       MathHelper.psxDegToRad(script.params_20[2].get()) / (2.0f / vsyncMode_8007a3b8),
@@ -1895,7 +1932,9 @@ public class SMap extends EngineState {
     sobj.animationFinishedFrames_12c = 0;
     sobj.rotationFrames_188 = 0;
     sobj.lastMovementTick = Integer.MIN_VALUE;
-    sobj.lastRotationTick = Integer.MIN_VALUE;
+    sobj.lastRotationTickX = Integer.MIN_VALUE;
+    sobj.lastRotationTickY = Integer.MIN_VALUE;
+    sobj.lastRotationTickZ = Integer.MIN_VALUE;
 
     return FlowControl.CONTINUE;
   }
@@ -1966,18 +2005,20 @@ public class SMap extends EngineState {
     if(deltaX != 0.0f || deltaZ != 0.0f) {
       final float destAngle = MathHelper.positiveAtan2(deltaZ, deltaX);
 
-      sobj.finishInterpolatedRotation();
+      if(!flEq(model.coord2_14.transforms.rotate.y, destAngle)) {
+        sobj.finishInterpolatedRotationY();
 
-      if(sobj.lastRotationTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
-        model.coord2_14.transforms.rotate.y = destAngle;
-      } else {
-        sobj.interpRotationTicksTotal = 2 / vsyncMode_8007a3b8;
-        sobj.interpRotationTicks = 0;
-        sobj.interpRotationStart.set(model.coord2_14.transforms.rotate);
-        sobj.interpRotationDest.set(model.coord2_14.transforms.rotate).y = destAngle;
+        if((this.smapTicks_800c6ae0 - sobj.lastRotationTickY) >= 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
+          model.coord2_14.transforms.rotate.y = destAngle;
+        } else {
+          sobj.interpRotationTicksTotalY = 2 / vsyncMode_8007a3b8;
+          sobj.interpRotationTicksY = 0;
+          sobj.interpRotationStartY = model.coord2_14.transforms.rotate.y;
+          sobj.interpRotationDestY = destAngle;
+        }
+
+        sobj.lastRotationTickY = this.smapTicks_800c6ae0;
       }
-
-      sobj.lastRotationTick = this.smapTicks_800c6ae0;
     }
 
     sobj.rotationFrames_188 = 0;
@@ -2534,13 +2575,31 @@ public class SMap extends EngineState {
       sobj.interpMovementTicksTotal = 0;
     }
 
-    if(sobj.interpRotationTicks < sobj.interpRotationTicksTotal) {
-      sobj.interpRotationStart.lerp(sobj.interpRotationDest, (sobj.interpRotationTicks + 1.0f) / sobj.interpRotationTicksTotal, sobj.model_00.coord2_14.transforms.rotate);
-      sobj.interpRotationTicks++;
+    if(sobj.interpRotationTicksX < sobj.interpRotationTicksTotalX) {
+      sobj.model_00.coord2_14.transforms.rotate.x = Math.lerp(sobj.interpRotationStartX, sobj.interpRotationDestX, (sobj.interpRotationTicksX + 1.0f) / sobj.interpRotationTicksTotalX);
+      sobj.interpRotationTicksX++;
     }
 
-    if(sobj.interpRotationTicks >= sobj.interpRotationTicksTotal) {
-      sobj.interpRotationTicksTotal = 0;
+    if(sobj.interpRotationTicksX >= sobj.interpRotationTicksTotalX) {
+      sobj.interpRotationTicksTotalX = 0;
+    }
+
+    if(sobj.interpRotationTicksY < sobj.interpRotationTicksTotalY) {
+      sobj.model_00.coord2_14.transforms.rotate.y = Math.lerp(sobj.interpRotationStartY, sobj.interpRotationDestY, (sobj.interpRotationTicksY + 1.0f) / sobj.interpRotationTicksTotalY);
+      sobj.interpRotationTicksY++;
+    }
+
+    if(sobj.interpRotationTicksY >= sobj.interpRotationTicksTotalY) {
+      sobj.interpRotationTicksTotalY= 0;
+    }
+
+    if(sobj.interpRotationTicksZ < sobj.interpRotationTicksTotalZ) {
+      sobj.model_00.coord2_14.transforms.rotate.z = Math.lerp(sobj.interpRotationStartZ, sobj.interpRotationDestZ, (sobj.interpRotationTicksZ + 1.0f) / sobj.interpRotationTicksTotalZ);
+      sobj.interpRotationTicksZ++;
+    }
+
+    if(sobj.interpRotationTicksZ >= sobj.interpRotationTicksTotalZ) {
+      sobj.interpRotationTicksTotalZ = 0;
     }
 
     if(!sobj.hidden_128) {
