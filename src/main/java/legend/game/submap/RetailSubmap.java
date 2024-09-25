@@ -520,11 +520,6 @@ public class RetailSubmap extends Submap {
     }
   }
 
-  @Override
-  public void restoreAssets() {
-    this.loadTextures();
-  }
-
   private void loadTextureOverrides() {
     this.sobjTextureOverrides.clear();
     this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);

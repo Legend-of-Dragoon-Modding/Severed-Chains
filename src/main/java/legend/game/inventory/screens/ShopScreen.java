@@ -131,10 +131,6 @@ public class ShopScreen extends MenuScreen {
       }
 
       case LOAD_ITEMS_1 -> {
-        if(uiFile_800bdc3c == null) {
-          return;
-        }
-
         startFadeEffect(2, 10);
 
         final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];

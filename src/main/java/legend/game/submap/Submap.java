@@ -16,8 +16,6 @@ public abstract class Submap {
 
   public abstract void loadEnv(final Runnable onLoaded);
   public abstract void loadAssets(final Runnable onLoaded);
-  /** Called when legacy textures (NOT OpenGL textures) need to be reloaded (e.g. after menus are closed) */
-  public abstract void restoreAssets();
 
   public abstract void loadMusicAndSounds();
   public abstract void startMusic();

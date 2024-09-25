@@ -59,6 +59,7 @@ import static legend.game.SItem.dartXpTable_801135e4;
 import static legend.game.SItem.haschelXpTable_801136d8;
 import static legend.game.SItem.kongolXpTable_801134f0;
 import static legend.game.SItem.lavitzXpTable_801138c0;
+import static legend.game.SItem.loadMenuAssets;
 import static legend.game.SItem.meruXpTable_801137cc;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
@@ -419,6 +420,7 @@ public final class GameEngine {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
       }
 
+      loadMenuAssets();
       initTextboxGeometry();
       battleUiParts.init();
       startSound();

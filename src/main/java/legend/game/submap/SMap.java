@@ -3131,16 +3131,6 @@ public class SMap extends EngineState {
     return true;
   }
 
-  @Override
-  @Method(0x800e3facL)
-  public void menuClosed() {
-    if(!transitioningFromCombatToSubmap_800bd7b8) {
-      this.submap.restoreAssets();
-    }
-
-    //LAB_800e4008
-  }
-
   @Method(0x800e4018L)
   private void setIndicatorStatusAndResetIndicatorTickCountOnReenable() {
     if(gameState_800babc8.indicatorsDisabled_4e3) {

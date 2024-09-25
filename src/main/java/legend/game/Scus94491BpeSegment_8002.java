@@ -107,7 +107,6 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
-import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -116,7 +115,6 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.monsterSoundLoaded;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
@@ -861,15 +859,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
-          if(uiFile_800bdc3c != null) {
-            uiFile_800bdc3c.delete();
-          }
-
           renderablePtr_800bdc5c = null;
-          uiFile_800bdc3c = null;
           resizeDisplay(384, 240);
-          loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
-          loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00 = 33;
 
           whichMenu_800bdc38 = destMenu;
@@ -908,12 +899,6 @@ public final class Scus94491BpeSegment_8002 {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
-
-        if(uiFile_800bdc3c != null) {
-          uiFile_800bdc3c.delete();
-        }
-
-        uiFile_800bdc3c = null;
 
         startFadeEffect(2, 10);
 
@@ -1002,17 +987,20 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022a94L)
-  public static void FUN_80022a94(final FileData data) {
+  public static void loadMenuTexture(final FileData data) {
     final Tim tim = new Tim(data);
     final Rect4i imageRect = tim.getImageRect();
 
     if(imageRect.w != 0 || imageRect.h != 0) {
+      imageRect.x -= 512;
       GPU.uploadData15(imageRect, tim.getImageData());
     }
 
     //LAB_80022acc
     if(tim.hasClut()) {
-      GPU.uploadData15(tim.getClutRect(), tim.getClutData());
+      final Rect4i clutRect = tim.getClutRect();
+      clutRect.x -= 512;
+      GPU.uploadData15(clutRect, tim.getClutData());
     }
 
     //LAB_80022aec
@@ -1577,11 +1565,19 @@ public final class Scus94491BpeSegment_8002 {
             transforms.scaling(width, height, 1.0f);
             transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
 
+            int tpageX = (tpage & 0b1111) * 64;
+            int clutX = (clut & 0b111111) * 16;
+
+            if(!renderable.useOriginalTpage) {
+              tpageX -= 512;
+              clutX -= 512;
+            }
+
             final RenderEngine.QueuedModel<?> model = RENDERER
               .queueOrthoModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
-              .tpageOverride((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-              .clutOverride((clut & 0b111111) * 16, clut >>> 6);
+              .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
+              .clutOverride(clutX, clut >>> 6);
 
             if((metrics.clut_04 & 0x8000) != 0) {
               model.translucency(Translucency.of(tpage >>> 5 & 0b11));

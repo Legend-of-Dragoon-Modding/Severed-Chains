@@ -56,9 +56,9 @@ import java.util.Map;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
@@ -66,6 +66,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
+import static legend.game.Scus94491BpeSegment_8002.loadMenuTexture;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
@@ -554,15 +555,20 @@ public final class SItem {
     return 9 + a0 * 17;
   }
 
+  public static void loadMenuAssets() {
+    loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
+    loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
+  }
+
   @Method(0x800fc944L)
   public static void menuAssetsLoaded(final FileData data, final int whichFile) {
     if(whichFile == 0) {
       //LAB_800fc98c
-      FUN_80022a94(data.slice(0x83e0)); // Character textures
-      FUN_80022a94(data); // Menu textures
-      FUN_80022a94(data.slice(0x6200)); // Item textures
-      FUN_80022a94(data.slice(0x1_0460));
-      FUN_80022a94(data.slice(0x1_0580));
+      loadMenuTexture(data.slice(0x83e0)); // Character textures
+      loadMenuTexture(data); // Menu textures
+      loadMenuTexture(data.slice(0x6200)); // Item textures
+      loadMenuTexture(data.slice(0x1_0460));
+      loadMenuTexture(data.slice(0x1_0580));
     } else if(whichFile == 1) {
       //LAB_800fc9e4
       uiFile_800bdc3c = UiFile.fromFile(data);
@@ -592,13 +598,7 @@ public final class SItem {
           canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
         }
 
-        inventoryMenuState_800bdc28 = InventoryMenuState.AWAIT_INIT_1;
-      }
-
-      case AWAIT_INIT_1 -> {
-        if(uiFile_800bdc3c != null) {
-          inventoryMenuState_800bdc28 = InventoryMenuState._2;
-        }
+        inventoryMenuState_800bdc28 = InventoryMenuState._2;
       }
 
       case _2 -> {
@@ -614,12 +614,6 @@ public final class SItem {
 
       case UNLOAD_125 -> {
         deallocateRenderables(0xff);
-
-        if(uiFile_800bdc3c != null) {
-          uiFile_800bdc3c.delete();
-        }
-
-        uiFile_800bdc3c = null;
 
         switch(whichMenu_800bdc38) {
           case RENDER_SAVE_GAME_MENU_19 ->
