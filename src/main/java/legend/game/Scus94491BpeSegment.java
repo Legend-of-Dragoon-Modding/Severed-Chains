@@ -742,7 +742,7 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.widthSquisher;
       final float extraWidth = fullWidth - displayWidth_1f8003e0;
       fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
       fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
@@ -757,7 +757,7 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.widthSquisher;
       final float extraWidth = fullWidth - displayWidth_1f8003e0;
       fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
       fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
@@ -773,8 +773,8 @@ public final class Scus94491BpeSegment {
   @Method(0x80013c3cL)
   public static void drawFullScreenRect(final int colour, final Translucency transMode) {
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
-    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.widthSquisher;
+    final float extraWidth = fullWidth - RENDERER.getProjectionWidth();
     fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
     fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
@@ -1994,7 +1994,7 @@ public final class Scus94491BpeSegment {
     clearGreen_800bb104 = 0;
     clearBlue_800babc0 = 0;
     _8004f6e4 = 1;
-    dissolveDisplayWidth = RENDERER.getProjectionSize().x;
+    dissolveDisplayWidth = RENDERER.getProjectionWidth();
 
     if(dissolveSquare != null) {
       dissolveSquare.delete();
