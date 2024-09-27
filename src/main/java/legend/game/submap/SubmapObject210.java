@@ -51,9 +51,9 @@ public class SubmapObject210 {
   public int interpRotationTicksTotalX;
   public int interpRotationTicksTotalY;
   public int interpRotationTicksTotalZ;
-  public int lastRotationTickX = Integer.MIN_VALUE;
-  public int lastRotationTickY = Integer.MIN_VALUE;
-  public int lastRotationTickZ = Integer.MIN_VALUE;
+  public long lastRotationTickX = Integer.MIN_VALUE;
+  public long lastRotationTickY = Integer.MIN_VALUE;
+  public long lastRotationTickZ = Integer.MIN_VALUE;
 
   /** Only one sobj may have this value set at a time */
   public boolean cameraAttached_178;
