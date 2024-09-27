@@ -247,9 +247,14 @@ return
 
 
 
+USE_CAUSE_STATUS_S8_BACKUP:
+data 0
+
 ; @param int s8 colour index (weird negative numbers)
 USE_CAUSE_STATUS:
+mov stor[8], inl[:USE_CAUSE_STATUS_S8_BACKUP]
 gosub inl[:LABEL_124] ; addr
+mov inl[:USE_CAUSE_STATUS_S8_BACKUP], stor[8]
 gosub inl[:THROW_ATTACK_ITEM] ; addr
 call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
