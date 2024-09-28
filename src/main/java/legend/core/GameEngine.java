@@ -16,7 +16,6 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
-import legend.core.ui.ScreenStack;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
@@ -100,7 +99,6 @@ public final class GameEngine {
   public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
 
   public static final RenderEngine RENDERER = new RenderEngine();
-  public static final ScreenStack SCREENS = new ScreenStack();
 
   public static final Gte GTE;
   public static final Gpu GPU;
@@ -109,8 +107,6 @@ public final class GameEngine {
 
   public static final Thread hardwareThread;
   public static final Thread openalThread;
-
-  public static boolean legacyUi;
 
   static {
     try {
