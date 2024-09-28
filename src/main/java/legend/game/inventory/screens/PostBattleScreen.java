@@ -11,9 +11,11 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -154,13 +156,15 @@ public class PostBattleScreen extends MenuScreen {
             }
           }
 
+          final float secondaryCharXpMultiplier = CONFIG.getConfig(CoreMod.SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG.get());
+
           //LAB_8010d9d4
           //LAB_8010d9f8
           for(int secondaryCharSlot = 0; secondaryCharSlot < 9; secondaryCharSlot++) {
             final int secondaryCharIndex = secondaryCharIds_800bdbf8[secondaryCharSlot];
 
             if(secondaryCharIndex != -1) {
-              this.pendingXp_8011e180[secondaryCharIndex] = MathHelper.safeDiv(totalXpFromCombat_800bc95c, xpDivisor) / 2;
+              this.pendingXp_8011e180[secondaryCharIndex] = (int)(totalXpFromCombat_800bc95c * secondaryCharXpMultiplier);
             }
 
             //LAB_8010da24
