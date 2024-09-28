@@ -98,6 +98,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDepthFunc;
@@ -110,8 +111,7 @@ import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
-import static org.lwjgl.opengl.GL30C.GL_HALF_FLOAT;
-import static org.lwjgl.opengl.GL30C.GL_RGBA16F;
+import static org.lwjgl.opengl.GL31C.GL_RGBA8_SNORM;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
@@ -1226,9 +1226,9 @@ public class RenderEngine {
 
       this.renderTextures[i] = Texture.create(builder -> {
         builder.size(this.width, this.height);
-        builder.internalFormat(GL_RGBA16F);
+        builder.internalFormat(GL_RGBA8_SNORM);
         builder.dataFormat(GL_RGBA);
-        builder.dataType(GL_HALF_FLOAT);
+        builder.dataType(GL_UNSIGNED_BYTE);
         builder.magFilter(GL_NEAREST);
         builder.minFilter(GL_LINEAR);
       });
