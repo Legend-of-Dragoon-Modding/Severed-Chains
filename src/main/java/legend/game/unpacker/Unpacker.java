@@ -62,7 +62,7 @@ public final class Unpacker {
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 5;
+  private static final int VERSION = 4;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -1355,7 +1355,7 @@ public final class Unpacker {
       case 196 -> new int[] {39, 47};
       case 197 -> new int[] {41, 63};
       case 198 -> new int[] {65};
-      case 203 -> new int[] {93};
+      case 202 -> new int[] {93};
       case 232 -> new int[] {72};
       case 235 -> new int[] {60, 75};
       case 236 -> new int[] {9, 121};
