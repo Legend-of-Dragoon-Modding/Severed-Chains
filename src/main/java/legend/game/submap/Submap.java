@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gte.MV;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
@@ -43,5 +43,5 @@ public abstract class Submap {
   public abstract void storeStateBeforeBattle();
   public abstract boolean isReturningToSameMapAfterBattle();
 
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final RenderEngine.QueuedModel model) { }
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) { }
 }

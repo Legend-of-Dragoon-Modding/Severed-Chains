@@ -1,7 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.Rect4i;
@@ -1414,7 +1414,7 @@ public final class Scus94491BpeSegment_8002 {
               clutX -= 512;
             }
 
-            final RenderEngine.QueuedModel<?> model = RENDERER
+            final QueuedModel<?> model = RENDERER
               .queueOrthoModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
@@ -3383,7 +3383,7 @@ public final class Scus94491BpeSegment_8002 {
             textTransforms.transfer.y += trim;
           }
 
-          final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
+          final QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
             .texture(RENDERER.textTexture)
             .vertices((c - 33) * 4, 4)
             .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);

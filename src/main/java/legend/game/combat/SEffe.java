@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.QueuedModel;
 import legend.core.RenderEngine;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
@@ -356,7 +357,7 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
+    final QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)

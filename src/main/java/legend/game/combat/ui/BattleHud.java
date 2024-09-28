@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -518,7 +518,7 @@ public class BattleHud {
 
               // Numbers
               this.uiTransforms.transfer.set(displayStats.x_00 + digit.x_02, displayStats.y_02 + digit.y_04, 124.0f);
-              final RenderEngine.QueuedModel<?> digitModel = RENDERER.queueOrthoModel(this.floatingTextType1Digits[digit.digitValue_00], this.uiTransforms);
+              final QueuedModel<?> digitModel = RENDERER.queueOrthoModel(this.floatingTextType1Digits[digit.digitValue_00], this.uiTransforms);
 
               if(charDisplay._14[2] < 6) {
                 digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f, this.colourTemp);
@@ -545,7 +545,7 @@ public class BattleHud {
           }
 
           this.uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
-          final RenderEngine.QueuedModel<?> nameModel = RENDERER.queueOrthoModel(this.names[charSlot], this.uiTransforms);
+          final QueuedModel<?> nameModel = RENDERER.queueOrthoModel(this.names[charSlot], this.uiTransforms);
 
           // Portraits
           if(this.portraits[charSlot] == null) {
@@ -558,7 +558,7 @@ public class BattleHud {
           }
 
           this.uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
-          final RenderEngine.QueuedModel<?> portraitModel = RENDERER.queueOrthoModel(this.portraits[charSlot], this.uiTransforms);
+          final QueuedModel<?> portraitModel = RENDERER.queueOrthoModel(this.portraits[charSlot], this.uiTransforms);
 
           if(charDisplay._14[2] < 6) {
             nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
@@ -648,7 +648,7 @@ public class BattleHud {
             }
 
             this.uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
-            final RenderEngine.QueuedModel<?> statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms);
+            final QueuedModel<?> statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms);
 
             if(charDisplay._14[2] < 6) {
               statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);

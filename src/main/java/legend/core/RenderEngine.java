@@ -1,7 +1,6 @@
 package legend.core;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
@@ -19,7 +18,6 @@ import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
 import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
-import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdShaderOptions;
 import legend.core.opengl.VoidShaderOptions;
@@ -28,26 +26,22 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.Battle;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.submap.SMap;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
@@ -55,13 +49,10 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -118,8 +109,8 @@ public class RenderEngine {
   public static int legacyMode;
   public boolean usePs1Gpu = true;
 
-  private final LinkedList<RenderBatch> batches;
-  private RenderBatch currentBatch;
+  private final List<RenderBatch> batches;
+  private final RenderBatch mainBatch;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -239,7 +230,6 @@ public class RenderEngine {
   private boolean wireframeMode;
 
   private final Vector3f tempColour = new Vector3f();
-  private boolean needsSorting;
 
   private boolean togglePause;
   private boolean paused;
@@ -248,51 +238,61 @@ public class RenderEngine {
   private boolean reloadShaders;
 
   public RenderEngine() {
-    this.batches = new LinkedList<>();
-    this.currentBatch = new RenderBatch(this);
+    this.batches = new ArrayList<>();
+    this.mainBatch = new RenderBatch(this);
   }
 
-  public void pushBatch() {
-    this.batches.push(this.currentBatch);
-    this.currentBatch = new RenderBatch(this, this.currentBatch);
+  /**
+   * Adds a new render batch. Batches will be rendered in the order that they are
+   * added. Depth buffer is cleared between batches, so each batch will be rendered
+   * on top of the previous one. Use the returned {@link RenderBatch} to queue
+   * models into this batch. Render batches have their own projections, widescreen
+   * config, etc. and will need to be configured separately if desired. They start
+   * out with a copy of the main render batch's config when they are created.
+   */
+
+  public RenderBatch addBatch() {
+    final RenderBatch batch = new RenderBatch(this, this.mainBatch);
+    this.batches.add(batch);
+    return batch;
   }
 
   private void resetBatches() {
-    while(!this.batches.isEmpty()) {
-      this.currentBatch = this.batches.pop();
+    this.mainBatch.reset();
+
+    for(int i = 0; i < this.batches.size(); i++) {
+      this.batches.get(i).reset();
     }
   }
 
   /** NOTE: you must call {@link #updateProjections} yourself */
   public void setAllowWidescreen(final boolean allowWidescreen) {
-    this.currentBatch.allowWidescreen = allowWidescreen;
+    this.mainBatch.setAllowWidescreen(allowWidescreen);
   }
 
   public boolean getAllowWidescreen() {
-    return this.currentBatch.allowWidescreen;
+    return this.mainBatch.allowWidescreen;
   }
 
   /** NOTE: you must call {@link #updateProjections} yourself */
   public void setAllowHighQualityProjection(final boolean allowHighQualityProjection) {
-    this.currentBatch.allowHighQualityProjection = allowHighQualityProjection;
+    this.mainBatch.setAllowHighQualityProjection(allowHighQualityProjection);
   }
 
   public float getWidthSquisher() {
-    return this.currentBatch.widthSquisher;
+    return this.mainBatch.widthSquisher;
   }
 
   public void setProjectionSize(final float width, final float height) {
-    this.currentBatch.projectionWidth = width;
-    this.currentBatch.projectionHeight = height;
-    this.updateFieldOfView();
+    this.mainBatch.setProjectionSize(width, height);
   }
 
   public float getProjectionWidth() {
-    return this.currentBatch.projectionWidth;
+    return this.mainBatch.getProjectionWidth();
   }
 
   public float getProjectionHeight() {
-    return this.currentBatch.projectionHeight;
+    return this.mainBatch.getProjectionHeight();
   }
 
   public float getRenderWidth() {
@@ -304,15 +304,11 @@ public class RenderEngine {
   }
 
   public void setProjectionDepth(final float depth) {
-    this.currentBatch.projectionDepth = depth;
-    this.updateFieldOfView();
+    this.mainBatch.setProjectionDepth(depth);
   }
 
-  private void updateFieldOfView() {
-    this.currentBatch.aspectRatio = 320.0f / this.currentBatch.projectionHeight;
-    final float halfWidth = this.currentBatch.projectionWidth / 2.0f;
-    this.currentBatch.fieldOfView = (float)(Math.atan(halfWidth / this.currentBatch.projectionDepth) * 2.0f / this.currentBatch.aspectRatio);
-    this.updateProjections();
+  public void updateProjections() {
+    this.mainBatch.updateProjections();
   }
 
   public Window.Events events() {
@@ -502,8 +498,6 @@ public class RenderEngine {
           this.frameAdvanceSingle = false;
           this.frameAdvance = false;
           this.resetBatches();
-          this.currentBatch.modelPool.reset();
-          this.currentBatch.orthoPool.reset();
         } else {
           this.renderCallback.run();
         }
@@ -511,10 +505,6 @@ public class RenderEngine {
 
       if(this.frameAdvanceSingle || this.frameAdvance) {
         this.resetBatches();
-        this.currentBatch.modelPool.reset();
-        this.currentBatch.orthoPool.reset();
-        this.currentBatch.shaderPool.reset();
-        this.currentBatch.shaderOrthoPool.reset();
         this.renderCallback.run();
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
@@ -533,7 +523,7 @@ public class RenderEngine {
         }
 
         this.renderBuffers[this.renderBufferIndex].bind();
-        this.clear();
+        this.clearColour();
 
         // Render batches
         for(int i = 0; i < this.batches.size(); i++) {
@@ -541,7 +531,7 @@ public class RenderEngine {
           this.renderBatch(batch);
         }
 
-        this.renderBatch(this.currentBatch);
+        this.renderBatch(this.mainBatch);
 
         // set render states
         glDisable(GL_DEPTH_TEST);
@@ -563,24 +553,12 @@ public class RenderEngine {
 
         // If we don't unbind the framebuffer textures, window resizing will crash since it has to resize the framebuffer
         Texture.unbind();
-
-        // If we're paused, don't reset the pool so that we keep rendering the same scene over and over again
-        if(!this.paused) {
-          this.resetBatches();
-          this.currentBatch.modelPool.reset();
-          this.currentBatch.orthoPool.reset();
-          this.currentBatch.shaderPool.reset();
-          this.currentBatch.shaderOrthoPool.reset();
-        }
-      } else if(!this.paused) {
-        this.resetBatches();
-        this.currentBatch.orthoPool.reset();
-        this.currentBatch.modelPool.reset();
-        this.currentBatch.shaderPool.reset();
-        this.currentBatch.shaderOrthoPool.reset();
       }
 
+      // If we're paused, don't reset the pool so that we keep rendering the same scene over and over again
       if(!this.paused) {
+        this.resetBatches();
+
         this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
 
         // Delete stuff marked for deletion
@@ -603,37 +581,17 @@ public class RenderEngine {
         }
       }
 
-      if(this.movingLeft) {
-        this.camera3d.strafe(-MOVE_SPEED * 200);
-      }
-
-      if(this.movingRight) {
-        this.camera3d.strafe(MOVE_SPEED * 200);
-      }
-
-      if(this.movingForward) {
-        this.camera3d.move(-MOVE_SPEED * 200);
-      }
-
-      if(this.movingBackward) {
-        this.camera3d.move(MOVE_SPEED * 200);
-      }
-
-      if(this.movingUp) {
-        this.camera3d.jump(-MOVE_SPEED * 200);
-      }
-
-      if(this.movingDown) {
-        this.camera3d.jump(MOVE_SPEED * 200);
-      }
+      this.handleMovement();
     });
   }
 
   private void renderBatch(final RenderBatch batch) {
-    if(this.needsSorting) {
+    if(batch.needsSorting) {
       this.sortOrthoPool(batch.orthoPool);
-      this.needsSorting = false;
+      batch.needsSorting = false;
     }
+
+    this.clearDepth();
 
     RENDERER.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPool(batch, batch.modelPool, true);
@@ -894,6 +852,32 @@ public class RenderEngine {
     }
   }
 
+  private void handleMovement() {
+    if(this.movingLeft) {
+      this.camera3d.strafe(-MOVE_SPEED * 200);
+    }
+
+    if(this.movingRight) {
+      this.camera3d.strafe(MOVE_SPEED * 200);
+    }
+
+    if(this.movingForward) {
+      this.camera3d.move(-MOVE_SPEED * 200);
+    }
+
+    if(this.movingBackward) {
+      this.camera3d.move(MOVE_SPEED * 200);
+    }
+
+    if(this.movingUp) {
+      this.camera3d.jump(-MOVE_SPEED * 200);
+    }
+
+    if(this.movingDown) {
+      this.camera3d.jump(MOVE_SPEED * 200);
+    }
+  }
+
   /**
    * @param transforms Matrix used for transforms, contents will be overwritten
    */
@@ -910,14 +894,14 @@ public class RenderEngine {
     final float angle = MathHelper.HALF_PI + MathHelper.atan2(dy, dx);
     final float length = (float)Math.sqrt(dx * dx + dy * dy);
 
-    transforms.translation(p0.x + this.currentBatch.widescreenOrthoOffsetX, p0.y, z);
+    transforms.translation(p0.x + this.mainBatch.widescreenOrthoOffsetX, p0.y, z);
     transforms.rotateZ(angle);
     transforms.scale(1.0f, length, 1.0f);
     return RENDERER.queueOrthoModel(obj, transforms);
   }
 
   public void setProjectionMode(final ProjectionMode projectionMode) {
-    this.setProjectionMode(this.currentBatch, projectionMode);
+    this.setProjectionMode(this.mainBatch, projectionMode);
   }
 
   public void setProjectionMode(final RenderBatch batch, final ProjectionMode projectionMode) {
@@ -970,175 +954,48 @@ public class RenderEngine {
   }
 
   public QueuedModel<VoidShaderOptions> queueModel(final Obj obj) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      throw new IllegalArgumentException("3D models can only use order-independent translucency modes");
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj);
   }
 
   public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final MV mv) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj, mv);
   }
 
   public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final MV mv, final MV lightMv) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj, mv, lightMv);
   }
 
   public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final Matrix4f mv) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj, mv);
   }
 
   public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final Matrix4f mv, final MV lightMv) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj, mv, lightMv);
   }
 
   public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.orthoPool.acquire();
-    entry.reset();
-    entry.transforms.setTranslation(this.currentBatch.widescreenOrthoOffsetX, 0.0f, 0.0f);
-    entry.obj = obj;
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueOrthoModel(obj);
   }
 
   public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final MV mv) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.orthoPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.currentBatch.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueOrthoModel(obj, mv);
   }
 
   /** NOTE: you have to add widescreenOrthoOffsetX yourself */
   public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final Matrix4f transforms) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.currentBatch.orthoPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(transforms);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueOrthoModel(obj, transforms);
   }
 
   public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueModel(final Obj obj, final ShaderType<Options> shaderType) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<Options> entry = this.currentBatch.shaderPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.shader = ShaderManager.getShader(shaderType);
-    entry.shaderOptions = entry.shader.makeOptions();
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj, shaderType);
   }
 
   public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueModel(final Obj obj, final MV mv, final ShaderType<Options> shaderType) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<Options> entry = this.currentBatch.shaderPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.shader = ShaderManager.getShader(shaderType);
-    entry.shaderOptions = entry.shader.makeOptions();
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueModel(obj, mv, shaderType);
   }
 
   public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueOrthoModel(final Obj obj, final MV mv, final ShaderType<Options> shaderType) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<Options> entry = this.currentBatch.shaderOrthoPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.shader = ShaderManager.getShader(shaderType);
-    entry.shaderOptions = entry.shader.makeOptions();
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
+    return this.mainBatch.queueOrthoModel(obj, mv, shaderType);
   }
 
   private void setVdf(final Vector3f[] vertices) {
@@ -1175,59 +1032,6 @@ public class RenderEngine {
     }
   }
 
-  public void updateProjections() {
-    this.currentBatch.widthSquisher = 1.0f;
-    this.currentBatch.expectedWidth = 320.0f;
-    this.currentBatch.expandedSubmap = false;
-
-    if(legacyMode != 0) {
-      this.currentBatch.perspectiveProjection.setPerspectiveLH(PI / 4.0f, (float)this.renderWidth / this.renderHeight, 0.1f, 500.0f);
-      this.currentBatch.orthographicProjection.setOrtho2D(0.0f, this.renderWidth, this.renderHeight, 0.0f);
-      return;
-    }
-
-    // LOD uses a left-handed projection with a negated Y axis because reasons.
-    if(this.currentBatch.allowHighQualityProjection && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
-      final float ratio;
-      if(this.currentBatch.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
-        ratio = this.renderWidth / (float)this.renderHeight;
-        final float w = this.currentBatch.projectionHeight * ratio;
-        final float h = this.currentBatch.projectionHeight;
-        this.currentBatch.orthographicProjection.setOrthoLH(0.0f, w * (this.currentBatch.projectionWidth / this.currentBatch.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
-        this.currentBatch.widescreenOrthoOffsetX = (w - this.currentBatch.expectedWidth) / 2.0f;
-      } else {
-        ratio = this.currentBatch.aspectRatio;
-        this.currentBatch.orthographicProjection.setOrthoLH(0.0f, this.currentBatch.projectionWidth, this.currentBatch.projectionHeight, 0.0f, 0.0f, 1000000.0f);
-        this.currentBatch.widescreenOrthoOffsetX = 0.0f;
-      }
-
-      this.currentBatch.perspectiveProjection.setPerspectiveLH(this.currentBatch.fieldOfView, ratio, 0.1f, 1000000.0f);
-      this.currentBatch.perspectiveProjection.negateY();
-    } else {
-      this.currentBatch.expandedSubmap = currentEngineState_8004dd04 instanceof SMap && CONFIG.getConfig(CoreMod.SUBMAP_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
-
-      // Our perspective projection is actually a centred orthographic projection. We are doing a
-      // projection plane division in the vertex shader to emulate perspective division on the GTE.
-      if(this.currentBatch.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || this.currentBatch.expandedSubmap) {
-        if(this.currentBatch.expandedSubmap) {
-          this.currentBatch.expectedWidth = 368.0f;
-          this.currentBatch.widthSquisher = 368.0f / 320.0f;
-        }
-
-        final float ratio = this.renderWidth / (float)this.renderHeight;
-        final float w = this.currentBatch.projectionHeight * ratio;
-        final float h = this.currentBatch.projectionHeight;
-        this.currentBatch.perspectiveProjection.setOrthoLH(-w / 2.0f * this.currentBatch.widthSquisher, w / 2.0f * this.currentBatch.widthSquisher, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);
-        this.currentBatch.orthographicProjection.setOrthoLH(0.0f, w * (this.currentBatch.projectionWidth / this.currentBatch.expectedWidth) * this.currentBatch.widthSquisher, h, 0.0f, 0.0f, 1000000.0f);
-        this.currentBatch.widescreenOrthoOffsetX = (w * this.currentBatch.widthSquisher - this.currentBatch.expectedWidth) / 2.0f;
-      } else {
-        this.currentBatch.perspectiveProjection.setOrthoLH(-this.currentBatch.projectionWidth / 2.0f, this.currentBatch.projectionWidth / 2.0f, this.currentBatch.projectionHeight / 2.0f, -this.currentBatch.projectionHeight / 2.0f, 0.0f, 1000000.0f);
-        this.currentBatch.orthographicProjection.setOrthoLH(0.0f, this.currentBatch.projectionWidth, this.currentBatch.projectionHeight, 0.0f, 0.0f, 1000000.0f);
-        this.currentBatch.widescreenOrthoOffsetX = 0.0f;
-      }
-    }
-  }
-
   public void updateResolution() {
     this.onResize(this.window, this.window.getWidth(), this.window.getHeight());
   }
@@ -1256,6 +1060,11 @@ public class RenderEngine {
     // Projections
     this.updateProjections();
 
+    for(int i = 0; i < this.batches.size(); i++) {
+      this.batches.get(i).updateProjections();
+    }
+
+    // Textures
     for(int i = 0; i < this.renderTextures.length; i++) {
       if(this.renderTextures[i] != null) {
         this.renderTextures[i].delete();
@@ -1283,6 +1092,7 @@ public class RenderEngine {
     });
 
 
+    // Render buffers
     for(int i = 0; i < this.renderBuffers.length; i++) {
       if(this.renderBuffers[i] != null) {
         this.renderBuffers[i].delete();
@@ -1388,259 +1198,6 @@ public class RenderEngine {
       }
     } else if (key == GLFW_KEY_F10) {
       this.frameAdvance = false;
-    }
-  }
-
-  public static class QueuedModel<Options extends ShaderOptions<Options>> {
-    private final RenderEngine engine;
-
-    private Obj obj;
-    private final Matrix4f transforms = new Matrix4f();
-    private final Matrix4f lightTransforms = new Matrix4f();
-    private final Vector3f screenspaceOffset = new Vector3f();
-    private final Vector3f colour = new Vector3f();
-    private final Vector2f clutOverride = new Vector2f();
-    private final Vector2f tpageOverride = new Vector2f();
-    private final Vector2f uvOffset = new Vector2f();
-
-    private final Matrix4f lightDirection = new Matrix4f();
-    private final Matrix3f lightColour = new Matrix3f();
-    private final Vector4f backgroundColour = new Vector4f();
-    private boolean lightUsed;
-
-    private final Rect4i scissor = new Rect4i();
-
-    private Shader<Options> shader;
-    private Options shaderOptions;
-
-    private int startVertex;
-    private int vertexCount;
-
-    private final Texture[] textures = new Texture[32];
-    private boolean texturesUsed;
-
-    private Translucency translucency;
-    private boolean hasTranslucencyOverride;
-
-    private boolean isTmd;
-    private int tmdTranslucency;
-    private int ctmdFlags;
-    private final Vector3f battleColour = new Vector3f();
-
-    private Vector3f[] vdf;
-
-    public QueuedModel(final RenderEngine engine) {
-      this.engine = engine;
-    }
-
-    public Options options() {
-      return this.shaderOptions;
-    }
-
-    public QueuedModel<Options> screenspaceOffset(final Vector2f offset) {
-      this.screenspaceOffset.x = offset.x;
-      this.screenspaceOffset.y = offset.y;
-      return this;
-    }
-
-    public QueuedModel<Options> screenspaceOffset(final float x, final float y) {
-      this.screenspaceOffset.x = x;
-      this.screenspaceOffset.y = y;
-      return this;
-    }
-
-    public QueuedModel<Options> depthOffset(final float z) {
-      this.screenspaceOffset.z = z;
-      return this;
-    }
-
-    public QueuedModel<Options> colour(final Vector3f colour) {
-      this.colour.set(colour);
-      return this;
-    }
-
-    public QueuedModel<Options> colour(final float r, final float g, final float b) {
-      this.colour.set(r, g, b);
-      return this;
-    }
-
-    public QueuedModel<Options> monochrome(final float shade) {
-      this.colour.set(shade);
-      return this;
-    }
-
-    public QueuedModel<Options> clutOverride(final float x, final float y) {
-      this.clutOverride.set(x, y);
-      return this;
-    }
-
-    public QueuedModel<Options> tpageOverride(final float x, final float y) {
-      this.tpageOverride.set(x, y);
-      return this;
-    }
-
-    public QueuedModel<Options> uvOffset(final float x, final float y) {
-      this.uvOffset.set(x, y);
-      return this;
-    }
-
-    public QueuedModel<Options> lightDirection(final Matrix3f lightDirection) {
-      this.lightDirection.set(lightDirection).mul(this.lightTransforms).setTranslation(0.0f, 0.0f, 0.0f);
-      this.lightUsed = true;
-      return this;
-    }
-
-    public QueuedModel<Options> lightColour(final Matrix3f lightColour) {
-      this.lightColour.set(lightColour);
-      this.lightUsed = true;
-      return this;
-    }
-
-    public QueuedModel<Options> backgroundColour(final Vector3f backgroundColour) {
-      this.backgroundColour.set(backgroundColour, 0.0f);
-      this.lightUsed = true;
-      return this;
-    }
-
-    /** Note: origin is top-left corner */
-    public QueuedModel<Options> scissor(final int x, final int y, final int w, final int h) {
-      this.scissor.set(x, y, w, h);
-      return this;
-    }
-
-    /** Note: origin is top-left corner */
-    public QueuedModel<Options> scissor(final Rect4i scissor) {
-      this.scissor.set(scissor);
-      return this;
-    }
-
-    public QueuedModel<Options> vertices(final int startVertex, final int vertexCount) {
-      this.startVertex = startVertex;
-      this.vertexCount = vertexCount;
-      return this;
-    }
-
-    public QueuedModel<Options> texture(final Texture texture, final int textureUnit) {
-      this.textures[textureUnit] = texture;
-      this.texturesUsed = true;
-      return this;
-    }
-
-    public QueuedModel<Options> texture(final Texture texture) {
-      return this.texture(texture, 0);
-    }
-
-    public QueuedModel<Options> translucency(final Translucency translucency) {
-      this.translucency = translucency;
-      this.hasTranslucencyOverride = true;
-
-      if(translucency == Translucency.HALF_B_PLUS_HALF_F) {
-        this.engine.needsSorting = true;
-      }
-
-      return this;
-    }
-
-    public QueuedModel<Options> ctmdFlags(final int ctmdFlags) {
-      this.isTmd = true;
-      this.ctmdFlags = ctmdFlags;
-      return this;
-    }
-
-    public QueuedModel<Options> tmdTranslucency(final int tmdTranslucency) {
-      this.isTmd = true;
-      this.tmdTranslucency = tmdTranslucency;
-      return this;
-    }
-
-    public QueuedModel<Options> battleColour(final Vector3f colour) {
-      this.battleColour.set(colour);
-      return this;
-    }
-
-    public QueuedModel<Options> vdf(final Vector3f[] vdf) {
-      this.vdf = vdf;
-      return this;
-    }
-
-    private void reset() {
-      this.shader = null;
-      this.shaderOptions = null;
-      this.transforms.identity();
-      this.lightTransforms.identity();
-      this.screenspaceOffset.zero();
-      this.colour.set(1.0f, 1.0f, 1.0f);
-      this.clutOverride.zero();
-      this.tpageOverride.zero();
-      this.uvOffset.zero();
-      this.scissor.set(0, 0, 0, 0);
-      this.vertexCount = 0;
-      Arrays.fill(this.textures, null);
-      this.hasTranslucencyOverride = false;
-      this.texturesUsed = false;
-      this.lightUsed = false;
-      this.isTmd = false;
-      this.tmdTranslucency = 0;
-      this.ctmdFlags = 0;
-      this.battleColour.zero();
-      this.vdf = null;
-    }
-
-    private void useTexture() {
-      if(this.texturesUsed) {
-        for(int i = 0; i < this.textures.length; i++) {
-          if(this.textures[i] != null) {
-            this.textures[i].use(i);
-          }
-        }
-      } else {
-        GPU.useVramTexture();
-      }
-    }
-
-    public boolean isUniformLit() {
-      return (this.ctmdFlags & 0x10) != 0;
-    }
-
-    public boolean hasTranslucency() {
-      return this.hasTranslucencyOverride || (this.ctmdFlags & 0x2) != 0 || this.obj.hasTranslucency();
-    }
-
-    public boolean shouldRender(@Nullable final Translucency translucency) {
-      if(this.isTmd && this.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
-        return translucency != null && this.tmdTranslucency == translucency.ordinal();
-      }
-
-      return
-        this.hasTranslucencyOverride && this.translucency == translucency ||
-        (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() ||
-        !this.hasTranslucencyOverride && this.obj.shouldRender(translucency)
-      ;
-    }
-
-    private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
-      this.transforms.get(modelIndex * 20, transforms2Buffer);
-      this.screenspaceOffset.get(modelIndex * 20 + 16, transforms2Buffer);
-
-      if(this.lightUsed) {
-        this.lightDirection.get(modelIndex * 32, lightingBuffer);
-        this.lightColour.get3x4(modelIndex * 32 + 16, lightingBuffer);
-        this.backgroundColour.get(modelIndex * 32 + 28, lightingBuffer);
-      }
-    }
-
-    private void render(final Translucency translucency) {
-      if(this.hasTranslucencyOverride || (this.ctmdFlags & 0x2) != 0 || this.isTmd && this.obj.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
-        // Translucency override
-        this.obj.render(this.startVertex, this.vertexCount);
-      } else {
-        this.obj.render(translucency, this.startVertex, this.vertexCount);
-      }
-    }
-
-    @Override
-    public String toString() {
-      return this.obj.toString();
     }
   }
 }

@@ -1,7 +1,7 @@
 package legend.game.wmap;
 
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -1912,7 +1912,7 @@ public class WMap extends EngineState {
           }
           this.mapState_800c6798.pathDots.transforms.transfer.add(intersectionPoint).y -= 1.0f;
 
-          final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+          final QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
             .vertices(bigDotStateIndex * 4, 4);
 
           //LAB_800d7df0
@@ -1970,7 +1970,7 @@ public class WMap extends EngineState {
                 .scale(0.25f);
               this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
 
-              final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+              final QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
                 .vertices(12, 4);
 
               //LAB_800d87fc
@@ -2085,7 +2085,7 @@ public class WMap extends EngineState {
         lw.transfer.y += 6.0f;
       }
 
-      final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(dobj2.obj, lw);
+      final QueuedModel<?> model = RENDERER.queueModel(dobj2.obj, lw);
 
       if(i == 0) {
         if(this.mapState_800c6798.continent_00.continentNum < 9) {

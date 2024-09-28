@@ -2,7 +2,7 @@ package legend.game.submap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
@@ -332,7 +332,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final RenderEngine.QueuedModel model) {
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) {
     for(int n = 0; n < this.submapWorldMapExits_800f7f74.length; n++) {
       final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
 
