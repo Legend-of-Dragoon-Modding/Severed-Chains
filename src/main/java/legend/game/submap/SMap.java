@@ -1050,44 +1050,46 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Delta Z position")
   @Method(0x800de1d0L)
   private FlowControl scriptMovePlayer(final RunningScript<SubmapObject210> script) {
-    final short deltaX = (short)script.params_20[0].get();
-    final short deltaY = (short)script.params_20[1].get();
-    final short deltaZ = (short)script.params_20[2].get();
+    if(this.smapTicks_800c6ae0 > 10 * (3 - vsyncMode_8007a3b8)) {
+      final short deltaX = (short)script.params_20[0].get();
+      final short deltaY = (short)script.params_20[1].get();
+      final short deltaZ = (short)script.params_20[2].get();
 
-    if(deltaX != 0 || deltaY != 0 || deltaZ != 0) {
-      final Vector3f deltaMovement = new Vector3f();
-      final Vector3f worldspaceDeltaMovement = new Vector3f();
+      if(deltaX != 0 || deltaY != 0 || deltaZ != 0) {
+        final Vector3f deltaMovement = new Vector3f();
+        final Vector3f worldspaceDeltaMovement = new Vector3f();
 
-      //LAB_800de218
-      final SubmapObject210 player = script.scriptState_04.innerStruct_00;
-      final Model124 playerModel = player.model_00;
+        //LAB_800de218
+        final SubmapObject210 player = script.scriptState_04.innerStruct_00;
+        final Model124 playerModel = player.model_00;
 
-      deltaMovement.set(deltaX, deltaY, deltaZ);
-      GTE.setTransforms(worldToScreenMatrix_800c3548);
-      this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
+        deltaMovement.set(deltaX, deltaY, deltaZ);
+        GTE.setTransforms(worldToScreenMatrix_800c3548);
+        this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
-      if(collidedPrimitiveIndex >= 0) {
-        if(this.isWalkable(collidedPrimitiveIndex)) {
-          player.finishInterpolatedMovement();
+        final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
+        if(collidedPrimitiveIndex >= 0) {
+          if(this.isWalkable(collidedPrimitiveIndex)) {
+            player.finishInterpolatedMovement();
 
-          // Collision returns Y value as destination rather than delta, so convert it to a delta
-          worldspaceDeltaMovement.y -= playerModel.coord2_14.coord.transfer.y;
+            // Collision returns Y value as destination rather than delta, so convert it to a delta
+            worldspaceDeltaMovement.y -= playerModel.coord2_14.coord.transfer.y;
 
-          player.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
-          player.interpMovementTicks = 0;
-          player.interpMovementStart.set(playerModel.coord2_14.coord.transfer);
-          player.interpMovementStart.add(worldspaceDeltaMovement, player.interpMovementDest);
-          player.lastMovementTick = this.smapTicks_800c6ae0;
+            player.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
+            player.interpMovementTicks = 0;
+            player.interpMovementStart.set(playerModel.coord2_14.coord.transfer);
+            player.interpMovementStart.add(worldspaceDeltaMovement, player.interpMovementDest);
+            player.lastMovementTick = this.smapTicks_800c6ae0;
+          }
+
+          //LAB_800de2c8
+          player.collidedPrimitiveIndex_16c = collidedPrimitiveIndex;
         }
 
-        //LAB_800de2c8
-        player.collidedPrimitiveIndex_16c = collidedPrimitiveIndex;
+        //LAB_800de2cc
+        player.us_170 = 0;
+        this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
       }
-
-      //LAB_800de2cc
-      player.us_170 = 0;
-      this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
     //LAB_800de318
