@@ -3775,6 +3775,7 @@ public class SMap extends EngineState {
         }
 
         if(this.isScriptLoaded(0)) {
+          this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
           this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c = this.currentSubmapScene_800caaf8;
         }
 
@@ -3785,7 +3786,20 @@ public class SMap extends EngineState {
         startFadeEffect(2, 10);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
-        this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+        this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_FADE_IN;
+      }
+
+      case WAIT_FOR_FADE_IN -> {
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
+
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
+
+        if(fullScreenEffect_800bb140.currentColour_28 == 0) {
+          if(this.isScriptLoaded(0)) {
+            this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = false;
+          }
+          this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+        }
       }
 
       case RENDER_SUBMAP_12 -> {
