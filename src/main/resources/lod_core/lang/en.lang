@@ -65,7 +65,11 @@ lod_core.config.mash_mode.label=Button Mash Mode
 lod_core.config.mash_mode.MASH=Mash
 lod_core.config.mash_mode.HOLD=Hold
 lod_core.config.mash_mode.AUTO=Automatic
-lod_core.config.secondary_character_xp_multiplier.label=Secondary Character XP gain
+lod_core.config.secondary_character_xp_multiplier.label=Secondary Character XP Gain
+lod_core.config.battle_transition_mode.label=Battle Transition
+lod_core.config.battle_transition_mode.NORMAL=Normal
+lod_core.config.battle_transition_mode.FAST=Fast
+lod_core.config.battle_transition_mode.INSTANT=Instant
 
 lod_core.keybind.help=Press DEL when done
 lod_core.keybind.missing_input=Missing required input

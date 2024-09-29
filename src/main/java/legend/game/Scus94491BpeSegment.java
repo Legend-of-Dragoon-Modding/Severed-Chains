@@ -19,6 +19,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
+import legend.game.combat.BattleTransitionMode;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
@@ -1865,11 +1866,14 @@ public final class Scus94491BpeSegment {
       tickBattleDissolveDarkening();
     }
 
+    final BattleTransitionMode mode = CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get());
+    final int speedDivisor = mode == BattleTransitionMode.NORMAL ? 1 : 2;
+
     //LAB_8001b480
     if((battleFlags_800bc960 & 0x2) != 0) { // Combat controller script is loaded
       if(battleStartDelayTicks_8004f6ec == 0) {
         battleStartDelayTicks_8004f6ec = 1;
-        setBattleDissolveDarkeningMetrics(true, 300 / vsyncMode_8007a3b8);
+        setBattleDissolveDarkeningMetrics(true, 300 / vsyncMode_8007a3b8 / speedDivisor);
         startFadeEffect(1, 1);
       }
     }
@@ -1877,7 +1881,7 @@ public final class Scus94491BpeSegment {
     //LAB_8001b4c0
     if(battleStartDelayTicks_8004f6ec != 0) {
       //LAB_8001b4d4
-      if(battleStartDelayTicks_8004f6ec >= 150 / vsyncMode_8007a3b8) {
+      if(battleStartDelayTicks_8004f6ec >= 150 / vsyncMode_8007a3b8 / speedDivisor || mode == BattleTransitionMode.INSTANT) {
         _8004f6e4 = -1;
         battleFlags_800bc960 |= 0x1;
       }
@@ -1911,7 +1915,7 @@ public final class Scus94491BpeSegment {
 
     battleDissolveTicks += vsyncMode_8007a3b8;
 
-    if((battleDissolveTicks & 0x1) == 0) {
+    if((battleDissolveTicks & 0x1) == 0 || CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get()) == BattleTransitionMode.FAST) {
       final float squish;
       final float width;
       final float offset;
