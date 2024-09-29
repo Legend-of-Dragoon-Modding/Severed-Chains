@@ -19,6 +19,7 @@ import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
 import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
+import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdShaderOptions;
 import legend.core.opengl.VoidShaderOptions;
@@ -27,6 +28,7 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.Battle;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.submap.SMap;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,6 +98,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDepthFunc;
@@ -108,8 +111,7 @@ import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
-import static org.lwjgl.opengl.GL30C.GL_HALF_FLOAT;
-import static org.lwjgl.opengl.GL30C.GL_RGBA16F;
+import static org.lwjgl.opengl.GL31C.GL_RGBA16_SNORM;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
@@ -120,6 +122,9 @@ public class RenderEngine {
   public boolean allowWidescreen;
   public boolean allowHighQualityProjection;
   private float widescreenOrthoOffsetX;
+  private float expectedWidth = 320.0f;
+  public float widthSquisher = 1.0f;
+  private boolean expandedSubmap;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -263,8 +268,12 @@ public class RenderEngine {
     this.updateFieldOfView();
   }
 
-  public Vector2f getProjectionSize() {
-    return new Vector2f(this.projectionWidth, this.projectionHeight);
+  public float getProjectionWidth() {
+    return this.projectionWidth;
+  }
+
+  public float getProjectionHeight() {
+    return this.projectionHeight;
   }
 
   public float getRenderWidth() {
@@ -704,8 +713,8 @@ public class RenderEngine {
       if(entry.scissor.w != 0) {
         glEnable(GL_SCISSOR_TEST);
 
-        if(widescreen) {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
+        if(widescreen || this.expandedSubmap) {
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (this.expectedWidth / this.projectionWidth) / this.widthSquisher), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * h * (this.expectedWidth / this.projectionWidth) / this.widthSquisher), (int)(entry.scissor.h * h));
         } else {
           glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
         }
@@ -1130,6 +1139,10 @@ public class RenderEngine {
   }
 
   public void updateProjections() {
+    this.widthSquisher = 1.0f;
+    this.expectedWidth = 320.0f;
+    this.expandedSubmap = false;
+
     if(legacyMode != 0) {
       this.perspectiveProjection.setPerspectiveLH(PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.width, this.height, 0.0f);
@@ -1143,8 +1156,8 @@ public class RenderEngine {
         ratio = this.width / (float)this.height;
         final float w = this.projectionHeight * ratio;
         final float h = this.projectionHeight;
-        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.0f, 1000000.0f);
-        this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / this.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
+        this.widescreenOrthoOffsetX = (w - this.expectedWidth) / 2.0f;
       } else {
         ratio = this.aspectRatio;
         this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.0f, 1000000.0f);
@@ -1154,15 +1167,22 @@ public class RenderEngine {
       this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, ratio, 0.1f, 1000000.0f);
       this.perspectiveProjection.negateY();
     } else {
+      this.expandedSubmap = currentEngineState_8004dd04 instanceof SMap && CONFIG.getConfig(CoreMod.SUBMAP_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
+
       // Our perspective projection is actually a centred orthographic projection. We are doing a
       // projection plane division in the vertex shader to emulate perspective division on the GTE.
-      if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || this.expandedSubmap) {
+        if(this.expandedSubmap) {
+          this.expectedWidth = 368.0f;
+          this.widthSquisher = 368.0f / 320.0f;
+        }
+
         final float ratio = this.width / (float)this.height;
         final float w = this.projectionHeight * ratio;
         final float h = this.projectionHeight;
-        this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);
-        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.0f, 1000000.0f);
-        this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+        this.perspectiveProjection.setOrthoLH(-w / 2.0f * this.widthSquisher, w / 2.0f * this.widthSquisher, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / this.expectedWidth) * this.widthSquisher, h, 0.0f, 0.0f, 1000000.0f);
+        this.widescreenOrthoOffsetX = (w * this.widthSquisher - this.expectedWidth) / 2.0f;
       } else {
         this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.0f, 1000000.0f);
         this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.0f, 1000000.0f);
@@ -1206,9 +1226,9 @@ public class RenderEngine {
 
       this.renderTextures[i] = Texture.create(builder -> {
         builder.size(this.width, this.height);
-        builder.internalFormat(GL_RGBA16F);
+        builder.internalFormat(GL_RGBA16_SNORM);
         builder.dataFormat(GL_RGBA);
-        builder.dataType(GL_HALF_FLOAT);
+        builder.dataType(GL_UNSIGNED_BYTE);
         builder.magFilter(GL_NEAREST);
         builder.minFilter(GL_LINEAR);
       });

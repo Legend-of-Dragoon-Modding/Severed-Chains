@@ -261,7 +261,7 @@ public final class Fmv {
 
     oldFps = RENDERER.window().getFpsLimit();
     RENDERER.window().setFpsLimit(15);
-    oldProjectionSize.set(RENDERER.getProjectionSize());
+    oldProjectionSize.set(RENDERER.getProjectionWidth(), RENDERER.getProjectionHeight());
     RENDERER.setProjectionSize(320.0f, 240.0f);
 
     final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
@@ -560,7 +560,7 @@ public final class Fmv {
       fullScrenMesh.delete();
     }
 
-    width = (int)RENDERER.getProjectionSize().x;
+    width = (int)RENDERER.getProjectionWidth();
     height = 240;
 
     final float aspect = 4.0f / 3.0f;
