@@ -9,6 +9,7 @@ diff,SECT/DRGN1.BIN/284,scripts/DRGN1/284.diff,"Divine Dragon, Load Dart if not 
 diff,SECT/DRGN1.BIN/294,scripts/DRGN1/294.diff,"Lenus I, Fix for hardcoded char count"
 diff,SECT/DRGN1.BIN/302,scripts/DRGN1/302.diff,"Gehrich, Fix finisher crash"
 diff,SECT/DRGN1.BIN/330,scripts/DRGN1/330.diff,"Jiango, Remove code that freezes script when dart is not in party"
+diff,SECT/DRGN1.BIN/336,scripts/DRGN1/336.diff,"Grand Jewel, Remove hardcoded character count"
 diff,SECT/DRGN1.BIN/388,scripts/DRGN1/388.diff,"Zieg, Remove dart check, fix finisher crash when below 3 characters"
 diff,SECT/DRGN1.BIN/389,scripts/DRGN1/389.diff,"Melbu, Fix for hardcoded character count"
 diff,SECT/DRGN1.BIN/397,scripts/DRGN1/397.diff,"Unknown Script, Fix for hardcoded character count"
