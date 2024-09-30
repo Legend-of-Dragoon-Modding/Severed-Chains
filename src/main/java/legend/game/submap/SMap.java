@@ -417,6 +417,16 @@ public class SMap extends EngineState {
     this.submap.startMusic();
   }
 
+  /** Disable input while the screen is fading in */
+  @Override
+  public int getScriptInput(final int input) {
+    if(this.smapLoadingStage_800cb430 == SubmapState.WAIT_FOR_FADE_IN) {
+      return 0;
+    }
+
+    return super.getScriptInput(input);
+  }
+
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
@@ -3775,7 +3785,6 @@ public class SMap extends EngineState {
         }
 
         if(this.isScriptLoaded(0)) {
-          this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
           this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c = this.currentSubmapScene_800caaf8;
         }
 
@@ -3795,9 +3804,6 @@ public class SMap extends EngineState {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-          if(this.isScriptLoaded(0)) {
-            this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = false;
-          }
           this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
         }
       }
