@@ -205,6 +205,13 @@ public final class Input {
   }
 
   public static void useController(@Nullable final Controller controller) {
+    if(activeController != null) {
+      for(final InputBinding binding : activeController.bindings) {
+        held.removeBoolean(binding);
+        pressedThisFrame.removeBoolean(binding);
+      }
+    }
+
     if(controller != null) {
       activeController = controller;
     } else {

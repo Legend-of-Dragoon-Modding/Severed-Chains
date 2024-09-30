@@ -52,8 +52,6 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
@@ -736,7 +734,7 @@ public class BattleHud {
         this.drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
         final int targetCombatant = menu.combatantIndex_54;
         String str;
-        Element element;
+        final Element element;
         if(targetCombatant == -1) {  // Target all
           str = targeting_800fb36c[menu.targetType_50];
           element = LodMod.DIVINE_ELEMENT.get();
@@ -758,35 +756,24 @@ public class BattleHud {
 
             //LAB_800f0d10
             str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
-            element = monsterBent.displayElement_1c;
             targetBent = monsterBent;
             EVENTS.postEvent(new SingleMonsterTargetEvent(monsterBent));
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378[targetBent.charId_272];
-            element = targetBent.getElement();
-
-            if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-              element = LodMod.DIVINE_ELEMENT.get();
-            }
           } else {
             //LAB_800f0d58
             //LAB_800f0d5c
-            final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[targetCombatant];
-            targetBent = state.innerStruct_00;
+            targetBent = battleState_8006e398.allBents_e0c[targetCombatant].innerStruct_00;
             if(targetBent instanceof final MonsterBattleEntity monsterBent) {
               //LAB_800f0e24
               str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[targetCombatant]);
-              element = monsterBent.displayElement_1c;
             } else {
               str = playerNames_800fb378[targetBent.charId_272];
-              element = targetBent.getElement();
-
-              if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-                element = LodMod.DIVINE_ELEMENT.get();
-              }
             }
           }
+
+          element = targetBent.getElement();
 
           //LAB_800f0e60
           final int status = targetBent.status_0e;
@@ -1507,7 +1494,7 @@ public class BattleHud {
         this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 0;
 
         // Input for changing camera angles
-        if(countCameraPositionIndicesIndices >= 2 && (input_800bee90 & 0x2) != 0) {
+        if(countCameraPositionIndicesIndices >= 2 && Input.getButtonState(InputAction.BUTTON_SHOULDER_RIGHT_2)) {
           this.currentCameraPositionIndicesIndicesIndex_800c6ba1++;
           if(this.currentCameraPositionIndicesIndicesIndex_800c6ba1 >= countCameraPositionIndicesIndices) {
             this.currentCameraPositionIndicesIndicesIndex_800c6ba1 = 0;
@@ -1524,7 +1511,7 @@ public class BattleHud {
 
         // Input for cycling right on menu bar
         //LAB_800f65b8
-        if((input_800bee90 & 0x2000) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_RIGHT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
           playSound(0, 1, (short)0, (short)0);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.iconCount_0e - 1) {
@@ -1553,7 +1540,7 @@ public class BattleHud {
 
         // Input for cycling left on menu bar
         //LAB_800f6664
-        if((input_800bee90 & 0x8000) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_LEFT) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
           playSound(0, 1, (short)0, (short)0);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
@@ -1623,7 +1610,7 @@ public class BattleHud {
 
         // Input for pressing X on menu bar
         //LAB_800f671c
-        if((press_800bee94 & 0x20) != 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
           if((selectedIconFlag & 0x80) != 0) {
             playSound(0, 3, (short)0, (short)0);
@@ -1664,7 +1651,7 @@ public class BattleHud {
           }
           //LAB_800f6898
           // Input for pressing circle on menu bar
-        } else if((press_800bee94 & 0x40) != 0) {
+        } else if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
           //LAB_800f68a4
           //LAB_800f68bc
           playSound(0, 3, (short)0, (short)0);
@@ -1935,7 +1922,7 @@ public class BattleHud {
     }
 
     //LAB_800f77f4
-    if((press_800bee94 & 0x3000) != 0) {
+    if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c++;
       if(this.battleMenu_800c6c34.targetedSlot_800c697c >= count) {
         this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
@@ -1944,7 +1931,7 @@ public class BattleHud {
 
     //LAB_800f7830
     short t3 = 1;
-    if((press_800bee94 & 0xc000) != 0) {
+    if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN) || Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c--;
       if(this.battleMenu_800c6c34.targetedSlot_800c697c < 0) {
         this.battleMenu_800c6c34.targetedSlot_800c697c = count - 1;
@@ -2012,14 +1999,14 @@ public class BattleHud {
 
     //LAB_800f7a0c
     //LAB_800f7a10
-    if((press_800bee94 & 0x20) != 0) { // Cross
+    if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
       return 1;
     }
 
     //LAB_800f7a38
-    if((press_800bee94 & 0x40) != 0) { // Circle
+    if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.target_48 = -1;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;

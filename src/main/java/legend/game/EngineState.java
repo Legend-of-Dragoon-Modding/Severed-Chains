@@ -55,4 +55,9 @@ public abstract class EngineState {
   public boolean allowsHighQualityProjection() {
     return true;
   }
+
+  /** Allows engine states to modify input before a script reads it */
+  public int getScriptInput(final int input) {
+    return input;
+  }
 }

@@ -222,28 +222,28 @@ public class AdditionsScreen extends MenuScreen {
 
   private void menuNavigateUp() {
     if(this.selectedSlot > 0) {
+      playMenuSound(1);
       this.selectedSlot--;
     }
 
-    playMenuSound(1);
     this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
   }
 
   private void menuNavigateDown() {
     if(this.selectedSlot < 6) {
+      playMenuSound(1);
       this.selectedSlot++;
     }
 
-    playMenuSound(1);
     this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
   }
 
   private void menuNavigateLeft() {
-    this.scrollAccumulator++;
+    this.scrollAccumulator = 1.0d;
   }
 
   private void menuNavigateRight() {
-    this.scrollAccumulator--;
+    this.scrollAccumulator = -1.0d;
   }
 
   private void menuSelect() {
@@ -287,13 +287,7 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-      this.menuNavigateLeft();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-      this.menuNavigateRight();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_EAST) {
+    if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     } else if(inputAction == InputAction.BUTTON_SOUTH) {
@@ -319,6 +313,12 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.HANDLED;
     } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
+      return InputPropagation.HANDLED;
+    } else if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+      return InputPropagation.HANDLED;
+    } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
       return InputPropagation.HANDLED;
     }
 

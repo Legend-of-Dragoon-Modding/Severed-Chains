@@ -129,8 +129,8 @@ public final class Scus94491BpeSegment_800b {
   public static BackgroundMusic victoryMusic;
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
-  public static int _800bd710;
-  public static int _800bd714;
+  public static int dissolveRowCount_800bd710;
+  public static int dissolveIterationsPerformed_800bd714;
   public static int battleDissolveTicks;
 
   public static int _800bd740;
@@ -235,6 +235,10 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x20 - Cross</li>
    *   <li>0x40 - Circle</li>
    *   <li>0x80 - Square</li>
+   *   <li>0x100 - Start</li>
+   *   <li>0x200 - Left thumb</li>
+   *   <li>0x400 - Right thumb</li>
+   *   <li>0x800 - Select</li>
    *   <li>0x1000 - Up</li>
    *   <li>0x2000 - Right</li>
    *   <li>0x4000 - Down</li>
@@ -253,6 +257,10 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x20 - Cross</li>
    *   <li>0x40 - Circle</li>
    *   <li>0x80 - Square</li>
+   *   <li>0x100 - Start</li>
+   *   <li>0x200 - Left thumb</li>
+   *   <li>0x400 - Right thumb</li>
+   *   <li>0x800 - Select</li>
    *   <li>0x1000 - Up</li>
    *   <li>0x2000 - Right</li>
    *   <li>0x4000 - Down</li>
@@ -271,6 +279,10 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x20 - Cross</li>
    *   <li>0x40 - Circle</li>
    *   <li>0x80 - Square</li>
+   *   <li>0x100 - Start</li>
+   *   <li>0x200 - Left thumb</li>
+   *   <li>0x400 - Right thumb</li>
+   *   <li>0x800 - Select</li>
    *   <li>0x1000 - Up</li>
    *   <li>0x2000 - Right</li>
    *   <li>0x4000 - Down</li>

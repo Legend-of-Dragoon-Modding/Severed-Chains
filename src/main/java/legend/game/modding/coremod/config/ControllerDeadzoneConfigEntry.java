@@ -11,7 +11,7 @@ public class ControllerDeadzoneConfigEntry extends ConfigEntry<Float> {
     super(0.3f, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, ControllerDeadzoneConfigEntry::serializer, ControllerDeadzoneConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
-      final NumberSpinner<Float> spinner = NumberSpinner.floatSpinner(number, 0.05f, 0.0f, 0.95f);
+      final NumberSpinner<Float> spinner = NumberSpinner.floatSpinner(number, 0.05f, 0.25f, 0.0f, 0.95f);
       spinner.onChange(val -> gameState.setConfig(this, val));
       return spinner;
     });

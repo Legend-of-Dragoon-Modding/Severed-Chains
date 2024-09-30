@@ -280,12 +280,12 @@ public class UseItemScreen extends MenuScreen {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
         if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           if(!this.itemTargetAll) {
-            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
+            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
           } else {
             int responseValue = -2;
 
             for(int i = 0; i < characterCount_8011d7c4; i++) {
-              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[i]);
+              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
 
               if(this.useItemResponse.value_04 != -2) {
                 responseValue = 0;
@@ -526,12 +526,12 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage3Select() {
     if(!this.itemTargetAll) {
-      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
+      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
     } else {
       int responseValue = -2;
 
       for(int i = 0; i < characterCount_8011d7c4; i++) {
-        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.use(Item.UsageLocation.MENU, this.useItemResponse, characterIndices_800bdbb8[i]);
+        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
 
         if(this.useItemResponse.value_04 != -2) {
           responseValue = 0;

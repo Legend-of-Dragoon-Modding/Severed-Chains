@@ -2,11 +2,14 @@ package legend.game.inventory;
 
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.scripting.Param;
+import legend.game.scripting.ScriptReadable;
 import legend.game.types.EquipmentSlot;
 import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
-public class Equipment extends RegistryEntry implements InventoryEntry {
+public class Equipment extends RegistryEntry implements InventoryEntry, ScriptReadable {
   public final int price;
 
   /**
@@ -69,7 +72,7 @@ public class Equipment extends RegistryEntry implements InventoryEntry {
     final int type = data.readUByte(0x1);
     final int _02 = data.readUByte(0x2);
     final int equipableFlags = data.readUByte(0x3);
-    final Element element = Element.fromFlag(data.readUByte(0x4));
+    final Element element = Element.fromFlag(data.readUByte(0x4)).get();
     final int _05 = data.readUByte(0x5);
     final ElementSet elementalResistance = new ElementSet().unpack(data.readUByte(0x6));
     final ElementSet elementalImmunity = new ElementSet().unpack(data.readUByte(0x7));
@@ -193,5 +196,17 @@ public class Equipment extends RegistryEntry implements InventoryEntry {
   @Override
   public int getPrice() {
     return this.price;
+  }
+
+  public void applyEffect(final BattleEntity27c wearer) {
+
+  }
+
+  @Override
+  public void read(final int index, final Param out) {
+    switch(index) {
+      case 1000 -> out.set(0); //TODO temporary - is detonate arrow
+      default -> throw new RuntimeException("Invalid equipment read");
+    }
   }
 }

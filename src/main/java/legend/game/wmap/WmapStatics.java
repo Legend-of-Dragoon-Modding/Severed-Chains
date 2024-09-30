@@ -1,5 +1,6 @@
 package legend.game.wmap;
 
+import legend.game.input.InputAction;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -39,9 +40,6 @@ public final class WmapStatics {
     new UvAdjustmentMetrics14(20,  736, 256, true),
     new UvAdjustmentMetrics14(21,  704, 384, true),
   };
-
-  public static final int[] mapTerrainTmdIndices_800ef194 = {12, 6, 13, 8, 4, 3, 3};
-  public static final int[] mapFrameTmdIndices_800ef19c = {4, 9, 14, 9, 8, 5, 5};
 
   /** These are where the 3D map disappears towards when you fully zoom out */
   public static final Vector3i[] mapPositions_800ef1a8 = {
@@ -206,11 +204,27 @@ public final class WmapStatics {
   public static final String[] regions_800f01ec = {"South of Serdio", "North of Serdio", "Tiberoa"};
 
   /** Each element is an input value mask, with values counter-clockwise from north */
-  public static final int[] positiveDirectionMovementMask_800f0204 = {0x1, 0x9, 0x8, 0xc, 0x4, 0x6, 0x2, 0x3, 0x1, 0x0, 0x0, 0x0};
+  public static final InputAction[][] positiveDirectionMovementMask_800f0204 = {
+    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
+    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP, InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
+    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
+    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT, InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
+    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
+    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN, InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
+    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
+    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT, InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
+  };
   /** Each element is an input value mask, with values counter-clockwise from south */
-  public static final int[] negativeDirectionMovementMask_800f0210 = {0x4, 0x6, 0x2, 0x3, 0x1, 0x9, 0x8, 0xc, 0x4, 0x0, 0x0, 0x0};
-  /** Used in calculation determining which path you take at a path intersection point */
-  public static final int[] inputAngleModifierAtPathIntersection_800f021c = {0x0, 0xc00, 0xe00, 0x800, 0x0, 0xa00, 0x0, 0x400, 0x200, 0x0, 0x0, 0x600};
+  public static final InputAction[][] negativeDirectionMovementMask_800f0210 = {
+    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
+    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN, InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
+    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
+    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT, InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
+    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
+    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP, InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
+    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
+    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT, InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
+  };
 
   public static final Place0c[] places_800f0234 = {
     new Place0c(                      "Forest",  0,  0x0, new int[]{ 12, -1, -1, -1}),

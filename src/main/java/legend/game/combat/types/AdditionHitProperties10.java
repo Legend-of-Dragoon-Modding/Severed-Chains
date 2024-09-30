@@ -81,7 +81,7 @@ public class AdditionHitProperties10 {
       case 13 -> this._0d;
       case 14 -> this.framesPostFailure_0e;
       case 15 -> this.overlayStartingFrameOffset_0f;
-      default -> throw new IllegalArgumentException("Invalid property index " + propertyIndex);
+      default -> throw new IllegalArgumentException("Invalid property index " + index);
     };
   }
 }

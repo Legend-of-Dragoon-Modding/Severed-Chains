@@ -39,11 +39,21 @@ public class SubmapObject210 {
   public int interpMovementTicks;
   public int interpMovementTicksTotal;
   public int lastMovementTick = Integer.MIN_VALUE;
-  public final Vector3f interpRotationStart = new Vector3f();
-  public final Vector3f interpRotationDest = new Vector3f();
-  public int interpRotationTicks;
-  public int interpRotationTicksTotal;
-  public int lastRotationTick = Integer.MIN_VALUE;
+  public float interpRotationStartX;
+  public float interpRotationStartY;
+  public float interpRotationStartZ;
+  public float interpRotationDestX;
+  public float interpRotationDestY;
+  public float interpRotationDestZ;
+  public int interpRotationTicksX;
+  public int interpRotationTicksY;
+  public int interpRotationTicksZ;
+  public int interpRotationTicksTotalX;
+  public int interpRotationTicksTotalY;
+  public int interpRotationTicksTotalZ;
+  public long lastRotationTickX = Integer.MIN_VALUE;
+  public long lastRotationTickY = Integer.MIN_VALUE;
+  public long lastRotationTickZ = Integer.MIN_VALUE;
 
   /** Only one sobj may have this value set at a time */
   public boolean cameraAttached_178;
@@ -116,11 +126,27 @@ public class SubmapObject210 {
     }
   }
 
-  public void finishInterpolatedRotation() {
-    if(this.interpRotationTicksTotal != 0) {
-      this.model_00.coord2_14.transforms.rotate.set(this.interpRotationDest);
-      this.interpRotationTicksTotal = 0;
-      this.lastRotationTick = Integer.MIN_VALUE;
+  public void finishInterpolatedRotationX() {
+    if(this.interpRotationTicksTotalX != 0) {
+      this.model_00.coord2_14.transforms.rotate.x = this.interpRotationDestX;
+      this.interpRotationTicksTotalX = 0;
+      this.lastRotationTickX = Integer.MIN_VALUE;
+    }
+  }
+
+  public void finishInterpolatedRotationY() {
+    if(this.interpRotationTicksTotalY != 0) {
+      this.model_00.coord2_14.transforms.rotate.y = this.interpRotationDestY;
+      this.interpRotationTicksTotalY = 0;
+      this.lastRotationTickY = Integer.MIN_VALUE;
+    }
+  }
+
+  public void finishInterpolatedRotationZ() {
+    if(this.interpRotationTicksTotalZ != 0) {
+      this.model_00.coord2_14.transforms.rotate.z = this.interpRotationDestZ;
+      this.interpRotationTicksTotalZ = 0;
+      this.lastRotationTickZ = Integer.MIN_VALUE;
     }
   }
 

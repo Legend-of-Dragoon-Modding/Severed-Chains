@@ -20,6 +20,8 @@ import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
+import legend.game.modding.events.inventory.GatherAttackItemsEvent;
+import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -89,6 +91,7 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.combat.Battle.seed_800fa754;
 
 public final class SItem {
   private SItem() { }
@@ -236,6 +239,7 @@ public final class SItem {
     1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1,
+
     2, 5, 5, 5, 1, 5, 5, 5,
     50, 5, 5, 5, 15, 10, 5, 10,
     10, 10, 10, 10, 10, 1, 10, 10,
@@ -442,6 +446,24 @@ public final class SItem {
     final RegistryId id = script.params_20[0].getRegistryId();
     final boolean taken = takeEquipmentId(REGISTRIES.equipment.getEntry(id).get());
     script.params_20[1].set(taken ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Picks a random attack item")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGenerateAttackItem(final RunningScript<?> script) {
+    final Item[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getItems();
+    final Item item = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(item.getRegistryId());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Picks a random recovery item")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGenerateRecoveryItem(final RunningScript<?> script) {
+    final Item[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getItems();
+    final Item item = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(item.getRegistryId());
     return FlowControl.CONTINUE;
   }
 

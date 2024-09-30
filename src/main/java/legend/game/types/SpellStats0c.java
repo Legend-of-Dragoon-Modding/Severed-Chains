@@ -3,6 +3,7 @@ package legend.game.types;
 import legend.game.characters.Element;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 public class SpellStats0c {
   public final String name;
@@ -26,7 +27,8 @@ public class SpellStats0c {
   public final int accuracy_05;
   public final int mp_06;
   public final int statusChance_07;
-  public final Element element_08;
+  /** TODO this can be turned back into a regular Element once spells are in a registry */
+  public final RegistryDelegate<Element> element_08;
   public final int statusType_09;
   public final int buffType_0a;
   public final int _0b;
@@ -40,7 +42,7 @@ public class SpellStats0c {
     final int accuracy_05 = data.readUByte(0x5);
     final int mp_06 = data.readUByte(0x6);
     final int statusChance_07 = data.readUByte(0x7);
-    final Element element_08 = Element.fromFlag(data.readUByte(0x8));
+    final RegistryDelegate<Element> element_08 = Element.fromFlag(data.readUByte(0x8));
     final int statusType_09 = data.readUByte(0x9);
     final int buffType_0a = data.readUByte(0xa);
     final int _0b = data.readUByte(0xb);
@@ -59,13 +61,13 @@ public class SpellStats0c {
     this.accuracy_05 = 0;
     this.mp_06 = 0;
     this.statusChance_07 = 0;
-    this.element_08 = LodMod.NO_ELEMENT.get();
+    this.element_08 = LodMod.NO_ELEMENT;
     this.statusType_09 = 0;
     this.buffType_0a = 0;
     this._0b = 0;
   }
 
-  public SpellStats0c(final String name, final String battleDescription, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final Element element, final int statusType, final int buffType, final int _0b) {
+  public SpellStats0c(final String name, final String battleDescription, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b) {
     this.name = name;
     this.battleDescription = battleDescription;
     this.targetType_00 = targetType;

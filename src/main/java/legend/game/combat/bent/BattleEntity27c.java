@@ -55,6 +55,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
   public final BattleEntityType type;
 
+  public Element element;
+
   public final StatCollection stats;
 
   /**
@@ -249,7 +251,10 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract ElementSet getAttackElements();
-  public abstract Element getElement();
+
+  public Element getElement() {
+    return this.element;
+  }
 
   public abstract int calculatePhysicalDamage(final BattleEntity27c target);
   /**
@@ -385,7 +390,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case SPELL_ACCURACY -> this.spell_94.accuracy_05;
       case SPELL_MP -> this.spell_94.mp_06;
       case SPELL_STATUS_CHANCE -> this.spell_94.statusChance_07;
-      case SPELL_ELEMENT -> this.spell_94.element_08.flag;
+      case SPELL_ELEMENT -> this.spell_94.element_08.get().flag;
       case SPELL_STATUS_TYPE -> this.spell_94.statusType_09;
       case SPELL_BUFF_TYPE -> this.spell_94.buffType_0a;
       case SPELL_0b -> this.spell_94._0b;

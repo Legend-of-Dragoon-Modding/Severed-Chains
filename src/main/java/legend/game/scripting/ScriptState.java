@@ -11,12 +11,18 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.legendofdragoon.scripting.Disassembler;
+import org.legendofdragoon.scripting.Translator;
+import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
@@ -43,12 +49,7 @@ public class ScriptState<T> {
   public BiConsumer<ScriptState<T>, T> destructor_0c;
   /** If the callback returns non-zero, it's set to null */
   public TempTicker<T> tempTicker_10;
-  /** Pointer to the script file */
-  public ScriptFile scriptPtr_14;
-  /** Pointer to the current script command */
-  public int offset_18;
-  /** Return offset for each stack frame */
-  public final int[] callStack_1c = new int[10];
+  private final LinkedList<ScriptStackFrame> callStack = new LinkedList<>();
   /**
    * <ul>
    *   <li>0 - my script index</li>
@@ -58,7 +59,7 @@ public class ScriptState<T> {
    *     <p>7 - flags bit set - which of the pointers at the start of the struct are set</p>
    *
    *     <ul>
-   *       <li>Bit 17 - {@link ScriptState#scriptPtr_14} is unset</li>
+   *       <li>Bit 17 - {@link ScriptState#callStack}.{@link ScriptStackFrame#file} is unset</li>
    *       <li>Bit 18 - {@link ScriptState#ticker_04} is unset</li>
    *       <li>Bit 19 - {@link ScriptState#renderer_08} is unset</li>
    *       <li>Bit 20 - Child script</li>
@@ -213,14 +214,13 @@ public class ScriptState<T> {
     if(script != null) {
       LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, entrypointIndex);
 
-      this.scriptPtr_14 = script;
-      this.offset_18 = script.getEntry(entrypointIndex);
+      this.callStack.clear();
+      this.pushFrame(new ScriptStackFrame(script, script.getEntry(entrypointIndex)));
       this.storage_44[7] &= 0xfffd_ffff;
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
 
-      this.scriptPtr_14 = null;
-      this.offset_18 = -1;
+      this.callStack.clear();
       this.storage_44[7] |= 0x2_0000;
     }
   }
@@ -285,8 +285,11 @@ public class ScriptState<T> {
     childScript.storage_44[5] = this.index;
     childScript.storage_44[6] = this.storage_44[6];
     this.storage_44[6] = childScript.index;
-    childScript.scriptPtr_14 = this.scriptPtr_14;
-    childScript.offset_18 = this.offset_18;
+
+    childScript.callStack.clear();
+    for(int i = this.callStack.size() - 1; i >= 0; i--) {
+      childScript.pushFrame(this.callStack.get(i).copy());
+    }
 
     //LAB_80015e4c
     return childScript;
@@ -316,20 +319,51 @@ public class ScriptState<T> {
     //LAB_80015f14
     System.arraycopy(child.storage_44, 8, this.storage_44, 8, 25);
 
-    this.scriptPtr_14 = child.scriptPtr_14;
-    this.offset_18 = child.offset_18;
+    this.callStack.clear();
+    this.callStack.addAll(child.callStack);
     child.deallocate();
 
     //LAB_80015f54
-    return child.offset_18;
+    return this.frame().offset;
+  }
+
+  public ScriptStackFrame frame() {
+    return this.callStack.peek();
+  }
+
+  public ScriptStackFrame frame(final int index) {
+    return this.callStack.get(index);
+  }
+
+  public ScriptStackFrame replaceFrame(final ScriptStackFrame frame) {
+    this.callStack.pop();
+    this.callStack.push(frame);
+    return frame;
+  }
+
+  public ScriptStackFrame pushFrame(final ScriptStackFrame frame) {
+    this.callStack.push(frame);
+    return frame;
+  }
+
+  public ScriptStackFrame pushFrame() {
+    return this.pushFrame(this.frame().copy());
+  }
+
+  public ScriptStackFrame popFrame() {
+    return this.callStack.pop();
+  }
+
+  public int callStackDepth() {
+    return this.callStack.size();
   }
 
   void executeFrame() {
     this.ticks++;
 
     if((this.storage_44[7] & 0x12_0000) == 0 && !this.paused) {
-      this.context.commandOffset_0c = this.offset_18;
-      this.context.opOffset_08 = this.offset_18;
+      this.context.commandOffset_0c = this.frame().offset;
+      this.context.opOffset_08 = this.context.commandOffset_0c;
 
       if(scriptLog[this.index]) {
         LOGGER.info(SCRIPT_MARKER, "Exec script index %d", this.index);
@@ -354,124 +388,12 @@ public class ScriptState<T> {
 
         this.context.commandOffset_0c++;
 
-        //LAB_80016050
         for(int paramIndex = 0; paramIndex < this.context.paramCount_14; paramIndex++) {
-          final int childCommand = this.context.getOp();
-          final int paramType = childCommand >>> 24;
-          final int cmd2 = childCommand >>> 16 & 0xff;
-          final int cmd1 = childCommand >>> 8 & 0xff;
-          final int cmd0 = childCommand & 0xff;
-
-          this.context.commandOffset_0c++;
-
-          if(paramType == 0x1) { // Push next value after this param
-            //LAB_800161f4
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c);
-            this.context.commandOffset_0c++;
-          } else if(paramType == 0x2) { // Push storage[cmd0]
-            //LAB_80016200
-            this.context.params_20[paramIndex] = new ScriptStorageParam(this, cmd0);
-          } else if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
-            //LAB_800160cc
-            //LAB_8001620c
-            final int otherScriptIndex1 = this.storage_44[cmd0];
-            final int otherScriptIndex2 = scriptStatePtrArr_800bc1c0[otherScriptIndex1].storage_44[cmd1];
-            this.context.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex2], cmd2);
-          } else if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
-            //LAB_80016258
-            final int otherScriptIndex = this.storage_44[cmd0];
-            final int storageIndex = cmd1 + this.storage_44[cmd2];
-            this.context.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex], storageIndex);
-          } else if(paramType == 0x5) { // Push gameVar[cmd0]
-            //LAB_80016290
-            this.context.params_20[paramIndex] = new GameVarParam(cmd0);
-          } else if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
-            //LAB_800162a4
-            this.context.params_20[paramIndex] = new GameVarParam(cmd0 + this.storage_44[cmd1]);
-          } else if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
-            //LAB_800162d0
-            final int arrIndex = this.storage_44[cmd1];
-            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0, arrIndex);
-          } else if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
-            //LAB_800160e8
-            //LAB_800162f4
-            final int storage1 = this.storage_44[cmd1];
-            final int storage2 = this.storage_44[cmd2];
-            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + storage1, storage2);
-          } else if(paramType == 0x9) { // INLINE_1 Push (commandStart + (cmd0 | cmd1 << 8) * 4)
-            //LAB_80016328
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08 + (short)childCommand);
-          } else if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
-            //LAB_80016118
-            //LAB_80016334
-            final int storage = this.storage_44[cmd2];
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
-          } else if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
-            //LAB_80016360
-            final int storage = this.storage_44[cmd2];
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
-          } else if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
-            //LAB_800163a0
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + this.storage_44[cmd1]);
-            this.context.commandOffset_0c++;
-          } else if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
-            //LAB_800163e8
-            this.context.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[this.storage_44[cmd0]], cmd1 + cmd2);
-          } else if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
-            //LAB_80016418
-            this.context.params_20[paramIndex] = new GameVarParam(cmd0 + cmd1);
-          } else if(paramType == 0xf) { // Push gameVar[cmd0][cmd1]
-            //LAB_8001642c
-            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0, cmd1);
-          } else if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
-            //LAB_80016180
-            //LAB_8001643c
-            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
-          } else if(paramType == 0x11) {
-            //LAB_80016468
-            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
-          } else if(paramType == 0x12) {
-            //LAB_80016138
-            //LAB_8001648c
-            assert false;
-          } else if(paramType == 0x13) { // INLINE_3
-            //LAB_800164a4
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2);
-          } else if(paramType == 0x14) { // INLINE_TABLE_3 Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
-            //LAB_800164b4
-            //LAB_800164cc
-            //LAB_800164d4
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2).get());
-          } else if(paramType == 0x15) {
-            //LAB_800161a0
-            //LAB_800164e0
-            //LAB_80016580
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + cmd1);
-            this.context.commandOffset_0c++;
-          } else if(paramType == 0x16) {
-            //LAB_80016518
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.storage_44[cmd1]);
-            this.context.commandOffset_0c++;
-          } else if(paramType == 0x17) { // INLINE_TABLE_4
-            //LAB_800161d4
-            //LAB_8001654c
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + cmd1);
-            this.context.commandOffset_0c++;
-          } else if(paramType == 0x20) { // Script state registry ID pointer
-            this.context.params_20[paramIndex] = new ScriptStateRegistryIdParam(this, cmd0);
-          } else if(paramType == 0x21) { // String registry ID
-            this.context.params_20[paramIndex] = new ScriptInlineRegistryIdParam(this, this.context.commandOffset_0c, cmd2);
-            this.context.commandOffset_0c += (cmd2 + 3) / 4;
-          } else { // Treated as an immediate if not a valid op
-            //LAB_80016574
-            this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
-          }
+          this.context.params_20[paramIndex] = this.parseParam();
 
           if(scriptLog[this.index]) {
             LOGGER.info(SCRIPT_MARKER, "params[%d] = %s", paramIndex, this.context.params_20[paramIndex]);
           }
-
-          //LAB_80016584
         }
 
         EVENTS.postEvent(new ScriptTickEvent(this.index));
@@ -480,7 +402,7 @@ public class ScriptState<T> {
           if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
             LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
           } else {
-            LOGGER.info(SCRIPT_MARKER, "Running callback %d", this.context.opIndex_10);
+            LOGGER.info(SCRIPT_MARKER, "Running callback %s", this.context.opIndex_10);
           }
         }
 
@@ -507,8 +429,149 @@ public class ScriptState<T> {
       } while(ret == FlowControl.CONTINUE && !this.paused);
 
       //LAB_800165f4
-      this.offset_18 = this.context.opOffset_08;
+      this.frame().offset = this.context.opOffset_08;
     }
+  }
+
+  private Param parseParam() {
+    final int childCommand = this.context.getOp();
+    final int paramType = childCommand >>> 24;
+    final int cmd2 = childCommand >>> 16 & 0xff;
+    final int cmd1 = childCommand >>> 8 & 0xff;
+    final int cmd0 = childCommand & 0xff;
+
+    this.context.commandOffset_0c++;
+
+    if(paramType == 0x1) { // Push next value after this param
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c);
+      this.context.commandOffset_0c++;
+      return param;
+    }
+
+    if(paramType == 0x2) { // Push storage[cmd0]
+      return new ScriptStorageParam(this, cmd0);
+    }
+
+    if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
+      final int otherScriptIndex1 = this.storage_44[cmd0];
+      final int otherScriptIndex2 = scriptStatePtrArr_800bc1c0[otherScriptIndex1].storage_44[cmd1];
+      return new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex2], cmd2);
+    }
+
+    if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
+      final int otherScriptIndex = this.storage_44[cmd0];
+      final int storageIndex = cmd1 + this.storage_44[cmd2];
+      return new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex], storageIndex);
+    }
+
+    if(paramType == 0x5) { // Push gameVar[cmd0]
+      return new GameVarParam(cmd0);
+    }
+
+    if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
+      return new GameVarParam(cmd0 + this.storage_44[cmd1]);
+    }
+
+    if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
+      final int arrIndex = this.storage_44[cmd1];
+      return new GameVarArrayParam(cmd0, arrIndex);
+    }
+
+    if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
+      final int storage1 = this.storage_44[cmd1];
+      final int storage2 = this.storage_44[cmd2];
+      return new GameVarArrayParam(cmd0 + storage1, storage2);
+    }
+
+    if(paramType == 0x9) { // INLINE_1 Push (commandStart + (cmd0 | cmd1 << 8) * 4)
+      return new ScriptInlineParam(this, this.context.opOffset_08 + (short)childCommand);
+    }
+
+    if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
+      final int storage = this.storage_44[cmd2];
+      return new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
+    }
+
+    if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
+      final int storage = this.storage_44[cmd2];
+      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
+    }
+
+    if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + this.storage_44[cmd1]);
+      this.context.commandOffset_0c++;
+      return param;
+    }
+
+    if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
+      return new ScriptStorageParam(scriptStatePtrArr_800bc1c0[this.storage_44[cmd0]], cmd1 + cmd2);
+    }
+
+    if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
+      return new GameVarParam(cmd0 + cmd1);
+    }
+    if(paramType == 0xf) { // Push gameVar[cmd0][cmd1]
+      return new GameVarArrayParam(cmd0, cmd1);
+    }
+
+    if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
+      return new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
+    }
+
+    if(paramType == 0x11) {
+      return new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
+    }
+
+    if(paramType == 0x12) {
+      throw new RuntimeException("Not implemented");
+    }
+
+    if(paramType == 0x13) { // INLINE_3
+      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2);
+    }
+
+    if(paramType == 0x14) { // INLINE_TABLE_3 Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
+      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2).get());
+    }
+
+    if(paramType == 0x15) {
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + cmd1);
+      this.context.commandOffset_0c++;
+      return param;
+    }
+
+    if(paramType == 0x16) {
+      final Param param = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.storage_44[cmd1]);
+      this.context.commandOffset_0c++;
+      return param;
+    }
+
+    if(paramType == 0x17) { // INLINE_TABLE_4
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + cmd1);
+      this.context.commandOffset_0c++;
+      return param;
+    }
+
+    if(paramType == 0x20) { // Script state registry ID pointer
+      return new ScriptStateRegistryIdParam(this, cmd0);
+    }
+
+    if(paramType == 0x21) { // String registry ID
+      final Param param = new ScriptInlineRegistryIdParam(this, this.context.commandOffset_0c, cmd2);
+      this.context.commandOffset_0c += (cmd2 + 3) / 4;
+      return param;
+    }
+
+    if(paramType == 0x22) { // Null
+      return new ScriptStateNullRegistryIdParam();
+    }
+
+    if(paramType == 0x23) { // Var registry ID
+      return new ScriptStateVarRegistryIdParam(this, cmd0);
+    }
+
+    // Treated as an immediate if not a valid op
+    return new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
   }
 
   private FlowControl runOp(final OpType op, final RunningScript<?> script) {
@@ -588,16 +651,44 @@ public class ScriptState<T> {
   }
 
   @Method(0x8001664cL)
-  public boolean scriptCompare(final int operandA, final int operandB, final int op) {
+  public boolean scriptCompare(final Param operandA, final Param operandB, final int op) {
+    // Check A for null
+    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandB.get() == 0) {
+      return switch(op) {
+        case 2 -> operandA.getRegistryId() == null;
+        case 3 -> operandA.getRegistryId() != null;
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Check B for null
+    if(operandB.isRegistryId() && !operandA.isRegistryId() && operandA.get() == 0) {
+      return switch(op) {
+        case 2 -> operandB.getRegistryId() == null;
+        case 3 -> operandB.getRegistryId() != null;
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Compare registry IDs
+    if(operandA.isRegistryId() && operandB.isRegistryId()) {
+      return switch(op) {
+        case 2 -> Objects.equals(operandA.getRegistryId(), operandB.getRegistryId());
+        case 3 -> !Objects.equals(operandA.getRegistryId(), operandB.getRegistryId());
+        default -> throw new IllegalArgumentException("Registry IDs can only be compared using == or !=");
+      };
+    }
+
+    // Standard compare
     return switch(op) {
-      case 0 -> operandA <= operandB;
-      case 1 -> operandA < operandB;
-      case 2 -> operandA == operandB;
-      case 3 -> operandA != operandB;
-      case 4 -> operandA > operandB;
-      case 5 -> operandA >= operandB;
-      case 6 -> (operandA & operandB) != 0;
-      case 7 -> (operandA & operandB) == 0;
+      case 0 -> operandA.get() <= operandB.get();
+      case 1 -> operandA.get() < operandB.get();
+      case 2 -> operandA.get() == operandB.get();
+      case 3 -> operandA.get() != operandB.get();
+      case 4 -> operandA.get() > operandB.get();
+      case 5 -> operandA.get() >= operandB.get();
+      case 6 -> (operandA.get() & operandB.get()) != 0;
+      case 7 -> (operandA.get() & operandB.get()) == 0;
       default -> false;
     };
   }
@@ -650,13 +741,13 @@ public class ScriptState<T> {
    */
   @Method(0x8001670cL)
   public FlowControl scriptCompare() {
-    return this.scriptCompare(this.context.params_20[0].get(), this.context.params_20[1].get(), this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
+    return this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /** Same as {@link #scriptCompare()} with first param set to 0 */
   @Method(0x80016744L)
   public FlowControl scriptCompare0() {
-    return this.scriptCompare(0, this.context.params_20[0].get(), this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
+    return this.scriptCompare(ScriptTempParam.ZERO, this.context.params_20[0], this.context.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /**
@@ -976,7 +1067,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016d4cL)
   public FlowControl scriptConditionalJump() {
-    if(this.scriptCompare(this.context.params_20[0].get(), this.context.params_20[1].get(), this.context.opParam_18)) {
+    if(this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18)) {
       this.context.params_20[2].jump(this.context);
     }
 
@@ -1006,7 +1097,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016da0L)
   public FlowControl scriptConditionalJump0() {
-    if(this.scriptCompare(0, this.context.params_20[0].get(), this.context.opParam_18)) {
+    if(this.scriptCompare(ScriptTempParam.ZERO, this.context.params_20[0], this.context.opParam_18)) {
       this.context.params_20[1].jump(this.context);
     }
 
@@ -1042,15 +1133,9 @@ public class ScriptState<T> {
    */
   @Method(0x80016e50L)
   public FlowControl scriptJumpAndLink() {
-    final ScriptState<T> struct = this.context.scriptState_04;
-
-    for(int i = struct.callStack_1c.length - 1; i > 0; i--) {
-      struct.callStack_1c[i] = struct.callStack_1c[i - 1];
-    }
-
-    struct.callStack_1c[0] = this.context.commandOffset_0c;
+    this.frame().offset = this.context.commandOffset_0c;
+    this.pushFrame();
     this.context.params_20[0].jump(this.context);
-
     return FlowControl.CONTINUE;
   }
 
@@ -1061,28 +1146,15 @@ public class ScriptState<T> {
    */
   @Method(0x80016f28L)
   public FlowControl scriptJumpReturn() {
-    final ScriptState<T> struct = this.context.scriptState_04;
-
-    this.context.commandOffset_0c = struct.callStack_1c[0];
-
-    for(int i = 0; i < struct.callStack_1c.length - 1; i++) {
-      struct.callStack_1c[i] = struct.callStack_1c[i + 1];
-    }
-
-    struct.callStack_1c[struct.callStack_1c.length - 1] = -1;
-
+    this.popFrame();
+    this.context.commandOffset_0c = this.frame().offset;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80016ffcL)
   public FlowControl scriptJumpAndLinkTable() {
-    final ScriptState<T> struct = this.context.scriptState_04;
-
-    for(int i = struct.callStack_1c.length - 1; i > 0; i--) {
-      struct.callStack_1c[i] = struct.callStack_1c[i - 1];
-    }
-
-    struct.callStack_1c[0] = this.context.commandOffset_0c;
+    this.frame().offset = this.context.commandOffset_0c;
+    this.pushFrame();
 
     // p1[p1[p0]]
     this.context.params_20[1].array(this.context.params_20[1].array(this.context.params_20[0].get()).get()).jump(this.context);
@@ -1127,7 +1199,7 @@ public class ScriptState<T> {
 
     final ScriptState<?> stateThatWasForked = scriptStatePtrArr_800bc1c0[this.context.params_20[0].get()];
     stateThatWasForked.fork();
-    stateThatWasForked.offset_18 = stateThatWasForked.scriptPtr_14.getEntry(this.context.params_20[1].get());
+    stateThatWasForked.frame().offset = stateThatWasForked.frame().file.getEntry(this.context.params_20[1].get());
     stateThatWasForked.storage_44[32] = this.context.params_20[2].get();
     return FlowControl.CONTINUE;
   }
@@ -1156,16 +1228,73 @@ public class ScriptState<T> {
 
   @Method(0x8001730cL)
   public FlowControl scriptGetCallStackDepth() {
-    //LAB_80017314
-    int i;
-    for(i = 0; i < 10; i++) {
-      if(this.context.scriptState_04.callStack_1c[i] == -1) {
-        break;
+    this.context.params_20[0].set(this.callStackDepth());
+    return FlowControl.CONTINUE;
+  }
+
+  public void dump() {
+    LOGGER.error("%s crashed!", this);
+    LOGGER.error("File %s %s @ 0x%x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
+    LOGGER.error("Parameters:");
+    LOGGER.error("  Op param: 0x%x", this.context.opParam_18);
+    for(int i = 0; i < this.context.paramCount_14; i++) {
+      LOGGER.error("  %d: %s", i, this.context.params_20[i]);
+    }
+
+    LOGGER.error("Storage:");
+    for(int i = 0; i < this.storage_44.length; i++) {
+      LOGGER.error("  %d: 0x%x", i, this.storage_44[i]);
+    }
+
+    LOGGER.error("Registry IDs:");
+    for(int i = 0; i < this.registryIds.length; i++) {
+      if(this.registryIds[i] != null) {
+        LOGGER.error("  %d: %s", i, this.registryIds[i]);
       }
     }
 
-    //LAB_80017338
-    this.context.params_20[0].set(i);
-    return FlowControl.CONTINUE;
+    LOGGER.error("Call stack:");
+    for(int i = 0; i < this.callStack.size(); i++) {
+      LOGGER.error("  %d: %s 0x%x", i, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+    }
+
+    LOGGER.error("Disassembly:");
+    try {
+      this.dumpDisassembly();
+    } catch(final Throwable t) {
+      LOGGER.warn("Failed to disassemble script");
+    }
+  }
+
+  private void dumpDisassembly() {
+    final Disassembler disassembler = new Disassembler(SCRIPTS.meta());
+    final Script tokens = disassembler.disassemble(this.frame().file.data);
+
+    final Translator translator = new Translator();
+    translator.lineNumbers = true;
+    final String decompiled = translator.translate(tokens, SCRIPTS.meta());
+
+    final String[] split = decompiled.split("\n");
+    for(int i = 0; i < split.length; i++) {
+      if(split[i].startsWith(Integer.toHexString(this.context.opOffset_08 * 4))) {
+        for(int n = Math.max(0, i - 5); n < i; n++) {
+          LOGGER.error("  %s", split[n]);
+        }
+
+        LOGGER.error("  %s", split[i]);
+        LOGGER.error("  %s", "~".repeat(split[i].length()));
+
+        for(int n = i + 1; n < Math.min(split.length - 1, i + 6); n++) {
+          LOGGER.error("  %s", split[n]);
+        }
+
+        break;
+      }
+    }
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + '[' + this.index + "] " + this.name;
   }
 }

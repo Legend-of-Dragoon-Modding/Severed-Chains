@@ -576,12 +576,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                 }
 
                 //LAB_80107664
-                final int buttonPressed = press_800bee94;
-
-                if((buttonPressed & 0x60) != 0) {
+                if((press_800bee94 & 0x60) != 0) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
 
-                  if((buttonPressed & buttonType) == 0 || (buttonPressed & ~buttonType) != 0) {
+                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) {
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;

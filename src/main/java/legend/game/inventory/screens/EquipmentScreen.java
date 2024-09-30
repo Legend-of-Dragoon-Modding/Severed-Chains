@@ -93,6 +93,7 @@ public class EquipmentScreen extends MenuScreen {
           this.scrollAccumulator -= 1.0d;
 
           if(this.slotScroll > 0) {
+            playMenuSound(1);
             this.scroll(this.slotScroll - 1);
           }
         }
@@ -101,6 +102,7 @@ public class EquipmentScreen extends MenuScreen {
           this.scrollAccumulator += 1.0d;
 
           if(this.slotScroll < this.equipmentCount - 4) {
+            playMenuSound(1);
             this.scroll(this.slotScroll + 1);
           }
         }
@@ -116,7 +118,6 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void scroll(final int scroll) {
-    playMenuSound(1);
     this.slotScroll = scroll;
     this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
   }
@@ -256,9 +257,8 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    playMenuSound(1);
-
     if(this.selectedSlot > 0) {
+      playMenuSound(1);
       this.selectedSlot--;
     } else {
       this.scrollAccumulator = 1;
@@ -268,9 +268,8 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateDown() {
-    playMenuSound(1);
-
     if(this.selectedSlot < 3) {
+      playMenuSound(1);
       this.selectedSlot++;
     } else {
       this.scrollAccumulator = -1;
@@ -319,6 +318,7 @@ public class EquipmentScreen extends MenuScreen {
 
   private void menuNavigateLeft() {
     if(this.charSlot > 0) {
+      playMenuSound(1);
       this.charSlot--;
       this.loadingStage = 1;
     }
@@ -326,6 +326,7 @@ public class EquipmentScreen extends MenuScreen {
 
   private void menuNavigateRight() {
     if(this.charSlot < characterCount_8011d7c4 - 1) {
+      playMenuSound(1);
       this.charSlot++;
       this.loadingStage = 1;
     }
@@ -370,33 +371,41 @@ public class EquipmentScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-      this.menuNavigateLeft();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-      this.menuNavigateRight();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SOUTH) {
-      this.menuSelect();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_NORTH) {
-      this.menuItemSort();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_1) {
-      this.menuNavigateTop();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_2) {
-      this.menuNavigateBottom();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
-      this.menuNavigatePageUp();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
-      this.menuNavigatePageDown();
-      return InputPropagation.HANDLED;
+    switch(inputAction) {
+      case BUTTON_EAST -> {
+        this.menuEscape();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SOUTH -> {
+        this.menuSelect();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_NORTH -> {
+        this.menuItemSort();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        this.menuNavigateTop();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        this.menuNavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_1 -> {
+        this.menuNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_2 -> {
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;
@@ -412,18 +421,36 @@ public class EquipmentScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-      this.menuNavigateUp();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.menuNavigateDown();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
-      this.menuNavigatePageUp();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
-      this.menuNavigatePageDown();
-      return InputPropagation.HANDLED;
+    switch(inputAction) {
+      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
+        this.menuNavigateUp();
+        return InputPropagation.HANDLED;
+      }
+
+      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
+        this.menuNavigateDown();
+        return InputPropagation.HANDLED;
+      }
+
+      case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
+        this.menuNavigateLeft();
+        return InputPropagation.HANDLED;
+      }
+
+      case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
+        this.menuNavigateRight();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_1 -> {
+        this.menuNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_RIGHT_2 -> {
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;
