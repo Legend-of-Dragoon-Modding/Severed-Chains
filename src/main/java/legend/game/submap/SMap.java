@@ -5158,7 +5158,7 @@ public class SMap extends EngineState {
     PopMatrix();
 
     if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
-      if(this.momentaryIndicatorTicks_800f9e9c < 33) {
+      if(this.momentaryIndicatorTicks_800f9e9c < 33 * (2 / vsyncMode_8007a3b8)) {
         this.renderTriangleIndicators();
         this.momentaryIndicatorTicks_800f9e9c++;
       }
