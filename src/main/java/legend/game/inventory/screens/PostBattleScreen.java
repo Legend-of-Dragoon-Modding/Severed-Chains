@@ -164,7 +164,7 @@ public class PostBattleScreen extends MenuScreen {
             final int secondaryCharIndex = secondaryCharIds_800bdbf8[secondaryCharSlot];
 
             if(secondaryCharIndex != -1) {
-              this.pendingXp_8011e180[secondaryCharIndex] = (int)(totalXpFromCombat_800bc95c * secondaryCharXpMultiplier);
+              this.pendingXp_8011e180[secondaryCharIndex] = (int)(MathHelper.safeDiv(totalXpFromCombat_800bc95c, xpDivisor) * secondaryCharXpMultiplier);
             }
 
             //LAB_8010da24
