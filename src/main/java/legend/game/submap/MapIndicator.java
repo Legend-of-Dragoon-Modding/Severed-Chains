@@ -41,7 +41,7 @@ public class MapIndicator {
       .clut(cX, cY)
       .uv(0, 0)
       .size(8, 16)
-      .uvSize(8, 16)
+      .uvSize(8, 15)
       .build());
   }
 
