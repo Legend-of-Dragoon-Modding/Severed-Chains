@@ -3282,11 +3282,11 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80027e40
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
     textbox.x_14 = newX;
-    textbox.y_16 = newY + 8;
+    textbox.y_16 = newY;
     textboxText.x_14 = newX;
-    textboxText.y_16 = newY + 8;
+    textboxText.y_16 = newY;
     textboxText._18 = newX - width;
-    textboxText._1a = newY - height + 8;
+    textboxText._1a = newY - height;
   }
 
   @Method(0x80027eb4L)
