@@ -714,9 +714,9 @@ public class RenderEngine {
         glEnable(GL_SCISSOR_TEST);
 
         if(widescreen || this.expandedSubmap) {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (this.expectedWidth / this.projectionWidth) / this.widthSquisher), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * h * (this.expectedWidth / this.projectionWidth) / this.widthSquisher), (int)(entry.scissor.h * h));
+          glScissor(Math.round((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (this.expectedWidth / this.projectionWidth) / this.widthSquisher), this.height - Math.round((entry.scissor.y + entry.scissor.h) * h), Math.round(entry.scissor.w * h * (this.expectedWidth / this.projectionWidth) / this.widthSquisher), Math.round(entry.scissor.h * h));
         } else {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
+          glScissor(Math.round((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - Math.round((entry.scissor.y + entry.scissor.h) * h), Math.round(entry.scissor.w * w), Math.round(entry.scissor.h * h));
         }
       }
 
