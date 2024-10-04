@@ -3,32 +3,48 @@ package legend.core.opengl;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class MeshObj extends Obj {
   private final Mesh[] meshes;
   private final boolean backfaceCulling;
-  private final boolean hasTexture;
-  private final boolean hasTranslucency;
+  private final boolean textured;
+  private final boolean opaque;
+  private final boolean translucent;
+  private final Set<Translucency> translucencies = EnumSet.noneOf(Translucency.class);
 
-  public MeshObj(final String name, final Mesh[] meshes, final boolean hasTexture) {
-    this(name, meshes, hasTexture, true);
+  public MeshObj(final String name, final Mesh[] meshes) {
+    this(name, meshes, true);
   }
 
-  public MeshObj(final String name, final Mesh[] meshes, final boolean hasTexture, final boolean backfaceCulling) {
+  public MeshObj(final String name, final Mesh[] meshes, final boolean backfaceCulling) {
     super(name);
     this.meshes = meshes;
-    this.hasTexture = hasTexture;
     this.backfaceCulling = backfaceCulling;
 
-    boolean hasTranslucency = false;
-    for(int i = 1; i < meshes.length; i++) {
-      if(meshes[i] != null) {
-        hasTranslucency = true;
-        break;
+    boolean textured = false;
+    boolean opaque = false;
+    boolean translucent = false;
+    for(int i = 0; i < meshes.length; i++) {
+      if(meshes[i].translucent) {
+        if(meshes[i].translucencyMode != null) {
+          this.translucencies.add(meshes[i].translucencyMode);
+        }
+
+        translucent = true;
+      } else {
+        opaque = true;
+      }
+
+      if(meshes[i].textured) {
+        textured = true;
       }
     }
 
-    this.hasTranslucency = hasTranslucency;
+    this.textured = textured;
+    this.opaque = opaque;
+    this.translucent = translucent;
   }
 
   @Override
@@ -38,51 +54,52 @@ public class MeshObj extends Obj {
 
   @Override
   public boolean hasTexture() {
-    return this.hasTexture;
+    return this.textured;
   }
 
   @Override
   public boolean hasTranslucency() {
-    return this.hasTranslucency;
+    return this.translucent;
   }
 
   @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
     if(translucency == null) {
-      return this.meshes[0] != null;
+      return this.opaque;
     }
 
-    return this.meshes[translucency.ordinal() + 1] != null;
+    // For untextured translucent faces, no translucency is defined in the TMD data and will be passed in at runtime via tmdGp0Tpage_1f8003ec
+    return this.translucencies.isEmpty() || this.translucencies.contains(translucency);
   }
 
   @Override
   public void render(final int startVertex, final int vertexCount) {
     for(int i = 0; i < this.meshes.length; i++) {
-      if(this.meshes[i] != null) {
-        this.meshes[i].draw(startVertex, vertexCount);
-      }
+      this.meshes[i].draw(startVertex, vertexCount);
     }
   }
 
   @Override
   public void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount) {
     if(translucency == null) {
-      this.meshes[0].draw(startVertex, vertexCount);
-    } else {
-      if(translucency != Translucency.HALF_B_PLUS_HALF_F && translucency != Translucency.B_PLUS_F && translucency != Translucency.B_MINUS_F && translucency != Translucency.B_PLUS_QUARTER_F) {
-        throw new RuntimeException("Need to implement " + translucency);
+      for(int i = 0; i < this.meshes.length; i++) {
+        if(!this.meshes[i].translucent) {
+          this.meshes[i].draw(startVertex, vertexCount);
+        }
       }
-
-      this.meshes[translucency.ordinal() + 1].draw(startVertex, vertexCount);
+    } else {
+      for(int i = 0; i < this.meshes.length; i++) {
+        if(this.meshes[i].translucent && this.meshes[i].translucencyMode == translucency) {
+          this.meshes[i].draw(startVertex, vertexCount);
+        }
+      }
     }
   }
 
   @Override
   protected void performDelete() {
     for(final Mesh mesh : this.meshes) {
-      if(mesh != null) {
-        mesh.delete();
-      }
+      mesh.delete();
     }
   }
 }
