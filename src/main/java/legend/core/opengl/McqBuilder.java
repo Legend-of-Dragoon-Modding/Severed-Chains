@@ -117,7 +117,7 @@ public class McqBuilder {
       }
     }
 
-    final Mesh mesh = new Mesh(GL_TRIANGLES, vertices, indices);
+    final Mesh mesh = new Mesh(GL_TRIANGLES, vertices, indices, true, this.translucency != null, this.translucency);
 
     mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
@@ -146,15 +146,7 @@ public class McqBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
-
-    if(this.translucency == null) {
-      meshes[0] = mesh;
-    } else {
-      meshes[this.translucency.ordinal() + 1] = mesh;
-    }
-
-    return new MeshObj(this.name, meshes, true);
+    return new MeshObj(this.name, new Mesh[] { mesh }, true);
   }
 
   private int setVertices(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final float w, final float h, final int clx, final int cly, final int tpx, final int tpy) {
