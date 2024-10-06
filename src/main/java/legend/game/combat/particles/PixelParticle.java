@@ -3,9 +3,12 @@ package legend.game.combat.particles;
 import legend.core.gte.MV;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
@@ -14,8 +17,8 @@ import static legend.game.combat.SEffe.FUN_800cfc20;
 public class PixelParticle extends ParticleEffectData98 {
   private final MV mv = new MV();
 
-  public PixelParticle(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
-    super(manager, parentScriptIndex, effectInner, type, count);
+  public PixelParticle(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
+    super(manager, parentBobj, effectInner, type, count);
   }
 
   @Override
@@ -31,15 +34,14 @@ public class PixelParticle extends ParticleEffectData98 {
   @Override
   public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
     final EffectManagerData6c<EffectManagerParams.ParticleType> manager = state.innerStruct_00;
-    final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
-    effect.countFramesRendered_52++;
+    this.countFramesRendered_52++;
 
     //LAB_800fde38
-    for(int i = 0; i < effect.countParticleInstance_50; i++) {
-      final ParticleEffectInstance94 inst = effect.particleArray_68[i];
+    for(int i = 0; i < this.countParticleInstance_50; i++) {
+      final ParticleEffectInstance94 inst = this.particleArray_68[i];
 
       if(inst.tick(manager)) {
-        effect.particleInstancePrerenderCallback_84.accept(manager, effect, inst);
+        this.particleInstancePrerenderCallback_84.accept(manager, inst);
 
         final Vector3f colour = new Vector3f();
         inst.tickAttributes(manager, colour);
@@ -62,8 +64,8 @@ public class PixelParticle extends ParticleEffectData98 {
     }
 
     //LAB_800fdfe8
-    if(effect.scaleOrUseEffectAcceleration_6c) {
-      effect.effectAcceleration_70.mul(effect.scaleParticleAcceleration_80);
+    if(this.scaleOrUseEffectAcceleration_6c) {
+      this.effectAcceleration_70.mul(this.scaleParticleAcceleration_80);
     }
 
     //LAB_800fe044

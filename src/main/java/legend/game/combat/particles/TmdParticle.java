@@ -12,11 +12,13 @@ import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GTE;
@@ -43,8 +45,8 @@ public class TmdParticle extends ParticleEffectData98 {
   /** ushort */
   private int tpage_56;
 
-  public TmdParticle(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
-    super(manager, parentScriptIndex, effectInner, type, count);
+  public TmdParticle(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
+    super(manager, parentBobj, effectInner, type, count);
   }
 
   @Override
@@ -172,7 +174,7 @@ public class TmdParticle extends ParticleEffectData98 {
       final ParticleEffectInstance94 inst = this.particleArray_68[i];
 
       if(inst.tick(manager)) {
-        this.particleInstancePrerenderCallback_84.accept(manager, this, inst);
+        this.particleInstancePrerenderCallback_84.accept(manager, inst);
         final Vector3f colour = new Vector3f();
         inst.tickAttributes(manager, colour);
 

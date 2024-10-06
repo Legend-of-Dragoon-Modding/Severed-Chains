@@ -6,11 +6,13 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
@@ -21,8 +23,8 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 public class LineParticle extends ParticleEffectData98 {
   private final Matrix4f identity = new Matrix4f();
 
-  public LineParticle(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
-    super(manager, parentScriptIndex, effectInner, type, count);
+  public LineParticle(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
+    super(manager, parentBobj, effectInner, type, count);
   }
 
   @Override
@@ -66,7 +68,7 @@ public class LineParticle extends ParticleEffectData98 {
 
           //LAB_800fd950
           inst.subParticlePositionsArray_44[0].set(inst.particlePosition_50);
-          this.particleInstancePrerenderCallback_84.accept(manager, this, inst);
+          this.particleInstancePrerenderCallback_84.accept(manager, inst);
 
           final Vector3f colour = new Vector3f();
           inst.tickAttributes(manager, colour);

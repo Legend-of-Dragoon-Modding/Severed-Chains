@@ -2,7 +2,6 @@ package legend.game.combat.particles;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.memory.types.TriConsumer;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -13,8 +12,9 @@ import org.joml.Math;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -22,7 +22,6 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.allocateEffectManager;
 import static legend.game.combat.SEffe.calculateBentPartPosition;
 import static legend.game.combat.SEffe.rotateAndTranslateEffect;
-import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 
 public class ParticleManager {
   public static final short[] particleSubCounts_800fb794 = {0, 0, 4, 0, 8, 0, 16, 0, 0, 0, 1, 0, 2, 0, 4, 0, 3, 0, 5, 0};
@@ -36,7 +35,7 @@ public class ParticleManager {
     this.camera = camera;
   }
 
-  public ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> allocateParticle(final ScriptState<? extends BattleObject> parent, final int behaviourType, final int particleCount, final int particleTypeId, final int _10, final int _14, final int _18, int innerStuff, final int parentScriptIndex) {
+  public ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> allocateParticle(final ScriptState<? extends BattleObject> allocator, final int behaviourType, final int particleCount, final int particleTypeId, final int _10, final int _14, final int _18, int innerStuff, @Nullable final BattleObject parentBobj) {
     if((innerStuff & 0xff) == 0) {
       innerStuff |= particleInnerStuffDefaultsArray_801197ec[behaviourType].ticksRemaining_02;
     }
@@ -52,18 +51,18 @@ public class ParticleManager {
     final int renderType = particleTypeId >> 20;
 
     final ParticleEffectData98 particle = switch(renderType) {
-      case 0 -> new QuadParticle(this, parentScriptIndex, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
-      case 1 -> new TmdParticle(this, parentScriptIndex, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
-      case 2 -> new LineParticle(this, parentScriptIndex, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
-      case 3 -> new PixelParticle(this, parentScriptIndex, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
-      case 4 -> new JkNotActuallyALineParticle(this, parentScriptIndex, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
-      case 5 -> new WhyIsThereANoParticle(this, parentScriptIndex, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
+      case 0 -> new QuadParticle(this, parentBobj, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
+      case 1 -> new TmdParticle(this, parentBobj, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
+      case 2 -> new LineParticle(this, parentBobj, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
+      case 3 -> new PixelParticle(this, parentBobj, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
+      case 4 -> new JkNotActuallyALineParticle(this, parentBobj, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
+      case 5 -> new WhyIsThereANoParticle(this, parentBobj, new ParticleEffectData98Inner24((short)_10, (short)_14, (short)_18 / (float)0x100, innerStuff, behaviourType), renderType, particleCount);
       default -> throw new RuntimeException("Invalid particle type");
     };
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state = allocateEffectManager(
       "Particle effect %x".formatted(particleTypeId),
-      parent,
+      allocator,
       particle,
       new EffectManagerParams.ParticleType()
     );
@@ -137,35 +136,35 @@ public class ParticleManager {
   }
 
   @Method(0x800fb9c0L)
-  private static void preRenderNoop(final EffectManagerData6c<EffectManagerParams.ParticleType> a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2) {
+  private static void preRenderNoop(final EffectManagerData6c<EffectManagerParams.ParticleType> a0, final ParticleEffectInstance94 a2) {
     // no-op
   }
 
   @Method(0x800fb9c8L)
-  private static void preRender2(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender2(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.x -= particle._16;
     particle.particleVelocity_58.y += particle._14;
   }
 
   @Method(0x800fb9ecL)
-  private static void preRender4(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender4(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
     particle._14 += particle._18;
-    particle._16 += particle._1a.x;
+    particle._16 += particle._1a;
     particle.particleVelocity_58.y -= 2.0f;
 
-    if(particle._1a.x >= 8.0f) {
-      particle._1a.x -= 8.0f;
+    if(particle._1a >= 8.0f) {
+      particle._1a -= 8;
     }
   }
 
   @Method(0x800fba58L)
-  private static void preRender5(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender5(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
-    particle.particlePosition_50.x += rcos((int)particle._1a.x) * particle._1a.y / 0x1000;
-    particle.particlePosition_50.z += rsin((int)particle._1a.x) * particle._1a.y / 0x1000;
+    particle.particlePosition_50.x += rcos(particle._1a) * particle._1c / (float)0x1000;
+    particle.particlePosition_50.z += rsin(particle._1a) * particle._1c / (float)0x1000;
     particle._16 += particle._18;
 
     if(particle._18 >= 4) {
@@ -173,15 +172,15 @@ public class ParticleManager {
     }
 
     //LAB_800fbaf0
-    particle._1a.x += particle._1a.z;
+    particle._1a += particle._1e;
   }
 
   @Method(0x800fbb14L)
-  private static void preRender6(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender6(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
-    particle.particlePosition_50.x += rcos((int)particle._1a.x) * particle._1a.y / 0x1000;
-    particle.particlePosition_50.y += rsin((int)particle._1a.x) * particle._1a.y / 0x1000;
+    particle.particlePosition_50.x += rcos(particle._1a) * particle._1c / (float)0x1000;
+    particle.particlePosition_50.y += rsin(particle._1a) * particle._1c / (float)0x1000;
 
     if(particle._16 >= particle._18 * 4) {
       particle._16 -= particle._18;
@@ -192,13 +191,13 @@ public class ParticleManager {
     }
 
     //LAB_800fbbbc
-    particle._1a.x += particle._1a.z;
+    particle._1a += particle._1e;
   }
 
   @Method(0x800fbbe0L)
-  private static void preRender8(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender8(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
-    particle._16 += particle._1a.y;
+    particle._16 += particle._1c;
     particle.particleVelocity_58.y += 20.0f;
     particle.angleVelocity_10 -= particle.angleAcceleration_24;
     if(particle._18 == 1) {
@@ -207,26 +206,26 @@ public class ParticleManager {
         particle.particlePosition_50.y = -particle.managerTranslation_2c.y;
         particle.ticksUntilMovementModeChanges_22--;
       } else {
-        particle.particlePosition_50.y = (rsin((int)particle._1a.x) * particle.verticalPositionScale_20 >> 12) - particle.managerTranslation_2c.y;
-        particle._1a.x += 0x7f;
-        particle.scaleHorizontalStep_0a = MathHelper.psxDegToRad(particle._1a.z);
-        particle.scaleVerticalStep_0c = MathHelper.psxDegToRad(particle._1a.z);
-        particle._1a.y += 5.0f;
+        particle.particlePosition_50.y = (rsin(particle._1a) * particle.verticalPositionScale_20 >> 12) - particle.managerTranslation_2c.y;
+        particle._1a += 0x7f;
+        particle.scaleHorizontalStep_0a = MathHelper.psxDegToRad(particle._1e);
+        particle.scaleVerticalStep_0c = MathHelper.psxDegToRad(particle._1e);
+        particle._1c += 5;
         particle.verticalPositionScale_20 += 20;
       }
       //LAB_800fbcc0
     } else if(particle.managerTranslation_2c.y + particle.particlePosition_50.y >= -1000) {
-      particle._1a.y = 0.0f;
+      particle._1c = 0;
       particle._18 = 1;
-      particle.scaleHorizontalStep_0a = MathHelper.psxDegToRad(particle._1a.z);
-      particle.scaleVerticalStep_0c = MathHelper.psxDegToRad(particle._1a.z);
+      particle.scaleHorizontalStep_0a = MathHelper.psxDegToRad(particle._1e);
+      particle.scaleVerticalStep_0c = MathHelper.psxDegToRad(particle._1e);
     }
 
     //LAB_800fbcf4
   }
 
   @Method(0x800fbd04L)
-  private static void preRender10(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender10(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
     particle._16 += particle._18;
@@ -235,28 +234,28 @@ public class ParticleManager {
     }
 
     //LAB_800fbd44
-    particle._14 += particle._1a.x;
+    particle._14 += particle._1a;
   }
 
   @Method(0x800fbd68L)
-  private static void preRender16(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender16(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     final Vector3f sp0x38 = new Vector3f();
     if(particle._18 == 0) {
       setParticlePositionAlongVector(particle);
       particle.particlePosition_50.y = 0.0f;
       particle.particlePosition_50.z /= 2.0f;
-      sp0x38.set(MathHelper.psxDegToRad(particle._1a.x), 0.0f, 0.0f);
+      sp0x38.set(MathHelper.psxDegToRad(particle._1a), 0.0f, 0.0f);
     } else {
       //LAB_800fbdb8
       particle.particlePosition_50.x = 0.0f;
       particle.particlePosition_50.y = rsin(particle._14) * particle._16 >> 11;
       particle.particlePosition_50.z = rcos(particle._14) * particle._16 >> 12;
-      sp0x38.set(0.0f, 0.0f, MathHelper.psxDegToRad(particle._1a.x));
+      sp0x38.set(0.0f, 0.0f, MathHelper.psxDegToRad(particle._1a));
     }
 
     //LAB_800fbe10
     particle._14 -= 0x80;
-    particle._1a.x -= 8.0f;
+    particle._1a -= 8;
 
     final Vector3f sp0x28 = new Vector3f();
     rotateAndTranslateEffect(manager, sp0x38, particle.particlePosition_50, sp0x28);
@@ -264,11 +263,11 @@ public class ParticleManager {
   }
 
   @Method(0x800fbe94L)
-  private static void preRender20(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender20(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
     particle.particlePosition_50.y = 0.0f;
     particle.particlePosition_50.z /= 2.0f;
-    final Vector3f sp0x38 = new Vector3f(MathHelper.psxDegToRad(particle._18), 0.0f, MathHelper.psxDegToRad(particle._1a.x));
+    final Vector3f sp0x38 = new Vector3f(MathHelper.psxDegToRad(particle._18), 0.0f, MathHelper.psxDegToRad(particle._1a));
     particle._14 += 0x80;
 
     final Vector3f sp0x28 = new Vector3f();
@@ -277,22 +276,22 @@ public class ParticleManager {
   }
 
   @Method(0x800fbf50L)
-  private static void preRender22(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender22(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
     particle._16 = (short)(particle._16 * particle._18 >> 8);
 
-    final float v1 = particle._1a.y / 4.0f;
+    final float v1 = particle._1c / 4.0f;
     if(particle._16 < v1) {
       particle._16 = (short)v1;
     }
 
     //LAB_800fbfac
-    particle._14 += particle._1a.x;
+    particle._14 += particle._1a;
   }
 
   @Method(0x800fbfd0L)
-  private static void preRender23(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender23(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.y = rsin(particle._14) * particle._16 >> 12;
     particle.particlePosition_50.z = rcos(particle._14) * particle._16 >> 12;
     particle._16 += particle._18;
@@ -301,11 +300,11 @@ public class ParticleManager {
     }
 
     //LAB_800fc044
-    particle._14 += particle._1a.x;
+    particle._14 += particle._1a;
   }
 
   @Method(0x800fc068L)
-  private static void preRender24(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender24(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
     particle._16 += particle._18;
@@ -317,26 +316,25 @@ public class ParticleManager {
   }
 
   @Method(0x800fc0d0L)
-  private static void preRender25(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender25(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     if(particle.particlePosition_50.y + particle.managerTranslation_2c.y >= -400 && particle._14 == 0) {
       particle._14 = 1;
       particle.particleAcceleration_60.y = -8.0f;
       //LAB_800fc11c
-    } else if(effect.parentScriptIndex_04 != -1 && particle._14 == 0) {
-      final Vector3f sp0x10 = new Vector3f();
-      scriptGetScriptedObjectPos(effect.parentScriptIndex_04, sp0x10);
-      particle.particleVelocity_58.x = (sp0x10.x - (particle.originalParticlePosition_3c.x + particle.managerTranslation_2c.x)) / particle._1a.z;
-      particle.particleVelocity_58.y = (sp0x10.y - (particle.originalParticlePosition_3c.y + particle.managerTranslation_2c.y)) / particle._1a.z;
-      particle.particleVelocity_58.z = (sp0x10.z - (particle.originalParticlePosition_3c.z + particle.managerTranslation_2c.z)) / particle._1a.z;
+    } else if(particle.particle.parentBobj_04 != null && particle._14 == 0) {
+      final Vector3f parentPos = particle.particle.parentBobj_04.getPosition();
+      particle.particleVelocity_58.x = (parentPos.x - (particle.originalParticlePosition_3c.x + particle.managerTranslation_2c.x)) / particle._1e;
+      particle.particleVelocity_58.y = (parentPos.y - (particle.originalParticlePosition_3c.y + particle.managerTranslation_2c.y)) / particle._1e;
+      particle.particleVelocity_58.z = (parentPos.z - (particle.originalParticlePosition_3c.z + particle.managerTranslation_2c.z)) / particle._1e;
       particle.particleVelocity_58.x += particle._18;
-      particle.particleVelocity_58.y += particle._1a.x;
-      particle.particleVelocity_58.z += particle._1a.y;
+      particle.particleVelocity_58.y += particle._1a;
+      particle.particleVelocity_58.z += particle._1c;
     }
     //LAB_800fc1ec
   }
 
   @Method(0x800fc1fcL)
-  private static void preRender27(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender27(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     setParticlePositionAlongVector(particle);
 
     particle._16 += particle._18;
@@ -348,90 +346,90 @@ public class ParticleManager {
   }
 
   @Method(0x800fc280L)
-  private static void preRender32(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle.particlePosition_50.z = rcos(particle._14) * 2 * particle._1a.y / 0x1000;
-    particle.particlePosition_50.x = rsin((int)particle._1a.z) * particle._1a.y / 0x1000;
+  private static void preRender32(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    particle.particlePosition_50.z = rcos(particle._14) * 2 * particle._1c / (float)0x1000;
+    particle.particlePosition_50.x = rsin(particle._1e) * particle._1c / (float)0x1000;
     particle._14 += particle._16;
-    particle._1a.z = particle._1a.z + particle._16 * 2;
-    particle.particlePosition_50.y += 0x40 + ((rcos(particle._18) >> 1) + 0x800) * particle._1a.y / 0x8000;
-    particle._18 += particle._1a.x;
+    particle._1e += particle._16 * 2;
+    particle.particlePosition_50.y += 0x40 + ((rcos(particle._18) >> 1) + 0x800) * particle._1c / (float)0x8000;
+    particle._18 += particle._1a;
   }
 
   @Method(0x800fc348L)
-  private static void preRender34(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle.particlePosition_50.x = rcos(particle._14) * particle._1a.x / 0x1000 * rsin(particle._18) / 0x1000;
+  private static void preRender34(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    particle.particlePosition_50.x = rcos(particle._14) * particle._1a / (float)0x1000 * rsin(particle._18) / 0x1000;
     particle.particlePosition_50.y = particle._18 * 2 - 0x800;
-    particle.particlePosition_50.z = rsin(particle._14) * particle._1a.x / 0x1000 * rsin(particle._18) / 0x1000;
+    particle.particlePosition_50.z = rsin(particle._14) * particle._1a / (float)0x1000 * rsin(particle._18) / 0x1000;
     particle._14 += particle._16;
   }
 
   @Method(0x800fc410L)
-  private static void preRender39(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle.particleVelocity_58.y += particle._14 / 0x100;
+  private static void preRender39(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    particle.particleVelocity_58.y += particle._14 / (float)0x100;
   }
 
   @Method(0x800fc42cL)
-  private static void preRender41(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle.particlePosition_50.x = particle._14 + rcos((int)particle._1a.x) * particle._1a.z / 0x1000;
-    particle.particlePosition_50.z = particle._18 + rsin((int)particle._1a.x) * particle._1a.z / 0x1000;
-    particle._1a.z += 16.0f;
-    particle._1a.x += particle._1a.y;
+  private static void preRender41(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    particle.particlePosition_50.x = particle._14 + rcos(particle._1a) * particle._1e / (float)0x1000;
+    particle.particlePosition_50.z = particle._18 + rsin(particle._1a) * particle._1e / (float)0x1000;
+    particle._1e += 16;
+    particle._1a += particle._1c;
   }
 
   @Method(0x800fc528L)
-  private static void preRender49(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender49(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.x = rsin(particle._14) * (particle._18 >> 1) >> 12;
     particle.particlePosition_50.z = rcos(particle._14) * particle._18 >> 12;
     particle._14 += particle._16;
   }
 
   @Method(0x800fc5a8L)
-  private static void preRender50(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender50(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.x = rsin(particle._14) * particle._18 >> 12;
     particle.particlePosition_50.z = rcos(particle._14) * particle._18 >> 12;
     particle._18 = (short)(particle._18 * 7 / 8);
   }
 
   @Method(0x800fc61cL)
-  private static void preRender52(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender52(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     particle.scaleVertical_08 = MathHelper.psxDegToRad((short)((rcos(particle._14) * particle._16 >> 12) * manager.params_10.scale_16.y));
     particle._14 -= particle._18;
 
     if(particle._16 > 0) {
-      particle._16 -= particle._1a.x;
+      particle._16 -= particle._1a;
     }
 
     //LAB_800fc6a8
   }
 
   @Method(0x800fc6bcL)
-  private static void preRender53(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender53(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.x = rsin(particle._14) * particle._16 >> 12;
     particle.particlePosition_50.z = rcos(particle._14) * particle._16 >> 12;
     particle.particlePosition_50.x += rsin(particle._18) << 8 >> 12;
     particle.particlePosition_50.z += rcos(particle._18) << 8 >> 12;
-    particle._18 += particle._1a.x;
+    particle._18 += particle._1a;
   }
 
   @Method(0x800fc768L)
-  private static void preRender58(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle._1a.x += particle._14;
-    particle._1a.y += particle._16;
-    particle._1a.z += particle._18;
-    particle.particleVelocity_58.x = particle._1a.x / 0x100;
-    particle.particleVelocity_58.y = particle._1a.y / 0x100;
-    particle.particleVelocity_58.z = particle._1a.z / 0x100;
+  private static void preRender58(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    particle._1a += particle._14;
+    particle._1c += particle._16;
+    particle._1e += particle._18;
+    particle.particleVelocity_58.x = particle._1a / (float)0x100;
+    particle.particleVelocity_58.y = particle._1c / (float)0x100;
+    particle.particleVelocity_58.z = particle._1e / (float)0x100;
   }
 
   @Method(0x800fc7c8L)
-  private static void preRender60(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void preRender60(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     if(particle.particlePosition_50.y + particle.managerTranslation_2c.y >= manager.params_10.y_30) {
       particle.particlePosition_50.y = manager.params_10.y_30 - particle.managerTranslation_2c.y;
       particle.particleVelocity_58.y = -particle.particleVelocity_58.y / 2.0f;
       if(particle._14 == 0) {
         final int angle = seed_800fa754.nextInt(0x1001);
-        particle.particleVelocity_58.x = (rcos(angle) >>> 8) * effect.effectInner_08._18;
-        particle.particleVelocity_58.z = (rcos(angle) >>> 8) * effect.effectInner_08._18;
+        particle.particleVelocity_58.x = (rcos(angle) >>> 8) * particle.particle.effectInner_08._18;
+        particle.particleVelocity_58.z = (rcos(angle) >>> 8) * particle.particle.effectInner_08._18;
       }
 
       //LAB_800fc8d8
@@ -441,12 +439,12 @@ public class ParticleManager {
   }
 
   @Method(0x800fea68L)
-  private static void initializerNoop(final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
+  private static void initializerNoop(final ParticleEffectInstance94 a2) {
     // no-op
   }
 
   @Method(0x800fea70L)
-  private static int initializer0(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static int initializer0(final ParticleEffectInstance94 particle) {
     final int angle = seed_800fa754.nextInt(4097);
     particle.particleVelocity_58.x = rcos(angle) >> 8;
     particle.particleVelocity_58.z = rsin(angle) >> 8;
@@ -461,15 +459,15 @@ public class ParticleManager {
   }
 
   @Method(0x800fec3cL)
-  private static void initializer1(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    final int s0 = initializer0(effect, particle, effectInner);
+  private static void initializer1(final ParticleEffectInstance94 particle) {
+    final int s0 = initializer0(particle);
     particle.particleVelocity_58.x = rcos(s0) >> 6;
     particle.particleVelocity_58.y = 0.0f;
     particle.particleVelocity_58.z = rsin(s0) >> 6;
   }
 
   @Method(0x800fecccL)
-  private static void initializer2(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer2(final ParticleEffectInstance94 particle) {
     final int angle = seed_800fa754.nextInt(4097);
     particle.particleVelocity_58.x = rcos(angle) >> 10;
     particle.particleVelocity_58.y = -(seed_800fa754.nextInt(33) + 13);
@@ -480,29 +478,29 @@ public class ParticleManager {
   }
 
   @Method(0x800fee9cL)
-  private static void initializer3(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer3(final ParticleEffectInstance94 particle) {
     final int angle = seed_800fa754.nextInt(4097);
-    particle.particleVelocity_58.x = rcos(angle) / 0x80;
+    particle.particleVelocity_58.x = rcos(angle) / (float)0x80;
     particle.particleVelocity_58.y = 0.0f;
-    particle.particleVelocity_58.z = rsin(angle) / 0x80;
+    particle.particleVelocity_58.z = rsin(angle) / (float)0x80;
     particle.framesUntilRender_04 = 1;
     particle._14 = (short)(seed_800fa754.nextInt(6));
   }
 
   @Method(0x800fefe4L)
-  private static void initializer4(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer3(effect, particle, effectInner);
+  private static void initializer4(final ParticleEffectInstance94 particle) {
+    initializer3(particle);
     particle._14 = (short)(seed_800fa754.nextInt(4097));
-    particle._16 = effectInner._10;
+    particle._16 = particle.particle.effectInner_08._10;
     particle._18 = (short)(seed_800fa754.nextInt(91) + 10);
-    particle._1a.x = 120.0f;
+    particle._1a = 120;
     particle.particleVelocity_58.x = 0.0f;
     particle.particleVelocity_58.y = -seed_800fa754.nextInt(11) - 5;
     particle.particleVelocity_58.z = 0.0f;
   }
 
   @Method(0x800ff15cL)
-  private static void initializer5(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer5(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.y = -seed_800fa754.nextInt(61) - 60;
 
     final float scaleStep;
@@ -518,76 +516,76 @@ public class ParticleManager {
 
     //LAB_800ff2b4
     particle._14 = (short)seed_800fa754.nextInt(4097);
-    particle._1a.x = seed_800fa754.nextInt(4097);
-    particle._1a.z = seed_800fa754.nextInt(1025) - 512;
+    particle._1a = (short)seed_800fa754.nextInt(4097);
+    particle._1e = (short)(seed_800fa754.nextInt(1025) - 512);
 
-    particle._1a.y = 100.0f;
-    particle._16 = effectInner._10;
-    particle._18 = (short)(effectInner._18 * 100);
+    particle._1c = 100;
+    particle._16 = particle.particle.effectInner_08._10;
+    particle._18 = (short)(particle.particle.effectInner_08._18 * 100);
   }
 
   @Method(0x800ff3e0L)
-  private static void initializer6(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer5(effect, particle, effectInner);
+  private static void initializer6(final ParticleEffectInstance94 particle) {
+    initializer5(particle);
     particle.verticalPositionScale_20 = (short)0;
     particle.ticksUntilMovementModeChanges_22 = (short)(0x8000 / particle.ticksRemaining_12);
     //TODO should this still be << 8?
-    particle.angleAcceleration_24 = MathHelper.psxDegToRad((effectInner.particleInnerStuff_1c >>> 8 & 0xff) << 8);
+    particle.angleAcceleration_24 = MathHelper.psxDegToRad((particle.particle.effectInner_08.particleInnerStuff_1c >>> 8 & 0xff) << 8);
   }
 
   @Method(0x800ff430L)
-  private static void initializer8(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    particle._16 = effectInner._10;
+  private static void initializer8(final ParticleEffectInstance94 particle) {
+    particle._16 = particle.particle.effectInner_08._10;
     particle._18 = (short)0;
-    particle._1a.x = 0.0f;
-    particle._1a.y = 50.0f;
+    particle._1a = 0;
+    particle._1c = 50;
     particle.verticalPositionScale_20 = (short)100;
     particle.ticksUntilMovementModeChanges_22 = (short)0;
     particle.angleAcceleration_24 = particle.angleVelocity_10 / particle.ticksRemaining_12;
 
     particle.particleVelocity_58.y = seed_800fa754.nextInt(31) + 10;
-    particle._1a.z = seed_800fa754.nextInt(41) + 40;
+    particle._1e = (short)(seed_800fa754.nextInt(41) + 40);
     particle._14 = (short)seed_800fa754.nextInt(4097);
   }
 
   @Method(0x800ff590L)
-  private static void initializer9(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer8(effect, particle, effectInner);
+  private static void initializer9(final ParticleEffectInstance94 particle) {
+    initializer8(particle);
     particle.ticksUntilMovementModeChanges_22 = 20;
     particle.verticalPositionScale_20 = 10;
   }
 
   @Method(0x800ff5c4L)
-  private static void initializer10(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer10(final ParticleEffectInstance94 particle) {
     // This method uses an uninitialized variable - the way the ASM was generated, it uses t2 which is set
     // in the calling method to the behaviourType. Since this is the 10th behaviour, t2 will always be 10.
     final int t2 = 10;
 
-    particle.particleVelocity_58.y = -(seed_800fa754.nextInt(61) + 60) * effectInner._18;
+    particle.particleVelocity_58.y = -(seed_800fa754.nextInt(61) + 60) * particle.particle.effectInner_08._18;
     particle._14 = (short)seed_800fa754.nextInt(4097);
-    particle._16 = effectInner._10;
+    particle._16 = particle.particle.effectInner_08._10;
     particle._18 = (short)100;
-    particle._1a.x = t2 * 4;
+    particle._1a = t2 * 4;
     particle.particleAcceleration_60.y = -particle.particleVelocity_58.y / particle.ticksRemaining_12;
   }
 
   @Method(0x800ff6d4L)
-  private static void initializer11(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer10(effect, particle, effectInner);
+  private static void initializer11(final ParticleEffectInstance94 particle) {
+    initializer10(particle);
     particle._18 = 0;
   }
 
   @Method(0x800ff6fcL)
-  private static void initializer16(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer16(final ParticleEffectInstance94 particle) {
     particle.angleVelocity_10 = MathHelper.TWO_PI / 32.0f;
     final int v1 = particle.index >>> 1;
     particle.angle_0e = MathHelper.psxDegToRad(v1 << 7);
     particle._14 = (short)(v1 << 7);
-    particle._16 = effectInner._10;
+    particle._16 = particle.particle.effectInner_08._10;
     particle._18 = (short)(particle.index & 0x1);
-    particle._1a.x = v1 << 3;
+    particle._1a = (short)(v1 << 3);
 
-    final float colour = Math.max(0, (effectInner.particleInnerStuff_1c >>> 8 & 0xff) - particle.index * 16) / (float)0x80;
+    final float colour = Math.max(0, (particle.particle.effectInner_08.particleInnerStuff_1c >>> 8 & 0xff) - particle.index * 16) / (float)0x80;
 
     //LAB_800ff754
     particle.ticksRemaining_12 = -1;
@@ -597,16 +595,16 @@ public class ParticleManager {
   }
 
   @Method(0x800ff788L)
-  private static void initializer20(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer20(final ParticleEffectInstance94 particle) {
     particle.ticksRemaining_12 = -1;
     particle._14 = (short)seed_800fa754.nextInt(4097);
-    particle._16 = effectInner._10;
+    particle._16 = particle.particle.effectInner_08._10;
     particle._18 = (short)seed_800fa754.nextInt(4097);
-    particle._1a.x = seed_800fa754.nextInt(4097);
+    particle._1a = (short)seed_800fa754.nextInt(4097);
   }
 
   @Method(0x800ff890L)
-  private static void initializer21(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer21(final ParticleEffectInstance94 particle) {
     final int angle1 = seed_800fa754.nextInt(4097);
     final int angle2 = seed_800fa754.nextInt(2049);
 
@@ -623,116 +621,116 @@ public class ParticleManager {
   }
 
   @Method(0x800ffa80L)
-  private static void initializer22(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer10(effect, particle, effectInner);
-    final short s2 = effectInner._10;
+  private static void initializer22(final ParticleEffectInstance94 particle) {
+    initializer10(particle);
+    final short s2 = particle.particle.effectInner_08._10;
     particle._16 = s2;
-    particle._1a.y = s2;
-    particle._18 = (short)(effectInner._18 * 0xe0);
+    particle._1c = s2;
+    particle._18 = (short)(particle.particle.effectInner_08._18 * 0xe0);
   }
 
   @Method(0x800ffadcL)
-  private static void initializer23(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer23(final ParticleEffectInstance94 particle) {
     particle._14 = (short)(seed_800fa754.nextInt(4097));
-    final int v0 = -effectInner._10 >> 5;
+    final int v0 = -particle.particle.effectInner_08._10 >> 5;
     particle.r_84 = 0;
     particle.g_86 = 0;
     particle.b_88 = 0;
-    particle._16 = effectInner._10;
-    particle._18 = (short)(v0 * effectInner._18);
-    particle._1a.x = effectInner._18 * 128.0f;
+    particle._16 = particle.particle.effectInner_08._10;
+    particle._18 = (short)(v0 * particle.particle.effectInner_08._18);
+    particle._1a = (short)(particle.particle.effectInner_08._18 * 128);
   }
 
   @Method(0x800ffb80L)
-  private static void initializer24(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer24(final ParticleEffectInstance94 particle) {
     particle.particleAcceleration_60.y = 8.0f;
     particle._14 = (short)(particle.index << 9);
-    particle._16 = effectInner._10;
+    particle._16 = particle.particle.effectInner_08._10;
     particle.framesUntilRender_04 = (short)(particle.index >>> 2 | 0x1);
-    particle._18 = (short)(effectInner._18 * 64.0f);
-    particle.particleVelocity_58.y = effectInner._14 * -0x40 >> 8;
+    particle._18 = (short)(particle.particle.effectInner_08._18 * 64.0f);
+    particle.particleVelocity_58.y = particle.particle.effectInner_08._14 * -0x40 >> 8;
   }
 
   @Method(0x800ffbd8L)
-  private static void initializer25(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer25(final ParticleEffectInstance94 particle) {
     particle._14 = 0;
     particle._18 = (short)(seed_800fa754.nextInt(21) - 10);
-    particle._1a.x = seed_800fa754.nextInt(21) - 10;
-    particle._1a.y = seed_800fa754.nextInt(81) - 40;
-    particle._1a.z = particle.ticksRemaining_12;
-    particle.particleVelocity_58.x = (seed_800fa754.nextInt(41) + 44) * effectInner._18;
-    particle.particleVelocity_58.y = (seed_800fa754.nextInt(81) - 40) * effectInner._18;
-    particle.particleVelocity_58.z = (seed_800fa754.nextInt(41) + 44) * effectInner._18;
+    particle._1a = (short)(seed_800fa754.nextInt(21) - 10);
+    particle._1c = (short)(seed_800fa754.nextInt(81) - 40);
+    particle._1e = particle.ticksRemaining_12;
+    particle.particleVelocity_58.x = (seed_800fa754.nextInt(41) + 44) * particle.particle.effectInner_08._18;
+    particle.particleVelocity_58.y = (seed_800fa754.nextInt(81) - 40) * particle.particle.effectInner_08._18;
+    particle.particleVelocity_58.z = (seed_800fa754.nextInt(41) + 44) * particle.particle.effectInner_08._18;
     particle.ticksRemaining_12 += 20;
   }
 
   @Method(0x800ffe80L)
-  private static void initializer28(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer28(final ParticleEffectInstance94 particle) {
     particle._14 = (short)(seed_800fa754.nextInt(4097));
-    particle._16 = effectInner._10;
-    particle._18 = (short)(effectInner._18 * 32.0f);
-    particle.particleAcceleration_60.y = effectInner._18 * 2.0f;
+    particle._16 = particle.particle.effectInner_08._10;
+    particle._18 = (short)(particle.particle.effectInner_08._18 * 32.0f);
+    particle.particleAcceleration_60.y = particle.particle.effectInner_08._18 * 2.0f;
   }
 
   @Method(0x800ffefcL)
-  private static void initializer30(final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
+  private static void initializer30(final ParticleEffectInstance94 a2) {
     // no-op
   }
 
   @Method(0x800fff04L)
-  private static void initializer32(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer32(final ParticleEffectInstance94 particle) {
     particle._14 = 0;
     particle._18 = 0;
-    particle._1a.z = 0.0f;
-    final float v0 = effectInner._18 * 64.0f;
+    particle._1e = 0;
+    final float v0 = particle.particle.effectInner_08._18 * 64.0f;
     particle._16 = (short)v0;
-    particle._1a.x = v0;
-    particle._1a.y = effectInner._10;
+    particle._1a = (short)v0;
+    particle._1c = particle.particle.effectInner_08._10;
   }
 
   @Method(0x800fff30L)
-  private static void initializer33(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer33(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.x = seed_800fa754.nextInt(769) + 256;
   }
 
   @Method(0x800fffa0L)
-  private static void initializer34(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    particle._1a.x = effectInner._10;
+  private static void initializer34(final ParticleEffectInstance94 particle) {
+    particle._1a = particle.particle.effectInner_08._10;
     particle._14 = (short)(seed_800fa754.nextInt(4097));
-    particle._16 = (short)((seed_800fa754.nextInt(123) + 64) * effectInner._18);
-    particle._18 = (short)(0x800 / effect.countParticleInstance_50 * particle.index);
+    particle._16 = (short)((seed_800fa754.nextInt(123) + 64) * particle.particle.effectInner_08._18);
+    particle._18 = (short)(0x800 / particle.particle.countParticleInstance_50 * particle.index);
   }
 
   @Method(0x801000b8L)
-  private static void initializer35(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer35(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.x = -particle.particlePosition_50.x / 32.0f;
     particle.particleVelocity_58.z = -particle.particlePosition_50.z / 32.0f;
   }
 
   @Method(0x801000f8L)
-  private static void initializer39(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer21(effect, particle, effectInner);
+  private static void initializer39(final ParticleEffectInstance94 particle) {
+    initializer21(particle);
     particle.particleVelocity_58.y = -Math.abs(particle.particleVelocity_58.y);
-    particle._14 = (short)(effectInner._18 * 0x300);
+    particle._14 = (short)(particle.particle.effectInner_08._18 * 0x300);
   }
 
   @Method(0x80100150L)
-  private static void initializer41(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    particle._1a.x = (short)(seed_800fa754.nextInt(4097));
+  private static void initializer41(final ParticleEffectInstance94 particle) {
+    particle._1a = (short)(seed_800fa754.nextInt(4097));
     particle._14 = (short)particle.particlePosition_50.x;
     particle._16 = (short)particle.particlePosition_50.y;
     particle._18 = (short)particle.particlePosition_50.z;
-    particle._1a.z = effectInner._10 / 4.0f;
-    particle.particleVelocity_58.y = effectInner._18 * -64.0f;
-    particle._1a.y = (seed_800fa754.nextInt(513) - 256) * effectInner._18;
+    particle._1e = (short)(particle.particle.effectInner_08._10 / 4);
+    particle.particleVelocity_58.y = particle.particle.effectInner_08._18 * -64.0f;
+    particle._1c = (short)((seed_800fa754.nextInt(513) - 256) * particle.particle.effectInner_08._18);
   }
 
   @Method(0x8010025cL)
-  private static void initializer42(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer42(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.y = 64.0f;
     final int angle = seed_800fa754.nextInt(4097);
-    if(effectInner.behaviourType_20 == 0x2a) {
-      final int velocityMagnitude = (effectInner._10 & 0xffff) >>> 5;
+    if(particle.particle.effectInner_08.behaviourType_20 == 0x2a) {
+      final int velocityMagnitude = (particle.particle.effectInner_08._10 & 0xffff) >>> 5;
       particle.particleVelocity_58.x = rcos(angle) * velocityMagnitude >> 12;
       particle.particleVelocity_58.y = rsin(angle) * velocityMagnitude >> 12;
     } else {
@@ -743,13 +741,13 @@ public class ParticleManager {
   }
 
   @Method(0x801003e8L)
-  private static void initializer46(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    final int s4 = effectInner._10; //TODO read with lw here but as a short everywhere else? Is this a bug?
-    initializer21(effect, particle, effectInner);
+  private static void initializer46(final ParticleEffectInstance94 particle) {
+    final int s4 = particle.particle.effectInner_08._10; //TODO read with lw here but as a short everywhere else? Is this a bug?
+    initializer21(particle);
 
     final int angle1 = seed_800fa754.nextInt(4097);
     final int angle2 = seed_800fa754.nextInt(2049);
-    particle.ticksRemaining_12 = (short)(effectInner.particleInnerStuff_1c >>> 16 & 0xff);
+    particle.ticksRemaining_12 = (short)(particle.particle.effectInner_08.particleInnerStuff_1c >>> 16 & 0xff);
     particle.particlePosition_50.x = (rcos(angle1) * rsin(angle2) >> 12) * s4 >> 12;
     particle.particlePosition_50.y = rcos(angle2) * s4 >> 12;
     particle.particlePosition_50.z = (rsin(angle1) * rsin(angle2) >> 12) * s4 >> 12;
@@ -759,131 +757,128 @@ public class ParticleManager {
   }
 
   @Method(0x80100364L)
-  private static void initializer44(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 particleEffect) {
-    initializer21(effect, particle, particleEffect);
+  private static void initializer44(final ParticleEffectInstance94 particle) {
+    initializer21(particle);
     particle._14 = 0;
     particle.particleVelocity_58.y = -Math.abs(particle.particleVelocity_58.y);
     particle.particleAcceleration_60.set(particle.particleVelocity_58).negate().div(particle.ticksRemaining_12);
   }
 
   @Method(0x801005b8L)
-  private static void initializer47(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    final int s2 = effectInner._10;
-    initializer21(effect, particle, effectInner);
+  private static void initializer47(final ParticleEffectInstance94 particle) {
+    final int s2 = particle.particle.effectInner_08._10;
+    initializer21(particle);
     final int angle = seed_800fa754.nextInt(4097);
     particle.particlePosition_50.y = rsin(angle) * s2 >> 12;
     particle.particlePosition_50.z = rcos(angle) * s2 >> 12;
-    particle.particleVelocity_58.x = (seed_800fa754.nextInt(65) + 54) * effectInner._18;
+    particle.particleVelocity_58.x = (seed_800fa754.nextInt(65) + 54) * particle.particle.effectInner_08._18;
     particle.particleAcceleration_60.x = -particle.particleVelocity_58.x / particle.ticksRemaining_12;
     particle.particleAcceleration_60.y = 16.0f;
     final int a1_0 = -((rsin(angle) * s2 >> 12) + s2) / 2;
-    particle.particleVelocity_58.y = (seed_800fa754.nextInt(-a1_0 + 1) + a1_0) * effectInner._18;
+    particle.particleVelocity_58.y = (seed_800fa754.nextInt(-a1_0 + 1) + a1_0) * particle.particle.effectInner_08._18;
   }
 
   @Method(0x801007b4L)
-  private static void initializer48(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer48(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.set(particle.particlePosition_50).negate().div(particle.ticksRemaining_12);
   }
 
   @Method(0x80100800L)
-  private static void initializer49(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    particle._16 = (short)(effectInner._18 * 64.0f);
-    particle._18 = effectInner._10;
+  private static void initializer49(final ParticleEffectInstance94 particle) {
+    particle._16 = (short)(particle.particle.effectInner_08._18 * 64.0f);
+    particle._18 = particle.particle.effectInner_08._10;
     particle._14 = (short)(seed_800fa754.nextInt(4097));
   }
 
   @Method(0x80100878L)
-  private static void initializer50(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer50(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.y = -64.0f;
-    particle._18 = effectInner._10;
-    particle._16 = (short)(effectInner._18 * 0x2000);
+    particle._18 = particle.particle.effectInner_08._10;
+    particle._16 = (short)(particle.particle.effectInner_08._18 * 0x2000);
     particle._14 = (short)(seed_800fa754.nextInt(4097));
   }
 
   @Method(0x801008f8L)
-  private static void initializer52(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer52(final ParticleEffectInstance94 particle) {
     particle.angle_0e = 0.0f;
     particle.angleVelocity_10 = 0.0f;
     particle.spriteRotation_70.zero();
     particle.spriteRotationStep_78.zero();
-    particle._18 = (short)(effectInner._18 * 256.0f);
+    particle._18 = (short)(particle.particle.effectInner_08._18 * 256);
     particle._14 = 0x800;
-    particle._16 = (short)(effectInner._10 << 4);
-    particle._1a.x = effectInner._18 * 64.0f;
-    particle.framesUntilRender_04 = (short)(particle.index * (effectInner._14 / effect.countParticleInstance_50));
+    particle._16 = (short)(particle.particle.effectInner_08._10 * 16);
+    particle._1a = (short)(particle.particle.effectInner_08._18 * 64);
+    particle.framesUntilRender_04 = (short)(particle.index * (particle.particle.effectInner_08._14 / particle.particle.countParticleInstance_50));
   }
 
   @Method(0x80100978L)
-  private static void initializer53(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer53(final ParticleEffectInstance94 particle) {
     particle._14 = (short)(seed_800fa754.nextInt(4097));
-    particle._16 = (short)(seed_800fa754.nextInt((effectInner._10 & 0xffff) + 1));
+    particle._16 = (short)(seed_800fa754.nextInt((particle.particle.effectInner_08._10 & 0xffff) + 1));
     particle._18 = (short)(seed_800fa754.nextInt(4097));
-    particle._1a.x = (seed_800fa754.nextInt(41) + 150) * effectInner._18;
+    particle._1a = (short)((seed_800fa754.nextInt(41) + 150) * particle.particle.effectInner_08._18);
     particle.particleVelocity_58.y = -64.0f;
   }
 
   @Method(0x80100af4L)
-  private static void initializer54(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer21(effect, particle, effectInner);
-    particle.particleVelocity_58.x = particle.particleVelocity_58.x * effectInner._18;
-    particle.particleVelocity_58.y = particle.particleVelocity_58.y * effectInner._18;
-    particle.particleVelocity_58.z = particle.particleVelocity_58.z * effectInner._18;
+  private static void initializer54(final ParticleEffectInstance94 particle) {
+    initializer21(particle);
+    particle.particleVelocity_58.x = particle.particleVelocity_58.x * particle.particle.effectInner_08._18;
+    particle.particleVelocity_58.y = particle.particleVelocity_58.y * particle.particle.effectInner_08._18;
+    particle.particleVelocity_58.z = particle.particleVelocity_58.z * particle.particle.effectInner_08._18;
     particle.particleAcceleration_60.set(particle.particleVelocity_58).negate().div(particle.ticksRemaining_12);
   }
 
   @Method(0x80100bb4L)
-  private static void initializer55(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer55(final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.y = seed_800fa754.nextInt(33) + 16;
   }
 
   @Method(0x80100c18L)
-  private static void initializer58(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    particle._14 = (short)(-particle.particlePosition_50.x / 2.0f * effectInner._18);
-    particle._16 = (short)(-particle.particlePosition_50.y / 2.0f * effectInner._18);
-    particle._18 = (short)(-particle.particlePosition_50.z / 2.0f * effectInner._18);
-    particle._1a.zero();
+  private static void initializer58(final ParticleEffectInstance94 particle) {
+    particle._14 = (short)(-particle.particlePosition_50.x / 2.0f * particle.particle.effectInner_08._18);
+    particle._16 = (short)(-particle.particlePosition_50.y / 2.0f * particle.particle.effectInner_08._18);
+    particle._18 = (short)(-particle.particlePosition_50.z / 2.0f * particle.particle.effectInner_08._18);
+    particle._1a = 0;
+    particle._1c = 0;
+    particle._1e = 0;
   }
 
   @Method(0x80100cacL)
-  private static void initializer59(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    initializer21(effect, particle, effectInner);
+  private static void initializer59(final ParticleEffectInstance94 particle) {
+    initializer21(particle);
     particle.particleVelocity_58.y = -Math.abs(particle.particleVelocity_58.y);
     particle.particleVelocity_58.x = 0.0f;
     particle._14 = 0;
   }
 
   @Method(0x80100cecL)
-  private static void initializer60(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  private static void initializer60(final ParticleEffectInstance94 particle) {
     particle._14 = 0;
-    particle.particleAcceleration_60.y = effectInner._18 * 2.0f;
+    particle.particleAcceleration_60.y = particle.particle.effectInner_08._18 * 2.0f;
   }
 
   @Method(0x80100d00L)
-  private static void initializer64(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    calculateBentPartPosition(SCRIPTS.getObject(effect.parentScriptIndex_04, BattleEntity27c.class), particle.particlePosition_50, particle.index);
+  private static void initializer64(final ParticleEffectInstance94 particle) {
+    calculateBentPartPosition((BattleEntity27c)particle.particle.parentBobj_04, particle.particlePosition_50, particle.index);
   }
 
   @Method(0x80100d58L)
-  private static void tickNoop(final EffectManagerData6c<EffectManagerParams.ParticleType> a1, final ParticleEffectData98 a2, final ParticleEffectInstance94 a3) {
+  private static void tickNoop(final EffectManagerData6c<EffectManagerParams.ParticleType> a1, final ParticleEffectInstance94 a3) {
     // no-op
   }
 
   @Method(0x80100d60L)
-  private static void tick2(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    if(particle.framesUntilRender_04 == 0 && effect.parentScriptIndex_04 != -1) {
-      final Vector3f translation = manager.getPosition();
-
-      final Vector3f parentTranslation = new Vector3f();
-      scriptGetScriptedObjectPos(effect.parentScriptIndex_04, parentTranslation);
-
-      final Vector3f diffTranslation = new Vector3f().set(translation).sub(parentTranslation);
+  private static void tick2(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    if(particle.framesUntilRender_04 == 0 && particle.particle.parentBobj_04 != null) {
+      final Vector3f diffTranslation = new Vector3f().set(manager.getPosition()).sub(particle.particle.parentBobj_04.getPosition());
       particle.particlePosition_50.sub(diffTranslation);
     }
     //LAB_80100e14
   }
 
   @Method(0x80100e28L)
-  private static void tickResetColourStep(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void tickResetColourStep(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0) {
       particle.stepR_8a = 0;
       particle.stepG_8c = 0;
@@ -893,7 +888,7 @@ public class ParticleManager {
   }
 
   @Method(0x80100e4cL)
-  private static void tickSlowColourStep(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  private static void tickSlowColourStep(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0) {
       particle.stepR_8a = -1.0f / particle.ticksRemaining_12;
       particle.stepG_8c = -1.0f / particle.ticksRemaining_12;
@@ -903,21 +898,18 @@ public class ParticleManager {
   }
 
   @Method(0x80100ea0L)
-  private static void tick30(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    final int s1 = effect.effectInner_08._10 & 0xffff;
+  private static void tick30(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle) {
+    final int s1 = particle.particle.effectInner_08._10 & 0xffff;
 
-    final Vector3f parentTranslation = new Vector3f();
-    scriptGetScriptedObjectPos(effect.parentScriptIndex_04, parentTranslation);
-
-    final Vector3f diffTranslation = new Vector3f().set(parentTranslation).sub(manager.getPosition());
+    final Vector3f diffTranslation = new Vector3f().set(particle.particle.parentBobj_04.getPosition()).sub(manager.getPosition());
 
     final int mod = s1 * 2 + 1;
     particle.particleVelocity_58.x = diffTranslation.x / 8.0f + (seed_800fa754.nextInt(mod) - s1 >>> 4);
     particle.particleVelocity_58.y = diffTranslation.y / 8.0f + (seed_800fa754.nextInt(mod) - s1 >>> 4);
     particle.particleVelocity_58.z = diffTranslation.z / 8.0f + (seed_800fa754.nextInt(mod) - s1 >>> 4);
-    particle.particleVelocity_58.x *= effect.effectInner_08._18;
-    particle.particleVelocity_58.y *= effect.effectInner_08._18;
-    particle.particleVelocity_58.z *= effect.effectInner_08._18;
+    particle.particleVelocity_58.x *= particle.particle.effectInner_08._18;
+    particle.particleVelocity_58.y *= particle.particle.effectInner_08._18;
+    particle.particleVelocity_58.z *= particle.particle.effectInner_08._18;
 
     if(particle.particleVelocity_58.x == 0) {
       particle.particleVelocity_58.x = 1.0f;
@@ -1063,7 +1055,7 @@ public class ParticleManager {
     new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
   };
 
-  public static final TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94>[] particleInstancePrerenderCallbacks_80119bac = new TriConsumer[65];
+  public static final BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94>[] particleInstancePrerenderCallbacks_80119bac = new BiConsumer[65];
   static {
     particleInstancePrerenderCallbacks_80119bac[0] = ParticleManager::preRenderNoop; // no-op
     particleInstancePrerenderCallbacks_80119bac[1] = ParticleManager::preRenderNoop; // no-op
@@ -1132,7 +1124,7 @@ public class ParticleManager {
     particleInstancePrerenderCallbacks_80119bac[64] = ParticleManager::preRenderNoop; // no-op
   }
 
-  public static final TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94>[] particleInstanceTickCallbacks_80119cb0 = new TriConsumer[65];
+  public static final BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94>[] particleInstanceTickCallbacks_80119cb0 = new BiConsumer[65];
   static {
     particleInstanceTickCallbacks_80119cb0[0] = ParticleManager::tickNoop; // no-op
     particleInstanceTickCallbacks_80119cb0[1] = ParticleManager::tickNoop; // no-op
@@ -1201,7 +1193,7 @@ public class ParticleManager {
     particleInstanceTickCallbacks_80119cb0[64] = ParticleManager::tickNoop; // no-op
   }
 
-  public static final TriConsumer<ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new TriConsumer[65];
+  public static final Consumer<ParticleEffectInstance94>[] initializerCallbacks_80119db4 = new Consumer[65];
   static {
     initializerCallbacks_80119db4[0] = ParticleManager::initializer0;
     initializerCallbacks_80119db4[1] = ParticleManager::initializer1;

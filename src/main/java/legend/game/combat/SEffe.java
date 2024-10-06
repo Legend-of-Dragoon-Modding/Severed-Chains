@@ -848,6 +848,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "behaviourType", description = "Also controls how the particle behaves")
   @Method(0x80102088L)
   public static FlowControl scriptAllocateParticleEffect(final RunningScript<? extends BattleObject> script) {
+    final BattleObject parentBobj = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
     final int particleTypeId = script.params_20[2].get();
     final int particleCount = script.params_20[3].get();
     final int _10 = script.params_20[4].get();
@@ -856,7 +857,7 @@ public final class SEffe {
     final int innerStuff = script.params_20[7].get();
     final int behaviourType = script.params_20[8].get();
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state = ((Battle)currentEngineState_8004dd04).particles.allocateParticle(script.scriptState_04, behaviourType, particleCount, particleTypeId, _10, _14, _18, innerStuff, script.params_20[1].get());
+    final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state = ((Battle)currentEngineState_8004dd04).particles.allocateParticle(script.scriptState_04, behaviourType, particleCount, particleTypeId, _10, _14, _18, innerStuff, parentBobj);
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;

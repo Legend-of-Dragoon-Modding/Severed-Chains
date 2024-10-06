@@ -9,6 +9,7 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.SpriteMetrics08;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Math;
@@ -35,8 +36,8 @@ public class QuadParticle extends ParticleEffectData98 {
   /** ushort */
   private int clut_5c;
 
-  public QuadParticle(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
-    super(manager, parentScriptIndex, effectInner, type, count);
+  public QuadParticle(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
+    super(manager, parentBobj, effectInner, type, count);
   }
 
   @Override
@@ -122,7 +123,7 @@ public class QuadParticle extends ParticleEffectData98 {
         }
 
         //LAB_800fe1fc
-        this.particleInstancePrerenderCallback_84.accept(manager, this, inst);
+        this.particleInstancePrerenderCallback_84.accept(manager, inst);
 
         inst.tickAttributes(manager, colour);
 

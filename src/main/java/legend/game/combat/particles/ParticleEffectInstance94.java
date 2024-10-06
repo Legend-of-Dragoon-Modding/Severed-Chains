@@ -35,7 +35,9 @@ public class ParticleEffectInstance94 {
   public short _14; // position x // Monoxide: not sure what these are, they're set to x/y/z at one point, but definitely not used as a position
   public short _16; // position y // Monoxide: actually, maybe multipurpose, depending on effect? Sometimes used as angles, sometimes seem to be used as position modifiers
   public short _18; // position z
-  public final Vector3f _1a = new Vector3f(); // position noise velocity? (TODO not actually a vector)
+  public short _1a;
+  public short _1c;
+  public short _1e;
   //
 
   public short verticalPositionScale_20;
@@ -99,9 +101,9 @@ public class ParticleEffectInstance94 {
     this.spriteRotationStep_78.y = seed_800fa754.nextFloat() * MathHelper.TWO_PI / 32.0f - MathHelper.TWO_PI / 64.0f;
     this.spriteRotationStep_78.z = 0.0f;
     this.flags_90 = this.flags_90 & 0xffff_fff1 | (seed_800fa754.nextFloat() < 0.5f ? 0 : 0x8);
+
     final ParticleInitialTransformationMetrics10 metrics = particleInitialTransformationMetrics_801198f0[behaviourType];
-    final int initialPositionMode = metrics.initialPositionMode_00;
-    if(initialPositionMode == 1) {
+    if(metrics.initialPositionMode_00 == 1) {
       //LAB_80101840
       final int angle = seed_800fa754.nextInt(4097);
       final short baseTranslationMagnitude = effectInner._10;
@@ -109,17 +111,17 @@ public class ParticleEffectInstance94 {
       this.particlePosition_50.y = 0.0f;
       this.particlePosition_50.z = rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
       //LAB_80101824
-    } else if(initialPositionMode == 2) {
+    } else if(metrics.initialPositionMode_00 == 2) {
       //LAB_801018c8
       final int angle = seed_800fa754.nextInt(4097);
       final int baseTranslationMagnitude = seed_800fa754.nextInt(effectInner._10 + 1);
       this.particlePosition_50.x = rcos(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
       this.particlePosition_50.y = 0.0f;
       this.particlePosition_50.z = rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
-    } else if(initialPositionMode == 3) {
+    } else if(metrics.initialPositionMode_00 == 3) {
       //LAB_80101990
       this.particlePosition_50.y = seed_800fa754.nextInt(metrics.initialTranslationMagnitudeReductionFactor2_04 - metrics.initialTranslationMagnitudeReductionFactor1_02 + 1) + metrics.initialTranslationMagnitudeReductionFactor1_02;
-    } else if(initialPositionMode == 4) {
+    } else if(metrics.initialPositionMode_00 == 4) {
       //LAB_801019e4
       final int angle1 = seed_800fa754.nextInt(4097);
       final int angle2 = seed_800fa754.nextInt(2049);
@@ -130,7 +132,7 @@ public class ParticleEffectInstance94 {
 
     //LAB_80101b10
     //LAB_80101b18
-    particle.initializerCallback_8c.accept(particle, this, effectInner);
+    particle.initializerCallback_8c.accept(this);
 
     if(metrics.hasSpecialAccelerationHandling_06) {
       this.particleVelocity_58.x = this.particleVelocity_58.x * effectInner._18;
@@ -211,7 +213,7 @@ public class ParticleEffectInstance94 {
     }
 
     //LAB_800fd54c
-    this.particle.particleInstanceTickCallback_88.accept(manager, this.particle, this);
+    this.particle.particleInstanceTickCallback_88.accept(manager, this);
 
     if((this.flags_90 & 0x1) == 0) {
       return false;

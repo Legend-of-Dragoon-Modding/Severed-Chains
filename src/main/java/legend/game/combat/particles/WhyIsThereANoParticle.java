@@ -2,14 +2,16 @@ package legend.game.combat.particles;
 
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class WhyIsThereANoParticle extends ParticleEffectData98 {
-  public WhyIsThereANoParticle(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
-    super(manager, parentScriptIndex, effectInner, type, count);
+  public WhyIsThereANoParticle(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
+    super(manager, parentBobj, effectInner, type, count);
   }
 
   @Override

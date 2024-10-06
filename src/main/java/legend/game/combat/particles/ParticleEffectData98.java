@@ -1,13 +1,17 @@
 package legend.game.combat.particles;
 
 import legend.core.gte.MV;
-import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.game.combat.particles.ParticleManager.initializerCallbacks_80119db4;
 import static legend.game.combat.particles.ParticleManager.particleInnerStuffDefaultsArray_801197ec;
@@ -18,7 +22,8 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
   public final ParticleManager manager;
 
   /** Can be -1 */
-  public final int parentScriptIndex_04;
+  @Nullable
+  public final BattleObject parentBobj_04;
   public final ParticleEffectData98Inner24 effectInner_08;
 
   /** ushort */
@@ -46,17 +51,17 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
 
   public final Vector3f effectAcceleration_70 = new Vector3f();
   public int scaleParticleAcceleration_80;
-  public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
-  public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceTickCallback_88;
-  public TriConsumer<ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> initializerCallback_8c;
+  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
+  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstanceTickCallback_88;
+  public Consumer<ParticleEffectInstance94> initializerCallback_8c;
   public ParticleEffectData98 next_94;
 
   public Obj obj;
   public final MV transforms = new MV();
 
-  public ParticleEffectData98(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 inner, final int type, final int count) {
+  public ParticleEffectData98(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 inner, final int type, final int count) {
     this.manager = manager;
-    this.parentScriptIndex_04 = parentScriptIndex;
+    this.parentBobj_04 = parentBobj;
     this.effectInner_08 = inner;
     this.countParticleInstance_50 = count;
     this.renderType_60 = type;
