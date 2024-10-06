@@ -68,7 +68,7 @@ public class LineParticle extends ParticleEffectData98 {
 
           //LAB_800fd950
           inst.subParticlePositionsArray_44[0].set(inst.particlePosition_50);
-          this.particleInstancePrerenderCallback_84.accept(manager, inst);
+          inst.beforeRender(manager);
 
           final Vector3f colour = new Vector3f();
           inst.tickAttributes(manager, colour);

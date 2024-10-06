@@ -11,7 +11,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.particles.ParticleManager.particleInitialTransformationMetrics_801198f0;
 
-public class ParticleEffectInstance94 {
+public abstract class ParticleEffectInstance94 {
   public final int index;
   public final ParticleEffectData98 particle;
 
@@ -31,7 +31,7 @@ public class ParticleEffectInstance94 {
   public float angleVelocity_10;
   public short ticksRemaining_12; // Scales colour, rotation, ... over time
 
-  // Polymorphic section
+  // Polymorphic section TODO move into instances
   public short _14; // position x // Monoxide: not sure what these are, they're set to x/y/z at one point, but definitely not used as a position
   public short _16; // position y // Monoxide: actually, maybe multipurpose, depending on effect? Sometimes used as angles, sometimes seem to be used as position modifiers
   public short _18; // position z
@@ -132,7 +132,7 @@ public class ParticleEffectInstance94 {
 
     //LAB_80101b10
     //LAB_80101b18
-    particle.initializerCallback_8c.accept(this);
+    this.initType();
 
     if(metrics.hasSpecialAccelerationHandling_06) {
       this.particleVelocity_58.x = this.particleVelocity_58.x * effectInner._18;
@@ -150,6 +150,8 @@ public class ParticleEffectInstance94 {
     //LAB_80101c20
     this.particlePositionCopy2_48.set(this.particlePosition_50);
   }
+
+  protected abstract void initType();
 
   @Method(0x800fd084L)
   private void updateParticleRotationTranslationColour(final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
@@ -213,7 +215,7 @@ public class ParticleEffectInstance94 {
     }
 
     //LAB_800fd54c
-    this.particle.particleInstanceTickCallback_88.accept(manager, this);
+    this.tickType(manager);
 
     if((this.flags_90 & 0x1) == 0) {
       return false;
@@ -233,6 +235,8 @@ public class ParticleEffectInstance94 {
     //LAB_800fd5e0
     return true;
   }
+
+  protected abstract void tickType(final EffectManagerData6c<EffectManagerParams.ParticleType> manager);
 
   @Method(0x800fd1dcL)
   protected void tickAttributes(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final Vector3f colour) {
@@ -289,5 +293,16 @@ public class ParticleEffectInstance94 {
       this.particleVelocity_58.add(this.particle.effectAcceleration_70);
     }
     //LAB_800fd458
+  }
+
+  protected abstract void beforeRender(final EffectManagerData6c<EffectManagerParams.ParticleType> manager);
+
+  /**
+   * Sets a particle's position based on an angle and distance
+   */
+  @Method(0x800fb95cL)
+  protected static void setParticlePositionAlongVector(final ParticleEffectInstance94 particle) {
+    particle.particlePosition_50.x = rcos(particle._14) * particle._16 >> 12;
+    particle.particlePosition_50.z = rsin(particle._14) * particle._16 >> 12;
   }
 }

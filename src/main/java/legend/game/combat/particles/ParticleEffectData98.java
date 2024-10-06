@@ -10,13 +10,9 @@ import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-import static legend.game.combat.particles.ParticleManager.initializerCallbacks_80119db4;
+import static legend.game.combat.particles.ParticleManager.instanceConstructors;
 import static legend.game.combat.particles.ParticleManager.particleInnerStuffDefaultsArray_801197ec;
-import static legend.game.combat.particles.ParticleManager.particleInstancePrerenderCallbacks_80119bac;
-import static legend.game.combat.particles.ParticleManager.particleInstanceTickCallbacks_80119cb0;
 
 public abstract class ParticleEffectData98 implements Effect<EffectManagerParams.ParticleType> {
   public final ParticleManager manager;
@@ -51,9 +47,9 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
 
   public final Vector3f effectAcceleration_70 = new Vector3f();
   public int scaleParticleAcceleration_80;
-  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
-  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstanceTickCallback_88;
-  public Consumer<ParticleEffectInstance94> initializerCallback_8c;
+//  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
+//  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstanceTickCallback_88;
+//  public Consumer<ParticleEffectInstance94> initializerCallback_8c;
   public ParticleEffectData98 next_94;
 
   public Obj obj;
@@ -67,9 +63,6 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
     this.renderType_60 = type;
     this.particleArray_68 = new ParticleEffectInstance94[count];
 
-    this.particleInstancePrerenderCallback_84 = particleInstancePrerenderCallbacks_80119bac[inner.behaviourType_20];
-    this.particleInstanceTickCallback_88 = particleInstanceTickCallbacks_80119cb0[inner.behaviourType_20];
-    this.initializerCallback_8c = initializerCallbacks_80119db4[inner.behaviourType_20];
     this.callback90Type_61 = particleInnerStuffDefaultsArray_801197ec[inner.behaviourType_20].callbackType_03;
 
     for(int i = 0; i < this.countParticleInstance_50; i++) {
@@ -81,7 +74,7 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
   }
 
   protected ParticleEffectInstance94 makeInstance(final int index) {
-    return new ParticleEffectInstance94(index, this);
+    return instanceConstructors[this.renderType_60].apply(index, this);
   }
 
   protected abstract void init(final int flags);

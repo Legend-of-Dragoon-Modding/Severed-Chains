@@ -174,7 +174,7 @@ public class TmdParticle extends ParticleEffectData98 {
       final ParticleEffectInstance94 inst = this.particleArray_68[i];
 
       if(inst.tick(manager)) {
-        this.particleInstancePrerenderCallback_84.accept(manager, inst);
+        inst.beforeRender(manager);
         final Vector3f colour = new Vector3f();
         inst.tickAttributes(manager, colour);
 

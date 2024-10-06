@@ -123,8 +123,7 @@ public class QuadParticle extends ParticleEffectData98 {
         }
 
         //LAB_800fe1fc
-        this.particleInstancePrerenderCallback_84.accept(manager, inst);
-
+        inst.beforeRender(manager);
         inst.tickAttributes(manager, colour);
 
         if((this.effectInner_08.particleInnerStuff_1c & 0x1000_0000) == 0 || (inst.flags_90 & 0x8) == 0) {
