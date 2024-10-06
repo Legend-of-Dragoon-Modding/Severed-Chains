@@ -7,7 +7,7 @@ import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 
 import static legend.game.combat.Battle.seed_800fa754;
-import static legend.game.combat.SEffe.getModelObjectTranslation;
+import static legend.game.combat.SEffe.calculateBentPartPosition;
 
 public class MonsterDeathEffect34 implements Effect<EffectManagerParams.VoidType> {
   /** short; Indicates highest part index to turn off. Parts at index <= value are "destroyed" */
@@ -88,7 +88,7 @@ public class MonsterDeathEffect34 implements Effect<EffectManagerParams.VoidType
           obj.stepG_2c = obj.g_26 / obj.stepCount_01;
           obj.stepB_2e = obj.b_28 / obj.stepCount_01;
           final Vector3f translation = new Vector3f();
-          getModelObjectTranslation(this.parent_08, translation, objIndex);
+          calculateBentPartPosition(this.parent_08, translation, objIndex);
           obj.translation_14.set(translation);
           this.setModelObjectVisibility(objIndex, false);
         }

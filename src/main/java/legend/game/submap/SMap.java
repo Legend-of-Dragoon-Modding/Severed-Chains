@@ -31,6 +31,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.tim.Tim;
+import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
@@ -106,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
+import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
@@ -976,9 +978,9 @@ public class SMap extends EngineState {
         final ModelPart10 dobj2 = model.modelParts_00[i];
 
         GsGetLws(dobj2.coord2_04, lw, ls);
-//        GsSetLightMatrix(lw);
-//        GTE.setTransforms(ls);
-//        Renderer.renderDobj2(dobj2, false, 0);
+        GsSetLightMatrix(lw);
+        GTE.setTransforms(ls);
+        Renderer.renderDobj2(dobj2, false, 0);
 
         if(dobj2.obj != null) { //TODO remove me
           GsGetLw(dobj2.coord2_04, lw);

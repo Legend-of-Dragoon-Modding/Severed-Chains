@@ -1,8 +1,6 @@
 package legend.game.combat.particles;
 
 import legend.core.gte.MV;
-import legend.core.gte.TmdObjTable1c;
-import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
 import legend.game.combat.effects.Effect;
@@ -11,35 +9,25 @@ import legend.game.combat.effects.EffectManagerParams;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 
-import java.util.Arrays;
+import static legend.game.combat.particles.ParticleManager.initializerCallbacks_80119db4;
+import static legend.game.combat.particles.ParticleManager.particleInnerStuffDefaultsArray_801197ec;
+import static legend.game.combat.particles.ParticleManager.particleInstancePrerenderCallbacks_80119bac;
+import static legend.game.combat.particles.ParticleManager.particleInstanceTickCallbacks_80119cb0;
 
-public class ParticleEffectData98 implements Effect<EffectManagerParams.ParticleType> {
-  private final ParticleManager manager;
-  private final int type;
+public abstract class ParticleEffectData98 implements Effect<EffectManagerParams.ParticleType> {
+  public final ParticleManager manager;
 
-  public ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> myState_00;
   /** Can be -1 */
-  public int parentScriptIndex_04;
-  public final ParticleEffectData98Inner24 effectInner_08 = new ParticleEffectData98Inner24();
-
-  public TmdObjTable1c tmd_30;
-  public short halfW_34;
-  public short halfH_36;
+  public final int parentScriptIndex_04;
+  public final ParticleEffectData98Inner24 effectInner_08;
 
   /** ushort */
-  public int countParticleInstance_50;
+  public final int countParticleInstance_50;
   /** ushort */
   public int countFramesRendered_52;
   /** ushort */
   public int countParticleSub_54;
-  /** ushort */
-  public int tpage_56;
-  /** ushort */
-  public int u_58;
-  /** ushort */
-  public int v_5a;
-  /** ushort */
-  public int clut_5c;
+
   /** ubyte */
   public int w_5e;
   /** ubyte */
@@ -48,7 +36,7 @@ public class ParticleEffectData98 implements Effect<EffectManagerParams.Particle
    * Some kind of effect type flag or something; possibly multiuse? Gets used as a callback index at one point,
    * but can have values greater than length of callback array.
    */
-  public byte subParticleType_60;
+  public final int renderType_60;
   public int callback90Type_61;
 
   /** Size in bytes of following array of structs */
@@ -59,21 +47,39 @@ public class ParticleEffectData98 implements Effect<EffectManagerParams.Particle
   public final Vector3f effectAcceleration_70 = new Vector3f();
   public int scaleParticleAcceleration_80;
   public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
-  public QuadConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>>, EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceTickCallback_88;
+  public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceTickCallback_88;
   public TriConsumer<ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> initializerCallback_8c;
-  public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceReconstructorCallback_90;
   public ParticleEffectData98 next_94;
 
   public Obj obj;
   public final MV transforms = new MV();
 
-  public ParticleEffectData98(final ParticleManager manager, final int type, final int count) {
+  public ParticleEffectData98(final ParticleManager manager, final int parentScriptIndex, final ParticleEffectData98Inner24 inner, final int type, final int count) {
     this.manager = manager;
-    this.type = type;
+    this.parentScriptIndex_04 = parentScriptIndex;
+    this.effectInner_08 = inner;
     this.countParticleInstance_50 = count;
+    this.renderType_60 = type;
     this.particleArray_68 = new ParticleEffectInstance94[count];
-    Arrays.setAll(this.particleArray_68, ParticleEffectInstance94::new);
+
+    this.particleInstancePrerenderCallback_84 = particleInstancePrerenderCallbacks_80119bac[inner.behaviourType_20];
+    this.particleInstanceTickCallback_88 = particleInstanceTickCallbacks_80119cb0[inner.behaviourType_20];
+    this.initializerCallback_8c = initializerCallbacks_80119db4[inner.behaviourType_20];
+    this.callback90Type_61 = particleInnerStuffDefaultsArray_801197ec[inner.behaviourType_20].callbackType_03;
+
+    for(int i = 0; i < this.countParticleInstance_50; i++) {
+      final ParticleEffectInstance94 inst = this.makeInstance(i);
+      this.particleArray_68[i] = inst;
+      inst.init();
+      inst.originalParticlePosition_3c.set(inst.particlePosition_50);
+    }
   }
+
+  protected ParticleEffectInstance94 makeInstance(final int index) {
+    return new ParticleEffectInstance94(index, this);
+  }
+
+  protected abstract void init(final int flags);
 
   @Override
   public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
@@ -81,9 +87,7 @@ public class ParticleEffectData98 implements Effect<EffectManagerParams.Particle
   }
 
   @Override
-  public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
-    this.manager.particleEffectRenderers_80119b7c[this.type].accept(state);
-  }
+  public abstract void render(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state);
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state) {
@@ -94,4 +98,16 @@ public class ParticleEffectData98 implements Effect<EffectManagerParams.Particle
 
     this.manager.deleteParticle(this);
   }
+
+  public void reinitInstance(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 inst) {
+    if(this.callback90Type_61 == 0 && (manager.params_10.flags_24 & 0x4) != 0 || this.callback90Type_61 != 0 && (manager.params_10.flags_24 & 0x4) == 0) {
+      inst.init();
+
+      if(this.countParticleSub_54 != 0) {
+        this.reinitInstanceType(manager, inst);
+      }
+    }
+  }
+
+  protected abstract void reinitInstanceType(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 inst);
 }
