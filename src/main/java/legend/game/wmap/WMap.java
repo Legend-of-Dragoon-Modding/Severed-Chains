@@ -3374,9 +3374,8 @@ public class WMap extends EngineState {
     obj.delete();
 
     transforms.identity();
-    transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0);
-    RENDERER.queueOrthoModel(obj, transforms)
-      .depthOffset(400.0f);
+    transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 400.0f);
+    RENDERER.queueOrthoModel(obj, transforms);
 
     //LAB_800e2770
     //LAB_800e2774
