@@ -132,8 +132,8 @@
 +CHAR_INDEX:
 +data 0x0
 +KILL_LAVITZ:
-+mov inl[:P_INDEX], stor[10]
-+call 167, var[34][stor[10]], stor[10]
++mov inl[:P_INDEX], stor[22]
++call 167, var[34][stor[22]], stor[10]
 +jmp_cmp ==, stor[10], 0x1, inl[:SET_DEAD]
 +incr inl[:P_INDEX]
 +jmp_cmp ==, var[35], inl[:P_INDEX], inl[:NOT_FOUND]
@@ -144,5 +144,5 @@
 +NOT_FOUND:
 +return
 +SET_DEAD:
-+call 173, stor[10], 0x1
++call 173, var[34][stor[22]], 0x1
 +return
