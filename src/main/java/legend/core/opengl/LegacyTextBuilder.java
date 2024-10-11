@@ -45,13 +45,13 @@ public class LegacyTextBuilder {
     return offset;
   }
 
-  private int setVertices(int offset, final float[] vertices, final int chr) {
+  private int setVertices(int offset, final float[] vertices, final int chr, final float selectionWidth, final float selectionHeight) {
     final int u = (chr & 0xf) * 16;
     final int v = chr / 16 * 16;
     offset = this.setVertex(offset, vertices, 0.0f,  0.0f, u, v);
-    offset = this.setVertex(offset, vertices, 0.0f, 16.0f, u, v + 16.0f);
-    offset = this.setVertex(offset, vertices, 8.0f,  0.0f, u + 8.0f, v);
-    offset = this.setVertex(offset, vertices, 8.0f, 16.0f, u + 8.0f, v + 16.0f);
+    offset = this.setVertex(offset, vertices, 0.0f, selectionHeight, u, v + selectionHeight);
+    offset = this.setVertex(offset, vertices, selectionWidth,  0.0f, u + selectionWidth, v);
+    offset = this.setVertex(offset, vertices, selectionWidth, selectionHeight, u + selectionWidth, v + selectionHeight);
     return offset;
   }
 
@@ -66,7 +66,7 @@ public class LegacyTextBuilder {
     final float[] vertices = new float[CHAR_COUNT * 4 * vertexSize];
     int offset = 0;
     for(int chr = 0; chr < CHAR_COUNT; chr++) {
-      offset = this.setVertices(offset, vertices, chr);
+      offset = this.setVertices(offset, vertices, chr, getSelectionWidth(chr), getSelectionHeight());
     }
 
     final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, CHAR_COUNT * 4);
@@ -101,5 +101,17 @@ public class LegacyTextBuilder {
     final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
     meshes[0] = mesh;
     return new MeshObj(this.name, meshes, true);
+  }
+
+  private float getSelectionWidth(int chr) {
+    if(chr > 223 && chr <= 256) {
+      return 15.0f;
+    } else {
+      return 8.0f;
+    }
+  }
+
+  private float getSelectionHeight() {
+    return 16.0f;
   }
 }
