@@ -1512,3 +1512,5 @@
 "Battle::scriptUseItem","in","int","targetBentIndex","The ID of the bent being targeted","none"
 "Battle::scriptApplyEquipmentEffect","in","reg","equipmentId","The ID of the equipment","none"
 "Battle::scriptApplyEquipmentEffect","in","int","wearerBentIndex","The ID of the bent wearing the equipment","none"
+"Battle::scriptSetCombatantCharSlot","in","int","combatantIndex","Combatant ID","none"
+"Battle::scriptSetCombatantCharSlot","in","int","charSlot","Target character slot","none"

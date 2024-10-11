@@ -14,6 +14,7 @@ import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.input.Input;
@@ -3119,11 +3120,11 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80027e40
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
     textbox.x_14 = newX;
-    textbox.y_16 = newY + 8;
+    textbox.y_16 = newY;
     textboxText.x_14 = newX;
-    textboxText.y_16 = newY + 8;
+    textboxText.y_16 = newY;
     textboxText._18 = newX - width;
-    textboxText._1a = newY - height + 8;
+    textboxText._1a = newY - height;
   }
 
   @Method(0x80027eb4L)
@@ -3223,13 +3224,13 @@ public final class Scus94491BpeSegment_8002 {
 
         //LAB_8002840c
         if(scrollH < 13) {
-          final float x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc - nudgeX;
-          final float y;
+          final int x = (int)(textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc - nudgeX);
+          final int y;
 
           if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 && i < textboxText.chars_1c) {
-            y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY;
+            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY);
           } else {
-            y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY - textboxText.scrollAmount_2c;
+            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY - textboxText.scrollAmount_2c);
           }
 
           //LAB_80028544
@@ -3237,12 +3238,12 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x + 1, GPU.getOffsetY() + (int)y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
+          textboxText.transforms.transfer.set(GPU.getOffsetX() + x + 1, GPU.getOffsetY() + y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
           RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .monochrome(0.0f)
-            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y, 8, height);
+            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 8, height);
 
           textboxText.transforms.transfer.x--;
           textboxText.transforms.transfer.y--;
@@ -3251,7 +3252,7 @@ public final class Scus94491BpeSegment_8002 {
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
-            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y, 8, height);
+            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 8, height);
         }
 
         nudgeX += getCharWidth(chr.char_06);

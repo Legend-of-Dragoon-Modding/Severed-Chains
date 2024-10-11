@@ -1,11 +1,19 @@
 package legend.lodmod.items;
 
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.scripting.ScriptState;
+
+import java.util.function.BiFunction;
 
 public class SunRhapsodyItem extends RecoverHpItem {
   public SunRhapsodyItem() {
     super(34, 25, false, 100);
+  }
+
+  @Override
+  protected BiFunction<Integer, Integer, Integer> getRecoveryMethod() {
+    return Scus94491BpeSegment_8002::addMp;
   }
 
   @Override

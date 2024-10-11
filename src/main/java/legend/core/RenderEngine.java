@@ -88,6 +88,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDepthFunc;
@@ -100,8 +101,7 @@ import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
-import static org.lwjgl.opengl.GL30C.GL_HALF_FLOAT;
-import static org.lwjgl.opengl.GL30C.GL_RGBA16F;
+import static org.lwjgl.opengl.GL31C.GL_RGBA16_SNORM;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
@@ -705,9 +705,9 @@ public class RenderEngine {
         glEnable(GL_SCISSOR_TEST);
 
         if(widescreen || batch.expandedSubmap) {
-          glScissor((int)((entry.scissor.x + batch.widescreenOrthoOffsetX) * h * (batch.expectedWidth / batch.projectionWidth) / batch.widthSquisher), this.renderHeight - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * h * (batch.expectedWidth / batch.projectionWidth) / batch.widthSquisher), (int)(entry.scissor.h * h));
+          glScissor(Math.round((entry.scissor.x + batch.widescreenOrthoOffsetX) * h * (batch.expectedWidth / batch.projectionWidth) / batch.widthSquisher), this.renderHeight - Math.round((entry.scissor.y + entry.scissor.h) * h), Math.round(entry.scissor.w * h * (batch.expectedWidth / batch.projectionWidth) / batch.widthSquisher), Math.round(entry.scissor.h * h));
         } else {
-          glScissor((int)((entry.scissor.x + batch.widescreenOrthoOffsetX) * w), this.renderHeight - (int)((entry.scissor.y + entry.scissor.h) * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
+          glScissor(Math.round((entry.scissor.x + batch.widescreenOrthoOffsetX) * w), this.renderHeight - Math.round((entry.scissor.y + entry.scissor.h) * h), Math.round(entry.scissor.w * w), Math.round(entry.scissor.h * h));
         }
       }
 
@@ -1072,9 +1072,9 @@ public class RenderEngine {
 
       this.renderTextures[i] = Texture.create(builder -> {
         builder.size(this.renderWidth, this.renderHeight);
-        builder.internalFormat(GL_RGBA16F);
+        builder.internalFormat(GL_RGBA16_SNORM);
         builder.dataFormat(GL_RGBA);
-        builder.dataType(GL_HALF_FLOAT);
+        builder.dataType(GL_UNSIGNED_BYTE);
         builder.magFilter(GL_NEAREST);
         builder.minFilter(GL_LINEAR);
       });

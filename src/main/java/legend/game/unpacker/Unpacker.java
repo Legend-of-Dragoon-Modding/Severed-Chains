@@ -1344,7 +1344,9 @@ public final class Unpacker {
       case 159 -> new int[] {96};
       case 161 -> new int[] {48};
       case 162 -> new int[] {114};
+      case 164 -> new int[] {67};
       case 168 -> new int[] {5, 32};
+      case 172 -> new int[] {11};
       case 177 -> new int[] {25, 49};
       case 179 -> new int[] {56, 144};
       case 183 -> new int[] {20};
@@ -1353,7 +1355,7 @@ public final class Unpacker {
       case 196 -> new int[] {39, 47};
       case 197 -> new int[] {41, 63};
       case 198 -> new int[] {65};
-      case 208 -> new int[] {11, 67, 93};
+      case 202 -> new int[] {93};
       case 232 -> new int[] {72};
       case 235 -> new int[] {60, 75};
       case 236 -> new int[] {9, 121};

@@ -130,8 +130,8 @@ public final class Scus94491BpeSegment_800b {
   public static BackgroundMusic victoryMusic;
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
-  public static int _800bd710;
-  public static int _800bd714;
+  public static int dissolveRowCount_800bd710;
+  public static int dissolveIterationsPerformed_800bd714;
   public static int battleDissolveTicks;
 
   public static int _800bd740;

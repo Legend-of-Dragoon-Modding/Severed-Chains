@@ -423,6 +423,16 @@ public class SMap extends EngineState {
     this.submap.startMusic();
   }
 
+  /** Disable input while the screen is fading in */
+  @Override
+  public int getScriptInput(final int input) {
+    if(this.smapLoadingStage_800cb430 == SubmapState.WAIT_FOR_FADE_IN) {
+      return 0;
+    }
+
+    return super.getScriptInput(input);
+  }
+
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
@@ -2853,8 +2863,8 @@ public class SMap extends EngineState {
       // Load map assets
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
         this.unloadSubmapParticles_800c6870 = false;
-        this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_7);
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_SOBJ_ASSETS_AND_SCRIPTS_6;
+        this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_7);
       }
 
       // Load submap objects
@@ -3783,7 +3793,17 @@ public class SMap extends EngineState {
         startFadeEffect(2, 10);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
-        this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+        this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_FADE_IN;
+      }
+
+      case WAIT_FOR_FADE_IN -> {
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
+
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
+
+        if(fullScreenEffect_800bb140.currentColour_28 == 0) {
+          this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+        }
       }
 
       case RENDER_SUBMAP_12 -> {
@@ -5113,7 +5133,7 @@ public class SMap extends EngineState {
     PopMatrix();
 
     if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
-      if(this.momentaryIndicatorTicks_800f9e9c < 33) {
+      if(this.momentaryIndicatorTicks_800f9e9c < 33 * (2 / vsyncMode_8007a3b8)) {
         this.renderTriangleIndicators();
         this.momentaryIndicatorTicks_800f9e9c++;
       }

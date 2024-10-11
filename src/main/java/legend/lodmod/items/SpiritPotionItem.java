@@ -9,6 +9,11 @@ public class SpiritPotionItem extends RecoverHpItem {
   }
 
   @Override
+  public boolean canBeUsed(final UsageLocation location) {
+    return location == UsageLocation.BATTLE;
+  }
+
+  @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;
   }

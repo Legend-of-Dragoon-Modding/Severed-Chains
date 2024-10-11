@@ -17,12 +17,14 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
+import legend.game.combat.BattleTransitionMode;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
@@ -62,6 +64,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
@@ -131,8 +134,8 @@ import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bc9a8;
 import static legend.game.Scus94491BpeSegment_800b._800bd0f0;
-import static legend.game.Scus94491BpeSegment_800b._800bd710;
-import static legend.game.Scus94491BpeSegment_800b._800bd714;
+import static legend.game.Scus94491BpeSegment_800b.dissolveRowCount_800bd710;
+import static legend.game.Scus94491BpeSegment_800b.dissolveIterationsPerformed_800bd714;
 import static legend.game.Scus94491BpeSegment_800b._800bd740;
 import static legend.game.Scus94491BpeSegment_800b.battleDissolveTicks;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
@@ -1843,11 +1846,14 @@ public final class Scus94491BpeSegment {
       tickBattleDissolveDarkening();
     }
 
+    final BattleTransitionMode mode = CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get());
+    final int speedDivisor = mode == BattleTransitionMode.NORMAL ? 1 : 2;
+
     //LAB_8001b480
     if((battleFlags_800bc960 & 0x2) != 0) { // Combat controller script is loaded
       if(battleStartDelayTicks_8004f6ec == 0) {
         battleStartDelayTicks_8004f6ec = 1;
-        setBattleDissolveDarkeningMetrics(true, 300 / vsyncMode_8007a3b8);
+        setBattleDissolveDarkeningMetrics(true, 300 / vsyncMode_8007a3b8 / speedDivisor);
         startFadeEffect(1, 1);
       }
     }
@@ -1855,7 +1861,7 @@ public final class Scus94491BpeSegment {
     //LAB_8001b4c0
     if(battleStartDelayTicks_8004f6ec != 0) {
       //LAB_8001b4d4
-      if(battleStartDelayTicks_8004f6ec >= 150 / vsyncMode_8007a3b8) {
+      if(battleStartDelayTicks_8004f6ec >= 150 / vsyncMode_8007a3b8 / speedDivisor || mode == BattleTransitionMode.INSTANT) {
         _8004f6e4 = -1;
         battleFlags_800bc960 |= 0x1;
       }
@@ -1889,76 +1895,100 @@ public final class Scus94491BpeSegment {
 
     battleDissolveTicks += vsyncMode_8007a3b8;
 
-    final int sp10 = 0;
-    final int sp14 = 0;
+    if((battleDissolveTicks & 0x1) == 0 || CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get()) == BattleTransitionMode.FAST) {
+      final float squish;
+      final float width;
+      final float offset;
 
-    if((battleDissolveTicks & 0x1) == 0) {
-      final int a0 = displayHeight_1f8003e4 / 8;
-      final int v0 = 100 / a0;
+      // Make sure effect fills the whole screen
+      if(RENDERER.getAllowWidescreen() && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+        squish = 1.0f;
+        width = dissolveDisplayWidth;
+        offset = 0.0f;
+      } else {
+        squish = dissolveDisplayWidth / 320.0f;
+        width = RENDERER.getLastFrame().width / (RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
+        offset = width - 320.0f;
+      }
 
-      if(v0 == _800bd714) {
-        _800bd714 = 0;
-        _800bd710++;
-        final int v1 = a0 - 1;
-        if(v1 < _800bd710) {
-          _800bd710 = v1;
+      final int numberOfBlocksY = displayHeight_1f8003e4 / 8;
+      final int blockHeight = 100 / numberOfBlocksY;
+
+      if(blockHeight == dissolveIterationsPerformed_800bd714) {
+        dissolveIterationsPerformed_800bd714 = 0;
+        dissolveRowCount_800bd710++;
+
+        if(dissolveRowCount_800bd710 > numberOfBlocksY) {
+          dissolveRowCount_800bd710 = numberOfBlocksY;
         }
       }
 
       //LAB_8001b608
-      int sp30 = 512;
+      int offsetY = 2;
 
       //LAB_8001b620
-      for(int sp18 = 0; sp18 <= _800bd710; sp18++) {
-        final int sp24 = sp30 >> 8;
-        int sp2c = sp10;
-        final int v = displayHeight_1f8003e4 - (_800bd710 + 1) * 8 + sp18 * 8;
+      for(int row = 0; row < dissolveRowCount_800bd710; row++) {
+        int offsetX = 0;
+        final int v = displayHeight_1f8003e4 - dissolveRowCount_800bd710 * 8 + row * 8;
 
         //LAB_8001b664
-        for(int sp1c = 0; sp1c < displayWidth_1f8003e0 / 32 * 4; sp1c++) {
-          final int u = sp1c * 8;
+        for(int col = 0; col < width * squish / 32 * 4; col++) {
+          final int u = col * 8;
 
           //LAB_8001b6a4
-          for(int s7 = 0; s7 <= 0; s7++) {
-            int s3 = rand() % 4;
-            if((rand() & 1) != 0) {
-              s3 = -s3;
-            }
-
-            //LAB_8001b6dc
-            final int s2 = rand() % 6;
-            final int left = sp2c + s3;
-            final int top = sp14 + v + s2 + sp24;
-
-            //LAB_8001b734
-            //LAB_8001b868
-            dissolveTransforms.transfer.set(left, top, 24.0f);
-            RENDERER.queueOrthoModel(dissolveSquare, dissolveTransforms)
-              .uvOffset((float)u / dissolveDisplayWidth, (240.0f - v) / 240.0f)
-              .texture(RENDERER.getLastFrame())
-              .monochrome((dissolveDarkening_800bd700.brightnessAccumulator_08 >> 8) / 128.0f);
+          int jitterX = rand() % 4;
+          if((rand() & 1) != 0) {
+            jitterX = -jitterX;
           }
 
-          sp2c += 8;
+          //LAB_8001b6dc
+          final int jitterY = rand() % 6;
+          final int left = offsetX + jitterX;
+          final int top = v + offsetY + jitterY;
+
+          //LAB_8001b734
+          //LAB_8001b868
+          dissolveTransforms.transfer.set(left - offset / 2.0f, top, 24.0f);
+          RENDERER.queueOrthoModel(dissolveSquare, dissolveTransforms)
+            .uvOffset((float)u / dissolveDisplayWidth, (displayHeight_1f8003e4 - v) / (float)displayHeight_1f8003e4)
+            .texture(RENDERER.getLastFrame())
+            .monochrome((dissolveDarkening_800bd700.brightnessAccumulator_08 >> 8) / 128.0f);
+
+          offsetX += 8;
         }
 
         //LAB_8001b8b8
-        sp30 += 512;
+        offsetY += 2;
       }
 
-      _800bd714++;
+      dissolveIterationsPerformed_800bd714++;
     }
 
-    renderBattleStartingScreenDarkening(sp10, sp14);
+    renderBattleStartingScreenDarkening();
   }
 
   private static final MV darkeningTransforms = new MV();
 
   /** The game doesn't continue rendering when battles are loading, this basically continues rendering the last frame that was rendered, but slightly darker each time */
   @Method(0x8001bbccL)
-  public static void renderBattleStartingScreenDarkening(final int x, final int y) {
-    darkeningTransforms.transfer.set(0.0f, 0.0f, 25.0f);
-    darkeningTransforms.scaling(dissolveDisplayWidth, 240.0f, 1.0f);
+  public static void renderBattleStartingScreenDarkening() {
+    final float squish;
+    final float width;
+    final float offset;
+
+    // Make sure effect fills the whole screen
+    if(RENDERER.getAllowWidescreen() && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      squish = 1.0f;
+      width = dissolveDisplayWidth;
+      offset = 0.0f;
+    } else {
+      squish = dissolveDisplayWidth / 320.0f;
+      width = RENDERER.getLastFrame().width / (RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
+      offset = width - 320.0f;
+    }
+
+    darkeningTransforms.transfer.set(-offset / 2.0f, 0.0f, 25.0f);
+    darkeningTransforms.scaling(width * squish, displayHeight_1f8003e4, 1.0f);
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, darkeningTransforms)
       .texture(RENDERER.getLastFrame())
       .monochrome(MathHelper.clamp((int)(dissolveDarkening_800bd700.brightnessAccumulator_08 * 1.1f) >> 8, 0x80 - 2 * vsyncMode_8007a3b8, 0x80) / 128.0f);
@@ -1973,8 +2003,8 @@ public final class Scus94491BpeSegment {
     dissolveDarkening_800bd700.active_00 = false;
     dissolveDarkening_800bd700.framesRemaining_04 = 0;
     dissolveDarkening_800bd700.brightnessAccumulator_08 = 0x8000;
-    _800bd714 = 0;
-    _800bd710 = 0;
+    dissolveIterationsPerformed_800bd714 = 0;
+    dissolveRowCount_800bd710 = 0;
     battleDissolveTicks = 0;
     clearRed_8007a3a8 = 0;
     clearGreen_800bb104 = 0;
