@@ -73,7 +73,7 @@ diff,SECT/DRGN0.BIN/5326/1,scripts/DRGN0/5326/1.diff,"Kubila Froggy, fix charact
 diff,SECT/DRGN0.BIN/5334/1,scripts/DRGN0/5334/1.diff,"Zackwell Skeleton, fix character count crash"
 diff,SECT/DRGN0.BIN/5344/1,scripts/DRGN0/5344/1.diff,"Zackwell - Lavitz (weird move), fix character count crash"
 diff,SECT/DRGN0.BIN/5414/1,scripts/DRGN0/5414/1.diff,"Melbu I Magic Casting, fix character count crash"
-diff,SECT/DRGN0.BIN/5414/1,scripts/DRGN0/5414/1.diff,"Melbu I Petrify Move, fix character count crash"
+diff,SECT/DRGN0.BIN/5418/1,scripts/DRGN0/5418/1.diff,"Melbu I Petrify Move, fix character count crash"
 diff,SECT/DRGN0.BIN/5442/1,scripts/DRGN0/5442/1.diff,"Melbu III Planet Attack, fix character count crash"
 diff,SECT/DRGN0.BIN/5464/1,scripts/DRGN0/5464/1.diff,"Melbu III Bomb Star Spawn, fix character count crash"
 diff,SECT/DRGN0.BIN/5466/1,scripts/DRGN0/5466/1.diff,"Melbu IV Trident Attack, fix character count crash"
