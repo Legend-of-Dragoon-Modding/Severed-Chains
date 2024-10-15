@@ -93,6 +93,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
@@ -152,6 +153,7 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -1850,7 +1852,10 @@ public class Battle extends EngineState {
       battleLoaded_800bc94c = false;
 
       switch(postBattleAction_800bc974) {
-        case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
+        case 1, 3 -> {
+          whichMenu_800bdc38 = WhichMenu.RENDER_NEW_MENU;
+          menuStack.pushScreen(new PostBattleScreen());
+        }
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
