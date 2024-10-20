@@ -361,7 +361,7 @@ public class CollisionGeometry {
    */
   @Method(0x800e9430L)
   private int handleMovementAndCollision(final float x, final float y, final float z, final Vector3f movement) {
-    if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
+    if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smap.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) {
       return -1;
     }
 
