@@ -4,7 +4,7 @@
  LABEL_227:
  jmp_cmp &, 0x1000, var[45][31], inl[:LABEL_234]
  jmp_cmp &, 0x80, var[45][31], inl[:LABEL_232]
-+jmp_cmp == 0x1, var[35], inl[:SKIP_SUCKY]
++jmp_cmp ==, 0x1, var[35], inl[:SKIP_SUCKY]
  gosub inl[:LABEL_228]
 +SKIP_SUCKY:
  jmp_cmp &, 0x80, var[45][31], inl[:LABEL_256]
