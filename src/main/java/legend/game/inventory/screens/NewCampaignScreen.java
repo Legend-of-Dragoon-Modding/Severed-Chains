@@ -99,13 +99,13 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
       loadingNewGameState_800bdc34 = true;
       playMenuSound(2);
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }
   }
 
   private void menuEscape() {
     playMenuSound(3);
-    whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
+    whichMenu_800bdc38 = WhichMenu.UNLOAD;
 
     bootMods(MODS.getAllModIds());
   }

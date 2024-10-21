@@ -60,13 +60,11 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.submap.SMap.shops_800f4930;
@@ -131,10 +129,6 @@ public class ShopScreen extends MenuScreen {
       }
 
       case LOAD_ITEMS_1 -> {
-        if(uiFile_800bdc3c == null) {
-          return;
-        }
-
         startFadeEffect(2, 10);
 
         final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];
@@ -287,15 +281,7 @@ public class ShopScreen extends MenuScreen {
         this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
       }
 
-      case UNLOAD_19 -> {
-        startFadeEffect(2, 10);
-        deallocateRenderables(0xff);
-
-        currentEngineState_8004dd04.menuClosed();
-
-        whichMenu_800bdc38 = WhichMenu.UNLOAD_SHOP_MENU_10;
-        textZ_800bdf00 = 13;
-      }
+      case UNLOAD_19 -> whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }
   }
 

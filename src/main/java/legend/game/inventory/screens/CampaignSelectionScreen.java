@@ -98,7 +98,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       gameState_800babc8.syncIds();
 
       loadingNewGameState_800bdc34 = true;
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
 
       submapScene_80052c34 = gameState_800babc8.submapScene_a4;
       submapCut_80052c30 = gameState_800babc8.submapCut_a8;
@@ -149,7 +149,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   private void menuEscape() {
     playMenuSound(3);
-    whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
+    whichMenu_800bdc38 = WhichMenu.UNLOAD;
 
     // Restore all mods when going back to the title screen
     bootMods(MODS.getAllModIds());

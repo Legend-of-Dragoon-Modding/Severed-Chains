@@ -1,7 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.Rect4i;
@@ -22,23 +22,11 @@ import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.inventory.screens.CampaignSelectionScreen;
-import legend.game.inventory.screens.CharSwapScreen;
-import legend.game.inventory.screens.FullScreenInputScreen;
+import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
-import legend.game.inventory.screens.MessageBoxScreen;
-import legend.game.inventory.screens.NewCampaignScreen;
-import legend.game.inventory.screens.OptionsCategoryScreen;
-import legend.game.inventory.screens.PostBattleScreen;
-import legend.game.inventory.screens.SaveGameScreen;
-import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
-import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.TakeItemEvent;
-import legend.game.saves.ConfigStorageLocation;
-import legend.game.saves.InvalidSaveException;
-import legend.game.saves.SaveFailedException;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
 import legend.game.scripting.RunningScript;
@@ -53,11 +41,9 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
-import legend.game.types.MessageBoxResult;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
@@ -86,14 +72,12 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -103,30 +87,24 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
-import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderMenus;
+import static legend.game.SItem.startMenuMusic;
+import static legend.game.SItem.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.monsterSoundLoaded;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.startMenuMusic;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
@@ -152,7 +130,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.previousEngineState_800bdb88;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
@@ -795,113 +772,44 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022510
   }
 
-  private static WhichMenu destMenu;
-  private static Supplier<MenuScreen> destScreen;
+  public static void initMenu(final WhichMenu destMenu, @Nullable final Supplier<MenuScreen> destScreen) {
+    startMenuMusic();
+    SCRIPTS.stop();
 
-  private static void initMenu(final WhichMenu destMenu, final Supplier<MenuScreen> destScreen) {
-    if((getLoadedDrgnFiles() & 0x80) == 0) {
-      inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
-      whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
-      startMenuMusic();
-      SCRIPTS.stop();
-      Scus94491BpeSegment_8002.destMenu = destMenu;
-      Scus94491BpeSegment_8002.destScreen = destScreen;
+    renderablePtr_800bdc5c = null;
+    resizeDisplay(384, 240);
+    textZ_800bdf00 = 33;
+
+    whichMenu_800bdc38 = destMenu;
+
+    if(destScreen != null) {
+      menuStack.pushScreen(destScreen.get());
     }
+  }
+
+  public static void initInventoryMenu() {
+    initMenu(WhichMenu.RENDER_NEW_MENU, () -> new MainMenuScreen(() -> {
+      menuStack.popScreen();
+
+      if(whichMenu_800bdc38 == WhichMenu.QUIT) {
+        deallocateRenderables(0xff);
+        startFadeEffect(2, 10);
+        textZ_800bdf00 = 13;
+      }
+
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
+    }));
   }
 
   @Method(0x80022590L)
   public static void loadAndRenderMenus() {
     switch(whichMenu_800bdc38) {
-      case INIT_INVENTORY_MENU_1 -> initMenu(WhichMenu.RENDER_INVENTORY_MENU_4, null);
-      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, ShopScreen::new);
-      case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, CampaignSelectionScreen::new);
-      case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
-      case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
-      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
+      case RENDER_NEW_MENU, RENDER_SAVE_GAME_MENU_19 -> menuStack.render();
 
-      case INIT_CATEGORIZE_SAVE_MENU -> initMenu(WhichMenu.RENDER_CATEGORIZE_SAVE_MENU, () -> new FullScreenInputScreen("Uncategorized saves found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
-        if(result == MessageBoxResult.YES) {
-          if(SAVES.campaignExists(name)) {
-            menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
-            return;
-          }
-
-          try {
-            SAVES.moveCategorizedSaves(name);
-          } catch(final IOException e) {
-            LOGGER.error("Failed to categorize saves", e);
-          }
-        }
-
-        whichMenu_800bdc38 = WhichMenu.UNLOAD_CATEGORIZE_SAVE_MENU;
-      }));
-
-      case INIT_MEMCARD_MENU -> initMenu(WhichMenu.RENDER_MEMCARD_MENU, () -> new FullScreenInputScreen("PS1 memory card found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
-        if(result == MessageBoxResult.YES) {
-          if(SAVES.campaignExists(name)) {
-            menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
-            return;
-          }
-
-          try {
-            SAVES.splitMemcards(name);
-          } catch(final IOException | InvalidSaveException | SaveFailedException e) {
-            LOGGER.error("Failed to convert memcard", e);
-          }
-        }
-
-        whichMenu_800bdc38 = WhichMenu.UNLOAD_MEMCARD_MENU;
-      }));
-
-      case INIT_CHAR_SWAP_MENU_21 -> {
-        loadCharacterStats();
-        cacheCharacterSlots();
-        initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
-      }
-      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, TooManyItemsScreen::new);
-
-      case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
-          if(uiFile_800bdc3c != null) {
-            uiFile_800bdc3c.delete();
-          }
-
-          renderablePtr_800bdc5c = null;
-          uiFile_800bdc3c = null;
-          resizeDisplay(384, 240);
-          loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
-          loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
-          textZ_800bdf00 = 33;
-
-          whichMenu_800bdc38 = destMenu;
-
-          if(destScreen != null) {
-            menuStack.pushScreen(destScreen.get());
-            destScreen = null;
-          }
-        }
-      }
-
-      case INIT_POST_COMBAT_REPORT_26 -> {
-        if((getLoadedDrgnFiles() & 0x80) == 0) {
-          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
-        }
-      }
-
-      case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80) == 0) {
-          whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29;
-          menuStack.pushScreen(new PostBattleScreen());
-        }
-      }
-
-      case RENDER_SHOP_MENU_9, RENDER_CAMPAIGN_SELECTION_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_POST_COMBAT_REPORT_29, RENDER_TOO_MANY_ITEMS_MENU_34, RENDER_NEW_CAMPAIGN_MENU, RENDER_OPTIONS_MENU, RENDER_CATEGORIZE_SAVE_MENU, RENDER_MEMCARD_MENU -> menuStack.render();
-      case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
-
-      case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU, UNLOAD_CATEGORIZE_SAVE_MENU, UNLOAD_MEMCARD_MENU -> {
+      case UNLOAD, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_POST_COMBAT_REPORT_30 -> {
         menuStack.reset();
 
-        if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
+        if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20 && whichMenu_800bdc38 != WhichMenu.UNLOAD_POST_COMBAT_REPORT_30) {
           stopMenuMusic();
         }
 
@@ -910,28 +818,9 @@ public final class Scus94491BpeSegment_8002 {
 
         deallocateRenderables(0xff);
 
-        if(uiFile_800bdc3c != null) {
-          uiFile_800bdc3c.delete();
-        }
-
-        uiFile_800bdc3c = null;
-
         startFadeEffect(2, 10);
 
-        currentEngineState_8004dd04.menuClosed();
-
         textZ_800bdf00 = 13;
-      }
-
-      case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        stopMenuMusic();
-        SCRIPTS.start();
-        whichMenu_800bdc38 = WhichMenu.NONE_0;
-      }
-
-      case UNLOAD_POST_COMBAT_REPORT_30 -> {
-        SCRIPTS.start();
-        whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
     }
   }
@@ -1003,17 +892,20 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022a94L)
-  public static void FUN_80022a94(final FileData data) {
+  public static void loadMenuTexture(final FileData data) {
     final Tim tim = new Tim(data);
     final Rect4i imageRect = tim.getImageRect();
 
     if(imageRect.w != 0 || imageRect.h != 0) {
+      imageRect.x -= 512;
       GPU.uploadData15(imageRect, tim.getImageData());
     }
 
     //LAB_80022acc
     if(tim.hasClut()) {
-      GPU.uploadData15(tim.getClutRect(), tim.getClutData());
+      final Rect4i clutRect = tim.getClutRect();
+      clutRect.x -= 512;
+      GPU.uploadData15(clutRect, tim.getClutData());
     }
 
     //LAB_80022aec
@@ -1238,69 +1130,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80023870L)
   public static void playMenuSound(final int soundIndex) {
     playSound(0, soundIndex, (short)0, (short)0);
-  }
-
-  /**
-   * Gets the highest priority button on the joypad that is currently pressed. "Priority" is likely arbitrary.
-   */
-  @Method(0x800238a4L)
-  public static int getJoypadInputByPriority() {
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_LEFT_1)) {
-      return 0x4;
-    }
-
-    //LAB_800238c4
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_RIGHT_1)) {
-      return 0x8;
-    }
-
-    //LAB_800238d4
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_LEFT_2)) {
-      return 0x1;
-    }
-
-    //LAB_800238e4
-    if(Input.pressedWithRepeatPulse(InputAction.BUTTON_SHOULDER_RIGHT_2)) {
-      return 0x2;
-    }
-
-    //LAB_800238f4
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_UP) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-      return 0x1000;
-    }
-
-    //LAB_80023904
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-      return 0x4000;
-    }
-
-    //LAB_80023914
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)) {
-      return 0x8000;
-    }
-
-    //LAB_80023924
-    if(Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
-      return 0x2000;
-    }
-
-    //LAB_80023934
-    if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
-      return 0x10;
-    }
-
-    //LAB_80023950
-    if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
-      return 0x40;
-    }
-
-    //LAB_80023960
-    if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
-      return 0x80;
-    }
-
-    //LAB_80023970
-    return Input.pressedThisFrame(InputAction.BUTTON_SOUTH) ? 0x20 : 0;
   }
 
   @Method(0x800239e0L)
@@ -1578,11 +1407,19 @@ public final class Scus94491BpeSegment_8002 {
             transforms.scaling(width, height, 1.0f);
             transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
 
-            final RenderEngine.QueuedModel<?> model = RENDERER
+            int tpageX = (tpage & 0b1111) * 64;
+            int clutX = (clut & 0b111111) * 16;
+
+            if(!renderable.useOriginalTpage) {
+              tpageX -= 512;
+              clutX -= 512;
+            }
+
+            final QueuedModel<?> model = RENDERER
               .queueOrthoModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
-              .tpageOverride((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-              .clutOverride((clut & 0b111111) * 16, clut >>> 6);
+              .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
+              .clutOverride(clutX, clut >>> 6);
 
             if((metrics.clut_04 & 0x8000) != 0) {
               model.translucency(Translucency.of(tpage >>> 5 & 0b11));
@@ -3547,7 +3384,7 @@ public final class Scus94491BpeSegment_8002 {
             textTransforms.transfer.y += trim;
           }
 
-          final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
+          final QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
             .texture(RENDERER.textTexture)
             .vertices((c - 33) * 4, 4)
             .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);

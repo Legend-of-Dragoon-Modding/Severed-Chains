@@ -40,10 +40,6 @@ public abstract class EngineState {
 
   }
 
-  public void menuClosed() {
-
-  }
-
   public boolean renderTextOnTopOfAllBoxes() {
     return true;
   }

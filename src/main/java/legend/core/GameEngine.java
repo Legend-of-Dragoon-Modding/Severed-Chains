@@ -16,7 +16,6 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
-import legend.core.ui.ScreenStack;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
@@ -59,6 +58,7 @@ import static legend.game.SItem.dartXpTable_801135e4;
 import static legend.game.SItem.haschelXpTable_801136d8;
 import static legend.game.SItem.kongolXpTable_801134f0;
 import static legend.game.SItem.lavitzXpTable_801138c0;
+import static legend.game.SItem.loadMenuAssets;
 import static legend.game.SItem.meruXpTable_801137cc;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
@@ -99,7 +99,6 @@ public final class GameEngine {
   public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
 
   public static final RenderEngine RENDERER = new RenderEngine();
-  public static final ScreenStack SCREENS = new ScreenStack();
 
   public static final Gte GTE;
   public static final Gpu GPU;
@@ -108,8 +107,6 @@ public final class GameEngine {
 
   public static final Thread hardwareThread;
   public static final Thread openalThread;
-
-  public static boolean legacyUi;
 
   static {
     try {
@@ -419,6 +416,7 @@ public final class GameEngine {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
       }
 
+      loadMenuAssets();
       initTextboxGeometry();
       battleUiParts.init();
       startSound();
