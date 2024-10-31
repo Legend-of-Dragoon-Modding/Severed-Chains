@@ -250,7 +250,6 @@ public class RenderEngine {
    * config, etc. and will need to be configured separately if desired. They start
    * out with a copy of the main render batch's config when they are created.
    */
-
   public RenderBatch addBatch() {
     final RenderBatch batch = new RenderBatch(this, this.mainBatch);
     this.batches.add(batch);

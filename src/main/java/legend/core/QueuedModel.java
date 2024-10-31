@@ -19,6 +19,8 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 
 public class QueuedModel<Options extends ShaderOptions<Options>> {
+  private final RenderBatch batch;
+
   Obj obj;
   final Matrix4f transforms = new Matrix4f();
   final Matrix4f lightTransforms = new Matrix4f();
@@ -53,6 +55,10 @@ public class QueuedModel<Options extends ShaderOptions<Options>> {
   final Vector3f battleColour = new Vector3f();
 
   Vector3f[] vdf;
+
+  public QueuedModel(final RenderBatch batch) {
+    this.batch = batch;
+  }
 
   public Options options() {
     return this.shaderOptions;
@@ -158,6 +164,11 @@ public class QueuedModel<Options extends ShaderOptions<Options>> {
   public QueuedModel<Options> translucency(final Translucency translucency) {
     this.translucency = translucency;
     this.hasTranslucencyOverride = true;
+
+    if(this.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.batch.needsSorting = true;
+    }
+
     return this;
   }
 

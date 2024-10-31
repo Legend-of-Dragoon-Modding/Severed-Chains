@@ -57,10 +57,10 @@ public class RenderBatch {
 
   public RenderBatch(final RenderEngine engine) {
     this.engine = engine;
-    this.modelPool = new QueuePool<>(QueuedModel::new);
-    this.orthoPool = new QueuePool<>(QueuedModel::new);
-    this.shaderPool = new QueuePool<>(QueuedModel::new);
-    this.shaderOrthoPool = new QueuePool<>(QueuedModel::new);
+    this.modelPool = new QueuePool<>(() -> new QueuedModel<>(this));
+    this.orthoPool = new QueuePool<>(() -> new QueuedModel<>(this));
+    this.shaderPool = new QueuePool<>(() -> new QueuedModel<>(this));
+    this.shaderOrthoPool = new QueuePool<>(() -> new QueuedModel<>(this));
   }
 
   public RenderBatch(final RenderEngine engine, final RenderBatch current) {
