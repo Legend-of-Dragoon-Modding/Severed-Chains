@@ -265,7 +265,7 @@ public class QuadBuilder {
       offset = this.setVertices(offset, vertices, quad);
     }
 
-    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, this.quads.size() * 4);
+    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, this.quads.size() * 4, (this.flags & TEXTURED_FLAG) != 0, this.translucency != null, this.translucency);
 
     mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
@@ -294,15 +294,7 @@ public class QuadBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
-
-    if(this.translucency == null) {
-      meshes[0] = mesh;
-    } else {
-      meshes[this.translucency.ordinal() + 1] = mesh;
-    }
-
-    return new MeshObj(this.name, meshes, (this.flags & TEXTURED_FLAG) != 0);
+    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0);
   }
 
   private static class Quad {

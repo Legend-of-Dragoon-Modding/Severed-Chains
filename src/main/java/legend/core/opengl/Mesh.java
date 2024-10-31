@@ -2,6 +2,9 @@ package legend.core.opengl;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import legend.game.types.Translucency;
+
+import javax.annotation.Nullable;
 
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
@@ -25,6 +28,10 @@ public class Mesh {
   private static final Int2ObjectMap<Mesh> usedVaos = new Int2ObjectOpenHashMap<>();
   private static final Int2ObjectMap<Mesh> usedVbos = new Int2ObjectOpenHashMap<>();
 
+  public final boolean textured;
+  public final boolean translucent;
+  public final Translucency translucencyMode;
+
   private final int vao;
   private final int vbo;
   private final int ebo;
@@ -35,6 +42,13 @@ public class Mesh {
   private boolean deleted;
 
   public Mesh(final int mode, final float[] vertexData, final int[] indices) {
+    this(mode, vertexData, indices, false, false, null);
+  }
+
+  public Mesh(final int mode, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode) {
+    this.textured = textured;
+    this.translucent = translucent;
+    this.translucencyMode = translucencyMode;
     this.count = indices.length;
     this.mode = mode;
     this.useIndices = true;
@@ -65,6 +79,13 @@ public class Mesh {
   }
 
   public Mesh(final int mode, final float[] vertexData, final int vertexCount) {
+    this(mode, vertexData, vertexCount, false, false, null);
+  }
+
+  public Mesh(final int mode, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode) {
+    this.textured = textured;
+    this.translucent = translucent;
+    this.translucencyMode = translucencyMode;
     this.count = vertexCount;
     this.mode = mode;
     this.useIndices = false;

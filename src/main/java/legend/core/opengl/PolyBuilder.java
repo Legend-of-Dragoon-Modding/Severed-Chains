@@ -176,7 +176,7 @@ public class PolyBuilder {
       this.setVertex(vertices, i);
     }
 
-    final Mesh mesh = new Mesh(this.type, vertices, this.vertices.size());
+    final Mesh mesh = new Mesh(this.type, vertices, this.vertices.size(), (this.flags & TEXTURED_FLAG) != 0, this.translucency != null, this.translucency);
 
     mesh.attribute(0, 0L, POS_SIZE, VERTEX_SIZE);
 
@@ -205,15 +205,7 @@ public class PolyBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, VERTEX_SIZE);
 
-    final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
-
-    if(this.translucency == null) {
-      meshes[0] = mesh;
-    } else {
-      meshes[this.translucency.ordinal() + 1] = mesh;
-    }
-
-    return new MeshObj(this.name, meshes, (this.flags & TEXTURED_FLAG) != 0);
+    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0);
   }
 
   private static class Vertex {
