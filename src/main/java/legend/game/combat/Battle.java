@@ -93,6 +93,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
@@ -152,6 +153,7 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -977,6 +979,7 @@ public class Battle extends EngineState {
     functions[1010] = this::scriptUseItem;
     functions[1011] = this::scriptApplyEquipmentEffect;
 
+    functions[1020] = this::scriptSetCombatantCharSlot;
     return functions;
   }
 
@@ -1101,6 +1104,14 @@ public class Battle extends EngineState {
     final BattleEntity27c wearer = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     equipment.applyEffect(wearer);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Changes char slot of a combatant")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "Combatant ID")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charSlot", description = "Target character slot")
+  private FlowControl scriptSetCombatantCharSlot(final RunningScript<BattleEntity27c> script) {
+    this.combatants_8005e398[script.params_20[0].get()].charSlot_19c = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
@@ -1841,7 +1852,10 @@ public class Battle extends EngineState {
       battleLoaded_800bc94c = false;
 
       switch(postBattleAction_800bc974) {
-        case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
+        case 1, 3 -> {
+          whichMenu_800bdc38 = WhichMenu.RENDER_NEW_MENU;
+          menuStack.pushScreen(new PostBattleScreen());
+        }
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 

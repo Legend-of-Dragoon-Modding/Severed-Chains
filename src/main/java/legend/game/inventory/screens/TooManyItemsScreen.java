@@ -28,15 +28,12 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class TooManyItemsScreen extends MenuScreen {
@@ -66,19 +63,17 @@ public class TooManyItemsScreen extends MenuScreen {
   protected void render() {
     switch(this.menuState) {
       case _1 -> {
-        if(uiFile_800bdc3c != null) {
-          loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
+        loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
 
-          for(final Item item : itemOverflow) {
-            this.droppedItems.add(MenuEntryStruct04.make(item));
-          }
-
-          for(final Equipment equipment : equipmentOverflow) {
-            this.droppedItems.add(MenuEntryStruct04.make(equipment));
-          }
-
-          this.menuState = MenuState._2;
+        for(final Item item : itemOverflow) {
+          this.droppedItems.add(MenuEntryStruct04.make(item));
         }
+
+        for(final Equipment equipment : equipmentOverflow) {
+          this.droppedItems.add(MenuEntryStruct04.make(equipment));
+        }
+
+        this.menuState = MenuState._2;
       }
 
       case _2 -> {
@@ -184,21 +179,8 @@ public class TooManyItemsScreen extends MenuScreen {
         this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).item_00, this.invIndex, this.invScroll, 0);
 
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
-          startFadeEffect(2, 10);
-          deallocateRenderables(0xff);
-
-          if(uiFile_800bdc3c != null) {
-            uiFile_800bdc3c.delete();
-          }
-
-          uiFile_800bdc3c = null;
-          whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
-
-          currentEngineState_8004dd04.menuClosed();
-
-          textZ_800bdf00 = 13;
-
           menuStack.popScreen();
+          whichMenu_800bdc38 = WhichMenu.UNLOAD;
         }
       }
     }

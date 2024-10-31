@@ -30,7 +30,6 @@ public final class Config {
     properties.setProperty("low_memory_unpacker", "false");
     properties.setProperty("window_width", "960");
     properties.setProperty("window_height", "720");
-    properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
@@ -91,10 +90,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 480, 1, Integer.MAX_VALUE);
-  }
-
-  public static boolean unlockParty() {
-    return readBool("unlock_party", false);
   }
 
   public static boolean changeBattleRgb() {

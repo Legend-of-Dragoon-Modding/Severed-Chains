@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -313,7 +313,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
         effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
         effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms);
+        final QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms);
 
         if(completionState == 1) {  // Success
           model.monochrome(1.0f);
@@ -369,7 +369,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           .rotateZ(borderOverlay.angleModifier_02);
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
 
-        final RenderEngine.QueuedModel<?> model;
+        final QueuedModel<?> model;
 
         // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
         if((borderOverlay.sideEffects_0d == 0 || borderOverlay.sideEffects_0d == -1) && currentHitCompletionState >= 0) {
