@@ -13,10 +13,8 @@ import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
 import legend.game.combat.BattleTransitionMode;
@@ -70,14 +68,11 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.core.GameEngine.SCREENS;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
-import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -152,9 +147,7 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
-import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
-import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
@@ -391,15 +384,8 @@ public final class Scus94491BpeSegment {
       }
     });
 
-    final MatrixStack matrixStack = new MatrixStack();
-    final ScissorStack scissorStack = new ScissorStack(RENDERER.window());
-
-    legacyUi = true;
-
     RENDERER.setRenderCallback(() -> {
-      if(legacyUi) {
-        GPU.startFrame();
-      }
+      GPU.startFrame();
 
       if(engineState_8004dd20.isInGame()) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8;
@@ -418,7 +404,7 @@ public final class Scus94491BpeSegment {
 
       EVENTS.postEvent(RENDER_EVENT);
 
-      SCREENS.render(RENDERER, matrixStack, scissorStack);
+      loadAndRenderMenus();
 
       final boolean scriptsTicked = SCRIPTS.tick();
 
@@ -444,9 +430,7 @@ public final class Scus94491BpeSegment {
       tickCount_800bb0fc++;
       endFrame();
 
-      if(legacyUi) {
-        GPU.endFrame();
-      }
+      GPU.endFrame();
     });
 
     RENDERER.events().onShutdown(() -> {
@@ -534,8 +518,8 @@ public final class Scus94491BpeSegment {
     //LAB_80012ad8
     currentEngineState_8004dd04 = overlay.constructor_00.get();
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
-    RENDERER.allowWidescreen = currentEngineState_8004dd04.allowsWidescreen();
-    RENDERER.allowHighQualityProjection = currentEngineState_8004dd04.allowsHighQualityProjection();
+    RENDERER.setAllowWidescreen(currentEngineState_8004dd04.allowsWidescreen());
+    RENDERER.setAllowHighQualityProjection(currentEngineState_8004dd04.allowsHighQualityProjection());
     RENDERER.updateProjections();
   }
 
@@ -696,7 +680,7 @@ public final class Scus94491BpeSegment {
         //LAB_80013818
         colour = v1 * 255 / fullScreenEffect_800bb140.totalFrames_08;
         //LAB_80013808
-      } else if(a1 == 2) { // a1 == 2
+      } else if(a1 == 2) {
         //LAB_8001383c
         colour = v1 * 255 / fullScreenEffect_800bb140.totalFrames_08 ^ 0xff;
 
@@ -747,7 +731,7 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.widthSquisher;
+      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.getWidthSquisher();
       final float extraWidth = fullWidth - displayWidth_1f8003e0;
       fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
       fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
@@ -762,7 +746,7 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.widthSquisher;
+      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.getWidthSquisher();
       final float extraWidth = fullWidth - displayWidth_1f8003e0;
       fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
       fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
@@ -778,7 +762,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80013c3cL)
   public static void drawFullScreenRect(final int colour, final Translucency transMode) {
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.widthSquisher;
+    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.getWidthSquisher();
     final float extraWidth = fullWidth - RENDERER.getProjectionWidth();
     fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
     fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
@@ -1146,10 +1130,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018508L)
   public static void renderPostCombatScreen() {
-    if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
-      loadAndRenderMenus();
-    }
-
     // There used to be code to preload SMAP while the post-combat screen is still up. I removed it because it only takes a few milliseconds to load in SC.
 
     //LAB_8001852c
@@ -1921,7 +1901,7 @@ public final class Scus94491BpeSegment {
       final float offset;
 
       // Make sure effect fills the whole screen
-      if(RENDERER.allowWidescreen && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      if(RENDERER.getAllowWidescreen() && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
         squish = 1.0f;
         width = dissolveDisplayWidth;
         offset = 0.0f;
@@ -1997,7 +1977,7 @@ public final class Scus94491BpeSegment {
     final float offset;
 
     // Make sure effect fills the whole screen
-    if(RENDERER.allowWidescreen && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+    if(RENDERER.getAllowWidescreen() && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
       squish = 1.0f;
       width = dissolveDisplayWidth;
       offset = 0.0f;
@@ -2349,7 +2329,12 @@ public final class Scus94491BpeSegment {
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
-    AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
+    playMusicPackage(new BackgroundMusic(files, fileIndex), startSequence);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
+  }
+
+  public static void playMusicPackage(final BackgroundMusic music,  final boolean startSequence) {
+    AUDIO_THREAD.loadBackgroundMusic(music);
     AUDIO_THREAD.setSequenceVolume(40);
 
     if(startSequence) {
@@ -2357,8 +2342,6 @@ public final class Scus94491BpeSegment {
     }
 
     musicLoaded_800bd782 = true;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
-
     _800bd0f0 = 2;
   }
 
@@ -2434,45 +2417,6 @@ public final class Scus94491BpeSegment {
       case 9, 10 -> "Divine";
       default -> throw new IllegalArgumentException("Invalid character ID " + id);
     };
-  }
-
-  /** FUN_8001e010 with param 0 */
-  @Method(0x8001e010L)
-  public static void startMenuMusic() {
-    //LAB_8001e054
-    copyPlayingSounds(queuedSounds_800bd110, playingSoundsBackup_800bca78);
-    stopAndResetSoundsAndSequences();
-    unloadSoundFile(8);
-    unloadSoundFile(8);
-
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    loadDrgnDir(0, 5815, files -> musicPackageLoadedCallback(files, 5815, true));
-  }
-
-  /** FUN_8001e010 with param -1 */
-  @Method(0x8001e010L)
-  public static void stopMenuMusic() {
-    //LAB_8001e044
-    //LAB_8001e0f8
-    if(loadingNewGameState_800bdc34) {
-      if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
-        sssqResetStuff();
-        unloadSoundFile(8);
-        loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-        loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
-      }
-    } else {
-      //LAB_8001e160
-      stopMusicSequence();
-      unloadSoundFile(8);
-
-      currentEngineState_8004dd04.restoreMusicAfterMenu();
-    }
-
-    //LAB_8001e26c
-    stopAndResetSoundsAndSequences();
-    copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
-    playingSoundsBackup_800bca78.clear();
   }
 
   /**

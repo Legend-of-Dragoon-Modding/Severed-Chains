@@ -24,19 +24,16 @@ import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.addLevelUpOverlay;
 import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
-import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
@@ -46,7 +43,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
@@ -86,29 +82,14 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010d614L)
   @Override
   protected void render() {
-    inventoryJoypadInput_800bdc44 = getJoypadInputByPriority();
-
     switch(this.inventoryMenuState_800bdc28) {
       case INIT_0:
-        if(uiFile_800bdc3c != null) {
-          uiFile_800bdc3c.delete();
-        }
-
         renderablePtr_800bdc5c = null;
-        uiFile_800bdc3c = null;
         resizeDisplay(320, 240);
-        loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
-        loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
         textZ_800bdf00 = 33;
-        this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_UI_FILE_TO_LOAD_1;
         this.initResultBackgrounds();
-        break;
-
-      case WAIT_FOR_UI_FILE_TO_LOAD_1:
-        if(uiFile_800bdc3c != null) {
-          startFadeEffect(2, 10);
-          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2;
-        }
+        startFadeEffect(2, 10);
+        this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2;
         break;
 
       case WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2:
@@ -417,20 +398,9 @@ public class PostBattleScreen extends MenuScreen {
         break;
 
       case UNLOAD_18:
-        startFadeEffect(2, 10);
-        deallocateRenderables(0xff);
-
-        if(uiFile_800bdc3c != null) {
-          uiFile_800bdc3c.delete();
-        }
-
-        uiFile_800bdc3c = null;
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
-        textZ_800bdf00 = 13;
-
-        this.deleteResultsScreenObjects();
-
         menuStack.popScreen();
+        this.deleteResultsScreenObjects();
         break;
     }
 
@@ -564,6 +534,7 @@ public class PostBattleScreen extends MenuScreen {
     renderable.y_44 = y;
     renderable.clut_30 = v << 6 | (u & 0x3f0) >> 4;
     renderable.tpage_2c = 0x1b;
+    renderable.useOriginalTpage = true;
     return renderable;
   }
 

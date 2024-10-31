@@ -17,7 +17,6 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.FullScreenEffect;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
@@ -101,17 +100,19 @@ public final class Scus94491BpeSegment_800b {
   public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
-   * 0x1 - menu sounds
-   * 0x2 - submap sounds
-   * 0x4 - battle cutscene sounds
-   * 0x8 - battle character sounds
-   * 0x10 - battle phase sounds
-   * 0x20 - battle monster sounds
-   * 0x40 - battle DEFF sounds
-   * 0x80 - music
-   * 0x4000 - victory music
-   * 0x8000 - world map destination sounds
-   * 0x10000 - different battle character attack sounds?
+   * <ul>
+   *   <li>0x1 - menu sounds</li>
+   *   <li>0x2 - submap sounds</li>
+   *   <li>0x4 - battle cutscene sounds</li>
+   *   <li>0x8 - battle character sounds</li>
+   *   <li>0x10 - battle phase sounds</li>
+   *   <li>0x20 - battle monster sounds</li>
+   *   <li>0x40 - battle DEFF sounds</li>
+   *   <li>0x80 - music</li>
+   *   <li>0x4000 - victory music</li>
+   *   <li>0x8000 - world map destination sounds</li>
+   *   <li>0x10000 - different battle character attack sounds?</li>
+   * </ul>
    */
   public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 
@@ -168,8 +169,6 @@ public final class Scus94491BpeSegment_800b {
   public static final int[] characterIndices_800bdbb8 = new int[9];
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
-  public static InventoryMenuState inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
-
   public static boolean loadingNewGameState_800bdc34;
   /**
    * 0xe - load game
@@ -182,24 +181,6 @@ public final class Scus94491BpeSegment_800b {
   public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static McqHeader gameOverMcq_800bdc3c;
-
-  /**
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int inventoryJoypadInput_800bdc44;
 
   public static Renderable58 renderablePtr_800bdc5c;
 

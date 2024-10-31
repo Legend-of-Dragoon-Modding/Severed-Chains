@@ -3,7 +3,7 @@ package legend.game.submap;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
@@ -22,6 +22,10 @@ import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.CharSwapScreen;
+import legend.game.inventory.screens.SaveGameScreen;
+import legend.game.inventory.screens.ShopScreen;
+import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -75,6 +79,7 @@ import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
+import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
@@ -91,9 +96,10 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
+import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
+import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
@@ -983,7 +989,7 @@ public class SMap extends EngineState {
         if(dobj2.obj != null) { //TODO remove me
           GsGetLw(dobj2.coord2_04, lw);
 
-          final RenderEngine.QueuedModel<?> queue = RENDERER.queueModel(dobj2.obj, lw)
+          final QueuedModel<?> queue = RENDERER.queueModel(dobj2.obj, lw)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
@@ -3141,16 +3147,6 @@ public class SMap extends EngineState {
     return true;
   }
 
-  @Override
-  @Method(0x800e3facL)
-  public void menuClosed() {
-    if(!transitioningFromCombatToSubmap_800bd7b8) {
-      this.submap.restoreAssets();
-    }
-
-    //LAB_800e4008
-  }
-
   @Method(0x800e4018L)
   private void setIndicatorStatusAndResetIndicatorTickCountOnReenable() {
     if(gameState_800babc8.indicatorsDisabled_4e3) {
@@ -3468,7 +3464,7 @@ public class SMap extends EngineState {
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
 
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
+        final QueuedModel<?> model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
@@ -3629,7 +3625,9 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3fa) {
       SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
+      loadCharacterStats();
+      cacheCharacterSlots();
+      initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       submapCutForSave_800cb450 = submapCut_80052c30;
       return;
@@ -3643,7 +3641,7 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3fc) {
       SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
+      initMenu(WhichMenu.RENDER_NEW_MENU, TooManyItemsScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3654,14 +3652,14 @@ public class SMap extends EngineState {
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
       this.mapTransitionData_800cab24.clear();
-      whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
+      initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3fe) {
       SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
+      initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3669,7 +3667,7 @@ public class SMap extends EngineState {
     if(newScene == 0x3ff) {
       SCRIPTS.pause();
       submapCutForSave_800cb450 = submapCut_80052c30;
-      whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
+      initInventoryMenu();
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3842,48 +3840,25 @@ public class SMap extends EngineState {
       }
 
       case RENDER_MENU_14 -> {
-        final WhichMenu menu = whichMenu_800bdc38; // copy menu state since some of these functions may change it
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
 
-        if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
-          loadAndRenderMenus();
-
-          if(whichMenu_800bdc38 == WhichMenu.QUIT) {
-            this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-            this._800f7e4c = false;
-            this.mapTransition(-1, 0x3fb);
-            drgnBinIndex_800bc058 = 1;
-            break;
-          }
-
-          if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
-            break;
-          }
-        }
-
         //LAB_800e6018
-        switch(menu) {
-          case UNLOAD_INVENTORY_MENU_5:
-            if(gameState_800babc8.isOnWorldMap_4e4) {
-              this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_WORLD_MAP_18;
-              this._800f7e4c = false;
-              break;
-            }
+        switch(whichMenu_800bdc38) {
+          case UNLOAD -> this.smapLoadingStage_800cb430 = SubmapState.UNLOAD_MENU_15;
 
-            // Fall through
-
-          case UNLOAD_CHAR_SWAP_MENU_25:
-          case UNLOAD_TOO_MANY_ITEMS_MENU_35:
-          case UNLOAD_SHOP_MENU_10:
-            this.smapLoadingStage_800cb430 = SubmapState.UNLOAD_MENU_15;
-            break;
-
-          case UNLOAD_SAVE_GAME_MENU_20:
+          case UNLOAD_SAVE_GAME_MENU_20 -> {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
             this._800f7e4c = false;
             this.mapTransition(this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00, this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04);
             collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[0].submapScene_04;
-            break;
+          }
+
+          case QUIT -> {
+            this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+            this._800f7e4c = false;
+            this.mapTransition(-1, 0x3fb);
+            drgnBinIndex_800bc058 = 1;
+          }
         }
       }
 
@@ -5072,7 +5047,7 @@ public class SMap extends EngineState {
         final SavePointRenderData44 struct = this.savePoint_800d5630[fp * 4 + s4];
 
         struct.transforms.transfer.set(GPU.getOffsetX() + struct.vert0_00.x, GPU.getOffsetY() + struct.vert0_00.y, 164.0f);
-        final RenderEngine.QueuedModel<?> queuedModel = RENDERER.queueOrthoModel(this.savepointObj, struct.transforms)
+        final QueuedModel<?> queuedModel = RENDERER.queueOrthoModel(this.savepointObj, struct.transforms)
           .vertices(8, 4)
           .monochrome(struct.colour_34);
 

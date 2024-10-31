@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.MathHelper;
 import legend.game.DabasManager;
 import legend.game.i18n.I18n;
+import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
@@ -43,7 +44,6 @@ import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
@@ -162,7 +162,7 @@ public class DabasScreen extends MenuScreen {
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
 
-        if((inventoryJoypadInput_800bdc44 & 0x20) == 0) {
+        if(!Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           this.renderDabasMenu(this.menuIndex);
           break;
         }
@@ -177,7 +177,7 @@ public class DabasScreen extends MenuScreen {
       case 4 -> {
         messageBox(this.messageBox_8011dc90);
 
-        if(this.gold <= 10 || (inventoryJoypadInput_800bdc44 & 0x20) != 0) {
+        if(this.gold <= 10 || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           gameState_800babc8.gold_94 += this.gold;
           this.gold = 0;
           unloadRenderable(this.renderable2);
@@ -204,7 +204,7 @@ public class DabasScreen extends MenuScreen {
 
       case 5 -> {
         messageBox(this.messageBox_8011dc90);
-        if((inventoryJoypadInput_800bdc44 & 0x20) != 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           unloadRenderable(this.renderable2);
           this.messageBox_8011dc90.state_0c++;
           this.loadingStage++;

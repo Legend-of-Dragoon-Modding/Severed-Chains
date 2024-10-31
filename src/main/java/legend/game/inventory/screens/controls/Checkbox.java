@@ -1,7 +1,7 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
@@ -93,7 +93,7 @@ public class Checkbox extends Control {
     };
 
     this.transforms.transfer.set(x, y, this.getZ() * 4.0f);
-    final RenderEngine.QueuedModel<?> model = RENDERER
+    final QueuedModel<?> model = RENDERER
       .queueOrthoModel(this.obj, this.transforms);
 
     if(this.checked) {
