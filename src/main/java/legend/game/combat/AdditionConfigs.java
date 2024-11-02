@@ -16,8 +16,8 @@ public class AdditionConfigs {
     "Harpoon", "Spinning Cane", "Rod Typhoon", "Gust of Wind Dance", "Flower Storm" // Albert
   };
 
-  private static boolean dirty = true;
-  private static boolean fc = true; //Frame Correction (shorthanded it to keep the ternaries in the createAdditionHits calls lean)
+  private static boolean dirty = true; //Starts at true so the first load call actually loads the additions
+  private static boolean fc = true; //Frame Correction (shorthanded to keep the ternaries in the createAdditionHits calls lean)
 
   // Call when you want additions to be reloaded at the start of the next combat (useful for a change in the settings to be applied)
   public static void setDirty() {
@@ -137,8 +137,11 @@ public class AdditionConfigs {
   // overlayHitFrameOffset: the speed at which the overlay closes in
   // overlayStartingFrameOffset: frames before the overlay shows
   private static AdditionHitProperties10 createAdditionHitProperties(final int flags, final int totalFrames, int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
-    if (false) { // Need to potentially implement a setting that lets you adjust it or not?
+    if (false) { // -1 or +1 correction for people who would prefer it. There to potentially implement a setting that lets you adjust it or not?
       overlayHitFrameOffset = Math.max(0, overlayHitFrameOffset - 1);
+    }
+    else if (false) {
+      overlayHitFrameOffset += 1;
     }
     return new AdditionHitProperties10(flags, totalFrames, overlayHitFrameOffset, totalSuccessFrames, damageMultiplier, spValue, audioFile, isFinalHit, _08, _09, _0a, hitDistanceFromTarget, framesToHitPosition, _0d, _0e, overlayStartingFrameOffset);
   }
