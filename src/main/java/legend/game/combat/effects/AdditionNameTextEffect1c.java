@@ -3,11 +3,11 @@ package legend.game.combat.effects;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.types.TriConsumer;
+import legend.game.combat.AdditionConfigs;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 
 import static legend.game.Scus94491BpeSegment.battleUiParts;
-import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.asciiTable_800fa788;
 
 public class AdditionNameTextEffect1c {
@@ -32,7 +32,7 @@ public class AdditionNameTextEffect1c {
     while(true) {
       chr = asciiTable_800fa788[charIndex];
 
-      if(additionNames_800fa8d4[additionId].charAt(charOffset) == chr) {
+      if(AdditionConfigs.additionNames_800fa8d4[additionId].charAt(charOffset) == chr) {
         break;
       } else if(chr == 0) {
         //LAB_800d3860
