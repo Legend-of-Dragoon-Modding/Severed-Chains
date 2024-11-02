@@ -6,7 +6,6 @@ import legend.game.combat.types.AdditionHits80;
 public class AdditionConfigs {
 
   public static AdditionHits80[] additionHits_8010e658;
-
   public static final String[] additionNames_800fa8d4 = {
     "Double Slash", "Volcano", "Burning Rush", "Crush Dance", "Madness Hero", "Moon Strike", "Blazing Dynamo", "", // Dart
     "Harpoon", "Spinning Cane", "Rod Typhoon", "Gust of Wind Dance", "Flower Storm", "", // Lavitz
@@ -17,16 +16,34 @@ public class AdditionConfigs {
     "Harpoon", "Spinning Cane", "Rod Typhoon", "Gust of Wind Dance", "Flower Storm" // Albert
   };
 
+  private static boolean dirty = true;
+  private static boolean fc = true; //Frame Correction (shorthanded it to keep the ternaries in the createAdditionHits calls lean)
+
+  // Call when you want additions to be reloaded at the start of the next combat (useful for a change in the settings to be applied)
+  public static void setDirty() {
+    dirty = true;
+  }
+
+  public static void setFrameCorrection(final boolean value) {
+    fc = value;
+  }
+
+  public static boolean getFrameCorrection() {
+    return fc;
+  }
+
   public static void reload() {
-    AdditionConfigs.additionHits_8010e658 = null;
+    dirty = true;
     load();
   }
 
   public static void load() {
 
-    if (AdditionConfigs.additionHits_8010e658 != null) {
+    if (!dirty) {
       return;
     }
+
+    dirty = false;
 
     additionHits_8010e658 = new AdditionHits80[43];
     int additionIndex = 0;
