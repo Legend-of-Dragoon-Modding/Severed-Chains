@@ -40,7 +40,7 @@ public class AdditionConfigs {
 
     dirty = false;
 
-    // Not reloaded when config is changed. Perhaps you can help with that? I would to set dirty when the setting is changed instead of having to reload the entire array every combat even if the setting hasn't changed.
+    // Not reloaded when config is changed. Perhaps you can help with that? I would like to set dirty when the setting is changed instead of having to reload the entire array every combat even if the setting hasn't changed.
     fc = CONFIG.getConfig(CoreMod.ADDITION_TIMING_MODE_CONFIG.get()) == AdditionTimingMode.RETIMED;
     additionHits_8010e658 = new AdditionHits80[43];
     int additionIndex = 0;
