@@ -135,6 +135,7 @@ public class AdditionConfigs {
 
   // totalFrames: length of the animation, when done, the next animation and overlay starts
   // overlayHitFrameOffset: the speed at which the overlay closes in (bigger = slower)
+  // totalSuccessFrames: the total amount of frames that will be valid for a successful input
   // overlayStartingFrameOffset: frames before the overlay shows
   private static AdditionHitProperties10 createAdditionHitProperties(final int flags, final int totalFrames, int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
     if (false) { // -1 or +1 correction for people who would prefer it. There to potentially implement a setting that lets you adjust it or not?
