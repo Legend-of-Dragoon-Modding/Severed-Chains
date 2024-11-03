@@ -229,35 +229,35 @@ public class AdditionConfigs {
 
   private static AdditionHits80 createAdditionHits_Lavitz_Harpoon() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
-    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, 11, 3, 75, 30, 8, 0, 0, 2, 5, 7, 16, 32, 0, 11);
+    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, fc ? 10 : 11, 3, 75, 30, 8, 0, 0, 2, 5, 7, 16, 32, 0, 11);
     additionHitProperties[1] = createAdditionHitProperties(0xc0, 25, 13, 2, 25, 5, 0, 4, -8, 0, 8, 12, 14, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
 
   private static AdditionHits80 createAdditionHits_Lavitz_SpinningCane() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
-    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, 11, 3, 50, 15, 9, 0, 2, 2, 5, 7, 16, 32, 0, 11);
-    additionHitProperties[1] = createAdditionHitProperties(0xc0, 22, 16, 3, 25, 10, 0, 0, 0, 0, 17, 5, 16, 32, 0, 0);
+    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, fc ? 10 : 11, 3, 50, 15, 9, 0, 2, 2, 5, 7, 16, 32, 0, 11);
+    additionHitProperties[1] = createAdditionHitProperties(0xc0, 22, fc ? 15 : 16, 3, 25, 10, 0, 0, 0, 0, 17, 5, 16, 32, 0, 0);
     additionHitProperties[2] = createAdditionHitProperties(0xc0, 25, 20, 2, 25, 10, 0, 4, -4, 10, 8, 5, 17, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
 
   private static AdditionHits80 createAdditionHits_Lavitz_RodTyphoon() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
-    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, 11, 3, 30, 6, 10, 0, 2, 2, 5, 7, 16, 32, 0, 11);
-    additionHitProperties[1] = createAdditionHitProperties(0xc0, 19, 13, 3, 30, 6, 0, 0, -3, 11, 7, 3, 15, 32, 0, 0);
-    additionHitProperties[2] = createAdditionHitProperties(0xc0, 13, 7, 3, 30, 6, 0, 0, -2, 0, 9, 11, 12, 32, 0, 0);
-    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, 10, 3, 30, 6, 0, 0, -2, 0, 12, 11, 14, 32, 0, 0);
+    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, fc ? 10 : 11, 3, 30, 6, 10, 0, 2, 2, 5, 7, 16, 32, 0, 11);
+    additionHitProperties[1] = createAdditionHitProperties(0xc0, 19, fc ? 12 : 13, 3, 30, 6, 0, 0, -3, 11, 7, 3, 15, 32, 0, 0);
+    additionHitProperties[2] = createAdditionHitProperties(0xc0, 13, fc ? 6 : 7, 3, 30, 6, 0, 0, -2, 0, 9, 11, 12, 32, 0, 0);
+    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, fc ? 9 : 10, 3, 30, 6, 0, 0, -2, 0, 12, 11, 14, 32, 0, 0);
     additionHitProperties[4] = createAdditionHitProperties(0xc0, 17, 12, 2, 30, 6, 0, 4, -9, 0, 17, 13, 18, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
 
   private static AdditionHits80 createAdditionHits_Lavitz_GustOfWindDance() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
-    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, 11, 3, 30, 5, 11, 0, 0, 2, 5, 7, 16, 32, 0, 11);
-    additionHitProperties[1] = createAdditionHitProperties(0xc0, 29, 14, 3, 30, 5, 0, 0, 0, 0, 29, 6, 15, 32, 0, 0);
-    additionHitProperties[2] = createAdditionHitProperties(0xc0, 22, 15, 3, 30, 5, 0, 0, 0, 4, 11, 23, 9, 32, 0, 0);
-    additionHitProperties[3] = createAdditionHitProperties(0xc0, 10, 5, 2, 30, 5, 0, 0, 0, 4, 1, 1, 18, 32, 0, 0);
+    additionHitProperties[0] = createAdditionHitProperties(0xc0, 17, fc ? 10 : 11, 3, 30, 5, 11, 0, 0, 2, 5, 7, 16, 32, 0, 11);
+    additionHitProperties[1] = createAdditionHitProperties(0xc0, 29, fc ? 13 : 14, 3, 30, 5, 0, 0, 0, 0, 29, 6, 15, 32, 0, 0);
+    additionHitProperties[2] = createAdditionHitProperties(0xc0, 22, fc ? 14 : 15, 3, 30, 5, 0, 0, 0, 4, 11, 23, 9, 32, 0, 0);
+    additionHitProperties[3] = createAdditionHitProperties(0xc0, 10, fc ? 6 : 5, 2, 30, 5, 0, 0, 0, 4, 1, 1, 18, 32, 0, 0);
     additionHitProperties[4] = createAdditionHitProperties(0xc0, 22, 16, 3, 30, 5, 0, 0, 0, 11, 5, 3, 22, 32, 0, 0);
     additionHitProperties[5] = createAdditionHitProperties(0xc0, 13, fc ? 8 : 7, 3, 30, 5, 0, 0, -4, 3, 4, 7, 18, 32, 0, 0);
     additionHitProperties[6] = createAdditionHitProperties(0xc0, 40, 19, 2, 20, 5, 0, 4, -8, 0, 40, 6, 24, 32, 0, 0);
@@ -266,13 +266,13 @@ public class AdditionConfigs {
 
   private static AdditionHits80 createAdditionHits_Lavitz_FlowerStorm() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
-    additionHitProperties[0] = createAdditionHitProperties(0xe0, 17, 11, 3, 30, 8, 12, 0, 0, 2, 5, 7, 16, 32, 0, 11);
-    additionHitProperties[1] = createAdditionHitProperties(0xc0, 19, 13, 3, 30, 8, 0, 0, 0, 0, 0, 0, 18, 32, 18, 0);
-    additionHitProperties[2] = createAdditionHitProperties(0xc0, 27, 20, 2, 30, 8, 0, 0, 0, 14, 12, 12, 12, 32, 0, 0);
-    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, 10, 3, 40, 8, 0, 0, 0, 4, 5, 1, 22, 32, 0, 0);
-    additionHitProperties[4] = createAdditionHitProperties(0xc0, 22, 16, 3, 40, 8, 0, 0, 0, 10, 5, 3, 18, 32, 0, 0);
+    additionHitProperties[0] = createAdditionHitProperties(0xe0, 17, fc ? 10 : 11, 3, 30, 8, 12, 0, 0, 2, 5, 7, 16, 32, 0, 11);
+    additionHitProperties[1] = createAdditionHitProperties(0xc0, 19, fc ? 12 : 13, 3, 30, 8, 0, 0, 0, 0, 0, 0, 18, 32, 18, 0);
+    additionHitProperties[2] = createAdditionHitProperties(0xc0, 27, fc ? 18 : 20, fc ? 3 : 2, 30, 8, 0, 0, 0, 14, 12, 12, 12, 32, 0, 0);
+    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, fc ? 9 : 10, 3, 40, 8, 0, 0, 0, 4, 5, 1, 22, 32, 0, 0);
+    additionHitProperties[4] = createAdditionHitProperties(0xc0, 22, fc ? 15 : 16, 3, 40, 8, 0, 0, 0, 10, 5, 3, 18, 32, 0, 0);
     additionHitProperties[5] = createAdditionHitProperties(0xc0, 17, 12, 2, 40, 8, 0, 0, 0, 0, 14, 6, 22, 32, 0, 0);
-    additionHitProperties[6] = createAdditionHitProperties(0xc0, 20, 14, 3, 40, 6, 0, 0, 0, 11, 7, 14, 20, 32, 19, 0);
+    additionHitProperties[6] = createAdditionHitProperties(0xc0, 20, fc ? 13 : 14, 3, 40, 6, 0, 0, 0, 11, 7, 14, 20, 32, 19, 0);
     additionHitProperties[7] = createAdditionHitProperties(0xc0, 26, 7, 2, 50, 6, 0, 4, 0, 0, 26, 10, 10, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
