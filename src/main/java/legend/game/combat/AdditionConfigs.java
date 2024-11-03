@@ -134,7 +134,7 @@ public class AdditionConfigs {
   }
 
   // totalFrames: length of the animation, when done, the next animation and overlay starts
-  // overlayHitFrameOffset: the speed at which the overlay closes in
+  // overlayHitFrameOffset: the speed at which the overlay closes in (bigger = slower)
   // overlayStartingFrameOffset: frames before the overlay shows
   private static AdditionHitProperties10 createAdditionHitProperties(final int flags, final int totalFrames, int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
     if (false) { // -1 or +1 correction for people who would prefer it. There to potentially implement a setting that lets you adjust it or not?
@@ -387,7 +387,7 @@ public class AdditionConfigs {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
     additionHitProperties[0] = createAdditionHitProperties(0xc0, 7, 1, 3, 50, 20, 24, 0, 0, 0, 0, 0, 9, 32, 18, 13);
     additionHitProperties[1] = createAdditionHitProperties(0xc0, 26, 8, 3, 50, 5, 0, 0, 0, 6, 12, 8, 10, 32, 0, 0);
-    additionHitProperties[2] = createAdditionHitProperties(0xc0, 11, 3, 3, 25, 5, 0, 0, 0, 0, 3, 3, 9, 32, 0, 0);
+    additionHitProperties[2] = createAdditionHitProperties(0xc0, 11, fc ? 2 : 3, 3, 25, 5, 0, 0, 0, 0, 3, 3, 9, 32, 0, 0);
     additionHitProperties[3] = createAdditionHitProperties(0xc0, 71, 16, 3, 25, 5, 0, 4, -6, 0, 6, 10, 6, 32, 0, 0);
     additionHitProperties[4] = createAdditionHitProperties(0, 0, 0, 0, 0, 0, 0, 0, -8, 0, 0, 0, 0, 0, 0, 0);
     return new AdditionHits80(additionHitProperties);
@@ -396,9 +396,9 @@ public class AdditionConfigs {
   private static AdditionHits80 createAdditionHits_Meru_CoolBoogie() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
     additionHitProperties[0] = createAdditionHitProperties(0xc0, 7, 1, 3, 20, 12, 25, 0, 0, 0, 0, 0, 9, 32, 18, 13);
-    additionHitProperties[1] = createAdditionHitProperties(0xc0, 19, 8, 3, 20, 12, 0, 0, -7, 0, 9, 6, 9, 32, 0, 0);
-    additionHitProperties[2] = createAdditionHitProperties(0xc0, 34, 17, 3, 20, 12, 0, 0, 3, 6, 11, 20, 10, 32, 0, 0);
-    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, 2, 3, 20, 12, 0, 0, 0, 0, 0, 0, 15, 32, 0, 0);
+    additionHitProperties[1] = createAdditionHitProperties(0xc0, 19, fc ? 7 : 8, 3, 20, 12, 0, 0, -7, 0, 9, 6, 9, 32, 0, 0);
+    additionHitProperties[2] = createAdditionHitProperties(0xc0, 34, fc ? 16 : 17, 3, 20, 12, 0, 0, 3, 6, 11, 20, 10, 32, 0, 0);
+    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, fc ? 1 : 2, 3, 20, 12, 0, 0, 0, 0, 0, 0, 15, 32, 0, 0);
     additionHitProperties[4] = createAdditionHitProperties(0xc0, 23, 11, 2, 20, 12, 0, 4, -2, 9, 4, 6, 9, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
@@ -407,10 +407,10 @@ public class AdditionConfigs {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
     additionHitProperties[0] = createAdditionHitProperties(0xc0, 7, 1, 3, 30, 3, 26, 0, 0, 0, 0, 0, 9, 32, 18, 13);
     additionHitProperties[1] = createAdditionHitProperties(0xc0, 12, 6, 3, 20, 3, 0, 0, 0, 5, 3, 1, 12, 32, 0, 0);
-    additionHitProperties[2] = createAdditionHitProperties(0xc0, 16, 9, 3, 20, 3, 0, 0, 0, 0, 11, 6, 15, 32, 0, 0);
-    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, 8, 2, 20, 3, 0, 0, 0, 0, 12, 14, 14, 32, 0, 0);
+    additionHitProperties[2] = createAdditionHitProperties(0xc0, 16, fc ? 8 : 9, 3, 20, 3, 0, 0, 0, 0, 11, 6, 15, 32, 0, 0);
+    additionHitProperties[3] = createAdditionHitProperties(0xc0, 16, fc ? 9 : 8, 2, 20, 3, 0, 0, 0, 0, 12, 14, 14, 32, 0, 0);
     additionHitProperties[4] = createAdditionHitProperties(0xc0, 18, 1, 3, 20, 3, 0, 0, 10, 0, 2, 3, 12, 32, 0, 0);
-    additionHitProperties[5] = createAdditionHitProperties(0xc0, 27, 18, 3, 20, 3, 0, 0, -5, 0, 22, 5, 15, 32, 19, 0);
+    additionHitProperties[5] = createAdditionHitProperties(0xc0, 27, fc ? 17 : 18, 3, 20, 3, 0, 0, -5, 0, 22, 5, 15, 32, 19, 0);
     additionHitProperties[6] = createAdditionHitProperties(0xc0, 29, 1, 2, 20, 2, 0, 4, -9, 0, 3, 4, 15, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
@@ -418,12 +418,12 @@ public class AdditionConfigs {
   private static AdditionHits80 createAdditionHits_Meru_PerkyStep() {
     final AdditionHitProperties10[] additionHitProperties = createAdditionHitPropertiesArray();
     additionHitProperties[0] = createAdditionHitProperties(0xe0, 7, 1, 3, 30, 20, 27, 0, 0, 0, 0, 0, 9, 32, 18, 13);
-    additionHitProperties[1] = createAdditionHitProperties(0xc0, 24, 16, 3, 30, 20, 0, 0, 0, 6, 14, 10, 14, 32, 0, 0);
+    additionHitProperties[1] = createAdditionHitProperties(0xc0, 24, 16, fc ? 2 : 3, 30, 20, 0, 0, 0, 6, 14, 10, 14, 32, 0, 0);
     additionHitProperties[2] = createAdditionHitProperties(0xc0, 21, 1, 2, 30, 10, 0, 0, 0, 0, 4, 7, 14, 32, 19, 0);
-    additionHitProperties[3] = createAdditionHitProperties(0xc0, 19, 5, 3, 30, 10, 0, 0, -12, 0, 6, 15, 12, 32, 0, 0);
+    additionHitProperties[3] = createAdditionHitProperties(0xc0, 19, fc ? 4 : 5, 3, 30, 10, 0, 0, -12, 0, 6, 15, 12, 32, 0, 0);
     additionHitProperties[4] = createAdditionHitProperties(0xc0, 8, 1, 3, 20, 10, 0, 0, 15, 0, 6, 10, 22, 32, 0, 0);
     additionHitProperties[5] = createAdditionHitProperties(0xc0, 14, 4, 2, 20, 10, 0, 0, 0, 6, 3, 4, 16, 32, 0, 0);
-    additionHitProperties[6] = createAdditionHitProperties(0xc0, 19, 7, 3, 20, 10, 0, 0, -3, 0, 6, 1, 6, 32, 0, 0);
+    additionHitProperties[6] = createAdditionHitProperties(0xc0, 19, fc ? 6 : 7, 3, 20, 10, 0, 0, -3, 0, 6, 1, 6, 32, 0, 0);
     additionHitProperties[7] = createAdditionHitProperties(0xc0, 10, 1, 2, 20, 10, 0, 4, -2, 0, 2, 4, 18, 32, 0, 0);
     return new AdditionHits80(additionHitProperties);
   }
