@@ -2,6 +2,9 @@ package legend.game.combat;
 
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
+import legend.game.modding.coremod.CoreMod;
+
+import static legend.core.GameEngine.CONFIG;
 
 public class AdditionConfigs {
 
@@ -17,19 +20,11 @@ public class AdditionConfigs {
   };
 
   private static boolean dirty = true; //Starts at true so the first load call actually loads the additions
-  private static boolean fc = true; //Frame Correction (shorthanded to keep the ternaries in the createAdditionHits calls lean). Main use is to make the No HUD option on Additions feel way more intuitive
+  private static boolean fc; //Frame Correction (shorthanded to keep the ternaries in the createAdditionHits calls lean). Main use is to make the No HUD option on Additions feel way more intuitive
 
   // Call when you want additions to be reloaded at the start of the next combat (useful for a change in the settings to be applied)
   public static void setDirty() {
     dirty = true;
-  }
-
-  public static void setFrameCorrection(final boolean value) {
-    fc = value;
-  }
-
-  public static boolean getFrameCorrection() {
-    return fc;
   }
 
   public static void reload() {
@@ -45,6 +40,8 @@ public class AdditionConfigs {
 
     dirty = false;
 
+    // Not reloaded when config is changed. Perhaps you can help with that? I would to set dirty when the setting is changed instead of having to reload the entire array every combat even if the setting hasn't changed.
+    fc = CONFIG.getConfig(CoreMod.ADDITION_TIMING_MODE_CONFIG.get()) == AdditionTimingMode.RETIMED;
     additionHits_8010e658 = new AdditionHits80[43];
     int additionIndex = 0;
 
