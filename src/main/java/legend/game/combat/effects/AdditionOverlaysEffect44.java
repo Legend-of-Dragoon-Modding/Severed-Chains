@@ -100,21 +100,21 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final AdditionOverlaysHit20[] hitArray = new AdditionOverlaysHit20[hitCount];
     Arrays.setAll(hitArray, AdditionOverlaysHit20::new);
     this.hitOverlays_40 = hitArray;
-    int overlayDisplayDelay = this.getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xff;
-    this.unused_36 = overlayDisplayDelay;
+    int cumulativeOverlayDisplayDelay = 0;
 
     //LAB_801063f0
     for(hitNum = 0; hitNum < this.count_30; hitNum++) {
       final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
+      cumulativeOverlayDisplayDelay += this.getHitProperty(s5.charSlot_276, hitNum, 15, autoCompleteType) & 0xff;
       hitOverlay.unused_00 = 1;
       hitOverlay.hitSuccessful_01 = false;
       hitOverlay.shadowColour_08 = (short)0;
-      hitOverlay.frameSuccessLowerBound_10 = (short)(overlayDisplayDelay + 2);
+      hitOverlay.frameSuccessLowerBound_10 = (short)(cumulativeOverlayDisplayDelay + 2);
       hitOverlay.borderColoursArrayIndex_02 = 3;
       hitOverlay.isCounter_1c = false;
       additionHitCompletionState_8011a014[hitNum] = 0;
       int hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff;
-      overlayDisplayDelay += hitProperty; // Display delay for each hit
+      cumulativeOverlayDisplayDelay += hitProperty; // Display delay for each hit
       hitOverlay.totalHitFrames_0a = (short)hitProperty;
       hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 2, autoCompleteType) & 0xff;
       hitOverlay.frameBeginDisplay_0c = (short)hitProperty;
