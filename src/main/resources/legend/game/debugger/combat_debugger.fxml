@@ -42,7 +42,17 @@
                      <Insets right="4.0" />
                   </HBox.margin>
                </Button>
-               <Button fx:id="updateStats" mnemonicParsing="false" onAction="#updateStats" prefHeight="38.0" prefWidth="55.0" text="Update" />
+               <Button fx:id="updateStats" mnemonicParsing="false" onAction="#updateStats" prefHeight="38.0" prefWidth="55.0" text="Update">
+                  <HBox.margin>
+                     <Insets right="3.0" />
+                  </HBox.margin>
+               </Button>
+               <Separator orientation="VERTICAL" prefHeight="200.0">
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </Separator>
+               <Button fx:id="punchingBagMode" mnemonicParsing="false" onAction="#punchingBagMode" prefHeight="38.0" prefWidth="135.0" text="Punching Bag Mode" />
             </children>
          </HBox>
          <Separator prefWidth="200.0">

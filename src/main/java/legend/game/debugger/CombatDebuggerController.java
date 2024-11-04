@@ -80,6 +80,8 @@ public class CombatDebuggerController {
   public Button refreshStats;
   @FXML
   public Button updateStats;
+  @FXML
+  public Button punchingBagMode;
 
   public void initialize() {
     for(int i = 0; i < 10; i++) {
@@ -273,6 +275,46 @@ public class CombatDebuggerController {
 
     public String getName() {
       return this.prop.get();
+    }
+  }
+
+  public void punchingBagMode(final ActionEvent event) {
+    for (int i = 0; i < this.bentList.getItems().size(); i++) {
+      final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[i];
+
+      if(state == null) {
+        continue;
+      }
+
+      final BattleEntity27c bent = state.innerStruct_00;
+      final VitalsStat hp = bent.stats.getStat(LodMod.HP_STAT.get());
+      hp.setCurrent(9999);
+      hp.setMaxRaw(9999);
+
+      if (bent instanceof final PlayerBattleEntity player){
+        bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(9999);
+        bent.attack_34 = 0;
+        bent.magicAttack_36 = 0;
+        bent.attackHit_3c = 9999;
+        bent.magicHit_3e = 9999;
+        bent.defence_38 = 9999;
+        bent.magicDefence_3a = 9999;
+      } else {
+        bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(0);
+        bent.attack_34 = 0;
+        bent.magicAttack_36 = 0;
+        bent.attackHit_3c = 0;
+        bent.magicHit_3e = 0;
+        bent.defence_38 = 9999;
+        bent.magicDefence_3a = 9999;
+      }
+
+      this.bentList.getItems().get(i).update();
+    }
+
+    final int index = this.bentList.getSelectionModel().getSelectedIndex();
+    if (index > -1) {
+      this.displayStats(index);
     }
   }
 }
