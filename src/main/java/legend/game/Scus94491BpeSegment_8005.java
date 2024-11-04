@@ -68,7 +68,7 @@ public final class Scus94491BpeSegment_8005 {
     "Fire STR 50% Single", "Fire STR 25% All", "Fire STR 75% Single", "Fire STR 75% All", "STR 150% Single",
     "Wind STR 25% All", "Wind STR 75% Single", "Damage Resist 50% Dur 3", "Wind STR 75% All", "STR 100% All",
     "Light STR 25% All", "Ally 50% Rev, 100% Rec, Cure", "Ally All 50% Rev & Rec, Cure", "Light STR 75% & Allies 100% Rec", "Wind STR 25% All",
-    "Dark STR 50% Single & 33% Leech", "Dark STR 25% All & Fear", "Wind STR 75% Single", "Lethal attack for all - minor", "Dark STR 100% Single",
+    "Dark STR 50% Single & HP", "Dark STR 25% All & Fear", "Wind STR 75% Single", "Lethal attack for all - minor", "Dark STR 100% Single",
     "Thunder STR 25% Single", "Thunder STR 50% Single & Stun", "Thunder STR 75% Single", "Thunder STR 100% Single", "Water STR 50% Single",
     "Ally All 50% Rec, Cure", "Damage Resist 50% Dur 3", "Water STR 50% All", "Water STR 100% Single", "Earth STR 37.5% All",
     "Earth STR 50% All", "Earth STR 75% All", "", "", "",
