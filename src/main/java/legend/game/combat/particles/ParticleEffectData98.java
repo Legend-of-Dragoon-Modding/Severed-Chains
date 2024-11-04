@@ -74,7 +74,7 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
   }
 
   protected ParticleEffectInstance94 makeInstance(final int index) {
-    return instanceConstructors[this.renderType_60].apply(index, this);
+    return instanceConstructors[this.effectInner_08.behaviourType_20].apply(index, this);
   }
 
   protected abstract void init(final int flags);
