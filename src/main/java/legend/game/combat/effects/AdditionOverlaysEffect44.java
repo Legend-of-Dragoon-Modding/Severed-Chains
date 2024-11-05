@@ -8,6 +8,7 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.ui.AdditionOverlayMode;
@@ -23,9 +24,12 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.combat.Battle.additionNames_800fa8d4;
+import static legend.game.combat.Battle.asciiTable_800fa788;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
@@ -55,6 +59,11 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   public int lastCompletedHit_39;
   /** ubyte; 0 = no auto complete, 2 = WC and UW auto-complete */
   public int autoCompleteType_3a;
+
+  private int currentInputStatus = 0; //Failed Counter = -4, Late = -3, Early = -2, No Press = -1, None = 0, Success = 1, Perfect = 2
+  private int lastInputStatus = 0;
+  private int additionButtonFramesToRender; //Remaining frames that the addition button will render for
+  private int additionButtonTextFramesToRender; //Remaining frames that the addition button text will render for
 
   // Not needed anymore, just reference hit overlay array at index lastCompletedHit_39
   // public final Pointer<AdditionOverlaysHit20> lastCompletedHitOverlay_3c;
@@ -502,6 +511,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       final AdditionOverlaysHit20[] hitArray = this.hitOverlays_40;
       this.currentFrame_34++;
 
+      this.currentInputStatus = 0;
+
       //LAB_80107440
       int hitNum;
       int hitFailed = 1;
@@ -511,7 +522,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           if(additionHitCompletionState_8011a014[hitNum] == 0) {
             additionHitCompletionState_8011a014[hitNum] = -2;
             this.propagateFailedAdditionHitFlag(hitArray, hitNum);
-
+            this.currentInputStatus = -1;
+            this.additionButtonTextFramesToRender = 20;
             //LAB_80107478
           }
         } else if(additionHitCompletionState_8011a014[hitNum] == 0) {
@@ -579,14 +591,40 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                 if((press_800bee94 & 0x60) != 0) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
 
-                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) {
+                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) { // Unsuccessful Input
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;
+                    this.currentInputStatus = -4;
                   } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
                     additionHitCompletionState_8011a014[hitNum] = 1;
                     hitOverlay.hitSuccessful_01 = true;
+
+                    int perfectLowerBound = hitOverlay.frameSuccessLowerBound_10;
+                    int perfectUpperBound = hitOverlay.frameSuccessUpperBound_12;
+
+                    switch (hitOverlay.numSuccessFrames_0e)
+                    {
+                      case 2:
+                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        break;
+                      case 3:
+                        perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        break;
+                      case 4:
+                        perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 2;
+                        break;
+                    }
+
+                    this.currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? 2 : 1;
                   }
+                  else {
+                    this.currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? -2 : -3;
+                  }
+
+                  this.additionButtonTextFramesToRender = 20;
 
                   //LAB_801076f0
                   if(additionHitCompletionState_8011a014[hitNum] < 0) {
@@ -649,12 +687,15 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           }
         }
 
+        boolean isCounter = false;
+
         //LAB_80107330
         if(hitNum < this.count_30) {
           final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            this.renderAdditionButton(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1, hitOverlay.isCounter_1c);
-          }
+          isCounter = hitOverlay.isCounter_1c;
+//          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
+//            this.renderAdditionButton(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1, hitOverlay.isCounter_1c);
+//          }
 
           final byte currentFrame = (byte)this.currentFrame_34;
           if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
@@ -662,11 +703,101 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
               this.renderAdditionCentreSolidSquare(this, hitOverlay, -2, manager);
             }
           }
+          this.additionButtonFramesToRender = 1;
+        }
+        else if (hitNum == this.count_30) {
+          this.additionButtonFramesToRender = 7;
+        }
+
+        if (this.additionButtonFramesToRender > 0) {
+          if (this.currentInputStatus != 0 && this.currentInputStatus != -1) { //Button Down
+            this.renderAdditionButton(0, isCounter);
+          }
+          else { //Button Up
+            this.renderAdditionButton(2, isCounter);
+          }
+          this.additionButtonFramesToRender--;
+        }
+
+        if ((this.currentInputStatus != 0 || this.lastInputStatus != 0) && this.additionButtonTextFramesToRender > 0) {
+          this.lastInputStatus = this.currentInputStatus != 0 ? this.currentInputStatus : this.lastInputStatus;
+          this.renderAdditionFeedbackChar(235, 26);
+          this.additionButtonTextFramesToRender--;
+        }
+        else if (this.lastInputStatus != 0) {
+          this.lastInputStatus = 0;
         }
       }
     }
 
     //LAB_801073b4
+  }
+
+  private void renderAdditionFeedbackChar(final int xInitial, final int yInitial) {
+
+//    color = 0x40; //WHITE
+//    color = 0x41; //TURQUOISE
+//    color = 0x42; //YELLOW
+//    color = 0x43; //ORANGE
+//    color = 0x44; //PURPLE
+//    color = 0x45; //GREEN
+
+    final String text;
+    int color = 0;
+    final int brightness = 0x80;
+    switch (this.lastInputStatus) {
+      case -4:
+        text = "COUNTERED";
+        color = 0x42;
+        break;
+      case -3: case -1:
+        text = "LATE";
+        color = 0x43;
+        break;
+      case -2:
+        text = "EARLY";
+        color = 0x44;
+        break;
+      case 1:
+        text = "GOOD";
+        color = 0x45;
+        break;
+      case 2:
+        text = "PERFECT";
+        color = 0x41;
+        break;
+      default: return;
+    }
+
+    int textWidth = 0;
+    for (int i = 0; i < text.length(); i++)
+      textWidth += 8;
+
+    int xOffset = 0;
+    for (int i = 0; i < text.length(); i++) {
+      //LAB_800d3838
+      int charIndex = 0;
+      int chr;
+      while(true) {
+        chr = asciiTable_800fa788[charIndex];
+
+        if(text.charAt(i) == chr) {
+          break;
+        } else if(chr == 0) {
+          //LAB_800d3860
+          charIndex = 91;
+          break;
+        }
+
+        charIndex++;
+      }
+
+      xOffset += 8;
+      final int x = ((xInitial - textWidth) / 2) + xOffset;
+
+      //LAB_800d3864
+      battleUiParts.queueLetter(charIndex, x, yInitial, color, Translucency.HALF_B_PLUS_HALF_F, brightness, 1.0f, 1.0f);
+    }
   }
 
   @Override
