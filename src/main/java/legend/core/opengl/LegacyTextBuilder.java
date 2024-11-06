@@ -1,7 +1,6 @@
 package legend.core.opengl;
 
 import legend.core.gpu.Bpp;
-import legend.game.types.Translucency;
 
 import static legend.core.MathHelper.makeClut;
 import static legend.core.MathHelper.makeTpage;
@@ -98,8 +97,6 @@ public class LegacyTextBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
-    meshes[0] = mesh;
-    return new MeshObj(this.name, meshes, true);
+    return new MeshObj(this.name, new Mesh[] { mesh }, true);
   }
 }

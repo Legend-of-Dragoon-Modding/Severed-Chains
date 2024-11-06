@@ -66,7 +66,7 @@ public class LineBuilder {
       vertices[(i + 1) * vertexSize - 1] = this.flags;
     }
 
-    final Mesh mesh = new Mesh(this.closed ? GL_LINE_LOOP : GL_LINE_STRIP, vertices, this.pos.size());
+    final Mesh mesh = new Mesh(this.closed ? GL_LINE_LOOP : GL_LINE_STRIP, vertices, this.pos.size(), false, this.translucency != null, this.translucency);
 
     mesh.attribute(0, 0L, 3, vertexSize);
 
@@ -95,14 +95,6 @@ public class LineBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
-
-    if(this.translucency == null) {
-      meshes[0] = mesh;
-    } else {
-      meshes[this.translucency.ordinal() + 1] = mesh;
-    }
-
-    return new MeshObj(this.name, meshes, false);
+    return new MeshObj(this.name, new Mesh[] { mesh }, false);
   }
 }

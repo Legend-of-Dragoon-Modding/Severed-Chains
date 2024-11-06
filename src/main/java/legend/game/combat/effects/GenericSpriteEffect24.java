@@ -1,7 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -108,7 +108,7 @@ public class GenericSpriteEffect24 {
         this.transforms
           .rotationZ(this.angle_20)
           .scale(this.scaleX_1c / 8.0f * zDepth / 8.0f, this.scaleY_1e / 8.0f * zDepth / 8.0f, 1.0f);
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj, this.transforms)
+        final QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj, this.transforms)
           .colour(this.r_14 / 255.0f, this.g_15 / 255.0f, this.b_16 / 255.0f);
 
         if((this.flags_00 & 0x4000_0000) != 0) {

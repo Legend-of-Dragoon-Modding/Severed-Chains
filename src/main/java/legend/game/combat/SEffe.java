@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.QueuedModel;
 import legend.core.RenderEngine;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
@@ -301,7 +302,7 @@ public final class SEffe {
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */
   @Method(0x800cffd8L)
-  public static void getModelObjectTranslation(final BattleEntity27c bent, final Vector3f translation, final int objIndex) {
+  public static void calculateBentPartPosition(final BattleEntity27c bent, final Vector3f translation, final int objIndex) {
     final MV transformMatrix = new MV();
     GsGetLw(bent.model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
     translation.set(transformMatrix.transfer);
@@ -356,7 +357,7 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
+    final QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -845,21 +846,21 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7", description = "Unknown packed values")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type2", description = "Also controls how the particle behaves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "behaviourType", description = "Also controls how the particle behaves")
   @Method(0x80102088L)
   public static FlowControl scriptAllocateParticleEffect(final RunningScript<? extends BattleObject> script) {
-    final int scriptIndex = script.params_20[0].get();
+    final BattleObject parentBobj = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
     final int particleTypeId = script.params_20[2].get();
     final int particleCount = script.params_20[3].get();
     final int _10 = script.params_20[4].get();
     final int _14 = script.params_20[5].get();
     final int _18 = script.params_20[6].get();
     final int innerStuff = script.params_20[7].get();
-    final int particleType = script.params_20[8].get();
+    final int behaviourType = script.params_20[8].get();
 
-    final ParticleEffectData98 effect = ((Battle)currentEngineState_8004dd04).particles.allocateParticle(script.scriptState_04, particleType, particleCount, particleTypeId, _10, _14, _18, innerStuff, scriptIndex, script.params_20[1].get());
+    final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state = ((Battle)currentEngineState_8004dd04).particles.allocateParticle(script.scriptState_04, behaviourType, particleCount, particleTypeId, _10, _14, _18, innerStuff, parentBobj);
 
-    script.params_20[0].set(effect.myState_00.index);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 

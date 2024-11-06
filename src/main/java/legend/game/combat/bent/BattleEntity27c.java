@@ -1,6 +1,6 @@
 package legend.game.combat.bent;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -669,7 +669,7 @@ public abstract class BattleEntity27c extends BattleObject {
         Renderer.renderDobj2(part, true, 0);
 
         if(model.modelParts_00[i].obj != null) {
-          final RenderEngine.QueuedModel<?> queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw)
+          final QueuedModel<?> queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)

@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
@@ -94,7 +94,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.obj, sp0x10)
+        final QueuedModel<?> model = RENDERER.queueModel(this.obj, sp0x10)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
