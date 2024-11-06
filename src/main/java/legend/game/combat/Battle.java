@@ -35,6 +35,7 @@ import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.LoadedDeff24;
+import legend.game.combat.effects.AdditionButtonFeedbackText;
 import legend.game.combat.effects.AdditionCharEffectData0c;
 import legend.game.combat.effects.AdditionNameTextEffect1c;
 import legend.game.combat.effects.AdditionSparksEffect08;
@@ -277,6 +278,10 @@ public class Battle extends EngineState {
   public final BattleHud hud = new BattleHud(this);
   public final BattleCamera camera_800c67f0 = new BattleCamera();
   public final ParticleManager particles = new ParticleManager(this.camera_800c67f0);
+
+  public Battle() {
+    SEffe.additionButtonFeedbackText = new AdditionButtonFeedbackText();
+  }
 
   /**
    * <ol start="0">
@@ -588,6 +593,9 @@ public class Battle extends EngineState {
 
       if(battleLoaded_800bc94c) {
         this.renderBattleEnvironment();
+        if (SEffe.additionButtonFeedbackText != null) {
+          SEffe.additionButtonFeedbackText.renderAdditionFeedbackChar();
+        }
       }
     } else {
       //LAB_8001870c

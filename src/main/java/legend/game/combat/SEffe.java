@@ -28,6 +28,7 @@ import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
+import legend.game.combat.effects.AdditionButtonFeedbackText;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
@@ -195,6 +196,8 @@ public final class SEffe {
 
   private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
+
+  public static AdditionButtonFeedbackText additionButtonFeedbackText;
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
