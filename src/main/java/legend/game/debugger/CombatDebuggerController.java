@@ -83,6 +83,8 @@ public class CombatDebuggerController {
   @FXML
   public Button punchingBagMode;
 
+  public static boolean autoPunchingBagMode;
+
   public void initialize() {
     for(int i = 0; i < 10; i++) {
       this.bents.add(new ListItem(this::getCombatantName, i));
@@ -279,7 +281,22 @@ public class CombatDebuggerController {
   }
 
   public void punchingBagMode(final ActionEvent event) {
-    for (int i = 0; i < this.bentList.getItems().size(); i++) {
+    CombatDebuggerController.punchingBagMode();
+    final int selectedIndex = this.bentList.getSelectionModel().getSelectedIndex();
+    for(int i = 0; i < this.bentList.getItems().size(); i++) {
+      this.bentList.getItems().get(i).update();
+      if(selectedIndex == i) {
+        this.displayStats(i);
+      }
+    }
+  }
+
+  public static void punchingBagMode() {
+    if (battleState_8006e398 == null || battleState_8006e398.allBents_e0c.length < 1) {
+      return;
+    }
+
+    for (int i = 0; i < battleState_8006e398.allBents_e0c.length; i++) {
       final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[i];
 
       if(state == null) {
@@ -308,13 +325,6 @@ public class CombatDebuggerController {
         bent.defence_38 = 9999;
         bent.magicDefence_3a = 9999;
       }
-
-      this.bentList.getItems().get(i).update();
-    }
-
-    final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    if (index > -1) {
-      this.displayStats(index);
     }
   }
 }
