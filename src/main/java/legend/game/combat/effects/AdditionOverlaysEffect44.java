@@ -56,7 +56,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   /** ubyte; 0 = no auto complete, 2 = WC and UW auto-complete */
   public int autoCompleteType_3a;
 
-  private int currentInputStatus; //Failed Counter = -4, Late = -3, Early = -2, No Press = -1, None = 0, Success = 1, Perfect = 2
+  private AdditionButtonFeedbacks currentInputStatus;
   private int additionButtonFramesToRender; //Remaining frames that the addition button will render for
   private boolean flawlessAddition = true;
 
@@ -508,7 +508,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       final AdditionOverlaysHit20[] hitArray = this.hitOverlays_40;
       this.currentFrame_34++;
 
-      this.currentInputStatus = 0;
+      this.currentInputStatus = AdditionButtonFeedbacks.NONE;
 
       //LAB_80107440
       int hitNum;
@@ -519,7 +519,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           if(additionHitCompletionState_8011a014[hitNum] == 0) {
             additionHitCompletionState_8011a014[hitNum] = -2;
             this.propagateFailedAdditionHitFlag(hitArray, hitNum);
-            this.currentInputStatus = -1;
+            this.currentInputStatus = AdditionButtonFeedbacks.NO_PRESS;
             SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
             //LAB_80107478
           }
@@ -592,7 +592,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;
-                    this.currentInputStatus = -4;
+                    this.currentInputStatus = AdditionButtonFeedbacks.COUNTER;
                   } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
                     additionHitCompletionState_8011a014[hitNum] = 1;
                     hitOverlay.hitSuccessful_01 = true;
@@ -619,18 +619,18 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                         break;
                     }
 
-                    this.currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? 2 : 1;
-                    if (this.flawlessAddition && this.currentInputStatus != 2) {
+                    this.currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionButtonFeedbacks.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionButtonFeedbacks.GOOD_MINUS : AdditionButtonFeedbacks.GOOD_PLUS);
+                    if (this.flawlessAddition && this.currentInputStatus != AdditionButtonFeedbacks.PERFECT) {
                       this.flawlessAddition = false;
                     }
                   }
                   else {
-                    this.currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? -2 : -3;
+                    this.currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionButtonFeedbacks.EARLY : AdditionButtonFeedbacks.LATE;
                     this.flawlessAddition = false;
                   }
 
                   if (hitNum == hitArray.length - 1 && this.flawlessAddition) {
-                    SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, 3); //Flawless
+                    SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, AdditionButtonFeedbacks.FLAWLESS); //Flawless
                   }
                   else {
                     SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
@@ -720,7 +720,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         }
 
         if (this.additionButtonFramesToRender > 0) {
-          if (this.currentInputStatus != 0 && this.currentInputStatus != -1) { //Button Down
+          if (this.currentInputStatus != AdditionButtonFeedbacks.NONE && this.currentInputStatus != AdditionButtonFeedbacks.NO_PRESS) { //Button Down
             this.renderAdditionButton(0, isCounter);
           }
           else { //Button Up

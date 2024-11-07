@@ -6,7 +6,6 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.game.types.Translucency;
 import org.joml.Matrix4f;
-import org.joml.Vector2d;
 
 import java.nio.file.Path;
 
@@ -22,7 +21,7 @@ public class AdditionButtonFeedbackText {
     public float x;
     public float y;
     public Translucency translucency;
-    public FeedbackTextFrameData(final float x, final float y, Translucency translucency) {
+    public FeedbackTextFrameData(final float x, final float y, final Translucency translucency) {
       this.x = x;
       this.y = y;
       this.translucency = translucency;
@@ -32,12 +31,12 @@ public class AdditionButtonFeedbackText {
   private class FeedbackTextElement {
     public int frameIndex;
     public FeedbackTextFrameData[] frames;
-    public int feedbackIndex;
+    public AdditionButtonFeedbacks feedback;
 
     private int translucentFrameCount;
 
-    public FeedbackTextElement(final int feedbackIndex) {
-      this.feedbackIndex = feedbackIndex;
+    public FeedbackTextElement(final AdditionButtonFeedbacks feedback) {
+      this.feedback = feedback;
       this.setAnimationFrames();
     }
 
@@ -50,13 +49,13 @@ public class AdditionButtonFeedbackText {
     }
 
     private void setAnimationFrames() {
-      this.frames = new FeedbackTextFrameData[this.feedbackIndex == 3 ? 45 : 35];
+      this.frames = new FeedbackTextFrameData[this.feedback == AdditionButtonFeedbacks.FLAWLESS ? 45 : 35];
 
       for (int i = 0; i < 10; i++) {
         this.frames[this.frameIndex++] = new FeedbackTextFrameData(TEXT_POSITION_X, Math.max(TEXT_POSITION_Y, TEXT_POSITION_Y + 15 - i * 3), i < 3 ? Translucency.B_PLUS_QUARTER_F : this.getTranslucency());
       }
 
-      for (int i = 0; i < (this.feedbackIndex == 3 ? 30 : 20); i++) {
+      for (int i = 0; i < (this.feedback == AdditionButtonFeedbacks.FLAWLESS ? 30 : 20); i++) {
         this.frames[this.frameIndex++] = new FeedbackTextFrameData(TEXT_POSITION_X, TEXT_POSITION_Y, this.getTranslucency());
       }
 
@@ -69,7 +68,7 @@ public class AdditionButtonFeedbackText {
 
     private Translucency getTranslucency() {
       Translucency t = Translucency.B_PLUS_F;
-      if (this.feedbackIndex == 3) {
+      if (this.feedback == AdditionButtonFeedbacks.FLAWLESS) {
         t = this.translucentFrameCount >= 2 ? Translucency.B_PLUS_QUARTER_F : Translucency.B_PLUS_F;
         this.translucentFrameCount = this.translucentFrameCount > 2 ? 0 : this.translucentFrameCount + 1;
       }
@@ -95,12 +94,14 @@ public class AdditionButtonFeedbackText {
       .build();
 
     this.additionButtonTextTextures = new Texture[] {
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good.png")),
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Early.png")),
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Late.png")),
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Perfect.png")),
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Counter.png")),
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Flawless.png"))
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good.png")), //0
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Early.png")), //1
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Late.png")), //2
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Perfect.png")), //3
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Counter.png")), //4
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Flawless.png")), //5
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good-.png")), //6
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good+.png")) //7
     };
   }
 
@@ -108,8 +109,8 @@ public class AdditionButtonFeedbackText {
     this.feedbackTextElements = new FeedbackTextElement[length];
   }
 
-  public void setFeedbackTextElement(final int index, final int feedbackIndex) {
-    this.feedbackTextElements[index] = new FeedbackTextElement(feedbackIndex);
+  public void setFeedbackTextElement(final int index, final AdditionButtonFeedbacks feedback) {
+    this.feedbackTextElements[index] = new FeedbackTextElement(feedback);
 
     if (index > 0 && this.feedbackTextElements[index - 1].frameIndex < DECAY_FRAME_INDEX) {
       this.feedbackTextElements[index - 1].frameIndex = DECAY_FRAME_INDEX;
@@ -128,22 +129,24 @@ public class AdditionButtonFeedbackText {
 
           RENDERER
             .queueOrthoModel(this.additionButtonTextQuad, this.transformMatrix)
-            .texture(this.GetTexture(element.feedbackIndex))
+            .texture(this.GetTexture(element.feedback))
             .translucency(frame.translucency); //HALF_B_PLUS_HALF_F slightly transparent, B_PLUS_F slightly transparent without black
         }
       }
     }
   }
 
-  //Failed Counter = -4, Late = -3, Early = -2, No Press = -1, None = 0, Success = 1, Perfect = 2, Flawless = 3
-  private Texture GetTexture(final int feedbackIndex) {
-    return switch(feedbackIndex) {
-      case -4 -> this.additionButtonTextTextures[4];
-      case -3, -1 -> this.additionButtonTextTextures[2];
-      case -2 -> this.additionButtonTextTextures[1];
-      case 1 -> this.additionButtonTextTextures[0];
-      case 2 -> this.additionButtonTextTextures[3];
-      case 3 -> this.additionButtonTextTextures[5];
+  //Failed Counter = -4, Late = -3, Early = -2, No Press = -1, None = 0, Good = 1, Good- = 2, Good+ = 3, Perfect = 4, Flawless = 5
+  private Texture GetTexture(final AdditionButtonFeedbacks feedback) {
+    return switch(feedback) {
+      case AdditionButtonFeedbacks.COUNTER -> this.additionButtonTextTextures[4];
+      case AdditionButtonFeedbacks.LATE, AdditionButtonFeedbacks.NO_PRESS -> this.additionButtonTextTextures[2];
+      case AdditionButtonFeedbacks.EARLY -> this.additionButtonTextTextures[1];
+      case AdditionButtonFeedbacks.GOOD -> this.additionButtonTextTextures[0];
+      case AdditionButtonFeedbacks.GOOD_MINUS -> this.additionButtonTextTextures[6];
+      case AdditionButtonFeedbacks.GOOD_PLUS -> this.additionButtonTextTextures[7];
+      case AdditionButtonFeedbacks.PERFECT -> this.additionButtonTextTextures[3];
+      case AdditionButtonFeedbacks.FLAWLESS -> this.additionButtonTextTextures[5];
       default -> null;
     };
   }
