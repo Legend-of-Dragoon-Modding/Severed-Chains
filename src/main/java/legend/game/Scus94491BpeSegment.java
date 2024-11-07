@@ -2,6 +2,7 @@ package legend.game;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.stage.Stage;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
@@ -22,6 +23,8 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
+import legend.game.debugger.CombatDebugger;
+import legend.game.debugger.CombatDebuggerController;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
@@ -162,6 +165,7 @@ import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
@@ -355,6 +359,14 @@ public final class Scus94491BpeSegment {
         for(final Voice voice : SPU.voices) {
           voice.volumeLeft.set(0);
           voice.volumeRight.set(0);
+        }
+      }
+
+      if (key == GLFW_KEY_F8)
+      {
+        CombatDebuggerController.autoPunchingBagMode = !CombatDebuggerController.autoPunchingBagMode;
+        if (CombatDebuggerController.autoPunchingBagMode) {
+          CombatDebuggerController.punchingBagMode();
         }
       }
 
