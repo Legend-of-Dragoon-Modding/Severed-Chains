@@ -187,10 +187,6 @@ public final class Input {
   }
 
   private static void keyRelease(final Window window, final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
-
     for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
         inputBinding.setReleasedForKeyboardInput();
