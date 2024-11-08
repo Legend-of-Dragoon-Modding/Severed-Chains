@@ -1,6 +1,7 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
@@ -91,7 +92,7 @@ public class Textbox extends Control {
       this.transforms.scaling(1.0f, this.getHeight() - 5.0f, 1.0f);
       this.transforms.transfer.set(caretX, caretY, this.getZ() - 1.0f);
       RENDERER
-        .queueOrthoModel(RENDERER.opaqueQuad, this.transforms)
+        .queueOrthoModel(RENDERER.opaqueQuad, this.transforms, QueuedModelStandard.class)
         .colour(0xa0 / 255.0f, 0x80 / 255.0f, 0x50 / 255.0f);
     }
   }

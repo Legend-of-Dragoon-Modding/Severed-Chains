@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -114,7 +115,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
 
     final Obj obj = builder.build();
     obj.delete();
-    RENDERER.queueOrthoModel(obj, this.transforms)
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame());
   }
 
@@ -157,7 +158,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     this.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
     this.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.transforms)
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.transforms, QueuedModelStandard.class)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3))
       .colour(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f)
       .texture(RENDERER.getLastFrame());

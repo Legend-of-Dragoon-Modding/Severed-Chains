@@ -1,6 +1,8 @@
 package legend.game.title;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
+import legend.core.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
@@ -852,13 +854,13 @@ public class Ttle extends EngineState {
 
       //LAB_800c8a8c
       RENDERER
-        .queueOrthoModel(this.menuTextObj)
+        .queueOrthoModel(this.menuTextObj, QueuedModelStandard.class)
         .monochrome(colour / 128.0f)
         .texture(this.menuTextTex[2])
         .vertices((i + 4) * 4, 4);
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj)
+        .queueOrthoModel(this.menuTextObj, QueuedModelStandard.class)
         .monochrome(colour / 128.0f)
         .texture(this.menuTextTex[this.selectedMenuOption == i ? 1 : 0])
         .vertices(i * 4, 4);
@@ -885,7 +887,7 @@ public class Ttle extends EngineState {
     //LAB_800cabcc
     //LAB_800cabe8
     RENDERER
-      .queueOrthoModel(this.copyrightObj)
+      .queueOrthoModel(this.copyrightObj, QueuedModelStandard.class)
       .monochrome(this.copyrightFadeInAmount)
       .texture(this.copyrightTex);
   }
@@ -901,12 +903,12 @@ public class Ttle extends EngineState {
     //LAB_800cae2c
     //LAB_800cae48
     RENDERER
-      .queueOrthoModel(this.logoObj)
+      .queueOrthoModel(this.logoObj, QueuedModelStandard.class)
       .monochrome(this.logoFadeInAmount)
       .texture(this.logoTex);
 
     RENDERER
-      .queueOrthoModel(this.trademarkObj)
+      .queueOrthoModel(this.trademarkObj, QueuedModelStandard.class)
       .monochrome(this.logoFadeInAmount)
       .texture(this.trademarkTex);
   }
@@ -928,7 +930,7 @@ public class Ttle extends EngineState {
     //LAB_800cb0ec
     //LAB_800cb100
     RENDERER
-      .queueOrthoModel(this.backgroundObj)
+      .queueOrthoModel(this.backgroundObj, QueuedModelStandard.class)
       .texture(this.backgroundTex)
       .screenspaceOffset(0.0f, this.backgroundScrollAmount)
       .monochrome(this.backgroundFadeInAmount);
@@ -993,7 +995,7 @@ public class Ttle extends EngineState {
       GsGetLw(dobj2s[i].coord2_04, lw);
       lw.scaleLocal(scale);
 
-      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw)
+      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw, QueuedModelTmd.class)
         .monochrome(this.flameColour / 128.0f)
         .screenspaceOffset(8.0f, 0.0f)
         .lightDirection(lightDirectionMatrix_800c34e8)
@@ -1034,7 +1036,7 @@ public class Ttle extends EngineState {
 
     this.flashTransforms.transfer.set(0.0f, 0.0f, 30.0f);
     this.flashTransforms.scaling(368.0f, 240.0f, 1.0f);
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms)
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())
       .translucency(Translucency.B_PLUS_F)
       .monochrome(colour / 128.0f);

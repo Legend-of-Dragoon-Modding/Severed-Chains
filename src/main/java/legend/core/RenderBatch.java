@@ -2,20 +2,17 @@ package legend.core;
 
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
-import legend.core.opengl.ShaderManager;
-import legend.core.opengl.ShaderOptions;
-import legend.core.opengl.ShaderType;
+import legend.core.opengl.Shader;
 import legend.core.opengl.SubmapWidescreenMode;
-import legend.core.opengl.VoidShaderOptions;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.SMap;
 import legend.game.types.Translucency;
 import org.joml.Matrix4f;
 
+import java.nio.FloatBuffer;
+
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.MathHelper.PI;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class RenderBatch {
@@ -50,21 +47,17 @@ public class RenderBatch {
   public final Matrix4f perspectiveProjection = new Matrix4f();
   public final Matrix4f orthographicProjection = new Matrix4f();
 
-  public final QueuePool<QueuedModel<VoidShaderOptions>> modelPool;
-  public final QueuePool<QueuedModel<VoidShaderOptions>> orthoPool;
-  public final QueuePool<QueuedModel> shaderPool;
-  public final QueuePool<QueuedModel> shaderOrthoPool;
+  public final QueuePool<QueuedModel<?, ?>> modelPool;
+  public final QueuePool<QueuedModel<?, ?>> orthoPool;
 
-  public RenderBatch(final RenderEngine engine) {
+  public RenderBatch(final RenderEngine engine, final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
     this.engine = engine;
-    this.modelPool = new QueuePool<>(() -> new QueuedModel<>(this));
-    this.orthoPool = new QueuePool<>(() -> new QueuedModel<>(this));
-    this.shaderPool = new QueuePool<>(() -> new QueuedModel<>(this));
-    this.shaderOrthoPool = new QueuePool<>(() -> new QueuedModel<>(this));
+    this.modelPool = this.makePool(vdfUniform, vdfBuffer, lightingBuffer);
+    this.orthoPool = this.makePool(vdfUniform, vdfBuffer, lightingBuffer);
   }
 
-  public RenderBatch(final RenderEngine engine, final RenderBatch current) {
-    this(engine);
+  public RenderBatch(final RenderEngine engine, final RenderBatch current, final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
+    this(engine, vdfUniform, vdfBuffer, lightingBuffer);
     this.projectionWidth = current.projectionWidth;
     this.projectionHeight = current.projectionHeight;
     this.projectionDepth = current.projectionDepth;
@@ -80,11 +73,17 @@ public class RenderBatch {
     this.orthographicProjection.set(current.orthographicProjection);
   }
 
+  private QueuePool<QueuedModel<?, ?>> makePool(final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
+    final QueuePool<QueuedModel<?, ?>> pool = new QueuePool<>();
+    pool.addType(QueuedModelStandard.class, () -> new QueuedModelStandard(this, this.engine.standardShader, this.engine.standardShaderOptions));
+    pool.addType(QueuedModelTmd.class, () -> new QueuedModelTmd(this, this.engine.tmdShader, this.engine.tmdShaderOptions, lightingBuffer));
+    pool.addType(QueuedModelBattleTmd.class, () -> new QueuedModelBattleTmd(this, this.engine.battleTmdShader, this.engine.battleTmdShaderOptions, vdfUniform, vdfBuffer, lightingBuffer));
+    return pool;
+  }
+
   void reset() {
     this.modelPool.reset();
     this.orthoPool.reset();
-    this.shaderPool.reset();
-    this.shaderOrthoPool.reset();
   }
 
   /** NOTE: you must call {@link #updateProjections} yourself */
@@ -184,79 +183,61 @@ public class RenderBatch {
     }
   }
 
-  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj) {
+  public <T extends QueuedModel<?, ?>> T queueModel(final Obj obj, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      throw new IllegalArgumentException("3D models can only use order-independent translucency modes");
-    }
-
-    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    final T entry = this.modelPool.acquire(type);
+    entry.acquire(obj);
     return entry;
   }
 
-  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final MV mv) {
+  public <T extends QueuedModel<?, ?>> T queueModel(final Obj obj, final MV mv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    final T entry = this.modelPool.acquire(type);
+    entry.acquire(obj, mv);
     return entry;
   }
 
-  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final MV mv, final MV lightMv) {
+  public <T extends QueuedModel<?, ?> & LitModel> T queueModel(final Obj obj, final MV mv, final MV lightMv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    final T entry = this.modelPool.acquire(type);
+    entry.acquire(obj, mv);
+    entry.setLightTransforms(lightMv);
     return entry;
   }
 
-  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final Matrix4f mv) {
+  public <T extends QueuedModel<?, ?>> T queueModel(final Obj obj, final Matrix4f mv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    final T entry = this.modelPool.acquire(type);
+    entry.acquire(obj, mv);
     return entry;
   }
 
-  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final Matrix4f mv, final MV lightMv) {
+  public <T extends QueuedModel<?, ?> & LitModel> T queueModel(final Obj obj, final Matrix4f mv, final MV lightMv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    final T entry = this.modelPool.acquire(type);
+    entry.acquire(obj, mv);
+    entry.setLightTransforms(lightMv);
     return entry;
   }
 
-  public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj) {
+  private final Matrix4f temp = new Matrix4f();
+
+  public <T extends QueuedModel<?, ?>> T queueOrthoModel(final Obj obj, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
@@ -265,15 +246,14 @@ public class RenderBatch {
       this.needsSorting = true;
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.orthoPool.acquire();
-    entry.reset();
-    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
-    entry.obj = obj;
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    this.temp.identity().setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
+
+    final T entry = this.orthoPool.acquire(type);
+    entry.acquire(obj, this.temp);
     return entry;
   }
 
-  public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final MV mv) {
+  public <T extends QueuedModel<?, ?>> T queueOrthoModel(final Obj obj, final MV mv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
@@ -282,17 +262,15 @@ public class RenderBatch {
       this.needsSorting = true;
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.orthoPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    this.temp.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
+
+    final T entry = this.orthoPool.acquire(type);
+    entry.acquire(obj, this.temp);
     return entry;
   }
 
   /** NOTE: you have to add widescreenOrthoOffsetX yourself */
-  public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final Matrix4f transforms) {
+  public <T extends QueuedModel<?, ?>> T queueOrthoModel(final Obj obj, final Matrix4f transforms, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
@@ -301,58 +279,8 @@ public class RenderBatch {
       this.needsSorting = true;
     }
 
-    final QueuedModel<VoidShaderOptions> entry = this.orthoPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.transforms.set(transforms);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
-  }
-
-  public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueModel(final Obj obj, final ShaderType<Options> shaderType) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<Options> entry = this.shaderPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.shader = ShaderManager.getShader(shaderType);
-    entry.shaderOptions = entry.shader.makeOptions();
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
-  }
-
-  public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueModel(final Obj obj, final MV mv, final ShaderType<Options> shaderType) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<Options> entry = this.shaderPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.shader = ShaderManager.getShader(shaderType);
-    entry.shaderOptions = entry.shader.makeOptions();
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
-    return entry;
-  }
-
-  public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueOrthoModel(final Obj obj, final MV mv, final ShaderType<Options> shaderType) {
-    if(obj == null) {
-      throw new IllegalArgumentException("obj is null");
-    }
-
-    final QueuedModel<Options> entry = this.shaderOrthoPool.acquire();
-    entry.reset();
-    entry.obj = obj;
-    entry.shader = ShaderManager.getShader(shaderType);
-    entry.shaderOptions = entry.shader.makeOptions();
-    entry.transforms.set(mv).setTranslation(mv.transfer);
-    entry.lightTransforms.set(entry.transforms);
-    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    final T entry = this.orthoPool.acquire(type);
+    entry.acquire(obj, transforms);
     return entry;
   }
 }

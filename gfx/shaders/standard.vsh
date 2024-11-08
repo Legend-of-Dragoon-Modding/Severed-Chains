@@ -1,7 +1,7 @@
 #version 330 core
 
 layout(location = 0) in vec4 inPos; // w is vertex index
-layout(location = 1) in vec3 inNorm;
+layout(location = 1) in vec3 inNorm; // unused
 layout(location = 2) in vec2 inUv;
 layout(location = 3) in float inTpage;
 layout(location = 4) in float inClut;
@@ -15,8 +15,6 @@ flat out int vertBpp;
 smooth out vec4 vertColour;
 flat out int vertFlags;
 
-flat out int translucency;
-
 flat out float widthMultiplier;
 flat out int widthMask;
 flat out int indexShift;
@@ -28,16 +26,11 @@ smooth out float depthOffset;
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
+uniform float translucency;
 
 struct ModelTransforms {
   mat4 model;
   vec4 screenOffset;
-};
-
-struct Light {
-  mat4 lightDirection;
-  mat3 lightColour;
-  vec4 backgroundColour;
 };
 
 layout(std140) uniform transforms {
@@ -48,11 +41,6 @@ layout(std140) uniform transforms {
 /** 20-float (80-byte) stride */
 layout(std140) uniform transforms2 {
   ModelTransforms[128] modelTransforms;
-};
-
-/** 32-float (128-byte) stride */
-layout(std140) uniform lighting {
-  Light[128] lights;
 };
 
 layout(std140) uniform projectionInfo {
@@ -68,17 +56,13 @@ void main() {
   vec4 pos = vec4(inPos.xyz, 1.0f);
 
   vertFlags = int(inFlags);
-  bool translucent = (vertFlags & 0x8) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || translucency != 0;
   bool coloured = (vertFlags & 0x4) != 0;
   bool textured = (vertFlags & 0x2) != 0;
-  bool lit = (vertFlags & 0x1) != 0;
 
   ModelTransforms t = modelTransforms[int(modelIndex)];
-  Light l = lights[int(modelIndex)];
 
-  if(lit) {
-    vertColour.rgb = clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb;
-  } else if(coloured) {
+  if(coloured) {
     vertColour = inColour;
   } else {
     vertColour = vec4(1.0, 1.0, 1.0, 1.0);
@@ -86,7 +70,6 @@ void main() {
 
   int intTpage = int(inTpage);
   vertBpp = intTpage >> 7 & 0x3;
-  translucency = intTpage >> 5 & 0x3;
 
   if(textured) {
     if(coloured) {

@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -170,7 +171,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     obj.delete();
 
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
-    RENDERER.queueOrthoModel(obj, this.transforms);
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
   }
 
   @Method(0x800d15d8L)
@@ -220,6 +221,6 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     obj.delete();
 
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
-    RENDERER.queueOrthoModel(obj, this.transforms);
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
   }
 }

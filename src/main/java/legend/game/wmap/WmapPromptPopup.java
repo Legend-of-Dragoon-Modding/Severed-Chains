@@ -1,5 +1,6 @@
 package legend.game.wmap;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -262,7 +263,7 @@ public class WmapPromptPopup {
       //LAB_800ce5c8
       highlight.transforms.identity();
       highlight.transforms.transfer.set(x, y, highlight.z_3e);
-      RENDERER.queueOrthoModel(highlight.highlight, highlight.transforms)
+      RENDERER.queueOrthoModel(highlight.highlight, highlight.transforms, QueuedModelStandard.class)
         .vertices(i * 4, 4)
         .monochrome(highlight.currentBrightness_34);
     }
@@ -279,12 +280,12 @@ public class WmapPromptPopup {
 
     if(this.thumbnail != null) {
       this.transforms.transfer.set(this.thumbnailTranslation);
-      RENDERER.queueOrthoModel(this.thumbnail, this.transforms);
+      RENDERER.queueOrthoModel(this.thumbnail, this.transforms, QueuedModelStandard.class);
     }
 
     if(this.prompt != null) {
       this.transforms.transfer.set(this.promptTranslation);
-      RENDERER.queueOrthoModel(this.prompt, this.transforms);
+      RENDERER.queueOrthoModel(this.prompt, this.transforms, QueuedModelStandard.class);
     }
 
     if(!this.options.isEmpty()) {
@@ -292,7 +293,7 @@ public class WmapPromptPopup {
       for(int i = 0; i < this.options.size(); i++) {
         final TextObj option = this.options.get(i);
         if(option != null) {
-          RENDERER.queueOrthoModel(option, this.transforms);
+          RENDERER.queueOrthoModel(option, this.transforms, QueuedModelStandard.class);
           this.transforms.transfer.y += this.optionSpacing;
         }
       }
@@ -303,7 +304,7 @@ public class WmapPromptPopup {
       for(int i = 0; i < this.altText.size(); i++) {
         final TextObj altText = this.altText.get(i);
         if(altText != null) {
-          RENDERER.queueOrthoModel(altText, this.transforms);
+          RENDERER.queueOrthoModel(altText, this.transforms, QueuedModelStandard.class);
           this.transforms.transfer.y += this.altTextSpacing;
         }
       }

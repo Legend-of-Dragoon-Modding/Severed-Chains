@@ -1,7 +1,8 @@
 package legend.game.wmap;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModel;
+import legend.core.QueuedModelStandard;
+import legend.core.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -408,7 +409,7 @@ public class WMap extends EngineState {
           screenOffsetY = -8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
-        RENDERER.queueModel(dobj2.obj, lw)
+        RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -1830,7 +1831,7 @@ public class WMap extends EngineState {
     //LAB_800d6950
     // Continent name
     this.modelAndAnimData_800c66a8.mapOverlayTransforms.identity();
-    RENDERER.queueOrthoModel(this.modelAndAnimData_800c66a8.mapContinentNameObj, this.modelAndAnimData_800c66a8.mapOverlayTransforms)
+    RENDERER.queueOrthoModel(this.modelAndAnimData_800c66a8.mapContinentNameObj, this.modelAndAnimData_800c66a8.mapOverlayTransforms, QueuedModelStandard.class)
       .monochrome(this.modelAndAnimData_800c66a8.mapTextureBrightness_20);
 
     this.modelAndAnimData_800c66a8.mapTextureBrightness_20 += 0.25f / (3.0f / vsyncMode_8007a3b8);
@@ -1911,7 +1912,7 @@ public class WMap extends EngineState {
           }
           this.mapState_800c6798.pathDots.transforms.transfer.add(intersectionPoint).y -= 1.0f;
 
-          final QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+          final QueuedModelStandard model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms, QueuedModelStandard.class)
             .vertices(bigDotStateIndex * 4, 4);
 
           //LAB_800d7df0
@@ -1969,7 +1970,7 @@ public class WMap extends EngineState {
                 .scale(0.25f);
               this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
 
-              final QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+              final QueuedModelStandard model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms, QueuedModelStandard.class)
                 .vertices(12, 4);
 
               //LAB_800d87fc
@@ -2084,7 +2085,7 @@ public class WMap extends EngineState {
         lw.transfer.y += 6.0f;
       }
 
-      final QueuedModel<?> model = RENDERER.queueModel(dobj2.obj, lw);
+      final QueuedModelTmd model = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class);
 
       if(i == 0) {
         if(this.mapState_800c6798.continent_00.continentNum < 9) {
@@ -2251,7 +2252,7 @@ public class WMap extends EngineState {
 
     //LAB_800d9ccc
     this.mcqTransforms.transfer.set(0.0f, -8.0f, 121);
-    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms, QueuedModelStandard.class)
       .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800d9d10
@@ -2740,7 +2741,7 @@ public class WMap extends EngineState {
 
     //LAB_800dc114
     this.mcqTransforms.transfer.set(0.0f, -8.0f, 60000.0f);
-    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms, QueuedModelStandard.class)
       .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800dc164
@@ -3239,7 +3240,7 @@ public class WMap extends EngineState {
   @Method(0x800e1740L)
   private void renderDartShadow() {
     GsGetLw(this.modelAndAnimData_800c66a8.models_0c[this.modelAndAnimData_800c66a8.modelIndex_1e4].coord2_14, this.modelAndAnimData_800c66a8.shadowTransforms);
-    RENDERER.queueModel(this.modelAndAnimData_800c66a8.shadowObj, this.modelAndAnimData_800c66a8.shadowTransforms);
+    RENDERER.queueModel(this.modelAndAnimData_800c66a8.shadowObj, this.modelAndAnimData_800c66a8.shadowTransforms, QueuedModelStandard.class);
   }
 
   @Method(0x800e1ac4L)
@@ -3373,7 +3374,7 @@ public class WMap extends EngineState {
 
     transforms.identity();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 400.0f);
-    RENDERER.queueOrthoModel(obj, transforms);
+    RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
 
     //LAB_800e2770
     //LAB_800e2774
@@ -3485,7 +3486,7 @@ public class WMap extends EngineState {
     this.fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
     this.fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
 
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.fastTravelTransforms)
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.fastTravelTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())
       .translucency(Translucency.HALF_B_PLUS_HALF_F);
   }
@@ -3861,7 +3862,7 @@ public class WMap extends EngineState {
 
     //LAB_800e4f04
     this.mcqTransforms.transfer.set(0.0f, -8.0f, 60000.0f);
-    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms, QueuedModelStandard.class)
       .monochrome(this.mcqColour_800c6794);
 
     //LAB_800e4f50
@@ -5665,7 +5666,7 @@ public class WMap extends EngineState {
                   cloud.queueZ = i < 12 ? 556.0f : (orderingTableSize_1f8003c8 - 4.0f) * 4.0f;
                   cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
                   cloud.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, cloud.queueZ);
-                  RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[i % 3], cloud.transforms)
+                  RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[i % 3], cloud.transforms, QueuedModelStandard.class)
                     .monochrome(i < 12 ? cloud.brightness_5c : cloud.brightness_5c / 3.0f);
                 }
               }
@@ -5791,7 +5792,7 @@ public class WMap extends EngineState {
                 final int index = (int)(snowflake.snowTick_50 / 2.0f);
                 snowflake.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
                 snowflake.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 556.0f);
-                RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[index], snowflake.transforms)
+                RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[index], snowflake.transforms, QueuedModelStandard.class)
                   .monochrome(snowflake.brightness_5c);
               }
             }
@@ -6018,7 +6019,7 @@ public class WMap extends EngineState {
 
                   smoke.transforms.scaling(transformedSize);
                   smoke.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f);
-                  RENDERER.queueOrthoModel(smoke.objs[index], smoke.transforms)
+                  RENDERER.queueOrthoModel(smoke.objs[index], smoke.transforms, QueuedModelStandard.class)
                     .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f);
 
                   smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
