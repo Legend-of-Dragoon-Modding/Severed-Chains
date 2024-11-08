@@ -1,9 +1,9 @@
 package legend.game.combat.ui;
 
 public enum AdditionTimingOffset {
-  NORMAL(),
-  SLOW(),
   SLOWER(),
+  SLOW(),
+  NORMAL(),
   FAST(),
   FASTER()
 }
