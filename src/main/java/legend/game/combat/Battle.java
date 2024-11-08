@@ -591,7 +591,7 @@ public class Battle extends EngineState {
       if(battleLoaded_800bc94c) {
         this.renderBattleEnvironment();
         if (SEffe.additionButtonFeedbackText != null) {
-          SEffe.additionButtonFeedbackText.renderAdditionFeedbackChar();
+          SEffe.additionButtonFeedbackText.renderAdditionFeedbackTexture();
         }
       }
     } else {

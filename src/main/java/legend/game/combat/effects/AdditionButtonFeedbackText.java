@@ -43,11 +43,11 @@ public class AdditionButtonFeedbackText {
   private class FeedbackTextElement {
     public int frameIndex;
     public FeedbackTextFrameData[] frames;
-    public AdditionButtonFeedbacks feedback;
+    public AdditionButtonFeedback feedback;
 
     private int translucentFrameCount;
 
-    public FeedbackTextElement(final AdditionButtonFeedbacks feedback) {
+    public FeedbackTextElement(final AdditionButtonFeedback feedback) {
       this.feedback = feedback;
       this.setAnimationFrames();
     }
@@ -61,13 +61,13 @@ public class AdditionButtonFeedbackText {
     }
 
     private void setAnimationFrames() {
-      this.frames = new FeedbackTextFrameData[this.feedback == AdditionButtonFeedbacks.FLAWLESS ? 45 : 35];
+      this.frames = new FeedbackTextFrameData[this.feedback == AdditionButtonFeedback.FLAWLESS ? 45 : 35];
 
       for (int i = 0; i < 10; i++) {
         this.frames[this.frameIndex++] = new FeedbackTextFrameData(TEXT_POSITION_X, Math.max(TEXT_POSITION_Y, TEXT_POSITION_Y + 15 - i * 3), i < 3 ? Translucency.B_PLUS_QUARTER_F : this.getTranslucency());
       }
 
-      for (int i = 0; i < (this.feedback == AdditionButtonFeedbacks.FLAWLESS ? 30 : 20); i++) {
+      for (int i = 0; i < (this.feedback == AdditionButtonFeedback.FLAWLESS ? 30 : 20); i++) {
         this.frames[this.frameIndex++] = new FeedbackTextFrameData(TEXT_POSITION_X, TEXT_POSITION_Y, this.getTranslucency());
       }
 
@@ -80,7 +80,7 @@ public class AdditionButtonFeedbackText {
 
     private Translucency getTranslucency() {
       Translucency t = Translucency.B_PLUS_F;
-      if (this.feedback == AdditionButtonFeedbacks.FLAWLESS) {
+      if (this.feedback == AdditionButtonFeedback.FLAWLESS) {
         t = this.translucentFrameCount >= 2 ? Translucency.B_PLUS_QUARTER_F : Translucency.B_PLUS_F;
         this.translucentFrameCount = this.translucentFrameCount > 2 ? 0 : this.translucentFrameCount + 1;
       }
@@ -118,17 +118,17 @@ public class AdditionButtonFeedbackText {
     };
   }
 
-  private Texture getTexture(final AdditionButtonFeedbacks feedback) {
+  private Texture getTexture(final AdditionButtonFeedback feedback) {
     return switch(feedback) {
-      case AdditionButtonFeedbacks.GOOD -> this.additionButtonTextTextures[0];
-      case AdditionButtonFeedbacks.EARLY -> this.additionButtonTextTextures[1];
-      case AdditionButtonFeedbacks.LATE, AdditionButtonFeedbacks.NO_PRESS -> this.additionButtonTextTextures[2];
-      case AdditionButtonFeedbacks.PERFECT -> this.additionButtonTextTextures[3];
-      case AdditionButtonFeedbacks.COUNTER -> this.additionButtonTextTextures[4];
-      case AdditionButtonFeedbacks.FLAWLESS -> this.additionButtonTextTextures[5];
-      case AdditionButtonFeedbacks.GOOD_MINUS -> this.additionButtonTextTextures[6];
-      case AdditionButtonFeedbacks.GOOD_PLUS -> this.additionButtonTextTextures[7];
-      case AdditionButtonFeedbacks.WRONG -> this.additionButtonTextTextures[8];
+      case AdditionButtonFeedback.GOOD -> this.additionButtonTextTextures[0];
+      case AdditionButtonFeedback.EARLY -> this.additionButtonTextTextures[1];
+      case AdditionButtonFeedback.LATE, AdditionButtonFeedback.NO_PRESS -> this.additionButtonTextTextures[2];
+      case AdditionButtonFeedback.PERFECT -> this.additionButtonTextTextures[3];
+      case AdditionButtonFeedback.COUNTER -> this.additionButtonTextTextures[4];
+      case AdditionButtonFeedback.FLAWLESS -> this.additionButtonTextTextures[5];
+      case AdditionButtonFeedback.GOOD_MINUS -> this.additionButtonTextTextures[6];
+      case AdditionButtonFeedback.GOOD_PLUS -> this.additionButtonTextTextures[7];
+      case AdditionButtonFeedback.WRONG -> this.additionButtonTextTextures[8];
       default -> null;
     };
   }
@@ -137,7 +137,7 @@ public class AdditionButtonFeedbackText {
     this.feedbackTextElements = new FeedbackTextElement[length];
   }
 
-  public void setFeedbackTextElement(final int index, final AdditionButtonFeedbacks feedback) {
+  public void setFeedbackTextElement(final int index, final AdditionButtonFeedback feedback) {
     this.feedbackTextElements[index] = new FeedbackTextElement(feedback);
 
     if (index > 0 && this.feedbackTextElements[index - 1].frameIndex < DECAY_FRAME_INDEX) {
@@ -145,7 +145,7 @@ public class AdditionButtonFeedbackText {
     }
   }
 
-  public void renderAdditionFeedbackChar() {
+  public void renderAdditionFeedbackTexture() {
     for (int i = 0; i < this.feedbackTextElements.length; i++) {
       final FeedbackTextElement element = this.feedbackTextElements[i];
       if (element != null && element.hasRemainingFrames()) {

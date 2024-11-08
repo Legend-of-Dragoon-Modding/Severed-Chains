@@ -2,7 +2,6 @@ package legend.game;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.stage.Stage;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
@@ -23,7 +22,6 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
-import legend.game.debugger.CombatDebugger;
 import legend.game.debugger.CombatDebuggerController;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;

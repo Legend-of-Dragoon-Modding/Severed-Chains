@@ -58,7 +58,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   /** ubyte; 0 = no auto complete, 2 = WC and UW auto-complete */
   public int autoCompleteType_3a;
 
-  private AdditionButtonFeedbacks currentInputStatus;
+  private AdditionButtonFeedback currentInputStatus;
   private int additionButtonFramesToRender; //Remaining frames that the addition button will render for
   private boolean flawlessAddition = true;
 
@@ -198,7 +198,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     this.distancePerFrame_20.z = (targetStartingPosition.z - this.attackerStartingPosition_10.z) / firstHitSuccessLowerBound;
 
     if (SEffe.additionButtonFeedbackText != null) {
-      SEffe.additionButtonFeedbackText.initializeFeedbackTextElements(hitCount + 1);
+      SEffe.additionButtonFeedbackText.initializeFeedbackTextElements(hitCount);
     }
   }
 
@@ -521,7 +521,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       final AdditionOverlaysHit20[] hitArray = this.hitOverlays_40;
       this.currentFrame_34++;
 
-      this.currentInputStatus = AdditionButtonFeedbacks.NONE;
+      this.currentInputStatus = AdditionButtonFeedback.NONE;
 
       //LAB_80107440
       int hitNum;
@@ -532,7 +532,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           if(additionHitCompletionState_8011a014[hitNum] == 0) {
             additionHitCompletionState_8011a014[hitNum] = -2;
             this.propagateFailedAdditionHitFlag(hitArray, hitNum);
-            this.currentInputStatus = AdditionButtonFeedbacks.NO_PRESS;
+            this.currentInputStatus = AdditionButtonFeedback.NO_PRESS;
             if (SEffe.additionButtonFeedbackText != null) {
               SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
             }
@@ -603,12 +603,12 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                 if((press_800bee94 & 0x60) != 0) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
 
-                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) { // Unsuccessful Input
+                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) { // Wrong Input
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;
-                    this.currentInputStatus = hitOverlay.isCounter_1c ? AdditionButtonFeedbacks.COUNTER : AdditionButtonFeedbacks.WRONG;
-                  } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
+                    this.currentInputStatus = hitOverlay.isCounter_1c ? AdditionButtonFeedback.COUNTER : AdditionButtonFeedback.WRONG;
+                  } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) { // Good Input
                     additionHitCompletionState_8011a014[hitNum] = 1;
                     hitOverlay.hitSuccessful_01 = true;
 
@@ -634,19 +634,19 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                         break;
                     }
 
-                    this.currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionButtonFeedbacks.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionButtonFeedbacks.GOOD_MINUS : AdditionButtonFeedbacks.GOOD_PLUS);
-                    if (this.flawlessAddition && this.currentInputStatus != AdditionButtonFeedbacks.PERFECT) {
+                    this.currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionButtonFeedback.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionButtonFeedback.GOOD_MINUS : AdditionButtonFeedback.GOOD_PLUS);
+                    if (this.flawlessAddition && this.currentInputStatus != AdditionButtonFeedback.PERFECT) {
                       this.flawlessAddition = false;
                     }
                   }
-                  else {
-                    this.currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionButtonFeedbacks.EARLY : AdditionButtonFeedbacks.LATE;
+                  else { // Late/Early Input
+                    this.currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionButtonFeedback.EARLY : AdditionButtonFeedback.LATE;
                     this.flawlessAddition = false;
                   }
 
                   if (SEffe.additionButtonFeedbackText != null) {
                     if (hitNum == hitArray.length - 1 && this.flawlessAddition) {
-                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, AdditionButtonFeedbacks.FLAWLESS); //Flawless
+                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, AdditionButtonFeedback.FLAWLESS);
                     }
                     else {
                       SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
@@ -748,7 +748,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             break;
           case AdditionButtonMode.RESPONSIVE:
             if(this.additionButtonFramesToRender > 0) {
-              if(this.currentInputStatus != AdditionButtonFeedbacks.NONE && this.currentInputStatus != AdditionButtonFeedbacks.NO_PRESS) {
+              if(this.currentInputStatus != AdditionButtonFeedback.NONE && this.currentInputStatus != AdditionButtonFeedback.NO_PRESS) {
                 this.renderAdditionButton(0, isCounter); // Button Down
               } else {
                 this.renderAdditionButton(2, isCounter); // Button Up

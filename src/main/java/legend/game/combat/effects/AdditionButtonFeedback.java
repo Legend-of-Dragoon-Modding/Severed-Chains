@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-public enum AdditionButtonFeedbacks {
+public enum AdditionButtonFeedback {
   WRONG(),
   COUNTER(),
   LATE(),
