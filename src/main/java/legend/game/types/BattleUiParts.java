@@ -5,7 +5,9 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 
@@ -25,6 +27,9 @@ public class BattleUiParts {
   private Obj obj;
   private final MV mv = new MV();
 
+  private Obj obj2;
+  private final Matrix4f m2 = new Matrix4f();
+
   private int levelUpVert;
   private int bigNumberVert;
   private int pointsVert;
@@ -42,6 +47,16 @@ public class BattleUiParts {
   private int daddyPerfectVert;
 
   public void init() {
+
+    this.obj2 = new QuadBuilder("XBOX Addition Button")
+      .rgb(1.0f, 1.0f, 1.0f)
+      .size(1.0f, 1.0f)
+      .uv(0.0f, 0.0f)
+      .uvSize(1.0f, 1.0f)
+      .bpp(Bpp.BITS_24)
+      .build();
+    this.obj2.persistent = true;
+
     final QuadBuilder builder = new QuadBuilder("Battle UI Parts");
 
     this.levelUpVert = builder.currentQuadIndex() * 4;
@@ -260,6 +275,10 @@ public class BattleUiParts {
     this.queue(this.buttonVert + index * 4, x, y, w, h, metrics.packedClut_05, translucency, brightness, widthScale, heightScale);
   }
 
+  public void queueButton(final int x, final int y, final int w, final int h, final Texture texture) {
+    this.queue(x, y, w, h, texture);
+  }
+
   public void queueDaddyFrame(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
     this.queue(this.daddyFrameVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
     this.queue(this.daddyFrameVert + 4, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
@@ -327,5 +346,12 @@ public class BattleUiParts {
       .tpageOverride(704, 256)
       .monochrome(brightness / 128.0f)
       .translucency(transMode);
+  }
+
+  public void queue(final int x, final int y, final float w, final float h, final Texture texture) {
+    this.m2.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, 0);
+    this.m2.scale(w, h, 1f);
+    final QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj2, this.m2)
+      .texture(texture);
   }
 }

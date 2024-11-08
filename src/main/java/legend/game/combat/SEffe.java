@@ -19,6 +19,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
@@ -1178,6 +1179,10 @@ public final class SEffe {
 
   public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
     battleUiParts.queueButton(type, x, y, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public static void renderButtonPressHudElement1(final Texture texture) {
+    battleUiParts.queueButton(275, 170, 23, 17, texture);
   }
 
   @ScriptDescription("Gets the success or failure of the addition hit")

@@ -8,6 +8,8 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.combat.AdditionButtonMode;
+import legend.game.combat.AdditionButtonStyle;
 import legend.game.combat.SEffe;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.AdditionHitProperties10;
@@ -195,7 +197,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     this.distancePerFrame_20.y = (targetStartingPosition.y - this.attackerStartingPosition_10.y) / firstHitSuccessLowerBound;
     this.distancePerFrame_20.z = (targetStartingPosition.z - this.attackerStartingPosition_10.z) / firstHitSuccessLowerBound;
 
-    SEffe.additionButtonFeedbackText.initializeFeedbackTextElements(hitCount + 1);
+    if (SEffe.additionButtonFeedbackText != null) {
+      SEffe.additionButtonFeedbackText.initializeFeedbackTextElements(hitCount + 1);
+    }
   }
 
   public void setContinuationState(final int continuationState) {
@@ -238,13 +242,22 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   @Method(0x80106050L)
   private void renderAdditionButton(final int frames, final boolean isCounter) {
     final int offset = isCounter ? 1 : 0;
+    final AdditionButtonStyle style = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_STYLE_CONFIG.get());
     if(Math.abs(frames) >= 2) {  // Button up position
       renderButtonPressHudElement1(0x24, 119, 43, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
+      if (style == AdditionButtonStyle.PLAYSTATION) {
+        renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
+      } else if (style == AdditionButtonStyle.XBOX) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[0] : AdditionButtonFeedbackText.xboxAFrames[0]);
+      }
     } else {  // Button down position
       //LAB_80106114
       renderButtonPressHudElement1(0x24, 119, 51, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
+      if (style == AdditionButtonStyle.PLAYSTATION) {
+        renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
+      } else if (style == AdditionButtonStyle.XBOX) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[2] : AdditionButtonFeedbackText.xboxAFrames[2]);
+      }
       renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
     }
   }
@@ -520,7 +533,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             additionHitCompletionState_8011a014[hitNum] = -2;
             this.propagateFailedAdditionHitFlag(hitArray, hitNum);
             this.currentInputStatus = AdditionButtonFeedbacks.NO_PRESS;
-            SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
+            if (SEffe.additionButtonFeedbackText != null) {
+              SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
+            }
             //LAB_80107478
           }
         } else if(additionHitCompletionState_8011a014[hitNum] == 0) {
@@ -592,7 +607,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;
-                    this.currentInputStatus = AdditionButtonFeedbacks.COUNTER;
+                    this.currentInputStatus = hitOverlay.isCounter_1c ? AdditionButtonFeedbacks.COUNTER : AdditionButtonFeedbacks.WRONG;
                   } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
                     additionHitCompletionState_8011a014[hitNum] = 1;
                     hitOverlay.hitSuccessful_01 = true;
@@ -629,11 +644,13 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     this.flawlessAddition = false;
                   }
 
-                  if (hitNum == hitArray.length - 1 && this.flawlessAddition) {
-                    SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, AdditionButtonFeedbacks.FLAWLESS); //Flawless
-                  }
-                  else {
-                    SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
+                  if (SEffe.additionButtonFeedbackText != null) {
+                    if (hitNum == hitArray.length - 1 && this.flawlessAddition) {
+                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, AdditionButtonFeedbacks.FLAWLESS); //Flawless
+                    }
+                    else {
+                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
+                    }
                   }
 
                   //LAB_801076f0
@@ -698,35 +715,47 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         }
 
         boolean isCounter = false;
+        final AdditionButtonMode config = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_MODE_CONFIG.get());
 
         //LAB_80107330
         if(hitNum < this.count_30) {
           final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
           isCounter = hitOverlay.isCounter_1c;
-//          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-//            this.renderAdditionButton(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1, hitOverlay.isCounter_1c);
-//          }
 
-          final byte currentFrame = (byte)this.currentFrame_34;
-          if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
-            if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
-              this.renderAdditionCentreSolidSquare(this, hitOverlay, -2, manager);
-            }
+          switch(config) {
+            case AdditionButtonMode.RETAIL:
+              this.additionButtonFramesToRender = hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1;
+              break;
+            case AdditionButtonMode.RESPONSIVE:
+              final byte currentFrame = (byte)this.currentFrame_34;
+              if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
+                if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
+                  this.renderAdditionCentreSolidSquare(this, hitOverlay, -2, manager);
+                }
+              }
+              this.additionButtonFramesToRender = 1;
+              break;
+            default:
+              return;
           }
-          this.additionButtonFramesToRender = 1;
-        }
-        else if (hitNum == this.count_30) {
+        } else if(hitNum == this.count_30 && config == AdditionButtonMode.RESPONSIVE) {
           this.additionButtonFramesToRender = 7;
         }
 
-        if (this.additionButtonFramesToRender > 0) {
-          if (this.currentInputStatus != AdditionButtonFeedbacks.NONE && this.currentInputStatus != AdditionButtonFeedbacks.NO_PRESS) { //Button Down
-            this.renderAdditionButton(0, isCounter);
-          }
-          else { //Button Up
-            this.renderAdditionButton(2, isCounter);
-          }
-          this.additionButtonFramesToRender--;
+        switch(config) {
+          case AdditionButtonMode.RETAIL:
+            this.renderAdditionButton(this.additionButtonFramesToRender, isCounter);
+            break;
+          case AdditionButtonMode.RESPONSIVE:
+            if(this.additionButtonFramesToRender > 0) {
+              if(this.currentInputStatus != AdditionButtonFeedbacks.NONE && this.currentInputStatus != AdditionButtonFeedbacks.NO_PRESS) {
+                this.renderAdditionButton(0, isCounter); // Button Down
+              } else {
+                this.renderAdditionButton(2, isCounter); // Button Up
+              }
+              this.additionButtonFramesToRender--;
+            }
+            break;
         }
       }
     }

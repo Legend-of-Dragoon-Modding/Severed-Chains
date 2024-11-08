@@ -148,6 +148,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -268,6 +269,7 @@ import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
+import static legend.game.modding.coremod.CoreMod.ADDITION_BUTTON_MODE_CONFIG;
 
 public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
@@ -279,10 +281,6 @@ public class Battle extends EngineState {
   public final BattleHud hud = new BattleHud(this);
   public final BattleCamera camera_800c67f0 = new BattleCamera();
   public final ParticleManager particles = new ParticleManager(this.camera_800c67f0);
-
-  public Battle() {
-    SEffe.additionButtonFeedbackText = new AdditionButtonFeedbackText();
-  }
 
   /**
    * <ol start="0">
@@ -1500,6 +1498,12 @@ public class Battle extends EngineState {
 
     if (CombatDebuggerController.autoPunchingBagMode) {
       CombatDebuggerController.punchingBagMode();
+    }
+
+    if (CONFIG.getConfig(ADDITION_BUTTON_MODE_CONFIG.get()) == AdditionButtonMode.RESPONSIVE) {
+      SEffe.additionButtonFeedbackText = new AdditionButtonFeedbackText();
+    } else {
+      SEffe.additionButtonFeedbackText = null;
     }
   }
 

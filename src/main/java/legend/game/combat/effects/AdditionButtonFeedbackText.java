@@ -13,6 +13,18 @@ import static legend.core.GameEngine.RENDERER;
 
 public class AdditionButtonFeedbackText {
 
+  public static Texture[] xboxAFrames = new Texture[] {
+    Texture.png(Path.of("gfx", "ui", "additionButton_A_0.png")),
+    Texture.png(Path.of("gfx", "ui", "additionButton_A_1.png")),
+    Texture.png(Path.of("gfx", "ui", "additionButton_A_2.png"))
+  };
+
+  public static Texture[] xboxBFrames = new Texture[] {
+    Texture.png(Path.of("gfx", "ui", "additionButton_B_0.png")),
+    Texture.png(Path.of("gfx", "ui", "additionButton_B_1.png")),
+    Texture.png(Path.of("gfx", "ui", "additionButton_B_2.png"))
+  };
+
   final static int DECAY_FRAME_INDEX = 30;
   final static float TEXT_POSITION_X = 236f;
   final static float TEXT_POSITION_Y = 138f;
@@ -101,7 +113,8 @@ public class AdditionButtonFeedbackText {
       Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Counter.png")), //4
       Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Flawless.png")), //5
       Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good-.png")), //6
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good+.png")) //7
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good+.png")), //7
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Wrong.png")) //8
     };
   }
 
@@ -136,9 +149,9 @@ public class AdditionButtonFeedbackText {
     }
   }
 
-  //Failed Counter = -4, Late = -3, Early = -2, No Press = -1, None = 0, Good = 1, Good- = 2, Good+ = 3, Perfect = 4, Flawless = 5
   private Texture GetTexture(final AdditionButtonFeedbacks feedback) {
     return switch(feedback) {
+      case AdditionButtonFeedbacks.WRONG -> this.additionButtonTextTextures[8];
       case AdditionButtonFeedbacks.COUNTER -> this.additionButtonTextTextures[4];
       case AdditionButtonFeedbacks.LATE, AdditionButtonFeedbacks.NO_PRESS -> this.additionButtonTextTextures[2];
       case AdditionButtonFeedbacks.EARLY -> this.additionButtonTextTextures[1];
