@@ -106,15 +106,30 @@ public class AdditionButtonFeedbackText {
       .build();
 
     this.additionButtonTextTextures = new Texture[] {
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good.png")), //0
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Early.png")), //1
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Late.png")), //2
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Perfect.png")), //3
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Counter.png")), //4
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good.png")),     //0
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Early.png")),    //1
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Late.png")),     //2
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Perfect.png")),  //3
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Counter.png")),  //4
       Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Flawless.png")), //5
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good-.png")), //6
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good+.png")), //7
-      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Wrong.png")) //8
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good-.png")),    //6
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Good+.png")),    //7
+      Texture.png(Path.of("gfx", "ui", "additionFeedbackText_Wrong.png"))     //8
+    };
+  }
+
+  private Texture getTexture(final AdditionButtonFeedbacks feedback) {
+    return switch(feedback) {
+      case AdditionButtonFeedbacks.GOOD -> this.additionButtonTextTextures[0];
+      case AdditionButtonFeedbacks.EARLY -> this.additionButtonTextTextures[1];
+      case AdditionButtonFeedbacks.LATE, AdditionButtonFeedbacks.NO_PRESS -> this.additionButtonTextTextures[2];
+      case AdditionButtonFeedbacks.PERFECT -> this.additionButtonTextTextures[3];
+      case AdditionButtonFeedbacks.COUNTER -> this.additionButtonTextTextures[4];
+      case AdditionButtonFeedbacks.FLAWLESS -> this.additionButtonTextTextures[5];
+      case AdditionButtonFeedbacks.GOOD_MINUS -> this.additionButtonTextTextures[6];
+      case AdditionButtonFeedbacks.GOOD_PLUS -> this.additionButtonTextTextures[7];
+      case AdditionButtonFeedbacks.WRONG -> this.additionButtonTextTextures[8];
+      default -> null;
     };
   }
 
@@ -131,7 +146,6 @@ public class AdditionButtonFeedbackText {
   }
 
   public void renderAdditionFeedbackChar() {
-
     for (int i = 0; i < this.feedbackTextElements.length; i++) {
       final FeedbackTextElement element = this.feedbackTextElements[i];
       if (element != null && element.hasRemainingFrames()) {
@@ -142,25 +156,10 @@ public class AdditionButtonFeedbackText {
 
           RENDERER
             .queueOrthoModel(this.additionButtonTextQuad, this.transformMatrix)
-            .texture(this.GetTexture(element.feedback))
+            .texture(this.getTexture(element.feedback))
             .translucency(frame.translucency); //HALF_B_PLUS_HALF_F slightly transparent, B_PLUS_F slightly transparent without black
         }
       }
     }
-  }
-
-  private Texture GetTexture(final AdditionButtonFeedbacks feedback) {
-    return switch(feedback) {
-      case AdditionButtonFeedbacks.WRONG -> this.additionButtonTextTextures[8];
-      case AdditionButtonFeedbacks.COUNTER -> this.additionButtonTextTextures[4];
-      case AdditionButtonFeedbacks.LATE, AdditionButtonFeedbacks.NO_PRESS -> this.additionButtonTextTextures[2];
-      case AdditionButtonFeedbacks.EARLY -> this.additionButtonTextTextures[1];
-      case AdditionButtonFeedbacks.GOOD -> this.additionButtonTextTextures[0];
-      case AdditionButtonFeedbacks.GOOD_MINUS -> this.additionButtonTextTextures[6];
-      case AdditionButtonFeedbacks.GOOD_PLUS -> this.additionButtonTextTextures[7];
-      case AdditionButtonFeedbacks.PERFECT -> this.additionButtonTextTextures[3];
-      case AdditionButtonFeedbacks.FLAWLESS -> this.additionButtonTextTextures[5];
-      default -> null;
-    };
   }
 }
