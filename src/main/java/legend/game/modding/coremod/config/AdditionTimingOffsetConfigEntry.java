@@ -7,6 +7,6 @@ import legend.game.saves.EnumConfigEntry;
 
 public class AdditionTimingOffsetConfigEntry extends EnumConfigEntry<AdditionTimingOffset> {
   public AdditionTimingOffsetConfigEntry() {
-    super(AdditionTimingOffset.class, AdditionTimingOffset.NORMAL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(AdditionTimingOffset.class, AdditionTimingOffset.NORMAL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.ADDITIONS);
   }
 }

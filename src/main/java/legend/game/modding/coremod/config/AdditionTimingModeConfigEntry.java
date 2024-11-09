@@ -7,6 +7,6 @@ import legend.game.saves.EnumConfigEntry;
 
 public class AdditionTimingModeConfigEntry extends EnumConfigEntry<AdditionTimingMode> {
   public AdditionTimingModeConfigEntry() {
-    super(AdditionTimingMode.class, AdditionTimingMode.RETAIL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(AdditionTimingMode.class, AdditionTimingMode.RETAIL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.ADDITIONS);
   }
 }

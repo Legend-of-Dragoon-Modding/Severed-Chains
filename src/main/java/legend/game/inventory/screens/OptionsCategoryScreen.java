@@ -32,6 +32,10 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
     this.addControl(new Background());
 
     for(final ConfigCategory category : ConfigCategory.values()) {
+      if (category == ConfigCategory.ADDITIONS) {
+        continue;
+      }
+
       int count = 0;
       for(final RegistryId configId : GameEngine.REGISTRIES.config) {
         final ConfigEntry<?> entry = GameEngine.REGISTRIES.config.getEntry(configId).get();

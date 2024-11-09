@@ -7,6 +7,6 @@ import legend.game.saves.EnumConfigEntry;
 
 public class AdditionDifficultyConfigEntry extends EnumConfigEntry<AdditionDifficulty> {
   public AdditionDifficultyConfigEntry() {
-    super(AdditionDifficulty.class, AdditionDifficulty.NORMAL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(AdditionDifficulty.class, AdditionDifficulty.NORMAL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.ADDITIONS);
   }
 }
