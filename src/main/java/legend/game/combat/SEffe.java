@@ -1409,7 +1409,7 @@ public final class SEffe {
         daddy.ticksRemainingToBeginAddition_12--;
         if(daddy.ticksRemainingToBeginAddition_12 == 0) {
           state.deallocateWithChildren();
-        } else if((Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
+        } else if((Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC) && daddy.inputMode_13 != 2) {
           daddy.meterSpinning_10 = 1;
           daddyMeterSpinning_80119f42 = 1;
         }
@@ -1526,7 +1526,7 @@ public final class SEffe {
     daddy.meterSpinning_10 = flag == 1 ? 1 : 0;
     daddy.buttonPressGlowBrightnessFactor_11 = 0;
     daddy.ticksRemainingToBeginAddition_12 = script.params_20[2].get();
-    daddy.inputMode_13 = CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) ? 1 : flag & 0xff;
+    daddy.inputMode_13 = CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC ? 1 : flag & 0xff;
     daddy.charId_18 = charId;
 
     //LAB_80108910

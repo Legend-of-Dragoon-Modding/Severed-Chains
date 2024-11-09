@@ -67,34 +67,43 @@ lod_core.config.unlock_party.label=Unlock Party
 # Addition Settings
 lod_core.config.addition_settings.label=Additions
 lod_core.config.addition_settings.configure=Configure...
-lod_core.config.addition_mode.label=Addition Mode
-lod_core.config.addition_mode.NORMAL=Normal
+
+lod_core.config.general_addition_group.label=[--- General ---]
+lod_core.config.addition_button_style.label=Button Style
+lod_core.config.addition_button_style.PLAYSTATION=Playstation
+lod_core.config.addition_button_style.XBOX=Xbox
+
+lod_core.config.addition_group.label=[--- Additions ---]
+lod_core.config.addition_mode.label=Input
+lod_core.config.addition_mode.NORMAL=Manual
 lod_core.config.addition_mode.AUTOMATIC=Automatic
-lod_core.config.auto_dragoon_addition.label=Automatic Dragoon Addition
-lod_core.config.addition_overlay_mode.label=Addition Overlay Mode
+lod_core.config.addition_overlay_mode.label=Reticle
 lod_core.config.addition_overlay_mode.FULL=Normal
-lod_core.config.addition_overlay_mode.PARTIAL=No reticule
-lod_core.config.addition_overlay_mode.OFF=No HUD
-lod_core.config.addition_timing_mode.label=Addition Timing Mode
+lod_core.config.addition_overlay_mode.PARTIAL=Brief
+lod_core.config.addition_overlay_mode.OFF=Hidden
+lod_core.config.addition_timing_mode.label=Timing
 lod_core.config.addition_timing_mode.RETAIL=Retail
-lod_core.config.addition_timing_mode.ACCURATE=Accurate
-lod_core.config.addition_button_mode.label=Addition Button Mode
-lod_core.config.addition_button_mode.RETAIL=Retail
+lod_core.config.addition_timing_mode.ACCURATE=Adjusted
+lod_core.config.addition_button_mode.label=Button Behavior
+lod_core.config.addition_button_mode.RETAIL=Normal
 lod_core.config.addition_button_mode.RESPONSIVE=Responsive
+lod_core.config.addition_button_mode.FEEDBACK=Feedback
 lod_core.config.addition_button_mode.HIDDEN=Hidden
-lod_core.config.addition_timing_offset.label=Addition Timing Offset
+lod_core.config.addition_timing_offset.label=Reaction Time
 lod_core.config.addition_timing_offset.NORMAL=Normal
 lod_core.config.addition_timing_offset.SLOW=Slow
 lod_core.config.addition_timing_offset.SLOWER=Slower
 lod_core.config.addition_timing_offset.FAST=Fast
 lod_core.config.addition_timing_offset.FASTER=Faster
-lod_core.config.addition_difficulty.label=Addition Difficulty
+lod_core.config.addition_difficulty.label=Difficulty
 lod_core.config.addition_difficulty.EASY=Easier
 lod_core.config.addition_difficulty.NORMAL=Normal
 lod_core.config.addition_difficulty.HARD=Harder
-lod_core.config.addition_button_style.label=Addition Button Style
-lod_core.config.addition_button_style.PLAYSTATION=Playstation
-lod_core.config.addition_button_style.XBOX=Xbox
+
+lod_core.config.dragoon_addition_group.label=[--- Dragoon Additions ---]
+lod_core.config.dragoon_addition_mode.label=Input
+lod_core.config.dragoon_addition_mode.NORMAL=Manual
+lod_core.config.dragoon_addition_mode.AUTOMATIC=Automatic
 
 # Keybinds
 lod_core.keybind.help=Press DEL when done

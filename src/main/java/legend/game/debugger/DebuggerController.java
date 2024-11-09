@@ -11,6 +11,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
 import legend.game.combat.AdditionMode;
+import legend.game.combat.DragoonAdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
@@ -187,7 +188,7 @@ public class DebuggerController {
     this.counterOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 8) & 0xff)));
     this.counterOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 16) & 0xff)));
     this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC);
-    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC);
     this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
     this.combatStage.setSelected(Config.combatStage());
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
@@ -243,7 +244,7 @@ public class DebuggerController {
     this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
     this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
     this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC);
-    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC);
     this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
   }
 
@@ -265,8 +266,8 @@ public class DebuggerController {
       this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC);
     }
 
-    if(event.config == CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) {
-      this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    if(event.config == CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) {
+      this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC);
     }
 
     if(event.config == CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()) {
@@ -457,7 +458,8 @@ public class DebuggerController {
 
   @FXML
   private void toggleAutoDragoonMeter(final ActionEvent event) {
-    CONFIG.setConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get(), !CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    final boolean autoAddition = CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC;
+    CONFIG.setConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get(), autoAddition ? DragoonAdditionMode.NORMAL : DragoonAdditionMode.AUTOMATIC);
   }
 
   @FXML

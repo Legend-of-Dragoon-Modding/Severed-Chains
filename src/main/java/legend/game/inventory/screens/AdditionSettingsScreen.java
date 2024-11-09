@@ -4,12 +4,15 @@ import legend.core.GameEngine;
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
+import legend.game.inventory.screens.controls.Label;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +43,7 @@ public class AdditionSettingsScreen extends VerticalLayoutScreen {
     }
 
     translations.entrySet().stream()
-      .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue()))
+      .sorted(Comparator.comparingInt(o -> CoreMod.configOrder.indexOf(o.getKey().toString())))
       .forEach(entry -> {
         final RegistryId configId = entry.getKey();
         final String label = entry.getValue();
@@ -48,9 +51,13 @@ public class AdditionSettingsScreen extends VerticalLayoutScreen {
         //noinspection rawtypes
         final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
 
-        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
+        if(validLocations.contains(configEntry.storageLocation)) {
           //noinspection unchecked
-          this.addRow(label, configEntry.makeEditControl(config.getConfig(configEntry), config)).setZ(35);
+          if (configEntry.hasEditControl()) {
+            this.addRow(label, configEntry.makeEditControl(config.getConfig(configEntry), config)).setZ(35);
+          } else {
+            this.addRow(label, new Label("")).setZ(35);
+          }
         }
       });
   }

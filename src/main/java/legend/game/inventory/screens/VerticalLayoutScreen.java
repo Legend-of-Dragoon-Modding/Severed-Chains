@@ -52,7 +52,7 @@ public class VerticalLayoutScreen extends MenuScreen {
       label.addControl(control);
       this.configControls.add(control);
     } else {
-      this.configControls.add(null);
+      this.configControls.add(label);
     }
 
     this.rows.add(label);
