@@ -53,6 +53,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Set;
 
+import static legend.game.SItem.loadMenuAssets;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
@@ -372,6 +373,7 @@ public final class GameEngine {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
       }
 
+      loadMenuAssets();
       initTextboxGeometry();
       battleUiParts.init();
       startSound();
