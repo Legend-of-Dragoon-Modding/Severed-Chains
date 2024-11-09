@@ -28,7 +28,7 @@ public class BattleUiParts {
   private final MV mv = new MV();
 
   private Obj obj2;
-  private final Matrix4f m2 = new Matrix4f();
+  private final Matrix4f m = new Matrix4f();
 
   private int levelUpVert;
   private int bigNumberVert;
@@ -47,16 +47,6 @@ public class BattleUiParts {
   private int daddyPerfectVert;
 
   public void init() {
-
-    this.obj2 = new QuadBuilder("XBOX Addition Button")
-      .rgb(1.0f, 1.0f, 1.0f)
-      .size(1.0f, 1.0f)
-      .uv(0.0f, 0.0f)
-      .uvSize(1.0f, 1.0f)
-      .bpp(Bpp.BITS_24)
-      .build();
-    this.obj2.persistent = true;
-
     final QuadBuilder builder = new QuadBuilder("Battle UI Parts");
 
     this.levelUpVert = builder.currentQuadIndex() * 4;
@@ -234,6 +224,19 @@ public class BattleUiParts {
 
     this.obj = builder.build();
     this.obj.persistent = true;
+
+    final QuadBuilder builder2 = new QuadBuilder("Add-on elements (such as the xbox button");
+
+    builder2
+      .rgb(1.0f, 1.0f, 1.0f)
+      .size(1.0f, 1.0f)
+      .uv(0.0f, 0.0f)
+      .uvSize(1.0f, 1.0f)
+      .bpp(Bpp.BITS_24)
+      .build();
+
+    this.obj2 = builder2.build();
+    this.obj2.persistent = true;
   }
 
   /** Also includes +, S, P as indices 10, 11, 12 */
@@ -349,9 +352,9 @@ public class BattleUiParts {
   }
 
   public void queue(final int x, final int y, final float w, final float h, final Texture texture) {
-    this.m2.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, 0);
-    this.m2.scale(w, h, 1f);
-    final QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj2, this.m2)
+    this.m.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, 10);
+    this.m.scale(w, h, 1f);
+    final QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj2, this.m)
       .texture(texture);
   }
 }
