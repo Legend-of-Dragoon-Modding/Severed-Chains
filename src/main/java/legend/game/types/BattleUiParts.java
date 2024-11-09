@@ -278,8 +278,8 @@ public class BattleUiParts {
     this.queue(this.buttonVert + index * 4, x, y, w, h, metrics.packedClut_05, translucency, brightness, widthScale, heightScale);
   }
 
-  public void queueButton(final int x, final int y, final int w, final int h, final Texture texture) {
-    this.queue(x, y, w, h, texture);
+  public void queueButton(final int x, final int y, final int z, final int w, final int h, final Texture texture) {
+    this.queue(x, y, z, w, h, texture);
   }
 
   public void queueDaddyFrame(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
@@ -351,8 +351,8 @@ public class BattleUiParts {
       .translucency(transMode);
   }
 
-  public void queue(final int x, final int y, final float w, final float h, final Texture texture) {
-    this.m.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, 10);
+  public void queue(final int x, final int y, final int z, final float w, final float h, final Texture texture) {
+    this.m.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, z);
     this.m.scale(w, h, 1f);
     final QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj2, this.m)
       .texture(texture);

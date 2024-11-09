@@ -1181,8 +1181,12 @@ public final class SEffe {
     battleUiParts.queueButton(type, x, y, translucency, brightness, 1.0f, 1.0f);
   }
 
-  public static void renderButtonPressHudElement1(final Texture texture) {
-    battleUiParts.queueButton(275, 170, 23, 17, texture);
+  public static void renderButtonPressHudElement1(final Texture texture, final int type) {
+    switch (type) {
+      case 0: battleUiParts.queueButton(275, 170, 10, 23, 17, texture); break; // Normal Additions
+      case 1: battleUiParts.queueButton(236, 124, 10, 23, 17, texture); break; // Dragoon Additions
+      case 2: battleUiParts.queueButton(236, 172, 10, 23, 17, texture); break; // Mash
+    }
   }
 
   @ScriptDescription("Gets the success or failure of the addition hit")
@@ -1287,7 +1291,12 @@ public final class SEffe {
 
     //LAB_80107b10
     // Button
-    renderButtonPressHudElement1(buttonHudMetricsIndex, x0 + 12, y0 + 66, Translucency.B_PLUS_F, 128);
+    final AdditionButtonStyle style = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_STYLE_CONFIG.get());
+    if (style == AdditionButtonStyle.PLAYSTATION) {
+      renderButtonPressHudElement1(buttonHudMetricsIndex, x0 + 12, y0 + 66, Translucency.B_PLUS_F, 128);
+    } else if (style == AdditionButtonStyle.XBOX) {
+      renderButtonPressHudElement1(AdditionButtonFeedbackText.xboxAFrames[buttonHudMetricsIndex == 35 ? 2 : 0], 1);
+    }
 
     // Button press red glow
     if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {

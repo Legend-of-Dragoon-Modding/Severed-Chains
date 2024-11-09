@@ -1500,7 +1500,7 @@ public class Battle extends EngineState {
       CombatDebuggerController.punchingBagMode();
     }
 
-    if (CONFIG.getConfig(ADDITION_BUTTON_MODE_CONFIG.get()) == AdditionButtonMode.RESPONSIVE) {
+    if (CONFIG.getConfig(ADDITION_BUTTON_MODE_CONFIG.get()) == AdditionButtonMode.FEEDBACK) {
       SEffe.additionButtonFeedbackText = new AdditionButtonFeedbackText();
     } else {
       SEffe.additionButtonFeedbackText = null;
@@ -4641,8 +4641,15 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency", description = "The translucency mode")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "brightness", description = "The brightness")
   @Method(0x800d46d4L)
-  public FlowControl scriptRenderButtonPressHudElement(final RunningScript<?> script) {
-    renderButtonPressHudElement1(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), Translucency.of(script.params_20[3].get()), script.params_20[4].get());
+  public FlowControl scriptRenderButtonPressHudElement(final RunningScript<?> script) { // Magic Item Mash
+    final AdditionButtonStyle style = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_STYLE_CONFIG.get());
+    final int type = script.params_20[0].get();
+    final boolean isButtonType = type == 33 || type == 35; // 33 = Button Up, 35 = Button Down
+    if (!isButtonType || style == AdditionButtonStyle.PLAYSTATION) {
+      renderButtonPressHudElement1(type, script.params_20[1].get(), script.params_20[2].get(), Translucency.of(script.params_20[3].get()), script.params_20[4].get());
+    } else if (style == AdditionButtonStyle.XBOX) {
+      renderButtonPressHudElement1(AdditionButtonFeedbackText.xboxAFrames[type == 35 ? 2 : 0], 2);
+    }
     return FlowControl.CONTINUE;
   }
 

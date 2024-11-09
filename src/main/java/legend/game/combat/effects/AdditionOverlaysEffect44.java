@@ -248,7 +248,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       if (style == AdditionButtonStyle.PLAYSTATION) {
         renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
       } else if (style == AdditionButtonStyle.XBOX) {
-        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[0] : AdditionButtonFeedbackText.xboxAFrames[0]);
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[0] : AdditionButtonFeedbackText.xboxAFrames[0], 0);
       }
     } else {  // Button down position
       //LAB_80106114
@@ -256,7 +256,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       if (style == AdditionButtonStyle.PLAYSTATION) {
         renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
       } else if (style == AdditionButtonStyle.XBOX) {
-        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[2] : AdditionButtonFeedbackText.xboxAFrames[2]);
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[2] : AdditionButtonFeedbackText.xboxAFrames[2], 0);
       }
       renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
     }
@@ -727,6 +727,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
               this.additionButtonFramesToRender = hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1;
               break;
             case AdditionButtonMode.RESPONSIVE:
+            case AdditionButtonMode.FEEDBACK:
               final byte currentFrame = (byte)this.currentFrame_34;
               if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
                 if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
@@ -738,7 +739,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             default:
               return;
           }
-        } else if(hitNum == this.count_30 && config == AdditionButtonMode.RESPONSIVE) {
+        } else if(hitNum == this.count_30 && (config == AdditionButtonMode.RESPONSIVE || config == AdditionButtonMode.FEEDBACK)) {
           this.additionButtonFramesToRender = 7;
         }
 
@@ -747,6 +748,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             this.renderAdditionButton(this.additionButtonFramesToRender, isCounter);
             break;
           case AdditionButtonMode.RESPONSIVE:
+          case AdditionButtonMode.FEEDBACK:
             if(this.additionButtonFramesToRender > 0) {
               if(this.currentInputStatus != AdditionButtonFeedback.NONE && this.currentInputStatus != AdditionButtonFeedback.NO_PRESS) {
                 this.renderAdditionButton(0, isCounter); // Button Down

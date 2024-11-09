@@ -24,7 +24,7 @@ public class AdditionConfigs {
   private static boolean fc; //Frame Correction (shorthanded to keep the ternaries in the createAdditionHits calls lean). Main use is to make the No HUD option on Additions feel way more intuitive
 
   public static void load() {
-    fc = CONFIG.getConfig(CoreMod.ADDITION_TIMING_MODE_CONFIG.get()) == AdditionTimingMode.ACCURATE;
+    fc = CONFIG.getConfig(CoreMod.ADDITION_TIMING_MODE_CONFIG.get()) == AdditionTimingMode.ADJUSTED;
 
     additionHits_8010e658 = new AdditionHits80[43];
     int additionIndex = 0;
