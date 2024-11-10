@@ -8646,9 +8646,43 @@ public class Battle extends EngineState {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
+    this.hud.currentCameraPositionIndicesIndex_800c66b0 = this.getStartingCameraAngleIndex();
     this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
     battleFlags_800bc960 |= 0x2;
+  }
+
+  private int getStartingCameraAngleIndex() {
+    final PreferredBattleCameraAngle config = CONFIG.getConfig(CoreMod.PREFERRED_BATTLE_CAMERA_ANGLE.get());
+    if (config != PreferredBattleCameraAngle.NORMAL) {
+      int filteredArrayIndex = 0;
+      final int[] filteredIndices = new int[this.currentStageData_800c6718.cameraPosIndices_18.length];
+      final int[] cameraAngles = switch(config) {
+        case PreferredBattleCameraAngle.PLAYER -> BattleCamera.playerCameraAngles;
+        case PreferredBattleCameraAngle.SIDE -> BattleCamera.sideCameraAngles;
+        case PreferredBattleCameraAngle.ENEMY -> BattleCamera.enemyCameraAngles;
+        default -> throw new IllegalArgumentException("Couldn't match the config " + config + " to a camera angles preset array");
+      };
+
+      for (int i = 0; i < this.currentStageData_800c6718.cameraPosIndices_18.length; i++) {
+        if (this.cameraArrayContainsIndex(this.currentStageData_800c6718.cameraPosIndices_18[i], cameraAngles)) {
+          filteredIndices[filteredArrayIndex] = i;
+          filteredArrayIndex++;
+        }
+        if (filteredArrayIndex > 0) {
+          return filteredIndices[new Random().nextInt(filteredArrayIndex)];
+        }
+      }
+    }
+    return simpleRand() & 3; //Falls back to the default behavior
+  }
+
+  private boolean cameraArrayContainsIndex(final int index, final int[] array) {
+    for (int i = 0; i < array.length; i++) {
+      if (array[i] == index) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Method(0x80109808L)
