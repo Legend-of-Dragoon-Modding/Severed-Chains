@@ -428,7 +428,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020ea8
   }
 
-  /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
+  /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game  cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
   @Method(0x800dde70L)
   private static void animateSubmapModelClut(final Model124 model, final int index) {
     final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
@@ -647,7 +647,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   /**
-   * This method animates the fog in the first cutscene with Rose/Feyrbrand
+   * This method animates the fog in the first cutscene with /Feyrbrand
    */
   @Method(0x80022018L)
   public static void animateModelTextures(final Model124 model, final int index) {

@@ -4073,7 +4073,7 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  /** Used at the end of Rose transform, lots during Albert transform */
+  /** Used at the end of  transform, lots during Albert transform */
   @ScriptDescription("Allocates a full-screen overlay effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "startR", description = "The starting red channel")

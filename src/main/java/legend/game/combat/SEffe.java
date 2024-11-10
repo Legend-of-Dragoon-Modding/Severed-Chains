@@ -1779,7 +1779,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Used in Rose transform */
+  /** Used in  transform */
   @ScriptDescription("Allocates a gradient rays effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The ray count")

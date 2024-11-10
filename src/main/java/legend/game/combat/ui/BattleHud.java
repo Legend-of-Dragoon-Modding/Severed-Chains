@@ -92,7 +92,7 @@ public class BattleHud {
   /** Targeting ("All allies", "All players", "All") */
   private static final String[] targeting_800fb36c = { "All allies", "All enemies", "All" };
   public static final String[] playerNames_800fb378 = {
-    "Dart", "Lavitz", "Shana", "Rose", "Haschel",
+    "Dart", "Lavitz", "Shana", "", "Haschel",
     "Albert", "Meru", "Kongol", "Miranda", "DivinDGDart",
   };
   /** Poisoned, Dispirited, Weapon blocked, Stunned, Fearful, Confused, Bewitched, Petrified */

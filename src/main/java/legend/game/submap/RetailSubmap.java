@@ -1344,7 +1344,7 @@ public class RetailSubmap extends Submap {
         if(submapId == a2.submapId_00) {
           //LAB_8001c680
           for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
-            if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
+            if(submapId == 57) { // Opening ( intro, Dart forest, horses)
               if(a2.submapCuts_04[v1] != this.cut) {
                 continue;
               }

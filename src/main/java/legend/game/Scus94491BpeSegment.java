@@ -1771,7 +1771,7 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < 13; i++) {
       final SoundFile soundFile = soundFiles_800bcf80[i];
 
-      // hasSubfile check added because music loads faster than retail. In Kongol I cutscene when Rose wakes up
+      // hasSubfile check added because music loads faster than retail. In Kongol I cutscene when  wakes up
       // Dart's dragoon spirit, the current music is unloaded and a new one is loaded. This method got called by
       // the script after the "load new music" method was called, but it was quick enough that it happened after
       // the current music was unloaded, but before the new music finished loading.
@@ -2408,7 +2408,7 @@ public final class Scus94491BpeSegment {
       case 0 -> "Dart";
       case 1 -> "Lavitz";
       case 2 -> "Shana";
-      case 3 -> "Rose";
+      case 3 -> "";
       case 4 -> "Haschel";
       case 5 -> "Albert";
       case 6 -> "Meru";

@@ -160,10 +160,10 @@ public final class SItem {
   public static final int[] meruXpTable_801137cc = new int[61];
   public static final int[] lavitzXpTable_801138c0 = new int[61];
   public static final int[] albertXpTable_801138c0 = new int[61];
-  public static final int[] roseXpTable_801139b4 = new int[61];
+  public static final int[] XpTable_801139b4 = new int[61];
   public static final int[] shanaXpTable_80113aa8 = new int[61];
   public static final int[] mirandaXpTable_80113aa8 = new int[61];
-  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
+  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, XpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
 
   public static final Addition04[][] additions_80114070 = {
     {new Addition04(0, 0, 0), new Addition04(0, 0, 0), new Addition04(25, 0, 5), new Addition04(50, 0, 10), new Addition04(75, 0, 20), new Addition04(100, 0, 35)},
@@ -278,7 +278,7 @@ public final class SItem {
   };
 
   public static final String[] characterNames_801142dc = {
-    "Dart", "Lavitz", "Shana", "Rose", "Haschel",
+    "Dart", "Lavitz", "Shana", "", "Haschel",
     "Albert", "Meru", "Kongol", "Miranda",
   };
 
@@ -350,12 +350,12 @@ public final class SItem {
 
   public static final String[] goodsDescriptions_8011b75c = {
     "Dragoon Spirit \nhis father left \nhim. Fire-based.", "Dragoon Spirit \nfrom Lenus \nWater-based.", "Dragoon Spirit \nfrom Greham\nWind-based.", "Dragoon Spirit \nfound in Lohan\nEarth-based.", "Dragoon Spirit \nfrom Doel\nThunder-based.",
-    "Dragoon Spirit\nfrom Shirley\nLight-based.", "Dragoon Spirit \nof mysterious Rose\nDarkness-based.", "Dragoon Spirit \nof Divine Dragon.", "Special Edition \nshows tension among\nSandora & Serdio.", "A mysterious stone \nfrom Dart's Father\nGlows when held.",
+    "Dragoon Spirit\nfrom Shirley\nLight-based.", "Dragoon Spirit \nof mysterious \nDarkness-based.", "Dragoon Spirit \nof Divine Dragon.", "Special Edition \nshows tension among\nSandora & Serdio.", "A mysterious stone \nfrom Dart's Father\nGlows when held.",
     "Key to the second \nprison tower where\nShana is held.", "An axe left in a\nshack in a field.\nIt's well-worn.", "Good spirit that\npleases the \nman in Bale.", "Dabas forced him. \nSeems useless, but\nkept as a memento.", "A bottle acquired\nin Lohan to hold\n\"Life Water\".",
     "Life water from\na monster plant.\nRefreshes power.", "Fuel to light an\nelevator switch.", "Yellow Stone \nhidden in the \nBlack Castle.", "Blue Stone held by\nthe Spell Master \nMagi.", "Red Stone kept by\nthe janitor of the\nBlack Castle.",
     "Letter that tells \nof going alone to \nthe Gehrich Gang.", "A pass for\nZero Gravity \nValley.", "Good luck bouquet\nthrown by Kate at\nthe wedding.", "Key from the \nPhantom Ship \nCaptain.", "License to use a\nboat in Furni.\nIt's a must.",
     "A staff to confine\nDivine Dragon. \nRestrains Dragons.", "Family treasure \nof Serdio. Has\nenormous power.", "Family treasure \nof Tiberoa. Taken\naway.", "Family treasure \nof Mille Seseau.\nHidden by Flamvel.", "Attacking spell \nprepared by Savan\nof Aglis.",
-    "Ultimate attack \nspell given by \nSavan for Rose.", "A certificate of\nlaw production\nin Zenebatos.", "A certificate of\nlaw enactment\nin Zenebatos.", "Dragoon Spirit \nIndora gave Kongol\nEarth-based.", "Dabas' magical\nbag. Items are \nteleported to bag.",
+    "Ultimate attack \nspell given by \nSavan for .", "A certificate of\nlaw production\nin Zenebatos.", "A certificate of\nlaw enactment\nin Zenebatos.", "Dragoon Spirit \nIndora gave Kongol\nEarth-based.", "Dabas' magical\nbag. Items are \nteleported to bag.",
     "A mysterious stone \nfrom Martel for\ngetting Stardust.", "Lavitz's portrait\ndrawn in Bale. It\nlooks so real.", "Temporary event \nitem description37", "Temporary event \nitem description38", "Temporary event \nitem description39",
     "Temporary event \nitem description40", "Temporary event \nitem description41", "Temporary event \nitem description42", "Temporary event \nitem description43", "Temporary event \nitem description44",
     "Temporary event \nitem description45", "Temporary event \nitem description46", "Temporary event \nitem description47", "Temporary event \nitem description48", "Temporary event \nitem description49",

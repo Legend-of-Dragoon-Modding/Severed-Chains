@@ -897,7 +897,7 @@ public final class Unpacker {
     transformations.addNode("characters/meru/xp", node.data.slice(0x18054, 61 * 4));
     transformations.addNode("characters/lavitz/xp", node.data.slice(0x18148, 61 * 4));
     transformations.addNode("characters/albert/xp", node.data.slice(0x18148, 61 * 4));
-    transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
+    transformations.addNode("characters//xp", node.data.slice(0x1823c, 61 * 4));
     transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
     transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
 
@@ -1134,7 +1134,7 @@ public final class Unpacker {
     } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/752/2/")) {
       transformations.addNode("characters/shana/sounds/combat/" + end, node.data);
     } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/753/2/")) {
-      transformations.addNode("characters/rose/sounds/combat/" + end, node.data);
+      transformations.addNode("characters//sounds/combat/" + end, node.data);
     } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/754/2/")) {
       transformations.addNode("characters/haschel/sounds/combat/" + end, node.data);
     } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/755/2/")) {

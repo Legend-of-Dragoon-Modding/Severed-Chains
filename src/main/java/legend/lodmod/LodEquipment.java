@@ -114,7 +114,7 @@ public final class LodEquipment {
   public static final RegistryDelegate<Equipment> RED_DG_ARMOR = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("red_dg_armor"));
   public static final RegistryDelegate<Equipment> RED_EYE_STONE = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("red_eye_stone"));
   public static final RegistryDelegate<Equipment> ROBE = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("robe"));
-  public static final RegistryDelegate<Equipment> ROSES_HAIR_BAND = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("roses_hair_band"));
+  public static final RegistryDelegate<Equipment> S_HAIR_BAND = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("s_hair_band"));
   public static final RegistryDelegate<Equipment> RUBY_RING = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("ruby_ring"));
   public static final RegistryDelegate<Equipment> SAGES_CLOAK = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("sages_cloak"));
   public static final RegistryDelegate<Equipment> SAINT_ARMOR = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id("saint_armor"));

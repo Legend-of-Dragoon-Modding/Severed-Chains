@@ -11,7 +11,7 @@ public class StatusConditions20 {
   public int _0c;
   /** something to do with bewitched status (set to -1 if not bewitched) */
   public int _10;
-  /** Sometimes a spell ID, sometimes other values. 32 when idle, 33 when guarding, various other values when using items. Set to rose storm when used. */
+  /** Sometimes a spell ID, sometimes other values. 32 when idle, 33 when guarding, various other values when using items. Set to  storm when used. */
   public int _14;
   /**
    * <ul>

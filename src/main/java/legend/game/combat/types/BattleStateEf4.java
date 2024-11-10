@@ -132,7 +132,7 @@ public class BattleStateEf4 {
    *   <li>0x00 Dart</li>
    *   <li>0x01 Lavitz</li>
    *   <li>0x02 Shana</li>
-   *   <li>0x03 Rose</li>
+   *   <li>0x03 </li>
    *   <li>0x04 Haschel</li>
    *   <li>0x05 Albert</li>
    *   <li>0x06 Meru</li>

@@ -14,7 +14,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class GameStateEditorController {
 
-  String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
+  String[] characters = {"Dart", "Lavitz", "Shana", "", "Haschel", "Albert", "Meru", "Kongol", "???"};
   String[] characterData = {"EXP", "Party Flags", "HP", "MP", "SP", "Dragoon EXP", "Status", "Level", "Dragoon Level", "Equipment Slot 1", "Equipment Slot 2", "Equipment Slot 3", "Equipment Slot 4", "Equipment Slot 5", "Addition", "Addition Level Slot 1", "Addition Level Slot 2", "Addition Level Slot 3", "Addition Level Slot 4", "Addition Level Slot 5", "Addition Level Slot 6", "Addition Level Slot 7", "Addition Level Slot 8", "Addition EXP Slot 1", "Addition EXP Slot 2", "Addition EXP Slot 3", "Addition EXP Slot 4", "Addition EXP Slot 5", "Addition EXP Slot 6", "Addition EXP Slot 7", "Addition EXP Slot 8"};
   @FXML
   public TextField textData1;

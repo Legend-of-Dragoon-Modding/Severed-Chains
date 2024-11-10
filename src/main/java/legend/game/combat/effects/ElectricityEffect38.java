@@ -258,7 +258,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
   }
 
   /**
-   * Renders certain types of lightning effects. (Confirmed for Rose's D transformation)
+   * Renders certain types of lightning effects. (Confirmed for 's D transformation)
    * Used by allocator 0x801052dc
    */
   @Method(0x801030d8L)
@@ -436,7 +436,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
   }
 
   /**
-   * Renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block,
+   * Renders some lightning effects (confirmed at the end of 's D transformation, Melbu's D Block,
    * some Haschel stuff, Doel's fancy lightning bomb attack)
    * Used by allocator 0x801052dc
    */

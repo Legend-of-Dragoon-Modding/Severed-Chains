@@ -90,7 +90,7 @@ public final class Scus94491BpeSegment_8005 {
     "Star Children", "Moon Light", "Gates of Heaven", "W Silver Dragon", "Wing Blaster",
     "Astral Drain", "Death Dimension", "Gaspless", "Demon's Gate", "Dark Dragon",
     "Atomic Mind", "Thunder Kid", "Thunder God", "Violet Dragon", "Freezing Ring",
-    "Rainbow Breath", "Rose Storm", "Diamond Dust", "Blue Sea Dragon", "Grand Stream",
+    "Rainbow Breath", " Storm", "Diamond Dust", "Blue Sea Dragon", "Grand Stream",
     "Meteor Strike", "Golden Dragon", "", "", "",
     "", "", "", "", "",
     "", "", "", "", "",

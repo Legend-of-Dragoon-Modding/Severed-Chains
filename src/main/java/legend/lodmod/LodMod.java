@@ -114,7 +114,7 @@ public class LodMod {
     "gold_dg_armor", "disciple_vest", "warrior_dress", "masters_vest", "energy_girdle", "violet_dg_armor", "clothes", "leather_jacket",
     "silver_vest", "sparkle_dress", "robe", "silver_dg_armor", "dark_dg_armor", "blue_dg_armor", "armor_of_yore", "satori_vest",
     "rainbow_dress", "angel_robe", "armor_of_legend", "", "bandana", "sallet", "armet", "knight_helm",
-    "giganto_helm", "soul_headband", "felt_hat", "cape", "tiara", "jeweled_crown", "roses_hair_band", "",
+    "giganto_helm", "soul_headband", "felt_hat", "cape", "tiara", "jeweled_crown", "s_hair_band", "",
     "phoenix_plume", "legend_casque", "dragon_helm", "magical_hat", "", "leather_boots", "iron_kneepiece", "combat_shoes",
     "leather_shoes", "soft_boots", "stardust_boots", "magical_greaves", "dancers_shoes", "bandits_shoes", "", "poison_guard",
     "active_ring", "protector", "panic_guard", "stun_guard", "bravery_amulet", "magic_ego_bell", "destone_amulet", "power_wrist",
@@ -267,12 +267,12 @@ public class LodMod {
     shana.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
     shana.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> rose = event.gameState.charData_32c[3].equipment_14;
-    rose.put(EquipmentSlot.WEAPON, LodEquipment.RAPIER.get());
-    rose.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
-    rose.put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_JACKET.get());
-    rose.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
-    rose.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
+    final Map<EquipmentSlot, Equipment>  = event.gameState.charData_32c[3].equipment_14;
+    .put(EquipmentSlot.WEAPON, LodEquipment.RAPIER.get());
+    .put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
+    .put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_JACKET.get());
+    .put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
+    .put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
     final Map<EquipmentSlot, Equipment> haschel = event.gameState.charData_32c[4].equipment_14;
     haschel.put(EquipmentSlot.WEAPON, LodEquipment.IRON_KNUCKLE.get());

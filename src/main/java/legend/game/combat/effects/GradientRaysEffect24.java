@@ -96,7 +96,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
 
   }
 
-  /** Used in Rose transform */
+  /** Used in  transform */
   @Method(0x8010a860L)
   private void renderGradientRay(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final GradientRaysEffectInstance04 gradientRay) {
     final Vector3f vert0 = new Vector3f();

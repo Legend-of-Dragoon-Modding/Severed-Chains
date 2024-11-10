@@ -61,7 +61,7 @@ import static legend.game.SItem.lavitzXpTable_801138c0;
 import static legend.game.SItem.loadMenuAssets;
 import static legend.game.SItem.meruXpTable_801137cc;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
-import static legend.game.SItem.roseXpTable_801139b4;
+import static legend.game.SItem.XpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.gameLoop;
@@ -288,7 +288,7 @@ public final class GameEngine {
     final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
     final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
     final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
-    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
+    final FileData  = new FileData(Files.readAllBytes(Paths.get("./files/characters//xp")));
     final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
     final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
     final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
@@ -313,8 +313,8 @@ public final class GameEngine {
       mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
     }
 
-    for(int i = 0; i < roseXpTable_801139b4.length; i++) {
-      roseXpTable_801139b4[i] = rose.readInt(i * 4);
+    for(int i = 0; i < XpTable_801139b4.length; i++) {
+      XpTable_801139b4[i] = .readInt(i * 4);
     }
 
     for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
