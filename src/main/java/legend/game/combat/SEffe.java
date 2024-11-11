@@ -1406,6 +1406,27 @@ public final class SEffe {
     return currentPressNumber;
   }
 
+  private static int[] getDragoonAdditionStepCountsArrayFromDifficulty() {
+    final DragoonAdditionDifficulty difficulty = CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_DIFFICULTY_CONFIG.get());
+
+    if (difficulty == DragoonAdditionDifficulty.NORMAL) {
+      return daddyHudSpinnerStepCountsPointer_8011a028;
+    }
+
+    final int[] stepCountsArray = new int[daddyHudSpinnerStepCountsPointer_8011a028.length];
+    for (int i = 0; i < stepCountsArray.length; i++) {
+      if(daddyHudSpinnerStepCountsPointer_8011a028[i] < 2) {
+        stepCountsArray[i] = daddyHudSpinnerStepCountsPointer_8011a028[i];
+      } else {
+        switch (difficulty) {
+          case DragoonAdditionDifficulty.EASY: stepCountsArray[i] = daddyHudSpinnerStepCountsPointer_8011a028[i] + 2; break;
+          case DragoonAdditionDifficulty.HARD: stepCountsArray[i] = daddyHudSpinnerStepCountsPointer_8011a028[i] - 2; break;
+        }
+      }
+    }
+    return stepCountsArray;
+  }
+
   @Method(0x80108514L)
   public static void renderDragoonAdditionHud(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c daddy) {
     renderDragoonAdditionHud_(daddy, 0, daddy.baseAngle_02 - 0x400);
@@ -1553,6 +1574,8 @@ public final class SEffe {
       daddyHitSuccessWindowsPointer_8011a02c = daddyHitSuccessWindows_80119f60;
       daddy.totalPressCount_14 = 4;
     }
+
+    daddyHudSpinnerStepCountsPointer_8011a028 = getDragoonAdditionStepCountsArrayFromDifficulty();
 
     //LAB_80108984
     daddyHitsCompleted_80119f40 = 0;

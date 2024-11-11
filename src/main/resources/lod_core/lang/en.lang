@@ -64,7 +64,7 @@ lod_core.config.battle_transition_mode.FAST=Fast
 lod_core.config.battle_transition_mode.INSTANT=Instant
 lod_core.config.unlock_party.label=Unlock Party
 lod_core.config.preferred_battle_camera_angle.label=Battle Camera Angle
-lod_core.config.preferred_battle_camera_angle.NORMAL=Normal
+lod_core.config.preferred_battle_camera_angle.NORMAL=Random
 lod_core.config.preferred_battle_camera_angle.PLAYER=Prefer Player Side
 lod_core.config.preferred_battle_camera_angle.SIDE=Prefer Sideways
 lod_core.config.preferred_battle_camera_angle.ENEMY=Prefer Enemy Side
@@ -109,6 +109,10 @@ lod_core.config.dragoon_addition_group.label=[--- Dragoon Additions ---]
 lod_core.config.dragoon_addition_mode.label=Input
 lod_core.config.dragoon_addition_mode.NORMAL=Manual
 lod_core.config.dragoon_addition_mode.AUTOMATIC=Automatic
+lod_core.config.dragoon_addition_difficulty.label=Difficulty
+lod_core.config.dragoon_addition_difficulty.EASY=Easy
+lod_core.config.dragoon_addition_difficulty.NORMAL=Normal
+lod_core.config.dragoon_addition_difficulty.HARD=Hard
 
 # Keybinds
 lod_core.keybind.help=Press DEL when done

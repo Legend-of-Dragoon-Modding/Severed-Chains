@@ -1,4 +1,4 @@
-package legend.game.combat.effects;
+package legend.game.combat;
 
 public enum AdditionDifficulty {
   EASY(),

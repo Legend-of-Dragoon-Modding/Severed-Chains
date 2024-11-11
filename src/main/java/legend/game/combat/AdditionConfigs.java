@@ -2,7 +2,6 @@ package legend.game.combat;
 
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
-import legend.game.combat.effects.AdditionDifficulty;
 import legend.game.combat.ui.AdditionTimingOffset;
 import legend.game.modding.coremod.CoreMod;
 
