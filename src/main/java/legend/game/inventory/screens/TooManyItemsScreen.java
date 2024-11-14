@@ -209,7 +209,9 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       if((a4 & 0x2) != 0) {
-        renderString(194, 164, I18n.translate(this.items.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
+        if (slotScroll + slotIndex < this.items.size()) {
+          renderString(194, 164, I18n.translate(this.items.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
+        }
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
         renderable.clut_30 = 0x7ceb;
@@ -223,7 +225,9 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       if((a4 & 0x2) != 0) {
-        renderString(194, 164, I18n.translate(this.equipment.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
+        if (slotScroll + slotIndex < this.equipment.size()) {
+          renderString(194, 164, I18n.translate(this.equipment.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
+        }
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
         renderable.clut_30 = 0x7ceb;
@@ -351,7 +355,7 @@ public class TooManyItemsScreen extends MenuScreen {
       this.invScroll++;
     }
 
-    if(this.invIndex == 6 && this.invScroll == slotCount - 7) {
+    if((this.invIndex == 6 && this.invScroll == slotCount - 7) || (this.invScroll < 1 && this.invIndex >= slotCount - 1)) {
       this.invScroll = 0;
       this.invIndex = -1;
     }
