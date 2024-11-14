@@ -343,8 +343,8 @@ public class TooManyItemsScreen extends MenuScreen {
     }
 
     if(this.invIndex == 0 && this.invScroll == 0) {
-      this.invScroll = slotCount - 7;
-      this.invIndex = 7;
+      this.invScroll = Math.max(0, slotCount - 7);
+      this.invIndex = Math.min(slotCount, 7);
     }
   }
 
