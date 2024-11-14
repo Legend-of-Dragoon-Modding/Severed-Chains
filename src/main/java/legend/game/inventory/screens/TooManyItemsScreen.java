@@ -446,6 +446,10 @@ public class TooManyItemsScreen extends MenuScreen {
     final MenuEntryStruct04<InventoryEntry> newItem = this.droppedItems.get(this.dropIndex);
     final boolean isItem = this.droppedItems.get(this.dropIndex).item_00 instanceof Item;
 
+    if (this.invIndex + this.invScroll > this.items.size() - 1) {
+      return;
+    }
+
     if(((isItem ? this.items : this.equipment).get(this.invIndex + this.invScroll).flags_02 & 0x6000) != 0) {
       playMenuSound(40);
     } else {
