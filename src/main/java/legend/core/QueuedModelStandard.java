@@ -38,12 +38,6 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
-  public void useShader(final int modelIndex, final int discardMode) {
-    super.useShader(modelIndex, discardMode);
-    this.shaderOptions.opaque();
-  }
-
-  @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
     if(this.hasTranslucencyOverride) {
       return this.translucency == translucency;
@@ -62,6 +56,7 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
 
     if(this.hasTranslucencyOverride) {
       // Translucency override
+      this.updateColours(translucency);
       this.obj.render(this.startVertex, this.vertexCount);
       return;
     }

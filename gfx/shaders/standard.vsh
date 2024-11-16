@@ -26,7 +26,6 @@ smooth out float depthOffset;
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
-uniform float translucency;
 
 struct ModelTransforms {
   mat4 model;
@@ -56,7 +55,6 @@ void main() {
   vec4 pos = vec4(inPos.xyz, 1.0f);
 
   vertFlags = int(inFlags);
-  bool translucent = (vertFlags & 0x8) != 0 || translucency != 0;
   bool coloured = (vertFlags & 0x4) != 0;
   bool textured = (vertFlags & 0x2) != 0;
 

@@ -169,6 +169,7 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
   void render(@Nullable final Translucency translucency) {
     if(this.isTranslucent() || this.obj.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
       // Translucency override
+      this.updateColours(translucency);
       this.obj.render(this.startVertex, this.vertexCount);
       return;
     }
