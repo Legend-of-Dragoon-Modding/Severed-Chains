@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -210,7 +211,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       obj.delete();
 
       this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z * 4);
-      RENDERER.queueOrthoModel(obj, this.transforms);
+      RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
     }
     //LAB_8010ae18
   }

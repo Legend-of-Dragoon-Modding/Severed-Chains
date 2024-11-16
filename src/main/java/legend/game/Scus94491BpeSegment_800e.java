@@ -48,7 +48,7 @@ public final class Scus94491BpeSegment_800e {
     preload();
   }
 
-  @Method(0x800e5d64L) //TODO can rename most of these functions
+  @Method(0x800e5d64L)
   public static void gameInit() {
     ResetGraph();
 

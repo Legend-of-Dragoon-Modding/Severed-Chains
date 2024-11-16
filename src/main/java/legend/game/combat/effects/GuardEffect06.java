@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -98,7 +99,7 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
 
       final Obj obj = builder.build();
       this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), effectZ + managerZ);
-      RENDERER.queueOrthoModel(obj, this.transforms);
+      RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
       obj.delete(); // Mark for deletion after this frame
 
       //LAB_800d2c78

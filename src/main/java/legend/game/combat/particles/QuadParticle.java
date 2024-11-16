@@ -1,6 +1,7 @@
 package legend.game.combat.particles;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -157,7 +158,7 @@ public class QuadParticle extends ParticleEffectData98 {
 
           //LAB_800fe548
           this.transforms.transfer.z = instZ + effectZ;
-          RENDERER.queueOrthoModel(this.obj, this.transforms)
+          RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
             .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
             .colour(colour);
         }
@@ -184,7 +185,7 @@ public class QuadParticle extends ParticleEffectData98 {
               //LAB_800fe644
               //LAB_800fe78c
               particleSub.transforms.transfer.z = instZ + effectZ;
-              RENDERER.queueOrthoModel(this.obj, particleSub.transforms)
+              RENDERER.queueOrthoModel(this.obj, particleSub.transforms, QueuedModelStandard.class)
                 .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
                 .colour(colour);
             }

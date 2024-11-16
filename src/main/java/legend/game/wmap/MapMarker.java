@@ -1,5 +1,6 @@
 package legend.game.wmap;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
@@ -52,7 +53,7 @@ public class MapMarker {
   public void render(final int spriteIndex, final int colourIndex, final float x, final float y, final float z) {
     this.transforms.scaling(this.size, this.size, 1.0f);
     this.transforms.transfer.set(x, y, z);
-    RENDERER.queueOrthoModel(this.sprites[spriteIndex], this.transforms)
+    RENDERER.queueOrthoModel(this.sprites[spriteIndex], this.transforms, QueuedModelStandard.class)
       .colour(colours[colourIndex]);
   }
 

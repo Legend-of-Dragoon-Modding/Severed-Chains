@@ -65,12 +65,12 @@ public final class Scus94491BpeSegment_8005 {
   public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
 
   public static final String[] spellCombatDescriptions_80052018 = {
-    "Fire STR 50% Single", "Fire STR 25% All", "Fire STR 75% Single", "Fire STR 175% All", "STR 100% Single",
-    "Wind STR 25% All", "Wind STR 75% Single", "Damage Resist 50% Dur 3", "Wind STR 75% All", "STR 50% All",
-    "Light STR 25% All", "Ally Single 100% Rev & Rec", "Ally All 100% Recover", "Light STR 100% All HP", "Wind STR 25% All",
-    "Dark STR 25% Single & HP", "Dark STR 25% All & Fear", "Wind STR 100% Single", "Lethal attack for all", "Dark STR 100% Single",
-    "Thunder STR 50% Single", "Thunder STR 65% Single", "Thunder STR 75% Single", "Thunder STR 100% Single", "Water STR 50% Single",
-    "HP Recv & Cure - All", "Damage Resist 50% Dur 3", "Water STR 50% All", "Water STR 100% Single", "Earth STR 25% All",
+    "Fire STR 50% Single", "Fire STR 25% All", "Fire STR 75% Single", "Fire STR 75% All", "STR 150% Single",
+    "Wind STR 25% All", "Wind STR 75% Single", "Damage Resist 50% 3 Turns", "Wind STR 75% All", "STR 100% All",
+    "Light STR 25% All", "Ally 50% Rev, 100% Rec, Cure", "Ally All 50% Rev & Rec, Cure", "Light STR 75% & Allies 100% Rec", "Wind STR 25% All",
+    "Dark STR 50% Single & HP", "Dark STR 25% All & Fear", "Wind STR 75% Single", "Drags minor enemies to Hell", "Dark STR 100% Single",
+    "Thunder STR 25% Single", "Thunder STR 50% Single & Stun", "Thunder STR 75% Single", "Thunder STR 100% Single", "Water STR 50% Single",
+    "Ally All 50% Rec, Cure", "Damage Resist 50% 3 Turns", "Water STR 50% All", "Water STR 100% Single", "Earth STR 37.5% All",
     "Earth STR 50% All", "Earth STR 75% All", "", "", "",
     "", "", "", "", "",
     "", "", "", "", "",
@@ -78,7 +78,7 @@ public final class Scus94491BpeSegment_8005 {
     "", "", "", "", "",
     "", "", "", "", "",
     "", "", "", "", "",
-    "Light STR 25% All", "HP Recv & Cure-Single", "HP Recv & Cure-All", "", "",
+    "Light STR 25% All", "Ally 50% Rev, 100% Rec, Cure", "Ally All 50% Rev & Rec, Cure", "", "",
     "", "", "", "", "",
     "", "", "", "", "",
     "", "", "", "",

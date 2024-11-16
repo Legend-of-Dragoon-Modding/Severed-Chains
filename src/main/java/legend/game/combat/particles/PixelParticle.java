@@ -1,5 +1,6 @@
 package legend.game.combat.particles;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -57,7 +58,7 @@ public class PixelParticle extends ParticleEffectData98 {
 
           //LAB_800fdf44
           this.mv.transfer.set(ref.x + GPU.getOffsetX(), ref.y + GPU.getOffsetY(), z + manager.params_10.z_22);
-          RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.mv)
+          RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.mv, QueuedModelStandard.class)
             .colour(colour);
         }
       }

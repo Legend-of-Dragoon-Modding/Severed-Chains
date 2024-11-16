@@ -2,7 +2,9 @@ package legend.game.combat;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.QueuedModel;
+import legend.core.QueuedModelBattleTmd;
+import legend.core.QueuedModelStandard;
+import legend.core.QueuedModelTmd;
 import legend.core.RenderEngine;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
@@ -361,7 +363,7 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    final QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
+    final QueuedModelBattleTmd model = RENDERER.queueModel(obj, sp0x10, QueuedModelBattleTmd.class)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -494,7 +496,7 @@ public final class SEffe {
       final Obj obj = builder.build();
       obj.delete(); // Mark for deletion after this frame
 
-      RENDERER.queueModel(obj, transformMatrix)
+      RENDERER.queueModel(obj, transformMatrix, QueuedModelStandard.class)
         .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
     }
     //LAB_800e7930
@@ -833,7 +835,7 @@ public final class SEffe {
     GsGetLw(shadow.modelParts_00[0].coord2_04, lw);
 
     RENDERER
-      .queueModel(shadow.modelParts_00[0].obj, lw)
+      .queueModel(shadow.modelParts_00[0].obj, lw, QueuedModelTmd.class)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -1092,7 +1094,7 @@ public final class SEffe {
     obj.delete();
 
     data.transforms.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
-    RENDERER.queueOrthoModel(obj, data.transforms);
+    RENDERER.queueOrthoModel(obj, data.transforms, QueuedModelStandard.class);
 
     //LAB_801059c8
   }

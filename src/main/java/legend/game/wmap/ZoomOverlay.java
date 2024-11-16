@@ -1,6 +1,6 @@
 package legend.game.wmap;
 
-import legend.core.QueuedModel;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
@@ -69,7 +69,7 @@ public class ZoomOverlay {
     };
 
     for(int i = 0; i < 5; i++) {
-      final QueuedModel<?> model = RENDERER.queueOrthoModel(this.overlayOpaque)
+      final QueuedModelStandard model = RENDERER.queueOrthoModel(this.overlayOpaque, QueuedModelStandard.class)
         .vertices(i * 4, 4);
 
       if(i + 2 == currentZoomLevel) {
@@ -78,7 +78,7 @@ public class ZoomOverlay {
     }
 
     for(int i = 0; i < 2; i++) {
-      RENDERER.queueOrthoModel(this.overlayTranslucent)
+      RENDERER.queueOrthoModel(this.overlayTranslucent, QueuedModelStandard.class)
         .vertices(i * 4, 4);
     }
   }

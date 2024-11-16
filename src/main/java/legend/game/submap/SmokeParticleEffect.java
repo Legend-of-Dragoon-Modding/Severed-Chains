@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -333,7 +334,7 @@ public class SmokeParticleEffect {
         //LAB_800f4084
         this.transforms.scaling(inst.size_28, inst.size_28, 1.0f);
         this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, inst.z_34 * 4);
-        RENDERER.queueOrthoModel(this.particle, this.transforms)
+        RENDERER.queueOrthoModel(this.particle, this.transforms, QueuedModelStandard.class)
           .monochrome(brightness);
 
         inst.tick_02++;
@@ -426,7 +427,7 @@ public class SmokeParticleEffect {
         //LAB_800eff7c
         this.transforms.scaling(inst.size_28, inst.size_28, 1.0f);
         this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 160.0f);
-        RENDERER.queueOrthoModel(this.particle, this.transforms)
+        RENDERER.queueOrthoModel(this.particle, this.transforms, QueuedModelStandard.class)
           .monochrome(inst.brightness_30);
 
         inst.tick_02++;

@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
@@ -634,7 +635,7 @@ public class PostBattleScreen extends MenuScreen {
       this.resultsBackgroundTransforms.transfer.set(x, y, z * 4);
       this.resultsBackgroundTransforms.scaling(w, h, 1);
 
-      RENDERER.queueOrthoModel(this.resultsBackgroundObj[type - 1], this.resultsBackgroundTransforms);
+      RENDERER.queueOrthoModel(this.resultsBackgroundObj[type - 1], this.resultsBackgroundTransforms, QueuedModelStandard.class);
 
       //LAB_8010d318
     }

@@ -28,6 +28,10 @@ smooth out float depthOffset;
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
+uniform int ctmdFlags;
+uniform vec3 battleColour;
+
+uniform int useVdf;
 
 struct ModelTransforms {
   mat4 model;
@@ -64,10 +68,23 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
+layout(std140) uniform vdf {
+  vec4[1024] vertices;
+};
+
 void main() {
-  vec4 pos = vec4(inPos.xyz, 1.0f);
+  vec4 pos;
+
+  if(useVdf == 0) {
+    pos = vec4(inPos.xyz, 1.0f);
+  } else {
+    pos = vec4(vertices[int(inPos.w)].xyz, 1.0f);
+  }
 
   vertFlags = int(inFlags);
+  bool ctmd = (ctmdFlags & 0x20) != 0;
+  bool uniformLit = (ctmdFlags & 0x10) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
   bool coloured = (vertFlags & 0x4) != 0;
   bool textured = (vertFlags & 0x2) != 0;
   bool lit = (vertFlags & 0x1) != 0;
@@ -75,7 +92,9 @@ void main() {
   ModelTransforms t = modelTransforms[int(modelIndex)];
   Light l = lights[int(modelIndex)];
 
-  if(lit) {
+  if(textured && translucent && !lit && (ctmd || uniformLit)) {
+    vertColour.rgb = inColour.rgb * battleColour.rgb;
+  } else if(lit) {
     vertColour.rgb = clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb;
   } else if(coloured) {
     vertColour = inColour;
