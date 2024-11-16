@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.QueuedModel;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
@@ -649,7 +648,7 @@ public class BattleHud {
             }
 
             this.uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
-            final QueuedModel statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms, QueuedModelStandard.class);
+            final QueuedModelStandard statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms, QueuedModelStandard.class);
 
             if(charDisplay._14[2] < 6) {
               statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
