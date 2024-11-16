@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -155,7 +156,7 @@ public class AdditionButtonFeedbackText {
           this.transformMatrix.scale(100f, 22f, 1f);
 
           RENDERER
-            .queueOrthoModel(this.additionButtonTextQuad, this.transformMatrix)
+            .queueOrthoModel(this.additionButtonTextQuad, this.transformMatrix, QueuedModelStandard.class)
             .texture(this.getTexture(element.feedback))
             .translucency(frame.translucency); //HALF_B_PLUS_HALF_F slightly transparent, B_PLUS_F slightly transparent without black
         }

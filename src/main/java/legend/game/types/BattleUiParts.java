@@ -354,7 +354,7 @@ public class BattleUiParts {
   public void queue(final int x, final int y, final int z, final float w, final float h, final Texture texture) {
     this.m.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, z);
     this.m.scale(w, h, 1f);
-    final QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj2, this.m)
+    RENDERER.queueOrthoModel(this.obj2, this.m, QueuedModelStandard.class)
       .texture(texture);
   }
 }
