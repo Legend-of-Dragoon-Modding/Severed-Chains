@@ -72,7 +72,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
@@ -721,7 +720,6 @@ public class RenderEngine {
       return;
     }
 
-    this.state.initBatch(batch);
     this.state.backfaceCulling(false);
 
     // Do not update the depth mask so that we don't prevent things further away than this from rendering
@@ -851,13 +849,13 @@ public class RenderEngine {
 
     switch(projectionMode) {
       case _2D -> {
-        glDisable(GL_CULL_FACE);
+        this.state.backfaceCulling(false);
         this.setTransforms(this.camera2d, batch.orthographicProjection);
         this.projectionBuffer.put(3, 0.0f); // Projection mode: ortho
       }
 
       case _3D -> {
-        glEnable(GL_CULL_FACE);
+        this.state.backfaceCulling(true);
         this.setTransforms(this.camera3d, batch.perspectiveProjection);
 
         if(highQualityProjection) {

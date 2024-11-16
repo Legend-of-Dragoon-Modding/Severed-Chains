@@ -30,6 +30,10 @@ public class RenderState {
     this.widescreen = batch.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
     this.w = this.engine.getRenderWidth() / batch.projectionWidth;
     this.h = this.engine.getRenderHeight() / batch.projectionHeight;
+
+    this.backfaceCulling = false;
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_SCISSOR_TEST);
   }
 
   public void backfaceCulling(final boolean enable) {
