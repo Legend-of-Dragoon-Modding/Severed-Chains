@@ -3,7 +3,7 @@ package legend.game.wmap;
 import legend.core.gpu.Bpp;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.types.Translucency;
 import org.joml.Vector3f;
@@ -30,8 +30,8 @@ public class WMapAtmosphericEffectInstance60 {
     this.brightness_5c = other.brightness_5c;
   }
 
-  public static MeshObj[] buildCloudSprites() {
-    final MeshObj[] cloudArray = new MeshObj[3];
+  public static Obj[] buildCloudSprites() {
+    final Obj[] cloudArray = new Obj[3];
     for(int i = 0; i < 3; i++) {
       cloudArray[i] = new QuadBuilder("Cloud (index " + i + ')')
         .bpp(Bpp.BITS_4)
@@ -47,8 +47,8 @@ public class WMapAtmosphericEffectInstance60 {
     return cloudArray;
   }
 
-  public static MeshObj[] buildSnowSprites() {
-    final MeshObj[] snowArray = new MeshObj[6];
+  public static Obj[] buildSnowSprites() {
+    final Obj[] snowArray = new Obj[6];
     for(int i = 0; i < 6; i++) {
       snowArray[i] = new QuadBuilder("Snowflake (index " + i + ')')
         .bpp(Bpp.BITS_4)

@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.QueuedModel;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -293,7 +293,7 @@ public class BattleHud {
     //LAB_800ece9c
     this.battleMenu_800c6c34.transforms.identity();
     this.battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188[tickCount_800bb0fc & 0x7], 112.0f);
-    RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+    RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
       .vertices(this.battleMenu_800c6c34.targetArrowsObjOffset + colour * 4, 4)
       .translucency(Translucency.HALF_B_PLUS_HALF_F);
   }
@@ -518,7 +518,7 @@ public class BattleHud {
 
               // Numbers
               this.uiTransforms.transfer.set(displayStats.x_00 + digit.x_02, displayStats.y_02 + digit.y_04, 124.0f);
-              final QueuedModel<?> digitModel = RENDERER.queueOrthoModel(this.floatingTextType1Digits[digit.digitValue_00], this.uiTransforms);
+              final QueuedModelStandard digitModel = RENDERER.queueOrthoModel(this.floatingTextType1Digits[digit.digitValue_00], this.uiTransforms, QueuedModelStandard.class);
 
               if(charDisplay._14[2] < 6) {
                 digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f, this.colourTemp);
@@ -545,7 +545,7 @@ public class BattleHud {
           }
 
           this.uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
-          final QueuedModel<?> nameModel = RENDERER.queueOrthoModel(this.names[charSlot], this.uiTransforms);
+          final QueuedModelStandard nameModel = RENDERER.queueOrthoModel(this.names[charSlot], this.uiTransforms, QueuedModelStandard.class);
 
           // Portraits
           if(this.portraits[charSlot] == null) {
@@ -558,7 +558,7 @@ public class BattleHud {
           }
 
           this.uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
-          final QueuedModel<?> portraitModel = RENDERER.queueOrthoModel(this.portraits[charSlot], this.uiTransforms);
+          final QueuedModelStandard portraitModel = RENDERER.queueOrthoModel(this.portraits[charSlot], this.uiTransforms, QueuedModelStandard.class);
 
           if(charDisplay._14[2] < 6) {
             nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
@@ -648,7 +648,7 @@ public class BattleHud {
             }
 
             this.uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
-            final QueuedModel<?> statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms);
+            final QueuedModelStandard statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms, QueuedModelStandard.class);
 
             if(charDisplay._14[2] < 6) {
               statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
@@ -701,7 +701,7 @@ public class BattleHud {
               this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
-              RENDERER.queueOrthoModel(this.spBars, this.spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
+              RENDERER.queueOrthoModel(this.spBars, this.spBarTransforms, QueuedModelStandard.class).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
             }
 
             //SP border
@@ -1259,7 +1259,7 @@ public class BattleHud {
               //LAB_800f3ec0
               for(int s3 = 1; s3 < 3; s3++) {
                 num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
-                RENDERER.queueOrthoModel(digit.obj, num.transforms)
+                RENDERER.queueOrthoModel(digit.obj, num.transforms, QueuedModelStandard.class)
                   .colour(num.colour);
 
                 if((num.state_00 & 97) == 0) {
@@ -1735,7 +1735,7 @@ public class BattleHud {
       int y = this.battleMenu_800c6c34.y_08 - 10;
       this.battleMenu_800c6c34.transforms.scaling(variableW, 1.0f, 1.0f);
       this.battleMenu_800c6c34.transforms.transfer.set(x, y, 124.0f);
-      RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+      RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
         .vertices(this.battleMenu_800c6c34.actionMenuBackgroundObjOffset, 4)
         .translucency(Translucency.B_PLUS_F);
 
@@ -1776,7 +1776,7 @@ public class BattleHud {
         //LAB_800f716c
         this.battleMenu_800c6c34.transforms.scaling(w, h, 1.0f);
         this.battleMenu_800c6c34.transforms.transfer.set(x, y, 124.0f);
-        RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+        RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
           .vertices(this.battleMenu_800c6c34.actionMenuBackgroundObjOffset + (i + 1) * 4, 4)
           .translucency(Translucency.B_PLUS_F);
       }
@@ -1786,14 +1786,14 @@ public class BattleHud {
       //LAB_800f6fc8
       // Draw red glow underneath selected menu item
       this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX0_28, this.battleMenu_800c6c34.highlightY_2a, 123.9f);
-      RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+      RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
         .vertices(this.battleMenu_800c6c34.highlightObjOffset, 4)
         .translucency(Translucency.B_PLUS_F)
         .monochrome(this.battleMenu_800c6c34.colour_2c / 255.0f);
 
       if((this.battleMenu_800c6c34.highlightState_02 & 0x1) != 0) {
         this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX1_3c, this.battleMenu_800c6c34.highlightY_2a, 123.9f);
-        RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+        RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
           .vertices(this.battleMenu_800c6c34.highlightObjOffset, 4)
           .translucency(Translucency.B_PLUS_F)
           .monochrome(Math.max(0, (0x80 - this.battleMenu_800c6c34.colour_2c) / 255.0f));
@@ -1817,7 +1817,7 @@ public class BattleHud {
         if(this.battleMenu_800c6c34.selectedIcon_22 == iconIndex && this.battleMenu_800c6c34.renderSelectedIconText_40) {
           // Selected combat menu icon text
           this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08, 123.9f);
-          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionIconTextObjOffset + iconId * 4, 4);
         }
 
@@ -1826,22 +1826,22 @@ public class BattleHud {
         this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.8f);
 
         if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0xf) != 0x2) {
-          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionIconObjOffset + iconId * 12 + iconState * 4, 4)
             .translucency(Translucency.of(battleMenuIconMetrics_800fb674[iconId].translucencyMode_06));
         } else if(this.battleMenu_800c6c34.player_04.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
-          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionDragoonIconObjOffset + this.battleMenu_800c6c34.player_04.charId_272 * 12 + iconState * 4, 4)
             .translucency(Translucency.of(battleMenuIconMetrics_800fb674[1].translucencyMode_06));
         } else {
-          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionDragoonIconObjOffset + 9 * 12 + iconState * 4, 4)
             .translucency(Translucency.of(battleMenuIconMetrics_800fb674[1].translucencyMode_06));
 
           if(iconState != 0) {
             // Divine dragoon spirit overlay
             //LAB_800f6de0
-            RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+            RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
               .vertices(this.battleMenu_800c6c34.divineSpiritObjOffset + (iconState - 1) * 4, 4)
               .translucency(Translucency.B_PLUS_F);
           }
@@ -1849,7 +1849,7 @@ public class BattleHud {
 
         if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0x80) != 0) {
           this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 123.7f);
-          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms)
+          RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionDisabledObjOffset, 4);
         }
 
@@ -2151,10 +2151,10 @@ public class BattleHud {
     this.lineTransforms.scaling(x2 - x1 + 1, y2 - y1 + 1, 1.0f);
 
     if(translucent) {
-      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), this.lineTransforms)
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), this.lineTransforms, QueuedModelStandard.class)
         .colour(r / 255.0f, g / 255.0f, b / 255.0f);
     } else {
-      RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.lineTransforms)
+      RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.lineTransforms, QueuedModelStandard.class)
         .colour(r / 255.0f, g / 255.0f, b / 255.0f);
     }
   }

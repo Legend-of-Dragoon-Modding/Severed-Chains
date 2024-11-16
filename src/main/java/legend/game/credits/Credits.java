@@ -1,6 +1,7 @@
 package legend.game.credits;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -590,9 +591,9 @@ public class Credits extends EngineState {
   @Method(0x800eaf24L)
   private void renderCreditsGradient() {
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
-    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms, QueuedModelStandard.class);
     this.transforms.rotate(MathHelper.PI, 0, 0, 0);
-    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms, QueuedModelStandard.class);
   }
 
   @Method(0x800eb304L)
@@ -657,7 +658,7 @@ public class Credits extends EngineState {
   private void renderQuad(final CreditData1c credit, final float x, final float y) {
     this.transforms.identity();
     this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() +  y, (orderingTableSize_1f8003c8 - 3) * 4.0f);
-    RENDERER.queueOrthoModel(this.credits, this.transforms)
+    RENDERER.queueOrthoModel(this.credits, this.transforms, QueuedModelStandard.class)
       .vertices(credit.index * 4, 4)
       .colour(credit.colour_00);
   }

@@ -1,7 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModel;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.Rect4i;
@@ -14,7 +14,6 @@ import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.input.Input;
@@ -1415,8 +1414,8 @@ public final class Scus94491BpeSegment_8002 {
               clutX -= 512;
             }
 
-            final QueuedModel<?> model = RENDERER
-              .queueOrthoModel(renderable.uiType_20.obj, transforms)
+            final QueuedModelStandard model = RENDERER
+              .queueOrthoModel(renderable.uiType_20.obj, transforms, QueuedModelStandard.class)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride(clutX, clut >>> 6);
@@ -2053,7 +2052,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms);
+        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms, QueuedModelStandard.class);
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2109,7 +2108,7 @@ public final class Scus94491BpeSegment_8002 {
           .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
       }
 
-      RENDERER.queueOrthoModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
+      RENDERER.queueOrthoModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex], QueuedModelStandard.class);
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -3239,7 +3238,7 @@ public final class Scus94491BpeSegment_8002 {
 
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(GPU.getOffsetX() + x + 1, GPU.getOffsetY() + y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
-          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
+          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms, QueuedModelStandard.class)
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .monochrome(0.0f)
@@ -3248,7 +3247,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.transforms.transfer.x--;
           textboxText.transforms.transfer.y--;
           textboxText.transforms.transfer.z -= 4.0f;
-          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
+          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms, QueuedModelStandard.class)
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
@@ -3356,7 +3355,7 @@ public final class Scus94491BpeSegment_8002 {
 
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
     textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c * 4.0f);
-    RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms);
+    RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms, QueuedModelStandard.class);
   }
 
   private static final MV textTransforms = new MV();
@@ -3384,7 +3383,7 @@ public final class Scus94491BpeSegment_8002 {
             textTransforms.transfer.y += trim;
           }
 
-          final QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
+          final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
             .texture(RENDERER.textTexture)
             .vertices((c - 33) * 4, 4)
             .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
@@ -3438,7 +3437,7 @@ public final class Scus94491BpeSegment_8002 {
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
         textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c * 4.0f);
-        RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
+        RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms, QueuedModelStandard.class);
       }
     }
 

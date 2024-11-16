@@ -1,5 +1,6 @@
 package legend.game.combat.bent;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
@@ -131,14 +132,14 @@ public class MonsterBattleEntity extends BattleEntity27c {
           transforms.transfer.set(screenspace.x - 13.0f, screenspace.y + 7.0f, 124.0f);
           transforms.scaling(26.0f, 4.0f, 1.0f);
           RENDERER
-            .queueOrthoModel(RENDERER.opaqueQuad, transforms)
+            .queueOrthoModel(RENDERER.opaqueQuad, transforms, QueuedModelStandard.class)
             .screenspaceOffset(160.0f, 120.0f)
             .monochrome(0.0f);
 
           transforms.transfer.set(screenspace.x - 12.0f, screenspace.y + 8.0f, 120.0f);
           transforms.scaling(24.0f * hp, 2.0f, 1.0f);
           RENDERER
-            .queueOrthoModel(RENDERER.opaqueQuad, transforms)
+            .queueOrthoModel(RENDERER.opaqueQuad, transforms, QueuedModelStandard.class)
             .screenspaceOffset(160.0f, 120.0f)
             .colour(r, g, b);
         }

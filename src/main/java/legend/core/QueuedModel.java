@@ -1,44 +1,40 @@
 package legend.core;
 
 import legend.core.gpu.Rect4i;
+import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.Shader;
-import legend.core.opengl.ShaderOptions;
+import legend.core.opengl.ShaderOptionsBase;
 import legend.core.opengl.Texture;
 import legend.game.types.Translucency;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 
-public class QueuedModel<Options extends ShaderOptions<Options>> {
-  private final RenderBatch batch;
+public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T extends QueuedModel<Options, T>> {
+  protected final RenderBatch batch;
+  protected final Shader<Options> shader;
+  protected final Options shaderOptions;
 
   Obj obj;
   final Matrix4f transforms = new Matrix4f();
-  final Matrix4f lightTransforms = new Matrix4f();
   final Vector3f screenspaceOffset = new Vector3f();
   final Vector3f colour = new Vector3f();
   final Vector2f clutOverride = new Vector2f();
   final Vector2f tpageOverride = new Vector2f();
   final Vector2f uvOffset = new Vector2f();
 
-  final Matrix4f lightDirection = new Matrix4f();
-  final Matrix3f lightColour = new Matrix3f();
-  final Vector4f backgroundColour = new Vector4f();
-  boolean lightUsed;
-
   final Rect4i scissor = new Rect4i();
 
-  Shader<Options> shader;
-  Options shaderOptions;
+  private final Vector3f tempColour = new Vector3f();
 
   int startVertex;
   int vertexCount;
@@ -46,159 +42,116 @@ public class QueuedModel<Options extends ShaderOptions<Options>> {
   final Texture[] textures = new Texture[32];
   boolean texturesUsed;
 
-  Translucency translucency;
-  boolean hasTranslucencyOverride;
-
-  boolean isTmd;
-  int tmdTranslucency;
-  int ctmdFlags;
-  final Vector3f battleColour = new Vector3f();
-
-  Vector3f[] vdf;
-
-  public QueuedModel(final RenderBatch batch) {
+  public QueuedModel(final RenderBatch batch, final Shader<Options> shader, final Options shaderOptions) {
     this.batch = batch;
+    this.shader = shader;
+    this.shaderOptions = shaderOptions;
   }
 
-  public Options options() {
-    return this.shaderOptions;
-  }
-
-  public QueuedModel<Options> screenspaceOffset(final Vector2f offset) {
+  public T screenspaceOffset(final Vector2f offset) {
     this.screenspaceOffset.x = offset.x;
     this.screenspaceOffset.y = offset.y;
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> screenspaceOffset(final float x, final float y) {
+  public T screenspaceOffset(final float x, final float y) {
     this.screenspaceOffset.x = x;
     this.screenspaceOffset.y = y;
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> depthOffset(final float z) {
+  public T depthOffset(final float z) {
     this.screenspaceOffset.z = z;
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> colour(final Vector3f colour) {
+  public T colour(final Vector3f colour) {
     this.colour.set(colour);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> colour(final float r, final float g, final float b) {
+  public T colour(final float r, final float g, final float b) {
     this.colour.set(r, g, b);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> monochrome(final float shade) {
+  public T monochrome(final float shade) {
     this.colour.set(shade);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> clutOverride(final float x, final float y) {
+  public T clutOverride(final float x, final float y) {
     this.clutOverride.set(x, y);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> tpageOverride(final float x, final float y) {
+  public T tpageOverride(final float x, final float y) {
     this.tpageOverride.set(x, y);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> uvOffset(final float x, final float y) {
+  public T uvOffset(final float x, final float y) {
     this.uvOffset.set(x, y);
-    return this;
-  }
-
-  public QueuedModel<Options> lightDirection(final Matrix3f lightDirection) {
-    this.lightDirection.set(lightDirection).mul(this.lightTransforms).setTranslation(0.0f, 0.0f, 0.0f);
-    this.lightUsed = true;
-    return this;
-  }
-
-  public QueuedModel<Options> lightColour(final Matrix3f lightColour) {
-    this.lightColour.set(lightColour);
-    this.lightUsed = true;
-    return this;
-  }
-
-  public QueuedModel<Options> backgroundColour(final Vector3f backgroundColour) {
-    this.backgroundColour.set(backgroundColour, 0.0f);
-    this.lightUsed = true;
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
   /**
    * Note: origin is top-left corner
    */
-  public QueuedModel<Options> scissor(final int x, final int y, final int w, final int h) {
+  public T scissor(final int x, final int y, final int w, final int h) {
     this.scissor.set(x, y, w, h);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
   /**
    * Note: origin is top-left corner
    */
-  public QueuedModel<Options> scissor(final Rect4i scissor) {
+  public T scissor(final Rect4i scissor) {
     this.scissor.set(scissor);
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> vertices(final int startVertex, final int vertexCount) {
+  public T vertices(final int startVertex, final int vertexCount) {
     this.startVertex = startVertex;
     this.vertexCount = vertexCount;
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> texture(final Texture texture, final int textureUnit) {
+  public T texture(final Texture texture, final int textureUnit) {
     this.textures[textureUnit] = texture;
     this.texturesUsed = true;
-    return this;
+    //noinspection unchecked
+    return (T)this;
   }
 
-  public QueuedModel<Options> texture(final Texture texture) {
+  public T texture(final Texture texture) {
     return this.texture(texture, 0);
   }
 
-  public QueuedModel<Options> translucency(final Translucency translucency) {
-    this.translucency = translucency;
-    this.hasTranslucencyOverride = true;
-
-    if(this.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.batch.needsSorting = true;
-    }
-
-    return this;
+  void acquire(final Obj obj, final MV transforms) {
+    this.transforms.set(transforms).setTranslation(transforms.transfer);
+    this.acquire(obj);
   }
 
-  public QueuedModel<Options> ctmdFlags(final int ctmdFlags) {
-    this.isTmd = true;
-    this.ctmdFlags = ctmdFlags;
-    return this;
+  void acquire(final Obj obj, final Matrix4f transforms) {
+    this.transforms.set(transforms);
+    this.acquire(obj);
   }
 
-  public QueuedModel<Options> tmdTranslucency(final int tmdTranslucency) {
-    this.isTmd = true;
-    this.tmdTranslucency = tmdTranslucency;
-    return this;
-  }
-
-  public QueuedModel<Options> battleColour(final Vector3f colour) {
-    this.battleColour.set(colour);
-    return this;
-  }
-
-  public QueuedModel<Options> vdf(final Vector3f[] vdf) {
-    this.vdf = vdf;
-    return this;
-  }
-
-  void reset() {
-    this.shader = null;
-    this.shaderOptions = null;
-    this.transforms.identity();
-    this.lightTransforms.identity();
+  void acquire(final Obj obj) {
+    this.obj = obj;
     this.screenspaceOffset.zero();
     this.colour.set(1.0f, 1.0f, 1.0f);
     this.clutOverride.zero();
@@ -207,14 +160,16 @@ public class QueuedModel<Options extends ShaderOptions<Options>> {
     this.scissor.set(0, 0, 0, 0);
     this.vertexCount = 0;
     Arrays.fill(this.textures, null);
-    this.hasTranslucencyOverride = false;
     this.texturesUsed = false;
-    this.lightUsed = false;
-    this.isTmd = false;
-    this.tmdTranslucency = 0;
-    this.ctmdFlags = 0;
-    this.battleColour.zero();
-    this.vdf = null;
+    this.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+  }
+
+  void setTransforms(final MV transforms) {
+    this.transforms.set(transforms).setTranslation(transforms.transfer);
+  }
+
+  void setTransforms(final Matrix4f transforms) {
+    this.transforms.set(transforms);
   }
 
   void useTexture() {
@@ -229,44 +184,39 @@ public class QueuedModel<Options extends ShaderOptions<Options>> {
     }
   }
 
-  public boolean isUniformLit() {
-    return (this.ctmdFlags & 0x10) != 0;
+  public boolean hasTranslucency() {
+    return this.obj.hasTranslucency();
   }
 
-  public boolean hasTranslucency() {
-    return this.hasTranslucencyOverride || (this.ctmdFlags & 0x2) != 0 || this.obj.hasTranslucency();
+  public void useShader(final int modelIndex, final int discardMode) {
+    this.shader.use();
+    this.shaderOptions.discardMode(discardMode);
+    this.shaderOptions.modelIndex(modelIndex);
+    this.shaderOptions.clut(this.clutOverride);
+    this.shaderOptions.tpage(this.tpageOverride);
+    this.shaderOptions.uvOffset(this.uvOffset);
   }
 
   public boolean shouldRender(@Nullable final Translucency translucency) {
-    if(this.isTmd && this.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
-      return translucency != null && this.tmdTranslucency == translucency.ordinal();
-    }
-
-    return
-      this.hasTranslucencyOverride && this.translucency == translucency ||
-        (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() ||
-        !this.hasTranslucencyOverride && this.obj.shouldRender(translucency)
-      ;
+    return this.obj.shouldRender(translucency);
   }
 
-  void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
+  protected void updateColours(@Nullable final Translucency translucency) {
+    switch(translucency) {
+      case B_MINUS_F -> this.shaderOptions.colour(this.colour.mul(-1.0f, this.tempColour));
+      case B_PLUS_QUARTER_F -> this.shaderOptions.colour(this.colour.mul(0.25f, this.tempColour));
+      case null, default -> this.shaderOptions.colour(this.colour);
+    }
+  }
+
+  void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer) {
     this.transforms.get(modelIndex * 20, transforms2Buffer);
     this.screenspaceOffset.get(modelIndex * 20 + 16, transforms2Buffer);
-
-    if(this.lightUsed) {
-      this.lightDirection.get(modelIndex * 32, lightingBuffer);
-      this.lightColour.get3x4(modelIndex * 32 + 16, lightingBuffer);
-      this.backgroundColour.get(modelIndex * 32 + 28, lightingBuffer);
-    }
   }
 
-  void render(final Translucency translucency) {
-    if(this.hasTranslucencyOverride || (this.ctmdFlags & 0x2) != 0 || this.isTmd && this.obj.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
-      // Translucency override
-      this.obj.render(this.startVertex, this.vertexCount);
-    } else {
-      this.obj.render(translucency, this.startVertex, this.vertexCount);
-    }
+  void render(@Nullable final Translucency translucency) {
+    this.updateColours(translucency);
+    this.obj.render(translucency, this.startVertex, this.vertexCount);
   }
 
   @Override

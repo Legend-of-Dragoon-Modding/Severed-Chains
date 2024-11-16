@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -737,7 +738,7 @@ public final class Scus94491BpeSegment {
       fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
 
       //LAB_800139c4
-      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms)
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
         .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
@@ -752,7 +753,7 @@ public final class Scus94491BpeSegment {
       fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
 
       //LAB_80013b10
-      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms)
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
         .colour(fullScreenEffect_800bb140.red1_18 / 255.0f, fullScreenEffect_800bb140.green1_10 / 255.0f, fullScreenEffect_800bb140.blue1_0c / 255.0f);
     }
 
@@ -767,7 +768,7 @@ public final class Scus94491BpeSegment {
     fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
     fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
-    RENDERER.queueOrthoModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms)
+    RENDERER.queueOrthoModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
       .monochrome(colour / 255.0f);
   }
 
@@ -1949,7 +1950,7 @@ public final class Scus94491BpeSegment {
           //LAB_8001b734
           //LAB_8001b868
           dissolveTransforms.transfer.set(left - offset / 2.0f, top, 24.0f);
-          RENDERER.queueOrthoModel(dissolveSquare, dissolveTransforms)
+          RENDERER.queueOrthoModel(dissolveSquare, dissolveTransforms, QueuedModelStandard.class)
             .uvOffset((float)u / dissolveDisplayWidth, (displayHeight_1f8003e4 - v) / (float)displayHeight_1f8003e4)
             .texture(RENDERER.getLastFrame())
             .monochrome((dissolveDarkening_800bd700.brightnessAccumulator_08 >> 8) / 128.0f);
@@ -1989,7 +1990,7 @@ public final class Scus94491BpeSegment {
 
     darkeningTransforms.transfer.set(-offset / 2.0f, 0.0f, 25.0f);
     darkeningTransforms.scaling(width * squish, displayHeight_1f8003e4, 1.0f);
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, darkeningTransforms)
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, darkeningTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())
       .monochrome(MathHelper.clamp((int)(dissolveDarkening_800bd700.brightnessAccumulator_08 * 1.1f) >> 8, 0x80 - 2 * vsyncMode_8007a3b8, 0x80) / 128.0f);
   }

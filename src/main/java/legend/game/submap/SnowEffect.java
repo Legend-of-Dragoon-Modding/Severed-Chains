@@ -1,6 +1,7 @@
 package legend.game.submap;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.Random;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
@@ -162,7 +163,7 @@ public class SnowEffect {
 
         this.transforms.scaling(inst.size_14);
         this.transforms.transfer.set(GPU.getOffsetX() + inst.x_16, GPU.getOffsetY() + inst.y_18, 160.0f);
-        RENDERER.queueOrthoModel(this.particle, this.transforms)
+        RENDERER.queueOrthoModel(this.particle, this.transforms, QueuedModelStandard.class)
           .monochrome(inst.brightness_34);
 
         inst.angle_08 = (inst.angle_08 + inst.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
