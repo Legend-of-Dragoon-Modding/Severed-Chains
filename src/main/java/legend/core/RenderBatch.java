@@ -136,7 +136,7 @@ public class RenderBatch {
     this.expandedSubmap = false;
 
     if(RenderEngine.legacyMode != 0) {
-      this.perspectiveProjection.setPerspectiveLH(PI / 4.0f, this.engine.getRenderWidth() / this.engine.getRenderHeight(), 0.1f, 500.0f);
+      this.perspectiveProjection.setPerspectiveLH(PI / 4.0f, (float)this.engine.getRenderWidth() / this.engine.getRenderHeight(), 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.engine.getRenderWidth(), this.engine.getRenderHeight(), 0.0f);
       return;
     }
@@ -145,7 +145,7 @@ public class RenderBatch {
     if(this.allowHighQualityProjection && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
       final float ratio;
       if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
-        ratio = this.engine.getRenderWidth() / this.engine.getRenderHeight();
+        ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
         final float w = this.projectionHeight * ratio;
         final float h = this.projectionHeight;
         this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / this.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
@@ -169,7 +169,7 @@ public class RenderBatch {
           this.widthSquisher = 368.0f / 320.0f;
         }
 
-        final float ratio = this.engine.getRenderWidth() / this.engine.getRenderHeight();
+        final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
         final float w = this.projectionHeight * ratio;
         final float h = this.projectionHeight;
         this.perspectiveProjection.setOrthoLH(-w / 2.0f * this.widthSquisher, w / 2.0f * this.widthSquisher, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);

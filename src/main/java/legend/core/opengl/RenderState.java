@@ -4,7 +4,6 @@ import legend.core.RenderBatch;
 import legend.core.RenderEngine;
 import legend.core.gpu.Rect4i;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
@@ -15,8 +14,6 @@ import static org.lwjgl.opengl.GL11C.glScissor;
 
 public class RenderState {
   private boolean backfaceCulling;
-  private boolean scissor;
-  private Translucency translucency;
 
   private final RenderEngine engine;
   private RenderBatch batch;

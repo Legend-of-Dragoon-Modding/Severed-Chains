@@ -639,13 +639,15 @@ public class RenderEngine {
       batch.needsSorting = false;
     }
 
+    this.state.initBatch(batch);
+
     this.clearDepth();
 
     this.setProjectionMode(batch, ProjectionMode._3D);
-    this.renderPool(batch, batch.modelPool, true);
+    this.renderPool(batch.modelPool, true);
 
     this.setProjectionMode(batch, ProjectionMode._2D);
-    this.renderPool(batch, batch.orthoPool, false);
+    this.renderPool(batch.orthoPool, false);
 
     this.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPoolTranslucent(batch, batch.modelPool);
@@ -654,12 +656,10 @@ public class RenderEngine {
     this.renderPoolTranslucent(batch, batch.orthoPool);
   }
 
-  private void renderPool(final RenderBatch batch, final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
+  private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
     if(pool.isEmpty()) {
       return;
     }
-
-    this.state.initBatch(batch);
 
     // Render if the depth is less than what is currently in the depth buffer
     glEnable(GL_DEPTH_TEST);
