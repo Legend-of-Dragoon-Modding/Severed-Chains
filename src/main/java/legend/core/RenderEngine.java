@@ -17,8 +17,8 @@ import legend.core.opengl.Resolution;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
-import legend.core.opengl.ShaderOptionsStandard;
 import legend.core.opengl.ShaderOptionsBattleTmd;
+import legend.core.opengl.ShaderOptionsStandard;
 import legend.core.opengl.ShaderOptionsTmd;
 import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -109,7 +108,7 @@ public class RenderEngine {
   public static int legacyMode;
   public boolean usePs1Gpu = true;
 
-  private final List<RenderBatch> batches;
+  private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
   private final RenderState state = new RenderState(this);
 
@@ -274,8 +273,6 @@ public class RenderEngine {
 
   private boolean wireframeMode;
 
-  private final Vector3f tempColour = new Vector3f();
-
   private boolean togglePause;
   private boolean paused;
   private boolean frameAdvanceSingle;
@@ -283,8 +280,7 @@ public class RenderEngine {
   private boolean reloadShaders;
 
   public RenderEngine() {
-    this.batches = new ArrayList<>();
-    this.mainBatch = new RenderBatch(this, this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
   }
 
   /**
@@ -296,7 +292,7 @@ public class RenderEngine {
    * out with a copy of the main render batch's config when they are created.
    */
   public RenderBatch addBatch() {
-    final RenderBatch batch = new RenderBatch(this, this.mainBatch, this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    final RenderBatch batch = new RenderBatch(this, this.mainBatch, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
     this.batches.add(batch);
     return batch;
   }
@@ -707,10 +703,7 @@ public class RenderEngine {
           final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
           if(entry.shouldRender(translucency)) {
-            if(backFaceCulling) {
-              this.state.backfaceCulling(false);
-            }
-
+            this.state.backfaceCulling(false);
             entry.useTexture();
             entry.render(translucency);
           }

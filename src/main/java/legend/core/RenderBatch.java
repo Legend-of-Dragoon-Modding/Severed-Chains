@@ -10,6 +10,7 @@ import legend.game.types.Translucency;
 import org.joml.Matrix4f;
 
 import java.nio.FloatBuffer;
+import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.MathHelper.PI;
@@ -47,17 +48,20 @@ public class RenderBatch {
   public final Matrix4f perspectiveProjection = new Matrix4f();
   public final Matrix4f orthographicProjection = new Matrix4f();
 
+  private final Supplier<Shader.UniformBuffer> vdfUniformSupplier;
+
   public final QueuePool<QueuedModel<?, ?>> modelPool;
   public final QueuePool<QueuedModel<?, ?>> orthoPool;
 
-  public RenderBatch(final RenderEngine engine, final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
+  public RenderBatch(final RenderEngine engine, final Supplier<Shader.UniformBuffer> vdfUniformSupplier, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
     this.engine = engine;
-    this.modelPool = this.makePool(vdfUniform, vdfBuffer, lightingBuffer);
-    this.orthoPool = this.makePool(vdfUniform, vdfBuffer, lightingBuffer);
+    this.vdfUniformSupplier = vdfUniformSupplier;
+    this.modelPool = this.makePool(vdfBuffer, lightingBuffer);
+    this.orthoPool = this.makePool(vdfBuffer, lightingBuffer);
   }
 
-  public RenderBatch(final RenderEngine engine, final RenderBatch current, final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
-    this(engine, vdfUniform, vdfBuffer, lightingBuffer);
+  public RenderBatch(final RenderEngine engine, final RenderBatch current, final Supplier<Shader.UniformBuffer> vdfUniformSupplier, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
+    this(engine, vdfUniformSupplier, vdfBuffer, lightingBuffer);
     this.projectionWidth = current.projectionWidth;
     this.projectionHeight = current.projectionHeight;
     this.projectionDepth = current.projectionDepth;
@@ -73,11 +77,11 @@ public class RenderBatch {
     this.orthographicProjection.set(current.orthographicProjection);
   }
 
-  private QueuePool<QueuedModel<?, ?>> makePool(final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
+  private QueuePool<QueuedModel<?, ?>> makePool(final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
     final QueuePool<QueuedModel<?, ?>> pool = new QueuePool<>();
     pool.addType(QueuedModelStandard.class, () -> new QueuedModelStandard(this, this.engine.standardShader, this.engine.standardShaderOptions));
     pool.addType(QueuedModelTmd.class, () -> new QueuedModelTmd(this, this.engine.tmdShader, this.engine.tmdShaderOptions, lightingBuffer));
-    pool.addType(QueuedModelBattleTmd.class, () -> new QueuedModelBattleTmd(this, this.engine.battleTmdShader, this.engine.battleTmdShaderOptions, vdfUniform, vdfBuffer, lightingBuffer));
+    pool.addType(QueuedModelBattleTmd.class, () -> new QueuedModelBattleTmd(this, this.engine.battleTmdShader, this.engine.battleTmdShaderOptions, this.vdfUniformSupplier.get(), vdfBuffer, lightingBuffer));
     return pool;
   }
 
