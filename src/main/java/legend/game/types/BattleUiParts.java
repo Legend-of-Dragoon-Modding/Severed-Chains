@@ -228,7 +228,7 @@ public class BattleUiParts {
     final QuadBuilder builder2 = new QuadBuilder("Add-on elements (such as the xbox button");
 
     builder2
-      .rgb(1.0f, 1.0f, 1.0f)
+      .rgb(0.6f, 0.6f, 0.6f)
       .size(1.0f, 1.0f)
       .uv(0.0f, 0.0f)
       .uvSize(1.0f, 1.0f)

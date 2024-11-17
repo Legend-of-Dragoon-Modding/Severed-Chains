@@ -99,7 +99,7 @@ public class AdditionButtonFeedbackText {
     this.transformMatrix = new Matrix4f();
 
     this.additionButtonTextQuad = new QuadBuilder("Addition Button Text background")
-      .rgb(1.0f, 1.0f, 1.0f)
+      .rgb(0.75f, 0.75f, 0.75f)
       .size(1.0f, 1.0f)
       .uv(0.0f, 0.0f)
       .uvSize(1.0f, 1.0f)
