@@ -117,11 +117,17 @@ public class AdditionConfigs {
   // overlayHitFrameOffset: the speed at which the overlay closes in (bigger = slower)
   // totalSuccessFrames: the total amount of frames that will be valid for a successful input
   // overlayStartingFrameOffset: frames before the overlay shows
-  private static AdditionHitProperties10 createAdditionHitProperties(final int flags, final int totalFrames, final int overlayHitFrameOffset, int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
+  private static AdditionHitProperties10 createAdditionHitProperties(final int flags, int totalFrames, final int overlayHitFrameOffset, int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
     switch (CONFIG.getConfig(CoreMod.ADDITION_DIFFICULTY_CONFIG.get())) {
       case AdditionDifficulty.EASY: totalSuccessFrames += 1; break;
-      case AdditionDifficulty.HARD: totalSuccessFrames -= 1; break;
+      case AdditionDifficulty.HARD:
+        if (totalSuccessFrames > 2) {
+          totalFrames = totalFrames - (totalSuccessFrames - 2);
+          totalSuccessFrames = 2;
+        }
+        break;
     }
+    totalFrames = Math.max(1, totalFrames);
     totalSuccessFrames = Math.max(1, totalSuccessFrames);
     return new AdditionHitProperties10(flags, totalFrames, overlayHitFrameOffset, totalSuccessFrames, damageMultiplier, spValue, audioFile, isFinalHit, _08, _09, _0a, hitDistanceFromTarget, framesToHitPosition, _0d, _0e, overlayStartingFrameOffset);
   }

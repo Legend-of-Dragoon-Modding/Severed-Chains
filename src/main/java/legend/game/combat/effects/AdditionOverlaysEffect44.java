@@ -618,8 +618,6 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     switch (hitOverlay.numSuccessFrames_0e)
                     {
                       case 2:
-                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 1;
-                        break;
                       case 3:
                         perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
                         perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 1;

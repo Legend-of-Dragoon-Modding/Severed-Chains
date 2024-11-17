@@ -309,7 +309,6 @@ public class CombatDebuggerController {
       hp.setMaxRaw(9999);
 
       if (bent instanceof final PlayerBattleEntity player){
-        bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(9999);
         bent.attack_34 = 0;
         bent.magicAttack_36 = 0;
         bent.attackHit_3c = 9999;
