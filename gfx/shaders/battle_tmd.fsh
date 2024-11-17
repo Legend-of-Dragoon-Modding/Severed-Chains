@@ -28,6 +28,7 @@ uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float discardTranslucency;
 uniform int tmdTranslucency;
+uniform int ctmdFlags;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -41,12 +42,14 @@ void main() {
     gl_FragDepth = gl_FragCoord.z;
   }
 
-  bool translucent = (vertFlags & 0x8) != 0;
+  bool ctmd = (ctmdFlags & 0x20) != 0;
+  bool uniformLit = (ctmdFlags & 0x10) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
   bool textured = (vertFlags & 0x2) != 0;
   outColour = vertColour;
 
   int translucencyMode = translucency;
-  if(translucent && !textured) {
+  if(translucent && (!textured || uniformLit)) {
     translucencyMode = tmdTranslucency + 1;
   }
 

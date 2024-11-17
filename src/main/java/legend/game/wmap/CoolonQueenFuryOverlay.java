@@ -1,7 +1,8 @@
 package legend.game.wmap;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
-import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 
 import static legend.core.GameEngine.GPU;
@@ -17,9 +18,9 @@ public class CoolonQueenFuryOverlay {
   /** Wmap.squareButtonUs_800ef168 */
   private static final int[] buttonStates = {0, 0, 1, 2, 2, 1, 0};
 
-  private final MeshObj[] buttonSprites = new MeshObj[3];
-  private final MeshObj[] coolonSprites = new MeshObj[4];
-  private final MeshObj[] queenFurySprites = new MeshObj[5];
+  private final Obj[] buttonSprites = new Obj[3];
+  private final Obj[] coolonSprites = new Obj[4];
+  private final Obj[] queenFurySprites = new Obj[5];
 
   public CoolonQueenFuryOverlay() {
     this.buildButton();
@@ -72,11 +73,11 @@ public class CoolonQueenFuryOverlay {
   /** @param mode 0: Coolon icon, 1: Queen Fury icon */
   public void render(final int mode) {
     final int buttonState = buttonStates[(int)(tickCount_800bb0fc / 2 / (3.0f / vsyncMode_8007a3b8) % 7)];
-    final MeshObj button = this.buttonSprites[buttonState];
-    RENDERER.queueOrthoModel(button);
+    final Obj button = this.buttonSprites[buttonState];
+    RENDERER.queueOrthoModel(button, QueuedModelStandard.class);
 
     final int iconState;
-    final MeshObj icon;
+    final Obj icon;
     if(mode == 0) {
       iconState = coolonIconStates[(int)(tickCount_800bb0fc / 2 / (3.0f / vsyncMode_8007a3b8) % 5)];
       icon = this.coolonSprites[iconState];
@@ -85,19 +86,19 @@ public class CoolonQueenFuryOverlay {
       icon = this.queenFurySprites[iconState];
     }
 
-    RENDERER.queueOrthoModel(icon);
+    RENDERER.queueOrthoModel(icon, QueuedModelStandard.class);
   }
 
   public void deallocate() {
-    for(final MeshObj button : this.buttonSprites) {
+    for(final Obj button : this.buttonSprites) {
       button.delete();
     }
 
-    for(final MeshObj icon : this.coolonSprites) {
+    for(final Obj icon : this.coolonSprites) {
       icon.delete();
     }
 
-    for(final MeshObj icon : this.queenFurySprites) {
+    for(final Obj icon : this.queenFurySprites) {
       icon.delete();
     }
   }

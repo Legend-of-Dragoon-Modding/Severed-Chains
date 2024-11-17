@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
@@ -57,7 +58,7 @@ public class RadialGradientEffect14 implements Effect<EffectManagerParams.Radial
 
       final MV transforms = new MV();
       transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.z_04 + manager.params_10.z_22);
-      RENDERER.queueOrthoModel(obj, transforms);
+      RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
 
       obj.delete(); // Mark for deletion after this frame
     }
@@ -108,7 +109,7 @@ public class RadialGradientEffect14 implements Effect<EffectManagerParams.Radial
 
       final MV transforms = new MV();
       transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.z_04 + manager.params_10.z_22);
-      RENDERER.queueOrthoModel(obj, transforms);
+      RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
 
       obj.delete(); // Mark for deletion after this frame
     }

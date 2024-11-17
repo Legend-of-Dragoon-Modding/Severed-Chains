@@ -2,7 +2,6 @@ package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
@@ -110,14 +109,14 @@ public class WMapModelAndAnimData258 {
   /** Used for brightness of the map name and the map textures overall (short) */
   public float mapTextureBrightness_20;
 
-  public MeshObj mapContinentNameObj;
+  public Obj mapContinentNameObj;
   public final MV mapOverlayTransforms = new MV();
 
   public MapMarker mapArrow;
   public MapMarker coolonPlaceMarker;
 
   public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
-  public MeshObj[] atmosphericEffectSprites;
+  public Obj[] atmosphericEffectSprites;
 
   public float clutYIndex_28;
   public FileData imageData_2c;

@@ -2,16 +2,17 @@ package legend.core;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
-class QueuePool<T> {
+public class QueuePool<T> {
   private final List<T> queue = new ArrayList<>();
-  private final Supplier<T> constructor;
-  private int index;
+  private final Map<Class<? extends T>, QueueType<? extends T>> pools = new HashMap<>();
 
-  public QueuePool(final Supplier<T> constructor) {
-    this.constructor = constructor;
+  public <U extends T> void addType(final Class<U> cls, final Supplier<U> constructor) {
+    this.pools.put(cls, new QueueType<>(constructor));
   }
 
   public T get(final int index) {
@@ -19,26 +20,26 @@ class QueuePool<T> {
   }
 
   public int size() {
-    return this.index;
+    return this.queue.size();
   }
 
   public boolean isEmpty() {
     return this.size() == 0;
   }
 
-  public T acquire() {
-    if(this.index >= this.queue.size()) {
-      final T entry = this.constructor.get();
-      this.queue.add(entry);
-      this.index++;
-      return entry;
-    }
-
-    return this.queue.get(this.index++);
+  public <U extends T> U acquire(final Class<U> cls) {
+    @SuppressWarnings("unchecked")
+    final U entry = (U)this.pools.get(cls).acquire();
+    this.queue.add(entry);
+    return entry;
   }
 
   public void reset() {
-    this.index = 0;
+    this.queue.clear();
+
+    for(final var entry : this.pools.values()) {
+      entry.reset();
+    }
   }
 
   public void sort(final Comparator<? super T> comparator) {

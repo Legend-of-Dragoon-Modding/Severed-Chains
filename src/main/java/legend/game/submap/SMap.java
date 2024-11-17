@@ -3,7 +3,8 @@ package legend.game.submap;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
-import legend.core.QueuedModel;
+import legend.core.QueuedModelStandard;
+import legend.core.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
@@ -966,7 +967,7 @@ public class SMap extends EngineState {
     GsGetLw(partCoord, lw);
 
     RENDERER
-      .queueModel(modelPart.obj, lw)
+      .queueModel(modelPart.obj, lw, QueuedModelTmd.class)
       .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
@@ -996,7 +997,7 @@ public class SMap extends EngineState {
         if(dobj2.obj != null) { //TODO remove me
           GsGetLw(dobj2.coord2_04, lw);
 
-          final QueuedModel<?> queue = RENDERER.queueModel(dobj2.obj, lw)
+          final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
@@ -2745,7 +2746,7 @@ public class SMap extends EngineState {
       .build();
     final MV transforms = new MV();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 148.0f);
-    RENDERER.queueOrthoModel(obj, transforms);
+    RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
     obj.delete();
   }
 
@@ -3471,7 +3472,7 @@ public class SMap extends EngineState {
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
 
-        final QueuedModel<?> model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
+        final QueuedModelStandard model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw, QueuedModelStandard.class)
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
@@ -3516,7 +3517,7 @@ public class SMap extends EngineState {
         if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
           final CollisionPrimitiveInfo0c collidedPrimitive = this.collisionGeometry_800cbe08.primitiveInfo_14[this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c];
 
-          RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines)
+          RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines, QueuedModelStandard.class)
             .colour(1.0f, 0.0f, 0.0f)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
@@ -5006,7 +5007,7 @@ public class SMap extends EngineState {
       }
 
       s0.transforms.transfer.set(GPU.getOffsetX() + x0, GPU.getOffsetY() + y0, s0.z_40 * 4.0f);
-      RENDERER.queueOrthoModel(this.savepointObj, s0.transforms)
+      RENDERER.queueOrthoModel(this.savepointObj, s0.transforms, QueuedModelStandard.class)
         .vertices(i * 4, 4)
         .monochrome(s0.colour_34);
     }
@@ -5055,7 +5056,7 @@ public class SMap extends EngineState {
         final SavePointRenderData44 struct = this.savePoint_800d5630[fp * 4 + s4];
 
         struct.transforms.transfer.set(GPU.getOffsetX() + struct.vert0_00.x, GPU.getOffsetY() + struct.vert0_00.y, 164.0f);
-        final QueuedModel<?> queuedModel = RENDERER.queueOrthoModel(this.savepointObj, struct.transforms)
+        final QueuedModelStandard queuedModel = RENDERER.queueOrthoModel(this.savepointObj, struct.transforms, QueuedModelStandard.class)
           .vertices(8, 4)
           .monochrome(struct.colour_34);
 

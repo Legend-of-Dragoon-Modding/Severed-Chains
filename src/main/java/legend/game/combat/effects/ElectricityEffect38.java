@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.TriConsumer;
@@ -431,7 +432,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
       obj.delete();
 
       this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
-      RENDERER.queueOrthoModel(obj, this.transforms);
+      RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
     }
   }
 
@@ -627,7 +628,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
         obj.delete();
 
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
-        RENDERER.queueOrthoModel(obj, this.transforms);
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
       }
     }
   }

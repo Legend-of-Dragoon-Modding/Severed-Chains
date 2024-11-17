@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
@@ -189,7 +190,7 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
 
         //LAB_800ce138
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), zFinal);
-        RENDERER.queueOrthoModel(obj, this.transforms);
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
       }
 
       //LAB_800ce1a0

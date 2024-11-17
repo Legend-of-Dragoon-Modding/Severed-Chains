@@ -1,5 +1,6 @@
 package legend.game.combat.particles;
 
+import legend.core.QueuedModelBattleTmd;
 import legend.core.RenderEngine;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -145,7 +146,7 @@ public class TmdParticle extends ParticleEffectData98 {
       zMax_1f8003cc = oldZMax;
       zMin = oldZMin;
 
-      RENDERER.queueModel(obj, transformMatrix)
+      RENDERER.queueModel(obj, transformMatrix, QueuedModelBattleTmd.class)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)

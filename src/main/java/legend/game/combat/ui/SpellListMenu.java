@@ -1,6 +1,7 @@
 package legend.game.combat.ui;
 
 import legend.core.Config;
+import legend.core.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.screens.TextColour;
@@ -63,7 +64,7 @@ public class SpellListMenu extends ListMenu {
 
     this.transforms.scaling(0.75f);
     this.transforms.transfer.set(x + 152, y, 124.0f);
-    RENDERER.queueOrthoModel(this.menuObj, this.transforms)
+    RENDERER.queueOrthoModel(this.menuObj, this.transforms, QueuedModelStandard.class)
       .vertices(this.mpObjOffset, 4);
 
     this.player_08.setActiveSpell(currentSpellId);

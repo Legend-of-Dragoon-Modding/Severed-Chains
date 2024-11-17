@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -55,7 +56,7 @@ public class FullScreenOverlayEffect0e implements Effect<EffectManagerParams.Voi
     fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
     //LAB_800139c4
-    RENDERER.queueOrthoModel(RENDERER.opaqueQuad, fullScreenEffect_800bb140.transforms)
+    RENDERER.queueOrthoModel(RENDERER.opaqueQuad, fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11))
       .colour((this.r_00 >> 8) / 255.0f, (this.g_02 >> 8) / 255.0f, (this.b_04 >> 8) / 255.0f);
   }

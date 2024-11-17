@@ -1,5 +1,6 @@
 package legend.game.title;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -58,7 +59,7 @@ public class GameOver extends EngineState {
     }
 
     this.transforms.transfer.set(GPU.getOffsetX() - 320.0f, GPU.getOffsetY() - 120.0f, 144.0f);
-    RENDERER.queueOrthoModel(this.background, this.transforms);
+    RENDERER.queueOrthoModel(this.background, this.transforms, QueuedModelStandard.class);
   }
 
   @Override
