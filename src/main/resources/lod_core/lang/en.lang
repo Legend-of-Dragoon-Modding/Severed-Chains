@@ -28,6 +28,7 @@ lod_core.config.resolution.ORIGINAL=240p (original)
 lod_core.config.resolution._480=480p
 lod_core.config.resolution._720=720p
 lod_core.config.resolution._1080=1080p
+lod_core.config.resolution._1440=1440p
 lod_core.config.resolution._4K=4K
 lod_core.config.resolution._8K=8K
 lod_core.config.resolution.NATIVE=Native (window size)
