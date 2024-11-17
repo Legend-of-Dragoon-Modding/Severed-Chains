@@ -34,6 +34,7 @@ import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
+import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -663,6 +664,8 @@ public final class Scus94491BpeSegment_8003 {
       cameraParent.set(cameraLw).translate(-cameraLw.transfer.x, -cameraLw.transfer.y, -cameraLw.transfer.z);
       RENDERER.camera().getView().mul(cameraParent);
     }
+
+    inverseWorldToScreenMatrix.set(worldToScreenMatrix_800c3548).invert();
 
     RENDERER.camera().getView().set(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer);
   }

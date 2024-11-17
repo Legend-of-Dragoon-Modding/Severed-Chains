@@ -17,6 +17,7 @@ import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -31,6 +32,7 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -99,6 +101,9 @@ public class TmdParticle extends ParticleEffectData98 {
   @Method(0x800fcf20L)
   private void renderTmdParticle(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final TmdObjTable1c tmd, final Obj obj, final ParticleMetrics48 particleMetrics, final int tpage) {
     if(particleMetrics.flags_00 >= 0) {
+      if(manager.name.contains("110")) {
+        int x = 0;
+      }
       final MV transforms = new MV();
       this.FUN_800fc4bc(transforms, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
@@ -108,16 +113,21 @@ public class TmdParticle extends ParticleEffectData98 {
       //LAB_800fcf94
       GsSetLightMatrix(transforms);
       final MV transformMatrix = new MV();
+      final Matrix4f transformGl = new Matrix4f();
 
       if(RenderEngine.legacyMode != 0) {
         transforms.compose(worldToScreenMatrix_800c3548, transformMatrix);
       } else {
         transformMatrix.set(transforms);
+        transformGl.set(transforms).setTranslation(transforms.transfer);
       }
 
       if((particleMetrics.flags_00 & 0x400_0000) == 0) {
-        transformMatrix.rotationXYZ(manager.params_10.rot_10);
+        transformMatrix.rotationXYZ(manager.params_10.rot_10).mulLocal(new MV().set(worldToScreenMatrix_800c3548.invert()));
         transformMatrix.scaleLocal(manager.params_10.scale_16);
+        transformGl.rotationXYZ(manager.params_10.rot_10.x, manager.params_10.rot_10.y, manager.params_10.rot_10.z);
+        transformGl.scaleLocal(manager.params_10.scale_16.x, manager.params_10.scale_16.y, manager.params_10.scale_16.z);
+        transformGl.mulLocal(inverseWorldToScreenMatrix).setTranslation(transforms.transfer);
       }
 
       //LAB_800fcff8
@@ -146,7 +156,7 @@ public class TmdParticle extends ParticleEffectData98 {
       zMax_1f8003cc = oldZMax;
       zMin = oldZMin;
 
-      RENDERER.queueModel(obj, transformMatrix, QueuedModelBattleTmd.class)
+      RENDERER.queueModel(obj, transformGl, QueuedModelBattleTmd.class)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
