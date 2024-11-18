@@ -141,6 +141,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
+import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -337,7 +338,7 @@ public final class SEffe {
 
       // Transform override is already in screenspace, so we need to un-transform it
       if(RenderEngine.legacyMode == 0) {
-        seffeTransforms.mul(worldToScreenMatrix_800c3548.invert(new Matrix3f()));
+        seffeTransforms.mulLocal(inverseWorldToScreenMatrix.get3x3(new Matrix3f()));
       }
     }
 
