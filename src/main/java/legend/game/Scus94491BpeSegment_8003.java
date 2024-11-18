@@ -725,6 +725,8 @@ public final class Scus94491BpeSegment_8003 {
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
 
+    inverseWorldToScreenMatrix.set(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer).invert();
+
     RENDERER.camera().getView().set(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer);
   }
 
