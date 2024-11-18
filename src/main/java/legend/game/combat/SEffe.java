@@ -197,6 +197,8 @@ public final class SEffe {
 
   private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
+  
+  private static final MV seffeTransforms = new MV();
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
@@ -313,11 +315,10 @@ public final class SEffe {
   /** used renderCtmd */
   @Method(0x800de3f4L)
   public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
-    final MV sp0x10 = new MV();
     if((effectParams.flags_00 & 0x8) != 0) {
       //TODO pretty sure this isn't equivalent to MATRIX#normalize
-      transforms.normal(sp0x10);
-      GsSetLightMatrix(sp0x10);
+      transforms.normal(seffeTransforms);
+      GsSetLightMatrix(seffeTransforms);
     } else {
       //LAB_800de458
       GsSetLightMatrix(transforms);
@@ -325,24 +326,24 @@ public final class SEffe {
 
     //LAB_800de45c
     if(RenderEngine.legacyMode != 0) {
-      transforms.compose(worldToScreenMatrix_800c3548, sp0x10);
+      transforms.compose(worldToScreenMatrix_800c3548, seffeTransforms);
     } else {
-      sp0x10.set(transforms);
+      seffeTransforms.set(transforms);
     }
 
     if((effectParams.flags_00 & 0x400_0000) == 0) {
-      sp0x10.rotationXYZ(effectParams.rot_10);
-      sp0x10.scale(effectParams.scale_16);
+      seffeTransforms.rotationXYZ(effectParams.rot_10);
+      seffeTransforms.scale(effectParams.scale_16);
 
-      // Transform override is already in screenspace so we need to un-transform it
+      // Transform override is already in screenspace, so we need to un-transform it
       if(RenderEngine.legacyMode == 0) {
-        sp0x10.mul(worldToScreenMatrix_800c3548.invert(new Matrix3f()));
+        seffeTransforms.mul(worldToScreenMatrix_800c3548.invert(new Matrix3f()));
       }
     }
 
     //LAB_800de4a8
     //LAB_800de50c
-    GTE.setTransforms(sp0x10);
+    GTE.setTransforms(seffeTransforms);
 
     final ModelPart10 dobj2 = new ModelPart10();
     dobj2.attribute_00 = effectParams.flags_00;
@@ -359,7 +360,7 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    final QueuedModelBattleTmd model = RENDERER.queueModel(obj, sp0x10, QueuedModelBattleTmd.class)
+    final QueuedModelBattleTmd model = RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -370,7 +371,6 @@ public final class SEffe {
     if(objTable.vdf != null) {
       model.vdf(objTable.vdf);
     }
-
     //LAB_800de528
   }
 
