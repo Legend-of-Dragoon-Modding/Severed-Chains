@@ -7963,6 +7963,10 @@ public class Battle extends EngineState {
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
+
+    final boolean isDragoon = attacker instanceof final PlayerBattleEntity player && player.isDragoon();
+    this.trySetPreferredCameraAngle(false, !isDragoon);
+
     return FlowControl.CONTINUE;
   }
 
@@ -7999,6 +8003,9 @@ public class Battle extends EngineState {
     //LAB_800f27ec
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
+
+    this.trySetPreferredCameraAngle(false, false);
+
     return FlowControl.CONTINUE;
   }
 
@@ -8033,6 +8040,9 @@ public class Battle extends EngineState {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.ITEM_MAGIC));
     this.applyItemSpecialEffects(attacker, defender);
+
+    this.trySetPreferredCameraAngle(false, true);
+
     return FlowControl.CONTINUE;
   }
 
@@ -8648,12 +8658,11 @@ public class Battle extends EngineState {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = this.getStartingCameraAngleIndex();
-    this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
+    this.trySetPreferredCameraAngle(true, false);
     battleFlags_800bc960 |= 0x2;
   }
 
-  private int getStartingCameraAngleIndex() {
+  private int getPreferredCameraAngle(final boolean battleStart, final boolean keepCurrentAngleIfNoPreference) {
     final PreferredBattleCameraAngle config = CONFIG.getConfig(CoreMod.PREFERRED_BATTLE_CAMERA_ANGLE.get());
     if (config != PreferredBattleCameraAngle.NORMAL) {
       int filteredArrayIndex = 0;
@@ -8667,6 +8676,9 @@ public class Battle extends EngineState {
 
       for (int i = 0; i < this.currentStageData_800c6718.cameraPosIndices_18.length; i++) {
         if (this.cameraArrayContainsIndex(this.currentStageData_800c6718.cameraPosIndices_18[i], cameraAngles)) {
+          if(!battleStart && this.hud.currentCameraPositionIndicesIndex_800c66b0 == i) {
+            return i;
+          }
           filteredIndices[filteredArrayIndex] = i;
           filteredArrayIndex++;
         }
@@ -8674,8 +8686,15 @@ public class Battle extends EngineState {
           return filteredIndices[new Random().nextInt(filteredArrayIndex)];
         }
       }
+    } else if (keepCurrentAngleIfNoPreference) {
+      return this.hud.currentCameraPositionIndicesIndex_800c66b0;
     }
     return simpleRand() & 3; //Falls back to the default behavior
+  }
+
+  private void trySetPreferredCameraAngle(final boolean battleStart, final boolean keepCurrentAngleIfNoPreference) {
+    this.hud.currentCameraPositionIndicesIndex_800c66b0 = this.getPreferredCameraAngle(battleStart, keepCurrentAngleIfNoPreference);
+    this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
   }
 
   private boolean cameraArrayContainsIndex(final int index, final int[] array) {
