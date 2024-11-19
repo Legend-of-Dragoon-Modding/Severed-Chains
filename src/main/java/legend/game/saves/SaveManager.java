@@ -192,7 +192,7 @@ public final class SaveManager {
     }
   }
 
-  public void splitMemcards(final String campaignName) throws IOException, InvalidSaveException, SaveFailedException {
+  public void splitMemcards(final String campaignName, final boolean deleteFile) throws IOException, InvalidSaveException, SaveFailedException {
     final List<Path> memcards = this.findMemcards();
 
     if(!memcards.isEmpty()) {
@@ -258,8 +258,10 @@ public final class SaveManager {
         whichMenu_800bdc38 = oldMenu;
       }
 
-      for(final Path memcard : memcards) {
-        Files.delete(memcard);
+      if(deleteFile) {
+        for(final Path memcard : memcards) {
+          Files.delete(memcard);
+        }
       }
     }
   }
