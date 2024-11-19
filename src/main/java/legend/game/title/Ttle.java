@@ -112,6 +112,8 @@ public class Ttle extends EngineState {
 
   private int loadingStage;
   private int selectedMenuOption;
+  private boolean memcardConversionShown;
+  private boolean saveCategorizationShown;
 
   private Texture backgroundTex;
   private Texture logoTex;
@@ -388,9 +390,12 @@ public class Ttle extends EngineState {
 
   private void fadeOutForCategorizeSave() {
     this.fadeOutToMenu(() -> new FullScreenInputScreen("Uncategorized saves found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
+      this.saveCategorizationShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
+          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> {
+            whichMenu_800bdc38 = WhichMenu.UNLOAD;
+          }));
           return;
         }
 
@@ -400,27 +405,32 @@ public class Ttle extends EngineState {
           LOGGER.error("Failed to categorize saves", e);
         }
       }
-
       whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }), () -> false);
   }
 
   private void fadeOutForMemcard() {
     this.fadeOutToMenu(() -> new FullScreenInputScreen("PS1 memory card found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
+      this.memcardConversionShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
+          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> {
+            whichMenu_800bdc38 = WhichMenu.UNLOAD;
+          }));
           return;
         }
 
-        try {
-          SAVES.splitMemcards(name);
-        } catch(final IOException | InvalidSaveException | SaveFailedException e) {
-          LOGGER.error("Failed to convert memcard", e);
-        }
+        menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", 2, result1 -> {
+          try {
+            SAVES.splitMemcards(name, result1 == MessageBoxResult.YES);
+          } catch(final IOException | InvalidSaveException | SaveFailedException e) {
+            LOGGER.error("Failed to convert memcard", e);
+          }
+          whichMenu_800bdc38 = WhichMenu.UNLOAD;
+        }));
+      } else {
+        whichMenu_800bdc38 = WhichMenu.UNLOAD;
       }
-
-      whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }), () -> false);
   }
 
@@ -740,13 +750,13 @@ public class Ttle extends EngineState {
   @Method(0x800c8634L)
   private void renderMenuOptions() {
     if(this.hasSavedGames == 0) {
-      if(!SAVES.findUncategorizedSaves().isEmpty()) {
+      if(!this.saveCategorizationShown && !SAVES.findUncategorizedSaves().isEmpty()) {
         this.menuState_800c672c = 4;
         this.menuTransitionState_800c6728 = 2;
         this.loadingStage = 9;
       }
 
-      if(!SAVES.findMemcards().isEmpty()) {
+      if(!this.memcardConversionShown && !SAVES.findMemcards().isEmpty()) {
         this.menuState_800c672c = 4;
         this.menuTransitionState_800c6728 = 2;
         this.loadingStage = 10;
