@@ -11,7 +11,6 @@ import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 import static legend.core.GameEngine.GTE;
@@ -44,7 +43,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
   public int tpage_10;
 
   final MV transforms = new MV();
-  final Matrix4f intermediateTransforms = new Matrix4f();
+  final Matrix4f glTransforms = new Matrix4f();
 
   @Override
   public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
@@ -86,10 +85,8 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         GTE.setTransforms(this.transforms);
 
         if(RenderEngine.legacyMode == 0) {
-          this.intermediateTransforms.set(this.transforms).setTranslation(this.transforms.transfer);
-          this.intermediateTransforms.mulLocal(inverseWorldToScreenMatrix);
-          this.transforms.set(this.intermediateTransforms.get3x3(new Matrix3f()));
-          this.intermediateTransforms.getTranslation(this.transforms.transfer);
+          this.glTransforms.set(this.transforms).setTranslation(this.transforms.transfer);
+          this.glTransforms.mulLocal(inverseWorldToScreenMatrix);
         }
 
         final ModelPart10 dobj2 = new ModelPart10();
@@ -107,7 +104,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        final QueuedModelBattleTmd model = RENDERER.queueModel(this.obj, this.transforms, QueuedModelBattleTmd.class)
+        final QueuedModelBattleTmd model = RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
