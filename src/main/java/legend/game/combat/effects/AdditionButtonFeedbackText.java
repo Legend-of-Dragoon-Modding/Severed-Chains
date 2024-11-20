@@ -15,15 +15,27 @@ import static legend.core.GameEngine.RENDERER;
 public class AdditionButtonFeedbackText {
 
   public static Texture[] xboxAFrames = new Texture[] {
-    Texture.png(Path.of("gfx", "ui", "additionButton_A_0.png")),
-    Texture.png(Path.of("gfx", "ui", "additionButton_A_1.png")),
-    Texture.png(Path.of("gfx", "ui", "additionButton_A_2.png"))
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Xbox_A_0.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Xbox_A_1.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Xbox_A_2.png"))
   };
 
   public static Texture[] xboxBFrames = new Texture[] {
-    Texture.png(Path.of("gfx", "ui", "additionButton_B_0.png")),
-    Texture.png(Path.of("gfx", "ui", "additionButton_B_1.png")),
-    Texture.png(Path.of("gfx", "ui", "additionButton_B_2.png"))
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Xbox_B_0.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Xbox_B_1.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Xbox_B_2.png"))
+  };
+
+  public static Texture[] nintendoAFrames = new Texture[] {
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Nintendo_A_0.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Nintendo_A_1.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Nintendo_A_2.png"))
+  };
+
+  public static Texture[] nintendoBFrames = new Texture[] {
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Nintendo_B_0.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Nintendo_B_1.png")),
+    Texture.png(Path.of("gfx", "ui", "3D_Button_Nintendo_B_2.png"))
   };
 
   final static int DECAY_FRAME_INDEX = 30;

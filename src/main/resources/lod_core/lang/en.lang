@@ -78,6 +78,7 @@ lod_core.config.general_addition_group.label=[--- General ---]
 lod_core.config.addition_button_style.label=Button Style
 lod_core.config.addition_button_style.PLAYSTATION=Playstation
 lod_core.config.addition_button_style.XBOX=Xbox
+lod_core.config.addition_button_style.NINTENDO=Nintendo
 
 lod_core.config.addition_group.label=[--- Additions ---]
 lod_core.config.addition_mode.label=Input

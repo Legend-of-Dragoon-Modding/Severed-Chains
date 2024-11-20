@@ -2,5 +2,6 @@ package legend.game.combat;
 
 public enum AdditionButtonStyle {
   PLAYSTATION(),
-  XBOX()
+  XBOX(),
+  NINTENDO()
 }

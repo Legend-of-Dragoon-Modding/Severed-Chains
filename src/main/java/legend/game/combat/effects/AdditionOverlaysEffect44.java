@@ -249,6 +249,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
       } else if (style == AdditionButtonStyle.XBOX) {
         renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[0] : AdditionButtonFeedbackText.xboxAFrames[0], 0);
+      } else if (style == AdditionButtonStyle.NINTENDO) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.nintendoBFrames[0] : AdditionButtonFeedbackText.nintendoAFrames[0], 0);
       }
     } else {  // Button down position
       //LAB_80106114
@@ -257,6 +259,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
       } else if (style == AdditionButtonStyle.XBOX) {
         renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[2] : AdditionButtonFeedbackText.xboxAFrames[2], 0);
+      } else if (style == AdditionButtonStyle.NINTENDO) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.nintendoBFrames[2] : AdditionButtonFeedbackText.nintendoAFrames[2], 0);
       }
       renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
     }
