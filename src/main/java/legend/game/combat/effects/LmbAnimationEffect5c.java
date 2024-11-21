@@ -620,17 +620,17 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
             final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
 
             if((flags & 0x200) == 0) {
-              transform.rot_0c.x += lmbType2TransformationData_8011a048[index++] << shift;
+              transform.rot_0c.x += MathHelper.psxDegToRad(lmbType2TransformationData_8011a048[index++] << shift);
             }
 
             //LAB_801173c8
             if((flags & 0x100) == 0) {
-              transform.rot_0c.y += lmbType2TransformationData_8011a048[index++] << shift;
+              transform.rot_0c.y += MathHelper.psxDegToRad(lmbType2TransformationData_8011a048[index++] << shift);
             }
 
             //LAB_801173f0
             if((flags & 0x80) == 0) {
-              transform.rot_0c.z += lmbType2TransformationData_8011a048[index++] << shift;
+              transform.rot_0c.z += MathHelper.psxDegToRad(lmbType2TransformationData_8011a048[index++] << shift);
             }
           }
         }
