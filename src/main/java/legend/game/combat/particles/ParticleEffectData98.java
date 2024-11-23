@@ -46,7 +46,7 @@ public abstract class ParticleEffectData98 implements Effect<EffectManagerParams
   public boolean scaleOrUseEffectAcceleration_6c;
 
   public final Vector3f effectAcceleration_70 = new Vector3f();
-  public int scaleParticleAcceleration_80;
+  public float scaleParticleAcceleration_80;
 //  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
 //  public BiConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectInstance94> particleInstanceTickCallback_88;
 //  public Consumer<ParticleEffectInstance94> initializerCallback_8c;
