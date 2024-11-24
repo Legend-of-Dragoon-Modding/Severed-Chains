@@ -109,7 +109,7 @@ public class RenderEngine {
 
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
-  private final RenderState state = new RenderState(this);
+  public final RenderState state = new RenderState(this);
 
   private Camera camera2d;
   private Camera camera3d;
@@ -630,7 +630,7 @@ public class RenderEngine {
 
   private void renderBatch(final RenderBatch batch) {
     if(batch.needsSorting) {
-      this.sortOrthoPool(batch.orthoPool);
+      this.sortOrthoPool(batch.modelPool);
       batch.needsSorting = false;
     }
 
@@ -638,20 +638,11 @@ public class RenderEngine {
 
     this.clearDepth();
 
-    this.setProjectionMode(batch, ProjectionMode._3D);
-    this.renderPool(batch.modelPool, true);
-
-    this.setProjectionMode(batch, ProjectionMode._2D);
-    this.renderPool(batch.orthoPool, false);
-
-    this.setProjectionMode(batch, ProjectionMode._3D);
+    this.renderPool(batch, batch.modelPool, true);
     this.renderPoolTranslucent(batch, batch.modelPool);
-
-    this.setProjectionMode(batch, ProjectionMode._2D);
-    this.renderPoolTranslucent(batch, batch.orthoPool);
   }
 
-  private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
+  private void renderPool(final RenderBatch batch, final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
     if(pool.isEmpty()) {
       return;
     }
@@ -688,6 +679,12 @@ public class RenderEngine {
       }
 
       if(entry.shouldRender(null)) {
+        if(entry.ortho) {
+          this.setProjectionMode(batch, ProjectionMode._2D);
+        } else {
+          this.setProjectionMode(batch, ProjectionMode._3D);
+        }
+
         if(backFaceCulling) {
           this.state.backfaceCulling(entry.obj.useBackfaceCulling());
         }
@@ -702,6 +699,12 @@ public class RenderEngine {
           final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
           if(entry.shouldRender(translucency)) {
+            if(entry.ortho) {
+              this.setProjectionMode(batch, ProjectionMode._2D);
+            } else {
+              this.setProjectionMode(batch, ProjectionMode._3D);
+            }
+
             this.state.backfaceCulling(false);
             entry.useTexture();
             entry.render(translucency);
@@ -754,21 +757,45 @@ public class RenderEngine {
         entry.useTexture();
 
         if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+          if(entry.ortho) {
+            this.setProjectionMode(batch, ProjectionMode._2D);
+          } else {
+            this.setProjectionMode(batch, ProjectionMode._3D);
+          }
+
           Translucency.HALF_B_PLUS_HALF_F.setGlState();
           entry.render(Translucency.HALF_B_PLUS_HALF_F);
         }
 
         if(entry.shouldRender(Translucency.B_PLUS_F)) {
+          if(entry.ortho) {
+            this.setProjectionMode(batch, ProjectionMode._2D);
+          } else {
+            this.setProjectionMode(batch, ProjectionMode._3D);
+          }
+
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_F);
         }
 
         if(entry.shouldRender(Translucency.B_MINUS_F)) {
+          if(entry.ortho) {
+            this.setProjectionMode(batch, ProjectionMode._2D);
+          } else {
+            this.setProjectionMode(batch, ProjectionMode._3D);
+          }
+
           Translucency.B_PLUS_F.setGlState(); // yes B-F uses negated additive blending
           entry.render(Translucency.B_MINUS_F);
         }
 
         if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
+          if(entry.ortho) {
+            this.setProjectionMode(batch, ProjectionMode._2D);
+          } else {
+            this.setProjectionMode(batch, ProjectionMode._3D);
+          }
+
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_QUARTER_F);
         }
@@ -849,13 +876,11 @@ public class RenderEngine {
 
     switch(projectionMode) {
       case _2D -> {
-        this.state.backfaceCulling(false);
         this.setTransforms(this.camera2d, batch.orthographicProjection);
         this.projectionBuffer.put(3, 0.0f); // Projection mode: ortho
       }
 
       case _3D -> {
-        this.state.backfaceCulling(true);
         this.setTransforms(this.camera3d, batch.perspectiveProjection);
 
         if(highQualityProjection) {
@@ -916,9 +941,6 @@ public class RenderEngine {
 
   private void pre() {
     glViewport(0, 0, (int)(this.renderWidth * this.window.getScale()), (int)(this.renderHeight * this.window.getScale()));
-
-    // Update global transforms (default to 3D)
-    this.setProjectionMode(ProjectionMode._3D);
 
     // Render scene
     this.clear();

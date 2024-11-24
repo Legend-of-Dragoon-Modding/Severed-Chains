@@ -491,6 +491,7 @@ public final class GameEngine {
 
   private static void renderIntro() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
+    RENDERER.state.backfaceCulling(false);
     glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;

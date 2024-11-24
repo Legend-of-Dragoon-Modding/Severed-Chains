@@ -51,13 +51,11 @@ public class RenderBatch {
   private final Supplier<Shader.UniformBuffer> vdfUniformSupplier;
 
   public final QueuePool<QueuedModel<?, ?>> modelPool;
-  public final QueuePool<QueuedModel<?, ?>> orthoPool;
 
   public RenderBatch(final RenderEngine engine, final Supplier<Shader.UniformBuffer> vdfUniformSupplier, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
     this.engine = engine;
     this.vdfUniformSupplier = vdfUniformSupplier;
     this.modelPool = this.makePool(vdfBuffer, lightingBuffer);
-    this.orthoPool = this.makePool(vdfBuffer, lightingBuffer);
   }
 
   public RenderBatch(final RenderEngine engine, final RenderBatch current, final Supplier<Shader.UniformBuffer> vdfUniformSupplier, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
@@ -87,7 +85,6 @@ public class RenderBatch {
 
   void reset() {
     this.modelPool.reset();
-    this.orthoPool.reset();
   }
 
   /** NOTE: you must call {@link #updateProjections} yourself */
@@ -252,8 +249,9 @@ public class RenderBatch {
 
     this.temp.identity().setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
 
-    final T entry = this.orthoPool.acquire(type);
+    final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, this.temp);
+    entry.ortho();
     return entry;
   }
 
@@ -268,8 +266,9 @@ public class RenderBatch {
 
     this.temp.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
 
-    final T entry = this.orthoPool.acquire(type);
+    final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, this.temp);
+    entry.ortho();
     return entry;
   }
 
@@ -283,8 +282,9 @@ public class RenderBatch {
       this.needsSorting = true;
     }
 
-    final T entry = this.orthoPool.acquire(type);
+    final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, transforms);
+    entry.ortho();
     return entry;
   }
 }

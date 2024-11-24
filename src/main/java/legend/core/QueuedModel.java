@@ -34,6 +34,8 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
 
   final Rect4i scissor = new Rect4i();
 
+  boolean ortho;
+
   private final Vector3f tempColour = new Vector3f();
 
   int startVertex;
@@ -162,6 +164,11 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     Arrays.fill(this.textures, null);
     this.texturesUsed = false;
     this.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    this.ortho = false;
+  }
+
+  void ortho() {
+    this.ortho = true;
   }
 
   void setTransforms(final MV transforms) {

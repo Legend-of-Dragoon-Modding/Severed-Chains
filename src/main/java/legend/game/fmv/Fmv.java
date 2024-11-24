@@ -481,6 +481,7 @@ public final class Fmv {
 
       FrameBuffer.unbind();
       RENDERER.setProjectionMode(ProjectionMode._2D);
+      RENDERER.state.backfaceCulling(false);
       glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
       identity.get(transforms2Buffer);

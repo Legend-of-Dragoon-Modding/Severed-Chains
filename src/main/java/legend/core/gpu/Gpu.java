@@ -487,6 +487,7 @@ public class Gpu {
 
   public void drawDisplay() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
+    RENDERER.state.backfaceCulling(false);
 
     glDisable(GL_BLEND);
 
@@ -502,6 +503,7 @@ public class Gpu {
 
   public void drawVram() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
+    RENDERER.state.backfaceCulling(false);
 
     glDisable(GL_BLEND);
 
