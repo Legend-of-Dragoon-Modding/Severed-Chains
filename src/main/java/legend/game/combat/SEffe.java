@@ -886,14 +886,14 @@ public final class SEffe {
     if(mode == 0) {
       effect.scaleOrUseEffectAcceleration_6c = true;
       effect.effectAcceleration_70.set(script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get() / (float)0x100);
-      effect.scaleParticleAcceleration_80 = script.params_20[5].get();
+      effect.scaleParticleAcceleration_80 = script.params_20[5].get() / (float)0x100;
       //LAB_801023d0
     } else if(mode == 1) {
       effect.scaleOrUseEffectAcceleration_6c = false;
       //LAB_801023e0
     } else if(mode == 2) {
       //LAB_801023e8
-      effect.scaleParticleAcceleration_80 = script.params_20[5].get();
+      effect.scaleParticleAcceleration_80 = script.params_20[5].get() / (float)0x100;
     }
 
     //LAB_801023ec

@@ -1,6 +1,5 @@
 package legend.game.combat.particles;
 
-import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -51,8 +50,8 @@ public class Instance8 extends ParticleEffectInstance94 {
       } else {
         this.particlePosition_50.y = (rsin(this._1a) * this.verticalPositionScale_20 >> 12) - this.managerTranslation_2c.y;
         this._1a += 0x7f;
-        this.scaleHorizontalStep_0a = MathHelper.psxDegToRad(this._1e);
-        this.scaleVerticalStep_0c = MathHelper.psxDegToRad(this._1e);
+        this.scaleHorizontalStep_0a = this._1e / (float)0x1000;
+        this.scaleVerticalStep_0c = this._1e / (float)0x1000;
         this._1c += 5;
         this.verticalPositionScale_20 += 20;
       }
@@ -60,8 +59,8 @@ public class Instance8 extends ParticleEffectInstance94 {
     } else if(this.managerTranslation_2c.y + this.particlePosition_50.y >= -1000) {
       this._1c = 0;
       this._18 = 1;
-      this.scaleHorizontalStep_0a = MathHelper.psxDegToRad(this._1e);
-      this.scaleVerticalStep_0c = MathHelper.psxDegToRad(this._1e);
+      this.scaleHorizontalStep_0a = this._1e / (float)0x1000;
+      this.scaleVerticalStep_0c = this._1e / (float)0x1000;
     }
 
     //LAB_800fbcf4
