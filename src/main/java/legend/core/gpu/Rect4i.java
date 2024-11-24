@@ -41,14 +41,14 @@ public final class Rect4i {
       this.w -= x - this.x;
       this.x = x;
     } else {
-      w -= (this.x - x);
+      w -= this.x - x;
     }
 
     if(this.y < y) {
       this.h -= y - this.y;
       this.y = y;
     } else {
-      h -= (this.y - y);
+      h -= this.y - y;
     }
 
     if(this.w > w) {
