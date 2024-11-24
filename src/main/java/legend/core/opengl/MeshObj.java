@@ -12,7 +12,7 @@ public class MeshObj extends Obj {
   private final boolean textured;
   private final boolean opaque;
   private final boolean translucent;
-  private final Set<Translucency> translucencies = EnumSet.noneOf(Translucency.class);
+  protected final Set<Translucency> translucencies = EnumSet.noneOf(Translucency.class);
 
   public MeshObj(final String name, final Mesh[] meshes) {
     this(name, meshes, true);
@@ -68,8 +68,7 @@ public class MeshObj extends Obj {
       return this.opaque;
     }
 
-    // For untextured translucent faces, no translucency is defined in the TMD data and will be passed in at runtime via tmdGp0Tpage_1f8003ec
-    return this.translucencies.isEmpty() || this.translucencies.contains(translucency);
+    return this.translucencies.contains(translucency);
   }
 
   @Override

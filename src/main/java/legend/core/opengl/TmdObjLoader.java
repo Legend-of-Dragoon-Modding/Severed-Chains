@@ -289,7 +289,7 @@ public final class TmdObjLoader {
       meshes[meshIndex++] = createMesh(tmdMeshes.translucent[i], vertexSize);
     }
 
-    return new MeshObj(name, meshes, backfaceCulling);
+    return new TmdMeshObj(name, meshes, backfaceCulling);
   }
 
   private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh, final int vertexSize) {
