@@ -600,6 +600,7 @@ public final class SItem {
     unloadSoundFile(8);
     unloadSoundFile(8);
 
+    menuMusic.reset();
     playMusicPackage(menuMusic, true);
   }
 

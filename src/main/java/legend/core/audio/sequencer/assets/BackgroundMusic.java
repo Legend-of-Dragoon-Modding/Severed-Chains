@@ -118,6 +118,10 @@ public final class BackgroundMusic {
     this.sequence = SequenceBuilder.create(sssq.slice(0x110), this.channels);
   }
 
+  public void reset() {
+    this.sequencePosition = 0;
+  }
+
   public BackgroundMusic createVictoryMusic(final List<FileData> files) {
     return new BackgroundMusic(files, this.breathControls, this.velocityRamp, this.soundFont);
   }
