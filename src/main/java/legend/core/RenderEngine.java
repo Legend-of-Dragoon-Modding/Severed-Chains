@@ -14,6 +14,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.RenderState;
 import legend.core.opengl.Resolution;
+import legend.core.opengl.ScissorStack;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
@@ -109,7 +110,8 @@ public class RenderEngine {
 
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
-  private final RenderState state = new RenderState(this);
+  public final ScissorStack scissorStack;
+  private final RenderState state;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -280,6 +282,8 @@ public class RenderEngine {
 
   public RenderEngine() {
     this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    this.scissorStack = new ScissorStack(this, this.mainBatch);
+    this.state = new RenderState(this, this.scissorStack);
   }
 
   /**
@@ -348,6 +352,10 @@ public class RenderEngine {
 
   public void updateProjections() {
     this.mainBatch.updateProjections();
+  }
+
+  public boolean expandedSubmap() {
+    return this.mainBatch.expandedSubmap;
   }
 
   public Window.Events events() {
@@ -609,6 +617,8 @@ public class RenderEngine {
         Texture.deleteTextures();
       }
 
+      this.scissorStack.reset();
+
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
@@ -635,6 +645,7 @@ public class RenderEngine {
     }
 
     this.state.initBatch(batch);
+    this.state.enableScissor();
 
     this.clearDepth();
 
@@ -649,6 +660,8 @@ public class RenderEngine {
 
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPoolTranslucent(batch, batch.orthoPool);
+
+    this.state.disableScissor();
   }
 
   private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
@@ -683,9 +696,7 @@ public class RenderEngine {
       final QueuedModel<?, ?> entry = pool.get(i);
       entry.useShader(modelIndex, 1);
 
-      if(entry.scissor.w != 0) {
-        this.state.scissor(entry.scissor);
-      }
+      this.state.scissor(entry);
 
       if(entry.shouldRender(null)) {
         if(backFaceCulling) {
@@ -707,10 +718,6 @@ public class RenderEngine {
             entry.render(translucency);
           }
         }
-      }
-
-      if(entry.scissor.w != 0) {
-        this.state.disableScissor();
       }
     }
   }
@@ -747,9 +754,7 @@ public class RenderEngine {
       if(entry.hasTranslucency()) {
         entry.useShader(modelIndex, 2);
 
-        if(entry.scissor.w != 0) {
-          this.state.scissor(entry.scissor);
-        }
+        this.state.scissor(entry);
 
         entry.useTexture();
 
@@ -771,10 +776,6 @@ public class RenderEngine {
         if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_QUARTER_F);
-        }
-
-        if(entry.scissor.w != 0) {
-          this.state.disableScissor();
         }
       }
     }
