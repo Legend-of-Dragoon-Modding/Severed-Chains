@@ -245,6 +245,7 @@ public class RenderEngine {
   private int renderWidth;
   /** The actual height for rendering (taking into account resolution config) */
   private int renderHeight;
+  private float renderAspectRatio;
 
   private long lastFrame;
   private double vsyncCount;
@@ -304,6 +305,10 @@ public class RenderEngine {
     }
   }
 
+  public RenderBatch getMainBatch() {
+    return this.mainBatch;
+  }
+
   /** NOTE: you must call {@link #updateProjections} yourself */
   public void setAllowWidescreen(final boolean allowWidescreen) {
     this.mainBatch.setAllowWidescreen(allowWidescreen);
@@ -340,6 +345,10 @@ public class RenderEngine {
 
   public int getRenderHeight() {
     return this.renderHeight;
+  }
+
+  public float getRenderAspectRatio() {
+    return this.renderAspectRatio;
   }
 
   public void setProjectionDepth(final float depth) {
@@ -959,6 +968,8 @@ public class RenderEngine {
       this.renderWidth = (int)((float)res.verticalResolution / height * width);
       this.renderHeight = res.verticalResolution;
     }
+
+    this.renderAspectRatio = (float)this.renderWidth / (float)this.renderHeight;
 
     // glLineWidth has been removed on M3 macs
     if(!this.isMac()) {
