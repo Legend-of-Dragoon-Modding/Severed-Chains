@@ -393,7 +393,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      RENDERER.window().setFpsLimit(60 / frames * Config.getGameSpeedMultiplier());
+      RENDERER.window().setFpsLimit(60 / frames);
 
       loadQueuedOverlay();
 
