@@ -1660,7 +1660,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "How dense the rain should be")
   @Method(0x80109158L)
   public static FlowControl scriptAllocateRainEffect(final RunningScript<? extends BattleObject> script) {
-    final float displayWidthCountModifier = RENDERER.getRenderAspectRatio() / RENDERER.getMainBatch().aspectRatio;
+    final float displayWidthCountModifier = RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
     final int count = (int)(script.params_20[1].get() * displayWidthCountModifier);
     final RainEffect08 effect = new RainEffect08(count);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("RainEffect08", script.scriptState_04, effect);

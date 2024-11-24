@@ -305,8 +305,8 @@ public class RenderEngine {
     }
   }
 
-  public RenderBatch getMainBatch() {
-    return this.mainBatch;
+  public float getNativeAspectRatio() {
+    return this.mainBatch.aspectRatio;
   }
 
   /** NOTE: you must call {@link #updateProjections} yourself */
