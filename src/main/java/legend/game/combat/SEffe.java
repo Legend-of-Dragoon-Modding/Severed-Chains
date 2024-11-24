@@ -1660,9 +1660,9 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "How dense the rain should be")
   @Method(0x80109158L)
   public static FlowControl scriptAllocateRainEffect(final RunningScript<? extends BattleObject> script) {
-    final float displayWidthCountModifier = RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
-    final int count = (int)(script.params_20[1].get() * displayWidthCountModifier);
-    final RainEffect08 effect = new RainEffect08(count);
+    final float displayWidthModifier = RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+    final int count = (int)(script.params_20[1].get() * displayWidthModifier);
+    final RainEffect08 effect = new RainEffect08(count, displayWidthModifier);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("RainEffect08", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.params_10.flags_00 = 0x5000_0000;
@@ -1671,7 +1671,7 @@ public final class SEffe {
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
     for(int i = 0; i < count; i++) {
       rainArray[i]._00 = 1;
-      rainArray[i].pos0_02.x = (short)seed_800fa754.nextInt(513);
+      rainArray[i].pos0_02.x = (short)seed_800fa754.nextInt((int)(513 * displayWidthModifier));
       rainArray[i].pos0_02.y = (short)seed_800fa754.nextInt(257);
       rainArray[i].speed_0a = seed_800fa754.nextFloat(0.75f) + 0.25f;
     }
