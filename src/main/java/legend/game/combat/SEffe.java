@@ -2002,31 +2002,31 @@ public final class SEffe {
       feather.callbackIndex_02 = 0;
       feather.currentFrame_04 = 0;
       feather.countCallback0Frames_64 = 1;
-      final int yOffset = -1500 / featherCount * i;
+      final float yOffset = -1500.0f / featherCount * i;
       feather.translation_08.set(0, yOffset, 0);
       feather.yOrigin_54 = yOffset;
-      feather.xOffset_48 = rand() % 0x361 + 0x100 << 8;
+      feather.xOffset_48 = rand() % 865 + 256;
       feather.countCallback1and3Frames_4c = rand() % 13 + 8;
-      final int stepOffsetX = feather.xOffset_48 * 2 / feather.countCallback1and3Frames_4c;
+      final float stepOffsetX = feather.xOffset_48 * 2 / feather.countCallback1and3Frames_4c;
       feather.velocityTranslationMagnitudeXz_40 = stepOffsetX;
       feather.accelerationTranslationMagnitudeXz_44 = -stepOffsetX / feather.countCallback1and3Frames_4c;
 
-      final int angleStep;
+      final float angleStep;
       if((simpleRand() & 1) != 0) {
-        angleStep = 0x5000 - feather.xOffset_48 >> 4 << 1;
+        angleStep = (80.0f - feather.xOffset_48) / 8.0f;
       } else {
         //LAB_8010d3b4
-        angleStep = -(0x5000 - (feather.xOffset_48 >> 4) << 1);
+        angleStep = -((80.0f - (feather.xOffset_48 / 16.0f)) * 2.0f);
       }
 
       //LAB_8010d3cc
-      feather.angleStep_60 = MathHelper.psxDegToRad(angleStep) / 0x100;
-      feather.translationMagnitudeY_50 = rand() % 0x178 << 8;
+      feather.angleStep_60 = MathHelper.psxDegToRad(angleStep);
+      feather.translationMagnitudeY_50 = rand() % 376;
       simpleRand();
-      feather.spriteAngle_6e = MathHelper.psxDegToRad(rand() % 0x1000);
+      feather.spriteAngle_6e = MathHelper.psxDegToRad(rand() % 4096.0f);
       feather.translationMagnitudeXz_3c = 0;
       feather.angle_58 = 0;
-      feather.angleNoiseXz_5c = MathHelper.psxDegToRad(rand() % 0x1000);
+      feather.angleNoiseXz_5c = MathHelper.psxDegToRad(rand() % 4096.0f);
       feather.r_38 = 0x7f;
       feather.g_39 = 0x7f;
       feather.b_3a = 0x7f;
