@@ -7,8 +7,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Uses JNA to enable ANSI colours in the command prompt
@@ -16,8 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 public final class MainWindows {
   private MainWindows() { }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger(MainWindows.class);
 
   public static void main(final String[] args) {
     try {
@@ -35,7 +31,8 @@ public final class MainWindows {
         Kernel32.INSTANCE.SetConsoleMode(hOut, dwMode);
       }
     } catch(final Throwable t) {
-      LOGGER.warn("Failed to enable colours in Windows terminal", t);
+      System.err.println("Failed to enable colours in Windows terminal");
+      t.printStackTrace();
     }
 
     Main.main(args);
