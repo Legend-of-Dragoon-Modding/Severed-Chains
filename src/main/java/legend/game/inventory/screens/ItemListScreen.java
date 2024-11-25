@@ -9,6 +9,8 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.screen.EquipMenuEntryIcon;
+import legend.game.modding.events.screen.ItemMenuEntryIcon;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -17,6 +19,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -108,11 +111,11 @@ public class ItemListScreen extends MenuScreen {
     loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
     for(final MenuEntryStruct04<Item> item : items) {
-      this.itemList.add(item);
+      this.itemList.add(MenuEntryStruct04.make(item.item_00, EVENTS.postEvent(new ItemMenuEntryIcon(item.item_00)).icon));
     }
 
-    for(final MenuEntryStruct04<Equipment> item : equipment) {
-      this.equipmentList.add(item);
+    for(final MenuEntryStruct04<Equipment> equip : equipment) {
+      this.equipmentList.add(MenuEntryStruct04.make(equip.item_00, EVENTS.postEvent(new EquipMenuEntryIcon(equip.item_00)).icon));
     }
 
     this.updateDescription(this.itemList.getSelectedItem());

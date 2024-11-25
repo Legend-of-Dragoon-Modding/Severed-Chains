@@ -9,6 +9,8 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.screen.EquipMenuEntryIcon;
+import legend.game.modding.events.screen.ItemMenuEntryIcon;
 import legend.game.types.DabasData100;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -21,6 +23,7 @@ import legend.lodmod.LodMod;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
@@ -120,9 +123,11 @@ public class DabasScreen extends MenuScreen {
 
           if(itemId != 0) {
             if(itemId > 192) {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()));
+              final Item item = REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get();
+              this.menuItems.add(MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIcon(item)).icon));
             } else {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()));
+              final Equipment equip = REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get();
+              this.menuItems.add(MenuEntryStruct04.make(equip, EVENTS.postEvent(new EquipMenuEntryIcon(equip)).icon));
             }
 
             this.hasItems = true;
@@ -131,7 +136,8 @@ public class DabasScreen extends MenuScreen {
 
         final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
-          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get());
+          final Equipment equip = REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get();
+          this.specialItem = MenuEntryStruct04.make(equip, equip.getIcon());
           this.hasItems = true;
         }
 

@@ -23,6 +23,7 @@ import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.modding.events.screen.EquipMenuEntryIcon;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -839,7 +840,7 @@ public final class SItem {
 
       for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
         final Item item = gameState_800babc8.items_2e9.get(i);
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item, item.getIcon());
         items.add(menuEntry);
       }
     }
@@ -850,7 +851,7 @@ public final class SItem {
       int equipmentIndex;
       for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment_1e8.size(); equipmentIndex++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
-        final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+        final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment, equipment.getIcon());
 
         if(a0 != 0 && !gameState_800babc8.equipment_1e8.get(equipmentIndex).canBeDiscarded()) {
           menuEntry.flags_02 = 0x2000;
@@ -864,7 +865,7 @@ public final class SItem {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             if(gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot) != null) {
               final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot);
-              final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+              final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment, equipment.getIcon());
               menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8[i];
               equipments.add(menuEntry);
 
@@ -1582,7 +1583,7 @@ public final class SItem {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipment_14.get(slot) != null) {
-          renderItemIcon(charData.equipment_14.get(slot).icon_0e, 202, 17 + 14 * slot.ordinal(), 0);
+          renderItemIcon(EVENTS.postEvent(new EquipMenuEntryIcon(charData.equipment_14.get(slot))).icon, 202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
