@@ -8,6 +8,8 @@ public class HealingRainItem extends RecoverHpItem {
     super(33, 60, true, 100);
   }
 
+  public HealingRainItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }
+
   @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;

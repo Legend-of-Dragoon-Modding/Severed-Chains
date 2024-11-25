@@ -13,8 +13,8 @@ public class RecoverMpItem extends Item {
   private final boolean targetAll;
   private final int percentage;
 
-  public RecoverMpItem(final int price, final boolean targetAll, final int percentage) {
-    super(34, price);
+  public RecoverMpItem(final int icon, final int price, final boolean targetAll, final int percentage) {
+    super(icon, price);
     this.targetAll = targetAll;
     this.percentage = percentage;
   }

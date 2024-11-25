@@ -8,6 +8,8 @@ public class AngelsPrayerItem extends BattleItem {
     super(36, 15);
   }
 
+  public AngelsPrayerItem(final int icon, final int price) { super(icon, price); }
+
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return location == UsageLocation.BATTLE;

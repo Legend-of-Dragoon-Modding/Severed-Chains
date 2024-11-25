@@ -11,6 +11,8 @@ public class MoonSerenadeItem extends RecoverHpItem {
     super(34, 100, true, 100);
   }
 
+  public MoonSerenadeItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }
+
   @Override
   protected BiFunction<Integer, Integer, Integer> getRecoveryMethod() {
     return Scus94491BpeSegment_8002::addMp;
