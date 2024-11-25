@@ -7,8 +7,8 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.events.screen.EquipMenuEntryIcon;
-import legend.game.modding.events.screen.ItemMenuEntryIcon;
+import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
+import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -69,11 +69,11 @@ public class TooManyItemsScreen extends MenuScreen {
         loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
 
         for(final Item item : itemOverflow) {
-          this.droppedItems.add(MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIcon(item)).icon));
+          this.droppedItems.add(MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon));
         }
 
         for(final Equipment equipment : equipmentOverflow) {
-          this.droppedItems.add(MenuEntryStruct04.make(equipment, EVENTS.postEvent(new EquipMenuEntryIcon(equipment)).icon));
+          this.droppedItems.add(MenuEntryStruct04.make(equipment, EVENTS.postEvent(new EquipMenuEntryIconEvent(equipment)).icon));
         }
 
         this.menuState = MenuState._2;

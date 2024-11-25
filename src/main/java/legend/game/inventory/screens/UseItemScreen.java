@@ -6,7 +6,7 @@ import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
-import legend.game.modding.events.screen.ItemMenuEntryIcon;
+import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -195,7 +195,7 @@ public class UseItemScreen extends MenuScreen {
       final Item item = gameState_800babc8.items_2e9.get(i);
 
       if(item.canBeUsed(Item.UsageLocation.MENU)) {
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIcon(item)).icon);
+        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon);
         menuEntry.flags_02 = 0;
 
         if(!item.canBeUsedNow(Item.UsageLocation.MENU)) {

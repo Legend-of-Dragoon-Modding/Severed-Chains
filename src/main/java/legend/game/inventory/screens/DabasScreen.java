@@ -9,8 +9,8 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.screen.EquipMenuEntryIcon;
-import legend.game.modding.events.screen.ItemMenuEntryIcon;
+import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
+import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.DabasData100;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -124,10 +124,10 @@ public class DabasScreen extends MenuScreen {
           if(itemId != 0) {
             if(itemId > 192) {
               final Item item = REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get();
-              this.menuItems.add(MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIcon(item)).icon));
+              this.menuItems.add(MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon));
             } else {
               final Equipment equip = REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get();
-              this.menuItems.add(MenuEntryStruct04.make(equip, EVENTS.postEvent(new EquipMenuEntryIcon(equip)).icon));
+              this.menuItems.add(MenuEntryStruct04.make(equip, EVENTS.postEvent(new EquipMenuEntryIconEvent(equip)).icon));
             }
 
             this.hasItems = true;

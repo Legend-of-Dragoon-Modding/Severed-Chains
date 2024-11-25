@@ -6,7 +6,7 @@ import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
-import legend.game.modding.events.screen.EquipMenuEntryIcon;
+import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -131,7 +131,7 @@ public class EquipmentScreen extends MenuScreen {
       final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentSlot);
       if(canEquip(equipment, charIndex)) {
         if(equipment != gameState_800babc8.charData_32c[charIndex].equipment_14.get(equipment.slot)) {
-          final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment, EVENTS.postEvent(new EquipMenuEntryIcon(equipment)).icon);
+          final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment, EVENTS.postEvent(new EquipMenuEntryIconEvent(equipment)).icon);
           menuEntry.itemSlot_01 = equipmentSlot;
           this.menuItems.add(menuEntry);
         }

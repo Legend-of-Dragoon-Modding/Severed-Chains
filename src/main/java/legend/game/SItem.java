@@ -23,7 +23,7 @@ import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
-import legend.game.modding.events.screen.EquipMenuEntryIcon;
+import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -1583,7 +1583,7 @@ public final class SItem {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipment_14.get(slot) != null) {
-          renderItemIcon(EVENTS.postEvent(new EquipMenuEntryIcon(charData.equipment_14.get(slot))).icon, 202, 17 + 14 * slot.ordinal(), 0);
+          renderItemIcon(EVENTS.postEvent(new EquipMenuEntryIconEvent(charData.equipment_14.get(slot))).icon, 202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
