@@ -6,6 +6,7 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.events.battle.ItemBattleDescriptionEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
 
@@ -123,13 +124,15 @@ public class ItemListMenu extends ListMenu {
     if(this.menuState_00 != 0 && (this.flags_02 & 0x1) != 0) {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
+        final Item item = this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item;
         //Selected item description
         if(this.description == null) {
           this.description = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getBattleDescriptionTranslationKey()), 160, 157, TextColour.WHITE, 0);
+
+        renderCentredText(EVENTS.postEvent(new ItemBattleDescriptionEvent(item, I18n.translate(item.getBattleDescriptionTranslationKey()))).description, 160, 157, TextColour.WHITE, 0);
       }
     }
   }

@@ -6,6 +6,7 @@ import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
+import legend.game.modding.events.screen.ItemDescriptionEvent;
 import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
@@ -156,7 +157,8 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final Item item = this.menuItems.get(selectedSlot + slotScroll).item_00;
+      renderString(194, 16, EVENTS.postEvent(new ItemDescriptionEvent(item, I18n.translate(item.getDescriptionTranslationKey()))).description, allocate);
     }
   }
 

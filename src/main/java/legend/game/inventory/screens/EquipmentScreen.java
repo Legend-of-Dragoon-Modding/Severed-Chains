@@ -6,6 +6,7 @@ import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.modding.events.screen.EquipDescriptionEvent;
 import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -157,7 +158,8 @@ public class EquipmentScreen extends MenuScreen {
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
 
     if(slotIndex + slotScroll < this.menuItems.size()) {
-      renderString(194, 178, I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final Equipment equip = this.menuItems.get(slotIndex + slotScroll).item_00;
+      renderString(194, 178, EVENTS.postEvent(new EquipDescriptionEvent(equip, I18n.translate(equip.getDescriptionTranslationKey()))).description, allocate);
     }
   }
 

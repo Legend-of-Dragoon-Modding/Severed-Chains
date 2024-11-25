@@ -9,7 +9,9 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.screen.EquipDescriptionEvent;
 import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
+import legend.game.modding.events.screen.ItemDescriptionEvent;
 import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -127,7 +129,8 @@ public class ItemListScreen extends MenuScreen {
       return;
     }
 
-    this.description.setText(I18n.translate(item.getDescriptionTranslationKey()));
+    final String description = I18n.translate(item.getDescriptionTranslationKey());
+    this.description.setText(item.item_00.getClass().isInstance(Equipment.class) ? EVENTS.postEvent(new EquipDescriptionEvent((Equipment)item.item_00, description)).description : EVENTS.postEvent(new ItemDescriptionEvent((Item)item.item_00, description)).description);
   }
 
   @Override
