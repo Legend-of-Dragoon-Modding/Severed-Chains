@@ -24,9 +24,9 @@ public class LmbType0 extends Lmb {
   public void loadIntoModel(final Model124 model) {
     model.anim_08 = model.new LmbAnim(this);
     model.partCount_98 = this.objectCount_04;
-    model.totalFrames_9a = this.partAnimations_08[0].count_04 * 2;
+    model.totalFrames_9a = this.partAnimations_08[0].keyframeCount_04 * 2;
     model.animationState_9c = 1;
-    model.remainingFrames_9e = this.partAnimations_08[0].count_04 * 2;
+    model.remainingFrames_9e = this.partAnimations_08[0].keyframeCount_04 * 2;
     model.subFrameIndex = 0;
   }
 
@@ -102,19 +102,19 @@ public class LmbType0 extends Lmb {
   }
 
   public static class PartInfo0c {
-    public final short _00;
+    public final short partFlagIndex_00;
 
-    public final short count_04;
+    public final short keyframeCount_04;
 
     public final LmbTransforms14[] keyframes_08;
 
     public PartInfo0c(final FileData data, final FileData baseData) {
-      this._00 = data.readShort(0x0);
+      this.partFlagIndex_00 = data.readShort(0x0);
 
-      this.count_04 = data.readShort(0x4);
+      this.keyframeCount_04 = data.readShort(0x4);
 
       final int transformsOffset = data.readInt(0x8);
-      this.keyframes_08 = new LmbTransforms14[this.count_04];
+      this.keyframes_08 = new LmbTransforms14[this.keyframeCount_04];
       for(int i = 0; i < this.keyframes_08.length; i++) {
         this.keyframes_08[i] = new LmbTransforms14(baseData.slice(transformsOffset + i * 0x14, 0x14));
       }
