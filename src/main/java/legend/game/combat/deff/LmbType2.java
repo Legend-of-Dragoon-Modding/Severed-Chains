@@ -13,7 +13,7 @@ public class LmbType2 extends Lmb {
    *   <li>0x200 - disable x rotation step</li>
    *   <li>0x400 - disable z translation step</li>
    *   <li>0x800 - disable y translation step</li>
-   *   <li>0x1000 - disable x translation step </li>
+   *   <li>0x1000 - disable x translation step</li>
    *   <li>0x2000 - disable z scale step</li>
    *   <li>0x4000 - disable y scale step</li>
    *   <li>0x8000 - disable x scale step</li>

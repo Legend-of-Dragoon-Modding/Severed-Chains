@@ -519,7 +519,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     final LmbType2 lmb = (LmbType2)this.lmb_0c;
     final LmbTransforms14[] originalTransforms = lmb.initialTransforms_10;
     final int keyframeIndex = tickFip12 / 0x2000;
-    final float lerpScale = (tickFip12 & 0x1fff) / (float)0x2000; // min(tick, 2) / 2
+    final float lerpScale = (tickFip12 & 0x1fff) / (float)0x2000; // mod(tick, 2) / 2
     final LmbTransforms14[] transformsLo = this.lmbTransforms_10;
     final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.objectCount_04, transformsLo.length);
     final int nextKeyframeIndex = (keyframeIndex + 1) % lmb.keyframeCount_0a;
