@@ -164,7 +164,7 @@ public class BattleHud {
   private int currentCameraPositionIndicesIndicesIndex_800c6ba1;
   private final BattleDisplayStats144[] displayStats_800c6c2c = new BattleDisplayStats144[3];
   private final int[] cameraPositionIndicesIndices_800c6c30 = new int[4];
-  private final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
+  public final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
 
   public final Battle battle;
 
