@@ -73,6 +73,8 @@ public final class Unpacker {
 
   public static Path ROOT = Path.of(".", "files");
 
+  public static Path MOD_ROOT = Path.of(".", "mods");
+
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
 
   private static final int availableProcessors = Runtime.getRuntime().availableProcessors();
@@ -172,6 +174,10 @@ public final class Unpacker {
 
   public static Path resolve(final String name) {
     return ROOT.resolve(fixPath(name));
+  }
+
+  public static Path resolveMods(final String name) {
+    return MOD_ROOT.resolve(fixPath(name));
   }
 
   public static FileData loadFile(final String name) {
