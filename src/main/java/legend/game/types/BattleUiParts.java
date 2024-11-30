@@ -5,7 +5,9 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +26,9 @@ import static legend.game.combat.SEffe.perfectDaddyGlyphVs_80119fc4;
 public class BattleUiParts {
   private Obj obj;
   private final MV mv = new MV();
+
+  private Obj obj2;
+  private final Matrix4f m = new Matrix4f();
 
   private int levelUpVert;
   private int bigNumberVert;
@@ -219,6 +224,19 @@ public class BattleUiParts {
 
     this.obj = builder.build();
     this.obj.persistent = true;
+
+    final QuadBuilder builder2 = new QuadBuilder("Add-on elements (such as the xbox button");
+
+    builder2
+      .rgb(0.6f, 0.6f, 0.6f)
+      .size(1.0f, 1.0f)
+      .uv(0.0f, 0.0f)
+      .uvSize(1.0f, 1.0f)
+      .bpp(Bpp.BITS_24)
+      .build();
+
+    this.obj2 = builder2.build();
+    this.obj2.persistent = true;
   }
 
   /** Also includes +, S, P as indices 10, 11, 12 */
@@ -258,6 +276,10 @@ public class BattleUiParts {
     }
 
     this.queue(this.buttonVert + index * 4, x, y, w, h, metrics.packedClut_05, translucency, brightness, widthScale, heightScale);
+  }
+
+  public void queueButton(final int x, final int y, final int z, final int w, final int h, final Texture texture) {
+    this.queue(x, y, z, w, h, texture);
   }
 
   public void queueDaddyFrame(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
@@ -327,5 +349,12 @@ public class BattleUiParts {
       .tpageOverride(704, 256)
       .monochrome(brightness / 128.0f)
       .translucency(transMode);
+  }
+
+  public void queue(final int x, final int y, final int z, final float w, final float h, final Texture texture) {
+    this.m.translation(x + RENDERER.getWidescreenOrthoOffsetX(), y, z);
+    this.m.scale(w, h, 1f);
+    RENDERER.queueOrthoModel(this.obj2, this.m, QueuedModelStandard.class)
+      .texture(texture);
   }
 }

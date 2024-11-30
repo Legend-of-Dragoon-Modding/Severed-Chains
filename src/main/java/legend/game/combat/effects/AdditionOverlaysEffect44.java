@@ -8,6 +8,9 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.combat.AdditionButtonMode;
+import legend.game.combat.AdditionButtonStyle;
+import legend.game.combat.SEffe;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.ui.AdditionOverlayMode;
@@ -16,7 +19,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector3f;
-
 import java.util.Arrays;
 
 import static legend.core.GameEngine.CONFIG;
@@ -55,6 +57,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   public int lastCompletedHit_39;
   /** ubyte; 0 = no auto complete, 2 = WC and UW auto-complete */
   public int autoCompleteType_3a;
+
+  private AdditionButtonFeedback currentInputStatus;
+  private int additionButtonFramesToRender; //Remaining frames that the addition button will render for
+  private boolean flawlessAddition = true;
 
   // Not needed anymore, just reference hit overlay array at index lastCompletedHit_39
   // public final Pointer<AdditionOverlaysHit20> lastCompletedHitOverlay_3c;
@@ -100,21 +106,21 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final AdditionOverlaysHit20[] hitArray = new AdditionOverlaysHit20[hitCount];
     Arrays.setAll(hitArray, AdditionOverlaysHit20::new);
     this.hitOverlays_40 = hitArray;
-    int overlayDisplayDelay = this.getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xff;
-    this.unused_36 = overlayDisplayDelay;
+    int cumulativeOverlayDisplayDelay = 0;
 
     //LAB_801063f0
     for(hitNum = 0; hitNum < this.count_30; hitNum++) {
       final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
+      cumulativeOverlayDisplayDelay += this.getHitProperty(s5.charSlot_276, hitNum, 15, autoCompleteType) & 0xff;
       hitOverlay.unused_00 = 1;
       hitOverlay.hitSuccessful_01 = false;
       hitOverlay.shadowColour_08 = (short)0;
-      hitOverlay.frameSuccessLowerBound_10 = (short)(overlayDisplayDelay + 2);
+      hitOverlay.frameSuccessLowerBound_10 = (short)(cumulativeOverlayDisplayDelay + 2);
       hitOverlay.borderColoursArrayIndex_02 = 3;
       hitOverlay.isCounter_1c = false;
       additionHitCompletionState_8011a014[hitNum] = 0;
       int hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff;
-      overlayDisplayDelay += hitProperty; // Display delay for each hit
+      cumulativeOverlayDisplayDelay += hitProperty; // Display delay for each hit
       hitOverlay.totalHitFrames_0a = (short)hitProperty;
       hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 2, autoCompleteType) & 0xff;
       hitOverlay.frameBeginDisplay_0c = (short)hitProperty;
@@ -190,6 +196,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     this.distancePerFrame_20.x = (targetStartingPosition.x - this.attackerStartingPosition_10.x) / firstHitSuccessLowerBound;
     this.distancePerFrame_20.y = (targetStartingPosition.y - this.attackerStartingPosition_10.y) / firstHitSuccessLowerBound;
     this.distancePerFrame_20.z = (targetStartingPosition.z - this.attackerStartingPosition_10.z) / firstHitSuccessLowerBound;
+
+    if (SEffe.additionButtonFeedbackText != null) {
+      SEffe.additionButtonFeedbackText.initializeFeedbackTextElements(hitCount);
+    }
   }
 
   public void setContinuationState(final int continuationState) {
@@ -232,13 +242,26 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   @Method(0x80106050L)
   private void renderAdditionButton(final int frames, final boolean isCounter) {
     final int offset = isCounter ? 1 : 0;
+    final AdditionButtonStyle style = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_STYLE_CONFIG.get());
     if(Math.abs(frames) >= 2) {  // Button up position
       renderButtonPressHudElement1(0x24, 119, 43, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
+      if (style == AdditionButtonStyle.PLAYSTATION) {
+        renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
+      } else if (style == AdditionButtonStyle.XBOX) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[0] : AdditionButtonFeedbackText.xboxAFrames[0], 0);
+      } else if (style == AdditionButtonStyle.NINTENDO) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.nintendoBFrames[0] : AdditionButtonFeedbackText.nintendoAFrames[0], 0);
+      }
     } else {  // Button down position
       //LAB_80106114
       renderButtonPressHudElement1(0x24, 119, 51, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
+      if (style == AdditionButtonStyle.PLAYSTATION) {
+        renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
+      } else if (style == AdditionButtonStyle.XBOX) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.xboxBFrames[2] : AdditionButtonFeedbackText.xboxAFrames[2], 0);
+      } else if (style == AdditionButtonStyle.NINTENDO) {
+        renderButtonPressHudElement1(isCounter ? AdditionButtonFeedbackText.nintendoBFrames[2] : AdditionButtonFeedbackText.nintendoAFrames[2], 0);
+      }
       renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
     }
   }
@@ -502,6 +525,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       final AdditionOverlaysHit20[] hitArray = this.hitOverlays_40;
       this.currentFrame_34++;
 
+      this.currentInputStatus = AdditionButtonFeedback.NONE;
+
       //LAB_80107440
       int hitNum;
       int hitFailed = 1;
@@ -511,7 +536,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           if(additionHitCompletionState_8011a014[hitNum] == 0) {
             additionHitCompletionState_8011a014[hitNum] = -2;
             this.propagateFailedAdditionHitFlag(hitArray, hitNum);
-
+            this.currentInputStatus = AdditionButtonFeedback.NO_PRESS;
+            if (SEffe.additionButtonFeedbackText != null) {
+              SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
+            }
             //LAB_80107478
           }
         } else if(additionHitCompletionState_8011a014[hitNum] == 0) {
@@ -579,13 +607,52 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                 if((press_800bee94 & 0x60) != 0) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
 
-                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) {
+                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) { // Wrong Input
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;
-                  } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) {
+                    this.currentInputStatus = hitOverlay.isCounter_1c ? AdditionButtonFeedback.COUNTER : AdditionButtonFeedback.WRONG;
+                  } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) { // Good Input
                     additionHitCompletionState_8011a014[hitNum] = 1;
                     hitOverlay.hitSuccessful_01 = true;
+
+                    int perfectLowerBound = hitOverlay.frameSuccessLowerBound_10;
+                    int perfectUpperBound = hitOverlay.frameSuccessLowerBound_10;
+
+                    switch (hitOverlay.numSuccessFrames_0e)
+                    {
+                      case 2:
+                      case 3:
+                        perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        break;
+                      case 4:
+                        perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 2;
+                        break;
+                      case 5:
+                        perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
+                        perfectUpperBound = hitOverlay.frameSuccessLowerBound_10 + 3;
+                        break;
+                    }
+
+                    this.currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionButtonFeedback.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionButtonFeedback.GOOD_MINUS : AdditionButtonFeedback.GOOD_PLUS);
+                    if (this.flawlessAddition && this.currentInputStatus != AdditionButtonFeedback.PERFECT) {
+                      this.flawlessAddition = false;
+                    }
+                  }
+                  else { // Late/Early Input
+                    this.currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionButtonFeedback.EARLY : AdditionButtonFeedback.LATE;
+                    this.flawlessAddition = false;
+                  }
+
+                  if (SEffe.additionButtonFeedbackText != null) {
+                    if (hitNum == hitArray.length - 1 && this.flawlessAddition) {
+                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, AdditionButtonFeedback.FLAWLESS);
+                    }
+                    else {
+                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.currentInputStatus);
+                    }
                   }
 
                   //LAB_801076f0
@@ -649,19 +716,50 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           }
         }
 
+        boolean isCounter = false;
+        final AdditionButtonMode config = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_MODE_CONFIG.get());
+
         //LAB_80107330
         if(hitNum < this.count_30) {
           final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            this.renderAdditionButton(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1, hitOverlay.isCounter_1c);
-          }
+          isCounter = hitOverlay.isCounter_1c;
 
-          final byte currentFrame = (byte)this.currentFrame_34;
-          if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
-            if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
-              this.renderAdditionCentreSolidSquare(this, hitOverlay, -2, manager);
-            }
+          switch(config) {
+            case AdditionButtonMode.RETAIL:
+              this.additionButtonFramesToRender = hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - this.currentFrame_34 - 1;
+              break;
+            case AdditionButtonMode.RESPONSIVE:
+            case AdditionButtonMode.FEEDBACK:
+              final byte currentFrame = (byte)this.currentFrame_34;
+              if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
+                if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
+                  this.renderAdditionCentreSolidSquare(this, hitOverlay, -2, manager);
+                }
+              }
+              this.additionButtonFramesToRender = 1;
+              break;
+            default:
+              return;
           }
+        } else if(hitNum == this.count_30 && (config == AdditionButtonMode.RESPONSIVE || config == AdditionButtonMode.FEEDBACK)) {
+          this.additionButtonFramesToRender = 7;
+        }
+
+        switch(config) {
+          case AdditionButtonMode.RETAIL:
+            this.renderAdditionButton(this.additionButtonFramesToRender, isCounter);
+            break;
+          case AdditionButtonMode.RESPONSIVE:
+          case AdditionButtonMode.FEEDBACK:
+            if(this.additionButtonFramesToRender > 0) {
+              if(this.currentInputStatus != AdditionButtonFeedback.NONE && this.currentInputStatus != AdditionButtonFeedback.NO_PRESS) {
+                this.renderAdditionButton(0, isCounter); // Button Down
+              } else {
+                this.renderAdditionButton(2, isCounter); // Button Up
+              }
+              this.additionButtonFramesToRender--;
+            }
+            break;
         }
       }
     }

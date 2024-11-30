@@ -129,6 +129,10 @@ public class RenderEngine {
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
   private final FloatBuffer vdfBuffer = BufferUtils.createFloatBuffer(4 * 1024);
 
+  public float getWidescreenOrthoOffsetX() {
+    return this.mainBatch.widescreenOrthoOffsetX;
+  }
+
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
     shader -> {

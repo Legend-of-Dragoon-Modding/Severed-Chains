@@ -21,6 +21,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
@@ -30,6 +31,7 @@ import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
+import legend.game.combat.effects.AdditionButtonFeedbackText;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
@@ -200,6 +202,8 @@ public final class SEffe {
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
   
   private static final MV seffeTransforms = new MV();
+
+  public static AdditionButtonFeedbackText additionButtonFeedbackText;
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
@@ -1180,6 +1184,14 @@ public final class SEffe {
     battleUiParts.queueButton(type, x, y, translucency, brightness, 1.0f, 1.0f);
   }
 
+  public static void renderButtonPressHudElement1(final Texture texture, final int type) {
+    switch (type) {
+      case 0: battleUiParts.queueButton(275, 170, 10, 23, 17, texture); break; // Normal Additions
+      case 1: battleUiParts.queueButton(236, 124, 10, 23, 17, texture); break; // Dragoon Additions
+      case 2: battleUiParts.queueButton(236, 172, 10, 23, 17, texture); break; // Mash
+    }
+  }
+
   @ScriptDescription("Gets the success or failure of the addition hit")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The hit index")
@@ -1282,7 +1294,12 @@ public final class SEffe {
 
     //LAB_80107b10
     // Button
-    renderButtonPressHudElement1(buttonHudMetricsIndex, x0 + 12, y0 + 66, Translucency.B_PLUS_F, 128);
+    final AdditionButtonStyle style = CONFIG.getConfig(CoreMod.ADDITION_BUTTON_STYLE_CONFIG.get());
+    if (style == AdditionButtonStyle.PLAYSTATION) {
+      renderButtonPressHudElement1(buttonHudMetricsIndex, x0 + 12, y0 + 66, Translucency.B_PLUS_F, 128);
+    } else if (style == AdditionButtonStyle.XBOX) {
+      renderButtonPressHudElement1(AdditionButtonFeedbackText.xboxAFrames[buttonHudMetricsIndex == 35 ? 2 : 0], 1);
+    }
 
     // Button press red glow
     if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {
@@ -1392,6 +1409,27 @@ public final class SEffe {
     return currentPressNumber;
   }
 
+  private static int[] getDragoonAdditionStepCountsArrayFromDifficulty() {
+    final DragoonAdditionDifficulty difficulty = CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_DIFFICULTY_CONFIG.get());
+
+    if (difficulty == DragoonAdditionDifficulty.NORMAL) {
+      return daddyHudSpinnerStepCountsPointer_8011a028;
+    }
+
+    final int[] stepCountsArray = new int[daddyHudSpinnerStepCountsPointer_8011a028.length];
+    for (int i = 0; i < stepCountsArray.length; i++) {
+      if(daddyHudSpinnerStepCountsPointer_8011a028[i] < 2) {
+        stepCountsArray[i] = daddyHudSpinnerStepCountsPointer_8011a028[i];
+      } else {
+        switch (difficulty) {
+          case DragoonAdditionDifficulty.EASY: stepCountsArray[i] = daddyHudSpinnerStepCountsPointer_8011a028[i] + 2; break;
+          case DragoonAdditionDifficulty.HARD: stepCountsArray[i] = daddyHudSpinnerStepCountsPointer_8011a028[i] - 2; break;
+        }
+      }
+    }
+    return stepCountsArray;
+  }
+
   @Method(0x80108514L)
   public static void renderDragoonAdditionHud(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c daddy) {
     renderDragoonAdditionHud_(daddy, 0, daddy.baseAngle_02 - 0x400);
@@ -1404,7 +1442,7 @@ public final class SEffe {
         daddy.ticksRemainingToBeginAddition_12--;
         if(daddy.ticksRemainingToBeginAddition_12 == 0) {
           state.deallocateWithChildren();
-        } else if((Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
+        } else if((Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC) && daddy.inputMode_13 != 2) {
           daddy.meterSpinning_10 = 1;
           daddyMeterSpinning_80119f42 = 1;
         }
@@ -1521,7 +1559,7 @@ public final class SEffe {
     daddy.meterSpinning_10 = flag == 1 ? 1 : 0;
     daddy.buttonPressGlowBrightnessFactor_11 = 0;
     daddy.ticksRemainingToBeginAddition_12 = script.params_20[2].get();
-    daddy.inputMode_13 = CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) ? 1 : flag & 0xff;
+    daddy.inputMode_13 = CONFIG.getConfig(CoreMod.DRAGOON_ADDITION_MODE_CONFIG.get()) == DragoonAdditionMode.AUTOMATIC ? 1 : flag & 0xff;
     daddy.charId_18 = charId;
 
     //LAB_80108910
@@ -1539,6 +1577,8 @@ public final class SEffe {
       daddyHitSuccessWindowsPointer_8011a02c = daddyHitSuccessWindows_80119f60;
       daddy.totalPressCount_14 = 4;
     }
+
+    daddyHudSpinnerStepCountsPointer_8011a028 = getDragoonAdditionStepCountsArrayFromDifficulty();
 
     //LAB_80108984
     daddyHitsCompleted_80119f40 = 0;

@@ -1,6 +1,7 @@
 package legend.game.combat.ui;
 
 import legend.core.Config;
+import legend.game.combat.AdditionConfigs;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.screens.TextColour;
 import legend.game.scripting.RunningScript;
@@ -24,7 +25,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.SBtld.loadAdditions;
 
 public class AdditionListMenu extends ListMenu {
@@ -124,10 +124,10 @@ public class AdditionListMenu extends ListMenu {
       final int level = additionData_80052884[additionOffset + additionSlot].level_00;
 
       if(level == -1 && (gameState_800babc8.charData_32c[charId].partyFlags_04 & 0x40) != 0) {
-        final String additionName = additionNames_800fa8d4[additionOffset + additionSlot];
+        final String additionName = AdditionConfigs.additionNames_800fa8d4[additionOffset + additionSlot];
         this.additions.add(additionName);
       } else if(level > 0 && level <= gameState_800babc8.charData_32c[charId].level_12) {
-        final String additionName = additionNames_800fa8d4[additionOffset + additionSlot];
+        final String additionName = AdditionConfigs.additionNames_800fa8d4[additionOffset + additionSlot];
         this.additions.add(additionName);
 
         if(gameState_800babc8.charData_32c[charId].additionLevels_1a[additionSlot] == 0) {

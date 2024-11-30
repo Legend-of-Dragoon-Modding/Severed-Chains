@@ -6,4 +6,5 @@ public enum ConfigCategory {
   AUDIO,
   CONTROLS,
   OTHER,
+  ADDITIONS
 }
