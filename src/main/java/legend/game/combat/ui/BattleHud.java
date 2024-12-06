@@ -1578,31 +1578,31 @@ public class BattleHud {
         }
 
         // Dragoon
-        if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_UP))) {
+        if(Input.pressedThisFrame((InputAction.BATTLE_DRAGOON))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[4]) ? iconFlags_800c7194[4] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         // Special
-        if(Input.pressedThisFrame((InputAction.JOYSTICK_RIGHT_BUTTON_DOWN))) {
+        if(Input.pressedThisFrame((InputAction.BATTLE_SPECIAL))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[7]) ? iconFlags_800c7194[7] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         // Escape
-        if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_LEFT_1))) {
+        if(Input.pressedThisFrame((InputAction.BATTLE_ESCAPE))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[3]) ? iconFlags_800c7194[3] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         // Guard
-        if(Input.pressedThisFrame((InputAction.BUTTON_SHOULDER_RIGHT_1))) {
+        if(Input.pressedThisFrame((InputAction.BATTLE_GUARD))) {
           selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[1]) ? iconFlags_800c7194[1] : 0;
           this.checkInvalidSelectedAction(selectedAction);
         }
 
         // Item Menu | Dragoon Spells
-        if(Input.pressedThisFrame((InputAction.BUTTON_WEST))) {
+        if(Input.pressedThisFrame((InputAction.BATTLE_ITEMS))) {
           selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(iconFlags_800c7194[2], iconFlags_800c7194[6]);
           this.checkInvalidSelectedAction(selectedAction);
         }

@@ -33,10 +33,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_GRAVE_ACCENT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_INSERT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
@@ -58,6 +60,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     this.addRegularKeyRange(GLFW_KEY_COMMA, GLFW_KEY_9);
     this.addRegularKey(GLFW_KEY_SEMICOLON);
     this.addRegularKey(GLFW_KEY_EQUAL);
+    this.addRegularKey(GLFW_KEY_MINUS);
     this.addRegularKeyRange(GLFW_KEY_A, GLFW_KEY_RIGHT_BRACKET);
     this.addRegularKey(GLFW_KEY_GRAVE_ACCENT);
     this.addKey(GLFW_KEY_ESCAPE, "ESC");
@@ -73,6 +76,10 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     this.addKey(GLFW_KEY_PAGE_DOWN, "PGDN");
     this.addKey(GLFW_KEY_HOME, "HOME");
     this.addKey(GLFW_KEY_END, "END");
+
+    for(int i = 0; i < 12; i++) {
+      this.addKey(GLFW_KEY_F1 + i, "F" + (i + 1));
+    }
 
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
@@ -151,10 +158,6 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind." + inputAction.name()), textbox);
       }
     }
-
-    this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind.pause"), new Label("F11"));
-    this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind.debugger"), new Label("F12"));
-    this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind.kill_sound"), new Label("DEL"));
   }
 
   private void addKey(final int keycode, final String name) {
@@ -188,7 +191,8 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     if(inputAction == InputAction.BUTTON_EAST) {
       for(final InputAction action : InputAction.values()) {
         if(CoreMod.KEYBIND_CONFIGS.containsKey(action)) {
-          if(this.config.getConfig(CoreMod.KEYBIND_CONFIGS.get(action).get()).isEmpty()) {
+          final ControllerKeybindConfigEntry keybind = CoreMod.KEYBIND_CONFIGS.get(action).get();
+          if(keybind.required && this.config.getConfig(keybind).isEmpty()) {
             playMenuSound(4);
             this.getStack().pushScreen(new MessageBoxScreen(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input"), 0, result -> { }));
             return InputPropagation.HANDLED;

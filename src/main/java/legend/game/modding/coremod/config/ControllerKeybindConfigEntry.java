@@ -9,8 +9,11 @@ import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
 public class ControllerKeybindConfigEntry extends ConfigEntry<IntSet> {
-  public ControllerKeybindConfigEntry(final int... defaultValue) {
+  public final boolean required;
+
+  public ControllerKeybindConfigEntry(final boolean required, final int... defaultValue) {
     super(new IntOpenHashSet(defaultValue), ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, ControllerKeybindConfigEntry::serializer, data -> deserializer(data, new IntOpenHashSet(defaultValue)));
+    this.required = required;
   }
 
   private static byte[] serializer(final IntSet val) {
