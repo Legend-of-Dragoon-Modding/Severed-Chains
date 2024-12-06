@@ -131,7 +131,8 @@ public class SnowEffect {
       .clut(960, 464)
       .monochrome(1.0f)
       .translucency(Translucency.B_PLUS_F)
-      .vramPos(960, 320)
+      .vramPos(960, 256)
+      .uv(0.0f, 64.0f)
       .size(1.0f, 1.0f)
       .uvSize(24, 24)
       .build();
