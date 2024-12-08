@@ -267,6 +267,7 @@ import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
+import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 
 public class Battle extends EngineState {
@@ -8605,7 +8606,7 @@ public class Battle extends EngineState {
 
   @Method(0x80109050L)
   private void loadStageDataAndControllerScripts() {
-    this.currentStageData_800c6718 = stageData_80109a98[encounterId_800bb0f8];
+    this.currentStageData_800c6718 = getEncounterStageData(encounterId_800bb0f8);
 
     this.playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
