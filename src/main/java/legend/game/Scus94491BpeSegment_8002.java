@@ -40,10 +40,12 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.Icon;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Model124;
+import legend.game.types.RenderTextProperties;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.SmallerStruct;
@@ -152,6 +154,8 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
 
 public final class Scus94491BpeSegment_8002 {
+  private static float scaleTextSpacing = 1.0f;
+
   private Scus94491BpeSegment_8002() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8002.class);
@@ -3410,6 +3414,14 @@ public final class Scus94491BpeSegment_8002 {
     renderText(text, x - textWidth(text), y, colour, trim);
   }
 
+  public static void renderText(RenderTextProperties textProperties) {
+    textTransforms.scale(textProperties.getScaleX(), textProperties.getScaleY(), textProperties.getScaleZ());
+    scaleTextSpacing = textProperties.getScaleTextSpacing();
+    renderText(textProperties.getText(), textProperties.getX(), textProperties.getY(), textProperties.getColour(), textProperties.getTrim());
+    scaleTextSpacing = 1.0f;
+    textTransforms.identity();
+  }
+
   @Method(0x80029920L)
   public static void setTextboxArrowPosition(final int textboxIndex, final boolean visible) {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
@@ -3801,10 +3813,14 @@ public final class Scus94491BpeSegment_8002 {
       case ',', '·', ':', '\'', '1', 'i', 'l' -> 4;
       case 'I' -> 5;
       case '\n' -> 8;
+      case Icon.UP_ARROW, Icon.DOWN_ARROW, Icon.LEFT_ARROW, Icon.RIGHT_ARROW, Icon.UP_ARROW_2, Icon.DOWN_ARROW_2, Icon.LEFT_ARROW_2, Icon.RIGHT_ARROW_2 -> 0;
+      case Icon.SELECT -> -8;
+      case Icon.MENU, Icon.COPY, Icon.LEFT_BUMPER, Icon.LEFT_TRIGGER, Icon.LEFT_JOYSTICK, Icon.RIGHT_BUMPER, Icon.RIGHT_TRIGGER, Icon.RIGHT_JOYSTICK, Icon.A, Icon.B, Icon.X_THICK, Icon.Y, Icon.START, Icon.LEFT_BUTTON_1, Icon.LEFT_BUTTON_2, Icon.LEFT_BUTTON_3, Icon.X_THIN, Icon.CIRCLE, Icon.SQUARE, Icon.TRIANGLE -> -2;
+      case Icon.RIGHT_BUTTON_1, Icon.RIGHT_BUTTON_2, Icon.RIGHT_BUTTON_3 -> -4;
       default -> 0;
     };
 
-    return 8 - nudge;
+    return (int)((8 - nudge) * scaleTextSpacing);
   }
 
   public static int textHeight(final String text) {

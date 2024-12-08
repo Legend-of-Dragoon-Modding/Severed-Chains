@@ -175,6 +175,8 @@ public class BattleHud {
   private final MV uiTransforms = new MV();
   private final Vector3f colourTemp = new Vector3f();
 
+  private final BattleControllerInputControl battleControllerInputControl = new BattleControllerInputControl();
+
   private final Obj[] floatingTextType1Digits = new Obj[10];
   private final Obj[] type1FloatingDigits = new Obj[10];
   private final Obj[] type3FloatingDigits = new Obj[10];
@@ -811,6 +813,10 @@ public class BattleHud {
         this.battleUiName.render(element.colour);
         Scus94491BpeSegment_8002.renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
+    }
+
+    if(this.battleControllerInputControl.isRendering()) {
+      this.battleControllerInputControl.render();
     }
     //LAB_800f0f2c
   }
@@ -1507,6 +1513,11 @@ public class BattleHud {
           this.toggleHighlight(false);
           break;
         }
+
+        // Input for BattleControllerInputControl UI control
+        if(Input.pressedThisFrame(InputAction.BATTLE_BUTTON_MAP)) {
+          this.battleControllerInputControl.toggleRendering();
+          }
 
         // Input for cycling right on menu bar
         //LAB_800f65b8
