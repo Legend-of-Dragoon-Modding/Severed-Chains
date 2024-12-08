@@ -1,11 +1,13 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.Lmb;
@@ -23,7 +25,10 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
+import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
@@ -35,6 +40,7 @@ import static legend.game.combat.SEffe.FUN_800e62a8;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
 import static legend.game.combat.SEffe.getRotationAndScaleFromTransforms;
 import static legend.game.combat.SEffe.renderTmdSpriteEffect;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 
 public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType> {
   /** Related to processing type 2 LMBs */
@@ -272,23 +278,34 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       GTE.setTransforms(w2sTransform);
 
       final float z = perspectiveTransform(worldCoords, screenCoords);
-      if(z >= 0x50) {
+      if(z >= 80) {
         //LAB_801163c4
+        // Intified and jankily rounded values to make Down Burst particles look retail-ish due to the effect
+        // being created with expectation that many of them would be infinitely small and not render.
         final float screenspaceScale = projectionPlaneDistance_1f8003f8 * 2.0f / z * manager.params_10.scale_16.z;
-        final float l = -w / 2.0f * screenspaceScale;
-        final float r = w / 2.0f * screenspaceScale;
-        final float t = -h / 2.0f * screenspaceScale;
-        final float b = h / 2.0f * screenspaceScale;
-        final float sin = MathHelper.sin(manager.params_10.rot_10.z);
-        final float cos = MathHelper.cos(manager.params_10.rot_10.z);
-        final float sinL = l * sin;
-        final float cosL = l * cos;
-        final float sinR = r * sin;
-        final float cosR = r * cos;
-        final float sinT = t * sin;
-        final float cosT = t * cos;
-        final float sinB = b * sin;
-        final float cosB = b * cos;
+        final int l = (int)(-w / 2.0f * screenspaceScale);
+        final int r = (int)(w / 2.0f * screenspaceScale);
+        final int t = (int)(-h / 2.0f * screenspaceScale);
+        final int b = (int)(h / 2.0f * screenspaceScale);
+
+        final int intRotation = MathHelper.radToPsxDeg(manager.params_10.rot_10.z);
+        int sin = rsin(intRotation);
+        if(sin == 0xfff) {
+          sin = 0x1000;
+        }
+        int cos = rcos(intRotation);
+        if(cos == 0xfff) {
+          cos = 0x1000;
+        }
+
+        final int sinL = l * sin / 0x1000;
+        final int cosL = l * cos / 0x1000;
+        final int sinR = r * sin / 0x1000;
+        final int cosR = r * cos / 0x1000;
+        final int sinT = t * sin / 0x1000;
+        final int cosT = t * cos / 0x1000;
+        final int sinB = b * sin / 0x1000;
+        final int cosB = b * cos / 0x1000;
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut((clut & 0b111111) * 16, clut >>> 6)
@@ -303,11 +320,35 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
           .uv(2, u, v + h - 1)
           .uv(3, u + w - 1, v + h - 1);
 
+        final Vector3f colour = new Vector3f(manager.params_10.colour_1c).div(255.0f);
+        final PolyBuilder builder = new PolyBuilder("LMB Sprite", GL_TRIANGLE_STRIP)
+          .clut((clut & 0b111111) * 16, clut >>> 6)
+          .vramPos(this.metrics_54.u_00 & 0x3c0, (this.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
+          .addVertex(screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT, 0)
+          .uv(u, v)
+          .rgb(colour)
+          .addVertex(screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT, 0)
+          .uv(u + w - 1, v)
+          .rgb(colour)
+          .addVertex(screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB, 0)
+          .uv(u, v + h - 1)
+          .rgb(colour)
+          .addVertex(screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB, 0)
+          .uv(u + w - 1, v + h - 1)
+          .rgb(colour);
+
         if((manager.params_10.flags_00 >>> 30 & 1) != 0) {
           cmd.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
+          builder.translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
         }
 
         GPU.queueCommand(z / 4.0f, cmd);
+
+        this.obj = builder.build();
+        transforms.identity();
+        transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z);
+        RENDERER.queueOrthoModel(this.obj, transforms, QueuedModelStandard.class);
+        this.obj.delete();
       }
     } else {
       //LAB_80116790
