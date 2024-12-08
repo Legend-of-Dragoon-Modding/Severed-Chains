@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
+import legend.game.input.Input;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import static legend.core.GameEngine.CONFIG;
 
 public abstract class ControlHost implements Iterable<Control> {
   private final List<Control> controls = new ArrayList<>();
@@ -109,6 +113,10 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected InputPropagation mouseMove(final int x, final int y) {
+    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+      return InputPropagation.HANDLED;
+    }
+
     this.mouseX = x;
     this.mouseY = y;
 
@@ -122,6 +130,10 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+      return InputPropagation.HANDLED;
+    }
+
     final Control control = this.findControlAt(x, y);
 
     if(control != null && !control.isDisabled()) {

@@ -1,11 +1,15 @@
 package legend.game.inventory.screens;
 
 import legend.game.SItem;
+import legend.game.input.Input;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static legend.core.GameEngine.CONFIG;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -81,6 +85,10 @@ public abstract class MenuScreen extends ControlHost {
 
   @Override
   protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+      return InputPropagation.HANDLED;
+    }
+
     this.updateHover(x, y);
     this.updateFocus(x, y);
 
