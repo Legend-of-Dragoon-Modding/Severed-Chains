@@ -282,6 +282,7 @@ public final class Input {
     controller.addBinding(new InputBinding(InputAction.BATTLE_ESCAPE, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.BATTLE_GUARD, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.BATTLE_ITEMS, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BATTLE_BUTTON_MAP, controller, InputType.KEYBOARD));
 
     controller.addBinding(new InputBinding(InputAction.SPEED_UP, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.SLOW_DOWN, controller, InputType.KEYBOARD));

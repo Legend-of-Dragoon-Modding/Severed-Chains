@@ -1515,7 +1515,7 @@ public class BattleHud {
         }
 
         // Input for BattleControllerInputControl UI control
-        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) {
+        if(Input.pressedThisFrame(InputAction.BATTLE_BUTTON_MAP)) {
           this.battleControllerInputControl.toggleRendering();
           }
 

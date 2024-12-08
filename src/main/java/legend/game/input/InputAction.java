@@ -39,6 +39,7 @@ public enum InputAction {
   BATTLE_ESCAPE(-1),
   BATTLE_GUARD(-1),
   BATTLE_ITEMS(-1),
+  BATTLE_BUTTON_MAP(-1),
 
   SPEED_UP(-1),
   SLOW_DOWN(-1),
