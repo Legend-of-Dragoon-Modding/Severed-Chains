@@ -97,6 +97,7 @@ lod_core.keybind.BATTLE_SPECIAL=Special (battle)
 lod_core.keybind.BATTLE_ESCAPE=Escape (battle)
 lod_core.keybind.BATTLE_GUARD=Guard (battle)
 lod_core.keybind.BATTLE_ITEMS=Items (battle)
+lod_core.keybind.BATTLE_BUTTON_MAP=Button Map (battle)
 lod_core.keybind.SPEED_UP=Increase game speed
 lod_core.keybind.SLOW_DOWN=Decrease game speed
 lod_core.keybind.DEBUGGER=Debugger

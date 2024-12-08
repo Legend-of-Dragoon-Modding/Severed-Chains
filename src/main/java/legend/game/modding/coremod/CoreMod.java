@@ -112,6 +112,7 @@ public class CoreMod {
     KEYBIND_CONFIGS.put(InputAction.BATTLE_ESCAPE, CONFIG_REGISTRAR.register("keybind_escape", () -> new ControllerKeybindConfigEntry(false)));
     KEYBIND_CONFIGS.put(InputAction.BATTLE_GUARD, CONFIG_REGISTRAR.register("keybind_guard", () -> new ControllerKeybindConfigEntry(false)));
     KEYBIND_CONFIGS.put(InputAction.BATTLE_ITEMS, CONFIG_REGISTRAR.register("keybind_items", () -> new ControllerKeybindConfigEntry(false)));
+    KEYBIND_CONFIGS.put(InputAction.BATTLE_BUTTON_MAP, CONFIG_REGISTRAR.register("keybind_button_map", () -> new ControllerKeybindConfigEntry(false)));
     KEYBIND_CONFIGS.put(InputAction.SPEED_UP, CONFIG_REGISTRAR.register("keybind_speed_up", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_EQUAL)));
     KEYBIND_CONFIGS.put(InputAction.SLOW_DOWN, CONFIG_REGISTRAR.register("keybind_slow_down", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_MINUS)));
     KEYBIND_CONFIGS.put(InputAction.DEBUGGER, CONFIG_REGISTRAR.register("keybind_debugger", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_F12)));
