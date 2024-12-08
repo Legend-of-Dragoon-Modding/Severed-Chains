@@ -29,7 +29,6 @@ import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
-import legend.game.modding.events.utility.UtilitySimpleRandEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -618,10 +617,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_800133dc
     simpleRandSeed_8004dd44 = v1 * 9 + 0x3711;
-    final var simpleRandResult = simpleRandSeed_8004dd44 / 2 & 0xffff;
-
-    final var utilitySimpleRandEvent = EVENTS.postEvent(new UtilitySimpleRandEvent(simpleRandResult, v1, simpleRandSeed_8004dd44));
-    return utilitySimpleRandEvent.simpleRandResult;
+    return simpleRandSeed_8004dd44 / 2 & 0xffff;
   }
 
   @Method(0x80013404L)

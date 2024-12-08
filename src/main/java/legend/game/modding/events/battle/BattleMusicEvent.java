@@ -12,12 +12,12 @@ public class BattleMusicEvent extends BattleEvent {
     this.victoryType = victoryType;
     this.musicIndex = musicIndex;
     this.stageData = new StageData2c(
-      stageData._00,
+      stageData.unused_00,
       stageData.musicIndex_04,
-      stageData._08,
+      stageData.escapeChance_08,
       stageData.postCombatSubmapScene_0c,
-      stageData._10,
-      stageData._14,
+      stageData.playerOpeningCamera_10,
+      stageData.monsterOpeningCamera_14,
       stageData.cameraPosIndices_18[0],
       stageData.cameraPosIndices_18[1],
       stageData.cameraPosIndices_18[2],
