@@ -1,17 +1,14 @@
 Unlock party fixes for Haschel leaving after Gehrich fight
-*Just in case they get read elsewhere, s24 and s25 are kept updated. Might be safe to delete.
+*Just in case they are read elsewhere, s24 and s25 are kept updated. Might be safe to remove.
 --- original
 +++ modified
-@@ -1246,6 +1246,7 @@
- call 103, stor[24], 0x0, 0x0, 0x0
- jmp inl[:LABEL_56]
- LABEL_148:
+@@ -1253,24 +1253,31 @@
+ mov stor[25], stor[24]
+ jmp inl[:LABEL_150]
+ LABEL_149:
 # Check slot 0 for Haschel
 +jmp_cmp ==, 0x4, var[17][0], inl[:HASCHEL_SLOT0]
- mov var[17][1], stor[24]
- mov var[17][2], stor[25]
- jmp_cmp !=, 0x4, stor[24], inl[:LABEL_149]
-@@ -1257,20 +1258,26 @@
+ jmp_cmp !=, 0x4, stor[25], inl[:LABEL_152]
  LABEL_150:
  mov 0x6, stor[25]
  jmp_cmp !=, stor[25], stor[24], inl[:LABEL_151]
@@ -23,7 +20,6 @@ Unlock party fixes for Haschel leaving after Gehrich fight
 +jmp_cmp ==, 0x6, var[17][0], inl[:EMPTY_SLOT2]
  mov stor[25], var[17][2]
  LABEL_152:
-# Remove unnecessary flag resets
 -andor 0x40, 0x23, var[115 + 0]
 -andor 0x40, 0x0, var[115 + 1]
 -andor 0x40, 0x3, var[115 + 2]
