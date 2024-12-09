@@ -101,6 +101,7 @@ import legend.game.modding.events.battle.AttackSpGainEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.scripting.FlowControl;
@@ -5955,6 +5956,8 @@ public class Battle extends EngineState {
       Unpacker.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
       Unpacker.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
+
+    EVENTS.postEvent(new DragoonDeffEvent((4139 + index * 2)));
   }
 
   @Method(0x800e6844L)
