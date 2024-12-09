@@ -5936,7 +5936,7 @@ public class Battle extends EngineState {
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
-    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
+    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index >= 84 ? 0 : index] << 16;
     this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
     if((deffManager_800c693c.flags_20 & 0x4_0000) != 0) {
