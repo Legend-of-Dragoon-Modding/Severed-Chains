@@ -1,0 +1,53 @@
+Unlock party fixes for Haschel leaving before Gehrich fight
+*Just in case they get read elsewhere, s24 and s25 are kept updated. Might be safe to delete.
+--- original
++++ modified
+@@ -2727,6 +2727,7 @@
+ data 0xffffff9c
+ data 0xfffffce0
+ LABEL_287:
+# Check slot 0 for Haschel
++jmp_cmp ==, 0x4, var[17][0], inl[:HASCHEL_SLOT0]
+ mov var[17][1], stor[24]
+ mov var[17][2], stor[25]
+ jmp_cmp !=, 0x4, stor[24], inl[:LABEL_288]
+@@ -2738,20 +2739,26 @@
+ LABEL_289:
+ mov 0x6, stor[25]
+ jmp_cmp !=, stor[25], stor[24], inl[:LABEL_290]
+# Check slot 0 for Shana
++jmp_cmp ==, 0x2, var[17][0], inl[:EMPTY_SLOT2]
+ mov 0x2, stor[25]
+ LABEL_290:
+# Check slot 0 for Meru
++jmp_cmp ==, 0x6, var[17][0], inl[:EMPTY_SLOT2]
+ mov stor[25], var[17][2]
+ LABEL_291:
+# Remove unnecessary flag resets
+-andor 0x40, 0x23, var[115 + 0]
+-andor 0x40, 0x0, var[115 + 1]
+-andor 0x40, 0x3, var[115 + 2]
+-andor 0x40, 0x3, var[115 + 3]
+ andor 0x40, 0x0, var[115 + 4]
+-andor 0x40, 0x3, var[115 + 5]
+-andor 0x40, 0x3, var[115 + 6]
+-andor 0x40, 0x0, var[115 + 7]
+-andor 0x40, 0x0, var[115 + 8]
+ return
++HASCHEL_SLOT0:
+# Shift party slots*
++mov var[17][2], stor[24]
++mov var[17][1], var[17][0]
++mov stor[24], var[17][1]
++EMPTY_SLOT2:
++mov 0xffffffff, stor[25]
++mov stor[25], var[17][2]
++jmp_cmp ==, 0xffffffff, var[17][0], inl[:SOLO_HASCHEL]
++jmp inl[:LABEL_291]
++SOLO_HASCHEL:
+# Replace solo Haschel with Dart
++mov 0x0, var[17][0]
++jmp inl[:LABEL_291]
+ LABEL_292:
+ gosub inl[:LABEL_56]
+ memcpy 0x3, inl[:LABEL_293], stor[stor[stor[0], 24], 11]
