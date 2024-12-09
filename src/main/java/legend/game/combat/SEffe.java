@@ -141,6 +141,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
+import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -197,6 +198,8 @@ public final class SEffe {
 
   private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
+  
+  private static final MV seffeTransforms = new MV();
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
@@ -313,11 +316,10 @@ public final class SEffe {
   /** used renderCtmd */
   @Method(0x800de3f4L)
   public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
-    final MV sp0x10 = new MV();
     if((effectParams.flags_00 & 0x8) != 0) {
       //TODO pretty sure this isn't equivalent to MATRIX#normalize
-      transforms.normal(sp0x10);
-      GsSetLightMatrix(sp0x10);
+      transforms.normal(seffeTransforms);
+      GsSetLightMatrix(seffeTransforms);
     } else {
       //LAB_800de458
       GsSetLightMatrix(transforms);
@@ -325,24 +327,24 @@ public final class SEffe {
 
     //LAB_800de45c
     if(RenderEngine.legacyMode != 0) {
-      transforms.compose(worldToScreenMatrix_800c3548, sp0x10);
+      transforms.compose(worldToScreenMatrix_800c3548, seffeTransforms);
     } else {
-      sp0x10.set(transforms);
+      seffeTransforms.set(transforms);
     }
 
     if((effectParams.flags_00 & 0x400_0000) == 0) {
-      sp0x10.rotationXYZ(effectParams.rot_10);
-      sp0x10.scale(effectParams.scale_16);
+      seffeTransforms.rotationXYZ(effectParams.rot_10);
+      seffeTransforms.scale(effectParams.scale_16);
 
-      // Transform override is already in screenspace so we need to un-transform it
+      // Transform override is already in screenspace, so we need to un-transform it
       if(RenderEngine.legacyMode == 0) {
-        sp0x10.mul(worldToScreenMatrix_800c3548.invert(new Matrix3f()));
+        seffeTransforms.mulLocal(inverseWorldToScreenMatrix.get3x3(new Matrix3f()));
       }
     }
 
     //LAB_800de4a8
     //LAB_800de50c
-    GTE.setTransforms(sp0x10);
+    GTE.setTransforms(seffeTransforms);
 
     final ModelPart10 dobj2 = new ModelPart10();
     dobj2.attribute_00 = effectParams.flags_00;
@@ -359,7 +361,7 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    final QueuedModelBattleTmd model = RENDERER.queueModel(obj, sp0x10, QueuedModelBattleTmd.class)
+    final QueuedModelBattleTmd model = RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -370,7 +372,6 @@ public final class SEffe {
     if(objTable.vdf != null) {
       model.vdf(objTable.vdf);
     }
-
     //LAB_800de528
   }
 
@@ -881,14 +882,14 @@ public final class SEffe {
     if(mode == 0) {
       effect.scaleOrUseEffectAcceleration_6c = true;
       effect.effectAcceleration_70.set(script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get() / (float)0x100);
-      effect.scaleParticleAcceleration_80 = script.params_20[5].get();
+      effect.scaleParticleAcceleration_80 = script.params_20[5].get() / (float)0x100;
       //LAB_801023d0
     } else if(mode == 1) {
       effect.scaleOrUseEffectAcceleration_6c = false;
       //LAB_801023e0
     } else if(mode == 2) {
       //LAB_801023e8
-      effect.scaleParticleAcceleration_80 = script.params_20[5].get();
+      effect.scaleParticleAcceleration_80 = script.params_20[5].get() / (float)0x100;
     }
 
     //LAB_801023ec
@@ -1659,8 +1660,9 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "How dense the rain should be")
   @Method(0x80109158L)
   public static FlowControl scriptAllocateRainEffect(final RunningScript<? extends BattleObject> script) {
-    final int count = script.params_20[1].get();
-    final RainEffect08 effect = new RainEffect08(count);
+    final float displayWidthModifier = RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+    final int count = (int)(script.params_20[1].get() * displayWidthModifier);
+    final RainEffect08 effect = new RainEffect08(count, displayWidthModifier);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("RainEffect08", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.params_10.flags_00 = 0x5000_0000;
@@ -1669,7 +1671,7 @@ public final class SEffe {
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
     for(int i = 0; i < count; i++) {
       rainArray[i]._00 = 1;
-      rainArray[i].pos0_02.x = (short)seed_800fa754.nextInt(513);
+      rainArray[i].pos0_02.x = (short)seed_800fa754.nextInt((int)(513 * displayWidthModifier));
       rainArray[i].pos0_02.y = (short)seed_800fa754.nextInt(257);
       rainArray[i].speed_0a = seed_800fa754.nextFloat(0.75f) + 0.25f;
     }
@@ -2000,31 +2002,31 @@ public final class SEffe {
       feather.callbackIndex_02 = 0;
       feather.currentFrame_04 = 0;
       feather.countCallback0Frames_64 = 1;
-      final int yOffset = -1500 / featherCount * i;
+      final float yOffset = -1500.0f / featherCount * i;
       feather.translation_08.set(0, yOffset, 0);
       feather.yOrigin_54 = yOffset;
-      feather.xOffset_48 = rand() % 0x361 + 0x100 << 8;
+      feather.xOffset_48 = rand() % 865 + 256;
       feather.countCallback1and3Frames_4c = rand() % 13 + 8;
-      final int stepOffsetX = feather.xOffset_48 * 2 / feather.countCallback1and3Frames_4c;
+      final float stepOffsetX = feather.xOffset_48 * 2 / feather.countCallback1and3Frames_4c;
       feather.velocityTranslationMagnitudeXz_40 = stepOffsetX;
       feather.accelerationTranslationMagnitudeXz_44 = -stepOffsetX / feather.countCallback1and3Frames_4c;
 
-      final int angleStep;
+      final float angleStep;
       if((simpleRand() & 1) != 0) {
-        angleStep = 0x5000 - feather.xOffset_48 >> 4 << 1;
+        angleStep = (80.0f - feather.xOffset_48) / 8.0f;
       } else {
         //LAB_8010d3b4
-        angleStep = -(0x5000 - (feather.xOffset_48 >> 4) << 1);
+        angleStep = -((80.0f - (feather.xOffset_48 / 16.0f)) * 2.0f);
       }
 
       //LAB_8010d3cc
-      feather.angleStep_60 = MathHelper.psxDegToRad(angleStep) / 0x100;
-      feather.translationMagnitudeY_50 = rand() % 0x178 << 8;
+      feather.angleStep_60 = MathHelper.psxDegToRad(angleStep);
+      feather.translationMagnitudeY_50 = rand() % 376;
       simpleRand();
-      feather.spriteAngle_6e = MathHelper.psxDegToRad(rand() % 0x1000);
+      feather.spriteAngle_6e = MathHelper.psxDegToRad(rand() % 4096.0f);
       feather.translationMagnitudeXz_3c = 0;
       feather.angle_58 = 0;
-      feather.angleNoiseXz_5c = MathHelper.psxDegToRad(rand() % 0x1000);
+      feather.angleNoiseXz_5c = MathHelper.psxDegToRad(rand() % 4096.0f);
       feather.r_38 = 0x7f;
       feather.g_39 = 0x7f;
       feather.b_3a = 0x7f;
@@ -4341,10 +4343,10 @@ public final class SEffe {
   /** Used by down burst and night raid */
   @ScriptDescription("Allocates an LMB animation")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lmbFlags", description = "Unknown, selects which LMB to use")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lmbFlags", description = "Selects which LMB to use")
   @Method(0x80117eb0L)
   public static FlowControl scriptAllocateLmbAnimation(final RunningScript<? extends BattleObject> script) {
-    final int param1 = script.params_20[1].get();
+    final int lmbFlags = script.params_20[1].get();
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "LMB animation",
       script.scriptState_04,
@@ -4356,34 +4358,34 @@ public final class SEffe {
     manager.flags_04 = 0;
 
     final DeffPart.LmbType lmbType;
-    if((param1 & 0xf_ff00) == 0xf_ff00) {
-      lmbType = deffManager_800c693c.lmbs_390[param1 & 0xff];
+    if((lmbFlags & 0xf_ff00) == 0xf_ff00) {
+      lmbType = deffManager_800c693c.lmbs_390[lmbFlags & 0xff];
     } else {
       //LAB_80117f58
-      lmbType = (DeffPart.LmbType)deffManager_800c693c.getDeffPart(param1);
+      lmbType = (DeffPart.LmbType)deffManager_800c693c.getDeffPart(lmbFlags);
     }
 
     //LAB_80117f68
     final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
     effect.lmbType_00 = lmbType.type_04;
-    effect._04 = 0;
+    effect.previousTick_04 = 0;
     effect.lmb_0c = lmbType.lmb_08;
     effect.lmbTransforms_10 = null;
-    effect._38 = 1;
-    effect._3c = 0x1000;
+    effect.totalSubFrames_38 = 1;
+    effect.subTickStep_3c = 0x1000;
     effect.deffTmdFlags_48 = -1;
     effect.deffSpriteFlags_50 = -1;
 
     //LAB_80117fc4
     for(int i = 0; i < 8; i++) {
-      effect._14[i] = 0;
+      effect.deffFlags_14[i] = 0;
     }
 
     final int type = effect.lmbType_00 & 0x7;
     if(type == 0) {
       //LAB_80118004
       final LmbType0 lmb = (LmbType0)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.partAnimations_08[0].count_04;
+      effect.keyframeCount_08 = lmb.partAnimations_08[0].keyframeCount_04;
     } else if(type == 1) {
       //LAB_80118018
       final LmbType1 lmb = (LmbType1)effect.lmb_0c;
@@ -4391,7 +4393,7 @@ public final class SEffe {
       effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04];
 
       for(int i = 0; i < lmb.objectCount_04; i++) {
-        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb._10[i]);
+        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.transforms_10[i]);
       }
     } else if(type == 2) {
       //LAB_80118068
@@ -4415,32 +4417,32 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with LMB animation")
+  @ScriptDescription("Set a flag at the given index in the LmbAnimationEffect5c deffFlags array")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagIndex", description = "DEFF flag index to set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlag", description = "Value of DEFF flag to set")
   @Method(0x801181a8L)
-  public static FlowControl FUN_801181a8(final RunningScript<?> script) {
+  public static FlowControl scriptSetLmbDeffFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    ((LmbAnimationEffect5c)manager.effect_44)._14[script.params_20[1].get()] = script.params_20[2].get();
+    ((LmbAnimationEffect5c)manager.effect_44).deffFlags_14[script.params_20[1].get()] = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with LMB animation")
+  @ScriptDescription("Sets metric used for sub-steps and manager transforms during secondary LMB processing")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "managerTransformFlags", description = "The flags for whether manager colour and scale are transformed")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "subStepCountMultiplier", description = "Multiplier used with subStepCount to calculate maximum number of sub-steps")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "subStepCount", description = "Base count of sub-steps for secondary LMB processing")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalManagerTransformMultiplier", description = "Fip12 multiplier for final manager colour and scale values")
   @Method(0x801181f0L)
-  public static FlowControl FUN_801181f0(final RunningScript<?> script) {
+  public static FlowControl scriptSetLmbManagerTransformMetrics(final RunningScript<?> script) {
     final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class).effect_44;
 
-    final int v1 = script.params_20[3].get() + 1;
-    effect.flags_34 = script.params_20[1].get();
-    effect._38 = script.params_20[2].get() * v1;
-    effect._3c = 0x1000 / v1;
-    effect._40 = script.params_20[4].get();
+    final int subStepCount = script.params_20[3].get() + 1;
+    effect.managerTransformFlags_34 = script.params_20[1].get();
+    effect.totalSubFrames_38 = script.params_20[2].get() * subStepCount;
+    effect.subTickStep_3c = 0x1000 / subStepCount;
+    effect.finalManagerTransformMultiplier_40 = script.params_20[4].get();
     return FlowControl.CONTINUE;
   }
 

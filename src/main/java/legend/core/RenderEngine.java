@@ -14,6 +14,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.RenderState;
 import legend.core.opengl.Resolution;
+import legend.core.opengl.ScissorStack;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
@@ -28,6 +29,7 @@ import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.Battle;
+import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -59,9 +61,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
@@ -109,7 +109,8 @@ public class RenderEngine {
 
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
-  private final RenderState state = new RenderState(this);
+  public final ScissorStack scissorStack;
+  private final RenderState state;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -245,6 +246,7 @@ public class RenderEngine {
   private int renderWidth;
   /** The actual height for rendering (taking into account resolution config) */
   private int renderHeight;
+  private float renderAspectRatio;
 
   private long lastFrame;
   private double vsyncCount;
@@ -278,8 +280,12 @@ public class RenderEngine {
   private boolean frameAdvance;
   private boolean reloadShaders;
 
+  private int frameSkipIndex;
+
   public RenderEngine() {
     this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    this.scissorStack = new ScissorStack(this, this.mainBatch);
+    this.state = new RenderState(this, this.scissorStack);
   }
 
   /**
@@ -302,6 +308,10 @@ public class RenderEngine {
     for(int i = 0; i < this.batches.size(); i++) {
       this.batches.get(i).reset();
     }
+  }
+
+  public float getNativeAspectRatio() {
+    return this.mainBatch.aspectRatio;
   }
 
   /** NOTE: you must call {@link #updateProjections} yourself */
@@ -342,12 +352,20 @@ public class RenderEngine {
     return this.renderHeight;
   }
 
+  public float getRenderAspectRatio() {
+    return this.renderAspectRatio;
+  }
+
   public void setProjectionDepth(final float depth) {
     this.mainBatch.setProjectionDepth(depth);
   }
 
   public void updateProjections() {
     this.mainBatch.updateProjections();
+  }
+
+  public boolean expandedSubmap() {
+    return this.mainBatch.expandedSubmap;
   }
 
   public Window.Events events() {
@@ -425,6 +443,7 @@ public class RenderEngine {
     this.window.events.onResize(this::onResize);
 
     this.window.events.onMouseMove(this::onMouseMove);
+    this.window.events.onPressedThisFrame(this::onPressedThisFrame);
     this.window.events.onKeyPress(this::onKeyPress);
     this.window.events.onKeyRelease(this::onKeyRelease);
 
@@ -556,6 +575,28 @@ public class RenderEngine {
 
       if(!this.paused) {
         this.renderCallback.run();
+
+        if(Config.getGameSpeedMultiplier() > 1) {
+          for(int i = 0; i < this.batches.size(); i++) {
+            this.batches.get(i).modelPool.ignoreQueues = true;
+            this.batches.get(i).orthoPool.ignoreQueues = true;
+          }
+
+          this.mainBatch.modelPool.ignoreQueues = true;
+          this.mainBatch.orthoPool.ignoreQueues = true;
+
+          for(int i = 1; i < Config.getGameSpeedMultiplier(); i++) {
+            this.renderCallback.run();
+          }
+
+          for(int i = 0; i < this.batches.size(); i++) {
+            this.batches.get(i).modelPool.ignoreQueues = false;
+            this.batches.get(i).orthoPool.ignoreQueues = false;
+          }
+
+          this.mainBatch.modelPool.ignoreQueues = false;
+          this.mainBatch.orthoPool.ignoreQueues = false;
+        }
       }
 
       if(legacyMode == 0 && this.usePs1Gpu) {
@@ -609,6 +650,8 @@ public class RenderEngine {
         Texture.deleteTextures();
       }
 
+      this.scissorStack.reset();
+
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
@@ -635,6 +678,7 @@ public class RenderEngine {
     }
 
     this.state.initBatch(batch);
+    this.state.enableScissor();
 
     this.clearDepth();
 
@@ -649,6 +693,8 @@ public class RenderEngine {
 
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPoolTranslucent(batch, batch.orthoPool);
+
+    this.state.disableScissor();
   }
 
   private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
@@ -683,9 +729,7 @@ public class RenderEngine {
       final QueuedModel<?, ?> entry = pool.get(i);
       entry.useShader(modelIndex, 1);
 
-      if(entry.scissor.w != 0) {
-        this.state.scissor(entry.scissor);
-      }
+      this.state.scissor(entry);
 
       if(entry.shouldRender(null)) {
         if(backFaceCulling) {
@@ -707,10 +751,6 @@ public class RenderEngine {
             entry.render(translucency);
           }
         }
-      }
-
-      if(entry.scissor.w != 0) {
-        this.state.disableScissor();
       }
     }
   }
@@ -747,9 +787,7 @@ public class RenderEngine {
       if(entry.hasTranslucency()) {
         entry.useShader(modelIndex, 2);
 
-        if(entry.scissor.w != 0) {
-          this.state.scissor(entry.scissor);
-        }
+        this.state.scissor(entry);
 
         entry.useTexture();
 
@@ -771,10 +809,6 @@ public class RenderEngine {
         if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_QUARTER_F);
-        }
-
-        if(entry.scissor.w != 0) {
-          this.state.disableScissor();
         }
       }
     }
@@ -960,6 +994,8 @@ public class RenderEngine {
       this.renderHeight = res.verticalResolution;
     }
 
+    this.renderAspectRatio = (float)this.renderWidth / (float)this.renderHeight;
+
     // glLineWidth has been removed on M3 macs
     if(!this.isMac()) {
       glLineWidth(Math.max(1, this.renderHeight / 480.0f));
@@ -1039,6 +1075,24 @@ public class RenderEngine {
     }
   }
 
+  private void onPressedThisFrame(final Window window, final InputAction inputAction) {
+    switch(inputAction) {
+      case InputAction.SPEED_UP -> Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() + 1, 16));
+      case InputAction.SLOW_DOWN -> Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() - 1, 1));
+      case InputAction.PAUSE -> this.togglePause = !this.togglePause;
+      case InputAction.FRAME_ADVANCE -> {
+        if(this.paused) {
+          this.frameAdvanceSingle = true;
+        }
+      }
+      case InputAction.FRAME_ADVANCE_HOLD -> {
+        if(this.paused) {
+          this.frameAdvance = true;
+        }
+      }
+    }
+  }
+
   private void onKeyPress(final Window window, final int key, final int scancode, final int mods) {
     if(this.allowMovement) {
       switch(key) {
@@ -1070,16 +1124,6 @@ public class RenderEngine {
       }
     } else if(key == GLFW_KEY_F5) {
       this.reloadShaders = true;
-    } else if(key == GLFW_KEY_F11) {
-      this.togglePause = !this.togglePause;
-    } else if(key == GLFW_KEY_F9) {
-      if(this.paused) {
-        this.frameAdvanceSingle = true;
-      }
-    } else if(key == GLFW_KEY_F10) {
-      if(this.paused) {
-        this.frameAdvance = true;
-      }
     }
 
     if(key == GLFW_KEY_M && (mods & GLFW_MOD_CONTROL) != 0) {

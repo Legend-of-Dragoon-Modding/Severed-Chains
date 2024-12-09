@@ -276,5 +276,19 @@ public final class Input {
     controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.BUTTON_WEST, controller, InputType.KEYBOARD));
+
+    controller.addBinding(new InputBinding(InputAction.BATTLE_DRAGOON, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BATTLE_SPECIAL, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BATTLE_ESCAPE, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BATTLE_GUARD, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BATTLE_ITEMS, controller, InputType.KEYBOARD));
+
+    controller.addBinding(new InputBinding(InputAction.SPEED_UP, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.SLOW_DOWN, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DEBUGGER, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.PAUSE, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE_HOLD, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.KILL_STUCK_SOUNDS, controller, InputType.KEYBOARD));
   }
 }

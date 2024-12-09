@@ -77,8 +77,7 @@ public class UiBox {
     xs[3] = x1 - 1;
     ys[3] = y1;
 
-    final QuadBuilder builder = new QuadBuilder("Battle UI Border")
-      .bpp(Bpp.BITS_4);
+    final QuadBuilder builder = new QuadBuilder("Battle UI Border");
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
@@ -98,7 +97,7 @@ public class UiBox {
         leftX = xs[borderMetrics.indexXy1_02] + borderMetrics.offsetX_08;
         rightX = xs[borderMetrics.indexXy0_00] - borderMetrics.offsetX_08;
         rightU = borderMetrics.u_04;
-        leftU = rightU + borderMetrics.w_0c - 1;
+        leftU = rightU + borderMetrics.w_0c;
       } else {
         //LAB_800f1128
         leftX = xs[borderMetrics.indexXy0_00] - borderMetrics.offsetX_08;
@@ -109,6 +108,7 @@ public class UiBox {
 
       builder
         .add()
+        .bpp(Bpp.BITS_4)
         .clut(720, 497)
         .vramPos(704, 256)
         .monochrome(0.5f)

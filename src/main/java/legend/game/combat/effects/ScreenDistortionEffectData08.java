@@ -98,7 +98,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
           final int x = (int)(MathHelper.sin(angle2) * multiplierX);
           final int y = (int)(row * whichHalf + rowOffset);
 
-          addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f);
+          this.addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f);
 
           angle2 += whichHalf * 0.05f;
         }

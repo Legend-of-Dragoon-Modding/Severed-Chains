@@ -1,6 +1,5 @@
 package legend.game.combat.particles;
 
-import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -34,7 +33,7 @@ public class Instance52 extends ParticleEffectInstance94 {
   @Method(0x800fc61cL)
   @Override
   protected void beforeRender(final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
-    this.scaleVertical_08 = MathHelper.psxDegToRad((short)((rcos(this._14) * this._16 >> 12) * manager.params_10.scale_16.y));
+    this.scaleVertical_08 = (short)((rcos(this._14) * this._16 >> 12) * manager.params_10.scale_16.y) / (float)0x1000;
     this._14 -= this._18;
 
     if(this._16 > 0) {

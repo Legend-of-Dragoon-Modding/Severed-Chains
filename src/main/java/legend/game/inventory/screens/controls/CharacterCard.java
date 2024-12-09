@@ -32,7 +32,7 @@ public class CharacterCard extends Control {
     this.background.getRenderable().x_40 += 8;
 
     this.name = this.addControl(new Label(""));
-    this.name.setPos(56, 3);
+    this.name.setPos(57, 3);
 
     this.portrait = this.addControl(new CharacterPortrait());
     this.portrait.setPos(8, 8);
@@ -67,7 +67,7 @@ public class CharacterCard extends Control {
       renderFraction(x + this.getWidth(), y + 39, stats.mp_06, stats.maxMp_6e);
       renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c[this.charId].xp_00, getXpToNextLevel(this.charId));
 
-      this.name.setVisibility(!renderCharacterStatusEffect(x + 48, y + 3, this.charId));
+      this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.charId));
     }
   }
 }

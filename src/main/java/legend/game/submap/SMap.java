@@ -209,6 +209,7 @@ public class SMap extends EngineState {
   private int mapTransitionTicks_800cab28;
 
   public SubmapState smapLoadingStage_800cb430 = SubmapState.INIT_0;
+  public Runnable menuTransition;
 
   private boolean returnedToSameSubmapAfterBattle_800cb448;
 
@@ -3243,6 +3244,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4708L)
   private void renderSubmap() {
+    this.submap.preDraw();
     this.attachedSobjEffect.renderAttachedSobjEffects(this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
     this.renderSubmapOverlays();
     this.handleAndRenderSubmapEffects();
@@ -3636,7 +3638,7 @@ public class SMap extends EngineState {
       SCRIPTS.pause();
       loadCharacterStats();
       cacheCharacterSlots();
-      initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
+      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       submapCutForSave_800cb450 = submapCut_80052c30;
       return;
@@ -3650,7 +3652,7 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3fc) {
       SCRIPTS.pause();
-      initMenu(WhichMenu.RENDER_NEW_MENU, TooManyItemsScreen::new);
+      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, TooManyItemsScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3661,14 +3663,14 @@ public class SMap extends EngineState {
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
       this.mapTransitionData_800cab24.clear();
-      initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
+      this.menuTransition = () -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3fe) {
       SCRIPTS.pause();
-      initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
+      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3676,7 +3678,7 @@ public class SMap extends EngineState {
     if(newScene == 0x3ff) {
       SCRIPTS.pause();
       submapCutForSave_800cb450 = submapCut_80052c30;
-      initInventoryMenu();
+      this.menuTransition = () -> initInventoryMenu();
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -3844,6 +3846,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e5fc0
+        this.menuTransition.run();
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_MENU_14;
         this.mapTransitionTicks_800cab28 = 0;
       }

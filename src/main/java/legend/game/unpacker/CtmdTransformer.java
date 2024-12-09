@@ -223,14 +223,16 @@ public final class CtmdTransformer {
 
     // Adjust DEFF container pointers
     final int deffContainerPtr10 = (int)MathHelper.get(newData, 0x10, 2);
-    final int deffContainerPtr14 = (int)MathHelper.get(newData, 0x14, 2); // NOTE: for type 4 DEFF containers, this may be the 0xc container header, but that should be fine because 0xc will be < the offset
-
     if(deffContainerPtr10 > containerOffset) {
       MathHelper.set(newData, 0x10, 2, deffContainerPtr10 + containerSizeDifference);
     }
 
-    if(deffContainerPtr14 > containerOffset) {
-      MathHelper.set(newData, 0x14, 2, deffContainerPtr14 + containerSizeDifference);
+    final int type = newData[3];
+    if(type != 0x3) {
+      final int deffContainerPtr14 = (int)MathHelper.get(newData, 0x14, 2); // NOTE: for type 4 DEFF containers, this may be the 0xc container header, but that should be fine because 0xc will be < the offset
+      if(deffContainerPtr14 > containerOffset) {
+        MathHelper.set(newData, 0x14, 2, deffContainerPtr14 + containerSizeDifference);
+      }
     }
 
     // Adjust 0xc container pointers

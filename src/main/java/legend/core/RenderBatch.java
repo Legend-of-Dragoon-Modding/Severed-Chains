@@ -17,7 +17,7 @@ import static legend.core.MathHelper.PI;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class RenderBatch {
-  private final RenderEngine engine;
+  public final RenderEngine engine;
 
   /** The PS1 native width (usually 320, sometimes 368) */
   public float projectionWidth;

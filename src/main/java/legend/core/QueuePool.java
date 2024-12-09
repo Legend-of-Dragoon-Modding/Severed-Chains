@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 public class QueuePool<T> {
   private final List<T> queue = new ArrayList<>();
   private final Map<Class<? extends T>, QueueType<? extends T>> pools = new HashMap<>();
+  boolean ignoreQueues;
 
   public <U extends T> void addType(final Class<U> cls, final Supplier<U> constructor) {
     this.pools.put(cls, new QueueType<>(constructor));
@@ -30,7 +31,11 @@ public class QueuePool<T> {
   public <U extends T> U acquire(final Class<U> cls) {
     @SuppressWarnings("unchecked")
     final U entry = (U)this.pools.get(cls).acquire();
-    this.queue.add(entry);
+
+    if(!this.ignoreQueues) {
+      this.queue.add(entry);
+    }
+
     return entry;
   }
 

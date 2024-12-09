@@ -3274,12 +3274,9 @@ public class WMap extends EngineState {
     GsGetLs(modelAndAnimData.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
 
-    final PolyBuilder builder = new PolyBuilder("Queen Fury wake", GL_TRIANGLES);
-    builder
+    final PolyBuilder builder = new PolyBuilder("Queen Fury wake", GL_TRIANGLES)
       .bpp(Bpp.BITS_4)
-      .translucency(Translucency.B_PLUS_F)
-      .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
-      .vramPos(448, 0);
+      .translucency(Translucency.B_PLUS_F);
 
     //LAB_800e1ccc
     for(int i = 0; i < modelAndAnimData.wakeSegmentCount - 1; i++) {
@@ -3321,6 +3318,8 @@ public class WMap extends EngineState {
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
           .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
+          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
+          .vramPos(448, 0)
           .uv(0, 0)
           .rgb(r0, g0, b0)
           .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)

@@ -2800,7 +2800,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    textboxText.waitTicks = currentEngineState_8004dd04.tickMultiplier();
+    textboxText.waitTicks = currentEngineState_8004dd04.tickMultiplier() - 1;
 
     final LodString str = textboxText.str_24;
 

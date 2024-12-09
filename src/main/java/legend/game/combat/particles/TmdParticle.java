@@ -17,6 +17,7 @@ import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -31,6 +32,7 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -45,6 +47,10 @@ public class TmdParticle extends ParticleEffectData98 {
 
   /** ushort */
   private int tpage_56;
+
+  private final MV particleTransforms = new MV();
+  private final MV gteTransforms = new MV();
+  private final Matrix4f glTransforms = new Matrix4f();
 
   public TmdParticle(final ParticleManager manager, @Nullable final BattleObject parentBobj, final ParticleEffectData98Inner24 effectInner, final int type, final int count) {
     super(manager, parentBobj, effectInner, type, count);
@@ -86,7 +92,7 @@ public class TmdParticle extends ParticleEffectData98 {
   }
 
   @Method(0x800fc4bcL)
-  private void FUN_800fc4bc(final MV out, final ParticleMetrics48 particleMetrics) {
+  private void initParticleTransforms(final MV out, final ParticleMetrics48 particleMetrics) {
     out.rotationXYZ(particleMetrics.rotation_38);
     out.transfer.set(particleMetrics.translation_18);
     out.scaleLocal(particleMetrics.scale_28);
@@ -99,29 +105,31 @@ public class TmdParticle extends ParticleEffectData98 {
   @Method(0x800fcf20L)
   private void renderTmdParticle(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final TmdObjTable1c tmd, final Obj obj, final ParticleMetrics48 particleMetrics, final int tpage) {
     if(particleMetrics.flags_00 >= 0) {
-      final MV transforms = new MV();
-      this.FUN_800fc4bc(transforms, particleMetrics);
+      this.initParticleTransforms(this.particleTransforms, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e61e4(particleMetrics.colour0_40.x, particleMetrics.colour0_40.y, particleMetrics.colour0_40.z);
       }
 
       //LAB_800fcf94
-      GsSetLightMatrix(transforms);
-      final MV transformMatrix = new MV();
+      GsSetLightMatrix(this.particleTransforms);
 
       if(RenderEngine.legacyMode != 0) {
-        transforms.compose(worldToScreenMatrix_800c3548, transformMatrix);
+        this.particleTransforms.compose(worldToScreenMatrix_800c3548, this.gteTransforms);
       } else {
-        transformMatrix.set(transforms);
+        this.gteTransforms.set(this.particleTransforms);
+        this.glTransforms.set(this.particleTransforms).setTranslation(this.particleTransforms.transfer);
       }
 
       if((particleMetrics.flags_00 & 0x400_0000) == 0) {
-        transformMatrix.rotationXYZ(manager.params_10.rot_10);
-        transformMatrix.scaleLocal(manager.params_10.scale_16);
+        this.gteTransforms.rotationXYZ(manager.params_10.rot_10);
+        this.gteTransforms.scaleLocal(manager.params_10.scale_16);
+        this.glTransforms.rotationXYZ(manager.params_10.rot_10.x, manager.params_10.rot_10.y, manager.params_10.rot_10.z);
+        this.glTransforms.scaleLocal(manager.params_10.scale_16.x, manager.params_10.scale_16.y, manager.params_10.scale_16.z);
+        this.glTransforms.mulLocal(inverseWorldToScreenMatrix).setTranslation(this.particleTransforms.transfer);
       }
 
       //LAB_800fcff8
-      GTE.setTransforms(transformMatrix);
+      GTE.setTransforms(this.gteTransforms);
       zOffset_1f8003e8 = 0;
       if((manager.params_10.flags_00 & 0x4000_0000) != 0) {
         tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
@@ -146,7 +154,7 @@ public class TmdParticle extends ParticleEffectData98 {
       zMax_1f8003cc = oldZMax;
       zMin = oldZMin;
 
-      RENDERER.queueModel(obj, transformMatrix, QueuedModelBattleTmd.class)
+      RENDERER.queueModel(obj, this.glTransforms, QueuedModelBattleTmd.class)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)

@@ -854,7 +854,7 @@ public class Battle extends EngineState {
     functions[605] = SEffe::scriptAllocateLmbAnimation;
     functions[606] = SEffe::allocateDeffTmd;
     functions[607] = this::FUN_800e99bc;
-    functions[608] = SEffe::FUN_801181a8;
+    functions[608] = SEffe::scriptSetLmbDeffFlag;
 
     functions[610] = this::scriptLoadCmbAnimation;
     functions[611] = SEffe::scriptAttachEffectToBobj;
@@ -877,7 +877,7 @@ public class Battle extends EngineState {
     functions[628] = SEffe::allocateDeffTmdRenderer;
     functions[629] = SEffe::scriptAttackEffectToBobjRelative;
     functions[630] = SEffe::scriptGetEffectRotation;
-    functions[631] = SEffe::FUN_801181f0;
+    functions[631] = SEffe::scriptSetLmbManagerTransformMetrics;
     functions[632] = SEffe::scriptAllocateBuggedEffect;
 
     functions[634] = SEffe::scriptWaitForXaToLoad;

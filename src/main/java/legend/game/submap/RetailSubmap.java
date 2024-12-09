@@ -1054,6 +1054,12 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
+  public void preDraw() {
+    RENDERER.scissorStack.push();
+    RENDERER.scissorStack.setRescale(this.backgroundRect.x + Math.round(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x), this.backgroundRect.y, this.backgroundRect.w, this.backgroundRect.h);
+  }
+
+  @Override
   @Method(0x800e7954L)
   public void drawEnv(final MV[] sobjMatrices) {
     this.animateAndRenderSubmapModel(this.submapCutMatrix_800d4bb0);

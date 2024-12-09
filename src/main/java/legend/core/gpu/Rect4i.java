@@ -33,6 +33,52 @@ public final class Rect4i {
   }
 
   /**
+   * Set the rect to a region inside the current rect using absolute coordinates.
+   * Any part that falls outside the current rect will be clipped.
+   */
+  public Rect4i subregion(final int x, final int y, int w, int h) {
+    if(this.x < x) {
+      this.w -= x - this.x;
+      this.x = x;
+    } else {
+      w -= this.x - x;
+    }
+
+    if(this.y < y) {
+      this.h -= y - this.y;
+      this.y = y;
+    } else {
+      h -= this.y - y;
+    }
+
+    if(this.w > w) {
+      this.w = w;
+    }
+
+    if(this.h > h) {
+      this.h = h;
+    }
+
+    if(this.w < 0) {
+      this.w = 0;
+    }
+
+    if(this.h < 0) {
+      this.h = 0;
+    }
+
+    return this;
+  }
+
+  /**
+   * Set the rect to a region inside the current rect using absolute coordinates.
+   * Any part that falls outside the current rect will be clipped.
+   */
+  public Rect4i subregion(final Rect4i other) {
+    return this.subregion(other.x, other.y, other.w, other.h);
+  }
+
+  /**
    * Calculate the minimum bounding box that contains other rects
    */
   public static Rect4i bound(final Rect4i... rects) {

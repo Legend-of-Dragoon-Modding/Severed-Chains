@@ -539,6 +539,7 @@ public final class SItem {
     unloadSoundFile(8);
     unloadSoundFile(8);
 
+    menuMusic.reset();
     playMusicPackage(menuMusic, true);
   }
 
@@ -1477,8 +1478,8 @@ public final class SItem {
       }
 
       //LAB_80108218
-      if(!renderCharacterStatusEffect(x + 48, y + 3, charId)) {
-        renderText(characterNames_801142dc[charId], x + 48, y + 3, TextColour.BROWN);
+      if(!renderCharacterStatusEffect(x + 46, y + 3, charId)) {
+        renderText(characterNames_801142dc[charId], x + 49, y + 3, TextColour.BROWN);
       }
     }
 

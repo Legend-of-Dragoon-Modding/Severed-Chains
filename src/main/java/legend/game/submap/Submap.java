@@ -27,6 +27,7 @@ public abstract class Submap {
   public abstract void prepareSobjModel(final SubmapObject210 sobj);
   public abstract void finishLoading();
 
+  public abstract void preDraw();
   public abstract void draw();
   public abstract void drawEnv(final MV[] sobjMatrices);
   public abstract void unload();
