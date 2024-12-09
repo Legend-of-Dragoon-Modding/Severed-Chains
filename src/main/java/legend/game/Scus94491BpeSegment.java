@@ -28,6 +28,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
+import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -161,6 +162,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
+import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
@@ -2356,7 +2358,7 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8];
+    final StageData2c stageData = getEncounterStageData(encounterId_800bb0f8);
 
     if(stageData.musicIndex_04 != 0xff) {
       stopMusicSequence();
@@ -2376,9 +2378,11 @@ public final class Scus94491BpeSegment {
         default -> parseMelbuVictory(stageData.musicIndex_04 & 0x1f);
       };
 
+      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(victoryType, musicIndex, stageData));
+
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4000);
 
-      loadEncounterMusic(musicIndex, victoryType);
+      loadEncounterMusic(battleMusicEvent.musicIndex, battleMusicEvent.victoryType);
     }
 
     //LAB_8001df9c
