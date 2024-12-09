@@ -11,6 +11,8 @@ public class SunRhapsodyItem extends RecoverHpItem {
     super(34, 25, false, 100);
   }
 
+  public SunRhapsodyItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }
+
   @Override
   protected BiFunction<Integer, Integer, Integer> getRecoveryMethod() {
     return Scus94491BpeSegment_8002::addMp;

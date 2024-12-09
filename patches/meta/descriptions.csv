@@ -897,7 +897,7 @@
 "SEffe::scriptAllocateGradientRaysEffect","Allocates a gradient rays effect"
 "SEffe::scriptAllocateScreenCaptureEffect","Allocates a screen capture effect"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
-"Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
+"Battle::scriptArcherSp","Set Archer SP"
 "SItem::scriptGetMaxItemCount","Gets the maximum number of items a player can carry"
 "SItem::scriptGetMaxEquipmentCount","Gets the maximum number of equipment a player can carry"
 "SItem::scriptIsItemSlotUsed","Checks whether or not an item slot is used"

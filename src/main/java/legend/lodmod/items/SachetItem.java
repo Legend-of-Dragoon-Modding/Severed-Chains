@@ -10,6 +10,8 @@ public class SachetItem extends BattleItem {
     super(46, 200);
   }
 
+  public SachetItem(final int icon, final int price) { super(icon, price); }
+
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return location == UsageLocation.BATTLE;
