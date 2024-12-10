@@ -22,6 +22,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
+import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -40,11 +41,22 @@ import static legend.game.combat.SEffe.FUN_800e62a8;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
 import static legend.game.combat.SEffe.getRotationAndScaleFromTransforms;
 import static legend.game.combat.SEffe.renderTmdSpriteEffect;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 
 public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType> {
+  private static final BiConsumer<EffectManagerData6c<EffectManagerParams.AnimType>, Integer>[] renderers = new BiConsumer[3];
+  {
+    renderers[0] = this::renderLmbSpecial;
+    renderers[1] = this::renderLmbTmd;
+    renderers[2] = this::renderLmbPoly;
+  };
+
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
+
+  /** Needed to track queue depths for poly renderer */
+  private final float[] zDepths;
+  private final MV transforms = new MV();
+  private PolyBuilder builder;
 
   public int lmbType_00;
   /** fip12 */
@@ -73,6 +85,59 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   public Obj obj;
   public int deffSpriteFlags_50;
   public final SpriteMetrics08 metrics_54 = new SpriteMetrics08();
+
+  public LmbAnimationEffect5c(final int lmbFlags) {
+    final DeffPart.LmbType lmbType;
+    if((lmbFlags & 0xf_ff00) == 0xf_ff00) {
+      lmbType = deffManager_800c693c.lmbs_390[lmbFlags & 0xff];
+    } else {
+      //LAB_80117f58
+      lmbType = (DeffPart.LmbType)deffManager_800c693c.getDeffPart(lmbFlags);
+    }
+
+    //LAB_80117f68
+    this.lmbType_00 = lmbType.type_04;
+    this.previousTick_04 = 0;
+    this.lmb_0c = lmbType.lmb_08;
+    this.lmbTransforms_10 = null;
+    this.totalSubFrames_38 = 1;
+    this.subTickStep_3c = 0x1000;
+    this.deffTmdFlags_48 = -1;
+    this.deffSpriteFlags_50 = -1;
+
+    this.zDepths = new float[this.lmb_0c.objectCount_04];
+
+    //LAB_80117fc4
+    for(int i = 0; i < 8; i++) {
+      this.deffFlags_14[i] = 0;
+    }
+
+    final int type = this.lmbType_00 & 0x7;
+    if(type == 0) {
+      //LAB_80118004
+      final LmbType0 lmb = (LmbType0)this.lmb_0c;
+      this.keyframeCount_08 = lmb.partAnimations_08[0].keyframeCount_04;
+    } else if(type == 1) {
+      //LAB_80118018
+      final LmbType1 lmb = (LmbType1)this.lmb_0c;
+      this.keyframeCount_08 = lmb.keyframeCount_0a;
+      this.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04];
+
+      for(int i = 0; i < lmb.objectCount_04; i++) {
+        this.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.transforms_10[i]);
+      }
+    } else if(type == 2) {
+      //LAB_80118068
+      final LmbType2 lmb = (LmbType2)this.lmb_0c;
+      this.keyframeCount_08 = lmb.keyframeCount_0a;
+      this.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04 * 2];
+
+      for(int i = 0; i < lmb.objectCount_04; i++) {
+        this.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
+        this.lmbTransforms_10[i + lmb.objectCount_04] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
+      }
+    }    
+  }
 
   @Override
   public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
@@ -197,186 +262,173 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     //LAB_80117e80
   }
 
-  @Override
-  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
-    }
+  private void renderLmbSpecial(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags) {
+    //LAB_80116790
+    final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
+    final EffectManagerData6c<?> manager2 = state.innerStruct_00;
+    manager.params_10.trans_04.set(this.transforms.transfer);
+    getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, this.transforms);
+
+    final int oldParentBobjIndex = manager2.parentBobjIndex_0c;
+    final int oldParentPartIndex = manager2.parentPartIndex_0d;
+    manager2.parentBobjIndex_0c = manager.myScriptState_0e.index;
+    manager2.parentPartIndex_0d = -1;
+    final int r = manager2.params_10.colour_1c.x;
+    final int g = manager2.params_10.colour_1c.y;
+    final int b = manager2.params_10.colour_1c.z;
+    // As far as I can tell, using R for each of these is right...
+    manager2.params_10.colour_1c.x = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.x / 128;
+    manager2.params_10.colour_1c.y = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.y / 128;
+    manager2.params_10.colour_1c.z = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.z / 128;
+    state.renderer_08.accept(state, manager2);
+    manager2.params_10.colour_1c.x = r;
+    manager2.params_10.colour_1c.y = g;
+    manager2.params_10.colour_1c.z = b;
+    manager2.parentBobjIndex_0c = oldParentBobjIndex;
+    manager2.parentPartIndex_0d = oldParentPartIndex;
   }
 
-  /**
-   * TODO used for rendering deffs of some kind, possibly sprite deffs?
-   *   Uses CTMD render pipeline if type == 0x300_0000
-   */
-  @Method(0x8011619cL)
-  private void renderLmbParticles(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final MV managerTransforms) {
-    final MV transforms = new MV();
-    transforms.rotationZYX(manager.params_10.rot_10);
-    transforms.scale(manager.params_10.scale_16);
-    transforms.transfer.set(manager.params_10.trans_04);
-    transforms.compose(managerTransforms, transforms);
-    final float scale = manager.params_10.scale_28 / (float)0x1000;
-    transforms.scaleLocal(scale, scale, scale);
-    manager.params_10.scale_16.mul(scale);
-
-    final int type = deffFlags & 0xff00_0000;
-    if(type == 0x300_0000) {
-      //LAB_80116708
-      final TmdObjTable1c tmdObjTable;
-      // If we already have it cached
-      if(this.deffTmdFlags_48 == deffFlags) {
-        tmdObjTable = this.deffTmdObjTable_4c;
+  private void renderLmbTmd(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final Integer deffFlags) {
+    //LAB_80116708
+    final TmdObjTable1c tmdObjTable;
+    // If we already have it cached
+    if(this.deffTmdFlags_48 == deffFlags) {
+      tmdObjTable = this.deffTmdObjTable_4c;
+    } else {
+      //LAB_80116724
+      if((deffFlags & 0xf_ff00) == 0xf_ff00) {
+        tmdObjTable = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
       } else {
-        //LAB_80116724
-        if((deffFlags & 0xf_ff00) == 0xf_ff00) {
-          tmdObjTable = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
-        } else {
-          //LAB_80116750
-          tmdObjTable = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-        }
-
-        //LAB_8011676c
-        // Cache it
-        this.deffTmdFlags_48 = deffFlags;
-        this.deffTmdObjTable_4c = tmdObjTable;
-
-        if(this.obj != null) {
-          this.obj.delete();
-        }
-
-        this.obj = TmdObjLoader.fromObjTable(manager.name, this.deffTmdObjTable_4c);
+        //LAB_80116750
+        tmdObjTable = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
-      //LAB_80116778
-      renderTmdSpriteEffect(tmdObjTable, this.obj, manager.params_10, transforms);
-    } else if(type == 0x400_0000) {
-      if(this.deffSpriteFlags_50 != deffFlags) {
-        //LAB_801162e8
-        final BillboardSpriteEffect0c sprite = new BillboardSpriteEffect0c();
+      //LAB_8011676c
+      // Cache it
+      this.deffTmdFlags_48 = deffFlags;
+      this.deffTmdObjTable_4c = tmdObjTable;
 
-        sprite.set(deffFlags);
-        this.metrics_54.u_00 = sprite.metrics_04.u_00;
-        this.metrics_54.v_02 = sprite.metrics_04.v_02;
-        this.metrics_54.w_04 = sprite.metrics_04.w_04;
-        this.metrics_54.h_05 = sprite.metrics_04.h_05;
-        this.metrics_54.clut_06 = sprite.metrics_04.clut_06;
-        this.deffSpriteFlags_50 = deffFlags;
-      }
-
-      final int u = (this.metrics_54.u_00 & 0x3f) * 4;
-      final int v = this.metrics_54.v_02 & 0xff;
-      final int w = this.metrics_54.w_04 & 0xff;
-      final int h = this.metrics_54.h_05 & 0xff;
-      final int clut = this.metrics_54.clut_06;
-
-      //LAB_8011633c
-      final Vector3f worldCoords = new Vector3f();
-      final MV w2sTransform = new MV();
-      final Vector2f screenCoords = new Vector2f();
-      transforms.compose(worldToScreenMatrix_800c3548, w2sTransform);
-      GTE.setTransforms(w2sTransform);
-
-      final float z = perspectiveTransform(worldCoords, screenCoords);
-      if(z >= 80) {
-        //LAB_801163c4
-        // Intified and jankily rounded values to make Down Burst particles look retail-ish due to the effect
-        // being created with expectation that many of them would be infinitely small and not render.
-        final float screenspaceScale = projectionPlaneDistance_1f8003f8 * 2.0f / z * manager.params_10.scale_16.z;
-        final int l = (int)(-w / 2.0f * screenspaceScale);
-        final int r = (int)(w / 2.0f * screenspaceScale);
-        final int t = (int)(-h / 2.0f * screenspaceScale);
-        final int b = (int)(h / 2.0f * screenspaceScale);
-
-        final int intRotation = MathHelper.radToPsxDeg(manager.params_10.rot_10.z);
-        int sin = rsin(intRotation);
-        if(sin == 0xfff) {
-          sin = 0x1000;
-        }
-        int cos = rcos(intRotation);
-        if(cos == 0xfff) {
-          cos = 0x1000;
-        }
-
-        final int sinL = l * sin / 0x1000;
-        final int cosL = l * cos / 0x1000;
-        final int sinR = r * sin / 0x1000;
-        final int cosR = r * cos / 0x1000;
-        final int sinT = t * sin / 0x1000;
-        final int cosT = t * cos / 0x1000;
-        final int sinB = b * sin / 0x1000;
-        final int cosB = b * cos / 0x1000;
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos(this.metrics_54.u_00 & 0x3c0, (this.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
-          .rgb(manager.params_10.colour_1c)
-          .pos(0, screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT)
-          .pos(1, screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT)
-          .pos(2, screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB)
-          .pos(3, screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB)
-          .uv(0, u, v)
-          .uv(1, u + w - 1, v)
-          .uv(2, u, v + h - 1)
-          .uv(3, u + w - 1, v + h - 1);
-
-        final Vector3f colour = new Vector3f(manager.params_10.colour_1c).div(255.0f);
-        final PolyBuilder builder = new PolyBuilder("LMB Sprite", GL_TRIANGLE_STRIP)
-          .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos(this.metrics_54.u_00 & 0x3c0, (this.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
-          .addVertex(screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT, 0)
-          .uv(u, v)
-          .rgb(colour)
-          .addVertex(screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT, 0)
-          .uv(u + w - 1, v)
-          .rgb(colour)
-          .addVertex(screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB, 0)
-          .uv(u, v + h - 1)
-          .rgb(colour)
-          .addVertex(screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB, 0)
-          .uv(u + w - 1, v + h - 1)
-          .rgb(colour);
-
-        if((manager.params_10.flags_00 >>> 30 & 1) != 0) {
-          cmd.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
-          builder.translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
-        }
-
-        GPU.queueCommand(z / 4.0f, cmd);
-
-        this.obj = builder.build();
-        transforms.identity();
-        transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z);
-        RENDERER.queueOrthoModel(this.obj, transforms, QueuedModelStandard.class);
+      if(this.obj != null) {
         this.obj.delete();
       }
-    } else {
-      //LAB_80116790
-      final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
-      final EffectManagerData6c<?> manager2 = state.innerStruct_00;
-      manager.params_10.trans_04.set(transforms.transfer);
-      getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, transforms);
 
-      final int oldParentBobjIndex = manager2.parentBobjIndex_0c;
-      final int oldParentPartIndex = manager2.parentPartIndex_0d;
-      manager2.parentBobjIndex_0c = manager.myScriptState_0e.index;
-      manager2.parentPartIndex_0d = -1;
-      final int r = manager2.params_10.colour_1c.x;
-      final int g = manager2.params_10.colour_1c.y;
-      final int b = manager2.params_10.colour_1c.z;
-      // As far as I can tell, using R for each of these is right...
-      manager2.params_10.colour_1c.x = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.x / 128;
-      manager2.params_10.colour_1c.y = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.y / 128;
-      manager2.params_10.colour_1c.z = manager.params_10.colour_1c.x * manager2.params_10.colour_1c.z / 128;
-      state.renderer_08.accept(state, manager2);
-      manager2.params_10.colour_1c.x = r;
-      manager2.params_10.colour_1c.y = g;
-      manager2.params_10.colour_1c.z = b;
-      manager2.parentBobjIndex_0c = oldParentBobjIndex;
-      manager2.parentPartIndex_0d = oldParentPartIndex;
+      this.obj = TmdObjLoader.fromObjTable(manager.name, this.deffTmdObjTable_4c);
     }
-    //LAB_801168b8
+
+    //LAB_80116778
+    renderTmdSpriteEffect(tmdObjTable, this.obj, manager.params_10, this.transforms);
   }
+
+  private void renderLmbPoly(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags) {
+    if(this.deffSpriteFlags_50 != deffFlags) {
+      //LAB_801162e8
+      final BillboardSpriteEffect0c sprite = new BillboardSpriteEffect0c();
+
+      sprite.set(deffFlags);
+      this.metrics_54.u_00 = sprite.metrics_04.u_00;
+      this.metrics_54.v_02 = sprite.metrics_04.v_02;
+      this.metrics_54.w_04 = sprite.metrics_04.w_04;
+      this.metrics_54.h_05 = sprite.metrics_04.h_05;
+      this.metrics_54.clut_06 = sprite.metrics_04.clut_06;
+      this.deffSpriteFlags_50 = deffFlags;
+    }
+
+    final int u = (this.metrics_54.u_00 & 0x3f) * 4;
+    final int v = this.metrics_54.v_02 & 0xff;
+    final int w = this.metrics_54.w_04 & 0xff;
+    final int h = this.metrics_54.h_05 & 0xff;
+    final int clut = this.metrics_54.clut_06;
+
+    //LAB_8011633c
+    final Vector3f worldCoords = new Vector3f();
+    final MV w2sTransform = new MV();
+    final Vector2f screenCoords = new Vector2f();
+    this.transforms.compose(worldToScreenMatrix_800c3548, w2sTransform);
+    GTE.setTransforms(w2sTransform);
+
+    final float z = perspectiveTransform(worldCoords, screenCoords);
+    if(z >= 80) {
+      //LAB_801163c4
+      // Intified and jankily rounded values to make Down Burst particles look retail-ish due to the effect
+      // being created with expectation that many of them would be infinitely small and not render.
+      final float screenspaceScale = projectionPlaneDistance_1f8003f8 * 2.0f / z * manager.params_10.scale_16.z;
+      final int l = (int)(-w / 2.0f * screenspaceScale);
+      final int r = (int)(w / 2.0f * screenspaceScale);
+      final int t = (int)(-h / 2.0f * screenspaceScale);
+      final int b = (int)(h / 2.0f * screenspaceScale);
+
+      final int intRotation = MathHelper.radToPsxDeg(manager.params_10.rot_10.z);
+      int sin = rsin(intRotation);
+      if(sin == 0xfff) {
+        sin = 0x1000;
+      }
+      int cos = rcos(intRotation);
+      if(cos == 0xfff) {
+        cos = 0x1000;
+      }
+
+      final int sinL = l * sin / 0x1000;
+      final int cosL = l * cos / 0x1000;
+      final int sinR = r * sin / 0x1000;
+      final int cosR = r * cos / 0x1000;
+      final int sinT = t * sin / 0x1000;
+      final int cosT = t * cos / 0x1000;
+      final int sinB = b * sin / 0x1000;
+      final int cosB = b * cos / 0x1000;
+
+      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+        .clut((clut & 0b111111) * 16, clut >>> 6)
+        .vramPos(this.metrics_54.u_00 & 0x3c0, (this.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
+        .rgb(manager.params_10.colour_1c)
+        .pos(0, screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT)
+        .pos(1, screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT)
+        .pos(2, screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB)
+        .pos(3, screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB)
+        .uv(0, u, v)
+        .uv(1, u + w - 1, v)
+        .uv(2, u, v + h - 1)
+        .uv(3, u + w - 1, v + h - 1);
+
+      final Vector3f colour = new Vector3f(manager.params_10.colour_1c).div(255.0f);
+      this.builder
+        .addVertex(screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT, 0)
+        .clut((clut & 0b111111) * 16, clut >>> 6)
+        .vramPos(this.metrics_54.u_00 & 0x3c0, (this.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
+        .uv(u, v)
+        .rgb(colour)
+        .addVertex(screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT, 0)
+        .uv(u + w - 1, v)
+        .rgb(colour)
+        .addVertex(screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB, 0)
+        .uv(u, v + h - 1)
+        .rgb(colour)
+        .addVertex(screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB, 0)
+        .uv(u, v + h - 1)
+        .rgb(colour)
+        .addVertex(screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT, 0)
+        .uv(u + w - 1, v)
+        .rgb(colour)
+        .addVertex(screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB, 0)
+        .uv(u + w - 1, v + h - 1)
+        .rgb(colour);
+
+      if((manager.params_10.flags_00 >>> 30 & 1) != 0) {
+        cmd.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
+        this.builder.translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
+      }
+
+      GPU.queueCommand(z / 4.0f, cmd);
+    }
+  }
+
+  private void setTransforms(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final MV managerTransforms) {
+    this.transforms.rotationZYX(manager.params_10.rot_10);
+    this.transforms.scale(manager.params_10.scale_16);
+    this.transforms.transfer.set(manager.params_10.trans_04);
+    this.transforms.compose(managerTransforms, this.transforms);
+    final float scale = manager.params_10.scale_28 / (float)0x1000;
+    this.transforms.scaleLocal(scale, scale, scale);
+    manager.params_10.scale_16.mul(scale);}
 
   @Method(0x801168e8L)
   private void processLmbType0(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int tickFip12, final MV managerTransforms) {
@@ -398,9 +450,20 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         manager.params_10.scale_16.x = (currentKeyframeTransforms.scale_00.x * lerpScaleA + nextKeyframeTransforms.scale_00.x * lerpScaleB);
         manager.params_10.scale_16.y = (currentKeyframeTransforms.scale_00.y * lerpScaleA + nextKeyframeTransforms.scale_00.y * lerpScaleB);
         manager.params_10.scale_16.z = (currentKeyframeTransforms.scale_00.z * lerpScaleA + nextKeyframeTransforms.scale_00.z * lerpScaleB);
-        this.renderLmbParticles(manager, this.deffFlags_14[lmb.partAnimations_08[i].partFlagIndex_00], managerTransforms);
+
+        final int deffFlags = this.deffFlags_14[lmb.partAnimations_08[i].partFlagIndex_00];
+        if((deffFlags & 0x400_0000) != 0) {
+          if(this.builder == null) {
+            this.builder = new PolyBuilder("LMB particles");
+          }
+        }
+
+        this.setTransforms(manager, managerTransforms);
+        renderers[deffFlags >> 25].accept(manager, deffFlags);
       }
     }
+
+    this.renderPolyObj();
   }
 
   @Method(0x80116b7cL)
@@ -549,7 +612,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         manager.params_10.trans_04.set(transforms.trans_06);
         manager.params_10.scale_16.set(transforms.scale_00);
 
-        this.renderLmbParticles(manager, deffFlags, managerTransforms);
+        this.setTransforms(manager, managerTransforms);
+        renderers[deffFlags >> 25].accept(manager, deffFlags);
       }
     }
     //LAB_801170d4
@@ -792,7 +856,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       final LmbTransforms14 transformHi = transformsHi[i];
       final int flags = lmb.transformFlags_0c[i];
 
-      if(this.deffFlags_14[flags >>> 24] != 0) {
+      final int deffFlags = this.deffFlags_14[flags >>> 24];
+      if(deffFlags != 0) {
         if(manager.params_10._2c != 0) {
           manager.params_10.rot_10.set(transformLo.rot_0c);
         } else {
@@ -803,9 +868,45 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         //LAB_80117938
         manager.params_10.trans_04.set(transformHi.trans_06);
         manager.params_10.scale_16.set(transformHi.scale_00);
-        this.renderLmbParticles(manager, this.deffFlags_14[flags >>> 24], managerTransforms);
+
+        //LAB_801179c0
+        if((deffFlags & 0x400_0000) != 0) {
+          if(this.builder == null) {
+            this.builder = new PolyBuilder("LMB particles");
+          }
+        }
+
+        this.setTransforms(manager, managerTransforms);
+        renderers[deffFlags >> 25].accept(manager, deffFlags);
       }
     }
-    //LAB_801179c0
+
+    this.renderPolyObj();
+  }
+
+  private void renderPolyObj() {
+    if(this.builder != null) {
+      this.obj = this.builder.build();
+
+
+      for(int i = 0; i < this.lmb_0c.objectCount_04; i++) {
+        this.transforms.identity();
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths[i]);
+        RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
+          .vertices(i * 6, 6);
+      }
+
+      this.obj.delete();
+      this.obj = null;
+      this.builder = null;
+    }
+  }
+
+  @Override
+  public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
+    if(this.obj != null) {
+      this.obj.delete();
+      this.obj = null;
+    }
   }
 }

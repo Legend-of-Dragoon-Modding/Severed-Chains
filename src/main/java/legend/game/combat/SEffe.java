@@ -28,8 +28,6 @@ import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
-import legend.game.combat.deff.LmbType1;
-import legend.game.combat.deff.LmbType2;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
@@ -4350,62 +4348,12 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "LMB animation",
       script.scriptState_04,
-      new LmbAnimationEffect5c(),
+      new LmbAnimationEffect5c(lmbFlags),
       new EffectManagerParams.AnimType()
     );
 
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0;
-
-    final DeffPart.LmbType lmbType;
-    if((lmbFlags & 0xf_ff00) == 0xf_ff00) {
-      lmbType = deffManager_800c693c.lmbs_390[lmbFlags & 0xff];
-    } else {
-      //LAB_80117f58
-      lmbType = (DeffPart.LmbType)deffManager_800c693c.getDeffPart(lmbFlags);
-    }
-
-    //LAB_80117f68
-    final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
-    effect.lmbType_00 = lmbType.type_04;
-    effect.previousTick_04 = 0;
-    effect.lmb_0c = lmbType.lmb_08;
-    effect.lmbTransforms_10 = null;
-    effect.totalSubFrames_38 = 1;
-    effect.subTickStep_3c = 0x1000;
-    effect.deffTmdFlags_48 = -1;
-    effect.deffSpriteFlags_50 = -1;
-
-    //LAB_80117fc4
-    for(int i = 0; i < 8; i++) {
-      effect.deffFlags_14[i] = 0;
-    }
-
-    final int type = effect.lmbType_00 & 0x7;
-    if(type == 0) {
-      //LAB_80118004
-      final LmbType0 lmb = (LmbType0)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.partAnimations_08[0].keyframeCount_04;
-    } else if(type == 1) {
-      //LAB_80118018
-      final LmbType1 lmb = (LmbType1)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.keyframeCount_0a;
-      effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04];
-
-      for(int i = 0; i < lmb.objectCount_04; i++) {
-        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.transforms_10[i]);
-      }
-    } else if(type == 2) {
-      //LAB_80118068
-      final LmbType2 lmb = (LmbType2)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.keyframeCount_0a;
-      effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04 * 2];
-
-      for(int i = 0; i < lmb.objectCount_04; i++) {
-        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
-        effect.lmbTransforms_10[i + lmb.objectCount_04] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
-      }
-    }
 
     //LAB_801180e0
     //LAB_801180e8
