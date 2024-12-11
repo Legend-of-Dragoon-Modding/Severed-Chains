@@ -1316,6 +1316,8 @@ public class Battle extends EngineState {
 
   @Method(0x800c7524L)
   public void initBattle() {
+    new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
+
     this.FUN_800c8624();
 
     gameState_800babc8._b4++;
