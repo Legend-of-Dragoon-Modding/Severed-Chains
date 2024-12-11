@@ -237,6 +237,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
@@ -585,6 +586,8 @@ public class Battle extends EngineState {
   @Override
   @Method(0x800186a0L)
   public void tick() {
+    LOGGER.info("Loading stage %d", pregameLoadingStage_800bb10c);
+
     if(battleLoaded_800bc94c) {
       this.checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents();
       this.battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c].run();
@@ -1499,6 +1502,17 @@ public class Battle extends EngineState {
   public void loadEncounterAssets() {
     this.loadEnemyTextures();
 
+    // Count total monsters
+    loadingMonsterModels.set(0);
+    for(int i = 0; i < this.combatantCount_800c66a0; i++) {
+      final CombatantStruct1a8 combatant = this.getCombatant(i);
+      if(combatant.charSlot_19c < 0) { // Monster
+        loadingMonsterModels.incrementAndGet();
+      }
+
+      //LAB_800fc050
+    }
+
     //LAB_800fc030
     for(int i = 0; i < this.combatantCount_800c66a0; i++) {
       final CombatantStruct1a8 combatant = this.getCombatant(i);
@@ -2220,6 +2234,10 @@ public class Battle extends EngineState {
     }
 
     combatant.flags_19e &= 0xffdf;
+
+    if(isMonster) {
+      loadingMonsterModels.decrementAndGet();
+    }
   }
 
   @Method(0x800c952cL)

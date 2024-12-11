@@ -9,6 +9,8 @@ import legend.game.unpacker.FileData;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
+
 /** Data related to a combatant (player or enemy) */
 public class CombatantStruct1a8 {
   public List<FileData> mrg_00;
@@ -45,7 +47,7 @@ public class CombatantStruct1a8 {
 
   @Method(0x800c90b0L)
   public boolean isModelLoaded() {
-    return (this.flags_19e & 0x20) == 0 && (this._1a4 >= 0 || this.mrg_00 != null && this.mrg_00.get(32).hasVirtualSize()) && this.isAssetLoaded(0);
+    return loadingMonsterModels.get() == 0 && (this.flags_19e & 0x20) == 0 && (this._1a4 >= 0 || this.mrg_00 != null && this.mrg_00.get(32).hasVirtualSize()) && this.isAssetLoaded(0);
   }
 
   @Method(0x800ca054L)
