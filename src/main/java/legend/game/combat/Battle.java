@@ -585,8 +585,6 @@ public class Battle extends EngineState {
   @Override
   @Method(0x800186a0L)
   public void tick() {
-    LOGGER.info("Loading stage %d", pregameLoadingStage_800bb10c);
-
     if(battleLoaded_800bc94c) {
       this.checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents();
       this.battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c].run();
