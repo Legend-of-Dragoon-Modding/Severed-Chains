@@ -1,3 +1,6 @@
+Haschel rejoins party
+Skip flag resets for other characters
+Unlock party fix
 --- original
 +++ modified
 @@ -2972,6 +2972,8 @@

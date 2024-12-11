@@ -1,4 +1,5 @@
-Unlock party fix, force Dart to slot 0 when party empties
+Entire party leaves, force Dart to slot 0
+Unlock party fix
 --- original
 +++ modified
 @@ -2541,6 +2541,7 @@
