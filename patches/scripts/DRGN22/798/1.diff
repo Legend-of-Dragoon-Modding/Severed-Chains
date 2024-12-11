@@ -15,6 +15,10 @@ Unlock party fix
  andor 0x40, 0x0, var[115 + 7]
  andor 0x40, 0x0, var[115 + 8]
  return
++CHARACTER:
++data 0
++CHARACTER_FLAG:
++data 0
 +HASCHEL_CHECK:
 # stor[24]: Index position for Haschel in active party
 +andor 0x40, 0x0, var[115 + 4]
@@ -53,10 +57,6 @@ Unlock party fix
 +mov var[17][1], stor[24]
 +mov var[17][2], stor[25]
 +return
-+CHARACTER:
-+data 0
-+CHARACTER_FLAG:
-+data 0
  LABEL_292:
  gosub inl[:LABEL_56]
  memcpy 0x3, inl[:LABEL_293], stor[stor[stor[0], 24], 11]
