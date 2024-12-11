@@ -61,6 +61,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F2;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
@@ -617,6 +618,8 @@ public class RenderEngine {
 
         this.renderBatch(this.mainBatch);
 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
         // set render states
         glDisable(GL_DEPTH_TEST);
         glDepthMask(true); // enable depth writes so glClear won't ignore clearing the depth buffer
@@ -682,15 +685,19 @@ public class RenderEngine {
 
     this.clearDepth();
 
+    glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPool(batch.modelPool, true);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPool(batch.orthoPool, false);
 
+    glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPoolTranslucent(batch, batch.modelPool);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPoolTranslucent(batch, batch.orthoPool);
 
@@ -1103,10 +1110,6 @@ public class RenderEngine {
         case GLFW_KEY_SPACE -> this.movingUp = true;
         case GLFW_KEY_LEFT_SHIFT -> this.movingDown = true;
         case GLFW_KEY_ESCAPE -> this.window.close();
-        case GLFW_KEY_TAB -> {
-          this.wireframeMode = !this.wireframeMode;
-          glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
-        }
       }
     } else if(key == GLFW_KEY_TAB) {
       if((mods & GLFW_MOD_SHIFT) != 0) {
@@ -1122,6 +1125,8 @@ public class RenderEngine {
         case 1 -> System.out.println("Switched to legacy rendering");
         case 2 -> System.out.println("Switched to VRAM rendering");
       }
+    } else if(key == GLFW_KEY_F2) {
+      this.wireframeMode = !this.wireframeMode;
     } else if(key == GLFW_KEY_F5) {
       this.reloadShaders = true;
     }
