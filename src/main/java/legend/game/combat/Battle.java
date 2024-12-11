@@ -269,7 +269,6 @@ import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
-import static legend.game.combat.environment.StageData.stageData_80109a98;
 
 public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
@@ -2088,14 +2087,15 @@ public class Battle extends EngineState {
 
         if(charSlot < 0) {
           combatant.flags_19e = 0x1;
+          combatant.vramSlot_1a0 = this.findFreeMonsterTextureSlot(a0);
         } else {
           //LAB_800c8f90
           combatant.flags_19e = 0x5;
+          combatant.vramSlot_1a0 = charSlot + 1;
         }
 
         //LAB_800c8f94
         combatant.charSlot_19c = charSlot;
-        combatant.vramSlot_1a0 = 0;
         combatant.charIndex_1a2 = a0;
         combatant._1a4 = -1;
         combatant._1a6 = -1;
@@ -2617,18 +2617,6 @@ public class Battle extends EngineState {
     final int vramSlot;
 
     if(combatant != null) {
-      //LAB_800ca77c
-      if(combatant.vramSlot_1a0 == 0) {
-        final int charSlot = combatant.charSlot_19c;
-
-        if(charSlot < 0) {
-          combatant.vramSlot_1a0 = this.findFreeMonsterTextureSlot(combatant.charIndex_1a2);
-        } else {
-          //LAB_800ca7c4
-          combatant.vramSlot_1a0 = charSlot + 1;
-        }
-      }
-
       vramSlot = combatant.vramSlot_1a0;
     } else {
       vramSlot = 0;
