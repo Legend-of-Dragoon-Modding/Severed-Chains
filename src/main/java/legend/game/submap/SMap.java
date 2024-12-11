@@ -3313,7 +3313,7 @@ public class SMap extends EngineState {
       return false;
     }
 
-    final var encounterAccumulatorLimit = 0x140;
+    final var encounterAccumulatorLimit = 0x1400;
     final var encounterAccumulatorStepModifier = 2.0f;
     final var encounterAccumulatorStep = this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / encounterAccumulatorStepModifier;
     final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
