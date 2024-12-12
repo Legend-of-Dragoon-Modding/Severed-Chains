@@ -1,5 +1,7 @@
 package legend.game.combat.effects;
 
+import it.unimi.dsi.fastutil.floats.FloatArrayList;
+import it.unimi.dsi.fastutil.floats.FloatList;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
@@ -22,7 +24,6 @@ import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
@@ -45,6 +46,7 @@ import static legend.game.combat.SEffe.renderTmdSpriteEffect;
 
 public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType> {
   private static final QuadConsumer<LmbAnimationEffect5c, EffectManagerData6c<EffectManagerParams.AnimType>, Integer, Integer>[] renderers = new QuadConsumer[3];
+
   static {
     renderers[0] = LmbAnimationEffect5c::renderLmbSpecial;
     renderers[1] = LmbAnimationEffect5c::renderLmbTmd;
@@ -55,7 +57,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
 
   /** Needed to track queue depths for poly renderer */
-  private final ArrayList<Float> zDepths = new ArrayList<>();
+  private final FloatList zDepths = new FloatArrayList();
+  private final Vector3f worldCoords = new Vector3f();
+  private final Vector2f screenCoords = new Vector2f();
+  private final MV w2sTransform = new MV();
   private final MV transforms = new MV();
   private PolyBuilder builder;
 
@@ -165,13 +170,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     final int clut = effect.metrics_54.clut_06;
 
     //LAB_8011633c
-    final Vector3f worldCoords = new Vector3f();
-    final MV w2sTransform = new MV();
-    final Vector2f screenCoords = new Vector2f();
-    effect.transforms.compose(worldToScreenMatrix_800c3548, w2sTransform);
-    GTE.setTransforms(w2sTransform);
+    effect.transforms.compose(worldToScreenMatrix_800c3548, effect.w2sTransform);
+    GTE.setTransforms(effect.w2sTransform);
 
-    final float z = perspectiveTransform(worldCoords, screenCoords);
+    final float z = perspectiveTransform(effect.worldCoords, effect.screenCoords);
     if(z >= 80) {
       effect.zDepths.add(z);
 
@@ -207,10 +209,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         .clut((clut & 0b111111) * 16, clut >>> 6)
         .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
         .rgb(manager.params_10.colour_1c)
-        .pos(0, screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT)
-        .pos(1, screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT)
-        .pos(2, screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB)
-        .pos(3, screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB)
+        .pos(0, effect.screenCoords.x + cosL - sinT, effect.screenCoords.y + sinL + cosT)
+        .pos(1, effect.screenCoords.x + cosR - sinT, effect.screenCoords.y + sinR + cosT)
+        .pos(2, effect.screenCoords.x + cosL - sinB, effect.screenCoords.y + sinL + cosB)
+        .pos(3, effect.screenCoords.x + cosR - sinB, effect.screenCoords.y + sinR + cosB)
         .uv(0, u, v)
         .uv(1, u + w - 1, v)
         .uv(2, u, v + h - 1)
@@ -218,24 +220,24 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
       final Vector3f colour = new Vector3f(manager.params_10.colour_1c).div(255.0f);
       effect.builder
-        .addVertex(screenCoords.x + cosL - sinT, screenCoords.y + sinL + cosT, 0)
+        .addVertex(effect.screenCoords.x + cosL - sinT, effect.screenCoords.y + sinL + cosT, 0)
         .clut((clut & 0b111111) * 16, clut >>> 6)
         .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
         .uv(u, v)
         .rgb(colour)
-        .addVertex(screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT, 0)
+        .addVertex(effect.screenCoords.x + cosR - sinT, effect.screenCoords.y + sinR + cosT, 0)
         .uv(u + w - 1, v)
         .rgb(colour)
-        .addVertex(screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB, 0)
+        .addVertex(effect.screenCoords.x + cosL - sinB, effect.screenCoords.y + sinL + cosB, 0)
         .uv(u, v + h - 1)
         .rgb(colour)
-        .addVertex(screenCoords.x + cosL - sinB, screenCoords.y + sinL + cosB, 0)
+        .addVertex(effect.screenCoords.x + cosL - sinB, effect.screenCoords.y + sinL + cosB, 0)
         .uv(u, v + h - 1)
         .rgb(colour)
-        .addVertex(screenCoords.x + cosR - sinT, screenCoords.y + sinR + cosT, 0)
+        .addVertex(effect.screenCoords.x + cosR - sinT, effect.screenCoords.y + sinR + cosT, 0)
         .uv(u + w - 1, v)
         .rgb(colour)
-        .addVertex(screenCoords.x + cosR - sinB, screenCoords.y + sinR + cosB, 0)
+        .addVertex(effect.screenCoords.x + cosR - sinB, effect.screenCoords.y + sinR + cosB, 0)
         .uv(u + w - 1, v + h - 1)
         .rgb(colour);
 
