@@ -549,7 +549,9 @@ public class RenderEngine {
     this.renderBufferQuad.persistent = true;
 
     this.window.events.onDraw(() -> {
-      this.pre();
+      if(this.frameSkipIndex == 0) {
+        this.pre();
+      }
 
       EVENTS.clearStaleRefs();
 
@@ -575,21 +577,7 @@ public class RenderEngine {
       }
 
       if(!this.paused) {
-        this.renderCallback.run();
-
-        if(Config.getGameSpeedMultiplier() > 1) {
-          for(int i = 0; i < this.batches.size(); i++) {
-            this.batches.get(i).modelPool.ignoreQueues = true;
-            this.batches.get(i).orthoPool.ignoreQueues = true;
-          }
-
-          this.mainBatch.modelPool.ignoreQueues = true;
-          this.mainBatch.orthoPool.ignoreQueues = true;
-
-          for(int i = 1; i < Config.getGameSpeedMultiplier(); i++) {
-            this.renderCallback.run();
-          }
-
+        if(this.frameSkipIndex == 0) {
           for(int i = 0; i < this.batches.size(); i++) {
             this.batches.get(i).modelPool.ignoreQueues = false;
             this.batches.get(i).orthoPool.ignoreQueues = false;
@@ -597,7 +585,17 @@ public class RenderEngine {
 
           this.mainBatch.modelPool.ignoreQueues = false;
           this.mainBatch.orthoPool.ignoreQueues = false;
+        } else {
+          for(int i = 0; i < this.batches.size(); i++) {
+            this.batches.get(i).modelPool.ignoreQueues = true;
+            this.batches.get(i).orthoPool.ignoreQueues = true;
+          }
+
+          this.mainBatch.modelPool.ignoreQueues = true;
+          this.mainBatch.orthoPool.ignoreQueues = true;
         }
+
+        this.renderCallback.run();
       }
 
       if(legacyMode == 0 && this.usePs1Gpu) {
@@ -608,15 +606,18 @@ public class RenderEngine {
         }
 
         this.renderBuffers[this.renderBufferIndex].bind();
-        this.clearColour();
 
-        // Render batches
-        for(int i = 0; i < this.batches.size(); i++) {
-          final RenderBatch batch = this.batches.get(i);
-          this.renderBatch(batch);
+        if(this.frameSkipIndex == 0) {
+          this.clearColour();
+
+          // Render batches
+          for(int i = 0; i < this.batches.size(); i++) {
+            final RenderBatch batch = this.batches.get(i);
+            this.renderBatch(batch);
+          }
+
+          this.renderBatch(this.mainBatch);
         }
-
-        this.renderBatch(this.mainBatch);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -644,16 +645,20 @@ public class RenderEngine {
 
       // If we're paused, don't reset the pool so that we keep rendering the same scene over and over again
       if(!this.paused) {
-        this.resetBatches();
+        if(this.frameSkipIndex == 0) {
+          this.resetBatches();
 
-        this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+          this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
 
-        // Delete stuff marked for deletion
-        Obj.deleteObjects();
-        Texture.deleteTextures();
+          // Delete stuff marked for deletion
+          Obj.deleteObjects();
+          Texture.deleteTextures();
+
+          this.scissorStack.reset();
+        }
+
+        this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
       }
-
-      this.scissorStack.reset();
 
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
