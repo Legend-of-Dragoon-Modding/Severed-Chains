@@ -1,3 +1,4 @@
+Skips moving animation when character is already at the destination
 --- original
 +++ modified
 @@ -152,6 +152,8 @@
