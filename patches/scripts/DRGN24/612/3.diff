@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -152,6 +152,8 @@
+ jmp_cmp !=, stor[29], stor[24], inl[:LABEL_24]
+ jmp_cmp !=, stor[30], stor[25], inl[:LABEL_24]
+ jmp_cmp !=, stor[31], stor[26], inl[:LABEL_24]
++mov 0, stor[24]
++return
+ jmp inl[:LABEL_29]
+ LABEL_24:
+ sub stor[24], stor[29]
