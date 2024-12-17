@@ -69,6 +69,7 @@ diff,SECT/DRGN0.BIN/5268/1,scripts/DRGN0/5268/1.diff,"Polter helm command block,
 diff,SECT/DRGN0.BIN/5274/1,scripts/DRGN0/5274/1.diff,"DD Spirit Leg Swipe, fix character count crash"
 diff,SECT/DRGN0.BIN/5288/1,scripts/DRGN0/5288/1.diff,"Regole Spirit Tsunami, fix character count crash"
 diff,SECT/DRGN0.BIN/5312/1,scripts/DRGN0/5312/1.diff,"Selebus singing, fix character count crash"
+diff,SECT/DRGN0.BIN/5316/1,scripts/DRGN0/5316/1.diff,"Selebus zambo hands' manager not getting secondary bobj index"
 diff,SECT/DRGN0.BIN/5326/1,scripts/DRGN0/5326/1.diff,"Kubila Froggy, fix character count crash"
 diff,SECT/DRGN0.BIN/5334/1,scripts/DRGN0/5334/1.diff,"Zackwell Skeleton, fix character count crash"
 diff,SECT/DRGN0.BIN/5344/1,scripts/DRGN0/5344/1.diff,"Zackwell - Lavitz (weird move), fix character count crash"
