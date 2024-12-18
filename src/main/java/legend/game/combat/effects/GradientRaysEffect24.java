@@ -183,28 +183,22 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       if(effect.type_1c == 1) {
         builder
           .addVertex(xy1.x, xy1.y, 0)
-          .monochrome(0)
           .addVertex(xy2.x, xy2.y, 0)
           .rgb(r, g, g)
-          .addVertex(xy3.x, xy3.y, 0)
-          .rgb(r, g, g);
+          .addVertex(xy3.x, xy3.y, 0);
       } else if(effect.type_1c == 2) {
         builder
           .addVertex(xy1.x, xy1.y, 0)
           .rgb(r / 2, g / 2, b / 2)
           .addVertex(xy2.x, xy2.y, 0)
-          .rgb(r / 2, g / 2, b / 2)
           .addVertex(xy3.x, xy3.y, 0)
           .rgb(r, g, b);
       } else {
         // I don't think there is another type in the scripts, but just to be sure.
         builder
           .addVertex(xy1.x, xy1.y, 0)
-          .monochrome(0)
           .addVertex(xy2.x, xy2.y, 0)
-          .monochrome(0)
-          .addVertex(xy3.x, xy3.y, 0)
-          .monochrome(0);
+          .addVertex(xy3.x, xy3.y, 0);
       }
 
       final Obj obj = builder.build();

@@ -2738,11 +2738,8 @@ public class SMap extends EngineState {
       .addVertex(v0.x, v0.y, 0.0f)
       .rgb(r, g, b)
       .addVertex(v1.x, v0.y, 0.0f)
-      .rgb(r, g, b)
       .addVertex(v0.x, v1.y, 0.0f)
-      .rgb(r, g, b)
       .addVertex(v1.x, v1.y, 0.0f)
-      .rgb(r, g, b)
       .build();
     final MV transforms = new MV();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 148.0f);

@@ -92,7 +92,6 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
           .addVertex(pos[i + 1].x, pos[i + 1].y, 0.0f)
           .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
           .addVertex(pos[i + 2].x, pos[i + 2].y, 0.0f)
-          .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
           .addVertex(pos[    0].x, pos[    0].y, 0.0f)
           .monochrome(r / 255.0f);
       }

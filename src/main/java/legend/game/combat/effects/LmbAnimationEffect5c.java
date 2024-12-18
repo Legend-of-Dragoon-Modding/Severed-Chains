@@ -227,19 +227,14 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         .rgb(colour)
         .addVertex(effect.screenCoords.x + cosR - sinT, effect.screenCoords.y + sinR + cosT, 0)
         .uv(u + w - 1, v)
-        .rgb(colour)
         .addVertex(effect.screenCoords.x + cosL - sinB, effect.screenCoords.y + sinL + cosB, 0)
         .uv(u, v + h - 1)
-        .rgb(colour)
         .addVertex(effect.screenCoords.x + cosL - sinB, effect.screenCoords.y + sinL + cosB, 0)
         .uv(u, v + h - 1)
-        .rgb(colour)
         .addVertex(effect.screenCoords.x + cosR - sinT, effect.screenCoords.y + sinR + cosT, 0)
         .uv(u + w - 1, v)
-        .rgb(colour)
         .addVertex(effect.screenCoords.x + cosR - sinB, effect.screenCoords.y + sinR + cosB, 0)
-        .uv(u + w - 1, v + h - 1)
-        .rgb(colour);
+        .uv(u + w - 1, v + h - 1);
 
       if((manager.params_10.flags_00 >>> 30 & 1) != 0) {
         cmd.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
