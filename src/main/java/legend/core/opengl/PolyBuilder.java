@@ -52,18 +52,18 @@ public class PolyBuilder {
 
   public PolyBuilder addVertex(final Vector3f pos) {
     this.current = new Vertex(pos.x, pos.y, pos.z);
-    this.current.clut = new Vector2i().set(this.lastClut);
-    this.current.vramPos = new Vector2i().set(this.lastVramPos);
-    this.current.colour = new Vector3f().set(this.lastColour);
+    this.current.clut.set(this.lastClut);
+    this.current.vramPos.set(this.lastVramPos);
+    this.current.colour.set(this.lastColour);
     this.vertices.add(this.current);
     return this;
   }
 
   public PolyBuilder addVertex(final float x, final float y, final float z) {
     this.current = new Vertex(x, y, z);
-    this.current.clut = new Vector2i().set(this.lastClut);
-    this.current.vramPos = new Vector2i().set(this.lastVramPos);
-    this.current.colour = new Vector3f().set(this.lastColour);
+    this.current.clut.set(this.lastClut);
+    this.current.vramPos.set(this.lastVramPos);
+    this.current.colour.set(this.lastColour);
     this.vertices.add(this.current);
     return this;
   }
@@ -205,9 +205,9 @@ public class PolyBuilder {
   private static class Vertex {
     private final Vector3f pos = new Vector3f();
     private final Vector2f uv = new Vector2f();
-    private Vector3f colour = new Vector3f();
-    private Vector2i clut;
-    private Vector2i vramPos;
+    private final Vector3f colour = new Vector3f();
+    private final Vector2i clut = new Vector2i();
+    private final Vector2i vramPos = new Vector2i();
 
     private Vertex(final float x, final float y, final float z) {
       this.pos.set(x, y, z);

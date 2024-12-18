@@ -163,7 +163,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
         //LAB_8010abf4
         r = ((128.0f - gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.x / 128.0f) / 256.0f;
         g = r / 2.0f;
-        b = 0.0f;
+        b = g;
       } else if(effect.type_1c == 2) {
         //LAB_8010ac68
         r = (this.getModifierR(gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.x * 8 / 128.0f) / 256.0f;
@@ -184,7 +184,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
         builder
           .addVertex(xy1.x, xy1.y, 0)
           .addVertex(xy2.x, xy2.y, 0)
-          .rgb(r, g, g)
+          .rgb(r, g, b)
           .addVertex(xy3.x, xy3.y, 0);
       } else if(effect.type_1c == 2) {
         builder
