@@ -615,11 +615,19 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         manager.params_10.trans_04.set(transforms.trans_06);
         manager.params_10.scale_16.set(transforms.scale_00);
 
+        if((deffFlags & 0x400_0000) != 0) {
+          if(this.builder == null) {
+            this.builder = new PolyBuilder("LMB particles");
+          }
+        }
+
         this.setTransforms(manager, managerTransforms);
         renderers[deffFlags >> 25].accept(this, manager, deffFlags, i);
       }
     }
+
     //LAB_801170d4
+    this.renderPolyObj();
   }
 
   @Method(0x80117104L)
@@ -893,7 +901,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
       for(int i = 0; i < this.zDepths.size(); i++) {
         this.transforms.identity();
-        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.get(i));
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
         RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
           .vertices(i * 6, 6);
       }
