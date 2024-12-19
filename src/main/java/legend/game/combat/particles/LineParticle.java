@@ -140,11 +140,9 @@ public class LineParticle extends ParticleEffectData98 {
         .addVertex(0.0f, 0.0f, 0.0f)
         .rgb(particleMetrics.colour0_40)
         .addVertex(1.0f, 0.0f, 0.0f)
-        .rgb(particleMetrics.colour0_40)
         .addVertex(0.0f, 1.0f, 0.0f)
         .rgb(particleMetrics.colour1_44)
         .addVertex(1.0f, 1.0f, 0.0f)
-        .rgb(particleMetrics.colour1_44)
         .build();
 
       RENDERER.queueLine(obj, this.identity, particleMetrics.z_04 + manager.params_10.z_22, particleMetrics.p0, particleMetrics.p1)

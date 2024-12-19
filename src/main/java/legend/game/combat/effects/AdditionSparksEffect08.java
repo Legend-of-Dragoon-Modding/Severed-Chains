@@ -75,11 +75,9 @@ public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidTy
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(1.0f)
         .addVertex(1.0f, 0.0f, 0.0f)
-        .monochrome(1.0f)
         .addVertex(0.0f, 1.0f, 0.0f)
         .monochrome(0.5f)
         .addVertex(1.0f, 1.0f, 0.0f)
-        .monochrome(0.5f)
         .build();
     }
 
