@@ -122,7 +122,6 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
@@ -360,6 +359,7 @@ public final class SEffe {
     zMin = oldZMin;
 
     final QueuedModelBattleTmd model = RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
+      .depthOffset(effectParams.z_22)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -468,10 +468,10 @@ public final class SEffe {
 
   /** Used in Astral Drain (ground glow) */
   @Method(0x800e75acL)
-  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix) {
+  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix, final int depthOffset) {
     final MV finalTransform = new MV();
     transformMatrix.compose(worldToScreenMatrix_800c3548, finalTransform);
-    final float z = java.lang.Math.min(0x3ff8, zOffset_1f8003e8 + finalTransform.transfer.z / 4.0f);
+    final float z = java.lang.Math.min(0x3ff8, depthOffset + finalTransform.transfer.z / 4.0f);
 
     if(z >= 40) {
       //LAB_800e7610
@@ -492,7 +492,8 @@ public final class SEffe {
       obj.delete(); // Mark for deletion after this frame
 
       RENDERER.queueModel(obj, transformMatrix, QueuedModelStandard.class)
-        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
+        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
+        .depthOffset(depthOffset);
     }
     //LAB_800e7930
   }
@@ -728,22 +729,21 @@ public final class SEffe {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
-    if(managerInner.flags_00 >= 0) { // No errors
-      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(managerInner.flags_00, metrics);
-      spriteEffect.r_14 = managerInner.colour_1c.x & 0xff;
-      spriteEffect.g_15 = managerInner.colour_1c.y & 0xff;
-      spriteEffect.b_16 = managerInner.colour_1c.z & 0xff;
-      spriteEffect.scaleX_1c = managerInner.scale_16.x;
-      spriteEffect.scaleY_1e = managerInner.scale_16.y;
-      spriteEffect.angle_20 = managerInner.rot_10.z;
+  public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> effectParams, final MV transformMatrix) {
+    if(effectParams.flags_00 >= 0) { // No errors
+      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(effectParams.flags_00, metrics);
+      spriteEffect.r_14 = effectParams.colour_1c.x & 0xff;
+      spriteEffect.g_15 = effectParams.colour_1c.y & 0xff;
+      spriteEffect.b_16 = effectParams.colour_1c.z & 0xff;
+      spriteEffect.scaleX_1c = effectParams.scale_16.x;
+      spriteEffect.scaleY_1e = effectParams.scale_16.y;
+      spriteEffect.angle_20 = effectParams.rot_10.z;
 
-      if((managerInner.flags_00 & 0x400_0000) != 0) {
-        zOffset_1f8003e8 = managerInner.z_22;
-        FUN_800e75ac(spriteEffect, transformMatrix);
+      if((effectParams.flags_00 & 0x400_0000) != 0) {
+        FUN_800e75ac(spriteEffect, transformMatrix, effectParams.z_22);
       } else {
         //LAB_800e9574
-        spriteEffect.render(transformMatrix.transfer, managerInner.z_22);
+        spriteEffect.render(transformMatrix.transfer, effectParams.z_22);
         spriteEffect.delete();
       }
     }

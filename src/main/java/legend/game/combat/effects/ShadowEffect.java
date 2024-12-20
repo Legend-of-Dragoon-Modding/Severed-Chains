@@ -28,24 +28,24 @@ public class ShadowEffect implements Effect<EffectManagerParams.VoidType> {
     if(manager.params_10.flags_00 >= 0) { // No errors
       final float y = manager.params_10.trans_04.y;
       manager.params_10.trans_04.y = 0.0f;
-      final MV sp0x10 = new MV();
-      calculateEffectTransforms(sp0x10, manager);
-      sp0x10.transfer.y = y;
+      final MV transforms = new MV();
+      calculateEffectTransforms(transforms, manager);
+      transforms.transfer.y = y;
       manager.params_10.trans_04.y = y;
 
-      final float rotY = MathHelper.atan2(-sp0x10.m02, sp0x10.m00);
-      sp0x10.rotateY(-rotY);
-      sp0x10.rotateZ(-MathHelper.atan2(sp0x10.m01, sp0x10.m00));
-      sp0x10.rotateX(-MathHelper.atan2(-sp0x10.m21, sp0x10.m22));
-      sp0x10.rotateY(rotY);
-      sp0x10.m01 = 0.0f;
-      sp0x10.m11 = 0.0f;
-      sp0x10.m21 = 0.0f;
-      sp0x10.transfer.y -= 0.05f; // Fix Z-fighting with ground
+      final float rotY = MathHelper.atan2(-transforms.m02, transforms.m00);
+      transforms.rotateY(-rotY);
+      transforms.rotateZ(-MathHelper.atan2(transforms.m01, transforms.m00));
+      transforms.rotateX(-MathHelper.atan2(-transforms.m21, transforms.m22));
+      transforms.rotateY(rotY);
+      transforms.m01 = 0.0f;
+      transforms.m11 = 0.0f;
+      transforms.m21 = 0.0f;
+      transforms.transfer.y -= 0.05f; // Fix Z-fighting with ground
       tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
       zOffset_1f8003e8 = manager.params_10.z_22;
       FUN_800e60e0(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
-      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager.params_10, sp0x10);
+      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager.params_10, transforms);
       FUN_800e6170();
     }
 

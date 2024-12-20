@@ -372,6 +372,7 @@ public class AttachedSobjEffect {
 
         RENDERER.queueModel(this.tmdDust, inst.transforms, QueuedModelTmd.class)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+          .depthOffset(this.tmdDustModel_800d4d40.zOffset_a0)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
