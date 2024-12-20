@@ -56,6 +56,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
 
+  private int depthOffset;
   /** Needed to track queue depths for poly renderer */
   private final FloatList zDepths = new FloatArrayList();
   private final Vector3f worldCoords = new Vector3f();
@@ -308,7 +309,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     if(flags >= 0) { // No errors
       int tickFip12 = Math.max(0, manager.params_10.ticks_24) % (this.keyframeCount_08 * 2) << 12;
       tmdGp0Tpage_1f8003ec = flags >>> 23 & 0x60; // tpage
-      zOffset_1f8003e8 = manager.params_10.z_22;
+      this.depthOffset = zOffset_1f8003e8 = manager.params_10.z_22;
       if((manager.params_10.flags_00 & 0x40) == 0) {
         FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
       }
@@ -898,6 +899,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         this.transforms.identity();
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
         RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
+          .depthOffset(this.depthOffset)
           .vertices(i * 6, 6);
       }
 

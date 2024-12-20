@@ -670,6 +670,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
         if(model.modelParts_00[i].obj != null) {
           final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw, QueuedModelBattleTmd.class)
+            .depthOffset(model.zOffset_a0)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
