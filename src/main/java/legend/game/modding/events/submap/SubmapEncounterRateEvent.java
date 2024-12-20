@@ -1,7 +1,7 @@
 package legend.game.modding.events.submap;
 
 public class SubmapEncounterRateEvent extends SubmapEvent {
-  public final int encounterRate;
+  public int encounterRate;
   public final int submapId;
 
   public SubmapEncounterRateEvent(final int encounterRate, final int submapId) {

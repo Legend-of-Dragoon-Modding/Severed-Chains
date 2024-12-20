@@ -2,7 +2,7 @@ package legend.game.modding.events.submap;
 
 public class SubmapEncounterAccumulatorEvent extends SubmapEvent {
   public final float encounterAccumulator;
-  public final float encounterAccumulatedStep;
+  public float encounterAccumulatedStep;
   public final float encounterMultiplier;
   public final int vsyncMode;
   public final int encounterAccumulatorLimit;

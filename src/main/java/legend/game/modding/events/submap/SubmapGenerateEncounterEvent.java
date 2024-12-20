@@ -1,8 +1,8 @@
 package legend.game.modding.events.submap;
 
 public class SubmapGenerateEncounterEvent extends SubmapEvent{
-  public final int encounterId;
-  public final int battleStageId;
+  public int encounterId;
+  public int battleStageId;
   public final int submapId;
   public final int sceneId;
   public final int[] scene;
