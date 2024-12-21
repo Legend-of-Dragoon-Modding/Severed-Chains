@@ -2046,7 +2046,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates a gold dragoon transformation effect")
+  @ScriptDescription("Allocates erupting rocks during gold dragoon transformation effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The effect instance count")
@@ -2054,8 +2054,8 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalMax", description = "The maximum position deviation on the XZ plane")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalMin", description = "The minimum deviation on the Y axis")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalMax", description = "The maximum deviation on the Y axis")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p8")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicksMax", description = "The maximum number of ticks a rock can move/exist")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "preMovementTicksMax", description = "The maximum number of ticks before a rock starts moving")
   @Method(0x8010d7dcL)
   public static FlowControl scriptAllocateGoldDragoonTransformEffect(final RunningScript<? extends BattleObject> script) {
     final int deffFlags = script.params_20[1].get();
@@ -2064,8 +2064,8 @@ public final class SEffe {
     final int horizontalMax = script.params_20[4].get();
     final int verticalMin = script.params_20[5].get();
     final int verticalMax = script.params_20[6].get();
-    final int sp2c = script.params_20[7].get();
-    final int sp30 = script.params_20[8].get();
+    final int movementTicksMax = script.params_20[7].get();
+    final int preMovementTicksMax = script.params_20[8].get();
 
     final GoldDragoonTransformEffect20 effect = new GoldDragoonTransformEffect20(count);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GoldDragoonTransformEffect20", script.scriptState_04, effect);
@@ -2075,9 +2075,6 @@ public final class SEffe {
       final GoldDragoonTransformEffectInstance84 instance = effect.parts_08[i];
       instance.used_00 = true;
       instance.counter_04 = 0;
-      instance._68 = 0x7f;
-      instance._69 = 0x7f;
-      instance._6a = 0x7f;
 
       final int horizontalOffset = rand() % (horizontalMax - horizontalMin + 1) + horizontalMin;
       final int theta = rand() % 4096;
@@ -2091,16 +2088,16 @@ public final class SEffe {
       instance.rotStep_48.y = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
       instance.rotStep_48.z = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
 
-      if(sp2c != 0) {
+      if(movementTicksMax != 0) {
         //LAB_8010dbc4
-        instance._7c = (short)(rand() % (sp2c + 1));
+        instance.movementTicksRemaining_7c = rand() % (movementTicksMax + 1);
       } else {
-        instance._7c = 0;
+        instance.movementTicksRemaining_7c = 0;
       }
 
       //LAB_8010dbe8
-      instance._7e = (short)(rand() % (sp30 + 2));
-      instance._80 = -1;
+      instance.preMovementTicks_7e = rand() % (preMovementTicksMax + 2);
+      instance.preMovementTick_80 = -1;
 
       if((deffFlags & 0xf_ff00) == 0xf_ff00) {
         instance.tmd_70 = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
