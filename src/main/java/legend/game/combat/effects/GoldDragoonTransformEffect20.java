@@ -4,7 +4,7 @@ import legend.core.QueuedModelTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
-import legend.core.opengl.TmdObjLoader;
+import legend.core.opengl.Obj;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 
@@ -24,6 +24,8 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
 
   private final MV transforms = new MV();
   private final MV w2sTransforms = new MV();
+
+  public Obj rockObjster;
 
   public GoldDragoonTransformEffect20(final int count) {
     this.parts_08 = new GoldDragoonTransformEffectInstance84[count];
@@ -99,7 +101,6 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
         this.transforms.scale(manager.params_10.scale_16);
 
         dobj2.tmd_08 = instance.tmd_70;
-        dobj2.obj = TmdObjLoader.fromObjTable("Kongol rock" + i + ')', dobj2.tmd_08);
 
         this.transforms.compose(worldToScreenMatrix_800c3548, this.w2sTransforms);
         GTE.setTransforms(this.w2sTransforms);
@@ -109,7 +110,7 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
 
         Renderer.renderDobj2(dobj2, false, 0);
 
-        RENDERER.queueModel(dobj2.obj, this.transforms, QueuedModelTmd.class);
+        RENDERER.queueModel(this.rockObjster, this.transforms, QueuedModelTmd.class);
       }
     }
     //LAB_8010e020
@@ -117,6 +118,8 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-
+    if(this.rockObjster != null) {
+      this.rockObjster.delete();
+    }
   }
 }
