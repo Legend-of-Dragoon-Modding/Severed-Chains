@@ -156,6 +156,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -3629,19 +3630,12 @@ public class SMap extends EngineState {
       return;
     }
 
-    final int encounterId;
-    if(newScene == 0) {
-      encounterId = encounterId_800bb0f8;
-    } else {
-      if(newScene > 0x1ff) {
-        SCRIPTS.pause();
-        return;
-      }
-
-      encounterId = newScene;
+    if(newScene != 0 && newScene >= stageData_80109a98.length) {
+      SCRIPTS.pause();
+      return;
     }
 
-    encounterId_800bb0f8 = encounterId;
+    encounterId_800bb0f8 = newScene == 0 ? encounterId_800bb0f8 : newScene;
 
     if(this.isScriptLoaded(0)) {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
