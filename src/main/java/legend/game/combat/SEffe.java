@@ -2111,6 +2111,9 @@ public final class SEffe {
       instance.trans_08.zero();
     }
 
+    // Confirmed in debugger and by checking script calls that only one deff flag/tmd is ever used
+    effect.rockObjster = TmdObjLoader.fromObjTable("Kongol rock", effect.parts_08[0].tmd_70);
+
     //LAB_8010dc8c
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
