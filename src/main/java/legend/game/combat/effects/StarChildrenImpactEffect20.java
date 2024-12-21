@@ -1,9 +1,11 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelBattleTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import org.joml.Math;
@@ -12,6 +14,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
@@ -25,8 +28,13 @@ import static legend.game.combat.SEffe.calculateEffectTransforms;
 
 public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.VoidType> {
   // public int count_00;
-  public int currentFrame_04;
+  private int currentFrame_04;
   public final StarChildrenImpactEffectInstancea8[] impactArray_08;
+
+  private final MV modelTransforms = new MV();
+  private final MV w2sModelTransforms = new MV();
+  private final Vector3f scale = new Vector3f();
+  private final MV lightingTransforms = new MV();
 
   public StarChildrenImpactEffect20(final int count) {
     this.impactArray_08 = new StarChildrenImpactEffectInstancea8[count];
@@ -109,12 +117,6 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     if(manager.params_10.flags_00 >= 0) {
-      final Vector3f translation = new Vector3f();
-      final MV transformMatrix1 = new MV();
-      final MV finalTransformMatrix1 = new MV();
-      final Vector3f scale = new Vector3f();
-      final MV transformMatrix0 = new MV();
-
       final ModelPart10 dobj = new ModelPart10();
 
       //LAB_8010f3a4
@@ -122,9 +124,8 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
         final StarChildrenImpactEffectInstancea8 impact = this.impactArray_08[i];
 
         if(impact.renderImpact_00) {
-          calculateEffectTransforms(transformMatrix0, manager);
+          calculateEffectTransforms(this.lightingTransforms, manager);
           final int stageNum = impact.animationFrame_a2 >= 10 ? 1 : 0;
-          translation.set(impact.translation_0c[stageNum]).add(manager.params_10.trans_04);
           final float scaleX = impact.scale_6c[stageNum].x * manager.params_10.scale_16.x;
           final float scaleY = impact.scale_6c[stageNum].y * manager.params_10.scale_16.y;
           final float scaleZ = impact.scale_6c[stageNum].z * manager.params_10.scale_16.z;
@@ -137,14 +138,14 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           }
 
           //LAB_8010f50c
-          GsSetLightMatrix(transformMatrix0);
-          transformMatrix1.rotationXYZ(impact.rotation_2c[stageNum]);
-          transformMatrix1.transfer.set(translation);
-          scale.set(scaleX, scaleY, scaleZ);
-          transformMatrix1.scale(scale);
+          GsSetLightMatrix(this.lightingTransforms);
+          this.modelTransforms.rotationXYZ(impact.rotation_2c[stageNum]);
+          this.modelTransforms.transfer.set(impact.translation_0c[stageNum]).add(manager.params_10.trans_04);
+          this.scale.set(scaleX, scaleY, scaleZ);
+          this.modelTransforms.scale(this.scale);
           dobj.attribute_00 = manager.params_10.flags_00;
-          transformMatrix1.compose(worldToScreenMatrix_800c3548, finalTransformMatrix1);
-          GTE.setTransforms(finalTransformMatrix1);
+          this.modelTransforms.compose(worldToScreenMatrix_800c3548, this.w2sModelTransforms);
+          GTE.setTransforms(this.w2sModelTransforms);
           zOffset_1f8003e8 = 0;
           tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
 
@@ -158,15 +159,24 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           if(impact.renderShockwave_01) {
             dobj.tmd_08 = impact.shockwaveObjTable_98;
             Renderer.renderDobj2(dobj, false, 0x20);
+
+            dobj.obj = TmdObjLoader.fromObjTable("Star Children shockwave" + i + ')', dobj.tmd_08);
+            RENDERER.queueModel(dobj.obj, this.modelTransforms, QueuedModelBattleTmd.class);
           }
 
           //LAB_8010f5d0
           if(impact.animationFrame_a2 < 9) {
             dobj.tmd_08 = impact.explosionObjTable_94;
             Renderer.renderDobj2(dobj, false, 0x20);
+
+            dobj.obj = TmdObjLoader.fromObjTable("Star Children explosion" + i + ')', dobj.tmd_08);
+            RENDERER.queueModel(dobj.obj, this.modelTransforms, QueuedModelBattleTmd.class);
           } else if(impact.animationFrame_a2 >= 11) {
             dobj.tmd_08 = impact.plumeObjTable_9c;
             Renderer.renderDobj2(dobj, false, 0x20);
+
+            dobj.obj = TmdObjLoader.fromObjTable("Star Children plume" + i + ')', dobj.tmd_08);
+            RENDERER.queueModel(dobj.obj, this.modelTransforms, QueuedModelBattleTmd.class);
           }
 
           zShift_1f8003c4 = oldZShift;
