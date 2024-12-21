@@ -1918,37 +1918,25 @@ public final class SEffe {
 
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
-    effect._00 = 5;
-    effect._02 = 0;
 
     //LAB_8010c4a4
     for(int i = 0; i < 5; i++) {
-      final LensFlareEffectInstance3c s0 = effect.instances_38[i];
-      s0.onScreen_03 = true;
-      s0.x_04 = 0;
-      s0.y_06 = 0;
-      s0._08 = 0;
-      s0._0c = 0;
-      s0._0e = 0;
-      s0._10 = 0;
-      s0._14 = 0;
-      s0._16 = 0;
-      s0._18 = 0;
-      s0._28 = 0;
-      s0.widthScale_2e = 0x1600;
-      s0.heightScale_30 = 0x1600;
-      s0._32 = 0;
-      s0._34 = 0;
+      final LensFlareEffectInstance3c instance = effect.instances_38[i];
+      instance.onScreen_03 = true;
+      instance.x_04 = 0;
+      instance.y_06 = 0;
+      instance.widthScale_2e = 1.375f;
+      instance.heightScale_30 = 1.375f;
 
-      final int a1 = script.params_20[5 + i].get();
-      if(a1 == -1) {
-        s0.enabled_02 = false;
+      final int deffFlags = script.params_20[5 + i].get();
+      if(deffFlags == -1) {
+        instance.enabled_02 = false;
       } else {
         //LAB_8010c500
-        s0.enabled_02 = true;
+        instance.enabled_02 = true;
 
-        if((a1 & 0xf_ff00) == 0xf_ff00) {
-          final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[a1 & 0xff];
+        if((deffFlags & 0xf_ff00) == 0xf_ff00) {
+          final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[deffFlags & 0xff];
           effect.u_04[i] = metrics.u_00;
           effect.v_0e[i] = metrics.v_02;
           effect.w_18[i] = metrics.w_04;
@@ -1956,7 +1944,7 @@ public final class SEffe {
           effect.clut_2c[i] = metrics.clut_06;
         } else {
           //LAB_8010c5a8
-          final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(a1 | 0x400_0000);
+          final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(deffFlags | 0x400_0000);
           final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
           effect.u_04[i] = deffMetrics.u_00;
           effect.v_0e[i] = deffMetrics.v_02;
@@ -1965,7 +1953,6 @@ public final class SEffe {
           effect.clut_2c[i] = GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a);
         }
       }
-
       //LAB_8010c608
     }
 
