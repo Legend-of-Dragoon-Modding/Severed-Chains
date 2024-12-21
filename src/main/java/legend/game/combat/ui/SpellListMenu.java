@@ -62,10 +62,7 @@ public class SpellListMenu extends ListMenu {
     renderText(spellStats_800fa0b8[spellId].name, x, y, textColour, trim);
     renderRightText(String.valueOf(this.player_08.spell_94.mp_06), x + 152, y, TextColour.WHITE, trim);
 
-    this.transforms.scaling(0.75f);
-    this.transforms.transfer.set(x + 152, y, 124.0f);
-    RENDERER.queueOrthoModel(this.menuObj, this.transforms, QueuedModelStandard.class)
-      .vertices(this.mpObjOffset, 4);
+    renderText("MP", x + 155, y, TextColour.WHITE, 0);
 
     this.player_08.setActiveSpell(currentSpellId);
   }
