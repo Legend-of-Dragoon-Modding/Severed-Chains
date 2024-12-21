@@ -13,6 +13,7 @@ import org.joml.Vector3f;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
 public class GenericSpriteEffect24 {
@@ -109,7 +110,7 @@ public class GenericSpriteEffect24 {
           .rotationZ(this.angle_20)
           .scale(this.scaleX_1c / 8.0f * zDepth / 8.0f, this.scaleY_1e / 8.0f * zDepth / 8.0f, 1.0f);
         final QueuedModelStandard model = RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
-          .depthOffset(zMod)
+          .depthOffset(zMod * (1 << zShift_1f8003c4))
           .colour(this.r_14 / 255.0f, this.g_15 / 255.0f, this.b_16 / 255.0f);
 
         if((this.flags_00 & 0x4000_0000) != 0) {
