@@ -94,6 +94,7 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
@@ -999,7 +1000,7 @@ public class SMap extends EngineState {
 
           final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-            .depthOffset(model.zOffset_a0)
+            .depthOffset(model.zOffset_a0 * (1 << zShift_1f8003c4))
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)

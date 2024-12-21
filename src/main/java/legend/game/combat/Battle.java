@@ -184,6 +184,7 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
@@ -7334,7 +7335,7 @@ public class Battle extends EngineState {
 
         if(part.obj != null) {
           RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(stage.z_5e8)
+            .depthOffset(stage.z_5e8 * (1 << zShift_1f8003c4))
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
