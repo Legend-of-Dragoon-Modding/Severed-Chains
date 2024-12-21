@@ -5,6 +5,7 @@ import legend.core.QueuedModelBattleTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
@@ -35,6 +36,10 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
   private final MV w2sModelTransforms = new MV();
   private final Vector3f scale = new Vector3f();
   private final MV lightingTransforms = new MV();
+
+  private Obj shockwaveObj;
+  private Obj explosionObj;
+  private Obj plumeObj;
 
   public StarChildrenImpactEffect20(final int count) {
     this.impactArray_08 = new StarChildrenImpactEffectInstancea8[count];
@@ -160,8 +165,10 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
             dobj.tmd_08 = impact.shockwaveObjTable_98;
             Renderer.renderDobj2(dobj, false, 0x20);
 
-            dobj.obj = TmdObjLoader.fromObjTable("Star Children shockwave" + i + ')', dobj.tmd_08);
-            RENDERER.queueModel(dobj.obj, this.modelTransforms, QueuedModelBattleTmd.class);
+            if(this.shockwaveObj == null) {
+              this.shockwaveObj = TmdObjLoader.fromObjTable("Star Children shockwave" + i + ')', dobj.tmd_08);
+            }
+            RENDERER.queueModel(this.shockwaveObj, this.modelTransforms, QueuedModelBattleTmd.class);
           }
 
           //LAB_8010f5d0
@@ -169,14 +176,18 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
             dobj.tmd_08 = impact.explosionObjTable_94;
             Renderer.renderDobj2(dobj, false, 0x20);
 
-            dobj.obj = TmdObjLoader.fromObjTable("Star Children explosion" + i + ')', dobj.tmd_08);
-            RENDERER.queueModel(dobj.obj, this.modelTransforms, QueuedModelBattleTmd.class);
+            if(this.explosionObj == null) {
+              this.explosionObj = TmdObjLoader.fromObjTable("Star Children explosion" + i + ')', dobj.tmd_08);
+            }
+            RENDERER.queueModel(this.explosionObj, this.modelTransforms, QueuedModelBattleTmd.class);
           } else if(impact.animationFrame_a2 >= 11) {
             dobj.tmd_08 = impact.plumeObjTable_9c;
             Renderer.renderDobj2(dobj, false, 0x20);
 
-            dobj.obj = TmdObjLoader.fromObjTable("Star Children plume" + i + ')', dobj.tmd_08);
-            RENDERER.queueModel(dobj.obj, this.modelTransforms, QueuedModelBattleTmd.class);
+            if(this.plumeObj == null) {
+              this.plumeObj = TmdObjLoader.fromObjTable("Star Children plume" + i + ')', dobj.tmd_08);
+            }
+            RENDERER.queueModel(this.plumeObj, this.modelTransforms, QueuedModelBattleTmd.class);
           }
 
           zShift_1f8003c4 = oldZShift;
@@ -190,12 +201,21 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
         }
       }
     }
-
     //LAB_8010f640
   }
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
+    if(this.shockwaveObj != null) {
+      this.shockwaveObj.delete();
+    }
 
+    if(this.explosionObj != null) {
+      this.explosionObj.delete();
+    }
+
+    if(this.plumeObj != null) {
+      this.plumeObj.delete();
+    }
   }
 }
