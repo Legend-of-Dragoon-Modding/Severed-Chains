@@ -3464,8 +3464,8 @@ public class SMap extends EngineState {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      final Vector2f transformed = new Vector2f();
-      final Vector3f middle = new Vector3f();
+      // final Vector2f transformed = new Vector2f();
+      // final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();

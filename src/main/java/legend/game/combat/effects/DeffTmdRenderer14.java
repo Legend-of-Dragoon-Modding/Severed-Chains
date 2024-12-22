@@ -105,7 +105,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zMin = oldZMin;
 
         final QueuedModelBattleTmd model = RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
-          .depthOffset(manager.params_10.z_22)
+          .depthOffset(manager.params_10.z_22 * 4)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
