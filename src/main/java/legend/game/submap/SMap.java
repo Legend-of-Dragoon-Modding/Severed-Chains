@@ -768,8 +768,8 @@ public class SMap extends EngineState {
 
       case CHECK_TRANSITIONS_1_2:
         if((this.submapFlags_800f7e54 & 0x1) == 0) {
-          // If an encounter should start
-          if(this.handleEncounters()) {
+          if(this.canEncounter()) {
+            this.submap.prepareEncounter(0);
             this.mapTransition(-1, 0);
           }
         }
@@ -3233,7 +3233,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e4b20L)
-  private boolean handleEncounters() {
+  private boolean canEncounter() {
     if(this.smapTicks_800c6ae0 < 15 * (3 - vsyncMode_8007a3b8) || Unpacker.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
       return false;
     }
@@ -3268,13 +3268,6 @@ public class SMap extends EngineState {
 
     if(this.encounterAccumulator_800c6ae8 <= submapEncounterAccumulatorEvent.encounterAccumulatorLimit) {
       return false;
-    }
-
-    // Start combat
-    this.submap.generateEncounter();
-
-    if(Config.combatStage()) {
-      battleStage_800bb0f4 = Config.getCombatStage();
     }
 
     return true;
@@ -3581,8 +3574,9 @@ public class SMap extends EngineState {
       return;
     }
 
+    SCRIPTS.pause();
+
     if(newScene == 0x3fa) {
-      SCRIPTS.pause();
       loadCharacterStats();
       cacheCharacterSlots();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
@@ -3592,20 +3586,17 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3fb) {
-      SCRIPTS.pause();
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_TITLE_20;
       return;
     }
 
     if(newScene == 0x3fc) {
-      SCRIPTS.pause();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, TooManyItemsScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3fd) {
-      SCRIPTS.pause();
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
@@ -3616,14 +3607,12 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3fe) {
-      SCRIPTS.pause();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3ff) {
-      SCRIPTS.pause();
       submapCutForSave_800cb450 = submapCut_80052c30;
       this.menuTransition = () -> initInventoryMenu();
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
@@ -3631,22 +3620,9 @@ public class SMap extends EngineState {
     }
 
     if(newScene != 0 && newScene >= stageData_80109a98.length) {
-      SCRIPTS.pause();
       return;
     }
 
-    encounterId_800bb0f8 = newScene == 0 ? encounterId_800bb0f8 : newScene;
-
-    if(this.isScriptLoaded(0)) {
-      final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
-
-      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
-      this.submap.storeStateBeforeBattle();
-      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
-      shouldRestoreCameraPosition_80052c40 = true;
-    }
-
-    SCRIPTS.pause();
     this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
   }
 
@@ -3993,6 +3969,16 @@ public class SMap extends EngineState {
   @Method(0x800e67d4L)
   private FlowControl scriptMapTransition(final RunningScript<?> script) {
     final int scene = script.params_20[1].get();
+
+    if(script.params_20[0].get() == -1) {
+      this.submap.prepareEncounter(scene);
+
+      final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
+      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
+      this.submap.storeStateBeforeBattle();
+      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
+      shouldRestoreCameraPosition_80052c40 = true;
+    }
 
     this.mapTransition(script.params_20[0].get(), scene);
 
