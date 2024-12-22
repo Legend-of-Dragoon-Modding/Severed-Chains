@@ -91,7 +91,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
         //TODO remove null check
         if(part.obj != null) {
           RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(model.zOffset_a0)
+            .depthOffset(model.zOffset_a0 * 4)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)

@@ -359,7 +359,7 @@ public final class SEffe {
     zMin = oldZMin;
 
     final QueuedModelBattleTmd model = RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
-      .depthOffset(effectParams.z_22)
+      .depthOffset(effectParams.z_22 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -493,7 +493,7 @@ public final class SEffe {
 
       RENDERER.queueModel(obj, transformMatrix, QueuedModelStandard.class)
         .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
-        .depthOffset(depthOffset);
+        .depthOffset(depthOffset * 4);
     }
     //LAB_800e7930
   }
