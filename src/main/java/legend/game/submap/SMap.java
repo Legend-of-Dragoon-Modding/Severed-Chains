@@ -3623,6 +3623,14 @@ public class SMap extends EngineState {
       return;
     }
 
+    if(this.isScriptLoaded(0)) {
+      final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
+      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
+      this.submap.storeStateBeforeBattle();
+      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
+      shouldRestoreCameraPosition_80052c40 = true;
+    }
+
     this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
   }
 
@@ -3972,12 +3980,6 @@ public class SMap extends EngineState {
 
     if(script.params_20[0].get() == -1) {
       this.submap.prepareEncounter(scene);
-
-      final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
-      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
-      this.submap.storeStateBeforeBattle();
-      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
-      shouldRestoreCameraPosition_80052c40 = true;
     }
 
     this.mapTransition(script.params_20[0].get(), scene);
