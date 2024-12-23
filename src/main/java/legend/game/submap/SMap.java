@@ -999,6 +999,7 @@ public class SMap extends EngineState {
 
           final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+            .depthOffset(model.zOffset_a0)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
@@ -3463,8 +3464,8 @@ public class SMap extends EngineState {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      final Vector2f transformed = new Vector2f();
-      final Vector3f middle = new Vector3f();
+      // final Vector2f transformed = new Vector2f();
+      // final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();

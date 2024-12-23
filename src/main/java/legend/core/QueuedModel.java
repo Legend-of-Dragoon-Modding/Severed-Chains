@@ -16,8 +16,6 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 
 public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T extends QueuedModel<Options, T>> {
   protected final RenderBatch batch;
@@ -162,7 +160,6 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     this.vertexCount = 0;
     Arrays.fill(this.textures, null);
     this.texturesUsed = false;
-    this.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     this.worldScissor.set(this.batch.engine.scissorStack.top());
   }
 

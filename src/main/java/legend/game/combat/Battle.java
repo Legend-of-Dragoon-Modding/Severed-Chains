@@ -7334,6 +7334,7 @@ public class Battle extends EngineState {
 
         if(part.obj != null) {
           RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
+            .depthOffset(stage.z_5e8 * 4)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
