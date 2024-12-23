@@ -769,7 +769,7 @@ public class SMap extends EngineState {
       case CHECK_TRANSITIONS_1_2:
         if((this.submapFlags_800f7e54 & 0x1) == 0) {
           if(this.canEncounter()) {
-            this.submap.prepareEncounter(0);
+            this.submap.prepareEncounter(null);
             this.mapTransition(-1, 0);
           }
         }
