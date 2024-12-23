@@ -409,18 +409,15 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  public void prepareEncounter(final int targetEncounterId) {
+  public void prepareEncounter(final Integer targetEncounterId) {
     final var sceneId = encounterData_800f64c4[this.cut].scene_00;
     final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var encounterId = targetEncounterId == 0 ? scene[this.randomEncounterIndex()] : targetEncounterId;
-    final var battleStageId = encounterData_800f64c4[this.cut].stage_03;
+    final var encounterId = targetEncounterId == null ? scene[this.randomEncounterIndex()] : targetEncounterId;
+    final var battleStageId = encounterData_800f64c4[this.cut].stage_03 == 0 && battleStage_800bb0f4 > -1 ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
     final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
     encounterId_800bb0f8 = generateEncounterEvent.encounterId;
-
-    if(generateEncounterEvent.battleStageId != 0) {
-      battleStage_800bb0f4 = generateEncounterEvent.battleStageId;
-    }
+    battleStage_800bb0f4 = generateEncounterEvent.battleStageId;
 
     if(Config.combatStage()) {
       battleStage_800bb0f4 = Config.getCombatStage();
