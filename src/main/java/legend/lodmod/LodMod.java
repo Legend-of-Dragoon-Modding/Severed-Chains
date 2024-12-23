@@ -22,6 +22,7 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.coremod.elements.DarkElement;
 import legend.game.modding.coremod.elements.DivineElement;
@@ -37,12 +38,14 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.ShopStruct40;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.equipment.DestroyerMaceEquipment;
 import legend.lodmod.equipment.DetonateArrowEquipment;
 import legend.lodmod.equipment.UltimateWargodEquipment;
 import legend.lodmod.equipment.WargodCallingEquipment;
+import legend.lodmod.shops.Shops;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -55,6 +58,7 @@ import static legend.game.SItem.itemPrices_80114310;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.submap.SMap.shops_800f4930;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID)
@@ -130,6 +134,8 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
+  public static final String[] SHOP_IDS = Shops.shops.keySet().toArray(new String[0]);
+
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     LodItems.register(event);
@@ -148,6 +154,19 @@ public class LodMod {
           case 0x9d -> new UltimateWargodEquipment(itemPrices_80114310[equipmentId]);
           default -> Equipment.fromFile(itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
         });
+      }
+    }
+  }
+
+  @EventListener
+  public static void registerShops(final ShopRegistryEvent event) {
+    for(int shopId = 0; shopId < 64; shopId++) {
+      final String name = SHOP_IDS[shopId];
+
+      if(shopId < 39) {
+        event.register(id(name), Shops.shops.get(name));
+      } else {
+        event.register(id("empty_shop"), Shops.shops.get("empty_shop"));
       }
     }
   }
