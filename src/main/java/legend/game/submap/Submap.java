@@ -35,7 +35,7 @@ public abstract class Submap {
   public abstract void calcGoodScreenOffset(final float x, final float y, final Vector2f out);
 
   public abstract int getEncounterRate();
-  public abstract void prepareEncounter(final int targetEncounterId);
+  public abstract void prepareEncounter(final Integer targetEncounterId);
 
   public boolean hasEncounters() {
     return this.getEncounterRate() != 0;
