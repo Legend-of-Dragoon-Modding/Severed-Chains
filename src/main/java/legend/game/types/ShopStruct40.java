@@ -1,10 +1,11 @@
 package legend.game.types;
 
 import legend.game.inventory.InventoryEntry;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.function.Supplier;
 
-public class ShopStruct40 {
+public class ShopStruct40 extends RegistryEntry {
   public final int shopType_00;
   public final Supplier<InventoryEntry>[] items_00;
 
