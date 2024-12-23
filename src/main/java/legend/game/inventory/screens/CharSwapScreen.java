@@ -185,7 +185,7 @@ public class CharSwapScreen extends MenuScreen {
             this.primaryCharHighlight.y_44 = this.getSlotY(i);
 
             final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
-            if(charIndex == -1 || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
+            if(charIndex == -1 || CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
               playMenuSound(2);
               this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
               FUN_80104b60(this.secondaryCharHighlight);
