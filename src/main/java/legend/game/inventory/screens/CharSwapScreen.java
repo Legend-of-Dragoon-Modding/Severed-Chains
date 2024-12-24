@@ -86,8 +86,8 @@ public class CharSwapScreen extends MenuScreen {
                 secondaryCharIds_800bdbf8[secondarySlotIndex++] = charIndex;
               }
             }
-            for(int i = secondarySlotIndex; i < 6; i++) {
-              secondaryCharIds_800bdbf8[i] = -1;
+            while(secondarySlotIndex < 6) {
+              secondaryCharIds_800bdbf8[secondarySlotIndex++] = -1;
             }
 
             gameState_800babc8.charIds_88[0] = slots[0];
