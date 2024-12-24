@@ -58,7 +58,7 @@ public class CharSwapScreen extends MenuScreen {
             }
           }
 
-          if(requiredInSecondary || gameState_800babc8.charIds_88[0] == -1 || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[0]].partyFlags_04 & 0x20) == 0) {
+          if(requiredInSecondary || gameState_800babc8.charIds_88[0] == -1 || gameState_800babc8.charIds_88[1] == -1 || gameState_800babc8.charIds_88[2] == -1 || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[0]].partyFlags_04 & 0x20) == 0) {
             final int[] slots = {-1, -1, -1};
             int primarySlotIndex = 0;
             int secondarySlotIndex = 0;
