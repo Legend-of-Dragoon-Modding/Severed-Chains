@@ -66,28 +66,24 @@ public class CharSwapScreen extends MenuScreen {
 
             for(charIndex = 0; charIndex < 9 && primarySlotIndex < 3; charIndex++) {
               if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) != 0) {
-                slots[primarySlotIndex] = charIndex;
-                primarySlotIndex++;
+                slots[primarySlotIndex++] = charIndex;
               }
             }
             for(int i = 0; i < 3 && primarySlotIndex < 3; i++) {
               charIndex = gameState_800babc8.charIds_88[i];
               if(charIndex != -1 && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) != 0 && charIndex != slots[0] && charIndex != slots[1] && charIndex != slots[2]) {
-                slots[primarySlotIndex] = charIndex;
-                primarySlotIndex++;
+                slots[primarySlotIndex++] = charIndex;
               }
             }
             for(charIndex = 0; charIndex < 9 && primarySlotIndex < 3; charIndex++) {
               if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0 && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) != 0 && charIndex != slots[0] && charIndex != slots[1] && charIndex != slots[2]) {
-                slots[primarySlotIndex] = charIndex;
-                primarySlotIndex++;
+                slots[primarySlotIndex++] = charIndex;
               }
             }
 
             for(charIndex = 0; charIndex < 9 && secondarySlotIndex < 6; charIndex++) {
               if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x1) != 0 && charIndex != slots[0] && charIndex != slots[1] && charIndex != slots[2]) {
-                secondaryCharIds_800bdbf8[secondarySlotIndex] = charIndex;
-                secondarySlotIndex++;
+                secondaryCharIds_800bdbf8[secondarySlotIndex++] = charIndex;
               }
             }
             for(int i = secondarySlotIndex; i < 6; i++) {
