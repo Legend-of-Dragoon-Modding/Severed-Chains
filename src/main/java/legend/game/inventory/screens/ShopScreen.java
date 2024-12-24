@@ -131,14 +131,14 @@ public class ShopScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         startFadeEffect(2, 10);
 
-        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];
+        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4].get();
         this.shopType = shop.shopType_00 & 1;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < shop.items_00.length; i++) {
-            final Equipment equipment = (Equipment)shop.items_00[i].get();
+          for(int i = 0; i < shop.getItemCount(); i++) {
+            final Equipment equipment = (Equipment)shop.getItem(i).get();
             shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2));
           }
 
@@ -147,8 +147,8 @@ public class ShopScreen extends MenuScreen {
         } else {
           final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < shop.items_00.length; i++) {
-            final Item item = (Item)shop.items_00[i].get();
+          for(int i = 0; i < shop.getItemCount(); i++) {
+            final Item item = (Item)shop.getItem(i).get();
             shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
           }
 
