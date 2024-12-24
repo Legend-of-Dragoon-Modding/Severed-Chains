@@ -45,7 +45,6 @@ import legend.lodmod.equipment.DestroyerMaceEquipment;
 import legend.lodmod.equipment.DetonateArrowEquipment;
 import legend.lodmod.equipment.UltimateWargodEquipment;
 import legend.lodmod.equipment.WargodCallingEquipment;
-import legend.lodmod.shops.Shops;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -58,7 +57,6 @@ import static legend.game.SItem.itemPrices_80114310;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
-import static legend.game.submap.SMap.shops_800f4930;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID)
@@ -134,7 +132,21 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
-  public static final String[] SHOP_IDS = Shops.shops.keySet().toArray(new String[0]);
+  public static final String[] SHOP_IDS = {
+    "bale_equipment_shop", "serdio_item_shop", "lohan_equipment_shop", "lohan_item_shop",
+    "kazas_equipment_shop", "kazas_fort_item_shop", "fletz_equipment_shop", "fletz_item_shop",
+    "donau_equipment_shop", "donau_item_shop", "queen_fury_equipment_shop", "queen_fury_item_shop",
+    "fueno_equipment_shop", "fueno_item_shop", "furni_equipment_shop", "furni_item_shop",
+    "deningrad_equipment_shop", "deningrad_item_shop", "wingly_forest_equipment_shop", "wingly_forest_item_shop",
+    "vellweb_equipment_shop", "vellweb_item_shop", "ulara_equipment_shop", "ulara_item_shop",
+    "rouge_equipment_shop", "rouge_item_shop", "moon_equipment_shop", "moon_item_shop",
+    "hellena_01_item_shop", "kashua_equipment_shop", "kashua_item_shop", "fletz_accessory_shop",
+    "forest_item_shop", "kazas_fort_equipment_shop", "volcano_item_shop", "zenebatos_equipment_shop",
+    "zenebatos_item_shop", "hellena_02_item_shop", "unknown_shop_01", "empty_shop", "empty_shop", "empty_shop"
+    , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop"
+    , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
+    "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
+  };
 
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
@@ -160,15 +172,7 @@ public class LodMod {
 
   @EventListener
   public static void registerShops(final ShopRegistryEvent event) {
-    for(int shopId = 0; shopId < 64; shopId++) {
-      final String name = SHOP_IDS[shopId];
-
-      if(shopId < 39) {
-        event.register(id(name), Shops.shops.get(name));
-      } else {
-        event.register(id("empty_shop"), Shops.shops.get("empty_shop"));
-      }
-    }
+    LodShops.register(event);
   }
 
   @EventListener

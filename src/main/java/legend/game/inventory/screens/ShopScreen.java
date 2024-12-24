@@ -131,7 +131,7 @@ public class ShopScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         startFadeEffect(2, 10);
 
-        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];
+        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4].get();
         this.shopType = shop.shopType_00 & 1;
 
         if(this.shopType == 0) {
