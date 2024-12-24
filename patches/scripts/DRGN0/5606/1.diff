@@ -169,15 +169,15 @@
  data 0xa
  data 0x1
 +LOAD_SLOTTED_TEXTURES:
++jmp_cmp >=, inl[:CHAR_INDEX], 0x3, inl[:LOAD_ENEMY_TEXTURE]
 +jmp_cmp ==, stor[13], 0xb, inl[:LOAD_PLAYER_TEXTURE]
 +LOAD_ENEMY_TEXTURE:
 +call 364, stor[8], stor[9]
 +return
 +LOAD_PLAYER_TEXTURE:
++incr inl[:CHAR_INDEX]
 +call 1020, stor[8], inl[:CHAR_INDEX]
 +call 364, stor[8], stor[9]
-+call 1020, stor[8], 0xffffffff
-+incr inl[:CHAR_INDEX]
 +return
 +CHAR_INDEX:
 +data 0x0
