@@ -151,7 +151,6 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
             .addVertex(v0.x, v0.y, 0.0f)
             .monochrome(0.0f)
             .addVertex(v1.x, v1.y, 0.0f)
-            .monochrome(0.0f)
             .addVertex(v2.x, v2.y, 0.0f)
             .rgb((colour.x >>> 8) / 255.0f, (colour.y >>> 8) / 255.0f, (colour.z >>> 8) / 255.0f)
             .addVertex(v1.x, v1.y, 0.0f)

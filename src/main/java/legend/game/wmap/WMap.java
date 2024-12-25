@@ -2940,9 +2940,12 @@ public class WMap extends EngineState {
       final float sin2 = MathHelper.sin((i + 1 & 0x7) * shadowAngleDelta);
       final float cos2 = MathHelper.cosFromSin(sin2, (i + 1 & 0x7) * shadowAngleDelta);
 
-      shadowBuilder.addVertex(0.0f, 0.0f, 0.0f).monochrome(0.5f);
-      shadowBuilder.addVertex(cos1 * 32.0f, 0.0f, sin1 * 32.0f);
-      shadowBuilder.addVertex(cos2 * 32.0f, 0.0f, sin2 * 32.0f);
+      shadowBuilder
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .monochrome(0.5f)
+        .addVertex(cos1 * 32.0f, 0.0f, sin1 * 32.0f)
+        .monochrome(0.0f)
+        .addVertex(cos2 * 32.0f, 0.0f, sin2 * 32.0f);
     }
 
     modelAndAnimData.shadowObj = shadowBuilder.build();

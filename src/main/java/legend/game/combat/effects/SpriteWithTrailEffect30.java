@@ -96,30 +96,30 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
 
       //LAB_80118fac
       if(this.countCopies_08 != 0) {
-        final EffectManagerParams.ColourType managerInner = new EffectManagerParams.ColourType();
+        final EffectManagerParams.ColourType effectParams = new EffectManagerParams.ColourType();
         final Vector3i colour = new Vector3i();
         final Vector3f stepScale = new Vector3f();
 
         //LAB_80118fc4
-        managerInner.set(manager.params_10);
+        effectParams.set(manager.params_10);
 
         final int combinedSteps = this.countCopies_08 * (this.countTransformSteps_0c + 1);
         if((this.colourAndScaleFlags_00 & 0x4) != 0) {
           final int brightness = this.colourAndScaleTransformModifier_10 - 0x1000;
-          managerInner.r_28 = managerInner.colour_1c.x << 12;
-          managerInner.g_2c = managerInner.colour_1c.y << 12;
-          managerInner.b_30 = managerInner.colour_1c.z << 12;
-          colour.x = managerInner.colour_1c.x * brightness / combinedSteps;
-          colour.y = managerInner.colour_1c.y * brightness / combinedSteps;
-          colour.z = managerInner.colour_1c.z * brightness / combinedSteps;
+          effectParams.r_28 = effectParams.colour_1c.x << 12;
+          effectParams.g_2c = effectParams.colour_1c.y << 12;
+          effectParams.b_30 = effectParams.colour_1c.z << 12;
+          colour.x = effectParams.colour_1c.x * brightness / combinedSteps;
+          colour.y = effectParams.colour_1c.y * brightness / combinedSteps;
+          colour.z = effectParams.colour_1c.z * brightness / combinedSteps;
         }
 
         //LAB_801190a8
         if((this.colourAndScaleFlags_00 & 0x8) != 0) {
           final float scaleModifier = (this.colourAndScaleTransformModifier_10 - 0x1000) / (float)0x1000;
-          stepScale.x = managerInner.scale_16.x * scaleModifier / combinedSteps;
-          stepScale.y = managerInner.scale_16.y * scaleModifier / combinedSteps;
-          stepScale.z = managerInner.scale_16.z * scaleModifier / combinedSteps;
+          stepScale.x = effectParams.scale_16.x * scaleModifier / combinedSteps;
+          stepScale.y = effectParams.scale_16.y * scaleModifier / combinedSteps;
+          stepScale.z = effectParams.scale_16.z * scaleModifier / combinedSteps;
         }
 
         //LAB_80119130
@@ -139,15 +139,15 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
           //LAB_80119204
           for(int j = this.countTransformSteps_0c; j >= 0; j--) {
             if((this.colourAndScaleFlags_00 & 0x4) != 0) {
-              managerInner.r_28 += colour.x;
-              managerInner.g_2c += colour.y;
-              managerInner.b_30 += colour.z;
+              effectParams.r_28 += colour.x;
+              effectParams.g_2c += colour.y;
+              effectParams.b_30 += colour.z;
               //LAB_80119254
               //LAB_80119270
               //LAB_8011928c
-              managerInner.colour_1c.x = managerInner.r_28 >> 12;
-              managerInner.colour_1c.y = managerInner.g_2c >> 12;
-              managerInner.colour_1c.z = managerInner.b_30 >> 12;
+              effectParams.colour_1c.x = effectParams.r_28 >> 12;
+              effectParams.colour_1c.y = effectParams.g_2c >> 12;
+              effectParams.colour_1c.z = effectParams.b_30 >> 12;
             }
 
             //LAB_80119294
@@ -155,7 +155,7 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
               //LAB_801192e4
               //LAB_80119300
               //LAB_8011931c
-              managerInner.scale_16.add(stepScale);
+              effectParams.scale_16.add(stepScale);
             }
 
             //LAB_80119324
@@ -167,15 +167,15 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
             //LAB_80119360
             //LAB_80119378
             transformMatrix.transfer.set(x, y, z);
-            transformMatrix.scaleLocal(managerInner.scale_16);
+            transformMatrix.scaleLocal(effectParams.scale_16);
 
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)this.subEffect_1c;
-              renderTmdSpriteEffect(subEffect.tmd_08, subEffect.obj, managerInner, transformMatrix);
+              renderTmdSpriteEffect(subEffect.tmd_08, subEffect.obj, effectParams, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)this.subEffect_1c;
-              renderBillboardSpriteEffect(subEffect.metrics_04, managerInner, transformMatrix);
+              renderBillboardSpriteEffect(subEffect.metrics_04, effectParams, transformMatrix);
             }
             //LAB_80119400
             //LAB_80119404

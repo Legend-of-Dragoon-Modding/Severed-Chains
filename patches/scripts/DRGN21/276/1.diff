@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -633,7 +633,7 @@
+ call 111, 0x1
+ call 101, stor[0], 0xffffff06, 0xffffff88, 0xad
+ call 103, stor[0], 0x0, 0x400, 0x0
+-call 97, 0xd
++call 97, 0xe
+ call 267, 0xc, stor[24], stor[25], stor[26]
+ call 107, stor[24], stor[25], stor[26], 0x1e
+ gosub inl[:LABEL_14]
+@@ -750,7 +750,7 @@
+ mov 0xc, stor[24]
+ gosub inl[:LABEL_20]
+ call 103, stor[0], 0x0, 0x400, 0x0
+-call 97, 0xe
++call 97, 0xd
+ call 107, 0xffffff06, 0xffffff88, 0xad, 0x1e
+ gosub inl[:LABEL_14]
+ call 0, 0x0

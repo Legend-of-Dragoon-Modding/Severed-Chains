@@ -34,13 +34,11 @@ public final class ConfigStorage {
 
     try {
       data = new FileData(Files.readAllBytes(file));
-    } catch(final IOException e) {
+      loadConfig(configs, location, data);
+    } catch(final Throwable e) {
       LOGGER.warn("Failed to load config file %s", file);
       LOGGER.warn("Exception", e);
-      return;
     }
-
-    loadConfig(configs, location, data);
   }
 
   public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation location, final Path file) {

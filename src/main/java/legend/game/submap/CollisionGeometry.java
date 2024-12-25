@@ -232,7 +232,7 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e9018L)
-  public int getCollisionPrimitiveAtPoint(final float x, final float y, final float z, final boolean checkSteepness) {
+  public int getCollisionPrimitiveAtPoint(final float x, final float y, final float z, final boolean checkSteepness, final boolean checkY) {
     int collisionPrimitiveIndexCount = 0;
 
     //LAB_800e9040
@@ -250,8 +250,14 @@ public class CollisionGeometry {
         // the XZ plane is infinitely small. We have to instead assume that the primitive extends up and
         // down to infinity, and ignore the Y check altogether, falling back to only the XZ check.
         // This was a fix for #1077
+
+        // NOTE #2:
+        // checkY was added as a fix for #1176 - we only need to check Y for the player. Magma Fish
+        // encounters were broken because they jump too high over the collision geometry and their
+        // collision primitives weren't getting set as expected.
+
         final float primitiveY;
-        if(this.normals_08[collisionPrimitiveIndex].y != 0.0f) {
+        if(checkY && this.normals_08[collisionPrimitiveIndex].y != 0.0f) {
           primitiveY = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
         } else {
           primitiveY = y;
@@ -380,7 +386,7 @@ public class CollisionGeometry {
 
     //LAB_800e94ec
     //LAB_800e960cdd
-    final int currentPrimitiveIndex = this.getCollisionPrimitiveAtPoint(x, y, z, true);
+    final int currentPrimitiveIndex = this.getCollisionPrimitiveAtPoint(x, y, z, true, true);
 
     //LAB_800e9710
     if(currentPrimitiveIndex == -1) {
@@ -412,7 +418,7 @@ public class CollisionGeometry {
     final float endZ = z + movement.z;
 
     //LAB_800e990c
-    final int destinationPrimitiveIndex = this.getCollisionPrimitiveAtPoint(endX, y, endZ, true);
+    final int destinationPrimitiveIndex = this.getCollisionPrimitiveAtPoint(endX, y, endZ, true, true);
 
     //LAB_800e9afc
     if(destinationPrimitiveIndex >= 0) {
@@ -532,7 +538,7 @@ public class CollisionGeometry {
         offsetX = x + cos * distanceMultiplier;
         offsetZ = z + sin * distanceMultiplier;
 
-        s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true);
+        s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
 
         //LAB_800ea22c
       }

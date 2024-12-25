@@ -27,7 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Input.class);
 
-  public static final ControllerManager controllerManager = new JamepadControllerManager("./gamecontrollerdb.txt", Input::onControllerConnected, Input::onControllerDisconnected);
+  public static final ControllerManager controllerManager = new GlfwControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
@@ -216,6 +216,10 @@ public final class Input {
     }
   }
 
+  public static Controller getController() {
+    return activeController;
+  }
+
   public static void rumble(final float bigIntensity, final float smallIntensity, final int ms) {
     activeController.rumble(bigIntensity, smallIntensity, ms);
   }
@@ -246,6 +250,10 @@ public final class Input {
     if(controllerFromConfig.isBlank() || controllerFromConfig.equals(controller.getGuid())) {
       useController(controller);
       CONFIG.setConfig(CoreMod.CONTROLLER_CONFIG.get(), controller.getGuid());
+
+      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get())) {
+        RENDERER.window().hideCursor();
+      }
     }
   }
 
@@ -254,6 +262,7 @@ public final class Input {
 
     if(activeController == controller) {
       useController(null);
+      RENDERER.window().showCursor();
     }
   }
 

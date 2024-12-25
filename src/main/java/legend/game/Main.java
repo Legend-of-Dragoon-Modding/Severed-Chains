@@ -7,12 +7,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public final class Main {
+  public static final Locale ORIGINAL_LOCALE = Locale.getDefault();
+
   static {
     System.setProperty("log4j.skipJansi", "false");
     System.setProperty("log4j2.configurationFile", "log4j2.xml");
+
+    Locale.setDefault(Locale.US);
   }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Main.class);

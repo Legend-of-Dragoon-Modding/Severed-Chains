@@ -1,0 +1,18 @@
+--- original
++++ modified
+@@ -2008,6 +2008,7 @@
+ deallocate_other stor[18]
+ return
+ LABEL_98:
++gosub inl[:LABEL_17]
+ gosub inl[:LABEL_126]
+ gosub inl[:LABEL_81]
+ gosub inl[:LABEL_79]
+@@ -2018,7 +2019,6 @@
+ mov 0x25d17, stor[stor[stor[0], 18], 8]
+ call 547, stor[18], 0xffffffff, 0x0, 0xa00, 0x0
+ call 545, stor[18], stor[28], 0x0, 0x0, 0x0
+-gosub inl[:LABEL_17]
+ gosub inl[:LABEL_111]
+ gosub inl[:LABEL_64]
+ call 545, stor[18], stor[28], 0x0, 0x0, 0x0

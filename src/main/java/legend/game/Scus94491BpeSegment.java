@@ -163,7 +163,6 @@ import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
-import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
@@ -184,6 +183,7 @@ public final class Scus94491BpeSegment {
   public static int centreScreenY_1f8003de;
   public static int displayWidth_1f8003e0;
   public static int displayHeight_1f8003e4;
+  /** Deprecated */
   public static int zOffset_1f8003e8;
   public static int tmdGp0Tpage_1f8003ec;
   public static int tmdGp0CommandId_1f8003ee;
@@ -397,7 +397,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      RENDERER.window().setFpsLimit(60 / frames);
+      RENDERER.window().setFpsLimit(60 / frames * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
 
@@ -476,7 +476,7 @@ public final class Scus94491BpeSegment {
 
       // Failsafe if we run too far behind (also applies to pausing in IDE)
       if(interval >= NANOS_PER_TICK * 3) {
-        LOGGER.warn("Sequencer running behind, skipping ticks to catch up");
+        LOGGER.debug("Sequencer running behind, skipping ticks to catch up");
         interval = NANOS_PER_TICK;
         time = System.nanoTime() - interval;
       }

@@ -163,7 +163,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
         //LAB_8010abf4
         r = ((128.0f - gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.x / 128.0f) / 256.0f;
         g = r / 2.0f;
-        b = 0.0f;
+        b = g;
       } else if(effect.type_1c == 2) {
         //LAB_8010ac68
         r = (this.getModifierR(gradientRay.vertColourAndYModifier_02) * manager.params_10.colour_1c.x * 8 / 128.0f) / 256.0f;
@@ -183,28 +183,22 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       if(effect.type_1c == 1) {
         builder
           .addVertex(xy1.x, xy1.y, 0)
-          .monochrome(0)
           .addVertex(xy2.x, xy2.y, 0)
-          .rgb(r, g, g)
-          .addVertex(xy3.x, xy3.y, 0)
-          .rgb(r, g, g);
+          .rgb(r, g, b)
+          .addVertex(xy3.x, xy3.y, 0);
       } else if(effect.type_1c == 2) {
         builder
           .addVertex(xy1.x, xy1.y, 0)
           .rgb(r / 2, g / 2, b / 2)
           .addVertex(xy2.x, xy2.y, 0)
-          .rgb(r / 2, g / 2, b / 2)
           .addVertex(xy3.x, xy3.y, 0)
           .rgb(r, g, b);
       } else {
         // I don't think there is another type in the scripts, but just to be sure.
         builder
           .addVertex(xy1.x, xy1.y, 0)
-          .monochrome(0)
           .addVertex(xy2.x, xy2.y, 0)
-          .monochrome(0)
-          .addVertex(xy3.x, xy3.y, 0)
-          .monochrome(0);
+          .addVertex(xy3.x, xy3.y, 0);
       }
 
       final Obj obj = builder.build();

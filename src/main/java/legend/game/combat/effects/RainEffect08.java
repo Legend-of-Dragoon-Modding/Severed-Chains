@@ -60,11 +60,9 @@ public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(0.0f)
         .addVertex(1.0f, 0.0f, 0.0f)
-        .monochrome(0.0f)
         .addVertex(0.0f, 1.0f, 0.0f)
         .monochrome(1.0f)
         .addVertex(1.0f, 1.0f, 0.0f)
-        .monochrome(1.0f)
         .build();
     }
 

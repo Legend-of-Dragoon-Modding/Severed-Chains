@@ -17,6 +17,7 @@ import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
 import legend.game.EngineStateEnum;
+import legend.game.Main;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
@@ -50,7 +51,6 @@ import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 import java.util.Set;
 
 import static legend.game.SItem.albertXpTable_801138c0;
@@ -265,7 +265,7 @@ public final class GameEngine {
     final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
 
     // Initialize language
-    LANG_ACCESS.initialize(MODS, Locale.getDefault());
+    LANG_ACCESS.initialize(MODS, Main.ORIGINAL_LOCALE);
 
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);

@@ -59,6 +59,8 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodEquipment;
 import legend.lodmod.LodItems;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -161,6 +163,8 @@ import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
+
   private int fmvIndex_800bf0dc;
 
   private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
@@ -375,7 +379,7 @@ public class SMap extends EngineState {
     new ChapterStruct08(710, 0),
     new ChapterStruct08(745, 58),
   };
-  private boolean _800f7e4c;
+  private boolean transitioning_800f7e4c;
   private int scriptSetOffsetMode_800f7e50;
   /**
    * <ul>
@@ -995,6 +999,7 @@ public class SMap extends EngineState {
 
           final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+            .depthOffset(model.zOffset_a0)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
@@ -2062,7 +2067,7 @@ public class SMap extends EngineState {
   private FlowControl scriptCheckSobjCollision(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
+    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false, false);
     script.params_20[1].set(collisionPrimitiveIndex);
     sobj.collidedPrimitiveIndex_16c = collisionPrimitiveIndex;
     return FlowControl.CONTINUE;
@@ -2734,11 +2739,8 @@ public class SMap extends EngineState {
       .addVertex(v0.x, v0.y, 0.0f)
       .rgb(r, g, b)
       .addVertex(v1.x, v0.y, 0.0f)
-      .rgb(r, g, b)
       .addVertex(v0.x, v1.y, 0.0f)
-      .rgb(r, g, b)
       .addVertex(v1.x, v1.y, 0.0f)
-      .rgb(r, g, b)
       .build();
     final MV transforms = new MV();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 148.0f);
@@ -3313,7 +3315,7 @@ public class SMap extends EngineState {
       return false;
     }
 
-    final var encounterAccumulatorLimit = 0x140;
+    final var encounterAccumulatorLimit = 0x1400;
     final var encounterAccumulatorStepModifier = 2.0f;
     final var encounterAccumulatorStep = this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / encounterAccumulatorStepModifier;
     final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
@@ -3462,8 +3464,8 @@ public class SMap extends EngineState {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      final Vector2f transformed = new Vector2f();
-      final Vector3f middle = new Vector3f();
+      // final Vector2f transformed = new Vector2f();
+      // final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();
@@ -3591,9 +3593,11 @@ public class SMap extends EngineState {
       return;
     }
 
-    if(this._800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
+    if(this.transitioning_800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
       return;
     }
+
+    LOGGER.info("Transitioning to cut %d scene %d", newCut, newScene);
 
     if(this.smapTicks_800c6ae0 > 15 * (3 - vsyncMode_8007a3b8)) {
       this.returnedToSameSubmapAfterBattle_800cb448 = false;
@@ -3610,7 +3614,7 @@ public class SMap extends EngineState {
       this.mapTransitionTicks_800cab28++;
     }
 
-    this._800f7e4c = true;
+    this.transitioning_800f7e4c = true;
 
     if(newCut > 0x7ff) {
       this.fmvIndex_800bf0dc = newCut - 0x800;
@@ -3858,14 +3862,14 @@ public class SMap extends EngineState {
 
           case UNLOAD_SAVE_GAME_MENU_20 -> {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-            this._800f7e4c = false;
+            this.transitioning_800f7e4c = false;
             this.mapTransition(this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00, this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04);
             collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[0].submapScene_04;
           }
 
           case QUIT -> {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-            this._800f7e4c = false;
+            this.transitioning_800f7e4c = false;
             this.mapTransition(-1, 0x3fb);
             drgnBinIndex_800bc058 = 1;
           }
@@ -3876,7 +3880,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         SCRIPTS.resume();
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
 
         if(loadingNewGameState_800bdc34) {
@@ -3919,7 +3923,7 @@ public class SMap extends EngineState {
 
         //LAB_800e624c
         //LAB_800e6250
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
       }
 
       case TRANSITION_TO_WORLD_MAP_18 -> {
@@ -3944,7 +3948,7 @@ public class SMap extends EngineState {
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
         pregameLoadingStage_800bb10c = 0;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
 
@@ -3953,7 +3957,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
         pregameLoadingStage_800bb10c = 0;
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
 
@@ -3984,7 +3988,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
 
         //LAB_800e6490
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
 
@@ -4010,7 +4014,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
         pregameLoadingStage_800bb10c = 0;
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
     }

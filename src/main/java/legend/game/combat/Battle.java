@@ -585,8 +585,6 @@ public class Battle extends EngineState {
   @Override
   @Method(0x800186a0L)
   public void tick() {
-    LOGGER.info("Loading stage %d", pregameLoadingStage_800bb10c);
-
     if(battleLoaded_800bc94c) {
       this.checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents();
       this.battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c].run();
@@ -984,7 +982,7 @@ public class Battle extends EngineState {
     functions[1010] = this::scriptUseItem;
     functions[1011] = this::scriptApplyEquipmentEffect;
 
-    functions[1020] = this::scriptSetCombatantCharSlot;
+    functions[1020] = this::scriptSetCombatantVramSlot;
     return functions;
   }
 
@@ -1112,11 +1110,12 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Changes char slot of a combatant")
+  @ScriptDescription("Changes vram slot of a combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "Combatant ID")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charSlot", description = "Target character slot")
-  private FlowControl scriptSetCombatantCharSlot(final RunningScript<BattleEntity27c> script) {
-    this.combatants_8005e398[script.params_20[0].get()].charSlot_19c = script.params_20[1].get();
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "vramSlot", description = "Target vram slot")
+  private FlowControl scriptSetCombatantVramSlot(final RunningScript<BattleEntity27c> script) {
+    this.unsetMonsterTextureSlotUsed(this.combatants_8005e398[script.params_20[0].get()].vramSlot_1a0);
+    this.combatants_8005e398[script.params_20[0].get()].vramSlot_1a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
@@ -7336,6 +7335,7 @@ public class Battle extends EngineState {
 
         if(part.obj != null) {
           RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
+            .depthOffset(stage.z_5e8 * 4)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)

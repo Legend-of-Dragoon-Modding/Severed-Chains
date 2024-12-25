@@ -138,7 +138,7 @@ public class Gpu {
   public void endFrame() {
     this.tick();
 
-    final int fpsLimit = RENDERER.window().getFpsLimit();
+    final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
     this.fps[this.fpsIndex] = RENDERER.getFps();
     this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
 
@@ -148,7 +148,7 @@ public class Gpu {
         avg += this.fps[i];
       }
 
-      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.VERSION, avg / fpsLimit * (1 << Config.getGameSpeedMultiplier() - 1), fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
     }
   }
 
