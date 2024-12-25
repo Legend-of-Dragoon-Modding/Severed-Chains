@@ -107,6 +107,7 @@ diff,SECT/DRGN22.BIN/453/1,scripts/DRGN22/453/1.diff,"Lohan Hero Competition sho
 diff,SECT/DRGN22.BIN/597/1,scripts/DRGN22/597/1.diff,"Kazas Garbage Room, GH#1078"
 diff,SECT/DRGN22.BIN/681/1,scripts/DRGN22/681/1.diff,"Adjust text placement for conversation with Kongol in training room, GH#1839"
 diff,SECT/DRGN22.BIN/681/2,scripts/DRGN22/681/2.diff,"Adjust text placement for conversation with Kongol in training room, GH#1839"
+diff,SECT/DRGN22.BIN/1098/1,scripts/DRGN22/1098/1.diff,"Princess Emille's room, fix Dart animation GH#1115"
 diff,SECT/DRGN23.BIN/12/1,scripts/DRGN23/12/1.diff,"Furni retail dialogue fix, GH#1484"
 diff,SECT/DRGN23.BIN/348/1,scripts/DRGN23/348/1.diff,"Flanvel Teleporter Fixes"
 diff,SECT/DRGN23.BIN/348/2,scripts/DRGN23/348/2.diff,"Flanvel Teleporter Fixes"
