@@ -9,7 +9,7 @@
  LABEL_88:
  rel :JMP_2704_0
  rel :JMP_2704_1
-@@ -1439,9 +1441,13 @@
+@@ -1439,9 +1441,11 @@
  gosub inl[:LABEL_103]
  mov 0x0, stor[22]
  gosub inl[:LABEL_103]
@@ -19,20 +19,16 @@
 +mov stor[0], inl[:INDEX_NO_ARROW]
 +or 0x2000, inl[:INDEX_NO_ARROW]
 +call 198, 0x0, inl[:INDEX_NO_ARROW], 0x100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x0]]
-+or 0x2000, inl[:INDEX_NO_ARROW]
 +call 198, 0x1, inl[:INDEX_NO_ARROW], 0x100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x1]]
-+or 0x2000, inl[:INDEX_NO_ARROW]
 +call 198, 0x2, inl[:INDEX_NO_ARROW], 0x100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x2]]
  call 198, 0x3, stor[0], 0x1111, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x3]]
  LABEL_89:
  yield
-@@ -1604,7 +1610,9 @@
+@@ -1604,7 +1608,7 @@
  jmp inl[:LABEL_101]
  LABEL_101:
  while stor[20], inl[:LABEL_102]
 -call 198, stor[22], stor[0], 0x100, 0x3, 0x1, inl[:LABEL_149[:LABEL_149[stor[22]]]]
-+mov stor[0], inl[:INDEX_NO_ARROW]
-+or 0x2000, inl[:INDEX_NO_ARROW]
 +call 198, stor[22], inl[:INDEX_NO_ARROW], 0x100, 0x3, 0x1, inl[:LABEL_149[:LABEL_149[stor[22]]]]
  mov 0x8, stor[20]
  LABEL_102:
