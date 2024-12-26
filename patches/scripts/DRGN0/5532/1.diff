@@ -1,14 +1,5 @@
 --- original
 +++ modified
-@@ -515,7 +515,7 @@
- incr stor[18]
- call 354, 0x0, stor[18], stor[9]
- call 355, stor[9]
--call 364, stor[8], stor[9]
-+gosub inl[:LOAD_SLOTTED_TEXTURES]
- call 356, stor[9]
- call 354, 0x0, stor[16], stor[9]
- call 355, stor[9]
 @@ -854,6 +854,10 @@
  data 0x8e
  data 0x8a
@@ -49,20 +40,3 @@
  mov 0x3, stor[stor[stor[0], 23], 24]
  call 618, stor[23], inl[:LABEL_5]
  return
-@@ -1750,3 +1754,16 @@
- return
- ENTRYPOINT_1:
- rewind
-+LOAD_SLOTTED_TEXTURES:
-+jmp_cmp >=, inl[:CHAR_INDEX], 0x3, inl[:LOAD_ENEMY_TEXTURE]
-+jmp_cmp ==, stor[13], 0xc, inl[:LOAD_PLAYER_TEXTURE]
-+LOAD_ENEMY_TEXTURE:
-+call 364, stor[8], stor[9]
-+return
-+LOAD_PLAYER_TEXTURE:
-+incr inl[:CHAR_INDEX]
-+call 1020, stor[8], inl[:CHAR_INDEX]
-+call 364, stor[8], stor[9]
-+return
-+CHAR_INDEX:
-+data 0x0
