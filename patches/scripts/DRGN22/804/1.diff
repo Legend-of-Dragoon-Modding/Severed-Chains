@@ -1,0 +1,14 @@
+Haschel rejoins party
+Skip flag resets for other characters
+Unlock party fix
+--- original
++++ modified
+@@ -2972,6 +2972,8 @@
+ LABEL_326:
+ mov var[17][1], var[17][2]
+ mov 0x4, var[17][1]
++andor 0x40, 0x23, var[115 + 4]
++return
+ andor 0x40, 0x23, var[115 + 0]
+ andor 0x40, 0x0, var[115 + 1]
+ andor 0x40, 0x3, var[115 + 2]
