@@ -75,6 +75,7 @@
 +LOAD_PLAYER_TEXTURE:
 +call 1020, stor[8], inl[:CHAR_INDEX]
 +call 364, stor[8], stor[9]
++call 1020, stor[8], 0xffffffff
 +incr inl[:CHAR_INDEX]
 +return
 +CHAR_INDEX:
