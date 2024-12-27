@@ -139,7 +139,7 @@ public class ShopScreen extends MenuScreen {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
           for(int i = 0; i < shop.getItemCount(); i++) {
-            final Equipment equipment = (Equipment)shop.getItem(i).get();
+            final Equipment equipment = (Equipment)shop.getItem(i);
             shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2));
           }
 
@@ -149,7 +149,7 @@ public class ShopScreen extends MenuScreen {
           final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
 
           for(int i = 0; i < shop.getItemCount(); i++) {
-            final Item item = (Item)shop.getItem(i).get();
+            final Item item = (Item)shop.getItem(i);
             shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
           }
 

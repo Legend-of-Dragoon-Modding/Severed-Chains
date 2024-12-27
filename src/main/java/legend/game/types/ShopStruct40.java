@@ -16,11 +16,11 @@ public class ShopStruct40 extends RegistryEntry {
     this.items_00 = Arrays.copyOf(items, items.length);
   }
 
-  public Supplier<InventoryEntry> getItem(int index) {
+  public InventoryEntry getItem(int index) {
     if(index < 0 || index >= items_00.length) {
       throw new IndexOutOfBoundsException("Invalid shop item index: " + index);
     }
-    return items_00[index];
+    return items_00[index].get();
   }
 
   public int getItemCount() {
