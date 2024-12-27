@@ -1,6 +1,5 @@
 package legend.game.submap;
 
-import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -131,9 +130,7 @@ import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
 import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -769,7 +766,7 @@ public class SMap extends EngineState {
       case CHECK_TRANSITIONS_1_2:
         if((this.submapFlags_800f7e54 & 0x1) == 0) {
           if(this.canEncounter()) {
-            this.submap.prepareEncounter(null);
+            this.submap.prepareEncounter();
             this.mapTransition(-1, 0);
           }
         }
