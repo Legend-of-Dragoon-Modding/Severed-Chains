@@ -1,6 +1,9 @@
+Adds movement animation to Lavitz's mother after the house tour ends.
+This positions her for Lavitz's hug in case the player starts the hug cutscene as soon as possible.
+Retail bug fix
 --- original
 +++ modified
-@@ -106,7 +106,71 @@
+@@ -106,7 +106,83 @@
  yield
  call 1, stor[24]
  jmp_cmp !=, 0x0, stor[24], inl[:LABEL_16]
@@ -10,6 +13,13 @@
 +mov 0xffffffcd, inl[:TARGET_Y]
 +mov 0x5c, inl[:TARGET_Z]
 +gosub inl[:ROTATE_0]
++COLLISION_CHECK:
++call 102, stor[0], inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z]
++call 107, inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z], 1
++call 97, 0
++yield
++call 308, stor[0], inl[:TARGET_Z]
++jmp_cmp ==, 0, inl[:TARGET_Z], inl[:COLLISION_CHECK]
 # Calculate movement ticks
 +mov 0x41, inl[:TARGET_X]
 +mov 0xffffffcd, inl[:TARGET_Y]
@@ -23,19 +33,17 @@
 +add inl[:MOM_X], inl[:MOM_Y]
 +add inl[:MOM_Y], inl[:MOM_Z]
 +sqrt inl[:MOM_Z], inl[:MOM_Z]
++abs inl[:MOM_Z]
 +jmp_cmp <=, 2, inl[:MOM_Z], inl[:CONTINUE]
 +mov 2, inl[:MOM_Z]
 +CONTINUE:
 +div 2, inl[:MOM_Z]
 # Move to target
 +call 107, inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z], inl[:MOM_Z]
-+call 99, 0
 +call 97, 1
-+wait inl[:MOM_Z]
-# Rotate to face player
-+mov inl[:TARGET_X], inl[:MOM_X]
-+mov inl[:TARGET_Y], inl[:MOM_Y]
-+mov inl[:TARGET_Z], inl[:MOM_Z]
++gosub inl[:WALK]
+# Rotate to player
++call 102, stor[0], inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z]
 +call 102, var[64][0], inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z]
 +gosub inl[:ROTATE_0]
  return
@@ -50,15 +58,22 @@
 +360_NEG_BOUND:
 +jmp_cmp >=, inl[:TARGET_Y], 0xfffff800, inl[:360_POS_BOUND]
 +add 0x1000, inl[:TARGET_Y]
-+jmp inl[:LABEL_13]
 +360_POS_BOUND:
 +jmp_cmp <, inl[:TARGET_Y], 0x800, inl[:ROTATE_1]
 +sub 0x1000, inl[:TARGET_Y]
 +ROTATE_1:
 +call 120, stor[0], 0, inl[:TARGET_Y], 0, 10
-+call 99, 0
 +call 97, 1
 +wait 10
++call 97, 0
++return
++WALK:
++jmp_cmp ==, 0x0, inl[:MOM_Z], inl[:STOP]
++yield
++call 308, stor[0], inl[:TARGET_Z]
++jmp_cmp ==, 0, inl[:TARGET_Z], inl[:COLLISION_CHECK]
++while inl[:MOM_Z], inl[:WALK]
++STOP:
 +call 97, 0
 +return
 +MOM_X:
