@@ -1116,6 +1116,7 @@ public class Battle extends EngineState {
   private FlowControl scriptSetCombatantVramSlot(final RunningScript<BattleEntity27c> script) {
     this.unsetMonsterTextureSlotUsed(this.combatants_8005e398[script.params_20[0].get()].vramSlot_1a0);
     this.combatants_8005e398[script.params_20[0].get()].vramSlot_1a0 = script.params_20[1].get();
+    this.setMonsterTextureSlotUsed(this.combatants_8005e398[script.params_20[0].get()].vramSlot_1a0);
     return FlowControl.CONTINUE;
   }
 
