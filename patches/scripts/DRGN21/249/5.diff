@@ -1,0 +1,77 @@
+--- original
++++ modified
+@@ -106,7 +106,74 @@
+ yield
+ call 1, stor[24]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_16]
++call 102, stor[0], inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z]
++mov 0x41, inl[:TARGET_X]
++mov 0xffffffcd, inl[:TARGET_Y]
++mov 0x5c, inl[:TARGET_Z]
++gosub inl[:ROTATE_0]
++mov 0x41, inl[:TARGET_X]
++mov 0xffffffcd, inl[:TARGET_Y]
++mov 0x5c, inl[:TARGET_Z]
++sub inl[:TARGET_X], inl[:MOM_X]
++sub inl[:TARGET_Y], inl[:MOM_Y]
++sub inl[:TARGET_Z], inl[:MOM_Z]
++mul inl[:MOM_X], inl[:MOM_X]
++mul inl[:MOM_Y], inl[:MOM_Y]
++mul inl[:MOM_Z], inl[:MOM_Z]
++add inl[:MOM_X], inl[:MOM_Y]
++add inl[:MOM_Y], inl[:MOM_Z]
++sqrt inl[:MOM_Z], inl[:MOM_Z]
++jmp_cmp >, 3, inl[:MOM_Z], inl[:CLOSE]
++jmp inl[:NORMAL]
++CLOSE:
++mov 2, inl[:MOM_Z]
++NORMAL:
++div 2, inl[:MOM_Z]
++call 107, inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z], inl[:MOM_Z]
++call 99, 0
++call 97, 1
++call 105, inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z]
++wait inl[:MOM_Z]
++mov inl[:TARGET_X], inl[:MOM_X]
++mov inl[:TARGET_Y], inl[:MOM_Y]
++mov inl[:TARGET_Z], inl[:MOM_Z]
++call 102, var[64][0], inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z]
++gosub inl[:ROTATE_0]
+ return
++ROTATE_0:
++sub inl[:MOM_X], inl[:TARGET_X]
++sub inl[:MOM_Z], inl[:TARGET_Z]
++atan2_12 inl[:TARGET_X], inl[:TARGET_Z], inl[:TARGET_Y]
++call 104, stor[0], inl[:TARGET_Z], inl[:TARGET_X], inl[:TARGET_Z]
++and 0xfff, inl[:TARGET_X]
++sub inl[:TARGET_X], inl[:TARGET_Y]
++add 0x800, inl[:TARGET_Y]
++360_NEG_BOUND:
++jmp_cmp >=, inl[:TARGET_Y], 0xfffff800, inl[:360_POS_BOUND]
++add 0x1000, inl[:TARGET_Y]
++jmp inl[:LABEL_13]
++360_POS_BOUND:
++jmp_cmp <, inl[:TARGET_Y], 0x800, inl[:ROTATE_1]
++sub 0x1000, inl[:TARGET_Y]
++ROTATE_1:
++call 120, stor[0], 0, inl[:TARGET_Y], 0, 10
++call 99, 0
++call 97, 1
++wait 10
++call 97, 0
++return
++MOM_X:
++data 0
++MOM_Y:
++data 0
++MOM_Z:
++data 0
++TARGET_X:
++data 0
++TARGET_Y:
++data 0
++TARGET_Z:
++data 0
+ ENTRYPOINT_0:
+ ENTRYPOINT_2:
+ ENTRYPOINT_3:
