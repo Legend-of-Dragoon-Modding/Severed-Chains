@@ -22,6 +22,7 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.coremod.elements.DarkElement;
 import legend.game.modding.coremod.elements.DivineElement;
@@ -37,6 +38,7 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.ShopStruct40;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.equipment.DestroyerMaceEquipment;
@@ -130,6 +132,22 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
+  public static final String[] SHOP_IDS = {
+    "bale_equipment_shop", "serdio_item_shop", "lohan_equipment_shop", "lohan_item_shop",
+    "kazas_equipment_shop", "kazas_fort_item_shop", "fletz_equipment_shop", "fletz_item_shop",
+    "donau_equipment_shop", "donau_item_shop", "queen_fury_equipment_shop", "queen_fury_item_shop",
+    "fueno_equipment_shop", "fueno_item_shop", "furni_equipment_shop", "furni_item_shop",
+    "deningrad_equipment_shop", "deningrad_item_shop", "wingly_forest_equipment_shop", "wingly_forest_item_shop",
+    "vellweb_equipment_shop", "vellweb_item_shop", "ulara_equipment_shop", "ulara_item_shop",
+    "rouge_equipment_shop", "rouge_item_shop", "moon_equipment_shop", "moon_item_shop",
+    "hellena_01_item_shop", "kashua_equipment_shop", "kashua_item_shop", "fletz_accessory_shop",
+    "forest_item_shop", "kazas_fort_equipment_shop", "volcano_item_shop", "zenebatos_equipment_shop",
+    "zenebatos_item_shop", "hellena_02_item_shop", "unknown_shop_01", "empty_shop", "empty_shop", "empty_shop"
+    , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop"
+    , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
+    "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
+  };
+
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     LodItems.register(event);
@@ -150,6 +168,11 @@ public class LodMod {
         });
       }
     }
+  }
+
+  @EventListener
+  public static void registerShops(final ShopRegistryEvent event) {
+    LodShops.register(event);
   }
 
   @EventListener

@@ -15,6 +15,7 @@ lod_core.config.controller.label=Controller
 lod_core.config.controller_keybinds.label=Controller Keybinds
 lod_core.config.controller_keybinds.configure=Configure...
 lod_core.config.controller_deadzone.label=Controller Deadzone
+lod_core.config.disable_mouse_input.label=Disable Mouse Input
 lod_core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
 lod_core.config.rumble.label=Rumble
 lod_core.config.allow_widescreen.label=3D Widescreen
