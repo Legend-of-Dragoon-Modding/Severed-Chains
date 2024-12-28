@@ -3,15 +3,15 @@ Skip flag resets for other characters
 Unlock party fix
 --- original
 +++ modified
-@@ -2727,6 +2727,7 @@
+@@ -2720,6 +2720,7 @@
  data 0xffffff9c
  data 0xfffffce0
- LABEL_287:
+ LABEL_289:
 +jmp inl[:HASCHEL_CHECK]
  mov var[17][1], stor[24]
  mov var[17][2], stor[25]
- jmp_cmp !=, 0x4, stor[24], inl[:LABEL_288]
-@@ -2752,6 +2753,43 @@
+ jmp_cmp !=, 0x4, stor[24], inl[:LABEL_290]
+@@ -2745,6 +2746,43 @@
  andor 0x40, 0x0, var[115 + 7]
  andor 0x40, 0x0, var[115 + 8]
  return
@@ -57,6 +57,6 @@ Unlock party fix
 +mov var[17][1], stor[24]
 +mov var[17][2], stor[25]
 +return
- LABEL_292:
+ LABEL_294:
  gosub inl[:LABEL_56]
- memcpy 0x3, inl[:LABEL_293], stor[stor[stor[0], 24], 11]
+ memcpy 0x3, inl[:LABEL_295], stor[stor[stor[0], 24], 11]
