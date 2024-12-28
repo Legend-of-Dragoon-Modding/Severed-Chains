@@ -45,7 +45,7 @@
  call 356, stor[9]
  call 354, 0x0, stor[16], stor[9]
  call 355, stor[9]
-@@ -4028,3 +4044,17 @@
+@@ -4028,3 +4044,16 @@
  data 0x14
  LABEL_233:
  data 0x1
@@ -58,8 +58,7 @@
 +LOAD_PLAYER_TEXTURE:
 +call 1020, stor[8], inl[:CHAR_INDEX]
 +call 364, stor[8], stor[9]
-+call 1020, stor[8], 0xffffffff
 +incr inl[:CHAR_INDEX]
 +return
 +CHAR_INDEX:
-+data 0x0
++data 0x1
