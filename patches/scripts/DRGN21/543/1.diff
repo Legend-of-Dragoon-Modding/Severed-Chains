@@ -1,0 +1,20 @@
+Retail bug: Dart can "fall" down a hole to a "ladder" (slope).
+Fix: Have the affected collision primitive trigger the jump-down animation as well.
+--- original
++++ modified
+@@ -625,6 +625,7 @@
+ data 0x8
+ data 0x6
+ data 0x14
++data 0x2a
+ data 0x2b
+ data 0x13
+ data 0xffffffff
+@@ -633,6 +634,7 @@
+ rel :JMP_166c_0
+ rel :JMP_166c_2
+ rel :JMP_166c_3
++rel :JMP_166c_3
+ rel :JMP_166c_4
+ JMP_166c_0:
+ jmp_cmp !&, 0x20, var[4], inl[:LABEL_92]
