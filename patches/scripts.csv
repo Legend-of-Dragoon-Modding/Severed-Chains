@@ -115,6 +115,7 @@ diff,SECT/DRGN22.BIN/798/1,scripts/DRGN22/798/1.diff,"Giganto Home outside thron
 diff,SECT/DRGN22.BIN/801/1,scripts/DRGN22/801/1.diff,"Giganto Home throne room, Haschel leaves, fix unlock party GH#1772"
 diff,SECT/DRGN22.BIN/804/1,scripts/DRGN22/804/1.diff,"Giganto Home Gehrich cutscene, Haschel rejoins, fix unlock party GH#1772"
 diff,SECT/DRGN22.BIN/807/1,scripts/DRGN22/807/1.diff,"Giganto Home below throne, party leaves, fix unlock party GH#1772"
+diff,SECT/DRGN22.BIN/873/1,scripts/DRGN22/873/1.diff,"Phantom Ship, fix overlapping arrows for chest puzzle textbox, GH#1387"
 diff,SECT/DRGN22.BIN/933/3,scripts/DRGN22/933/3.diff,"Fueno, rotate lady outside inn to face player for dialogue GH#1445"
 diff,SECT/DRGN22.BIN/1098/1,scripts/DRGN22/1098/1.diff,"Princess Emille's room, fix Dart animation GH#1115"
 diff,SECT/DRGN23.BIN/12/1,scripts/DRGN23/12/1.diff,"Furni retail dialogue fix, GH#1484"
