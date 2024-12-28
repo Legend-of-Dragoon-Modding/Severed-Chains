@@ -18,6 +18,7 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.ShopStruct40;
+import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.Objects;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
@@ -67,7 +69,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.submap.SMap.shops_800f4930;
 
 public class ShopScreen extends MenuScreen {
   private static final String Not_enough_money_8011c468 = "Not enough\nmoney";
@@ -131,14 +132,14 @@ public class ShopScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         startFadeEffect(2, 10);
 
-        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];
+        final ShopStruct40 shop = REGISTRIES.shop.getEntry(LodMod.id(LodMod.SHOP_IDS[shopId_8007a3b4])).get();
         this.shopType = shop.shopType_00 & 1;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < shop.items_00.length; i++) {
-            final Equipment equipment = (Equipment)shop.items_00[i].get();
+          for(int i = 0; i < shop.getItemCount(); i++) {
+            final Equipment equipment = (Equipment)shop.getItem(i);
             shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2));
           }
 
@@ -147,8 +148,8 @@ public class ShopScreen extends MenuScreen {
         } else {
           final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < shop.items_00.length; i++) {
-            final Item item = (Item)shop.items_00[i].get();
+          for(int i = 0; i < shop.getItemCount(); i++) {
+            final Item item = (Item)shop.getItem(i);
             shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
           }
 
