@@ -1,0 +1,13 @@
+Retail bug: Lady in Fueno doesn't look at the player
+--- original
++++ modified
+@@ -300,8 +300,7 @@
+ LABEL_22:
+ call 102, stor[0], stor[29], stor[30], stor[31]
+ call 107, stor[29], stor[30], stor[31], 0x1
+-mov 0x2c, stor[26]
+-mov 0x577, stor[27]
++call 102, var[64][0], stor[26], stor[27], stor[27]
+ call 102, stor[0], stor[28], stor[31], stor[29]
+ sub stor[28], stor[26]
+ sub stor[29], stor[27]
