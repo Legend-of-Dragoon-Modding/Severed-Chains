@@ -10,6 +10,7 @@ import legend.game.input.InputState;
 import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -51,8 +52,9 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
-import static org.lwjgl.glfw.GLFW.glfwGetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
+import static org.lwjgl.glfw.GLFW.glfwGetMonitorPos;
+import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
@@ -126,13 +128,15 @@ public class Window {
   private final float scale = 1.0f;
   private boolean hasFocus;
 
-  private final GLFWVidMode vidMode;
+  private long monitor;
+  private GLFWVidMode vidMode;
 
   private final List<Action> actions = new ArrayList<>();
   private final Action render = this.addAction(new Action(this::tickFrame, 60));
 
   public Window(final String title, final int width, final int height) {
-    this.vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    this.monitor = this.getMonitorFromConfig();
+    this.vidMode = glfwGetVideoMode(this.monitor);
 
     if(this.vidMode == null) {
       throw new RuntimeException("Failed to get video mode");
@@ -153,8 +157,10 @@ public class Window {
     if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
       glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
       this.window = glfwCreateWindow(this.vidMode.width(), this.vidMode.height(), title, NULL, NULL);
+      this.makeFullscreen();
     } else {
       this.window = glfwCreateWindow(width, height, title, NULL, NULL);
+      this.centerWindow();
     }
 
     glfwSetWindowSizeLimits(this.window, 320, 240, GLFW_DONT_CARE, GLFW_DONT_CARE);
@@ -178,7 +184,6 @@ public class Window {
       }
     });
 
-    this.centerWindow();
     this.makeContextCurrent();
     GL.createCapabilities();
 
@@ -191,6 +196,19 @@ public class Window {
     }
   }
 
+  private long getMonitorFromConfig() {
+    if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
+      final int monitorIndex = CONFIG.getConfig(CoreMod.MONITOR_CONFIG.get());
+      final PointerBuffer monitorPtrs = glfwGetMonitors();
+
+      if(monitorIndex >= 0 && monitorIndex < monitorPtrs.limit()) {
+        return monitorPtrs.get(monitorIndex);
+      }
+    }
+
+    return glfwGetPrimaryMonitor();
+  }
+
   public void centerWindow() {
     try(final MemoryStack stack = stackPush()) {
       final IntBuffer pWidth = stack.mallocInt(1);
@@ -198,24 +216,45 @@ public class Window {
 
       glfwGetFramebufferSize(this.window, pWidth, pHeight);
 
+      final int[] x = new int[1];
+      final int[] y = new int[1];
+      glfwGetMonitorPos(this.monitor, x, y);
+
       glfwSetWindowPos(
         this.window,
-        (this.vidMode.width() - pWidth.get(0)) / 2,
-        (this.vidMode.height() - pHeight.get(0)) / 2
+        x[0] + (this.vidMode.width() - pWidth.get(0)) / 2,
+        y[0] + (this.vidMode.height() - pHeight.get(0)) / 2
       );
     }
   }
 
+  private void moveToMonitor() {
+    final int[] x = new int[1];
+    final int[] y = new int[1];
+    glfwGetMonitorPos(this.monitor, x, y);
+    glfwSetWindowPos(this.window, x[0], y[0]);
+    this.vidMode = glfwGetVideoMode(this.monitor);
+  }
+
   public void makeFullscreen() {
+    this.monitor = this.getMonitorFromConfig();
+    this.moveToMonitor();
     glfwSetWindowAttrib(this.window, GLFW_DECORATED, GLFW_FALSE);
     glfwSetWindowSize(this.window, this.vidMode.width(), this.vidMode.height());
-    this.centerWindow();
   }
 
   public void makeWindowed() {
     glfwSetWindowAttrib(this.window, GLFW_DECORATED, GLFW_TRUE);
     glfwSetWindowSize(this.window, Config.windowWidth(), Config.windowHeight());
     this.centerWindow();
+  }
+
+  public void updateMonitor() {
+    this.monitor = this.getMonitorFromConfig();
+
+    if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
+      this.makeFullscreen();
+    }
   }
 
   public Action addAction(final Action action) {
