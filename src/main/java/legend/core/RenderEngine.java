@@ -98,7 +98,6 @@ import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
-import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
@@ -624,7 +623,7 @@ public class RenderEngine {
         // Fix for GH#1885
         // Don't know why it's broken or why this fixes it. The scissoring for the text is somehow getting
         // applied to the render buffer rendering. Resetting the scissor rect to the full screen fixes it.
-        glScissor(0, 0, this.getRenderWidth(), this.getRenderHeight());
+        this.state.fullScreenScissor();
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
