@@ -33,6 +33,7 @@ lod_core.config.resolution._1440=1440p
 lod_core.config.resolution._4K=4K
 lod_core.config.resolution._8K=8K
 lod_core.config.resolution.NATIVE=Native (window size)
+lod_core.config.monitor.label=Monitor
 lod_core.config.audio_device.label=Audio Device
 lod_core.config.music_volume.label=Music Volume
 

@@ -20,6 +20,7 @@ import legend.game.modding.coremod.config.HighQualityProjectionConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
 import legend.game.modding.coremod.config.MashModeConfigEntry;
+import legend.game.modding.coremod.config.MonitorConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
@@ -84,6 +85,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> HIGH_QUALITY_PROJECTION_CONFIG = CONFIG_REGISTRAR.register("high_quality_projection", HighQualityProjectionConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> FULLSCREEN_CONFIG = CONFIG_REGISTRAR.register("fullscreen", FullscreenConfigEntry::new);
   public static final RegistryDelegate<ResolutionConfig> RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("resolution", ResolutionConfig::new);
+  public static final RegistryDelegate<MonitorConfigEntry> MONITOR_CONFIG = CONFIG_REGISTRAR.register("monitor", MonitorConfigEntry::new);
 
   public static final RegistryDelegate<AudioDeviceConfig> AUDIO_DEVICE_CONFIG = CONFIG_REGISTRAR.register("audio_device", AudioDeviceConfig::new);
   public static final RegistryDelegate<MusicVolumeConfigEntry> MUSIC_VOLUME_CONFIG = CONFIG_REGISTRAR.register("music_volume", MusicVolumeConfigEntry::new);
