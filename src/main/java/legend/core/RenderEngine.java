@@ -572,6 +572,13 @@ public class RenderEngine {
       if(this.frameAdvanceSingle || this.frameAdvance) {
         this.resetBatches();
         this.renderCallback.run();
+
+        // Delete stuff marked for deletion
+        Obj.deleteObjects();
+        Texture.deleteTextures();
+
+        this.scissorStack.reset();
+
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
         }
