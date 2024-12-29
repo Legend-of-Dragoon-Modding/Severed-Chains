@@ -573,6 +573,13 @@ public class RenderEngine {
         this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
         this.resetBatches();
         this.renderCallback.run();
+
+        // Delete stuff marked for deletion
+        Obj.deleteObjects();
+        Texture.deleteTextures();
+
+        this.scissorStack.reset();
+
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
         }
