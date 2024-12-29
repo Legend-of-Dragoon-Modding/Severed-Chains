@@ -654,13 +654,15 @@ public class RenderEngine {
         if(this.frameSkipIndex == 0) {
           this.resetBatches();
 
-          this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
-
           // Delete stuff marked for deletion
           Obj.deleteObjects();
           Texture.deleteTextures();
 
           this.scissorStack.reset();
+        }
+
+        if(this.frameSkipIndex == Config.getGameSpeedMultiplier() - 1) {
+          this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
         }
 
         this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
