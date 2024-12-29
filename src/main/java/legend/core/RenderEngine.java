@@ -29,10 +29,10 @@ import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.game.combat.Battle;
+import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
-import legend.game.input.Input;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -98,6 +98,7 @@ import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
+import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
@@ -619,6 +620,11 @@ public class RenderEngine {
 
           this.renderBatch(this.mainBatch);
         }
+
+        // Fix for GH#1885
+        // Don't know why it's broken or why this fixes it. The scissoring for the text is somehow getting
+        // applied to the render buffer rendering. Resetting the scissor rect to the full screen fixes it.
+        glScissor(0, 0, this.getRenderWidth(), this.getRenderHeight());
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
