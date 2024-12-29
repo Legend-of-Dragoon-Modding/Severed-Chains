@@ -570,6 +570,7 @@ public class RenderEngine {
       }
 
       if(this.frameAdvanceSingle || this.frameAdvance) {
+        this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
         this.resetBatches();
         this.renderCallback.run();
         if(this.frameAdvanceSingle) {
