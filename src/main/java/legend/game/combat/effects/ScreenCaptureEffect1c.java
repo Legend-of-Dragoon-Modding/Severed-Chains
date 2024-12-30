@@ -65,6 +65,8 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
       final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
       calculateEffectTransforms(transforms, manager);
       transforms.compose(worldToScreenMatrix_800c3548);
+      GTE.setRotationMatrix(transforms);
+      GTE.setTranslationVector(transforms.transfer);
       this.screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, transforms);
     }
 
