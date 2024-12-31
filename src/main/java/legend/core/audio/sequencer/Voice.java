@@ -86,7 +86,7 @@ final class Voice {
     }
   }
 
-  private int sampleVoice() {
+  private float sampleVoice() {
     if(!this.hasSamples) {
       this.soundBankEntry.loadSamples(this.samples);
 
@@ -100,7 +100,7 @@ final class Voice {
 
     this.hasSamples = !this.counter.add(this.sampleRate);
 
-    return (int)sample;
+    return sample;
   }
 
   private void handleModulation() {
