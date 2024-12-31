@@ -1,7 +1,6 @@
-Retail camera pans to the left for this cutscene.
-Submap scissoring blocks rendering in this region.
-Submap background is still visible on the right in ultrawide aspect ratios.
-Solution: pan camera down similar to Marshland cutscene.
+Retail: camera pans to the left using mode 0. Mode 0: offset only applies to 2D elements. 3D geometry does not move.
+Problem: Submap scissoring blocks 3D rendering in this region. 2D background is still visible to the right in very wide aspect ratios.
+Solution: translate offset to y axis instead so geometry renders and background is hidden for all widescreen aspect ratios.
 --- original
 +++ modified
 @@ -1270,9 +1270,9 @@
