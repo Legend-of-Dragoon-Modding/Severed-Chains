@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 
 import javax.annotation.Nullable;
 
@@ -250,8 +251,9 @@ final class Voice {
   private void calculateVolume() {
     final float volume = this.channel.getAdjustedVolume() * this.instrument.getVolume() * this.layer.getVolume() * this.velocityVolume;
 
-    final float volumeL = volume * this.calculatePan(true);
-    final float volumeR = volume * this.calculatePan(false);
+    final FloatFloatImmutablePair panVolumes = this.lookupTables.getPan(this.channel.getPan(), this.instrument.getPan(), this.layer.getPan());
+    final float volumeL = volume * panVolumes.leftFloat();
+    final float volumeR = volume * panVolumes.rightFloat();
 
     if(this.layer.getLockedVolume() == 0) {
       this.volumeLeft = volumeL;
@@ -271,10 +273,6 @@ final class Voice {
     }
 
     this.calculateVolume();
-  }
-
-  private float calculatePan(final boolean left) {
-    return this.lookupTables.getPan(this.lookupTables.mergePan(this.channel.getPan(), this.lookupTables.mergePan(this.instrument.getPan(), this.layer.getPan())), left);
   }
 
   void setModulation(final int modulation) {
