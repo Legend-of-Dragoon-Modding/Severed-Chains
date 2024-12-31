@@ -18,7 +18,7 @@ public final class BackgroundMusic {
   private final int tickPerQuarterNote;
   private double samplesPerTick;
 
-  private final byte[][] breathControls;
+  private final short[][] breathControls;
   private final byte[] velocityRamp = new byte[0x80];
 
   private final Channel[] channels;
@@ -83,21 +83,29 @@ public final class BackgroundMusic {
     sshd.copyFrom(subfileOffsets[1] + 2, this.velocityRamp, 0, 0x80);
 
     if(subfileOffsets[2] == -1) {
-      this.breathControls = new byte[0][];
+      this.breathControls = new short[0][];
     } else {
-      this.breathControls = new byte[sshd.readUShort(subfileOffsets[2]) + 1][];
+      this.breathControls = new short[sshd.readUShort(subfileOffsets[2]) + 1][];
     }
 
     for(int i = 0; i < this.breathControls.length; i++) {
       final int relativeOffset = sshd.readShort(2 + i * 2 + subfileOffsets[2]);
 
       if(relativeOffset != -1) {
-        this.breathControls[i] = sshd.slice(subfileOffsets[2] + relativeOffset, 0x40).getBytes();
+        this.breathControls[i] = new short[63];
+        final int startingPosition = subfileOffsets[2] + relativeOffset;
+        for(int b = 0; b < 60; b++) {
+          this.breathControls[i][b + 1] = (short)(sshd.readUByte(startingPosition + b) - 0x80);
+        }
+
+        this.breathControls[i][0] = this.breathControls[i][59];
+        this.breathControls[i][61] = this.breathControls[i][2];
+        this.breathControls[i][62] = this.breathControls[i][3];
       }
     }
   }
 
-  private BackgroundMusic(final List<FileData> files, final byte[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont) {
+  private BackgroundMusic(final List<FileData> files, final short[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont) {
     this.songId = files.get(0).readUShort(0);
 
     this.breathControls = breathControls;
@@ -142,7 +150,7 @@ public final class BackgroundMusic {
     return this.samplesPerTick;
   }
 
-  public byte[][] getBreathControls() {
+  public short[][] getBreathControls() {
     return this.breathControls;
   }
 

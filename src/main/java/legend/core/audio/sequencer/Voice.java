@@ -3,6 +3,7 @@ package legend.core.audio.sequencer;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
+import legend.core.audio.sequencer.assets.sequence.bgm.BreathChange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -37,7 +38,7 @@ final class Voice {
   private boolean isModulation;
   private int modulation;
   /** waveforms_800c4ab8.waveforms_02 */
-  private byte[][] breathControls;
+  private short[][] breathControls;
   /** playingNote.breath_3c */
   private int breath;
   /** playingNote.breathControlListIndex_10 */
@@ -93,7 +94,7 @@ final class Voice {
     }
 
     final int sampleIndex = this.counter.getCurrentSampleIndex();
-    final int interpolationIndex = this.counter.getInterpolationIndex();
+    final int interpolationIndex = this.counter.getSampleInterpolationIndex();
 
     final float sample = this.lookupTables.interpolate(this.samples, sampleIndex, interpolationIndex);
 
@@ -108,32 +109,33 @@ final class Voice {
     }
 
     // The other branch probably doesn't matter for bgm. But let's throw here, just in case
-    if((this.breath & 0xfff) == 120) {
+    if(this.breath == BreathChange.BREATH_BASE_VALUE) {
       throw new RuntimeException("BREATH 120");
     }
 
-    this.breathControlPosition += this.breath & 0xfff;
+    this.counter.addBreath(this.breath);
 
     // TODO Pitch bend would be set to 0x80, which does nothing, might be worth to figure out, if we can remove this entirely (possibly check in modulation/breath control settings, since that is not run for every sample)
     if(this.breathControls == null || this.breathControls.length == 0) {
       return;
     }
 
-    if(this.breathControlPosition >= 0xf0) {
-      this.breathControlPosition = (this.breath & 0xfff) >>> 1;
-    }
-
     final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
     final int note = this.note + _64ths / 64;
     final int sixtyFourths = this.layer.getSixtyFourths() + (_64ths - (note - this.note) * 64);
 
-    // TODO Since breathControlIndex is set based on the asset, we might want to get rid of it entirely and simply load a byte[]
-    final int pitchBend = (((this.breathControls[this.breathControlIndex][this.breathControlPosition >>> 2] & 0xff) - 128) * this.modulation) / 256 + 64;
+    final int breathControlPosition = this.counter.getCurrentBreathIndex();
+    final int breathControlInterpolationIndex = this.counter.getBreathInterpolationIndex();
+
+    // TODO Since breathControlIndex is set based on the asset, we might want to get rid of it entirely and simply load a short[]
+    final float interpolatedBreath = this.lookupTables.interpolate(this.breathControls[this.breathControlIndex], breathControlPosition, breathControlInterpolationIndex);
+
+    final int pitchBend = (int)((interpolatedBreath * this.modulation) / 0x100) + 64;
 
     this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), note, sixtyFourths, pitchBend, 1);
   }
 
-  void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final byte[][] breathControls, final int playingVoices) {
+  void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final short[][] breathControls, final int playingVoices) {
     LOGGER.info(VOICE_MARKER, "Voice %d Key On", this.index);
 
     this.channel = channel;

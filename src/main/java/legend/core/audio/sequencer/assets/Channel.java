@@ -1,5 +1,6 @@
 package legend.core.audio.sequencer.assets;
 
+import legend.core.audio.sequencer.assets.sequence.bgm.BreathChange;
 import legend.game.unpacker.FileData;
 
 public final class Channel {
@@ -32,7 +33,7 @@ public final class Channel {
     this.pitchBend = data.readUByte(0x0a);
     // TODO this should probably be converted to an Enum
     this.priority = data.readUByte(0x0b);
-    this.breath = data.readUByte(0x0c);
+    this.breath = data.readUByte(0x0c) << (BreathChange.BREATH_BASE_SHIFT - 2);
 
     this.adjustedVolume = data.readUByte(0x0e) / 128f;
   }
