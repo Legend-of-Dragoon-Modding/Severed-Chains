@@ -47,8 +47,6 @@ public final class Sequencer extends AudioSource {
   private final short[] outputBuffer;
 
   private final Reverberizer reverb = new Reverberizer();
-  private float reverbVolumeLeft = 0x3000 / 32_768f;
-  private float reverbVolumeRight = 0x3000 / 32_768f;
 
   private float playerVolume = 1.0f;
   private float engineVolumeLeft = 0.5f;
@@ -140,10 +138,10 @@ public final class Sequencer extends AudioSource {
         voice.tick(this.voiceOutputBuffer, this.voiceReverbBuffer, this.effectsOverTimeCounter == 0);
       }
 
-      this.reverb.processReverb(this.voiceReverbBuffer[0] / 32_768f, this.voiceReverbBuffer[1] / 32_768f);
+      this.reverb.processReverb(this.voiceReverbBuffer[0], this.voiceReverbBuffer[1]);
 
-      this.outputBuffer[sample    ] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft()  * this.reverbVolumeLeft  * 0x8000) * this.engineVolumeLeft  * this.playerVolume), -0x8000, 0x7fff);
-      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + this.reverb.getOutputRight() * this.reverbVolumeRight * 0x8000) * this.engineVolumeRight * this.playerVolume), -0x8000, 0x7fff);
+      this.outputBuffer[sample    ] = (short)MathHelper.clamp(((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft()) * this.engineVolumeLeft  * this.playerVolume), -0x8000, 0x7fff);
+      this.outputBuffer[sample + 1] = (short)MathHelper.clamp(((this.voiceOutputBuffer[1] + this.reverb.getOutputRight()) * this.engineVolumeRight * this.playerVolume), -0x8000, 0x7fff);
     }
 
     this.bufferOutput(AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
@@ -417,8 +415,7 @@ public final class Sequencer extends AudioSource {
   }
 
   public void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
-    this.reverbVolumeLeft = (reverbVolumeLeft << 8) / 32768.0f;
-    this.reverbVolumeRight = (reverbVolumeRight << 8) / 32768.0f;
+    this.reverb.setVolume(reverbVolumeLeft / 128.0f, reverbVolumeRight / 128.0f);
   }
 
   private void endOfTrack(final EndOfTrack endOfTrack) {
