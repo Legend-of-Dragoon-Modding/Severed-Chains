@@ -6,7 +6,8 @@ final class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
   private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION) * SAMPLE_RATE_RATIO;
   private final int[] sampleRates = new int[64 * 12];
-  private final float[][] interpolationWeights;
+  private final int interpolationStep;
+  private final float[][] interpolationWeights = new float[2][];
   private final int[] pan = {
     0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
     0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E,
@@ -50,19 +51,19 @@ final class LookupTables {
       this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * Math.pow(2, i / (double)this.sampleRates.length));
     }
 
-    final int interpolationStep = 1 << interpolationBitDepth;
-    this.interpolationWeights = new float[interpolationStep][];
-    for(int i = 0; i < this.interpolationWeights.length; i++) {
-      final double pow1 = i / (double)this.interpolationWeights.length;
+    this.interpolationStep = 1 << interpolationBitDepth;
+
+    // The weights for Catmull-Rom splines are symmetrical, hence we can just store both of the unique sets and use a reverse index for half of them
+    this.interpolationWeights[0] = new float[this.interpolationStep + 1];
+    this.interpolationWeights[1] = new float[this.interpolationStep + 1];
+
+    for(int i = 0; i <= this.interpolationStep; i++) {
+      final double pow1 = i / (double)this.interpolationStep;
       final double pow2 = pow1 * pow1;
       final double pow3 = pow2 * pow1;
 
-      this.interpolationWeights[i] = new float[] {
-        (float)(0.5d * (-pow3 + 2 * pow2 - pow1)),
-        (float)(0.5d * (3 * pow3 - 5 * pow2 + 2)),
-        (float)(0.5d * (-3 * pow3 + 4 * pow2 + pow1)),
-        (float)(0.5d * (pow3 - pow2))
-      };
+      this.interpolationWeights[0][i] = (float)(0.5d * (-pow3 + 2 * pow2 - pow1));
+      this.interpolationWeights[1][i] = (float)(0.5d * (3 * pow3 - 5 * pow2 + 2));
     }
   }
 
@@ -70,8 +71,17 @@ final class LookupTables {
     return this.sampleRates[index];
   }
 
-  float[] getInterpolationWeights(final int index) {
-    return this.interpolationWeights[index];
+  /**
+   * Uses 4 points to return a Catmull-Rom spline interpolated value, which is somewhere between p1 and p2.
+   * @param array data to interpolate over
+   * @param position index of p0. Make sure there are at least 4 points available
+   * @param interpolationIndex position between p1 and p2. 0 will return p1
+   */
+  float interpolate(final short[] array, final int position, final int interpolationIndex) {
+    return this.interpolationWeights[0][interpolationIndex] * array[position]
+      + this.interpolationWeights[1][interpolationIndex] * array[position + 1]
+      + this.interpolationWeights[1][this.interpolationStep - interpolationIndex] * array[position + 2]
+      + this.interpolationWeights[0][this.interpolationStep - interpolationIndex] * array[position + 3];
   }
 
   float getPan(final int value, final boolean left) {

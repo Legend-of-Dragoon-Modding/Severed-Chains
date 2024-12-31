@@ -93,14 +93,9 @@ final class Voice {
     }
 
     final int sampleIndex = this.counter.getCurrentSampleIndex();
+    final int interpolationIndex = this.counter.getInterpolationIndex();
 
-    final float[] interpolationWeights = this.lookupTables.getInterpolationWeights(this.counter.getInterpolationIndex());
-
-    final float sample = interpolationWeights[0] * this.samples[sampleIndex]
-      + interpolationWeights[1] * this.samples[sampleIndex + 1]
-      + interpolationWeights[2] * this.samples[sampleIndex + 2]
-      + interpolationWeights[3] * this.samples[sampleIndex + 3];
-
+    final float sample = this.lookupTables.interpolate(this.samples, sampleIndex, interpolationIndex);
 
     this.hasSamples = !this.counter.add(this.sampleRate);
 
