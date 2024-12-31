@@ -120,19 +120,15 @@ final class Voice {
       return;
     }
 
-    final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
-    final int note = this.note + _64ths / 64;
-    final int sixtyFourths = this.layer.getSixtyFourths() + (_64ths - (note - this.note) * 64);
-
     final int breathControlPosition = this.counter.getCurrentBreathIndex();
     final int breathControlInterpolationIndex = this.counter.getBreathInterpolationIndex();
 
     // TODO Since breathControlIndex is set based on the asset, we might want to get rid of it entirely and simply load a short[]
     final float interpolatedBreath = this.lookupTables.interpolate(this.breathControls[this.breathControlIndex], breathControlPosition, breathControlInterpolationIndex);
 
-    final int pitchBend = (int)((interpolatedBreath * this.modulation) / 0x100) + 64;
+    final int finePitch = this.layer.getFinePitch() + (int)((interpolatedBreath * this.modulation) / 0x80);
 
-    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), note, sixtyFourths, pitchBend, 1);
+    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), this.note, finePitch, this.channel.getPitchBend(), this.pitchBendMultiplier);
   }
 
   void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final short[][] breathControls, final int playingVoices) {
@@ -163,7 +159,7 @@ final class Voice {
     this.adsrEnvelope.load(this.layer.getAdsr());
     this.soundBankEntry.load(this.layer.getSoundBankEntry());
 
-    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), note, this.layer.getSixtyFourths(), this.channel.getPitchBend(), this.pitchBendMultiplier);
+    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), note, this.layer.getFinePitch(), this.channel.getPitchBend(), this.pitchBendMultiplier);
     this.calculateVolume();
 
     this.used = true;
@@ -229,17 +225,17 @@ final class Voice {
     return this.note;
   }
 
-  private int calculateSampleRate(final int rootKey, final int note, final int sixtyFourths, final int pitchBend, final int pitchBendMultiplier) {
-    final int offsetIn64ths = (note - rootKey) * 64 + sixtyFourths + (pitchBend - 64) * pitchBendMultiplier;
+  private int calculateSampleRate(final int rootKey, final int note, final int finePitch, final int pitchBend, final int pitchBendMultiplier) {
+    final int offsetIn128ths = (note - rootKey) * 128 + finePitch + pitchBend * pitchBendMultiplier;
 
-    if(offsetIn64ths >= 0) {
-      final int octaveOffset = offsetIn64ths / 768;
-      final int sampleRateOffset = offsetIn64ths - octaveOffset * 768;
+    if(offsetIn128ths >= 0) {
+      final int octaveOffset = offsetIn128ths / 1536;
+      final int sampleRateOffset = offsetIn128ths - octaveOffset * 1536;
       return this.lookupTables.getSampleRate(sampleRateOffset) << octaveOffset;
     }
 
-    final int octaveOffset = (offsetIn64ths + 1) / -768 + 1;
-    final int sampleRateOffset = offsetIn64ths + octaveOffset * 768;
+    final int octaveOffset = (offsetIn128ths + 1) / -1536 + 1;
+    final int sampleRateOffset = offsetIn128ths + octaveOffset * 1536;
     return this.lookupTables.getSampleRate(sampleRateOffset) >> octaveOffset;
   }
 
@@ -248,7 +244,7 @@ final class Voice {
       return;
     }
 
-    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), this.note, this.layer.getSixtyFourths(), this.channel.getPitchBend(), this.pitchBendMultiplier);
+    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), this.note, this.layer.getFinePitch(), this.channel.getPitchBend(), this.pitchBendMultiplier);
   }
 
   private void calculateVolume() {

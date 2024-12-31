@@ -5,7 +5,7 @@ import static legend.core.audio.AudioThread.SAMPLE_RATE_RATIO;
 final class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
   private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION) * SAMPLE_RATE_RATIO;
-  private final int[] sampleRates = new int[64 * 12];
+  private final int[] sampleRates = new int[128 * 12];
   private final int interpolationStep;
   private final float[][] interpolationWeights = new float[2][];
   private final int[] pan = {

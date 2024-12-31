@@ -30,7 +30,7 @@ public final class Channel {
     this.pan = data.readUByte(0x04);
 
     this.modulation = data.readUByte(0x09);
-    this.pitchBend = data.readUByte(0x0a);
+    this.pitchBend = (data.readUByte(0x0a) - 0x40) * 2;
     // TODO this should probably be converted to an Enum
     this.priority = data.readUByte(0x0b);
     this.breath = data.readUByte(0x0c) << (BreathChange.BREATH_BASE_SHIFT - 2);

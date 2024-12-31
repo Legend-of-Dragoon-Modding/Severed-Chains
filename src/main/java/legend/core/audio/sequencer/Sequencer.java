@@ -353,7 +353,7 @@ public final class Sequencer extends AudioSource {
     LOGGER.info(SEQUENCER_MARKER, "Program Change Pan Channel: %d Instrument: %d", programChange.getChannel().getIndex(), programChange.getInstrumentIndex());
 
     programChange.getChannel().setInstrument(programChange.getInstrumentIndex());
-    programChange.getChannel().setPitchBend(0x40);
+    programChange.getChannel().setPitchBend(0);
     programChange.getChannel().setPriority(0x40);
   }
 
