@@ -36,7 +36,8 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 public final class Sequencer extends AudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
-  private static final int EFFECT_OVER_TIME_SAMPLES = ACTUAL_SAMPLE_RATE / 60;
+  public static final int EFFECTS_OVER_TIME_SCALE = 5;
+  private static final int EFFECT_OVER_TIME_SAMPLES = ACTUAL_SAMPLE_RATE / (60 * EFFECTS_OVER_TIME_SCALE);
   // TODO switch between mono and stereo
   private final boolean stereo;
   private final Voice[] voices;
@@ -479,7 +480,7 @@ public final class Sequencer extends AudioSource {
   }
 
   public void fadeIn(final int time, final int volume) {
-    this.fadeTime = time;
+    this.fadeTime = time * EFFECTS_OVER_TIME_SCALE;
     this.fadeInVolume = volume / 256.0f;
     this.fadeCounter = 0;
     this.fading = Fading.FADE_IN;
@@ -492,7 +493,7 @@ public final class Sequencer extends AudioSource {
       return;
     }
 
-    this.fadeTime = time;
+    this.fadeTime = time * EFFECTS_OVER_TIME_SCALE;
     this.fadeOutVolumeLeft = this.engineVolumeLeft;
     this.fadeOutVolumeRight = this.engineVolumeRight;
     this.fadeCounter = 0;
@@ -575,8 +576,8 @@ public final class Sequencer extends AudioSource {
     this.volumeChanging = true;
     this.newVolume = volume / 128.0f;
     this.oldVolume = this.backgroundMusic.getVolume();
-    this.volumeChangingTimeTotal = time;
-    this.volumeChangingTimeRemaining = time;
+    this.volumeChangingTimeTotal = time * EFFECTS_OVER_TIME_SCALE;
+    this.volumeChangingTimeRemaining = time * EFFECTS_OVER_TIME_SCALE;
 
     return Math.round(this.oldVolume * 0x80);
   }
