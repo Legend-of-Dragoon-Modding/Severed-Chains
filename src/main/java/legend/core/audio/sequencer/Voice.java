@@ -44,8 +44,6 @@ final class Voice {
   private int breath;
   /** playingNote.breathControlListIndex_10 */
   private int breathControlIndex;
-  /** playingNote._12 */
-  private int breathControlPosition;
 
   private int priorityOrder;
   private VoicePriority priority;
@@ -143,7 +141,6 @@ final class Voice {
     this.pitchBendMultiplier = this.layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : this.layer.getPitchBendMultiplier();
     this.breathControls = breathControls;
     this.breath = this.channel.getBreath();
-    this.breathControlPosition = 0;
     this.priority = VoicePriority.getPriority(this.layer.isHighPriority(), this.channel.getPriority());
     this.priorityOrder = playingVoices;
 
@@ -188,7 +185,6 @@ final class Voice {
     this.modulation = 0;
     this.breath = 0;
     this.breathControlIndex = 0;
-    this.breathControlPosition = 0;
     this.priority = VoicePriority.LOW;
     System.arraycopy(EMPTY, 0, this.samples, 28, EMPTY.length);
   }
