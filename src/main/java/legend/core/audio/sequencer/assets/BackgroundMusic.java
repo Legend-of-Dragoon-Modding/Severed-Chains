@@ -14,7 +14,7 @@ public final class BackgroundMusic {
   private static final double TEMPO_TICKS = ACTUAL_SAMPLE_RATE * 60;
   private final int songId;
 
-  private int volume;
+  private float volume;
   private final int tickPerQuarterNote;
   private double samplesPerTick;
 
@@ -67,7 +67,7 @@ public final class BackgroundMusic {
 
     final FileData sssq = files.get(1 + fileOffset);
 
-    this.volume = sssq.readUByte(0x0);
+    this.volume = sssq.readUByte(0x0) / 128.0f;
     this.tickPerQuarterNote = sssq.readUShort(0x2);
     this.setTempo(sssq.readUShort(0x4));
 
@@ -114,7 +114,7 @@ public final class BackgroundMusic {
 
     final FileData sssq = files.get(2);
 
-    this.volume = sssq.readUByte(0x0);
+    this.volume = sssq.readUByte(0x0) / 128.0f;
     this.tickPerQuarterNote = sssq.readUShort(0x2);
     this.setTempo(sssq.readUShort(0x4));
 
@@ -138,7 +138,7 @@ public final class BackgroundMusic {
     return this.sequence[this.sequencePosition++];
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return this.volume;
   }
 
@@ -226,7 +226,7 @@ public final class BackgroundMusic {
     return true;
   }
 
-  public void setVolume(final int volume) {
+  public void setVolume(final float volume) {
     this.volume = volume;
 
     for(final Channel channel : this.channels) {

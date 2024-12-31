@@ -5,12 +5,12 @@ import legend.core.audio.sequencer.assets.sequence.Command;
 
 public final class VolumeChange implements Command {
   private final Channel channel;
-  private final int volume;
+  private final float volume;
   private final int deltaTime;
 
   VolumeChange(final Channel channel, final int volume, final int deltaTime) {
     this.channel = channel;
-    this.volume = volume;
+    this.volume = volume / 128.0f;
     this.deltaTime = deltaTime;
   }
 
@@ -18,7 +18,7 @@ public final class VolumeChange implements Command {
     return this.channel;
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return this.volume;
   }
 

@@ -60,8 +60,8 @@ public final class Sequencer extends AudioSource {
   private int effectsOverTimeCounter;
 
   private boolean volumeChanging;
-  private int newVolume;
-  private int oldVolume;
+  private float newVolume;
+  private float oldVolume;
   private int volumeChangingTimeTotal;
   private int volumeChangingTimeRemaining;
 
@@ -320,7 +320,7 @@ public final class Sequencer extends AudioSource {
   }
 
   private void volume(final VolumeChange volumeChange) {
-    LOGGER.info(SEQUENCER_MARKER, "Control Change Volume Channel: %d Volume: %d", volumeChange.getChannel().getIndex(), volumeChange.getVolume());
+    LOGGER.info(SEQUENCER_MARKER, "Control Change Volume Channel: %d Volume: %s", volumeChange.getChannel().getIndex(), volumeChange.getVolume());
 
     volumeChange.getChannel().changeVolume(volumeChange.getVolume(), this.backgroundMusic.getVolume());
 
@@ -546,7 +546,7 @@ public final class Sequencer extends AudioSource {
   }
 
   public int getSequenceVolume() {
-    return this.backgroundMusic.getVolume();
+    return Math.round(this.backgroundMusic.getVolume() * 0x80);
   }
 
   public int setSequenceVolume(final int volume) {
@@ -554,9 +554,9 @@ public final class Sequencer extends AudioSource {
       return -1;
     }
 
-    final int oldVolume = this.backgroundMusic.getVolume();
+    final float oldVolume = this.backgroundMusic.getVolume();
 
-    this.backgroundMusic.setVolume(volume);
+    this.backgroundMusic.setVolume(volume / 128.0f);
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed()) {
@@ -564,7 +564,7 @@ public final class Sequencer extends AudioSource {
       }
     }
 
-    return oldVolume;
+    return Math.round(oldVolume * 0x80);
   }
 
   public int changeSequenceVolumeOverTime(final int volume, final int time) {
@@ -573,12 +573,12 @@ public final class Sequencer extends AudioSource {
     }
 
     this.volumeChanging = true;
-    this.newVolume = volume;
+    this.newVolume = volume / 128.0f;
     this.oldVolume = this.backgroundMusic.getVolume();
     this.volumeChangingTimeTotal = time;
     this.volumeChangingTimeRemaining = time;
 
-    return this.oldVolume;
+    return Math.round(this.oldVolume * 0x80);
   }
 
   public int getVolumeOverTimeFlags() {
