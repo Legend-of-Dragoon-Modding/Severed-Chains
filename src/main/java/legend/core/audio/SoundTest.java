@@ -8,7 +8,7 @@ public final class SoundTest {
   private static final int FILE_INDEX = 5820;
   private static final int SECONDS = 30;
   public static void main(final String[] args) {
-    final AudioThread audioThread = new AudioThread(100, true, 24, 9);
+    final AudioThread audioThread = new AudioThread(true, 24, InterpolationBitDepth.Double, SampleRateResolution.Quadruple);
 
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");

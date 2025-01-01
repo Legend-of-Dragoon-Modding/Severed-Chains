@@ -30,14 +30,10 @@ public final class XaPlayer extends AudioSource {
   private long sampleCount;
   private long samplesRead;
 
-  public XaPlayer(final int frequency) {
-    super(8);
+  public XaPlayer() {
+    super(5);
 
-    if(48_000 % frequency != 0) {
-      throw new IllegalArgumentException("Sample Rate (44_800) is not divisible by frequency");
-    }
-
-    this.samplesPerTick = 48_000 / frequency;
+    this.samplesPerTick = 48_000 / 60;
 
     this.channelCount = 1;
     this.format = AL_FORMAT_MONO16;

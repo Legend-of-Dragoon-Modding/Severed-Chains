@@ -2,23 +2,29 @@ package legend.core.audio.sequencer;
 
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import legend.core.MathHelper;
+import legend.core.audio.InterpolationBitDepth;
+import legend.core.audio.SampleRateResolution;
 
 import static legend.core.audio.AudioThread.SAMPLE_RATE_RATIO;
 
 final class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
   private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION) * SAMPLE_RATE_RATIO;
-  private final int[] sampleRates = new int[128 * 12];
-  private final int interpolationStep;
+  private SampleRateResolution sampleRateResolution;
+  private int[] sampleRates;
+  private int interpolationStep;
   private final float[][] interpolationWeights = new float[2][];
   private final float[] pan = new float[0x80];
 
-  LookupTables(final int interpolationBitDepth) {
+  LookupTables(final InterpolationBitDepth bitDepth, final SampleRateResolution sampleRateResolution) {
+    this.sampleRateResolution = sampleRateResolution;
+    this.sampleRates = new int[12 * sampleRateResolution.value];
+
     for(int i = 0; i < this.sampleRates.length; i++) {
       this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * Math.pow(2, i / (double)this.sampleRates.length));
     }
 
-    this.interpolationStep = 1 << interpolationBitDepth;
+    this.interpolationStep = 1 << bitDepth.value;
 
     // The weights for Catmull-Rom splines are symmetrical, hence we can just store both of the unique sets and use a reverse index for half of them
     this.interpolationWeights[0] = new float[this.interpolationStep + 1];
@@ -57,8 +63,19 @@ final class LookupTables {
     }
   }
 
-  int getSampleRate(final int index) {
-    return this.sampleRates[index];
+  int calculateSampleRate(final int rootKey, final int note, final int finePitch, final int pitchBend, final int pitchBendMultiplier) {
+    final int offsetIn128ths = (note - rootKey) * 128 + finePitch + pitchBend * pitchBendMultiplier;
+    final int scaledOffset = offsetIn128ths >> this.sampleRateResolution.sampleRateShift;
+
+    if(scaledOffset >= 0) {
+      final int octaveOffset = scaledOffset / this.sampleRates.length;
+      final int sampleRateOffset = scaledOffset - octaveOffset * this.sampleRates.length;
+      return this.sampleRates[sampleRateOffset] << octaveOffset;
+    }
+
+    final int octaveOffset = (scaledOffset + 1) / -this.sampleRates.length + 1;
+    final int sampleRateOffset = scaledOffset + octaveOffset * this.sampleRates.length;
+    return this.sampleRates[sampleRateOffset] >> octaveOffset;
   }
 
   /**
@@ -82,5 +99,36 @@ final class LookupTables {
 
   private static int mergePan(final int pan1, final int pan2) {
     return MathHelper.clamp(pan1 + pan2 - 60, 0, 0x7f);
+  }
+
+  // This will get scaled down later down the line, so we can to keep it in 128ths
+  int modulate(final int finePitch, final float interpolatedBreath, final int modulation) {
+    return finePitch + (int)((interpolatedBreath * modulation) / 0x80);
+  }
+
+  void changeSampleRates(final SampleRateResolution sampleRateResolution) {
+    this.sampleRateResolution = sampleRateResolution;
+    this.sampleRates = new int[12 * sampleRateResolution.value];
+
+    for(int i = 0; i < this.sampleRates.length; i++) {
+      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * Math.pow(2, i / (double)this.sampleRates.length));
+    }
+  }
+
+  void changeInterpolationBitDepth(final InterpolationBitDepth bitDepth) {
+    this.interpolationStep = 1 << bitDepth.value;
+
+    // The weights for Catmull-Rom splines are symmetrical, hence we can just store both of the unique sets and use a reverse index for half of them
+    this.interpolationWeights[0] = new float[this.interpolationStep + 1];
+    this.interpolationWeights[1] = new float[this.interpolationStep + 1];
+
+    for(int i = 0; i <= this.interpolationStep; i++) {
+      final double pow1 = i / (double)this.interpolationStep;
+      final double pow2 = pow1 * pow1;
+      final double pow3 = pow2 * pow1;
+
+      this.interpolationWeights[0][i] = (float)(0.5d * (-pow3 + 2 * pow2 - pow1));
+      this.interpolationWeights[1][i] = (float)(0.5d * (3 * pow3 - 5 * pow2 + 2));
+    }
   }
 }

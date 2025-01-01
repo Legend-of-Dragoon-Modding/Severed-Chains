@@ -43,12 +43,12 @@ public final class AudioThread implements Runnable {
   public static final double SAMPLE_RATE_MULTIPLIER = ACTUAL_SAMPLE_RATE / (double) BASE_SAMPLE_RATE;
 
   private final int nanosPerTick;
-  private final int frequency;
   private long audioContext;
   private long audioDevice;
   private final boolean stereo;
   private final int voiceCount;
-  private final int interpolationBitDepth;
+  private InterpolationBitDepth interpolationBitDepth;
+  private SampleRateResolution sampleRateResolution;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
   private final List<AudioSource> sources = new ArrayList<>();
@@ -70,16 +70,12 @@ public final class AudioThread implements Runnable {
     return ALUtil.getStringList(0, ALC_DEVICE_SPECIFIER);
   }
 
-  public AudioThread(final int frequency, final boolean stereo, final int voiceCount, final int interpolationBitDepth) {
-    if(1_000_000_000 % frequency != 0) {
-      throw new IllegalArgumentException("Nanos (1_000_000_000) is not divisible by frequency " + frequency);
-    }
-
-    this.frequency = frequency;
-    this.nanosPerTick = 1_000_000_000 / this.frequency;
+  public AudioThread(final boolean stereo, final int voiceCount, final InterpolationBitDepth bitDepth, final SampleRateResolution sampleRateResolution) {
+    this.nanosPerTick = 1_000_000_000 / 60;
     this.stereo = stereo;
     this.voiceCount = voiceCount;
-    this.interpolationBitDepth = interpolationBitDepth;
+    this.interpolationBitDepth = bitDepth;
+    this.sampleRateResolution = sampleRateResolution;
   }
 
   public void init() {
@@ -159,8 +155,8 @@ public final class AudioThread implements Runnable {
   }
 
   private void addDefaultSources() {
-    this.sequencer = this.addSource(new Sequencer(this.frequency, this.stereo, this.voiceCount, this.interpolationBitDepth));
-    this.xaPlayer = this.addSource(new XaPlayer(this.frequency));
+    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationBitDepth, this.sampleRateResolution));
+    this.xaPlayer = this.addSource(new XaPlayer());
   }
 
   public <T extends AudioSource> T addSource(final T source) {
@@ -395,5 +391,25 @@ public final class AudioThread implements Runnable {
       }
     }
     return 0;
+  }
+
+  public void changeSettings(final InterpolationBitDepth bitDepth, final SampleRateResolution sampleRateResolution) {
+    synchronized(this) {
+      if(this.interpolationBitDepth == bitDepth && this.sampleRateResolution == sampleRateResolution) {
+        return;
+      }
+
+      if(this.sampleRateResolution != sampleRateResolution) {
+        this.sampleRateResolution = sampleRateResolution;
+
+        this.sequencer.changeSampleRateResolution(this.sampleRateResolution);
+      }
+
+      if(this.interpolationBitDepth != bitDepth) {
+        this.interpolationBitDepth = bitDepth;
+
+        this.sequencer.changeInterpolationBitDepth(this.interpolationBitDepth);
+      }
+    }
   }
 }

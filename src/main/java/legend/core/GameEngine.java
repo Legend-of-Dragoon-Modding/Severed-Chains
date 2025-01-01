@@ -1,6 +1,8 @@
 package legend.core;
 
 import legend.core.audio.AudioThread;
+import legend.core.audio.InterpolationBitDepth;
+import legend.core.audio.SampleRateResolution;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
@@ -122,7 +124,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(100, true, 24, 9);
+    AUDIO_THREAD = new AudioThread(true, 24, InterpolationBitDepth.Double, SampleRateResolution.Quadruple);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");

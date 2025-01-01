@@ -1,5 +1,6 @@
 package legend.core.audio.sequencer;
 
+import legend.core.audio.InterpolationBitDepth;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
@@ -54,19 +55,15 @@ final class Voice {
   private boolean hasSamples;
   private final short[] samples = new short[28 + EMPTY.length];
 
-  Voice(final int index, final LookupTables lookupTables, final int interpolationBitDepth) {
+  Voice(final int index, final LookupTables lookupTables, final InterpolationBitDepth bitDepth) {
     this.index = index;
     this.lookupTables = lookupTables;
-    this.counter = new VoiceCounter(interpolationBitDepth);
+    this.counter = new VoiceCounter(bitDepth);
   }
 
-  void tick(final float[] output, final float[] reverb, final boolean effectsOverTime) {
+  void tick(final float[] output, final float[] reverb) {
     if(!this.used) {
       return;
-    }
-
-    if(effectsOverTime) {
-      this.handleModulation();
     }
 
     this.adsrEnvelope.tick();
@@ -102,8 +99,8 @@ final class Voice {
     return sample;
   }
 
-  private void handleModulation() {
-    if(!this.isModulation) {
+  void handleModulation() {
+    if(!this.used || !this.isModulation) {
       return;
     }
 
@@ -125,9 +122,9 @@ final class Voice {
     // TODO Since breathControlIndex is set based on the asset, we might want to get rid of it entirely and simply load a short[]
     final float interpolatedBreath = this.lookupTables.interpolate(this.breathControls[this.breathControlIndex], breathControlPosition, breathControlInterpolationIndex);
 
-    final int finePitch = this.layer.getFinePitch() + (int)((interpolatedBreath * this.modulation) / 0x80);
+    final int finePitch = this.lookupTables.modulate(this.layer.getFinePitch(), interpolatedBreath, this.modulation);
 
-    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), this.note, finePitch, this.channel.getPitchBend(), this.pitchBendMultiplier);
+    this.sampleRate = this.lookupTables.calculateSampleRate(this.layer.getKeyRoot(), this.note, finePitch, this.channel.getPitchBend(), this.pitchBendMultiplier);
   }
 
   void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final short[][] breathControls, final int playingVoices) {
@@ -157,7 +154,7 @@ final class Voice {
     this.adsrEnvelope.load(this.layer.getAdsr());
     this.soundBankEntry.load(this.layer.getSoundBankEntry());
 
-    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), note, this.layer.getFinePitch(), this.channel.getPitchBend(), this.pitchBendMultiplier);
+    this.sampleRate = this.lookupTables.calculateSampleRate(this.layer.getKeyRoot(), note, this.layer.getFinePitch(), this.channel.getPitchBend(), this.pitchBendMultiplier);
     this.calculateVolume();
 
     this.used = true;
@@ -222,26 +219,12 @@ final class Voice {
     return this.note;
   }
 
-  private int calculateSampleRate(final int rootKey, final int note, final int finePitch, final int pitchBend, final int pitchBendMultiplier) {
-    final int offsetIn128ths = (note - rootKey) * 128 + finePitch + pitchBend * pitchBendMultiplier;
-
-    if(offsetIn128ths >= 0) {
-      final int octaveOffset = offsetIn128ths / 1536;
-      final int sampleRateOffset = offsetIn128ths - octaveOffset * 1536;
-      return this.lookupTables.getSampleRate(sampleRateOffset) << octaveOffset;
-    }
-
-    final int octaveOffset = (offsetIn128ths + 1) / -1536 + 1;
-    final int sampleRateOffset = offsetIn128ths + octaveOffset * 1536;
-    return this.lookupTables.getSampleRate(sampleRateOffset) >> octaveOffset;
-  }
-
   void updateSampleRate() {
     if(this.layer == null) {
       return;
     }
 
-    this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), this.note, this.layer.getFinePitch(), this.channel.getPitchBend(), this.pitchBendMultiplier);
+    this.sampleRate = this.lookupTables.calculateSampleRate(this.layer.getKeyRoot(), this.note, this.layer.getFinePitch(), this.channel.getPitchBend(), this.pitchBendMultiplier);
   }
 
   private void calculateVolume() {
@@ -278,5 +261,9 @@ final class Voice {
 
   void setBreath(final int breath) {
     this.breath = breath;
+  }
+
+  void changeInterpolationBitDepth(final InterpolationBitDepth bitDepth) {
+    this.counter.changeInterpolationBitDepth(bitDepth);
   }
 }
