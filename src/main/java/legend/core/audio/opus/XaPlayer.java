@@ -31,9 +31,9 @@ public final class XaPlayer extends AudioSource {
   private long samplesRead;
 
   public XaPlayer() {
-    super(5);
+    super(8);
 
-    this.samplesPerTick = 48_000 / 60;
+    this.samplesPerTick = 48000 / 100;
 
     this.channelCount = 1;
     this.format = AL_FORMAT_MONO16;
