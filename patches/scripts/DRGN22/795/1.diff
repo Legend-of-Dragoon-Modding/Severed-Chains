@@ -1,0 +1,27 @@
+Retail: camera pans to the left using mode 0. Mode 0: offset only applies to 2D elements. 3D geometry does not move.
+Problem: Submap scissoring blocks 3D rendering in this region. 2D background is still visible to the right in very wide aspect ratios.
+Solution: translate offset to y axis instead so geometry renders and background is hidden for all widescreen aspect ratios.
+--- original
++++ modified
+@@ -1270,9 +1270,9 @@
+ wait stor[24]
+ call 237, 0x8, 0x25, 0x1
+ call 688, stor[0], 0x0
+# Offset is stored to reset. Swapping x and y variables
+-call 257, stor[22], stor[25]
++call 257, stor[25], stor[22]
+ call 264, 0x0, 0x0, 0x0
+-call 258, 0x190, stor[25]
++call 258, stor[25], 0x190
+ mov var[64][1], stor[24]
+ call 101, stor[24], 0x0, 0xffffffb0, 0xfffffdbc
+ call 103, stor[24], 0x0, 0xa00, 0x0
+@@ -1309,7 +1309,7 @@
+ gosub inl[:LABEL_153]
+ call 257, stor[24], stor[25]
+ call 264, 0x2, 0x0, 0x0
+-call 258, stor[22], stor[25]
++call 258, stor[24], stor[22]
+ call 267, 0x8, stor[8], stor[9], stor[10]
+ sub 0x32, stor[8]
+ mov var[64][1], stor[24]
