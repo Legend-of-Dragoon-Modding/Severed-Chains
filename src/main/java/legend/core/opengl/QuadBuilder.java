@@ -14,7 +14,6 @@ import static legend.core.MathHelper.makeClut;
 import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
-import static legend.core.opengl.TmdObjLoader.DISABLE_CULLING_FLAG;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
@@ -27,6 +26,7 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 public class QuadBuilder {
   private final String name;
   private Translucency translucency;
+  private boolean disableBackfaceCulling;
   private int flags;
 
   private final List<Quad> quads = new ArrayList<>();
@@ -219,7 +219,7 @@ public class QuadBuilder {
 
   public QuadBuilder disableBackfaceCulling() {
     this.addFirstQuad();
-    this.flags |= DISABLE_CULLING_FLAG;
+    this.disableBackfaceCulling = true;
     return this;
   }
 
@@ -315,7 +315,7 @@ public class QuadBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0 && (this.flags & DISABLE_CULLING_FLAG) == 0);
+    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0 && !this.disableBackfaceCulling);
   }
 
   private static class Quad {

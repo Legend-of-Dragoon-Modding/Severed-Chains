@@ -11,7 +11,6 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -24,7 +23,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
@@ -53,7 +51,8 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
 
   private final Vector3f normalizedLightingDirection_800fb8d0 = new Vector3f(1.0f, 0.0f, 0.0f);
 
-  private final Matrix4f transforms = new Matrix4f();
+  final Vector3f vert = new Vector3f();
+  private final MV transforms = new MV();
   private final Obj screenshot;
   private final Texture texture;
 
@@ -118,7 +117,6 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
       final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
       calculateEffectTransforms(transforms, manager);
       this.transforms.set(transforms);
-      this.transforms.setTranslation(transforms.transfer);
       transforms.compose(worldToScreenMatrix_800c3548);
       GTE.setRotationMatrix(transforms);
       GTE.setTranslationVector(transforms.transfer);
@@ -216,10 +214,9 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
 
           if(this.screenspaceW_10 == 0) {
             //LAB_8010b638
-            final float sp8c = getProjectionPlaneDistance();
-            final float zShift = z * 4;
-            this.screenspaceW_10 = this.captureW_04 * zShift / sp8c;
-            this.screenspaceH_14 = this.captureH_08 * zShift / sp8c;
+            final float displaySizeMultiplier = z * 4 / 320.0f;
+            this.screenspaceW_10 = this.captureW_04 * displaySizeMultiplier;
+            this.screenspaceH_14 = this.captureH_08 * displaySizeMultiplier;
             break;
           }
 
@@ -256,17 +253,6 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
           vert3.y = a1 * this.screenspaceH_14 / 2.0f;
           vert2.y = vert3.y;
           final float z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
-
-          if(this.screenspaceW_10 == 0) {
-            //LAB_8010b664
-            final float sp90 = getProjectionPlaneDistance();
-            final float z2 = z * 4.0f;
-
-            //LAB_8010b688
-            this.screenspaceW_10 = this.captureW_04 * z2 / sp90;
-            this.screenspaceH_14 = this.captureH_08 * z2 / sp90;
-            break;
-          }
 
           final int u = (i & 0x1) * 32;
           final int v = (i >> 1) * 64;
@@ -312,46 +298,24 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     rgb.z = rgb.z * manager.params_10.colour_1c.z / 128;
 
     //LAB_8010be14
-    final Vector3f vert0 = new Vector3f();
-    final Vector3f vert1 = new Vector3f();
-    final Vector3f vert2 = new Vector3f();
-    final Vector3f vert3 = new Vector3f();
-
-    final float vertZ0 = -this.screenspaceW_10 / 2;
-    vert0.z = vertZ0;
-    vert2.z = vertZ0;
-
-    final float vertY0 = -this.screenspaceH_14 / 2;
-    vert0.y = vertY0;
-    vert1.y = vertY0;
-
-    final float vertZ1 = this.screenspaceW_10 - this.screenspaceW_10 / 2;
-    vert1.z = vertZ1;
-    vert3.z = vertZ1;
-
-    final float vertY1 = this.screenspaceH_14 - this.screenspaceH_14 / 2;
-    vert2.y = vertY1;
-    vert3.y = vertY1;
-
-    final Vector2f sxy0 = new Vector2f();
-    final Vector2f sxy1 = new Vector2f();
-    final Vector2f sxy2 = new Vector2f();
-    final Vector2f sxy3 = new Vector2f();
-    final float z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
+    this.vert.z = this.screenspaceW_10 / 2;
+    this.vert.y = this.screenspaceH_14 / 2;
+    GTE.perspectiveTransform(this.vert);
+    final float z = GTE.getScreenZ(3);
 
     if(this.screenspaceW_10 == 0) {
       //LAB_8010bd08
-      final float projectionPlaneDistance = getProjectionPlaneDistance();
-      final float zShift = z * 4.0f;
-      this.screenspaceW_10 = this.captureW_04 * zShift / projectionPlaneDistance;
-      this.screenspaceH_14 = this.captureH_08 * zShift / projectionPlaneDistance;
+      final float displaySizeMultiplier = z / 320.0f;
+      this.screenspaceW_10 = this.captureW_04 * displaySizeMultiplier;
+      this.screenspaceH_14 = this.captureH_08 * displaySizeMultiplier;
     }
 
     //LAB_8010c0f0
-    this.transforms.rotate(-MathHelper.HALF_PI, 0, 1, 0);
+    this.transforms.rotateY(-MathHelper.HALF_PI);
     this.transforms.scale(this.screenspaceW_10, this.screenspaceH_14, 1);
     RENDERER.queueModel(this.screenshot, this.transforms, QueuedModelStandard.class)
-      .texture(this.texture);
+      .texture(this.texture)
+      .colour(rgb.x / 128.0f, rgb.y / 128.0f, rgb.z / 128.0f);
   }
 
   /**
