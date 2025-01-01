@@ -1846,11 +1846,11 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010b1d8L)
   public static FlowControl scriptAllocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
-    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c();
+    final int captureW = script.params_20[4].get();
+    final int captureH = script.params_20[5].get();
+    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c(captureW, captureH);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen capture", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    effect.captureW_04 = script.params_20[4].get();
-    effect.captureH_08 = script.params_20[5].get();
     effect.rendererIndex_0c = script.params_20[6].get();
     effect.screenspaceW_10 = 0;
     script.params_20[0].set(state.index);

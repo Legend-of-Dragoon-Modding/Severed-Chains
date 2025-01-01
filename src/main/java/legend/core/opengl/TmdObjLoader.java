@@ -34,6 +34,7 @@ public final class TmdObjLoader {
   public static final int TEXTURED_FLAG = 0x2;
   public static final int COLOURED_FLAG = 0x4;
   public static final int TRANSLUCENT_FLAG = 0x8;
+  public static final int DISABLE_CULLING_FLAG = 0x10;
 
   public static Obj[] fromTmd(final String name, final Tmd tmd) {
     return fromTmd(name, tmd, 0);
