@@ -1848,10 +1848,10 @@ public final class SEffe {
   public static FlowControl scriptAllocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
     final int captureW = script.params_20[4].get();
     final int captureH = script.params_20[5].get();
-    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c(captureW, captureH);
+    final int rendererIndex = script.params_20[6].get();
+    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c(captureW, captureH, rendererIndex);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen capture", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    effect.rendererIndex_0c = script.params_20[6].get();
     effect.screenspaceW_10 = 0;
     script.params_20[0].set(state.index);
     effect.setDeff(script.params_20[1].get());

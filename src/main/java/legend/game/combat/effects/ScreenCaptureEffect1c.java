@@ -3,15 +3,14 @@ package legend.game.combat.effects;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.BufferUtils;
@@ -19,11 +18,8 @@ import org.lwjgl.BufferUtils;
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
@@ -56,7 +52,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
   private final Obj screenshot;
   private final Texture texture;
 
-  public ScreenCaptureEffect1c(final int captureW, final int captureH) {
+  public ScreenCaptureEffect1c(final int captureW, final int captureH, final int rendererIndex_0c) {
     this.captureW_04 = captureW;
     this.captureH_08 = captureH;
 
@@ -80,14 +76,28 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
     final float normalizedCaptureW = captureW / RENDERER.getProjectionWidth() / widthFactor;
     final float normalizedCaptureH = captureH / RENDERER.getProjectionHeight();
-    this.screenshot = new QuadBuilder("Screen Capture")
-      .bpp(Bpp.BITS_24)
-      .disableBackfaceCulling()
-      .pos(-0.5f, -0.5f, 0)
-      .posSize(1.0f, 1.0f)
-      .uv((1.0f - normalizedCaptureW) / 2, -(1.0f - normalizedCaptureH) / 2)
-      .uvSize(normalizedCaptureW, -normalizedCaptureH)
-      .build();
+
+    if(rendererIndex_0c == 0) {
+      this.screenshot = new PolyBuilder("Screen Capture")
+        .bpp(Bpp.BITS_24)
+        .disableBackfaceCulling()
+        .addVertex(-0.5f, 0.5f, 0)
+        .uv((1.0f - normalizedCaptureW) / 2, -(1.0f + normalizedCaptureH) / 2)
+        .addVertex(0, -0.5f, 0)
+        .uv(0.5f, -(1.0f - normalizedCaptureH) / 2)
+        .addVertex(0.5f, 0.5f, 0)
+        .uv((1.0f + normalizedCaptureW) / 2, -(1.0f + normalizedCaptureH) / 2)
+        .build();
+    } else {
+      this.screenshot = new QuadBuilder("Screen Capture")
+        .bpp(Bpp.BITS_24)
+        .disableBackfaceCulling()
+        .pos(-0.5f, -0.5f, 0)
+        .posSize(1.0f, 1.0f)
+        .uv((1.0f - normalizedCaptureW) / 2, -(1.0f - normalizedCaptureH) / 2)
+        .uvSize(normalizedCaptureW, -normalizedCaptureH)
+        .build();
+    }
   }
 
   @Method(0x8010c2e0L)
@@ -138,9 +148,6 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
 
   @Method(0x8010b594L)
   private void renderImagoInstantDeathCapture(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final MV transforms) {
-    int a0;
-    int a1;
-
     final Vector3i rgb = new Vector3i();
 
     if((manager.params_10.flags_00 & 0x40) != 0) {
@@ -158,124 +165,24 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     rgb.y = rgb.y * manager.params_10.colour_1c.y / 128;
     rgb.z = rgb.z * manager.params_10.colour_1c.z / 128;
 
-    //LAB_8010b764
-    for(int i = 0; i < 8; i++) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .rgb(rgb.x, rgb.y, rgb.z);
+    this.vert.z = this.screenspaceW_10 / 2;
+    this.vert.y = this.screenspaceH_14 / 2;
+    GTE.perspectiveTransform(this.vert);
+    final float z0 = GTE.getScreenZ(3);
 
-      switch(i) {
-        case 1, 2, 4, 7 -> {
-          final Vector3f vert0 = new Vector3f();
-          final Vector3f vert1 = new Vector3f();
-          final Vector3f vert2 = new Vector3f();
-          final Vector2f sxy0 = new Vector2f();
-          final Vector2f sxy1 = new Vector2f();
-          final Vector2f sxy2 = new Vector2f();
-
-          //LAB_8010b80c
-          if(i == 1 || i == 4) {
-            //LAB_8010b828
-            a0 = i & 0x3;
-            vert1.z = (a0 - 2) * this.screenspaceW_10 / 4.0f;
-            vert0.z = (a0 - 1) * this.screenspaceW_10 / 4.0f;
-            vert2.z = vert0.z;
-            a0 = i >> 2;
-            vert0.y = (a0 - 1) * this.screenspaceH_14 / 2.0f;
-            vert1.y = a0 * this.screenspaceH_14 / 2.0f;
-            vert2.y = vert1.y;
-            final int u = (i >> 1) * 64;
-            final int v = (i & 0x1) * 32;
-
-            cmd
-              .uv(0, u, v + this.captureW_04 / 4 - 1)
-              .uv(1, v, u + this.captureH_08 / 2 - 1)
-              .uv(2, v + this.captureW_04 / 4 - 1, u + this.captureH_08 / 2 - 1);
-          } else {
-            //LAB_8010b8c8
-            a0 = i & 0x3;
-            vert1.z = (a0 - 2) * this.screenspaceW_10 / 4.0f;
-            vert0.z = vert1.z;
-            vert2.z = (a0 - 1) * this.screenspaceW_10 / 4.0f;
-            a0 = i >> 2;
-            vert0.y = (a0 - 1) * this.screenspaceH_14 / 2.0f;
-            vert2.y = a0 * this.screenspaceH_14 / 2.0f;
-            vert1.y = vert2.y;
-            final int u = (i & 1) * 32;
-            final int v = (i >> 1) * 64;
-
-            cmd
-              .uv(0, u, v)
-              .uv(1, u, v + this.captureH_08 / 2 - 1)
-              .uv(2, u + this.captureW_04 / 4 - 1, v + this.captureH_08 / 2 - 1);
-          }
-
-          //LAB_8010b9a4
-          final float z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
-
-          if(this.screenspaceW_10 == 0) {
-            //LAB_8010b638
-            final float displaySizeMultiplier = z * 4 / 320.0f;
-            this.screenspaceW_10 = this.captureW_04 * displaySizeMultiplier;
-            this.screenspaceH_14 = this.captureH_08 * displaySizeMultiplier;
-            break;
-          }
-
-          final ScreenCaptureEffectMetrics8 metrics = this.metrics_00;
-
-          cmd
-            .bpp(Bpp.BITS_15)
-            .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) == 0 ? 0 : 256)
-            .pos(0, sxy0.x, sxy0.y)
-            .pos(1, sxy1.x, sxy1.y)
-            .pos(2, sxy2.x, sxy2.y);
-
-          GPU.queueCommand(z / 4.0f, cmd);
-        }
-
-        case 5, 6 -> {
-          final Vector3f vert0 = new Vector3f();
-          final Vector3f vert1 = new Vector3f();
-          final Vector3f vert2 = new Vector3f();
-          final Vector3f vert3 = new Vector3f();
-          final Vector2f sxy0 = new Vector2f();
-          final Vector2f sxy1 = new Vector2f();
-          final Vector2f sxy2 = new Vector2f();
-          final Vector2f sxy3 = new Vector2f();
-
-          a0 = i & 0x3;
-          a1 = i >> 2;
-          vert2.z = (a0 - 2) * this.screenspaceW_10 / 4.0f;
-          vert0.z = vert2.z;
-          vert1.y = (a1 - 1) * this.screenspaceH_14 / 2.0f;
-          vert0.y = vert1.y;
-          vert3.z = (a0 - 1) * this.screenspaceW_10 / 4.0f;
-          vert1.z = vert3.z;
-          vert3.y = a1 * this.screenspaceH_14 / 2.0f;
-          vert2.y = vert3.y;
-          final float z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
-
-          final int u = (i & 0x1) * 32;
-          final int v = (i >> 1) * 64;
-          final ScreenCaptureEffectMetrics8 metrics = this.metrics_00;
-
-          GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
-            .bpp(Bpp.BITS_15)
-            .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
-            .rgb(rgb.x, rgb.y, rgb.z)
-            .pos(0, sxy0.x, sxy0.y)
-            .pos(1, sxy1.x, sxy1.y)
-            .pos(2, sxy2.x, sxy2.y)
-            .pos(3, sxy3.x, sxy3.y)
-            .uv(0, u, v)
-            .uv(1, u + this.captureW_04 / 4 - 1, v)
-            .uv(2, u, v + this.captureH_08 / 2 - 1)
-            .uv(3, u + this.captureW_04 / 4 - 1, v + this.captureH_08 / 2 - 1)
-          );
-        }
-      }
+    if(this.screenspaceW_10 == 0) {
+      //LAB_8010b638
+      final float displaySizeMultiplier = z0 / 320.0f;
+      this.screenspaceW_10 = this.captureW_04 * displaySizeMultiplier;
+      this.screenspaceH_14 = this.captureH_08 * displaySizeMultiplier;
+      return;
     }
 
-    //LAB_8010bc40
+    this.transforms.rotateY(-MathHelper.HALF_PI);
+    this.transforms.scale(this.screenspaceW_10, this.screenspaceH_14, 1);
+    RENDERER.queueModel(this.screenshot, this.transforms, QueuedModelStandard.class)
+      .texture(this.texture)
+      .colour(rgb.x / 128.0f, rgb.y / 128.0f, rgb.z / 128.0f);
   }
 
   @Method(0x8010bc60L)
@@ -308,6 +215,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
       final float displaySizeMultiplier = z / 320.0f;
       this.screenspaceW_10 = this.captureW_04 * displaySizeMultiplier;
       this.screenspaceH_14 = this.captureH_08 * displaySizeMultiplier;
+      return;
     }
 
     //LAB_8010c0f0
