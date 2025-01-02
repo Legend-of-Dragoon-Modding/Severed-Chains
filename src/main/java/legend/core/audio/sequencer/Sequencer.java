@@ -591,10 +591,12 @@ public final class Sequencer extends AudioSource {
     return flags;
   }
 
+  /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
   public void changeSampleRateResolution(final SampleRateResolution sampleRateResolution) {
     this.lookupTables.changeSampleRates(sampleRateResolution);
   }
 
+  /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
   public void changeInterpolationBitDepth(final InterpolationBitDepth interpolationBitDepth) {
     this.lookupTables.changeInterpolationBitDepth(interpolationBitDepth);
 

@@ -241,6 +241,8 @@ public final class GameEngine {
 
     AUDIO_THREAD.init();
     AUDIO_THREAD.getSequencer().setVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()));
+    AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_BIT_DEPTH_CONFIG.get()));
+    AUDIO_THREAD.changeSampleRateResolution(CONFIG.getConfig(CoreMod.MUSIC_SAMPLE_RATE_RESOLUTION_CONFIG.get()));
 
     SPU.init();
     RENDERER.init();

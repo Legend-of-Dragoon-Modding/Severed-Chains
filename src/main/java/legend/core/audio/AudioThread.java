@@ -393,22 +393,22 @@ public final class AudioThread implements Runnable {
     return 0;
   }
 
-  public void changeSettings(final InterpolationBitDepth bitDepth, final SampleRateResolution sampleRateResolution) {
+  public void changeInterpolationBitDepth(final InterpolationBitDepth bitDepth) {
     synchronized(this) {
-      if(this.interpolationBitDepth == bitDepth && this.sampleRateResolution == sampleRateResolution) {
-        return;
-      }
-
-      if(this.sampleRateResolution != sampleRateResolution) {
-        this.sampleRateResolution = sampleRateResolution;
-
-        this.sequencer.changeSampleRateResolution(this.sampleRateResolution);
-      }
-
       if(this.interpolationBitDepth != bitDepth) {
         this.interpolationBitDepth = bitDepth;
 
         this.sequencer.changeInterpolationBitDepth(this.interpolationBitDepth);
+      }
+    }
+  }
+
+  public void changeSampleRateResolution(final SampleRateResolution sampleRateResolution) {
+    synchronized(this) {
+      if(this.sampleRateResolution != sampleRateResolution) {
+        this.sampleRateResolution = sampleRateResolution;
+
+        this.sequencer.changeSampleRateResolution(this.sampleRateResolution);
       }
     }
   }
