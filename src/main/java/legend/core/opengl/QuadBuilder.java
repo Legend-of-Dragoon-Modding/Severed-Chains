@@ -211,12 +211,6 @@ public class QuadBuilder {
     return this;
   }
 
-  public QuadBuilder flipY() {
-    this.addFirstQuad();
-    this.current.yFlipped = true;
-    return this;
-  }
-
   public QuadBuilder disableBackfaceCulling() {
     this.addFirstQuad();
     this.disableBackfaceCulling = true;
@@ -258,17 +252,10 @@ public class QuadBuilder {
     final int clx = quad.clut.x;
     final int cly = quad.clut.y;
 
-    if(quad.yFlipped) {
-      offset = this.setVertex(offset, vertices, x0, y0, z, u0, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[0].x, quad.colour[0].y, quad.colour[0].z, this.flags);
-      offset = this.setVertex(offset, vertices, x0, y1, z, u0, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[1].x, quad.colour[1].y, quad.colour[1].z, this.flags);
-      offset = this.setVertex(offset, vertices, x1, y0, z, u1, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[2].x, quad.colour[2].y, quad.colour[2].z, this.flags);
-      offset = this.setVertex(offset, vertices, x1, y1, z, u1, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[3].x, quad.colour[3].y, quad.colour[3].z, this.flags);
-    } else {
-      offset = this.setVertex(offset, vertices, x0, y0, z, u0, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[0].x, quad.colour[0].y, quad.colour[0].z, this.flags);
-      offset = this.setVertex(offset, vertices, x0, y1, z, u0, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[1].x, quad.colour[1].y, quad.colour[1].z, this.flags);
-      offset = this.setVertex(offset, vertices, x1, y0, z, u1, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[2].x, quad.colour[2].y, quad.colour[2].z, this.flags);
-      offset = this.setVertex(offset, vertices, x1, y1, z, u1, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[3].x, quad.colour[3].y, quad.colour[3].z, this.flags);
-    }
+    offset = this.setVertex(offset, vertices, x0, y0, z, u0, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[0].x, quad.colour[0].y, quad.colour[0].z, this.flags);
+    offset = this.setVertex(offset, vertices, x0, y1, z, u0, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[1].x, quad.colour[1].y, quad.colour[1].z, this.flags);
+    offset = this.setVertex(offset, vertices, x1, y0, z, u1, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[2].x, quad.colour[2].y, quad.colour[2].z, this.flags);
+    offset = this.setVertex(offset, vertices, x1, y1, z, u1, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[3].x, quad.colour[3].y, quad.colour[3].z, this.flags);
 
     return offset;
   }
@@ -327,6 +314,5 @@ public class QuadBuilder {
     private final Vector2i clut = new Vector2i();
     private final Vector3f[] colour = {new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()};
     private Bpp bpp = Bpp.BITS_4;
-    private boolean yFlipped;
   }
 }

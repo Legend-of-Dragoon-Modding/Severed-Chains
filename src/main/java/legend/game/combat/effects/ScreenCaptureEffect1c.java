@@ -77,16 +77,16 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     this.texture.data(0, 0, w, h, data.flip());
 
-    final float normalizedCaptureW = captureW / RENDERER.getProjectionWidth();
+    final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
+    final float normalizedCaptureW = captureW / RENDERER.getProjectionWidth() / widthFactor;
     final float normalizedCaptureH = captureH / RENDERER.getProjectionHeight();
     this.screenshot = new QuadBuilder("Screen Capture")
       .bpp(Bpp.BITS_24)
-      .flipY()
       .disableBackfaceCulling()
       .pos(-0.5f, -0.5f, 0)
       .posSize(1.0f, 1.0f)
-      .uv((1.0f - normalizedCaptureW) / 2, (1.0f - normalizedCaptureH) / 2)
-      .uvSize(normalizedCaptureW, normalizedCaptureH)
+      .uv((1.0f - normalizedCaptureW) / 2, -(1.0f - normalizedCaptureH) / 2)
+      .uvSize(normalizedCaptureW, -normalizedCaptureH)
       .build();
   }
 
