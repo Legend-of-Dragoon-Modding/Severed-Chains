@@ -12,6 +12,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.scripting.RunningScript;
 import legend.game.types.Translucency;
+import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
@@ -274,6 +275,11 @@ public abstract class ListMenu {
           //LAB_800f5078
           this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
+
+          if(this.player_08.spell_94 != null && this.player_08.stats.getStat(LodMod.MP_STAT.get()).getCurrent() < this.player_08.spell_94.mp_06) {
+            playMenuSound(40);
+            break;
+          }
 
           //LAB_800f5190
           playMenuSound(2);
