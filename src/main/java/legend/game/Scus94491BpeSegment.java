@@ -2334,7 +2334,7 @@ public final class Scus94491BpeSegment {
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
-    playMusicPackage(new BackgroundMusic(files, fileIndex), startSequence);
+    playMusicPackage(new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate()), startSequence);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
   }
 
@@ -2846,7 +2846,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001fb44L)
   public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
-    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex);
+    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate());
     bgm.setVolume(40 / 128.0f);
 
     loadDrgnDir(0, victoryType, victoryFiles -> loadVictoryMusic(victoryFiles, bgm));

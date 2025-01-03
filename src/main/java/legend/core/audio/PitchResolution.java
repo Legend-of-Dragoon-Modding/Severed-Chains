@@ -1,6 +1,6 @@
 package legend.core.audio;
 
-public enum SampleRateResolution {
+public enum PitchResolution {
   Quarter(4, 5),
   Half(8, 4),
   Retail(16, 3),
@@ -11,7 +11,7 @@ public enum SampleRateResolution {
   public final int value;
   public final int sampleRateShift;
   
-  SampleRateResolution(final int value, final int shifts) {
+  PitchResolution(final int value, final int shifts) {
     this.value = value;
     this.sampleRateShift = shifts;
   }

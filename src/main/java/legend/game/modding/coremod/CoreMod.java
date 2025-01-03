@@ -21,8 +21,9 @@ import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
 import legend.game.modding.coremod.config.MashModeConfigEntry;
 import legend.game.modding.coremod.config.MonitorConfigEntry;
-import legend.game.modding.coremod.config.MusicInterpolationBitDepthConfigEntry;
-import legend.game.modding.coremod.config.MusicSampleRateResolutionConfigEntry;
+import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry;
+import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
+import legend.game.modding.coremod.config.MusicSampleRateConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
@@ -91,8 +92,9 @@ public class CoreMod {
 
   public static final RegistryDelegate<AudioDeviceConfig> AUDIO_DEVICE_CONFIG = CONFIG_REGISTRAR.register("audio_device", AudioDeviceConfig::new);
   public static final RegistryDelegate<MusicVolumeConfigEntry> MUSIC_VOLUME_CONFIG = CONFIG_REGISTRAR.register("music_volume", MusicVolumeConfigEntry::new);
-  public static final RegistryDelegate<MusicInterpolationBitDepthConfigEntry> MUSIC_INTERPOLATION_BIT_DEPTH_CONFIG = CONFIG_REGISTRAR.register("music_interpolation_bit_depth", MusicInterpolationBitDepthConfigEntry::new);
-  public static final RegistryDelegate<MusicSampleRateResolutionConfigEntry> MUSIC_SAMPLE_RATE_RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("music_sample_rate_resolution", MusicSampleRateResolutionConfigEntry::new);
+  public static final RegistryDelegate<MusicInterpolationPrecisionConfigEntry> MUSIC_INTERPOLATION_PRECISION_CONFIG = CONFIG_REGISTRAR.register("music_interpolation_precision", MusicInterpolationPrecisionConfigEntry::new);
+  public static final RegistryDelegate<MusicPitchResolutionConfigEntry> MUSIC_PITCH_RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("music_pitch_resolution", MusicPitchResolutionConfigEntry::new);
+  public static final RegistryDelegate<MusicSampleRateConfigEntry> MUSIC_SAMPLE_RATE_CONFIG = CONFIG_REGISTRAR.register("music_sample_rate", MusicSampleRateConfigEntry::new);
 
   /** Config isn't actually used, but adds a button to the options screen to open the keybinds screen */
   public static final RegistryDelegate<ConfigEntry<Void>> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);

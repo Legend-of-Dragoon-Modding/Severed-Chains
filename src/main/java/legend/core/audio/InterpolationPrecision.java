@@ -1,6 +1,6 @@
 package legend.core.audio;
 
-public enum InterpolationBitDepth {
+public enum InterpolationPrecision {
   Quarter(6),
   Half(7),
   Retail(8),
@@ -9,7 +9,7 @@ public enum InterpolationBitDepth {
 
   public final int value;
 
-  InterpolationBitDepth(final int value) {
+  InterpolationPrecision(final int value) {
     this.value = value;
   }
 }

@@ -2,26 +2,28 @@ package legend.core.audio.sequencer;
 
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import legend.core.MathHelper;
-import legend.core.audio.InterpolationBitDepth;
-import legend.core.audio.SampleRateResolution;
+import legend.core.audio.InterpolationPrecision;
+import legend.core.audio.PitchResolution;
+import legend.core.audio.SampleRate;
 
-import static legend.core.audio.AudioThread.SAMPLE_RATE_RATIO;
+import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
 
 final class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
-  private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION) * SAMPLE_RATE_RATIO;
-  private SampleRateResolution sampleRateResolution;
+  private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION);
+  private PitchResolution pitchResolution;
   private int[] sampleRates;
   private int interpolationStep;
   private final float[][] interpolationWeights = new float[2][];
   private final float[] pan = new float[0x80];
 
-  LookupTables(final InterpolationBitDepth bitDepth, final SampleRateResolution sampleRateResolution) {
-    this.sampleRateResolution = sampleRateResolution;
-    this.sampleRates = new int[12 * sampleRateResolution.value];
+  LookupTables(final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate) {
+    this.pitchResolution = pitchResolution;
+    this.sampleRates = new int[12 * pitchResolution.value];
 
+    final double sampleRateRatio = BASE_SAMPLE_RATE / (double)sampleRate.value;
     for(int i = 0; i < this.sampleRates.length; i++) {
-      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * Math.pow(2, i / (double)this.sampleRates.length));
+      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * sampleRateRatio * Math.pow(2, i / (double)this.sampleRates.length));
     }
 
     this.interpolationStep = 1 << bitDepth.value;
@@ -65,7 +67,7 @@ final class LookupTables {
 
   int calculateSampleRate(final int rootKey, final int note, final int finePitch, final int pitchBend, final int pitchBendMultiplier) {
     final int offsetIn128ths = (note - rootKey) * 128 + finePitch + pitchBend * pitchBendMultiplier;
-    final int scaledOffset = offsetIn128ths >> this.sampleRateResolution.sampleRateShift;
+    final int scaledOffset = offsetIn128ths >> this.pitchResolution.sampleRateShift;
 
     if(scaledOffset >= 0) {
       final int octaveOffset = scaledOffset / this.sampleRates.length;
@@ -106,16 +108,17 @@ final class LookupTables {
     return finePitch + (int)((interpolatedBreath * modulation) / 0x80);
   }
 
-  void changeSampleRates(final SampleRateResolution sampleRateResolution) {
-    this.sampleRateResolution = sampleRateResolution;
-    this.sampleRates = new int[12 * sampleRateResolution.value];
+  void changeSampleRates(final PitchResolution pitchResolution, final SampleRate sampleRate) {
+    this.pitchResolution = pitchResolution;
+    this.sampleRates = new int[12 * pitchResolution.value];
 
+    final double sampleRateRatio = BASE_SAMPLE_RATE / (double)sampleRate.value;
     for(int i = 0; i < this.sampleRates.length; i++) {
-      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * Math.pow(2, i / (double)this.sampleRates.length));
+      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * sampleRateRatio * Math.pow(2, i / (double)this.sampleRates.length));
     }
   }
 
-  void changeInterpolationBitDepth(final InterpolationBitDepth bitDepth) {
+  void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     this.interpolationStep = 1 << bitDepth.value;
 
     // The weights for Catmull-Rom splines are symmetrical, hence we can just store both of the unique sets and use a reverse index for half of them
@@ -130,5 +133,9 @@ final class LookupTables {
       this.interpolationWeights[0][i] = (float)(0.5d * (-pow3 + 2 * pow2 - pow1));
       this.interpolationWeights[1][i] = (float)(0.5d * (3 * pow3 - 5 * pow2 + 2));
     }
+  }
+
+  public PitchResolution getPitchResolution() {
+    return this.pitchResolution;
   }
 }

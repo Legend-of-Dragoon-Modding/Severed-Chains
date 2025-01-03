@@ -1,6 +1,6 @@
 package legend.core.audio.sequencer;
 
-import legend.core.audio.InterpolationBitDepth;
+import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
@@ -55,7 +55,7 @@ final class Voice {
   private boolean hasSamples;
   private final short[] samples = new short[28 + EMPTY.length];
 
-  Voice(final int index, final LookupTables lookupTables, final InterpolationBitDepth bitDepth) {
+  Voice(final int index, final LookupTables lookupTables, final InterpolationPrecision bitDepth) {
     this.index = index;
     this.lookupTables = lookupTables;
     this.counter = new VoiceCounter(bitDepth);
@@ -263,7 +263,7 @@ final class Voice {
     this.breath = breath;
   }
 
-  void changeInterpolationBitDepth(final InterpolationBitDepth bitDepth) {
+  void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     this.counter.changeInterpolationBitDepth(bitDepth);
   }
 }

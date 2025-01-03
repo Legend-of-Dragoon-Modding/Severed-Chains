@@ -1,5 +1,6 @@
 package legend.core.audio.sequencer.assets;
 
+import legend.core.audio.SampleRate;
 import legend.core.audio.sequencer.assets.sequence.Command;
 import legend.core.audio.sequencer.assets.sequence.bgm.SequenceBuilder;
 import legend.game.unpacker.FileData;
@@ -7,15 +8,13 @@ import legend.game.unpacker.Unpacker;
 
 import java.util.List;
 
-import static legend.core.audio.AudioThread.ACTUAL_SAMPLE_RATE;
-
-
 public final class BackgroundMusic {
-  private static final double TEMPO_TICKS = ACTUAL_SAMPLE_RATE * 60;
   private final int songId;
 
   private float volume;
   private final int tickPerQuarterNote;
+  private int tempo;
+  private double tempoTicks;
   private double samplesPerTick;
 
   private final short[][] breathControls;
@@ -34,7 +33,7 @@ public final class BackgroundMusic {
   private int repeatPosition;
   private boolean repeat;
 
-  public BackgroundMusic(final List<FileData> files, final int fileId) {
+  public BackgroundMusic(final List<FileData> files, final int fileId, final SampleRate sampleRate) {
     this.songId = files.get(0).readUShort(0);
 
     final int fileOffset = files.size() == 5 ? 1 : 0;
@@ -69,9 +68,10 @@ public final class BackgroundMusic {
 
     this.volume = sssq.readUByte(0x0) / 128.0f;
     this.tickPerQuarterNote = sssq.readUShort(0x2);
+    this.tempoTicks = sampleRate.value * 60;
     this.setTempo(sssq.readUShort(0x4));
 
-    this.soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank);
+    this.soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank, sampleRate);
 
     this.channels = new Channel[0x10];
     for(int channel = 0; channel < this.channels.length; channel++) {
@@ -143,7 +143,8 @@ public final class BackgroundMusic {
   }
 
   public void setTempo(final int tempo) {
-    this.samplesPerTick = TEMPO_TICKS / (tempo * this.tickPerQuarterNote);
+    this.tempo = tempo;
+    this.samplesPerTick = calculateSamplesPerTick(this.tempoTicks, tempo, this.tickPerQuarterNote);
   }
 
   public double getSamplesPerTick() {
@@ -232,5 +233,16 @@ public final class BackgroundMusic {
     for(final Channel channel : this.channels) {
       channel.changeVolume(channel.getVolume(), this.volume);
     }
+  }
+
+  public void changeSampleRate(final SampleRate sampleRate) {
+    this.soundFont.changeSampleRate(sampleRate);
+
+    this.tempoTicks = sampleRate.value * 60;
+    this.samplesPerTick = calculateSamplesPerTick(this.tempoTicks, this.tempo, this.tickPerQuarterNote);
+  }
+
+  private static double calculateSamplesPerTick(final double tempoTicks, final int tempo, final int ticksPerQuarterNote) {
+    return tempoTicks / (tempo * ticksPerQuarterNote);
   }
 }

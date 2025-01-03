@@ -1,6 +1,6 @@
 package legend.core.audio.sequencer;
 
-import legend.core.audio.InterpolationBitDepth;
+import legend.core.audio.InterpolationPrecision;
 
 import static legend.core.audio.sequencer.LookupTables.VOICE_COUNTER_BIT_PRECISION;
 import static legend.core.audio.sequencer.assets.sequence.bgm.BreathChange.BREATH_BASE_SHIFT;
@@ -18,7 +18,7 @@ final class VoiceCounter {
   private int breathInterpolationShift;
   private int interpolationAnd;
 
-  VoiceCounter(final InterpolationBitDepth bitDepth) {
+  VoiceCounter(final InterpolationPrecision bitDepth) {
     this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
     this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value;
     this.interpolationAnd = (1 << bitDepth.value) - 1;
@@ -67,7 +67,7 @@ final class VoiceCounter {
     this.breathCounter = 0;
   }
 
-  void changeInterpolationBitDepth(final InterpolationBitDepth bitDepth) {
+  void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
     this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value;
     this.interpolationAnd = (1 << bitDepth.value) - 1;

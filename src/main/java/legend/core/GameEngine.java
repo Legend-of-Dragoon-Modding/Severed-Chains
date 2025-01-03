@@ -1,8 +1,9 @@
 package legend.core;
 
 import legend.core.audio.AudioThread;
-import legend.core.audio.InterpolationBitDepth;
-import legend.core.audio.SampleRateResolution;
+import legend.core.audio.InterpolationPrecision;
+import legend.core.audio.PitchResolution;
+import legend.core.audio.SampleRate;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
@@ -124,7 +125,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(true, 24, InterpolationBitDepth.Double, SampleRateResolution.Quadruple);
+    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -241,8 +242,9 @@ public final class GameEngine {
 
     AUDIO_THREAD.init();
     AUDIO_THREAD.getSequencer().setVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()));
-    AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_BIT_DEPTH_CONFIG.get()));
-    AUDIO_THREAD.changeSampleRateResolution(CONFIG.getConfig(CoreMod.MUSIC_SAMPLE_RATE_RESOLUTION_CONFIG.get()));
+    AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get()));
+    AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
+    AUDIO_THREAD.changeSampleRate(CONFIG.getConfig(CoreMod.MUSIC_SAMPLE_RATE_CONFIG.get()));
 
     SPU.init();
     RENDERER.init();

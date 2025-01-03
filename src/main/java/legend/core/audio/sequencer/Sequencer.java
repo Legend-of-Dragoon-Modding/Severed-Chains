@@ -2,8 +2,9 @@ package legend.core.audio.sequencer;
 
 import legend.core.MathHelper;
 import legend.core.audio.AudioSource;
-import legend.core.audio.InterpolationBitDepth;
-import legend.core.audio.SampleRateResolution;
+import legend.core.audio.InterpolationPrecision;
+import legend.core.audio.PitchResolution;
+import legend.core.audio.SampleRate;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
 import legend.core.audio.sequencer.assets.sequence.Command;
@@ -31,7 +32,6 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.HashMap;
 import java.util.Map;
 
-import static legend.core.audio.AudioThread.ACTUAL_SAMPLE_RATE;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
@@ -39,16 +39,17 @@ public final class Sequencer extends AudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
   public static final int EFFECTS_OVER_TIME_SCALE = 5;
-  private static final int EFFECT_OVER_TIME_SAMPLES = ACTUAL_SAMPLE_RATE / (60 * EFFECTS_OVER_TIME_SCALE);
   // TODO switch between mono and stereo
   private final boolean stereo;
+  private SampleRate sampleRate;
+  private int effectsOverTimeSamples;
   private final LookupTables lookupTables;
   private final Voice[] voices;
   private int playingVoices;
   private final float[] voiceOutputBuffer = new float[2];
   private final float[] voiceReverbBuffer = new float[2];
   // TODO consider making this variable length for mono, but it might be better to simply always playback as stereo, just with down mixing
-  private final short[] outputBuffer;
+  private short[] outputBuffer;
 
   private final Reverberizer reverb = new Reverberizer();
 
@@ -73,14 +74,18 @@ public final class Sequencer extends AudioSource {
   private BackgroundMusic backgroundMusic;
   private int samplesToProcess;
 
-  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationBitDepth bitDepth, final SampleRateResolution sampleRateResolution) {
+  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate) {
     super(5);
 
-    this.outputBuffer = new short[(ACTUAL_SAMPLE_RATE / 60) * 2];
+    this.sampleRate = sampleRate;
+
+    this.outputBuffer = new short[(this.sampleRate.value / 60) * 2];
 
     this.stereo = stereo;
 
-    this.lookupTables = new LookupTables(bitDepth, sampleRateResolution);
+    this.effectsOverTimeSamples = sampleRate.value / (60 * EFFECTS_OVER_TIME_SCALE);
+
+    this.lookupTables = new LookupTables(bitDepth, pitchResolution, this.sampleRate);
 
     this.voices = new Voice[voiceCount];
 
@@ -101,6 +106,8 @@ public final class Sequencer extends AudioSource {
     this.addCommandCallback(PitchBendChange.class, this::pitchBend);
     this.addCommandCallback(TempoChange.class, this::changeTempo);
     this.addCommandCallback(EndOfTrack.class, this::endOfTrack);
+
+    this.reverb.setConfig(reverbConfigs_80059f7c[2].config_02, sampleRate);
   }
 
   public void setVolume(final float volume) {
@@ -111,7 +118,7 @@ public final class Sequencer extends AudioSource {
   public void tick() {
     int samplePostition = 0;
     for(int effect = 0; effect < EFFECTS_OVER_TIME_SCALE; effect++) {
-      for(int sample = 0; sample < EFFECT_OVER_TIME_SAMPLES; sample++, samplePostition += 2) {
+      for(int sample = 0; sample < this.effectsOverTimeSamples; sample++, samplePostition += 2) {
         this.clearFinishedVoices();
 
         this.tickSequence();
@@ -141,7 +148,7 @@ public final class Sequencer extends AudioSource {
       }
     }
 
-    this.bufferOutput(AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
+    this.bufferOutput(AL_FORMAT_STEREO16, this.outputBuffer, this.sampleRate.value);
 
     super.tick();
   }
@@ -408,7 +415,7 @@ public final class Sequencer extends AudioSource {
   }
 
   public void setReverbConfig(final ReverbConfig config) {
-    this.reverb.setConfig(config);
+    this.reverb.setConfig(config, this.sampleRate);
   }
 
   public void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
@@ -592,16 +599,34 @@ public final class Sequencer extends AudioSource {
   }
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
-  public void changeSampleRateResolution(final SampleRateResolution sampleRateResolution) {
-    this.lookupTables.changeSampleRates(sampleRateResolution);
+  public void changePitchResolution(final PitchResolution pitchResolution) {
+    this.lookupTables.changeSampleRates(pitchResolution, this.sampleRate);
   }
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
-  public void changeInterpolationBitDepth(final InterpolationBitDepth interpolationBitDepth) {
-    this.lookupTables.changeInterpolationBitDepth(interpolationBitDepth);
+  public void changeSampleRate(final SampleRate sampleRate) {
+    this.sampleRate = sampleRate;
+    this.effectsOverTimeSamples = sampleRate.value / (60 * EFFECTS_OVER_TIME_SCALE);
+
+    this.lookupTables.changeSampleRates(this.lookupTables.getPitchResolution(), sampleRate);
+    this.reverb.changeSampleRate(sampleRate);
+    this.outputBuffer = new short[(this.sampleRate.value / 60) * 2];
+
+    if(this.backgroundMusic != null) {
+      this.backgroundMusic.changeSampleRate(sampleRate);
+    }
+  }
+
+  /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
+  public void changeInterpolationBitDepth(final InterpolationPrecision interpolationPrecision) {
+    this.lookupTables.changeInterpolationBitDepth(interpolationPrecision);
 
     for(final Voice voice : this.voices) {
-      voice.changeInterpolationBitDepth(interpolationBitDepth);
+      voice.changeInterpolationBitDepth(interpolationPrecision);
     }
+  }
+
+  public SampleRate getSampleRate() {
+    return this.sampleRate;
   }
 }

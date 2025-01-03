@@ -1,6 +1,7 @@
 package legend.core.audio.sequencer;
 
-import legend.core.MathHelper;
+
+import legend.core.audio.SampleRate;
 import legend.core.spu.Reverb;
 import legend.game.sound.ReverbConfig;
 
@@ -110,8 +111,8 @@ final class Reverberizer {
     return this.reverbWorkArea[address];
   }
 
-  void setConfig(final ReverbConfig config) {
-    this.reverb.set(config);
+  void setConfig(final ReverbConfig config, final SampleRate sampleRate) {
+    this.reverb.set(config, sampleRate);
   }
 
   float getOutputLeft() {
@@ -129,5 +130,9 @@ final class Reverberizer {
 
   void clear() {
     Arrays.fill(this.reverbWorkArea, 0);
+  }
+
+  void changeSampleRate(final SampleRate sampleRate) {
+    this.reverb.changeSampleRate(sampleRate);
   }
 }

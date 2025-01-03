@@ -36,8 +36,9 @@ lod_core.config.resolution.NATIVE=Native (window size)
 lod_core.config.monitor.label=Monitor
 lod_core.config.audio_device.label=Audio Device
 lod_core.config.music_volume.label=Music Volume
-lod_core.config.music_interpolation_bit_depth.label = Interpolation Bit Depth
-lod_core.config.music_sample_rate_resolution.label = Sample Rate Resolution
+lod_core.config.music_interpolation_precision.label = Interpolation Precision
+lod_core.config.music_pitch_resolution.label = Pitch Resolution
+lod_core.config.music_sample_rate.label = Sample Rate
 
 # Campaign config
 lod_core.config.indicator_mode.label=Indicator Mode
