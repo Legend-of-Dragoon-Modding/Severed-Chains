@@ -605,6 +605,8 @@ public final class Sequencer extends AudioSource {
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
   public void changeSampleRate(final SampleRate sampleRate) {
+    this.resetBuffers();
+
     this.sampleRate = sampleRate;
     this.effectsOverTimeSamples = sampleRate.value / (60 * EFFECTS_OVER_TIME_SCALE);
 
@@ -614,6 +616,12 @@ public final class Sequencer extends AudioSource {
 
     if(this.backgroundMusic != null) {
       this.backgroundMusic.changeSampleRate(sampleRate);
+
+      for(final Voice voice : this.voices) {
+        voice.clear();
+      }
+
+      this.play();
     }
   }
 
