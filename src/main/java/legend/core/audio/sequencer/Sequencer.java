@@ -607,6 +607,7 @@ public final class Sequencer extends AudioSource {
   public void changeSampleRate(final SampleRate sampleRate) {
     this.resetBuffers();
 
+    final SampleRate old = this.sampleRate;
     this.sampleRate = sampleRate;
     this.effectsOverTimeSamples = sampleRate.value / (60 * EFFECTS_OVER_TIME_SCALE);
 
@@ -618,7 +619,7 @@ public final class Sequencer extends AudioSource {
       this.backgroundMusic.changeSampleRate(sampleRate);
 
       for(final Voice voice : this.voices) {
-        voice.clear();
+        voice.scaleSampleRate(old, sampleRate);
       }
 
       this.play();

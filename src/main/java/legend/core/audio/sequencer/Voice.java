@@ -1,6 +1,7 @@
 package legend.core.audio.sequencer;
 
 import legend.core.audio.InterpolationPrecision;
+import legend.core.audio.SampleRate;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
@@ -265,5 +266,13 @@ final class Voice {
 
   void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     this.counter.changeInterpolationBitDepth(bitDepth);
+  }
+
+  void scaleSampleRate(final SampleRate oldRate, final SampleRate newRate) {
+    if(!this.used) {
+      return;
+    }
+
+    this.sampleRate = (int)Math.round(this.sampleRate * ((double)oldRate.value / (double)newRate.value));
   }
 }
