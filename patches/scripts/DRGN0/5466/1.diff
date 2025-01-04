@@ -23,7 +23,8 @@
  call 42, 0x1, 0x0, 0x0, 0x0, stor[11]
  call 42, 0x1, 0x0, 0x1, 0x0, stor[12]
  call 42, 0x1, 0x0, 0x2, 0x0, stor[13]
-+mov 0x1, stor[9] # Moved camera updates before screen capture allocation and added 1 frame wait to get screen to capture on the correct frame
+# Moved camera updates before screen capture allocation and added 1 frame wait to get screen to capture on the correct frame
++mov 0x1, stor[9]
 +wait stor[9]
 +call 897, stor[22], 0x14400, 0x0, 0x0, 0x80, 0x60, 0x1
  call 545, stor[22], 0xffffffff, stor[11], stor[12], stor[13]

@@ -23,11 +23,9 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
-import static org.lwjgl.opengl.GL11.glGetTexImage;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL31C.GL_RGBA16_SNORM;
 
@@ -71,8 +69,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     });
 
     final ByteBuffer data = BufferUtils.createByteBuffer(w * h * 4);
-    RENDERER.getLastFrame().use();
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    this.texture.getData(data);
     this.texture.data(0, 0, w, h, data.flip());
 
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
