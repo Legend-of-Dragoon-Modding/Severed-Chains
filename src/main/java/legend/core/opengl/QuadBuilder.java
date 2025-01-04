@@ -256,7 +256,6 @@ public class QuadBuilder {
     offset = this.setVertex(offset, vertices, x0, y1, z, u0, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[1].x, quad.colour[1].y, quad.colour[1].z, this.flags);
     offset = this.setVertex(offset, vertices, x1, y0, z, u1, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[2].x, quad.colour[2].y, quad.colour[2].z, this.flags);
     offset = this.setVertex(offset, vertices, x1, y1, z, u1, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[3].x, quad.colour[3].y, quad.colour[3].z, this.flags);
-
     return offset;
   }
 

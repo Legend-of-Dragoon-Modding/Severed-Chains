@@ -169,11 +169,11 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     this.vert.z = this.screenspaceW_10 / 2;
     this.vert.y = this.screenspaceH_14 / 2;
     GTE.perspectiveTransform(this.vert);
-    final float z0 = GTE.getScreenZ(3);
+    final float z = GTE.getScreenZ(3);
 
     if(this.screenspaceW_10 == 0) {
       //LAB_8010b638
-      final float displaySizeMultiplier = z0 / 320.0f;
+      final float displaySizeMultiplier = z / 320.0f;
       this.screenspaceW_10 = this.captureW_04 * displaySizeMultiplier;
       this.screenspaceH_14 = this.captureH_08 * displaySizeMultiplier;
       return;
