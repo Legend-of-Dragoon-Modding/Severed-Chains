@@ -33,7 +33,8 @@ public final class Input {
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
   private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
 
-  private Input() { }
+  private Input() {
+  }
 
   public static void update() {
     if(!MODS.isReady(CoreMod.MOD_ID)) {

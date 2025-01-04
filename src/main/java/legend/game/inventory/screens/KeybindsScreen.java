@@ -182,14 +182,14 @@ public class KeybindsScreen extends VerticalLayoutScreen {
   }
 
   private boolean areModsValid(final int mods) {
-    if (mods == 0) {
+    if(mods == 0) {
       return false;
     }
 
-    for (int i = 0; i < 32; i++) {
+    for(int i = 0; i < 32; i++) {
       final int bitMask = 1 << i;
-      if ((mods & bitMask) != 0) {
-        if (!this.validMods.containsKey(bitMask)) {
+      if((mods & bitMask) != 0) {
+        if(!this.validMods.containsKey(bitMask)) {
           return false;
         }
       }
@@ -200,15 +200,15 @@ public class KeybindsScreen extends VerticalLayoutScreen {
   private String modsToText(final int mods) {
     final StringBuilder combo = new StringBuilder();
 
-    for (final Map.Entry<Integer, String> entry : this.validMods.entrySet()) {
-      if ((mods & entry.getKey()) != 0) {
-        if (!combo.isEmpty()) {
+    for(final Map.Entry<Integer, String> entry : this.validMods.entrySet()) {
+      if((mods & entry.getKey()) != 0) {
+        if(!combo.isEmpty()) {
           combo.append('+');
         }
         combo.append(entry.getValue());
       }
     }
-    if (!combo.isEmpty()) {
+    if(!combo.isEmpty()) {
       combo.append('+');
     }
     return combo.toString();
@@ -254,7 +254,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
           final ControllerKeybindConfigEntry keybind = CoreMod.KEYBIND_CONFIGS.get(action).get();
           if(keybind.required && this.config.getConfig(keybind).isEmpty()) {
             playMenuSound(4);
-            this.getStack().pushScreen(new MessageBoxScreen(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input"), 0, result -> { }));
+            this.getStack().pushScreen(new MessageBoxScreen(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input"), 0, result -> {}));
             return InputPropagation.HANDLED;
           }
         }
