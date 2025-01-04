@@ -166,11 +166,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
           }
 
           if(this.validKeys.containsKey(key)) {
-            int currentMod = 0;
-            if(this.validMods.containsKey(mods)) {
-              currentMod = mods << 9;
-            }
-            final int addedKey = key | currentMod;
+            final int addedKey = key | (this.areModsValid(mods) ? mods << 9 : 0);
             keycodes.add(addedKey);
             textbox.setText(this.keysToString(keycodes));
           }
@@ -183,6 +179,39 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind." + inputAction.name()), textbox);
       }
     }
+  }
+
+  private boolean areModsValid(final int mods) {
+    if (mods == 0) {
+      return false;
+    }
+
+    for (int i = 0; i < 32; i++) {
+      final int bitMask = 1 << i;
+      if ((mods & bitMask) != 0) {
+        if (!this.validMods.containsKey(bitMask)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private String modsToText(final int mods) {
+    final StringBuilder combo = new StringBuilder();
+
+    for (final Map.Entry<Integer, String> entry : this.validMods.entrySet()) {
+      if ((mods & entry.getKey()) != 0) {
+        if (!combo.isEmpty()) {
+          combo.append('+');
+        }
+        combo.append(entry.getValue());
+      }
+    }
+    if (!combo.isEmpty()) {
+      combo.append('+');
+    }
+    return combo.toString();
   }
 
   private void addKey(final int keycode, final String name) {
@@ -207,14 +236,10 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     return keycodes.intStream().sorted().mapToObj(this::keyToString).collect(Collectors.joining(", "));
   }
 
-  private String keyToString(final int keycode)
-  {
-    final int mod = keycode >> 9;
+  private String keyToString(final int keycode) {
+    final int mods = keycode >> 9;
     final int key = keycode & 0x1FF;
-    if(mod != 0) {
-      return this.validMods.getOrDefault(mod, "") + '+' + this.validKeys.getOrDefault(key, "");
-    }
-    return this.validKeys.getOrDefault(keycode, "");
+    return this.modsToText(mods) + this.validKeys.getOrDefault(key, "");
   }
 
   @Override
