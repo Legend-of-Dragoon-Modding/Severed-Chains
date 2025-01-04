@@ -132,7 +132,6 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
     //LAB_8010aa54
     final MV rotationMatrix = new MV();
     final MV translationMatrix = new MV();
-    final MV effectTransforms = new MV();
     final MV compositionMatrix = new MV();
     final MV worldMatrix = new MV();
     final MV transformMatrix = new MV();
@@ -142,15 +141,16 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
     rotationMatrix.rotationXYZ(rotation);
     translationMatrix.transfer.set(translation);
     translationMatrix.compose(rotationMatrix, compositionMatrix);
-    calculateEffectTransforms(effectTransforms, manager);
+    calculateEffectTransforms(translationMatrix, manager);
 
     if((manager.params_10.flags_00 & 0x400_0000) == 0) {
+      translationMatrix.compose(worldToScreenMatrix_800c3548, rotationMatrix);
       rotationMatrix.rotationXYZ(manager.params_10.rot_10);
-      effectTransforms.compose(rotationMatrix, transformMatrix);
+      compositionMatrix.compose(rotationMatrix, transformMatrix);
       GTE.setTransforms(transformMatrix);
     } else {
       //LAB_8010ab10
-      compositionMatrix.compose(effectTransforms, worldMatrix);
+      compositionMatrix.compose(translationMatrix, worldMatrix);
       worldMatrix.compose(worldToScreenMatrix_800c3548, transformMatrix);
       GTE.setTransforms(transformMatrix);
     }
