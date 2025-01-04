@@ -26,6 +26,7 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 public class QuadBuilder {
   private final String name;
   private Translucency translucency;
+  private boolean disableBackfaceCulling;
   private int flags;
 
   private final List<Quad> quads = new ArrayList<>();
@@ -210,6 +211,12 @@ public class QuadBuilder {
     return this;
   }
 
+  public QuadBuilder disableBackfaceCulling() {
+    this.addFirstQuad();
+    this.disableBackfaceCulling = true;
+    return this;
+  }
+
   private int setVertex(int offset, final float[] vertices, final float x, final float y, final float z, final float u, final float v, final int tpx, final int tpy, final int clx, final int cly, final Bpp bpp, final float r, final float g, final float b, final float flags) {
     vertices[offset++] = x;
     vertices[offset++] = y;
@@ -294,7 +301,7 @@ public class QuadBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0);
+    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0 && !this.disableBackfaceCulling);
   }
 
   private static class Quad {

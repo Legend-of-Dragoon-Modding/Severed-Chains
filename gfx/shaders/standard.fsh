@@ -56,6 +56,9 @@ void main() {
 
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
+    } else if(vertBpp == 2) {
+      ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
+      texColour = texelFetch(tex24, ivec2(uv.x, uv.y), 0);
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }
