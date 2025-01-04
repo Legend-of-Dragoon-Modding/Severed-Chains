@@ -1,14 +1,12 @@
 package legend.core.audio;
 
 public enum SampleRate {
-  _44100(44100, "44.1 kHz"),
-  _48000(48000, "48 kHz");
+  _44100(44100),
+  _48000(48000);
 
   public final int value;
-  public final String description;
 
-  SampleRate(final int sampleRate, final String description) {
+  SampleRate(final int sampleRate) {
     this.value = sampleRate;
-    this.description = description;
   }
 }

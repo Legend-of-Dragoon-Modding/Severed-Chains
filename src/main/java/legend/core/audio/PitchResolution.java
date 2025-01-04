@@ -1,18 +1,18 @@
 package legend.core.audio;
 
 public enum PitchResolution {
-  Quarter(4, 5),
-  Half(8, 4),
-  Retail(16, 3),
-  Double(32, 2),
-  Quadruple(64, 1),
-  Octuple(128, 0);
+  Quarter(4),
+  Half(8),
+  Retail(16),
+  Double(32),
+  Quadruple(64),
+  Octuple(128);
   
   public final int value;
   public final int sampleRateShift;
   
-  PitchResolution(final int value, final int shifts) {
+  PitchResolution(final int value) {
     this.value = value;
-    this.sampleRateShift = shifts;
+    this.sampleRateShift = 7 - Integer.numberOfTrailingZeros(value);
   }
 }
