@@ -53,6 +53,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
@@ -588,7 +589,7 @@ public final class SItem {
   }
 
   private static void menuMusicLoaded(final List<FileData> files) {
-    menuMusic = new BackgroundMusic(files, 5815);
+    menuMusic = new BackgroundMusic(files, 5815, AUDIO_THREAD.getSequencer().getSampleRate());
   }
 
   /** FUN_8001e010 with param 0 */

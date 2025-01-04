@@ -1,11 +1,14 @@
 package legend.core.audio.sequencer.assets;
 
+import legend.core.audio.sequencer.assets.sequence.bgm.BreathChange;
 import legend.game.unpacker.FileData;
+
+import static legend.core.audio.sequencer.Sequencer.EFFECTS_OVER_TIME_SCALE;
 
 public final class Channel {
   private final int index;
   private Instrument instrument;
-  private int volume;
+  private float volume;
   private int pan;
   private int modulation;
   private int pitchBend;
@@ -15,7 +18,7 @@ public final class Channel {
 
   private final SoundFont soundFont;
 
-  Channel(final FileData data, final int sssqVolume, final SoundFont soundFont) {
+  Channel(final FileData data, final float sssqVolume, final SoundFont soundFont) {
     this.soundFont = soundFont;
 
     this.index = data.readUByte(0x01);
@@ -25,16 +28,16 @@ public final class Channel {
       this.instrument = soundFont.getInstrument(instrumentIndex);
     }
 
-    this.changeVolume(data.readUByte(0x03), sssqVolume);
+    this.changeVolume(data.readUByte(0x03) / 128.0f, sssqVolume);
     this.pan = data.readUByte(0x04);
 
     this.modulation = data.readUByte(0x09);
-    this.pitchBend = data.readUByte(0x0a);
+    this.pitchBend = (data.readUByte(0x0a) - 0x40) * 2;
     // TODO this should probably be converted to an Enum
     this.priority = data.readUByte(0x0b);
-    this.breath = data.readUByte(0x0c);
+    this.breath = Math.round((data.readUByte(0x0c) << (BreathChange.BREATH_BASE_SHIFT - 2)) / (float)EFFECTS_OVER_TIME_SCALE);
 
-    this.adjustedVolume = data.readUByte(0x0e) / 128f;
+//    this.adjustedVolume = data.readUByte(0x0e) / 128f;
   }
 
   public int getIndex() {
@@ -49,17 +52,13 @@ public final class Channel {
     this.instrument = this.soundFont.getInstrument(instrumentIndex);
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return this.volume;
   }
 
-  public void changeVolume(final int volume, final int sssqVolume) {
+  public void changeVolume(final float volume, final float sssqVolume) {
     this.volume = volume;
-    this.adjustedVolume = (volume * sssqVolume) / 16384f;
-  }
-
-  public void setVolume(final int volume) {
-    this.volume = volume;
+    this.adjustedVolume = volume * sssqVolume;
   }
 
   public int getPan() {
@@ -103,9 +102,5 @@ public final class Channel {
 
   public float getAdjustedVolume() {
     return this.adjustedVolume;
-  }
-
-  public void setAdjustedVolume(final int adjustedVolume) {
-    this.adjustedVolume = adjustedVolume;
   }
 }
