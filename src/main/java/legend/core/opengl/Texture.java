@@ -188,12 +188,12 @@ public final class Texture {
   }
 
   public void getData(final ByteBuffer data) {
-    if(data.capacity() == this.width * this.height * 4) {
-      RENDERER.getLastFrame().use();
-      glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    } else {
+    if(data.capacity() != this.width * this.height * 4) {
       throw new RuntimeException("Buffer capacity does not match texture dimensions, Buffer size: " + data.capacity() + ", Texture size: " + this.width * this.height * 4);
     }
+
+    RENDERER.getLastFrame().use();
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {
