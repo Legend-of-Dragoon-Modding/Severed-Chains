@@ -105,7 +105,7 @@ public final class BackgroundMusic {
     }
   }
 
-  private BackgroundMusic(final List<FileData> files, final short[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont) {
+  private BackgroundMusic(final List<FileData> files, final short[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont, final double tempoTicks) {
     this.songId = files.get(0).readUShort(0);
 
     this.breathControls = breathControls;
@@ -116,6 +116,7 @@ public final class BackgroundMusic {
 
     this.volume = sssq.readUByte(0x0) / 128.0f;
     this.tickPerQuarterNote = sssq.readUShort(0x2);
+    this.tempoTicks = tempoTicks;
     this.setTempo(sssq.readUShort(0x4));
 
     this.channels = new Channel[0x10];
@@ -131,7 +132,7 @@ public final class BackgroundMusic {
   }
 
   public BackgroundMusic createVictoryMusic(final List<FileData> files) {
-    return new BackgroundMusic(files, this.breathControls, this.velocityRamp, this.soundFont);
+    return new BackgroundMusic(files, this.breathControls, this.velocityRamp, this.soundFont, this.tempoTicks);
   }
 
   public Command getNextCommand() {
