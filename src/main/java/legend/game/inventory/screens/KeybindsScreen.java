@@ -47,12 +47,16 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SEMICOLON;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_ALT;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 
 public class KeybindsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
   private final ConfigCollection config;
 
   private final Map<Integer, String> validKeys = new LinkedHashMap<>();
+  private final Map<Integer, String> validMods = new LinkedHashMap<>();
 
   public KeybindsScreen(final ConfigCollection config, final Runnable unload) {
     this.addKey(GLFW_KEY_SPACE, "SPACE");
@@ -77,6 +81,11 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     this.addKey(GLFW_KEY_HOME, "HOME");
     this.addKey(GLFW_KEY_END, "END");
 
+    // Modifiers
+    this.addMod(GLFW_MOD_ALT, "ALT");
+    this.addMod(GLFW_MOD_CONTROL, "CTRL");
+    this.addMod(GLFW_MOD_SHIFT, "SHFT");
+
     for(int i = 0; i < 12; i++) {
       this.addKey(GLFW_KEY_F1 + i, "F" + (i + 1));
     }
@@ -90,7 +99,15 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     this.addControl(new Background());
 
     final Label help = new Label(I18n.translate(CoreMod.MOD_ID + ".keybind.help"));
-    help.setPos(32, 12);
+    final Label supportedMods = new Label(I18n.translate(CoreMod.MOD_ID + ".keybind.mods") + ' ' + String.join(", ", this.validMods.values()));
+
+    supportedMods.setPos(32, 6);
+    supportedMods.setWidth(this.getWidth() - 64);
+    supportedMods.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    supportedMods.hide();
+    this.addControl(supportedMods);
+
+    help.setPos(32, 18);
     help.setWidth(this.getWidth() - 64);
     help.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
     help.hide();
@@ -109,6 +126,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         textbox.onGotFocus(() -> {
           keycodes.clear();
           textbox.setText("");
+          supportedMods.show();
           help.show();
         });
 
@@ -124,6 +142,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
           if(dupes.isEmpty()) {
             config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
             help.hide();
+            supportedMods.hide();
           } else {
             this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.keybind.duplicate_input"), 2, result -> {
               if(result == MessageBoxResult.YES) {
@@ -135,6 +154,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
               config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
               help.hide();
+              supportedMods.hide();
             }));
           }
         });
@@ -146,7 +166,12 @@ public class KeybindsScreen extends VerticalLayoutScreen {
           }
 
           if(this.validKeys.containsKey(key)) {
-            keycodes.add(key);
+            int currentMod = 0;
+            if(this.validMods.containsKey(mods)) {
+              currentMod = mods << 9;
+            }
+            final int addedKey = key | currentMod;
+            keycodes.add(addedKey);
             textbox.setText(this.keysToString(keycodes));
           }
 
@@ -164,6 +189,10 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     this.validKeys.put(keycode, name);
   }
 
+  private void addMod(final int mod, final String name) {
+    this.validMods.put(mod, name);
+  }
+
   private void addRegularKey(final int keycode) {
     this.addKey(keycode, String.valueOf((char)keycode));
   }
@@ -178,7 +207,13 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     return keycodes.intStream().sorted().mapToObj(this::keyToString).collect(Collectors.joining(", "));
   }
 
-  private String keyToString(final int keycode) {
+  private String keyToString(final int keycode)
+  {
+    final int mod = keycode >> 9;
+    final int key = keycode & 0x1FF;
+    if(mod != 0) {
+      return this.validMods.getOrDefault(mod, "") + '+' + this.validKeys.getOrDefault(key, "");
+    }
     return this.validKeys.getOrDefault(keycode, "");
   }
 

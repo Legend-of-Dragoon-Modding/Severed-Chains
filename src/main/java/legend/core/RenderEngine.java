@@ -1104,6 +1104,7 @@ public class RenderEngine {
 
   private void onPressedThisFrame(final Window window, final InputAction inputAction) {
     switch(inputAction) {
+      case InputAction.TOGGLE_FULL_SCREEN -> Config.switchFullScreen();
       case InputAction.SPEED_UP -> Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() + 1, 16));
       case InputAction.SLOW_DOWN -> Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() - 1, 1));
       case InputAction.PAUSE -> this.togglePause = !this.togglePause;

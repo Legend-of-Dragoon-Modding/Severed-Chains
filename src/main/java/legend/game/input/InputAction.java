@@ -47,6 +47,7 @@ public enum InputAction {
   FRAME_ADVANCE(-1),
   FRAME_ADVANCE_HOLD(-1),
   KILL_STUCK_SOUNDS(-1),
+  TOGGLE_FULL_SCREEN(-1),
   ;
 
   public final int hexCode;
