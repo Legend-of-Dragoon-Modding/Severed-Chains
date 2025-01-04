@@ -175,20 +175,20 @@ public final class Input {
   }
 
   private static void keyPress(final Window window, final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
+    final int keyWithMods = key | mods << 9;
 
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(keyWithMods)) {
         inputBinding.setPressedForKeyboardInput();
       }
     }
   }
 
   private static void keyRelease(final Window window, final int key, final int scancode, final int mods) {
+    final int keyWithMods = key | mods << 9;
+
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(keyWithMods)) {
         inputBinding.setReleasedForKeyboardInput();
       }
     }
