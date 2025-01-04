@@ -11,7 +11,7 @@ public final class SoundTest {
   private SoundTest() {}
 
   public static void main(final String[] args) {
-    final AudioThread audioThread = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000);
+    final AudioThread audioThread = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000, EffectsOverTimeGranularity.Finer);
 
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");

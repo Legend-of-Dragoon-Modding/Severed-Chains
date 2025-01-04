@@ -47,6 +47,7 @@ public final class AudioThread implements Runnable {
   private InterpolationPrecision interpolationPrecision;
   private PitchResolution pitchResolution;
   private SampleRate sampleRate;
+  private EffectsOverTimeGranularity effectsGranularity;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
   private final List<AudioSource> sources = new ArrayList<>();
@@ -68,13 +69,14 @@ public final class AudioThread implements Runnable {
     return ALUtil.getStringList(0, ALC_DEVICE_SPECIFIER);
   }
 
-  public AudioThread(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate) {
+  public AudioThread(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate, final EffectsOverTimeGranularity granularity) {
     this.nanosPerTick = 1_000_000_000 / 60;
     this.stereo = stereo;
     this.voiceCount = voiceCount;
     this.interpolationPrecision = bitDepth;
     this.pitchResolution = pitchResolution;
     this.sampleRate = sampleRate;
+    this.effectsGranularity = granularity;
   }
 
   public void init() {
@@ -154,7 +156,7 @@ public final class AudioThread implements Runnable {
   }
 
   private void addDefaultSources() {
-    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationPrecision, this.pitchResolution, this.sampleRate));
+    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationPrecision, this.pitchResolution, this.sampleRate, this.effectsGranularity));
     this.xaPlayer = this.addSource(new XaPlayer());
   }
 
@@ -417,7 +419,17 @@ public final class AudioThread implements Runnable {
       if(this.sampleRate != sampleRate) {
         this.sampleRate = sampleRate;
 
-        this.sequencer.changeSampleRate(sampleRate);
+        this.sequencer.changeSampleRate(sampleRate, this.effectsGranularity);
+      }
+    }
+  }
+
+  public void changeEffectsOverTimeGranularity(final EffectsOverTimeGranularity effectsGranularity) {
+    synchronized(this) {
+      if(this.effectsGranularity != effectsGranularity) {
+        this.effectsGranularity = effectsGranularity;
+
+        this.sequencer.changeEffectsOverTimeGranularity(effectsGranularity);
       }
     }
   }

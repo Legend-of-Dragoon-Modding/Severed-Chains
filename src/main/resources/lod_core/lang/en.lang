@@ -52,6 +52,10 @@ lod_core.config.music_pitch_resolution.Octuple = Octuple
 lod_core.config.music_sample_rate.label = Sample Rate
 lod_core.config.music_sample_rate._44100 = 41.1 kHz
 lod_core.config.music_sample_rate._48000 = 48 kHz
+lod_core.config.music_effects_over_time_granularity.label = Effects Granularity
+lod_core.config.music_effects_over_time_granularity.Retail = Retail
+lod_core.config.music_effects_over_time_granularity.Finer = Finer
+lod_core.config.music_effects_over_time_granularity.Finest = Finest
 
 # Campaign config
 lod_core.config.indicator_mode.label=Indicator Mode

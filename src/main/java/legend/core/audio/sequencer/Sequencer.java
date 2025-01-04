@@ -2,6 +2,7 @@ package legend.core.audio.sequencer;
 
 import legend.core.MathHelper;
 import legend.core.audio.AudioSource;
+import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
 import legend.core.audio.SampleRate;
@@ -38,7 +39,6 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 public final class Sequencer extends AudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
-  public static final int EFFECTS_OVER_TIME_SCALE = 5;
   // TODO switch between mono and stereo
   private final boolean stereo;
   private SampleRate sampleRate;
@@ -74,7 +74,7 @@ public final class Sequencer extends AudioSource {
   private BackgroundMusic backgroundMusic;
   private int samplesToProcess;
 
-  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate) {
+  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate, final EffectsOverTimeGranularity effectsGranularity) {
     super(5);
 
     this.sampleRate = sampleRate;
@@ -83,9 +83,9 @@ public final class Sequencer extends AudioSource {
 
     this.stereo = stereo;
 
-    this.effectsOverTimeSamples = sampleRate.value / (60 * EFFECTS_OVER_TIME_SCALE);
-
     this.lookupTables = new LookupTables(bitDepth, pitchResolution, this.sampleRate);
+    this.lookupTables.setEffectsOverTimeScale(effectsGranularity, sampleRate);
+    this.effectsOverTimeSamples = sampleRate.value / (60 * this.lookupTables.getEffectsOverTimeScale());
 
     this.voices = new Voice[voiceCount];
 
@@ -117,7 +117,7 @@ public final class Sequencer extends AudioSource {
   @Override
   public void tick() {
     int samplePostition = 0;
-    for(int effect = 0; effect < EFFECTS_OVER_TIME_SCALE; effect++) {
+    for(int effect = 0; effect < this.lookupTables.getEffectsOverTimeScale(); effect++) {
       for(int sample = 0; sample < this.effectsOverTimeSamples; sample++, samplePostition += 2) {
         this.clearFinishedVoices();
 
@@ -483,7 +483,7 @@ public final class Sequencer extends AudioSource {
   }
 
   public void fadeIn(final int time, final int volume) {
-    this.fadeTime = time * EFFECTS_OVER_TIME_SCALE;
+    this.fadeTime = time * this.lookupTables.getEffectsOverTimeScale();
     this.fadeInVolume = volume / 256.0f;
     this.fadeCounter = 0;
     this.fading = Fading.FADE_IN;
@@ -496,7 +496,7 @@ public final class Sequencer extends AudioSource {
       return;
     }
 
-    this.fadeTime = time * EFFECTS_OVER_TIME_SCALE;
+    this.fadeTime = time * this.lookupTables.getEffectsOverTimeScale();
     this.fadeOutVolumeLeft = this.engineVolumeLeft;
     this.fadeOutVolumeRight = this.engineVolumeRight;
     this.fadeCounter = 0;
@@ -578,8 +578,8 @@ public final class Sequencer extends AudioSource {
     this.volumeChanging = true;
     this.newVolume = volume / 128.0f;
     this.oldVolume = this.backgroundMusic.getVolume();
-    this.volumeChangingTimeTotal = time * EFFECTS_OVER_TIME_SCALE;
-    this.volumeChangingTimeRemaining = time * EFFECTS_OVER_TIME_SCALE;
+    this.volumeChangingTimeTotal = time * this.lookupTables.getEffectsOverTimeScale();
+    this.volumeChangingTimeRemaining = time * this.lookupTables.getEffectsOverTimeScale();
 
     return Math.round(this.oldVolume * 0x80);
   }
@@ -604,12 +604,18 @@ public final class Sequencer extends AudioSource {
   }
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
-  public void changeSampleRate(final SampleRate sampleRate) {
+  public void changeSampleRate(final SampleRate sampleRate, final EffectsOverTimeGranularity effectsGranularity) {
     this.resetBuffers();
 
     final SampleRate old = this.sampleRate;
     this.sampleRate = sampleRate;
-    this.effectsOverTimeSamples = sampleRate.value / (60 * EFFECTS_OVER_TIME_SCALE);
+
+    // Has to switch between 2 and 3;
+    if(effectsGranularity == EffectsOverTimeGranularity.Finer) {
+      this.changeEffectsOverTimeGranularity(effectsGranularity);
+    }
+
+    this.effectsOverTimeSamples = sampleRate.value / (60 * this.lookupTables.getEffectsOverTimeScale());
 
     this.lookupTables.changeSampleRates(this.lookupTables.getPitchResolution(), sampleRate);
     this.reverb.changeSampleRate(sampleRate);
@@ -624,6 +630,27 @@ public final class Sequencer extends AudioSource {
 
       this.play();
     }
+  }
+
+  /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
+  public void changeEffectsOverTimeGranularity(final EffectsOverTimeGranularity effectsGranularity) {
+    final int oldScale = this.lookupTables.getEffectsOverTimeScale();
+    this.lookupTables.setEffectsOverTimeScale(effectsGranularity, this.sampleRate);
+
+    this.effectsOverTimeSamples = this.sampleRate.value / (60 * this.lookupTables.getEffectsOverTimeScale());
+
+    this.scaleTimeValues(oldScale, this.lookupTables.getEffectsOverTimeScale());
+
+    for(final Voice voice : this.voices) {
+      voice.scaleBreath(oldScale, this.lookupTables.getEffectsOverTimeScale());
+    }
+  }
+
+  private void scaleTimeValues(final double oldScale, final double newScale) {
+    this.fadeCounter = (int)Math.round(this.fadeCounter * (newScale / oldScale));
+    this.fadeTime = (int)Math.round(this.fadeTime * (newScale / oldScale));
+    this.volumeChangingTimeRemaining = (int)Math.round(this.volumeChangingTimeRemaining * (newScale / oldScale));
+    this.volumeChangingTimeTotal = (int)Math.round(this.volumeChangingTimeTotal * (newScale / oldScale));
   }
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */

@@ -5,7 +5,6 @@ import legend.core.audio.SampleRate;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
-import legend.core.audio.sequencer.assets.sequence.bgm.BreathChange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -105,11 +104,6 @@ final class Voice {
       return;
     }
 
-    // The other branch probably doesn't matter for bgm. But let's throw here, just in case
-    if(this.breath == BreathChange.BREATH_BASE_VALUE) {
-      throw new RuntimeException("BREATH 120");
-    }
-
     this.counter.addBreath(this.breath);
 
     // TODO Pitch bend would be set to 0x80, which does nothing, might be worth to figure out, if we can remove this entirely (possibly check in modulation/breath control settings, since that is not run for every sample)
@@ -138,7 +132,7 @@ final class Voice {
     this.velocityVolume = velocityVolume / 128.0f;
     this.pitchBendMultiplier = this.layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : this.layer.getPitchBendMultiplier();
     this.breathControls = breathControls;
-    this.breath = this.channel.getBreath();
+    this.breath = this.lookupTables.adjustBreath(this.channel.getBreath());
     this.priority = VoicePriority.getPriority(this.layer.isHighPriority(), this.channel.getPriority());
     this.priorityOrder = playingVoices;
 
@@ -261,7 +255,7 @@ final class Voice {
   }
 
   void setBreath(final int breath) {
-    this.breath = breath;
+    this.breath = this.lookupTables.adjustBreath(breath);
   }
 
   void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
@@ -274,5 +268,9 @@ final class Voice {
     }
 
     this.sampleRate = (int)Math.round(this.sampleRate * ((double)oldRate.value / (double)newRate.value));
+  }
+
+  void scaleBreath(final int oldScale, final int newScale) {
+    this.breath = (int)Math.round(this.breath * ((double)oldScale / (double)newScale));
   }
 }

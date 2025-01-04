@@ -3,12 +3,7 @@ package legend.core.audio.sequencer.assets.sequence.bgm;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.sequence.Command;
 
-import static legend.core.audio.sequencer.Sequencer.EFFECTS_OVER_TIME_SCALE;
-
 public final class BreathChange implements Command {
-  public static final int BREATH_BASE_SHIFT = 22;
-  /** Represents all 60 positions in a breath control table */
-  public static final int BREATH_BASE_VALUE = 0xf0 << (BREATH_BASE_SHIFT - 2);
 
   private final Channel channel;
   private final int breath;
@@ -16,7 +11,7 @@ public final class BreathChange implements Command {
 
   BreathChange(final Channel channel, final int breath, final int deltaTime) {
     this.channel = channel;
-    this.breath = Math.round((BREATH_BASE_VALUE / (60 - breath * 58 / 127.0f)) / EFFECTS_OVER_TIME_SCALE);
+    this.breath = breath;
     this.deltaTime = deltaTime;
   }
 

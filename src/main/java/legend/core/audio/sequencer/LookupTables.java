@@ -2,6 +2,7 @@ package legend.core.audio.sequencer;
 
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import legend.core.MathHelper;
+import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
 import legend.core.audio.SampleRate;
@@ -11,6 +12,10 @@ import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
 final class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
   private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION);
+  public static final int BREATH_BASE_SHIFT = 22;
+  /** Represents all 60 positions in a breath control table */
+  public static final int BREATH_BASE_VALUE = 0xf0 << (BREATH_BASE_SHIFT - 2);
+  private int effectsOverTimeScale = 1;
   private PitchResolution pitchResolution;
   private int[] sampleRates;
   private int interpolationStep;
@@ -108,6 +113,10 @@ final class LookupTables {
     return finePitch + (int)((interpolatedBreath * modulation) / 0x80);
   }
 
+  int adjustBreath(final int breath) {
+    return Math.round((BREATH_BASE_VALUE / (60 - breath * 58 / 127.0f)) / this.effectsOverTimeScale);
+  }
+
   void changeSampleRates(final PitchResolution pitchResolution, final SampleRate sampleRate) {
     this.pitchResolution = pitchResolution;
     this.sampleRates = new int[12 * pitchResolution.value];
@@ -137,5 +146,21 @@ final class LookupTables {
 
   public PitchResolution getPitchResolution() {
     return this.pitchResolution;
+  }
+
+  int getEffectsOverTimeScale() {
+    return this.effectsOverTimeScale;
+  }
+
+  void setEffectsOverTimeScale(final EffectsOverTimeGranularity granularity, final SampleRate sampleRate) {
+    this.effectsOverTimeScale = effectsOverTimeGranularityValue(granularity, sampleRate);
+  }
+
+  private static int effectsOverTimeGranularityValue(final EffectsOverTimeGranularity granularity, final SampleRate sampleRate) {
+    return switch(granularity) {
+      case EffectsOverTimeGranularity.Retail -> 1;
+      case EffectsOverTimeGranularity.Finer -> sampleRate == SampleRate._44100 ? 3 : 2;
+      case EffectsOverTimeGranularity.Finest -> 5;
+    };
   }
 }

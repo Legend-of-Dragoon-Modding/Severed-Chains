@@ -2,9 +2,9 @@ package legend.core.audio.sequencer;
 
 import legend.core.audio.InterpolationPrecision;
 
+import static legend.core.audio.sequencer.LookupTables.BREATH_BASE_SHIFT;
+import static legend.core.audio.sequencer.LookupTables.BREATH_BASE_VALUE;
 import static legend.core.audio.sequencer.LookupTables.VOICE_COUNTER_BIT_PRECISION;
-import static legend.core.audio.sequencer.assets.sequence.bgm.BreathChange.BREATH_BASE_SHIFT;
-import static legend.core.audio.sequencer.assets.sequence.bgm.BreathChange.BREATH_BASE_VALUE;
 
 final class VoiceCounter {
   //TODO verify this is actually correct for other values in case we want to change
