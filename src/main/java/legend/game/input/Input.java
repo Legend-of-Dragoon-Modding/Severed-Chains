@@ -299,5 +299,6 @@ public final class Input {
     controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE_HOLD, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.KILL_STUCK_SOUNDS, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.TOGGLE_FULL_SCREEN, controller, InputType.KEYBOARD));
   }
 }
