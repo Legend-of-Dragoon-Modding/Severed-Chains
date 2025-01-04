@@ -6,6 +6,8 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.EnumConfigEntry;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
+
 public class MusicEffectsOverTimeGranularityConfigEntry extends EnumConfigEntry<EffectsOverTimeGranularity> {
   public MusicEffectsOverTimeGranularityConfigEntry() {
     super(EffectsOverTimeGranularity.class, EffectsOverTimeGranularity.Finer, ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO);
@@ -13,6 +15,6 @@ public class MusicEffectsOverTimeGranularityConfigEntry extends EnumConfigEntry<
 
   @Override
   public void onChange(final ConfigCollection configCollection, final EffectsOverTimeGranularity oldValue, final EffectsOverTimeGranularity newValue) {
-    // TODO
+    AUDIO_THREAD.changeEffectsOverTimeGranularity(newValue);
   }
 }
