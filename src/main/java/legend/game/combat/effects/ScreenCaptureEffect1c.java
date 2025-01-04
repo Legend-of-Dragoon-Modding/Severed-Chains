@@ -48,13 +48,15 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
   private final Vector3f normalizedLightingDirection_800fb8d0 = new Vector3f(1.0f, 0.0f, 0.0f);
 
   final Vector3f vert = new Vector3f();
+  final Vector3f normal = new Vector3f();
   private final MV transforms = new MV();
   private final Obj screenshot;
   private final Texture texture;
 
-  public ScreenCaptureEffect1c(final int captureW, final int captureH, final int rendererIndex_0c) {
+  public ScreenCaptureEffect1c(final int captureW, final int captureH, final int rendererIndex) {
     this.captureW_04 = captureW;
     this.captureH_08 = captureH;
+    this.rendererIndex_0c = rendererIndex;
 
     final int w = RENDERER.getRenderWidth();
     final int h = RENDERER.getRenderHeight();
@@ -77,7 +79,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     final float normalizedCaptureW = captureW / RENDERER.getProjectionWidth() / widthFactor;
     final float normalizedCaptureH = captureH / RENDERER.getProjectionHeight();
 
-    if(rendererIndex_0c == 0) {
+    if(rendererIndex == 0) {
       this.screenshot = new PolyBuilder("Screen Capture")
         .bpp(Bpp.BITS_24)
         .disableBackfaceCulling()
@@ -151,10 +153,9 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     final Vector3i rgb = new Vector3i();
 
     if((manager.params_10.flags_00 & 0x40) != 0) {
-      final Vector3f normal = new Vector3f();
-      this.normalizedLightingDirection_800fb8d0.mul(transforms, normal);
-      normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      GTE.normalColour(normal, 0xffffff, rgb);
+      this.normalizedLightingDirection_800fb8d0.mul(transforms, this.normal);
+      this.normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
+      GTE.normalColour(this.normal, 0xffffff, rgb);
     } else {
       //LAB_8010b6c8
       rgb.set(0x80, 0x80, 0x80);
@@ -190,10 +191,9 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     final Vector3i rgb = new Vector3i();
 
     if((manager.params_10.flags_00 & 0x40) != 0) {
-      final Vector3f normal = new Vector3f();
-      this.normalizedLightingDirection_800fb8d0.mul(transforms, normal);
-      normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      GTE.normalColour(normal, 0xffffff, rgb);
+      this.normalizedLightingDirection_800fb8d0.mul(transforms, this.normal);
+      this.normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
+      GTE.normalColour(this.normal, 0xffffff, rgb);
     } else {
       //LAB_8010bd6c
       rgb.set(0x80, 0x80, 0x80);
