@@ -1,5 +1,9 @@
 package legend.core;
 
+import legend.game.modding.coremod.CoreMod;
+import legend.game.saves.BoolConfigEntry;
+import legend.game.saves.ConfigStorage;
+import legend.game.saves.ConfigStorageLocation;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -15,6 +19,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static legend.core.GameEngine.CONFIG;
 
 public final class Config {
   private Config() {
@@ -236,6 +242,13 @@ public final class Config {
 
   public static void setTextBoxColourMode(final int value) {
     properties.setProperty("textbox_colour_mode", String.valueOf(value));
+  }
+
+  public static void switchFullScreen() {
+    final BoolConfigEntry fullScreenConfigEntry = CoreMod.FULLSCREEN_CONFIG.get();
+    final boolean isFullScreen = CONFIG.getConfig(fullScreenConfigEntry);
+    CONFIG.setConfig(fullScreenConfigEntry, !isFullScreen);
+    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
   }
 
   public static int getTextBoxRgb(final int textbox) {

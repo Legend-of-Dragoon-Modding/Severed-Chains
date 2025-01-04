@@ -107,3 +107,4 @@ lod_core.keybind.PAUSE=Pause
 lod_core.keybind.FRAME_ADVANCE=Frame advance
 lod_core.keybind.FRAME_ADVANCE_HOLD=Frame advance (hold)
 lod_core.keybind.KILL_STUCK_SOUNDS=Kill Stuck Sounds
+lod_core.keybind.TOGGLE_FULL_SCREEN=Toggle full screen
