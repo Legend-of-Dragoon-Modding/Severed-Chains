@@ -1,0 +1,71 @@
+Widescreen patch
+Knight of Sandora
+--- original
++++ modified
+@@ -208,14 +208,58 @@
+ rel :JMP_494_1
+ rel :JMP_494_1
+ rel :JMP_494_1
++ROTATE:
++call 102, stor[0], stor[29], stor[30], stor[31]
++sub stor[29], stor[26]
++sub stor[31], stor[28]
++atan2_12 stor[26], stor[28], stor[27]
++call 104, stor[0], stor[29], stor[30], stor[31]
++and 0xfff, stor[30]
++sub stor[30], stor[27]
++add 0x800, stor[27]
++LT_N360_CHECK:
++jmp_cmp >=, stor[27], 0xfffff800, inl[:GT_P360_CHECK]
++add 0x1000, stor[27]
++jmp inl[:ROTATE_0]
++GT_P360_CHECK:
++jmp_cmp <, stor[27], 0x800, inl[:ROTATE_0]
++sub 0x1000, stor[27]
++ROTATE_0:
++call 120, stor[0], 0x0, stor[27], 0x0, stor[24]
++jmp_cmp ==, stor[20], 0xffffffff, inl[:RETURN]
++jmp_cmp ==, stor[20], 0xfffffffe, inl[:ROTATE_WAIT]
++call 99, 0
++call 97, stor[20]
++ROTATE_WAIT:
++wait stor[24]
++RETURN:
++return
+ JMP_494_0:
+ call 3, 0x19, stor[8]
+ jmp_cmp !=, 0x0, stor[8], inl[:LABEL_13]
+# Wait for global script flag
++mov 0xa, stor[24]
++gosub inl[:LABEL_0]
+# Set new position
++call 101, stor[0], 0xfffffe52, 0xffffffe4, 0xfffffd00
++call 106, 0x0
+# Move to retail spawn position
++mov 0xfffffeb1, stor[24]
++mov 0xffffffe4, stor[25]
++mov 0xfffffd15, stor[26]
++mov 0x6, stor[27]
++mov 0x2, stor[28]
++gosub inl[:LABEL_5]
+# Face commander
++call 102, var[64][5], stor[26], stor[27], stor[28]
++mov 0, stor[20]
++mov 10, stor[24]
++gosub inl[:ROTATE]
+# Pause animation
++call 99, 1
+ mov 0x10, stor[24]
+ gosub inl[:LABEL_0]
+# Face destination
++mov 0xffffff4d, stor[26]
++mov 0xffffffe4, stor[27]
++mov 0xfffffc7d, stor[28]
++mov 0, stor[20]
+ mov 0x14, stor[24]
+-wait stor[24]
+-call 106, 0x0
++gosub inl[:ROTATE]
+ mov 0xffffff4d, stor[24]
+ mov 0xffffffe4, stor[25]
+ mov 0xfffffc7d, stor[26]
