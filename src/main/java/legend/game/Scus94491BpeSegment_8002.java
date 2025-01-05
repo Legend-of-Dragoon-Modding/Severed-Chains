@@ -1483,6 +1483,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002437cL)
   public static void deallocateRenderables(final int a0) {
+    // Clear out UI render queue
+    renderables.clear();
+
     Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {
