@@ -1,0 +1,30 @@
+Widescreen patch
+Lavitz
+Old: Lavitz would stack on Dart and Shana
+New: Lavitz waits for Dart to move before continuing
+--- original
++++ modified
+@@ -130,6 +130,13 @@
+ rel :JMP_404_2
+ rel :JMP_404_0
+ rel :JMP_404_0
++WAIT_IN_LINE:
++call 681, stor[25], stor[26]
++jmp_cmp !=, stor[24], stor[26], inl[:RETURN]
++yield
++jmp inl[:WAIT_IN_LINE]
++RETURN:
++return
+ JMP_404_1:
+ yield
+ call 3, 0x78, stor[24]
+@@ -150,6 +157,8 @@
+ mov 0x2e, stor[24]
+ gosub inl[:LABEL_2]
+ mov 0xf, stor[24]
+# Wait for Dart to move
++mov var[64][0], stor[25]
++gosub inl[:WAIT_IN_LINE]
+ gosub inl[:LABEL_2]
+ LABEL_11:
+ yield

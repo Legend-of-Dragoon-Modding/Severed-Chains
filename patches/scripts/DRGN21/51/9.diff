@@ -1,0 +1,62 @@
+Widescreen patch
+Warden, cutscene before fighting Fruegel (I)
+--- original
++++ modified
+@@ -176,18 +176,49 @@
+ rel :JMP_630_0
+ rel :JMP_630_0
+ JMP_630_1:
+# New entrance at top of stairs
+-mov 0x10, stor[24]
++mov 0x21, stor[24]
+ gosub inl[:LABEL_3]
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 311, stor[0]
+# Wait for flags, then follow a series of collision primitives downstairs
++ENTER_WAIT_0:
++yield
++call 3, 0x79, stor[24]
++jmp_cmp ==, 0, stor[24], inl[:ENTER_WAIT_0]
++ENTER_WAIT_1:
++yield
++call 3, 0x78, stor[24]
++jmp_cmp ==, 1, stor[24], inl[:ENTER_WAIT_1]
++call 2, 0x78, 1
++call 96, 0x4
++call 106, 0x0
++mov 0x28, stor[24]
++gosub inl[:LABEL_4]
++mov 0x1d, stor[24]
++gosub inl[:LABEL_4]
++RETAIL_MARK_WAIT:
++yield
++call 3, 0x78, stor[24]
++jmp_cmp ==, 1, stor[24], inl[:RETAIL_MARK_WAIT]
++call 2, 0x78, 1
++mov 0x23, stor[24]
++gosub inl[:LABEL_4]
++mov 0x17, stor[24]
++gosub inl[:LABEL_4]
++mov 0x2e, stor[24]
++gosub inl[:LABEL_4]
++mov 0xf, stor[24]
++gosub inl[:LABEL_4]
+ LABEL_18:
+ yield
+ call 3, 0x7a, stor[24]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_18]
+-call 96, 0x4
+-call 106, 0x0
+-mov 0x3c, stor[24]
+-wait stor[24]
++mov 0x10, stor[24]
++gosub inl[:LABEL_4]
+# Retail wait timer lines up with Shana's rotation, so that is now paired that with a flag change
++WAIT_FOR_SHANA_ROTATE:
++yield
++call 3, 0x78, stor[24]
++jmp_cmp ==, 1, stor[24], inl[:WAIT_FOR_SHANA_ROTATE]
++call 2, 0x78, 1
+ mov 0x18, stor[24]
+ gosub inl[:LABEL_4]
+ mov 0x1, stor[25]

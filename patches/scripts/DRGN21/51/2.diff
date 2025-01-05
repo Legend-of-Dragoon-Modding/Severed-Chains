@@ -1,0 +1,55 @@
+Widescreen patch
+Shana
+Old: Shana would stack on Dart and Lavitz
+New: Shana waits for Lavitz to move before continuing
+--- original
++++ modified
+@@ -131,6 +131,16 @@
+ rel :JMP_40c_2
+ rel :JMP_40c_0
+ rel :JMP_40c_0
++WAIT_IN_LINE:
++call 681, stor[25], stor[26]
++jmp_cmp !=, stor[24], stor[26], inl[:RETURN]
++yield
+# stor[22] used as a wait offset if flag is set
++call 3, 0x79, stor[26]
++jmp_cmp ==, 0, stor[26], inl[:WAIT_IN_LINE]
++incr stor[22]
++jmp inl[:WAIT_IN_LINE]
++RETURN:
++return
+ JMP_40c_1:
+ yield
+ call 3, 0x78, stor[24]
+@@ -149,14 +159,19 @@
+ mov 0x17, stor[24]
+ gosub inl[:LABEL_2]
+ mov 0x2e, stor[24]
+# Wait for Lavitz to move
++mov var[64][2], stor[25]
++mov 0, stor[22]
++gosub inl[:WAIT_IN_LINE]
+ gosub inl[:LABEL_2]
+ mov 0xf, stor[24]
++gosub inl[:WAIT_IN_LINE]
+ gosub inl[:LABEL_2]
+ LABEL_11:
+ yield
+ call 3, 0x79, stor[24]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_11]
+ mov 0x3c, stor[24]
+# Reduce wait time
++sub stor[22], stor[24]
+ wait stor[24]
+ mov 0x18, stor[24]
+ gosub inl[:LABEL_2]
+@@ -166,6 +181,7 @@
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_12]
+ mov 0x2d, stor[24]
+ wait stor[24]
+# Set flag for File 9 (Warden)
++call 2, 0x78, 0
+ call 120, stor[0], 0x0, 0xfffff880, 0x0, 0x8
+ mov 0x28, stor[24]
+ wait stor[24]
