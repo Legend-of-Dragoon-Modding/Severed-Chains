@@ -225,8 +225,9 @@ public final class Fmv {
   private static Texture displayTexture;
   private static Shader.UniformBuffer transforms2Uniform;
   private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
-  private static final Matrix4f identity = new Matrix4f();
+  private static final Matrix4f transforms = new Matrix4f();
   private static final Vector2f oldProjectionSize = new Vector2f();
+  private static boolean oldWidescreen;
 
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
@@ -260,8 +261,10 @@ public final class Fmv {
     frame = 0;
 
     oldFps = RENDERER.window().getFpsLimit();
-    RENDERER.window().setFpsLimit(15);
     oldProjectionSize.set(RENDERER.getProjectionWidth(), RENDERER.getProjectionHeight());
+    oldWidescreen = RENDERER.getAllowWidescreen();
+    RENDERER.window().setFpsLimit(15);
+    RENDERER.setAllowWidescreen(true);
     RENDERER.setProjectionSize(320.0f, 240.0f);
 
     final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
@@ -483,7 +486,8 @@ public final class Fmv {
       RENDERER.setProjectionMode(ProjectionMode._2D);
       glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
-      identity.get(transforms2Buffer);
+      transforms.translation((displayTexture.width * (RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio()) - displayTexture.width) / 2, 0.0f, 0.0f);
+      transforms.get(transforms2Buffer);
       transforms2Uniform.set(transforms2Buffer);
 
       simpleShader.use();
@@ -545,6 +549,7 @@ public final class Fmv {
       RENDERER.usePs1Gpu = true;
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
+      RENDERER.setAllowWidescreen(oldWidescreen);
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
       oldRenderer = null;
 
