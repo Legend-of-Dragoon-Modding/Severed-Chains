@@ -6,6 +6,7 @@ import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
+import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -59,6 +60,7 @@ public class PixelParticle extends ParticleEffectData98 {
           //LAB_800fdf44
           this.mv.transfer.set(ref.x + GPU.getOffsetX(), ref.y + GPU.getOffsetY(), z + manager.params_10.z_22);
           RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.mv, QueuedModelStandard.class)
+            .translucency(Translucency.B_PLUS_F)
             .colour(colour);
         }
       }
