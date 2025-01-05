@@ -5,6 +5,8 @@ import legend.core.memory.Method;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
@@ -13,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.Scus94491BpeSegment_8002.renderCentredText;
-import static legend.game.Scus94491BpeSegment_8002.renderRightText;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class ItemListMenu extends ListMenu {
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+
   private UiBox description;
 
   private final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
@@ -38,9 +40,13 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
-    renderText(I18n.translate(this.combatItems_800c6988.get(index).item), x, y, TextColour.WHITE, trim);
-    renderText("\u011d", x + 143, y, TextColour.WHITE, trim);
-    renderRightText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 168, y, TextColour.WHITE, trim);
+    this.fontOptions.trim(trim);
+    this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
+    renderText(I18n.translate(this.combatItems_800c6988.get(index).item), x, y, this.fontOptions);
+    renderText("\u011d", x + 143, y, this.fontOptions);
+
+    this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
+    renderText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 168, y, this.fontOptions);
   }
 
   @Override
@@ -129,7 +135,10 @@ public class ItemListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getBattleDescriptionTranslationKey()), 160, 157, TextColour.WHITE, 0);
+
+        this.fontOptions.trim(0);
+        this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
+        renderText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
       }
     }
   }

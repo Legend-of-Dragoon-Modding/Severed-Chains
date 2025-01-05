@@ -7,7 +7,6 @@ import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -27,7 +26,6 @@ import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderItemIcon;
-import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.addLevelUpOverlay;
 import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
@@ -38,6 +36,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -64,6 +63,8 @@ public class PostBattleScreen extends MenuScreen {
   private static final int[] characterPortraitVs_800fbc88 = {0x1f0, 0x1f2, 0x1f1, 0x1f3, 0x1f4, 0x1f5, 0x1f6, 0x1f7, 0x1f8};
   private static final int[] charPortraitGlyphs_800fbc9c = {0xd, 0xf, 0xe, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15};
   private static final int[] _800fbca8 = {0x26, 0x28, 0x27, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e};
+
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
 
   private int levelUpCharId_8011e170;
   private int unlockHeight_8011e178;
@@ -823,10 +824,12 @@ public class PostBattleScreen extends MenuScreen {
     y1 = 63;
     y2 = 64;
 
+    this.fontOptions.shadowColour(TextColour.BLACK);
+
     //LAB_8010eae0
     for(final EnemyDrop enemyDrop : itemsDroppedByEnemies_800bc928) {
       renderItemIcon(enemyDrop.icon, 18, y1, 0x8);
-      renderText(enemyDrop.name, 28, y2, TextColour.WHITE);
+      renderText(enemyDrop.name, 28, y2, this.fontOptions);
 
       //LAB_8010eb38
       y2 += 16;
@@ -887,8 +890,9 @@ public class PostBattleScreen extends MenuScreen {
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 3);
 
     if(height >= 20) {
-      Scus94491BpeSegment_8002.renderText(additions_8011a064[additionIndex], x - 4, y + 6, TextColour.WHITE, 0);
-      Scus94491BpeSegment_8002.renderText(NEW_ADDITION, x - 4, y + 20, TextColour.WHITE, 0);
+      this.fontOptions.noShadow();
+      renderText(additions_8011a064[additionIndex], x - 4, y + 6, this.fontOptions);
+      renderText(NEW_ADDITION, x - 4, y + 20, this.fontOptions);
     }
 
     //LAB_8010d470
@@ -900,8 +904,8 @@ public class PostBattleScreen extends MenuScreen {
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      Scus94491BpeSegment_8002.renderText(spellStats_800fa0b8[spellIndex].name, x - 4, y + 6, TextColour.WHITE, 0);
-      Scus94491BpeSegment_8002.renderText(SPELL_UNLOCKED, x - 4, y + 20, TextColour.WHITE, 0);
+      renderText(spellStats_800fa0b8[spellIndex].name, x - 4, y + 6, this.fontOptions);
+      renderText(SPELL_UNLOCKED, x - 4, y + 20, this.fontOptions);
     }
 
     //LAB_8010d470

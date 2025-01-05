@@ -33,7 +33,13 @@ public class MonitorConfigEntry extends ConfigEntry<Integer> {
         dropdown.addOption(glfwGetMonitorName(ptr));
       }
 
-      dropdown.setSelectedIndex(CONFIG.getConfig(this));
+      final int selected = CONFIG.getConfig(this);
+      if(selected >= 0 && selected < monitorPtrs.limit()) {
+        dropdown.setSelectedIndex(selected);
+      } else {
+        dropdown.setSelectedIndex(0);
+      }
+
       return dropdown;
     });
   }

@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
@@ -15,10 +14,13 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 
 public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
@@ -75,8 +77,8 @@ public class LoadGameScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText("Load Game", 188, 10, TextColour.BROWN);
-    SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
+    renderText("Load Game", 188, 10, UI_TEXT_CENTERED);
+    renderText("\u011f Delete", 297, 226, UI_TEXT);
   }
 
   private void menuDelete() {
