@@ -1,0 +1,110 @@
+Widescreen patch
+Lisa
+Old: Libria animation handled by File 2
+New: Libria animation handled by File 8, now on screen with Lisa.
+--- original
++++ modified
+@@ -828,6 +828,7 @@
+ gosub inl[:LABEL_29]
+ gosub inl[:LABEL_0]
+ call 2, 0x35, 0x1
++jmp inl[:WIDESCREEN_SCENE_0]
+ call 96, 0x7
+ call 101, stor[0], 0x8c, 0xfffffff6, 0xaf
+ mov 0x8, stor[24]
+@@ -867,8 +868,26 @@
+ call 2, 0x36, 0x1
+ call 106, 0x1
+ rewind
++WIDESCREEN_SCENE_0:
+# Move off-screen
++mov 0xac, stor[24]
++mov 0xfffffff6, stor[25]
++mov 0xab, stor[26]
++mov 0x2, stor[27]
++mov 0xffffffff, stor[28]
++gosub inl[:LABEL_29]
+# Wait for flag from file 8
++mov 0x34, stor[24]
++mov 0, stor[25]
++gosub inl[:LABEL_16]
++call 2, 0x34, 1
+# Hide model
++call 106, 1
+# Call textbox
++mov 0x1a, stor[24]
++mov 0x2, stor[26]
++gosub inl[:LABEL_20]
++gosub inl[:LABEL_4]
++call 2, 0x36, 0x1
++rewind
+ JMP_dc4_1:
+# New starting position
+-call 101, stor[0], 0x86, 0xfffffff6, 0xc0
++call 101, stor[0], 0xac, 0xfffffff6, 0xab
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 312, stor[0]
+ call 106, 0x1
+@@ -890,6 +909,15 @@
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_16]
+ call 106, 0x0
+# Move to original position
++mov 0x86, stor[24]
++mov 0xfffffff6, stor[25]
++mov 0xc0, stor[26]
++mov 2, stor[27]
++mov 1, stor[28]
++gosub inl[:LABEL_29]
+# Wait for flag from file 1
++mov 0x63, stor[24]
++mov 1, stor[25]
++gosub inl[:LABEL_16]
+ mov 0x36, stor[24]
+ mov 0xfffffff6, stor[25]
+ mov 0xe6, stor[26]
+@@ -937,6 +965,7 @@
+ gosub inl[:LABEL_29]
+ gosub inl[:LABEL_0]
+ call 2, 0xc, 0x1
++jmp inl[:WIDESCREEN_SCENE_1]
+ mov 0x8, stor[24]
+ wait stor[24]
+ call 96, 0x7
+@@ -972,6 +1001,23 @@
+ gosub inl[:LABEL_0]
+ call 106, 0x1
+ rewind
++WIDESCREEN_SCENE_1:
+# Move off-screen
++mov 0xac, stor[24]
++mov 0xfffffff6, stor[25]
++mov 0xab, stor[26]
++mov 0x2, stor[27]
++mov 0xffffffff, stor[28]
++gosub inl[:LABEL_29]
+# Wait for flag from file 8
++mov 0x62, stor[24]
++mov 1, stor[25]
++gosub inl[:LABEL_16]
+# Hide model
++call 106, 1
+# Call textbox
++mov 0x23, stor[24]
++mov 0x2, stor[26]
++gosub inl[:LABEL_20]
++gosub inl[:LABEL_4]
++call 2, 0xd, 0x1
++rewind
+ LABEL_61:
+ rel :PTR_2d24_0
+ rel :PTR_2d24_1
+@@ -1442,7 +1488,7 @@
+ data 0x1d
+ data 0x4
+ PTR_2d24_11:
+-data str[Lisa<line>I heard you are heading to the<line><colour=5>Vally of Corrupted Gravity<colour=0>.<line>And I have a favor to ask.<line>I would like you to<noterm>]
++data str[Lisa<line>I heard you are heading to the<line><colour=5>Valley of Corrupted Gravity<colour=0>.<line>And I have a favor to ask.<line>I would like you to<noterm>]
+ data str[ find out about<line>the relationship between my sister<line>Emille and the Gehrich Gang.]
+ PTR_2dc4_11:
+ data 0x22

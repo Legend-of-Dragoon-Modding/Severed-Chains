@@ -1,0 +1,61 @@
+Widescreen patch
+Rose
+Old: Model hidden based on camera panning and global flags
+New: No more hiding, added animation
+--- original
++++ modified
+@@ -153,6 +153,8 @@
+ call 99, 0x0
+ call 97, 0x0
+ LABEL_23:
+# Freeze idle animation, don't hide model
++call 99, 1
++rewind
+ yield
+ call 257, stor[24], stor[25]
+ jmp_cmp <, 0xfffffff1, stor[24], inl[:LABEL_23]
+@@ -165,20 +167,21 @@
+ call 99, 0x0
+ call 97, 0xb
+ call 99, 0x1
+# Run animation based on new flag trigger instead of hiding model
+-mov 0x8, stor[24]
++mov 0x62, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+-call 106, 0x1
++mov 11, stor[25]
++mov 0, stor[26]
++gosub inl[:ANIMATION]
+ mov 0xd, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+# Delay enabled shadow
+-call 311, stor[0]
+-call 106, 0x0
+ mov 0x74, stor[24]
+ mov 0xa0, stor[25]
+ mov 0x5, stor[26]
+ mov 0x0, stor[27]
+ gosub inl[:LABEL_10]
++call 311, stor[0]
+ mov 0x74, stor[24]
+ mov 0xfffffff6, stor[25]
+ mov 0xa0, stor[26]
+@@ -186,3 +189,16 @@
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_5]
+ rewind
++ANIMATION:
++call 99, 0
++call 97, stor[25]
++ANIMATION_WAIT:
++yield
++call 100, stor[27]
++jmp_cmp ==, stor[27], 0, inl[:ANIMATION_WAIT]
++jmp_cmp ==, stor[26], 0xffffffff, inl[:FREEZE]
++call 97, stor[26]
++return
++FREEZE:
++call 99, 1
++return

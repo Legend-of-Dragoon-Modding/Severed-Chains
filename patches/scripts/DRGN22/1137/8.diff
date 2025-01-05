@@ -1,0 +1,335 @@
+Widescreen patch
+Libria
+Old: Libria animation handled by File 2.
+New: Libria animation handled by File 8, now on screen with Lisa
+--- original
++++ modified
+@@ -13,6 +13,9 @@
+ JMP_44_0:
+ call 101, stor[0], 0x82, 0x32, 0xcd
+ call 103, stor[0], 0x0, 0x0, 0x0
++call 106, 0x1
++gosub inl[:SC_LIBRIA_SCENE_0]
++rewind
+ call 127, stor[31]
+ decr stor[31]
+ LABEL_1:
+@@ -22,4 +25,293 @@
+ rewind
+ JMP_44_1:
+ call 106, 0x1
++gosub inl[:SC_LIBRIA_SCENE_1]
+ rewind
++SC_LIBRIA_SCENE_0:
+# Wait for flag from file 2
++mov 0x34, stor[21]
++mov 1, stor[22]
++gosub inl[:FLAG_WAIT]
+# Set starting position and rotation
++mov 0xac, stor[29]
++mov inl[:S0_START_Y], stor[30]
++mov 0xaa, stor[31]
++call 101, stor[0], stor[29], stor[30], stor[31]
++mov 0x7d, stor[26]
++mov inl[:S0_START_Y], stor[27]
++mov 0xdc, stor[28]
++call 105, stor[26], stor[27], stor[28]
++call 312, stor[0]
+# Unhide model and move
++call 106, 0
++mov 1, stor[20]
++mov 2, stor[24]
++gosub inl[:MOVE]
+# Face Lisa
++mov var[64][1], stor[25]
++call 102, stor[25], stor[26], stor[27], stor[28]
++mov 0xfffffffe, stor[20]
++mov 10, stor[24]
++gosub inl[:ROTATE]
++call 97, 0
++call 99, 1
+# Wait for flag - Lisa exit
++mov 0x35, stor[21]
++mov 1, stor[22]
++gosub inl[:FLAG_WAIT_FOCUS]
+# Compare distance with Libria's retail start and wait
++mov inl[:S0_MARK_X], stor[26]
++mov inl[:S0_MARK_Y], stor[27]
++mov inl[:S0_MARK_Z], stor[28]
++mov inl[:S0_START_X], stor[29]
++mov inl[:S0_START_Y], stor[30]
++mov inl[:S0_START_Z], stor[31]
++mov 2, stor[24]
++gosub inl[:GET_MOVE_TICKS]
++mov stor[31], stor[22]
++call 102, stor[0], stor[29], stor[30], stor[31]
++gosub inl[:GET_MOVE_TICKS]
++mov stor[31], stor[23]
++jmp_cmp >, stor[23], stor[22], inl[:SKIP_WAIT_0]
++sub stor[23], stor[22]
++wait stor[22]
++SKIP_WAIT_0:
+# Rotate and move to greet party
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov inl[:S0_MARK_X], stor[26]
++mov inl[:S0_MARK_Z], stor[28]
++mov 0xffffffff, stor[20]
++mov 16, stor[24]
++gosub inl[:ROTATE]
++mov 10, stor[24]
++wait stor[24]
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov inl[:S0_MARK_X], stor[26]
++mov inl[:S0_MARK_Y], stor[27]
++mov inl[:S0_MARK_Z], stor[28]
++mov 1, stor[20]
++mov 2, stor[24]
++gosub inl[:MOVE]
+# Face Albert
++mov var[64][3], stor[25]
++call 102, stor[25], stor[26], stor[27], stor[28]
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov 0xffffffff, stor[20]
++mov 16, stor[24]
++gosub inl[:ROTATE]
+# Set flag - File 2 starts textbox
++call 2, 0x34, 0
+# Queue animation(s)
++mov 5, stor[20]
++mov 0xffffffff, stor[22]
++gosub inl[:ANIMATION]
++gosub inl[:ANIMATION]
+# Wait for flag - File 2 textbox closed
++mov 0x36, stor[21]
++mov 1, stor[22]
++gosub inl[:FLAG_WAIT]
+# Exit
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov 0xac, stor[26]
++mov 0xab, stor[28]
++mov 0xffffffff, stor[20]
++mov 16, stor[24]
++gosub inl[:ROTATE]
++mov 10, stor[24]
++wait stor[24]
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov 0xac, stor[26]
++mov inl[:S0_START_Y], stor[27]
++mov 0xab, stor[28]
++mov 1, stor[20]
++mov 2, stor[24]
++gosub inl[:MOVE]
++rewind
+# First scene retail coords
++S0_START_X:
++data 0x87
++S0_START_Y:
++data 0xfffffff6
++S0_START_Z:
++data 0x9b
++S0_MARK_X:
++data 0x44
++S0_MARK_Y:
++data 0xfffffff6
++S0_MARK_Z:
++data 0xdc
++SC_LIBRIA_SCENE_1:
+# Wait for flag from file 2
++mov 9, stor[21]
++mov 1, stor[22]
++gosub inl[:FLAG_WAIT]
+# Set starting position and rotation
++mov 0xac, stor[29]
++mov inl[:S1_START_Y], stor[30]
++mov 0xaa, stor[31]
++call 101, stor[0], stor[29], stor[30], stor[31]
++mov 0x7d, stor[26]
++mov inl[:S1_START_Y], stor[27]
++mov 0xfa, stor[28]
++call 105, stor[26], stor[27], stor[28]
++call 312, stor[0]
+# Unhide model and move
++call 106, 0
++mov 1, stor[20]
++mov 2, stor[24]
++gosub inl[:MOVE]
+# Face Lisa
++mov var[64][1], stor[25]
++call 102, stor[25], stor[26], stor[27], stor[28]
++mov 0xfffffffe, stor[20]
++mov 10, stor[24]
++gosub inl[:ROTATE]
++call 97, 0
++call 99, 1
++mov 0xc, stor[21]
++mov 1, stor[22]
++gosub inl[:FLAG_WAIT_FOCUS]
+# Compare distance with Libria's retail start and wait
++mov inl[:S1_MARK_X], stor[26]
++mov inl[:S1_MARK_Y], stor[27]
++mov inl[:S1_MARK_Z], stor[28]
++mov inl[:S1_START_X], stor[29]
++mov inl[:S1_START_Y], stor[30]
++mov inl[:S1_START_Z], stor[31]
++mov 2, stor[24]
++gosub inl[:GET_MOVE_TICKS]
++mov stor[31], stor[22]
++call 102, stor[0], stor[29], stor[30], stor[31]
++gosub inl[:GET_MOVE_TICKS]
++mov stor[31], stor[23]
++jmp_cmp >, stor[23], stor[22], inl[:SKIP_WAIT_1]
++sub stor[23], stor[22]
++wait stor[22]
++SKIP_WAIT_1:
+# Rotate and move to greet party
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov inl[:S1_MARK_X], stor[26]
++mov inl[:S1_MARK_Z], stor[28]
++mov 0xffffffff, stor[20]
++mov 16, stor[24]
++gosub inl[:ROTATE]
++mov 10, stor[24]
++wait stor[24]
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov inl[:S1_MARK_X], stor[26]
++mov inl[:S1_MARK_Y], stor[27]
++mov inl[:S1_MARK_Z], stor[28]
++mov 1, stor[20]
++mov 2, stor[24]
++gosub inl[:MOVE]
+# Face Albert
++mov var[64][3], stor[25]
++call 102, stor[25], stor[26], stor[27], stor[28]
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov 0xffffffff, stor[20]
++mov 16, stor[24]
++gosub inl[:ROTATE]
+# Set flag - File 2 starts textbox
++call 2, 0x62, 1
+# Queue animation(s)
++mov 5, stor[20]
++mov 0xffffffff, stor[22]
++gosub inl[:ANIMATION]
+# Wait for flag - File 2 textbox closed
++mov 0xd, stor[21]
++mov 1, stor[22]
++gosub inl[:FLAG_WAIT]
+# Exit
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov 0xac, stor[26]
++mov 0xab, stor[28]
++mov 0xffffffff, stor[20]
++mov 16, stor[24]
++gosub inl[:ROTATE]
++mov 10, stor[24]
++wait stor[24]
++call 102, stor[0], stor[29], stor[30], stor[31]
++mov 0xac, stor[26]
++mov inl[:S1_START_Y], stor[27]
++mov 0xab, stor[28]
++mov 1, stor[20]
++mov 2, stor[24]
++gosub inl[:MOVE]
++return
+# Second scene retail coords
++S1_START_X:
++data 0x86
++S1_START_Y:
++data 0xfffffff6
++S1_START_Z:
++data 0xc0
++S1_MARK_X:
++data 0x47
++S1_MARK_Y:
++data 0xfffffff6
++S1_MARK_Z:
++data 0xe1
++RETURN:
++return
++FLAG_WAIT:
++call 3, stor[21], stor[23]
++jmp_cmp ==, stor[22], stor[23], inl[:RETURN]
++yield
++jmp inl[:FLAG_WAIT]
++FLAG_WAIT_FOCUS:
++call 3, stor[21], stor[23]
++jmp_cmp ==, stor[22], stor[23], inl[:RETURN]
++yield
++call 102, stor[25], stor[26], stor[27], stor[28]
++call 105, stor[26], stor[27], stor[28]
++jmp inl[:FLAG_WAIT_FOCUS]
++MOVE:
++call 102, stor[0], stor[29], stor[30], stor[31]
++sub stor[26], stor[29]
++sub stor[27], stor[30]
++sub stor[28], stor[31]
++mul stor[29], stor[29]
++mul stor[30], stor[30]
++mul stor[31], stor[31]
++add stor[29], stor[30]
++add stor[30], stor[31]
++sqrt stor[31], stor[31]
++div stor[24], stor[31]
++jmp_cmp >=, 0, stor[31], inl[:RETURN]
++call 679, stor[0], stor[26], stor[27], stor[28], stor[31]
++jmp_cmp ==, 0xffffffff, stor[20], inl[:MOVE_RETURN]
++jmp_cmp ==, 0xfffffffe, stor[20], inl[:MOVE_WAIT]
++call 99, 0
++call 97, stor[20]
++MOVE_WAIT:
++wait stor[31]
++mov 0, stor[24]
++return
++MOVE_RETURN:
++mov stor[31], stor[24]
++return
++ROTATE:
++call 102, stor[0], stor[29], stor[30], stor[31]
++sub stor[29], stor[26]
++sub stor[31], stor[28]
++atan2_12 stor[26], stor[28], stor[27]
++call 104, stor[0], stor[29], stor[30], stor[31]
++and 0xfff, stor[30]
++sub stor[30], stor[27]
++add 0x800, stor[27]
++LT_N360_CHECK:
++jmp_cmp >=, stor[27], 0xfffff800, inl[:GT_P360_CHECK]
++add 0x1000, stor[27]
++jmp inl[:ROTATE_0]
++GT_P360_CHECK:
++jmp_cmp <, stor[27], 0x800, inl[:ROTATE_0]
++sub 0x1000, stor[27]
++ROTATE_0:
++call 120, stor[0], 0x0, stor[27], 0x0, stor[24]
++jmp_cmp ==, stor[20], 0xffffffff, inl[:RETURN]
++jmp_cmp ==, stor[20], 0xfffffffe, inl[:ROTATE_WAIT]
++call 99, 0
++call 97, stor[20]
++ROTATE_WAIT:
++wait stor[24]
++return
++ANIMATION:
++call 99, 0
++call 97, stor[20]
++ANIMATION_WAIT:
++yield
++call 100, stor[23]
++jmp_cmp ==, stor[23], 0, inl[:ANIMATION_WAIT]
++jmp_cmp ==, stor[22], 0xffffffff, inl[:FREEZE]
++call 97, stor[22]
++return
++FREEZE:
++call 99, 1
++return
++GET_MOVE_TICKS:
++sub stor[26], stor[29]
++sub stor[27], stor[30]
++sub stor[28], stor[31]
++mul stor[29], stor[29]
++mul stor[30], stor[30]
++mul stor[31], stor[31]
++add stor[29], stor[30]
++add stor[30], stor[31]
++sqrt stor[31], stor[31]
++div stor[24], stor[31]
++return
