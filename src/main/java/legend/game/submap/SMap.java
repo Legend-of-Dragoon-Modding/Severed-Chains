@@ -3864,6 +3864,10 @@ public class SMap extends EngineState {
       case TRANSITION_TO_WORLD_MAP_18 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
+        if(this.isScriptLoaded(0)) {
+          this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
+        }
+
         submapFullyLoaded_800bd7b4 = false;
 
         if(this.mapTransitionTicks_800cab28 != 0 || fullScreenEffect_800bb140._24 == 0) {
