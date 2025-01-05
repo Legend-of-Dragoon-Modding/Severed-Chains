@@ -34,7 +34,7 @@ public class InputBoxScreen extends MenuScreen {
 
     final Label label = panel.addControl(new Label(message));
     label.setAutoSize(true);
-    label.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     label.setPos((panel.getWidth() - label.getWidth()) / 2, 12);
     label.setZ(31);
 

@@ -1,7 +1,7 @@
 package legend.game.inventory.screens.controls;
 
 import legend.game.inventory.screens.Control;
-import legend.game.inventory.screens.TextColour;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
@@ -9,12 +9,13 @@ import legend.game.types.Renderable58;
 
 import javax.annotation.Nullable;
 
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.chapterNames_80114248;
-import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 
 public class SaveCard extends Control {
   final CharacterPortrait[] portraits = new CharacterPortrait[3];
@@ -39,7 +40,7 @@ public class SaveCard extends Control {
     this.invalidSave = this.addControl(new Label("Invalid save"));
     this.invalidSave.setPos(258, 47);
     this.invalidSave.setWidth(0);
-    this.invalidSave.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    this.invalidSave.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
   }
 
   public void setSaveData(@Nullable final SavedGame saveData) {
@@ -80,7 +81,7 @@ public class SaveCard extends Control {
         }
 
         //LAB_80108ba0
-        renderCentredText(locationNames[this.saveData.locationIndex], x + 258, y + 47, TextColour.BROWN); // Location text
+        renderText(locationNames[this.saveData.locationIndex], x + 258, y + 47, UI_TEXT_CENTERED); // Location text
 
         final GameState52c state = this.saveData.state;
 
