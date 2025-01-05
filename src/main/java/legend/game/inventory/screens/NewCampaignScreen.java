@@ -10,6 +10,7 @@ import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
+import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
@@ -88,13 +89,14 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     if(this.unload) {
       GameEngine.bootRegistries();
 
-      this.state.campaignName = this.campaignName.getText();
+      this.state.campaign = Campaign.create(SAVES, this.campaignName.getText().strip());
 
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
       final GameLoadedEvent gameLoadedEvent = EVENTS.postEvent(new GameLoadedEvent(newGameEvent.gameState));
 
       gameState_800babc8 = gameLoadedEvent.gameState;
 
+      this.state.campaign.loadConfigInto(CONFIG);
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
 
       loadingNewGameState_800bdc34 = true;

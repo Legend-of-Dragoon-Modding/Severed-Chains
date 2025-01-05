@@ -60,7 +60,7 @@ public class InputBoxScreen extends MenuScreen {
     this.accept.setZ(31);
     this.accept.onPressed(() -> {
       menuStack.popScreen();
-      this.onResult.accept(MessageBoxResult.YES, this.text.getText());
+      this.onResult.accept(MessageBoxResult.YES, this.text.getText().strip());
     });
 
     this.cancel = panel.addControl(new Button("Cancel"));
