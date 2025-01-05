@@ -4,6 +4,8 @@ import legend.core.Config;
 import legend.core.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.RunningScript;
@@ -12,12 +14,12 @@ import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.renderCentredText;
-import static legend.game.Scus94491BpeSegment_8002.renderRightText;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 public class SpellListMenu extends ListMenu {
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+
   private UiBox description;
 
   private final int listCount;
@@ -59,8 +61,14 @@ public class SpellListMenu extends ListMenu {
     }
 
     final int spellId = this.hud.battle.dragoonSpells_800c6960[this.player_08.charSlot_276].spellIndex_01[index];
-    renderText(spellStats_800fa0b8[spellId].name, x, y, textColour, trim);
-    renderRightText(String.valueOf(this.player_08.spell_94.mp_06), x + 152, y, TextColour.WHITE, trim);
+
+    this.fontOptions.trim(trim);
+    this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
+    this.fontOptions.colour(textColour);
+    renderText(spellStats_800fa0b8[spellId].name, x, y, this.fontOptions);
+    this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
+    this.fontOptions.colour(TextColour.WHITE);
+    renderText(String.valueOf(this.player_08.spell_94.mp_06), x + 152, y, this.fontOptions);
 
     this.transforms.scaling(0.75f);
     this.transforms.transfer.set(x + 152, y, 124.0f);
@@ -160,7 +168,10 @@ public class SpellListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText(spell.battleDescription, 160, 157, TextColour.WHITE, 0);
+
+        this.fontOptions.trim(0);
+        this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
+        renderText(spell.battleDescription, 160, 157, this.fontOptions);
       }
     }
   }

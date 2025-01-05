@@ -13,6 +13,7 @@ import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.glyphs_80114548;
@@ -21,10 +22,10 @@ import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -199,10 +200,10 @@ public class TooManyItemsScreen extends MenuScreen {
       renderString(16, 164, I18n.translate(inv.getDescriptionTranslationKey()), false);
     }
 
-    renderText(Acquired_item_8011c2f8, 32, 22, TextColour.BROWN);
+    renderText(Acquired_item_8011c2f8, 32, 22, UI_TEXT);
 
     if(inv instanceof Item) {
-      renderText(Used_item_8011c32c, 210, 22, TextColour.BROWN);
+      renderText(Used_item_8011c32c, 210, 22, UI_TEXT);
 
       if((a4 & 0x1) != 0) {
         renderMenuItems(194, 33, this.items, slotScroll, 7, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
@@ -215,10 +216,10 @@ public class TooManyItemsScreen extends MenuScreen {
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
         renderable.clut_30 = 0x7ceb;
-        renderText(Press_to_sort_8011d024, 37, 140, TextColour.BROWN);
+        renderText(Press_to_sort_8011d024, 37, 140, UI_TEXT);
       }
     } else {
-      renderText(Armed_item_8011c314, 210, 22, TextColour.BROWN);
+      renderText(Armed_item_8011c314, 210, 22, UI_TEXT);
 
       if((a4 & 0x1) != 0) {
         renderMenuItems(194, 33, this.equipment, slotScroll, 7, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
@@ -231,7 +232,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
         renderable.clut_30 = 0x7ceb;
-        renderText(Press_to_sort_8011d024, 37, 140, TextColour.BROWN);
+        renderText(Press_to_sort_8011d024, 37, 140, UI_TEXT);
       }
     }
   }

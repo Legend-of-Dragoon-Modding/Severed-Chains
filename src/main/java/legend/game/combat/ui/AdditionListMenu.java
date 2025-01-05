@@ -2,6 +2,8 @@ package legend.game.combat.ui;
 
 import legend.core.Config;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.scripting.RunningScript;
 import legend.game.types.ActiveStatsa0;
@@ -16,8 +18,6 @@ import java.util.List;
 import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment_8002.renderCentredText;
-import static legend.game.Scus94491BpeSegment_8002.renderRightText;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -28,6 +28,8 @@ import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.SBtld.loadAdditions;
 
 public class AdditionListMenu extends ListMenu {
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+
   private UiBox description;
 
   private final List<String> additions = new ArrayList<>();
@@ -64,9 +66,13 @@ public class AdditionListMenu extends ListMenu {
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
 
-    renderText(this.additions.get(index), x, y, TextColour.WHITE, trim);
-    renderRightText(String.valueOf(charData.additionXp_22[index]), x + 145, y, TextColour.WHITE, trim);
-    renderText("/", x + 146, y, TextColour.WHITE, trim);
+    this.fontOptions.trim(trim);
+    this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
+    renderText(this.additions.get(index), x, y, this.fontOptions);
+    renderText("/", x + 146, y, this.fontOptions);
+
+    this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
+    renderText(String.valueOf(charData.additionXp_22[index]), x + 145, y, this.fontOptions);
 
     final String max;
     if(charData.additionLevels_1a[index] < 5) {
@@ -75,7 +81,7 @@ public class AdditionListMenu extends ListMenu {
       max = "-";
     }
 
-    renderRightText(max, x + 168, y, TextColour.WHITE, trim);
+    renderText(max, x + 168, y, this.fontOptions);
   }
 
   @Override
@@ -159,7 +165,10 @@ public class AdditionListMenu extends ListMenu {
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderCentredText("Hits: " + additionData.attacks_01 + ", damage: " + damage + ", SP: " + sp, 160, 157, TextColour.WHITE, 0);
+
+        this.fontOptions.trim(0);
+        this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
+        renderText("Hits: " + additionData.attacks_01 + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
     }
   }
