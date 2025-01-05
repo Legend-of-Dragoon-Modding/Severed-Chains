@@ -1,6 +1,10 @@
 package legend.core;
 
 import legend.core.audio.AudioThread;
+import legend.core.audio.EffectsOverTimeGranularity;
+import legend.core.audio.InterpolationPrecision;
+import legend.core.audio.PitchResolution;
+import legend.core.audio.SampleRate;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
@@ -122,7 +126,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(100, true, 24, 9);
+    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000, EffectsOverTimeGranularity.Finer);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -239,6 +243,10 @@ public final class GameEngine {
 
     AUDIO_THREAD.init();
     AUDIO_THREAD.getSequencer().setVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()));
+    AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get()));
+    AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
+    AUDIO_THREAD.changeSampleRate(CONFIG.getConfig(CoreMod.MUSIC_SAMPLE_RATE_CONFIG.get()));
+    AUDIO_THREAD.changeEffectsOverTimeGranularity(CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get()));
 
     SPU.init();
     RENDERER.init();

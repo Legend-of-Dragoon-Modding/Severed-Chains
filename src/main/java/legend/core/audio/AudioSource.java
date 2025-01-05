@@ -111,4 +111,22 @@ public abstract class AudioSource {
 
     memFree(this.tmp);
   }
+
+  protected void resetBuffers() {
+    alSourceStop(this.sourceId);
+
+    final int processed = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+
+    for (int i = 0; i < processed; i++) {
+      alSourceUnqueueBuffers(this.sourceId, this.buffers);
+      alDeleteBuffers(this.buffers[0]);
+    }
+
+    alGenBuffers(this.buffers);
+    this.bufferIndex = this.buffers.length - 1;
+
+    if(this.playing) {
+      alSourcePlay(this.sourceId);
+    }
+  }
 }

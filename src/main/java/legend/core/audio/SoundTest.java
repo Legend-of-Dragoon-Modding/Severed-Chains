@@ -7,13 +7,16 @@ import legend.game.unpacker.Unpacker;
 public final class SoundTest {
   private static final int FILE_INDEX = 5820;
   private static final int SECONDS = 30;
+
+  private SoundTest() {}
+
   public static void main(final String[] args) {
-    final AudioThread audioThread = new AudioThread(100, true, 24, 9);
+    final AudioThread audioThread = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000, EffectsOverTimeGranularity.Finer);
 
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");
 
-    final BackgroundMusic bgm = new BackgroundMusic(Unpacker.loadDirectory("SECT/DRGN0.BIN/" + FILE_INDEX), FILE_INDEX);
+    final BackgroundMusic bgm = new BackgroundMusic(Unpacker.loadDirectory("SECT/DRGN0.BIN/" + FILE_INDEX), FILE_INDEX, audioThread.getSequencer().getSampleRate());
 
     spuThread.start();
 
