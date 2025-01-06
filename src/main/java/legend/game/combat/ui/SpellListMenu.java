@@ -54,7 +54,7 @@ public class SpellListMenu extends ListMenu {
 
     final TextColour textColour;
     this.setActiveSpell(index);
-    if(this.player_08.stats.getStat(LodMod.MP_STAT.get()).getCurrent() < this.player_08.spell_94.mp_06) {
+    if(!this.canUse()) {
       textColour = TextColour.GREY;
     } else {
       textColour = TextColour.WHITE;
@@ -81,6 +81,13 @@ public class SpellListMenu extends ListMenu {
   @Override
   protected void onSelection(final int index) {
     this.setActiveSpell(index);
+  }
+
+  @Override
+  protected boolean canUse() {
+    final int currentMP = this.player_08.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+    final int spellMPCost = this.player_08.spell_94.mp_06;
+    return currentMP >= spellMPCost;
   }
 
   private void setActiveSpell(final int index) {

@@ -102,6 +102,10 @@ public abstract class ListMenu {
   protected abstract int handleTargeting();
   public abstract void getTargetingInfo(final RunningScript<?> script);
 
+  protected boolean canUse() {
+    return true;
+  };
+
   private void initObjs() {
     if(this.menuObj == null) {
       final QuadBuilder builder = new QuadBuilder("Spell/item menu");
@@ -274,11 +278,9 @@ public abstract class ListMenu {
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           //LAB_800f5078
           this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
-          this.player_08.spell_94 = null;
-          this.player_08.item_d4 = null;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
 
-          if(this.player_08.spell_94 != null && this.player_08.stats.getStat(LodMod.MP_STAT.get()).getCurrent() < this.player_08.spell_94.mp_06) {
+          if(!this.canUse()) {
             playMenuSound(40);
             break;
           }
