@@ -4,25 +4,35 @@ Old: Shana would stack on Dart and Lavitz
 New: Shana waits for Lavitz to move before continuing
 --- original
 +++ modified
-@@ -131,6 +131,16 @@
- rel :JMP_40c_2
- rel :JMP_40c_0
- rel :JMP_40c_0
+@@ -48,12 +48,28 @@
+ yield
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ call 116, stor[24]
++gosub inl[:WAIT_TIME]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_4]
+ call 294, 0x0, 0x1
+ call 97, 0x0
+ call 111, 0x0
+ return
+# Wait for target, stor[25], to not be on queued collision primitive, stor[24]
 +WAIT_IN_LINE:
 +call 681, stor[25], stor[26]
 +jmp_cmp !=, stor[24], stor[26], inl[:RETURN]
 +yield
-# stor[22] used as a wait offset if flag is set
-+call 3, 0x79, stor[26]
-+jmp_cmp ==, 0, stor[26], inl[:WAIT_IN_LINE]
-+incr stor[22]
++gosub inl[:WAIT_TIME]
 +jmp inl[:WAIT_IN_LINE]
 +RETURN:
 +return
- JMP_40c_1:
- yield
- call 3, 0x78, stor[24]
-@@ -149,14 +159,19 @@
+# If flag 0x79 has been set true, count idle and movement ticks, stor[22], to offset upcoming wait timer
++WAIT_TIME:
++call 3, 0x79, stor[26]
++jmp_cmp ==, 0, stor[26], inl[:RETURN]
++incr stor[22]
++return
+ LABEL_5:
+ mov var[64][stor[28]], stor[28]
+ call 102, stor[28], stor[29], stor[30], stor[31]
+@@ -149,14 +163,19 @@
  mov 0x17, stor[24]
  gosub inl[:LABEL_2]
  mov 0x2e, stor[24]
@@ -39,17 +49,11 @@ New: Shana waits for Lavitz to move before continuing
  call 3, 0x79, stor[24]
  jmp_cmp ==, 0x0, stor[24], inl[:LABEL_11]
  mov 0x3c, stor[24]
-# Reduce wait time
+# Reduce wait time to match retail
++jmp_cmp >, stor[22], stor[24], inl[:NO_WAIT]
 +sub stor[22], stor[24]
  wait stor[24]
++NO_WAIT:
  mov 0x18, stor[24]
  gosub inl[:LABEL_2]
-@@ -166,6 +181,7 @@
- jmp_cmp ==, 0x0, stor[24], inl[:LABEL_12]
- mov 0x2d, stor[24]
- wait stor[24]
-# Set flag for File 9 (Warden)
-+call 2, 0x78, 0
- call 120, stor[0], 0x0, 0xfffff880, 0x0, 0x8
- mov 0x28, stor[24]
- wait stor[24]
+ LABEL_12:

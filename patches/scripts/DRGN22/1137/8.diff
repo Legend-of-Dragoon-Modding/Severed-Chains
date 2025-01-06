@@ -21,15 +21,16 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:SC_LIBRIA_SCENE_1]
  rewind
 +SC_LIBRIA_SCENE_0:
-# Wait for flag from file 2
+# Wait for Lisa (flag from file 2)
 +mov 0x34, stor[21]
 +mov 1, stor[22]
 +gosub inl[:FLAG_WAIT]
-# Set starting position and rotation
+# Set position
 +mov 0xac, stor[29]
 +mov inl[:S0_START_Y], stor[30]
 +mov 0xaa, stor[31]
 +call 101, stor[0], stor[29], stor[30], stor[31]
+# Set rotation
 +mov 0x7d, stor[26]
 +mov inl[:S0_START_Y], stor[27]
 +mov 0xdc, stor[28]
@@ -92,14 +93,13 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +mov 0xffffffff, stor[20]
 +mov 16, stor[24]
 +gosub inl[:ROTATE]
-# Set flag - File 2 starts textbox
-+call 2, 0x34, 0
-# Queue animation(s)
+# Set flag for file 2 to handle textbos
++call 2, 0x62, 1
 +mov 5, stor[20]
 +mov 0xffffffff, stor[22]
 +gosub inl[:ANIMATION]
 +gosub inl[:ANIMATION]
-# Wait for flag - File 2 textbox closed
+# Wait for textbox to close (flag from file 2)
 +mov 0x36, stor[21]
 +mov 1, stor[22]
 +gosub inl[:FLAG_WAIT]
@@ -134,15 +134,16 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +S0_MARK_Z:
 +data 0xdc
 +SC_LIBRIA_SCENE_1:
-# Wait for flag from file 2
+# Wait for Lisa (flag from file 2)
 +mov 9, stor[21]
 +mov 1, stor[22]
 +gosub inl[:FLAG_WAIT]
-# Set starting position and rotation
+# Set position
 +mov 0xac, stor[29]
 +mov inl[:S1_START_Y], stor[30]
 +mov 0xaa, stor[31]
 +call 101, stor[0], stor[29], stor[30], stor[31]
+# Set rotation
 +mov 0x7d, stor[26]
 +mov inl[:S1_START_Y], stor[27]
 +mov 0xfa, stor[28]
@@ -204,13 +205,13 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +mov 0xffffffff, stor[20]
 +mov 16, stor[24]
 +gosub inl[:ROTATE]
-# Set flag - File 2 starts textbox
+# Set flag for file 2 to handle textbos
 +call 2, 0x62, 1
 # Queue animation(s)
 +mov 5, stor[20]
 +mov 0xffffffff, stor[22]
 +gosub inl[:ANIMATION]
-# Wait for flag - File 2 textbox closed
+# Wait for textbox to close (flag from file 2)
 +mov 0xd, stor[21]
 +mov 1, stor[22]
 +gosub inl[:FLAG_WAIT]

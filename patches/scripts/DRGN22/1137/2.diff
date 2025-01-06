@@ -12,7 +12,7 @@ New: Libria animation handled by File 8, now on screen with Lisa.
  call 96, 0x7
  call 101, stor[0], 0x8c, 0xfffffff6, 0xaf
  mov 0x8, stor[24]
-@@ -867,8 +868,26 @@
+@@ -867,8 +868,25 @@
  call 2, 0x36, 0x1
  call 106, 0x1
  rewind
@@ -24,11 +24,10 @@ New: Libria animation handled by File 8, now on screen with Lisa.
 +mov 0x2, stor[27]
 +mov 0xffffffff, stor[28]
 +gosub inl[:LABEL_29]
-# Wait for flag from file 8
-+mov 0x34, stor[24]
-+mov 0, stor[25]
+# Wait for Libria (flag from file 8)
++mov 0x62, stor[24]
++mov 1, stor[25]
 +gosub inl[:LABEL_16]
-+call 2, 0x34, 1
 # Hide model
 +call 106, 1
 # Call textbox
@@ -39,24 +38,24 @@ New: Libria animation handled by File 8, now on screen with Lisa.
 +call 2, 0x36, 0x1
 +rewind
  JMP_dc4_1:
-# New starting position
+# New start
 -call 101, stor[0], 0x86, 0xfffffff6, 0xc0
 +call 101, stor[0], 0xac, 0xfffffff6, 0xab
  call 103, stor[0], 0x0, 0x0, 0x0
  call 312, stor[0]
  call 106, 0x1
-@@ -890,6 +909,15 @@
+@@ -890,6 +908,15 @@
  mov 0x1, stor[25]
  gosub inl[:LABEL_16]
  call 106, 0x0
-# Move to original position
+# Move to original start when camera pan starts
 +mov 0x86, stor[24]
 +mov 0xfffffff6, stor[25]
 +mov 0xc0, stor[26]
 +mov 2, stor[27]
 +mov 1, stor[28]
 +gosub inl[:LABEL_29]
-# Wait for flag from file 1
+# Wait for pan to finish (flag from File 1)
 +mov 0x63, stor[24]
 +mov 1, stor[25]
 +gosub inl[:LABEL_16]
@@ -71,7 +70,7 @@ New: Libria animation handled by File 8, now on screen with Lisa.
  mov 0x8, stor[24]
  wait stor[24]
  call 96, 0x7
-@@ -972,6 +1001,23 @@
+@@ -972,6 +1000,23 @@
  gosub inl[:LABEL_0]
  call 106, 0x1
  rewind
@@ -83,7 +82,7 @@ New: Libria animation handled by File 8, now on screen with Lisa.
 +mov 0x2, stor[27]
 +mov 0xffffffff, stor[28]
 +gosub inl[:LABEL_29]
-# Wait for flag from file 8
+# Wait for Libria (flag from file 8)
 +mov 0x62, stor[24]
 +mov 1, stor[25]
 +gosub inl[:LABEL_16]
@@ -99,7 +98,7 @@ New: Libria animation handled by File 8, now on screen with Lisa.
  LABEL_61:
  rel :PTR_2d24_0
  rel :PTR_2d24_1
-@@ -1442,7 +1488,7 @@
+@@ -1442,7 +1487,7 @@
  data 0x1d
  data 0x4
  PTR_2d24_11:

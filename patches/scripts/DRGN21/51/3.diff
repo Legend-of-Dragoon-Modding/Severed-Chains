@@ -8,6 +8,7 @@ New: Lavitz waits for Dart to move before continuing
  rel :JMP_404_2
  rel :JMP_404_0
  rel :JMP_404_0
+# Wait for target, stor[25], to not be on queued collision primitive, stor[24]
 +WAIT_IN_LINE:
 +call 681, stor[25], stor[26]
 +jmp_cmp !=, stor[24], stor[26], inl[:RETURN]

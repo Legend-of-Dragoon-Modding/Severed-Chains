@@ -2,7 +2,27 @@ Widescreen patch
 Warden, cutscene before fighting Fruegel (I)
 --- original
 +++ modified
-@@ -176,18 +176,49 @@
+@@ -58,11 +58,18 @@
+ yield
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ call 116, stor[24]
++gosub inl[:WAIT_TIME]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_6]
+ call 294, 0x0, 0x1
+ call 97, 0x0
+ call 111, 0x0
+ return
+# If flag 0x7a has been set true, count idle and movement ticks, stor[22], to offset upcoming wait timer
++WAIT_TIME:
++call 3, 0x7a, stor[26]
++jmp_cmp ==, 0, stor[26], inl[:RETURN]
++incr stor[22]
++RETURN:
++return
+ LABEL_7:
+ mov var[64][stor[28]], stor[28]
+ call 102, stor[28], stor[29], stor[30], stor[31]
+@@ -176,18 +183,50 @@
  rel :JMP_630_0
  rel :JMP_630_0
  JMP_630_1:
@@ -12,7 +32,7 @@ Warden, cutscene before fighting Fruegel (I)
  gosub inl[:LABEL_3]
  call 103, stor[0], 0x0, 0x0, 0x0
  call 311, stor[0]
-# Wait for flags, then follow a series of collision primitives downstairs
+# Wait for series of flags, then follow a series of collision primitives downstairs
 +ENTER_WAIT_0:
 +yield
 +call 3, 0x79, stor[24]
@@ -24,10 +44,12 @@ Warden, cutscene before fighting Fruegel (I)
 +call 2, 0x78, 1
 +call 96, 0x4
 +call 106, 0x0
++mov 0, stor[22]
 +mov 0x28, stor[24]
 +gosub inl[:LABEL_4]
 +mov 0x1d, stor[24]
 +gosub inl[:LABEL_4]
+# Wait halfway down flight of stairs
 +RETAIL_MARK_WAIT:
 +yield
 +call 3, 0x78, stor[24]
@@ -45,18 +67,17 @@ Warden, cutscene before fighting Fruegel (I)
  yield
  call 3, 0x7a, stor[24]
  jmp_cmp ==, 0x0, stor[24], inl[:LABEL_18]
+# Move to old start location
 -call 96, 0x4
 -call 106, 0x0
--mov 0x3c, stor[24]
--wait stor[24]
 +mov 0x10, stor[24]
 +gosub inl[:LABEL_4]
-# Retail wait timer lines up with Shana's rotation, so that is now paired that with a flag change
-+WAIT_FOR_SHANA_ROTATE:
-+yield
-+call 3, 0x78, stor[24]
-+jmp_cmp ==, 1, stor[24], inl[:WAIT_FOR_SHANA_ROTATE]
-+call 2, 0x78, 1
+ mov 0x3c, stor[24]
+# Reduce wait time to match retail
++jmp_cmp >, stor[22], stor[24], inl[:NO_WAIT]
++sub stor[22], stor[24]
+ wait stor[24]
++NO_WAIT:
  mov 0x18, stor[24]
  gosub inl[:LABEL_4]
  mov 0x1, stor[25]

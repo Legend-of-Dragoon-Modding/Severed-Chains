@@ -7,6 +7,7 @@ New: Do not hide tree
  rel :JMP_8c_0
  JMP_8c_0:
  call 111, 0x1
+# This tree normally starts hidden
 -call 106, 0x1
  call 101, stor[0], 0xfffffe8e, 0x23, 0x214
  call 103, stor[0], 0x0, 0xc8, 0x0
