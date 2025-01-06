@@ -1430,7 +1430,7 @@ public final class SItem {
     //LAB_80107e90
     final int status = gameState_800babc8.charData_32c[charIndex].status_10;
 
-    if((tickCount_800bb0fc & 0x10) == 0) {
+    if(tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier() % 32 < 16) {
       return false;
     }
 
