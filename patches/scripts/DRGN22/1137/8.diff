@@ -4,6 +4,7 @@ Old: Libria animation handled by File 2.
 New: Libria animation handled by File 8, now on screen with Lisa
 --- original
 +++ modified
+## FIRST SCENE ##
 @@ -13,6 +13,9 @@
  JMP_44_0:
  call 101, stor[0], 0x82, 0x32, 0xcd
@@ -14,12 +15,14 @@ New: Libria animation handled by File 8, now on screen with Lisa
  call 127, stor[31]
  decr stor[31]
  LABEL_1:
+## SECOND SCENE ##
 @@ -22,4 +25,293 @@
  rewind
  JMP_44_1:
  call 106, 0x1
 +gosub inl[:SC_LIBRIA_SCENE_1]
  rewind
+## NEW SCRIPT ##
 +SC_LIBRIA_SCENE_0:
 # Wait for Lisa (flag from file 2)
 +mov 0x34, stor[21]
@@ -65,9 +68,9 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +mov stor[31], stor[22]
 +call 102, stor[0], stor[29], stor[30], stor[31]
 +gosub inl[:GET_MOVE_TICKS]
-+mov stor[31], stor[23]
-+jmp_cmp >, stor[23], stor[22], inl[:SKIP_WAIT_0]
-+sub stor[23], stor[22]
++incr stor[31]
++jmp_cmp >=, stor[31], stor[22], inl[:SKIP_WAIT_0]
++sub stor[31], stor[22]
 +wait stor[22]
 +SKIP_WAIT_0:
 # Rotate and move to greet party
@@ -133,6 +136,7 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +data 0xfffffff6
 +S0_MARK_Z:
 +data 0xdc
+## SECOND SCENE ##
 +SC_LIBRIA_SCENE_1:
 # Wait for Lisa (flag from file 2)
 +mov 9, stor[21]
@@ -245,6 +249,7 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +data 0xfffffff6
 +S1_MARK_Z:
 +data 0xe1
+## SUBROUTINES ##
 +RETURN:
 +return
 +FLAG_WAIT:

@@ -8,6 +8,7 @@ New: Shana waits for Lavitz to move before continuing
  yield
  call 102, stor[0], stor[8], stor[9], stor[10]
  call 116, stor[24]
+# Inside walking loop for LABEL_2 subroutine
 +gosub inl[:WAIT_TIME]
  jmp_cmp !=, 0x0, stor[24], inl[:LABEL_4]
  call 294, 0x0, 0x1
