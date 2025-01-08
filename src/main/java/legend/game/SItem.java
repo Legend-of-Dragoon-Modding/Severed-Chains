@@ -20,6 +20,7 @@ import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
+import legend.game.modding.events.inventory.EquipmentCanEquipEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
@@ -707,7 +708,8 @@ public final class SItem {
 
   @Method(0x801039a0L)
   public static boolean canEquip(final Equipment equipment, final int charIndex) {
-    return (characterValidEquipment_80114284[charIndex] & equipment.equipableFlags_03) != 0;
+    final EquipmentCanEquipEvent event = EVENTS.postEvent(new EquipmentCanEquipEvent(equipment, equipment.equipableFlags_03));
+    return (characterValidEquipment_80114284[charIndex] & event.equipableFlags_03) != 0;
   }
 
   /**
