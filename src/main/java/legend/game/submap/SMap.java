@@ -566,7 +566,9 @@ public class SMap extends EngineState {
     textboxText.type_04 = textType;
     textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
-    if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
+    int sObjIndex = script.params_20[1].get();
+
+    if(textType == 1 && (sObjIndex & 0x1000) > 0) {
       textboxText.flags_08 |= 0x20;
     }
 
@@ -582,7 +584,10 @@ public class SMap extends EngineState {
     }
 
     //LAB_800253d4
-    textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
+    /* This is not a retail flag. Used in a script patch to remove arrows from 3 of 4 overlapping textboxes for Phantom Ship's code-locked chest. */
+    if((sObjIndex & 0x2000) > 0) {
+      sObjIndex ^= 0x2000;
+    } else textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
