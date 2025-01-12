@@ -62,7 +62,7 @@ public class SaveGameScreen extends MenuScreen {
 
     this.saveList.addEntry(null);
 
-    this.saves = SAVES.loadAllSaves(gameState_800babc8.campaignName);
+    this.saves = gameState_800babc8.campaign.loadAllSaves();
     for(final SavedGame save : this.saves) {
       this.saveList.addEntry(save);
     }
@@ -86,7 +86,7 @@ public class SaveGameScreen extends MenuScreen {
 
   private void onNewSaveResult(final MessageBoxResult result, final String name) {
     if(result == MessageBoxResult.YES) {
-      if(SAVES.saveExists(gameState_800babc8.campaignName, name)) {
+      if(gameState_800babc8.campaign.saveExists(name)) {
         menuStack.pushScreen(new MessageBoxScreen("Save name already\nin use", 0, result1 -> { }));
         return;
       }
@@ -131,7 +131,7 @@ public class SaveGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteSave(this.saveList.getSelected().state.campaignName, this.saveList.getSelected().fileName);
+            this.saveList.getSelected().state.campaign.deleteSave(this.saveList.getSelected().fileName);
             this.saves.removeIf(save -> save.fileName.equals(this.saveList.getSelected().fileName));
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {

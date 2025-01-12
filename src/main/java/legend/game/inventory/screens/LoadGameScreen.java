@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
@@ -55,7 +54,7 @@ public class LoadGameScreen extends MenuScreen {
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);
 
-    for(final SavedGame save : SAVES.loadAllSaves(campaign.filename())) {
+    for(final SavedGame save : campaign.loadAllSaves()) {
       this.saveList.addEntry(save);
     }
   }
@@ -94,7 +93,7 @@ public class LoadGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteSave(this.campaign.filename(), this.saveList.getSelected().fileName);
+            this.campaign.deleteSave(this.saveList.getSelected().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
