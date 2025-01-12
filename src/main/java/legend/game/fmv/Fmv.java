@@ -486,7 +486,7 @@ public final class Fmv {
       RENDERER.setProjectionMode(ProjectionMode._2D);
       glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
-      transforms.translation((displayTexture.width * (RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio()) - displayTexture.width) / 2, 0.0f, 0.0f);
+      transforms.translation((320.0f * (RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio()) - 320.0f) / 2, 0.0f, 0.0f);
       transforms.get(transforms2Buffer);
       transforms2Uniform.set(transforms2Buffer);
 
