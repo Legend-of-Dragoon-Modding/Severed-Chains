@@ -1,6 +1,11 @@
 package legend.game.combat.bent;
 
 import legend.core.Latch;
+import legend.core.MathHelper;
+import legend.core.QueuedModelTmd;
+import legend.core.RenderEngine;
+import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
@@ -17,10 +22,16 @@ import java.util.Map;
 
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
+import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 public class PlayerBattleEntity extends BattleEntity27c {
@@ -74,6 +85,35 @@ public class PlayerBattleEntity extends BattleEntity27c {
     //noinspection unchecked
     this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[scriptIndex]);
     this.script = script;
+  }
+
+  @Override
+  protected void bentLoadedTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    this.model_148.partInvisible_f4 |= 0x1L << this.getWeaponModelPart();
+    final GsCOORDINATE2 coord2 = this.model_148.modelParts_00[this.getWeaponModelPart()].coord2_04;
+    super.bentLoadedTicker(state, bent);
+  }
+
+  @Override
+  protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    super.bentRenderer(state, bent);
+
+    final MV lw = new MV();
+    final GsCOORDINATE2 coord2 = this.model_148.modelParts_00[this.getWeaponModelPart()].coord2_04;
+    coord2.transforms.rotationAdd.x = -MathHelper.HALF_PI;
+    coord2.transforms.rotationAdd.z = MathHelper.HALF_PI;
+    GsGetLw(coord2, lw);
+    GsSetLightMatrix(lw);
+    lw
+      .scale(600.0f)
+    ;
+
+    RENDERER.queueModel(RenderEngine.lloyd, lw, QueuedModelTmd.class)
+      .depthOffset(this.model_148.zOffset_a0 * 4)
+      .lightDirection(lightDirectionMatrix_800c34e8)
+      .lightColour(lightColourMatrix_800c3508)
+      .backgroundColour(GTE.backgroundColour)
+    ;
   }
 
   @Override

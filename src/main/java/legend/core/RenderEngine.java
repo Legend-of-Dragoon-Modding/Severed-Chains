@@ -10,6 +10,7 @@ import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.RenderState;
@@ -38,6 +39,12 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.assimp.AIColor4D;
+import org.lwjgl.assimp.AIFace;
+import org.lwjgl.assimp.AIMesh;
+import org.lwjgl.assimp.AIScene;
+import org.lwjgl.assimp.AIVector3D;
+import org.lwjgl.assimp.Assimp;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -434,6 +441,9 @@ public class RenderEngine {
     return this.renderTextures[Math.floorMod(this.renderBufferIndex - 1, RENDER_BUFFER_COUNT)];
   }
 
+  public static Obj lloyd;
+  public static Matrix4f lloydTransforms;
+
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
@@ -548,6 +558,37 @@ public class RenderEngine {
       .uvSize(1.0f, -1.0f)
       .build();
     this.renderBufferQuad.persistent = true;
+
+    final PolyBuilder lloydBuilder = new PolyBuilder("Lloyd", GL_TRIANGLES);
+
+    final Path path = Path.of("db.glb").toAbsolutePath();
+    try(final AIScene scene = Assimp.aiImportFile(path.toString(), 0)) {
+      for(int meshIndex = 0; meshIndex < scene.mNumMeshes(); meshIndex++) {
+        try(final AIMesh mesh = AIMesh.create(scene.mMeshes().get(meshIndex))) {
+          final AIFace.Buffer faces = mesh.mFaces();
+          final AIVector3D.Buffer vertices = mesh.mVertices();
+          final AIVector3D.Buffer normals = mesh.mNormals();
+          final AIColor4D.Buffer colours = mesh.mColors(0);
+
+          while(faces.hasRemaining()) {
+            final AIFace face = faces.get();
+
+            for(int i = 0; i < face.mNumIndices(); i++) {
+              final int vertexIndex = face.mIndices().get(i);
+              final AIVector3D vertex = vertices.get(vertexIndex);
+              final AIVector3D normal = normals.get(vertexIndex);
+              final AIColor4D colour = colours.get(vertexIndex);
+              lloydBuilder.addVertex(vertex.x(), vertex.y(), vertex.z());
+              lloydBuilder.normal(normal.x(), normal.y(), normal.z());
+              lloydBuilder.rgb(colour.r() / 2, colour.g() / 2, colour.b() / 2);
+            }
+          }
+        }
+      }
+    }
+
+    lloyd = lloydBuilder.build();
+    lloydTransforms = new Matrix4f();
 
     this.window.events.onDraw(() -> {
       if(this.frameSkipIndex == 0) {

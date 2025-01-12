@@ -41,6 +41,7 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.Keyframe0c;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
@@ -67,6 +68,7 @@ import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Quaternionf;
 import org.legendofdragoon.modloader.registries.Registry;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -514,11 +516,14 @@ public final class Scus94491BpeSegment_8002 {
   public static void applyKeyframe(final Model124 model) {
     //LAB_80021320
     for(int i = 0; i < model.modelParts_00.length; i++) {
+      final Keyframe0c keyframe = model.keyframes_90[model.currentKeyframe_94][i];
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final Transforms params = coord2.transforms;
 
-      params.quat.set(model.keyframes_90[model.currentKeyframe_94][i].quat);
-      params.trans.set(model.keyframes_90[model.currentKeyframe_94][i].translate_06);
+      params.quat.rotationZYX(keyframe.rotate_00.z + params.rotationAdd.z, keyframe.rotate_00.y + params.rotationAdd.y, keyframe.rotate_00.x + params.rotationAdd.x);
+
+//      params.quat.set(keyframe.quat);
+      params.trans.set(keyframe.translate_06);
 
       coord2.coord.rotation(params.quat);
       coord2.coord.transfer.set(params.trans);
@@ -527,14 +532,19 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800213c4L)
   public static void applyInterpolationFrame(final Model124 model, final int framesPerKeyframe) {
+    final Quaternionf quat = new Quaternionf();
+
     //LAB_80021404
     for(int i = 0; i < model.modelParts_00.length; i++) {
+      final Keyframe0c keyframe = model.keyframes_90[model.currentKeyframe_94][i];
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final Transforms params = coord2.transforms;
 
+      quat.rotationZYX(keyframe.rotate_00.z + params.rotationAdd.z, keyframe.rotate_00.y + params.rotationAdd.y, keyframe.rotate_00.x + params.rotationAdd.x);
+
       final float interpolationScale = (model.subFrameIndex + 1.0f) / framesPerKeyframe;
-      params.trans.lerp(model.keyframes_90[model.currentKeyframe_94][i].translate_06, interpolationScale, coord2.coord.transfer);
-      params.quat.nlerp(model.keyframes_90[model.currentKeyframe_94][i].quat, interpolationScale, params.quat);
+      params.trans.lerp(keyframe.translate_06, interpolationScale, coord2.coord.transfer);
+      params.quat.nlerp(quat, interpolationScale, params.quat);
       coord2.coord.rotation(params.quat);
     }
   }

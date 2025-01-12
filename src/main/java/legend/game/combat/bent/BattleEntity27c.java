@@ -604,7 +604,7 @@ public abstract class BattleEntity27c extends BattleObject {
   protected abstract ScriptFile getScript();
 
   @Method(0x800caf2cL)
-  private void bentLoadedTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+  protected void bentLoadedTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     state.setRenderer(this::bentRenderer);
     state.setTicker(this::bentTicker);
     this.bentTicker(state, this);

@@ -9,6 +9,8 @@ public class Transforms {
   public final Vector3f trans = new Vector3f();
   public final Quaternionf quat = new Quaternionf();
 
+  public final Vector3f rotationAdd = new Vector3f();
+
   public Transforms set(final Transforms other) {
     this.scale.set(other.scale);
     this.rotate.set(other.rotate);
