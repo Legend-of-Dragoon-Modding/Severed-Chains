@@ -1,0 +1,12 @@
+Rotation subroutine doesn't check if the rotating sobj is at the target, causing the sobj to 180.
+Bug doesn't occur in retail because Meru is off target by 1 on both axes due to math precision errors.
+--- original
++++ modified
+@@ -392,9 +392,10 @@
+ sub stor[8], stor[28]
+ sub stor[10], stor[30]
+ atan2_12 stor[28], stor[30], stor[26]
++jmp_cmp ==, 0, stor[26], inl[:LABEL_40]
+ LABEL_38:
+ call 104, stor[24], stor[28], stor[29], stor[30]
+ and 0xfff, stor[26]
