@@ -1,5 +1,6 @@
 Widescreen patch
-Warden, cutscene after fighting Fruegel (I)
+Hellena Prison, cutscene before fighting Fruegel (I)
+Warden
 --- original
 +++ modified
 @@ -922,14 +922,20 @@

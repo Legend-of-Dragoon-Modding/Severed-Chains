@@ -1,44 +1,33 @@
 Widescreen patch
+Twin Castle, Lisa Balcony cutscenes
 Rose
 Old: Model hidden based on camera panning and global flags
 New: No more hiding, added animation
 --- original
 +++ modified
 ## FIRST SCENE ##
-@@ -153,6 +153,29 @@
+@@ -153,6 +153,15 @@
  call 99, 0x0
  call 97, 0x0
  LABEL_23:
 # Disable animation, wait for Haschel/Meru embarrassment flag
 +call 99, 1
-+mov 0x38, stor[24]
-+mov 1, stor[25]
-+gosub inl[:LABEL_1]
-+mov 15, stor[24]
-+wait stor[24]
++mov 0x38, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++mov 20, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
 # Animation: shake head
-+mov 7, stor[25]
-+mov 0xffffffff, stor[26]
-+gosub inl[:ANIMATION]
++mov 7, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
 +rewind
-+ANIMATION:
-+call 99, 0
-+call 97, stor[25]
-+ANIMATION_WAIT:
-+yield
-+call 100, stor[27]
-+jmp_cmp ==, stor[27], 0, inl[:ANIMATION_WAIT]
-+jmp_cmp ==, stor[26], 0xffffffff, inl[:FREEZE]
-+call 97, stor[26]
-+return
-+FREEZE:
-+call 99, 1
-+return
++#include ../../../../patches/libs/widescreen.txt
  yield
  call 257, stor[24], stor[25]
  jmp_cmp <, 0xfffffff1, stor[24], inl[:LABEL_23]
 ## SECOND SCENE ##
-@@ -165,20 +188,21 @@
+@@ -165,20 +174,21 @@
  call 99, 0x0
  call 97, 0xb
  call 99, 0x1
@@ -49,9 +38,9 @@ New: No more hiding, added animation
  gosub inl[:LABEL_1]
 -call 106, 0x1
 # Animation: stand up from leaning against wall
-+mov 11, stor[25]
-+mov 0xffffffff, stor[26]
-+gosub inl[:ANIMATION]
++mov 11, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
  mov 0xd, stor[24]
  mov 0x1, stor[25]
  gosub inl[:LABEL_1]
