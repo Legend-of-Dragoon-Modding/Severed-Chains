@@ -3,6 +3,7 @@ package legend.core.opengl.fonts;
 import legend.core.GameEngine;
 import legend.core.IoHelper;
 import legend.core.opengl.Mesh;
+import legend.core.opengl.Texture;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTPackContext;
 import org.lwjgl.stb.STBTTPackedchar;
@@ -16,15 +17,8 @@ import java.util.function.Consumer;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_RED;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11C.glBindTexture;
-import static org.lwjgl.opengl.GL11C.glGenTextures;
-import static org.lwjgl.opengl.GL11C.glTexImage2D;
-import static org.lwjgl.opengl.GL11C.glTexParameteri;
 import static org.lwjgl.opengl.GL30C.GL_R8;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
 import static org.lwjgl.stb.STBTruetype.stbtt_PackBegin;
@@ -49,7 +43,7 @@ public class Font {
   private static final int BITMAP_W = 512;
   private static final int BITMAP_H = 512;
 
-  private final int texture;
+  private final Texture texture;
   private final STBTTPackedchar.Buffer charData;
 
   private final STBTTAlignedQuad q = STBTTAlignedQuad.malloc();
@@ -60,7 +54,6 @@ public class Font {
   private final int font = 1;
 
   public Font(final Path font) throws IOException {
-    this.texture = glGenTextures();
     this.charData = STBTTPackedchar.malloc(6 * 128);
 
     try(final STBTTPackContext pc = STBTTPackContext.malloc()) {
@@ -90,14 +83,19 @@ public class Font {
       this.charData.clear();
       stbtt_PackEnd(pc);
 
-      glBindTexture(GL_TEXTURE_2D, this.texture);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, BITMAP_W, BITMAP_H, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      this.texture = Texture.create(builder -> {
+        builder.dataType(GL_UNSIGNED_BYTE);
+        builder.dataFormat(GL_RED);
+        builder.internalFormat(GL_R8);
+        builder.data(bitmap, BITMAP_W, BITMAP_H);
+        builder.magFilter(GL_LINEAR);
+        builder.minFilter(GL_LINEAR);
+      });
     }
   }
 
   public void free() {
+    this.texture.delete();
     this.charData.free();
     this.q.free();
     memFree(this.xb);
@@ -109,7 +107,7 @@ public class Font {
   }
 
   public void use() {
-    glBindTexture(GL_TEXTURE_2D, this.texture);
+    this.texture.use();
   }
 
   public Mesh buildTextQuads(final CharSequence text) {
