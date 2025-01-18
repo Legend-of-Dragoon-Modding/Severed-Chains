@@ -81,7 +81,11 @@ public class SaveCard extends Control {
         }
 
         //LAB_80108ba0
-        renderText(locationNames[this.saveData.locationIndex], x + 258, y + 47, UI_TEXT_CENTERED); // Location text
+        if(this.saveData.locationIndex < locationNames.length) {
+          renderText(locationNames[this.saveData.locationIndex], x + 258, y + 47, UI_TEXT_CENTERED);
+        } else {
+          renderText("Unknown location", x + 258, y + 47, UI_TEXT_CENTERED);
+        }
 
         final GameState52c state = this.saveData.state;
 

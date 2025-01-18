@@ -253,10 +253,14 @@ public final class GameEngine {
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     Input.init();
     GPU.init();
-    RENDERER.run();
 
-    RENDERER.delete();
-    Input.destroy();
+    try {
+      RENDERER.run();
+    } finally {
+      AUDIO_THREAD.destroy();
+      RENDERER.delete();
+      Input.destroy();
+    }
   }
 
   /** Returns missing mod IDs, if any */

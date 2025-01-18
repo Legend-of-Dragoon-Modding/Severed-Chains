@@ -100,12 +100,16 @@ public final class SaveManager {
       location = submapNames_8011c108[submapId_800bd808];
     }
 
+    return this.generateSaveName(existingSaves, location);
+  }
+
+  public String generateSaveName(final List<SavedGame> existingSaves, final String name) {
     int highestSaveNumber = 0;
 
     for(final SavedGame save : existingSaves) {
       final Matcher matcher = SAVE_NUMBER_PATTERN.matcher(save.saveName);
 
-      if(matcher.matches() && matcher.group(1).equals(location)) {
+      if(matcher.matches() && matcher.group(1).equals(name)) {
         final int saveNumber = Integer.parseInt(matcher.group(2));
 
         if(highestSaveNumber < saveNumber) {
@@ -114,7 +118,7 @@ public final class SaveManager {
       }
     }
 
-    return location + ' ' + (highestSaveNumber + 1);
+    return name + ' ' + (highestSaveNumber + 1);
   }
 
   /** Look for saves from before campaigns were a thing */
