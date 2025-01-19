@@ -16,6 +16,7 @@ import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineStateEnum;
+import legend.game.i18n.I18n;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.types.Translucency;
@@ -278,6 +279,9 @@ public final class Fmv {
 
   private static void setSkipText(final String text, final InputSource inputSource) {
     synchronized(skipTextLock) {
+      if(skipText != null) {
+        skipText.delete();
+      }
       skipText = font.text(stream -> stream.text(text));
     }
     currentInputSource = inputSource;
@@ -286,10 +290,10 @@ public final class Fmv {
 
   private static void handleSkipText() {
     if(isKeyboardInput) {
-      setSkipText("Press ENTER to skip", InputSource.KEYBOARD);
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard"), InputSource.KEYBOARD);
       isKeyboardInput = false;
     } else if(isControllerInput) {
-      setSkipText("Press Y/Triangle to skip", InputSource.CONTROLLER);
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller"), InputSource.CONTROLLER);
       isControllerInput = false;
     }
 
@@ -297,7 +301,10 @@ public final class Fmv {
       skipTextFramesRemained--;
       if(skipTextFramesRemained == 0) {
         synchronized(skipTextLock) {
-          skipText = null;
+          if(skipText != null) {
+            skipText.delete();
+            skipText = null;
+          }
         }
         currentInputSource = InputSource.NONE;
       }
@@ -312,7 +319,6 @@ public final class Fmv {
 
   private static void play(final String file, final boolean doubleSpeed) {
     font = FontManager.get("default");
-    skipText = null;
     shouldStop = false;
 
     final byte[] data = new byte[2352];
@@ -358,7 +364,7 @@ public final class Fmv {
       if(isValidSkipInput(InputSource.MOUSE)) {
         shouldStop = true;
       } else {
-        setSkipText("Click again to skip", InputSource.MOUSE);
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_mouse"), InputSource.MOUSE);
       }
     });
     onResize = RENDERER.events().onResize(Fmv::windowResize);
@@ -640,6 +646,7 @@ public final class Fmv {
       }
 
       if(skipText != null) {
+        skipText.delete();
         skipText = null;
       }
 
