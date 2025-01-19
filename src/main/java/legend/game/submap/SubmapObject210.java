@@ -30,9 +30,19 @@ public class SubmapObject210 {
 //  /** The total distance moved (.16) */
 //  public final Vector3f movementDistanceMoved12_160 = new Vector3f();
   public int collidedPrimitiveIndex_16c;
-  public int us_170;
-  public int s_172;
-  public int s_174;
+  /**
+   * Forced movement types
+   * <ul>
+   *   <li>0 - none</li>
+   *   <li>1 - linear</li>
+   *   <li>2 - non-linear</li>
+   * </ul>
+   */
+  public int movementType_170;
+  /** Forced movement geometry collision detection */
+  public int ignoreCollision_172;
+  /** Used to restore ignoreCollision_172 after scriptSobjAccelerateAlongArc */
+  public int ignoreCollisionMemory_174;
 
   public final Vector3f interpMovementStart = new Vector3f();
   public final Vector3f interpMovementDest = new Vector3f();

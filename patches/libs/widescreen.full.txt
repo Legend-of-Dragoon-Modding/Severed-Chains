@@ -35,7 +35,7 @@ data 0xffffffff
 
 ; Wait for flag to match a given value. Face sobj while waiting if provided.
 ; @param int WS_WAIT_FLAG - flags 1 bit
-; @param int WS_WAIT_FLAG_VALUE - match value
+; @param int WS_WAIT_FLAG_MATCH - match value
 ; @param int WS_WAIT_FLAG_SOBJ - sobj index
 WS_FLAG_WAIT:
 call Scus94491BpeSegment::scriptReadGlobalFlag1, inl[:WS_WAIT_FLAG], inl[:WS_WAIT_FLAG_STATUS]
