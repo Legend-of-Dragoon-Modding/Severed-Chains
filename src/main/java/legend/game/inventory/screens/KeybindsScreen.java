@@ -103,13 +103,13 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
     supportedMods.setPos(32, 6);
     supportedMods.setWidth(this.getWidth() - 64);
-    supportedMods.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    supportedMods.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     supportedMods.hide();
     this.addControl(supportedMods);
 
     help.setPos(32, 18);
     help.setWidth(this.getWidth() - 64);
-    help.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    help.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     help.hide();
     this.addControl(help);
 

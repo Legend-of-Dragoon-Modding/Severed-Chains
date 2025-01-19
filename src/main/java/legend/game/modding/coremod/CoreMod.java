@@ -32,6 +32,7 @@ import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEn
 import legend.game.modding.coremod.config.SubmapWidescreenModeConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.saves.BoolConfigEntry;
+import legend.game.saves.CampaignNameConfigEntry;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
@@ -138,6 +139,7 @@ public class CoreMod {
   }
 
   // Per-campaign config
+  public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
   public static final RegistryDelegate<InventorySizeConfigEntry> INVENTORY_SIZE_CONFIG = CONFIG_REGISTRAR.register("inventory_size", InventorySizeConfigEntry::new);

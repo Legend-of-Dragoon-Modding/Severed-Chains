@@ -23,17 +23,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_CENTERED;
+import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
+import static legend.game.SItem.UI_TEXT_SELECTED_CENTERED;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
-import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -42,6 +44,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -598,19 +601,19 @@ public class DabasScreen extends MenuScreen {
 
   private void renderDabasMenu(final int selectedSlot) {
     //LAB_801031cc
-    renderText(DigDabas_8011d04c, 48, 28, TextColour.BROWN);
-    renderText(AcquiredItems_8011d050, 210, 28, TextColour.BROWN);
-    renderText(SpecialItem_8011d054, 210, 170, TextColour.BROWN);
-    renderText(AcquiredGold_8011cdd4, 30, 124, TextColour.BROWN);
-    renderCentredText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? TextColour.RED : !this.hasItems && this.gold == 0 ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
-    renderCentredText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? TextColour.RED : !this.hasItems ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
-    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? TextColour.RED : !this.newDigEnabled ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
+    renderText(DigDabas_8011d04c, 48, 28, UI_TEXT);
+    renderText(AcquiredItems_8011d050, 210, 28, UI_TEXT);
+    renderText(SpecialItem_8011d054, 210, 170, UI_TEXT);
+    renderText(AcquiredGold_8011cdd4, 30, 124, UI_TEXT);
+    renderText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? UI_TEXT_SELECTED_CENTERED : !this.hasItems && this.gold == 0 ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
+    renderText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? UI_TEXT_SELECTED_CENTERED : !this.hasItems ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
+    renderText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? UI_TEXT_SELECTED_CENTERED : !this.newDigEnabled ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
     renderMenuItems(194, 37, this.menuItems, 0, 6, null, null);
     renderEightDigitNumber(100, 147, this.gold, 0x2);
 
     if(this.specialItem != null) {
       renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8);
-      renderText(I18n.translate(this.specialItem.getNameTranslationKey()), 214, 194, TextColour.BROWN);
+      renderText(I18n.translate(this.specialItem.getNameTranslationKey()), 214, 194, UI_TEXT);
     }
 
     //LAB_80103390
