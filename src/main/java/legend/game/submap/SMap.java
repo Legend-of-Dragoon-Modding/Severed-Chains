@@ -48,7 +48,6 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
-import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
@@ -57,16 +56,12 @@ import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
-import legend.lodmod.LodEquipment;
-import legend.lodmod.LodItems;
-import legend.lodmod.LodShops;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -3864,6 +3859,10 @@ public class SMap extends EngineState {
       case TRANSITION_TO_WORLD_MAP_18 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
+        if(this.isScriptLoaded(0)) {
+          this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
+        }
+
         submapFullyLoaded_800bd7b4 = false;
 
         if(this.mapTransitionTicks_800cab28 != 0 || fullScreenEffect_800bb140._24 == 0) {
@@ -5015,11 +5014,7 @@ public class SMap extends EngineState {
     this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
     this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
-    if(gameState_800babc8.indicatorsDisabled_4e3) {
-      return;
-    }
-
-    if(fullScreenEffect_800bb140.currentColour_28 != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_WORLD_MAP_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
       return;
     }
 

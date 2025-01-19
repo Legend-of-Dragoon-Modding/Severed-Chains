@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -10,14 +9,12 @@ import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
-import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
@@ -25,10 +22,13 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -50,7 +50,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
 
-    this.campaignList = this.addControl(new BigList<>(Campaign::filename));
+    this.campaignList = this.addControl(new BigList<>(c -> c.name));
     this.campaignList.setPos(16, 16);
     this.campaignList.setSize(360, 144);
     this.campaignList.onHighlight(campaign -> {
@@ -59,7 +59,7 @@ public class CampaignSelectionScreen extends MenuScreen {
         return;
       }
 
-      saveCard.setSaveData(campaign.latestSave());
+      saveCard.setSaveData(campaign.latestSave);
     });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);
@@ -73,7 +73,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     playMenuSound(2);
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
-    ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
+    campaign.loadConfigInto(CONFIG);
 
     final String[] modIds = CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get());
     final Set<String> missingMods;
@@ -125,8 +125,8 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText("Campaigns", 188, 10, TextColour.BROWN);
-    SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
+    renderText("Campaigns", 188, 10, UI_TEXT_CENTERED);
+    renderText("\u011f Delete", 297, 226, UI_TEXT);
   }
 
   private void menuDelete() {
@@ -136,7 +136,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this campaign?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteCampaign(this.campaignList.getSelected().filename());
+            this.campaignList.getSelected().delete();
             this.campaignList.removeEntry(this.campaignList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete campaign", e);

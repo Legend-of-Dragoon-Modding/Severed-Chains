@@ -6,11 +6,11 @@ import legend.core.gte.MV;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
-import legend.game.inventory.screens.TextColour;
 
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.SItem.renderText;
+import static legend.game.SItem.UI_TEXT;
 import static legend.game.Scus94491BpeSegment_8002.charWidth;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
@@ -82,7 +82,7 @@ public class Textbox extends Control {
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderText(this.text, x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+    renderText(this.text, x + 4, y + (this.getHeight() - 11) / 2 + 1, UI_TEXT);
     textZ_800bdf00 = oldZ;
 
     if(this.hasFocus()) {

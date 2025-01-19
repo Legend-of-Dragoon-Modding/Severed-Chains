@@ -1,5 +1,6 @@
 package legend.core;
 
+import com.github.slugify.Slugify;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.joml.Vector3f;
@@ -13,7 +14,11 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
@@ -21,6 +26,8 @@ import static org.lwjgl.system.MemoryUtil.memSlice;
 
 public final class IoHelper {
   private IoHelper() { }
+
+  private static final Slugify SLUG = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").build();
 
   public static boolean getPackedFlag(final int[] array, final int packed) {
     return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;
@@ -44,6 +51,24 @@ public final class IoHelper {
 
     buffer.flip();
     return memSlice(buffer);
+  }
+
+  public static String slugName(final String name) {
+    return SLUG.slugify(name);
+  }
+
+  public static Stream<Path> childrenSortedByDate(final Path path, final PathMatcher matcher) throws IOException {
+    return Files.list(path)
+      .filter(file -> !Files.isDirectory(file) && matcher.matches(file.getFileName()))
+      .sorted(Comparator.comparingLong(IoHelper::getModifiedTime).reversed());
+  }
+
+  public static long getModifiedTime(final Path path) {
+    try {
+      return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /** ASCII bytes of a string prefixed with lengthSize-byte length header */
