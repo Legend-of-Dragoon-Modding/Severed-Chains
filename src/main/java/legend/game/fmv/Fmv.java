@@ -11,10 +11,15 @@ import legend.core.opengl.ShaderManager;
 import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
+import legend.core.opengl.fonts.Font;
+import legend.core.opengl.fonts.FontManager;
+import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineStateEnum;
+import legend.game.i18n.I18n;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
+import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -41,12 +46,21 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glDisable;
+import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glViewport;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 public final class Fmv {
   private Fmv() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
+
+  private enum InputSource {
+    KEYBOARD,
+    CONTROLLER,
+    MOUSE,
+    NONE
+  }
 
   private static final int[] _80052d6c = {0, 4, 7, 15};
   private static final String[][] diskFmvs_80052d7c = {
@@ -216,8 +230,9 @@ public final class Fmv {
 
   private static GenericSource source;
 
-  private static Window.Events.Char charPress;
+  private static Window.Events.Key keyPress;
   private static Window.Events.Click click;
+  private static Window.Events.OnPressedThisFrame pressedThisFrame;
   private static Window.Events.Resize onResize;
   private static boolean shouldStop;
 
@@ -232,6 +247,14 @@ public final class Fmv {
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
 
+  private static InputSource currentInputSource = InputSource.NONE;
+  private static final Object skipTextLock = new Object();
+  private static int skipTextFramesRemained;
+  private static Font font;
+  private static TextStream skipText;
+  private static boolean isKeyboardInput;
+  private static boolean isControllerInput;
+
   public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
     sssqResetStuff();
 
@@ -244,7 +267,58 @@ public final class Fmv {
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 
+  private static void displaySkipText() {
+    if(skipText != null) {
+      glEnable(GL_BLEND);
+      Translucency.HALF_B_PLUS_HALF_F.setGlState();
+      skipText.setColour(1.0f, 1.0f, 1.0f);
+      skipText.draw(10, 10, 0.5f, 0.5f);
+      glDisable(GL_BLEND);
+    }
+  }
+
+  private static void setSkipText(final String text, final InputSource inputSource) {
+    synchronized(skipTextLock) {
+      if(skipText != null) {
+        skipText.delete();
+      }
+      skipText = font.text(stream -> stream.text(text));
+    }
+    currentInputSource = inputSource;
+    skipTextFramesRemained = 60;
+  }
+
+  private static void handleSkipText() {
+    if(isKeyboardInput) {
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard"), InputSource.KEYBOARD);
+      isKeyboardInput = false;
+    } else if(isControllerInput) {
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller"), InputSource.CONTROLLER);
+      isControllerInput = false;
+    }
+
+    if(skipTextFramesRemained > 0) {
+      skipTextFramesRemained--;
+      if(skipTextFramesRemained == 0) {
+        synchronized(skipTextLock) {
+          if(skipText != null) {
+            skipText.delete();
+            skipText = null;
+          }
+        }
+        currentInputSource = InputSource.NONE;
+      }
+    }
+  }
+
+  private static boolean isValidSkipInput(final InputSource source) {
+    synchronized(skipTextLock) {
+      return skipText != null && currentInputSource == source;
+    }
+  }
+
   private static void play(final String file, final boolean doubleSpeed) {
+    font = FontManager.get("default");
     shouldStop = false;
 
     final byte[] data = new byte[2352];
@@ -274,17 +348,32 @@ public final class Fmv {
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
 
-    charPress = RENDERER.events().onCharPress((window, codepoint) -> shouldStop = true);
-    click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
+    keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_ENTER && isValidSkipInput(InputSource.KEYBOARD)) {
+        shouldStop = true;
+      } else {
+        isKeyboardInput = true;
+      }
+    });
+    pressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> {
+      if(!isKeyboardInput && !shouldStop) {
+        isControllerInput = true;
+      }
+    });
+    click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
+      if(isValidSkipInput(InputSource.MOUSE)) {
+        shouldStop = true;
+      } else {
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_mouse"), InputSource.MOUSE);
+      }
+    });
     onResize = RENDERER.events().onResize(Fmv::windowResize);
     windowResize(RENDERER.window(), RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
     RENDERER.usePs1Gpu = false;
 
     oldRenderer = RENDERER.setRenderCallback(() -> {
-      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
-        || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
-        || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+      if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && isValidSkipInput(InputSource.CONTROLLER)) {
         shouldStop = true;
       }
 
@@ -514,7 +603,8 @@ public final class Fmv {
           stopRumble(0);
         }
       }
-
+      handleSkipText();
+      displaySkipText();
       frame++;
     });
   }
@@ -531,9 +621,9 @@ public final class Fmv {
         displayTexture = null;
       }
 
-      if(charPress != null) {
-        RENDERER.events().removeCharPress(charPress);
-        charPress = null;
+      if(keyPress != null) {
+        RENDERER.events().removeKeyPress(keyPress);
+        keyPress = null;
       }
 
       if(click != null) {
@@ -541,9 +631,23 @@ public final class Fmv {
         click = null;
       }
 
+      if(pressedThisFrame != null) {
+        RENDERER.events().removePressedThisFrame(pressedThisFrame);
+        pressedThisFrame = null;
+      }
+
       if(onResize != null) {
         RENDERER.events().removeOnResize(onResize);
         onResize = null;
+      }
+
+      if(font != null) {
+        font = null;
+      }
+
+      if(skipText != null) {
+        skipText.delete();
+        skipText = null;
       }
 
       RENDERER.usePs1Gpu = true;

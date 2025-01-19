@@ -57,6 +57,11 @@ lod_core.config.music_effects_over_time_granularity.Retail = Retail
 lod_core.config.music_effects_over_time_granularity.Finer = Finer
 lod_core.config.music_effects_over_time_granularity.Finest = Finest
 
+# FMV config
+lod_core.config.fmv.skip_keyboard = Press ENTER to skip
+lod_core.config.fmv.skip_controller = Press Y/Triangle to skip
+lod_core.config.fmv.skip_mouse = Click again to skip
+
 # Campaign config
 lod_core.config.indicator_mode.label=Indicator Mode
 lod_core.config.indicator_mode.OFF=Off
