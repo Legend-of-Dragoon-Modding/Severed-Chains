@@ -1,0 +1,57 @@
+Widescreen patch
+Forest, intro escape cutscene
+Feyrbrand
+Old: Feyrbrand's model disappears after about a 90 degree rotation.
+New: Feyrbrand continues to rotate and walk off screen
+--- original
++++ modified
+@@ -163,15 +163,17 @@
+ mov 0x3c, stor[8]
+ wait stor[8]
+ call 99, 0x1
+# Extended travel distance
+-mov 0x1f4, stor[24]
++mov 0x3e8, stor[24]
+ mov 0xd2, stor[25]
+-mov 0xc8, stor[26]
++mov 0xa8, stor[26]
+ mov 0x5, stor[27]
+ mov 0xffffffff, stor[28]
+ gosub inl[:LABEL_2]
+# Different rotation
+-mov 0x0, stor[24]
+-mov 0x28, stor[25]
+-gosub inl[:LABEL_7]
++mov 0x320, inl[:WS_TARGET_X]
++mov 0xa8, inl[:WS_TARGET_Z]
++mov 0x50, inl[:WS_FRAMES]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
+ mov 0x3, stor[8]
+ wait stor[8]
+ call 2, 0x11, 0x1
+@@ -184,7 +186,8 @@
+ mov 0x2, stor[8]
+ wait stor[8]
+ call 236, 0x8, 0xf, 0x0, 0x0, 0x0, 0x0
+# Instead of hiding, activate walking animation
+-call 106, 0x1
++call 99, 0
++call 97, 1
+ mov 0x1c, stor[8]
+ wait stor[8]
+ call 2, 0x11, 0x1
+@@ -219,10 +222,12 @@
+ call 236, 0x8, 0x12, 0x0, 0x0, 0x0, 0x0
+ wait stor[8]
+ call 2, 0x1c, 0x1
+# Hide after final sound effect
++call 106, 1
+ mov 0x5, stor[24]
+ gosub inl[:LABEL_1]
+ call 230, 0x46, 0x0
+ rewind
++#include ../../../../patches/libs/widescreen.txt
+ LABEL_17:
+ call 97, 0x2
+ mov 0x208, stor[24]
