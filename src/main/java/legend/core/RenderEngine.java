@@ -163,9 +163,10 @@ public class RenderEngine {
       final Shader<ShaderOptionsStandard>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
       final Shader<ShaderOptionsStandard>.UniformVec2 clutOverride = shader.new UniformVec2("clutOverride");
       final Shader<ShaderOptionsStandard>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
-      final Shader<ShaderOptionsStandard>.UniformFloat translucency = shader.new UniformFloat("translucency");
       final Shader<ShaderOptionsStandard>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
-      return () -> new ShaderOptionsStandard(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, translucency);
+      final Shader<ShaderOptionsStandard>.UniformFloat translucency = shader.new UniformFloat("translucency");
+      final Shader<ShaderOptionsStandard>.UniformFloat alpha = shader.new UniformFloat("alpha");
+      return () -> new ShaderOptionsStandard(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, translucency, alpha);
     }
   );
 
@@ -836,6 +837,11 @@ public class RenderEngine {
         if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_QUARTER_F);
+        }
+
+        if(entry.shouldRender(Translucency.ALPHA)) {
+          Translucency.HALF_B_PLUS_HALF_F.setGlState();
+          entry.render(Translucency.ALPHA);
         }
       }
     }

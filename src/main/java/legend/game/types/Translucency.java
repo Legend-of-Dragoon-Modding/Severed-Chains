@@ -19,23 +19,11 @@ public enum Translucency {
   B_MINUS_F,
   /** 1.0 x background + 0.25 x foreground */
   B_PLUS_QUARTER_F,
-  /** 1.0 x background + 0.0 x foreground */
-  FULL_BACKGROUND,
-  /** 0.75 x background + 1.0 x foreground */
-  TQUATER_B_FOREGROUND,
-  /** 0.50 x background + 1.0 x foreground */
-  HALF_B_FOREGROUND,
-  /** 0.25 x background + 1.0 x foreground */
-  QUARTER_B_FOREGROUND,
-  /** 0.0 x background + 1.0 x foreground */
-  FULL_FOREGROUND,
-  /** 0.25 x background + 0.25 x foreground */
-  QUARTER_B_QUARTER_F,
-  /** 0.75 x background + 0.75 x foreground */
-  TQUARTER_B_TQUARTER_F,
+  /** True alpha, only supported in standard shader and not supported at all in legacy renderer */
+  ALPHA,
   ;
 
-  public static final Translucency[] FOR_RENDERING = {HALF_B_PLUS_HALF_F, B_PLUS_F, B_MINUS_F};
+  public static final Translucency[] FOR_RENDERING = {HALF_B_PLUS_HALF_F, B_PLUS_F, B_MINUS_F, B_PLUS_QUARTER_F, ALPHA};
   public static final Translucency[] ORDER_DEPENDENT = {HALF_B_PLUS_HALF_F};
 
   /** NOTE: returns null if value is -1 */
@@ -50,7 +38,7 @@ public enum Translucency {
 
   public void setGlState() {
     switch(this) {
-      case HALF_B_PLUS_HALF_F -> {
+      case HALF_B_PLUS_HALF_F, ALPHA -> {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       }
