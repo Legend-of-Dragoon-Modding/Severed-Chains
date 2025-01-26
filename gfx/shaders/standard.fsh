@@ -26,6 +26,7 @@ uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float translucency;
 uniform float discardTranslucency;
+uniform float alpha;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -88,5 +89,10 @@ void main() {
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;
+  }
+
+  // True alpha
+  if(translucencyMode == 5) {
+    outColour.a = alpha;
   }
 }
