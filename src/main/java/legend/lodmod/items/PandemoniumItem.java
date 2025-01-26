@@ -8,6 +8,8 @@ public class PandemoniumItem extends BattleItem {
     super(0x2d, 200);
   }
 
+  public PandemoniumItem(final int icon, final int price) { super(icon, price); }
+
   @Override
   public boolean isRepeat() {
     return true;

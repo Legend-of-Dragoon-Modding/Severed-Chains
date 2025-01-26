@@ -13,8 +13,8 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 public class RecoverStatusItem extends BattleItem {
   private final int status;
 
-  public RecoverStatusItem(final int price, final int status) {
-    super(37, price);
+  public RecoverStatusItem(final int icon, final int price, final int status) {
+    super(icon, price);
     this.status = status;
   }
 

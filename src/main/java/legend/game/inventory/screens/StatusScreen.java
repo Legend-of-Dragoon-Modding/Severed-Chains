@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.game.input.InputAction;
-
+import legend.game.modding.coremod.CoreMod;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateUiElement;
@@ -14,7 +14,6 @@ import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.SItem.spellMp_80114290;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
@@ -110,18 +109,18 @@ public class StatusScreen extends MenuScreen {
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
-      for(int i = 0; i < 4; i++) {
-        if(allocate && i < unlockedSpellCount) {
-          renderCharacter(200, 127 + i * 14, i + 1);
-        }
+      for(int i = 0; i < unlockedSpellCount; i++) {
+        renderCharacter(200, 127 + i * 14, i + 1);
+      }
 
+      for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
         //LAB_80109370
         final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
           renderText(spellStats_800fa0b8[spellIndex].name, 210, 125 + i * 14, UI_TEXT);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
+            renderThreeDigitNumber(342, 128 + i * 14, spellStats_800fa0b8[spellIndex].mp_06);
           }
         }
       }

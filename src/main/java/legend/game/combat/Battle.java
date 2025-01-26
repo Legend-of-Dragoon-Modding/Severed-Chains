@@ -97,11 +97,14 @@ import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.AttackSpGainEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SetBentStatEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -972,6 +975,8 @@ public class Battle extends EngineState {
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
 
+    functions[899] = this::scriptArcherSp;
+
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
     functions[1002] = this::scriptRemoveStatMod;
@@ -984,6 +989,26 @@ public class Battle extends EngineState {
 
     functions[1020] = this::scriptSetCombatantVramSlot;
     return functions;
+  }
+
+  @ScriptDescription("Set Archer SP")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "dlv", description = "Battle entity dlv")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "sp", description = "Battle entity sp to give")
+  private FlowControl scriptArcherSp(final RunningScript<?> script) {
+    final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
+    final int dlv = script.params_20[1].get();
+    final int sp;
+    switch(dlv) {
+      case 1 -> sp = 35;
+      case 2 -> sp = 50;
+      case 3 -> sp = 70;
+      case 4 -> sp = 100;
+      case 5 -> sp = 150;
+      default -> sp = 0;
+    }
+    script.params_20[2].set(EVENTS.postEvent(new AttackSpGainEvent(player, sp)).sp);
+    return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Check if a stat modifier is present on a battle entity stat")
@@ -3538,10 +3563,11 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
+    final SetBentStatEvent event = EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].get()));
 
     switch(stat) {
       case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
-      default -> bent.setStat(stat, script.params_20[1].get());
+      default -> bent.setStat(stat, event.value);
     }
 
     return FlowControl.CONTINUE;
@@ -5922,7 +5948,7 @@ public class Battle extends EngineState {
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
-    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
+    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index >= 84 ? 0 : index] << 16;
     this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
     if((deffManager_800c693c.flags_20 & 0x4_0000) != 0) {
@@ -5941,6 +5967,8 @@ public class Battle extends EngineState {
       Unpacker.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
       Unpacker.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
+
+    EVENTS.postEvent(new DragoonDeffEvent((4139 + index * 2)));
   }
 
   @Method(0x800e6844L)

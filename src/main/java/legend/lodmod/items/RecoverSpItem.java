@@ -11,8 +11,8 @@ public class RecoverSpItem extends Item {
   private final boolean targetAll;
   private final int percentage;
 
-  public RecoverSpItem(final int price, final boolean targetAll, final int percentage) {
-    super(35, price);
+  public RecoverSpItem(final int icon, final int price, final boolean targetAll, final int percentage) {
+    super(icon, price);
     this.targetAll = targetAll;
     this.percentage = percentage;
   }
