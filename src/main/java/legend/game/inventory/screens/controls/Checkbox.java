@@ -9,6 +9,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 
 import java.nio.file.Path;
@@ -23,7 +24,7 @@ public class Checkbox extends Control {
   private final Texture uncheckedTexture;
   private final Texture checkedTexture;
 
-  private Label.HorizontalAlign horizontalAlign = Label.HorizontalAlign.CENTRE;
+  private HorizontalAlign horizontalAlign = HorizontalAlign.CENTRE;
   private Label.VerticalAlign verticalAlign = Label.VerticalAlign.CENTRE;
   private boolean checked;
 
@@ -40,11 +41,11 @@ public class Checkbox extends Control {
     this.setSize(14, 14);
   }
 
-  public void setHorizontalAlign(final Label.HorizontalAlign horizontalAlign) {
+  public void setHorizontalAlign(final HorizontalAlign horizontalAlign) {
     this.horizontalAlign = horizontalAlign;
   }
 
-  public Label.HorizontalAlign getHorizontalAlign() {
+  public HorizontalAlign getHorizontalAlign() {
     return this.horizontalAlign;
   }
 

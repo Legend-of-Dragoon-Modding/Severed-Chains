@@ -13,16 +13,12 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
-import legend.game.modding.events.inventory.ShopTypeEvent;
-import legend.game.modding.events.screen.EquipDescriptionEvent;
-import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
-import legend.game.modding.events.screen.ItemDescriptionEvent;
-import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.ShopStruct40;
+import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -33,7 +29,12 @@ import java.util.Objects;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_CENTERED;
+import static legend.game.SItem.UI_TEXT_DISABLED;
+import static legend.game.SItem.UI_TEXT_SELECTED_CENTERED;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -45,13 +46,11 @@ import static legend.game.SItem.glyphs_80114510;
 import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderFiveDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderString;
-import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
@@ -62,6 +61,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -72,7 +72,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.submap.SMap.shops_800f4930;
 
 public class ShopScreen extends MenuScreen {
   private static final String Not_enough_money_8011c468 = "Not enough\nmoney";
@@ -136,16 +135,15 @@ public class ShopScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         startFadeEffect(2, 10);
 
-        final ShopStruct40 shop = shops_800f4930[shopId_8007a3b4];
-        final ShopTypeEvent shopTypeEvent = EVENTS.postEvent(new ShopTypeEvent(shops_800f4930[shopId_8007a3b4].shopType_00 & 1, shopId_8007a3b4));
-        this.shopType = shopTypeEvent.shopType;
+        final ShopStruct40 shop = REGISTRIES.shop.getEntry(LodMod.id(LodMod.SHOP_IDS[shopId_8007a3b4])).get();
+        this.shopType = shop.shopType_00 & 1;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < shop.items_00.length; i++) {
-            final Equipment equipment = (Equipment)shop.items_00[i].get();
-            shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2, EVENTS.postEvent(new EquipMenuEntryIconEvent(equipment)).icon));
+          for(int i = 0; i < shop.getItemCount(); i++) {
+            final Equipment equipment = (Equipment)shop.getItem(i);
+            shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2));
           }
 
           final ShopEquipmentEvent event = EVENTS.postEvent(new ShopEquipmentEvent(shopId_8007a3b4, shopEntries));
@@ -153,9 +151,9 @@ public class ShopScreen extends MenuScreen {
         } else {
           final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
 
-          for(int i = 0; i < shop.items_00.length; i++) {
-            final Item item = (Item)shop.items_00[i].get();
-            shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon));
+          for(int i = 0; i < shop.getItemCount(); i++) {
+            final Item item = (Item)shop.getItem(i);
+            shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
           }
 
           final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4, shopEntries));
@@ -188,11 +186,11 @@ public class ShopScreen extends MenuScreen {
 
         if(this.shopType == 0) {
           this.renderEquipmentStatChange((Equipment)entry.item, characterIndices_800bdbb8[this.equipCharIndex]);
-          renderString(16, 122, EVENTS.postEvent(new EquipDescriptionEvent((Equipment)entry.item, I18n.translate(entry.item.getDescriptionTranslationKey()))).description, false);
         } else {
           this.renderNumberOfItems((Item)entry.item);
-          renderString(16, 122, EVENTS.postEvent(new ItemDescriptionEvent((Item)entry.item, I18n.translate(entry.item.getDescriptionTranslationKey()))).description, false);
         }
+
+        renderString(16, 122, I18n.translate(entry.item.getDescriptionTranslationKey()), false);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -217,7 +215,7 @@ public class ShopScreen extends MenuScreen {
       case BUY_SELECT_CHAR_5 -> {
         final ShopEntry<? extends InventoryEntry> equipment = this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
         this.renderEquipmentStatChange((Equipment)equipment.item, characterIndices_800bdbb8[this.equipCharIndex]);
-        renderString(16, 122, EVENTS.postEvent(new EquipDescriptionEvent((Equipment)equipment.item, I18n.translate(equipment.item.getDescriptionTranslationKey()))).description, false);
+        renderString(16, 122, I18n.translate(equipment.item.getDescriptionTranslationKey()), false);
         this.renderMenuEntries(this.inv, this.menuScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
         this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
       }
@@ -225,20 +223,18 @@ public class ShopScreen extends MenuScreen {
       case SELL_10 -> {
         final int count;
         if(this.shopType2 != 0) {
-          renderText(Which_item_do_you_want_to_sell_8011c4e4, 16, 128, TextColour.BROWN);
+          renderText(Which_item_do_you_want_to_sell_8011c4e4, 16, 128, UI_TEXT);
           count = gameState_800babc8.items_2e9.size();
 
           if(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0 < count) {
-            final Item item = gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
-            renderString(193, 122, EVENTS.postEvent(new ItemDescriptionEvent(item, I18n.translate(item.getDescriptionTranslationKey()))).description, false);
+            renderString(193, 122, I18n.translate(gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).getDescriptionTranslationKey()), false);
           }
         } else {
-          renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, TextColour.BROWN);
+          renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, UI_TEXT);
           count = gameState_800babc8.equipment_1e8.size();
 
           if(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0 < count) {
-            final Equipment equip = gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
-            renderString(193, 122, EVENTS.postEvent(new EquipDescriptionEvent(equip, I18n.translate(equip.getDescriptionTranslationKey()))).description, false);
+            renderString(193, 122, I18n.translate(gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).getDescriptionTranslationKey()), false);
           }
         }
 
@@ -322,10 +318,10 @@ public class ShopScreen extends MenuScreen {
   }
 
   private void renderShopMenu(final int selectedMenuItem, final int isItemMenu) {
-    renderCentredText(Buy_8011c6a4, 72, this.getShopMenuYOffset(0) + 2, selectedMenuItem != 0 ? TextColour.BROWN : TextColour.RED);
-    renderCentredText(Sell_8011c6ac, 72, this.getShopMenuYOffset(1) + 2, selectedMenuItem != 1 ? TextColour.BROWN : TextColour.RED);
-    renderCentredText(Carried_8011c6b8, 72, this.getShopMenuYOffset(2) + 2, selectedMenuItem != 2 ? TextColour.BROWN : TextColour.RED);
-    renderCentredText(Leave_8011c6c8, 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? TextColour.BROWN : TextColour.RED);
+    renderText(Buy_8011c6a4, 72, this.getShopMenuYOffset(0) + 2, selectedMenuItem != 0 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
+    renderText(Sell_8011c6ac, 72, this.getShopMenuYOffset(1) + 2, selectedMenuItem != 1 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
+    renderText(Carried_8011c6b8, 72, this.getShopMenuYOffset(2) + 2, selectedMenuItem != 2 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
+    renderText(Leave_8011c6c8, 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
 
     if(isItemMenu != 0) {
       renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
@@ -366,7 +362,7 @@ public class ShopScreen extends MenuScreen {
         renderThreeDigitNumberComparison(284, 147, oldStats.equipmentMagicAttack_8a, newStats.equipmentMagicAttack_8a);
         renderThreeDigitNumberComparison(284, 157, oldStats.equipmentMagicDefence_8e, newStats.equipmentMagicDefence_8e);
       } else {
-        renderText(Cannot_be_armed_with_8011c6d4, 228, 137, TextColour.BROWN);
+        renderText(Cannot_be_armed_with_8011c6d4, 228, 137, UI_TEXT);
       }
 
       gameState_800babc8.charData_32c[charIndex].equipment_14.clear();
@@ -383,7 +379,7 @@ public class ShopScreen extends MenuScreen {
         count++;
       }
     }
-    renderText(Number_kept_8011c7f4 + count, 195, 125, TextColour.BROWN);
+    renderText(Number_kept_8011c7f4 + count, 195, 125, UI_TEXT);
   }
 
   private void renderItemList(final int firstItem, final int isItemMenu, final Renderable58 upArrow, final Renderable58 downArrow) {
@@ -392,7 +388,7 @@ public class ShopScreen extends MenuScreen {
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
         final Item item = gameState_800babc8.items_2e9.get(firstItem + i);
         renderItemIcon(item.getIcon(), 151, this.menuEntryY(i), 0x8);
-        renderText(I18n.translate(item), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
+        renderText(I18n.translate(item), 168, this.menuEntryY(i) + 2, UI_TEXT);
 
         final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, item, item.getPrice()));
         this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
@@ -404,7 +400,7 @@ public class ShopScreen extends MenuScreen {
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
         renderItemIcon(equipment.icon_0e, 151, this.menuEntryY(i), 0x8);
-        renderText(I18n.translate(equipment), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+        renderText(I18n.translate(equipment), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? UI_TEXT : UI_TEXT_DISABLED);
 
         if(equipment.canBeDiscarded()) {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getPrice()));
@@ -424,9 +420,9 @@ public class ShopScreen extends MenuScreen {
     int i;
     for(i = 0; i < Math.min(6, list.size() - startItemIndex); i++) {
       final ShopEntry<? extends InventoryEntry> item = list.get(startItemIndex + i);
-      renderText(I18n.translate(item.item.getNameTranslationKey()), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
+      renderText(I18n.translate(item.item.getNameTranslationKey()), 168, this.menuEntryY(i) + 2, UI_TEXT);
       renderFiveDigitNumber(324, this.menuEntryY(i) + 4, item.price);
-      renderItemIcon(item.icon, 151, this.menuEntryY(i), 0x8);
+      renderItemIcon(item.item.getIcon(), 151, this.menuEntryY(i), 0x8);
     }
 
     upArrow.setVisible(startItemIndex != 0);
@@ -1284,12 +1280,10 @@ public class ShopScreen extends MenuScreen {
   public static class ShopEntry<T extends InventoryEntry> {
     public final T item;
     public final int price;
-    public final int icon;
 
-    public ShopEntry(final T item, final int price, final int icon) {
+    public ShopEntry(final T item, final int price) {
       this.item = item;
       this.price = price;
-      this.icon = icon;
     }
   }
 

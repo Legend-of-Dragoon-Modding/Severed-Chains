@@ -26,6 +26,7 @@ uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float translucency;
 uniform float discardTranslucency;
+uniform float alpha;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -56,6 +57,9 @@ void main() {
 
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
+    } else if(vertBpp == 2) {
+      ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
+      texColour = texelFetch(tex24, ivec2(uv.x, uv.y), 0);
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }
@@ -85,5 +89,10 @@ void main() {
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;
+  }
+
+  // True alpha
+  if(translucencyMode == 5) {
+    outColour.a = alpha;
   }
 }

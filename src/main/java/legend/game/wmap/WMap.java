@@ -22,6 +22,8 @@ import legend.game.EngineStateEnum;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
@@ -47,7 +49,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -82,7 +83,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.setTextAndTextboxesToUninitialized;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -202,7 +202,7 @@ public class WMap extends EngineState {
     SET_DEST_9,
   }
 
-  private static final Pattern NEWLINE = Pattern.compile("\\n");
+  private static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
 
   private boolean reinitializingWmap_80052c6c;
 
@@ -439,19 +439,19 @@ public class WMap extends EngineState {
           for(int i = 0; i < 8; i++) {
             if(this.startLabelNames[i] != null) {
               textZ_800bdf00 = textboxes_800be358[i].z_0c - 1;
-              this.renderCenteredShadowedText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], TextColour.WHITE, 0);
+              renderText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], UI_WHITE_SHADOWED);
             }
           }
         }
 
         if(this.destLabelName != null) {
           textZ_800bdf00 = textboxes_800be358[7].z_0c - 1;
-          this.renderCenteredShadowedText(this.destLabelName, this.destLabelX, this.destLabelY, TextColour.WHITE, 0);
+          renderText(this.destLabelName, this.destLabelX, this.destLabelY, UI_WHITE_SHADOWED);
         }
 
         if(this.coolonWarpDestLabelName != null && this.destinationLabelStage_800c86f0 != 0) {
           textZ_800bdf00 = textboxes_800be358[7].z_0c - 1;
-          this.renderCenteredShadowedText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, TextColour.WHITE, 0);
+          renderText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, UI_WHITE_SHADOWED);
         }
 
         this.handleMapTransitions();
@@ -2940,9 +2940,12 @@ public class WMap extends EngineState {
       final float sin2 = MathHelper.sin((i + 1 & 0x7) * shadowAngleDelta);
       final float cos2 = MathHelper.cosFromSin(sin2, (i + 1 & 0x7) * shadowAngleDelta);
 
-      shadowBuilder.addVertex(0.0f, 0.0f, 0.0f).monochrome(0.5f);
-      shadowBuilder.addVertex(cos1 * 32.0f, 0.0f, sin1 * 32.0f);
-      shadowBuilder.addVertex(cos2 * 32.0f, 0.0f, sin2 * 32.0f);
+      shadowBuilder
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .monochrome(0.5f)
+        .addVertex(cos1 * 32.0f, 0.0f, sin1 * 32.0f)
+        .monochrome(0.0f)
+        .addVertex(cos2 * 32.0f, 0.0f, sin2 * 32.0f);
     }
 
     modelAndAnimData.shadowObj = shadowBuilder.build();
@@ -4449,18 +4452,6 @@ public class WMap extends EngineState {
 
     widthRef.set(longestLineWidth);
     linesRef.set(lines.length);
-  }
-
-  @Method(0x800e774cL)
-  private void renderCenteredShadowedText(final String text, final float x, final float y, final TextColour colour, final int trim) {
-    final String[] lines = NEWLINE.split(text);
-
-    for(int i = 0; i < lines.length; i++) {
-      final String line = lines[i];
-      final int textWidth = textWidth(line);
-      renderText(line, x - textWidth / 2.0f, y + i * 12, colour, trim);
-      renderText(line, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);
-    }
   }
 
   @Method(0x800e78c0L)

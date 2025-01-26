@@ -5,12 +5,12 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MenuScreen;
-import legend.game.inventory.screens.TextColour;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.SItem.renderText;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Dropdown extends Control {
@@ -80,6 +80,11 @@ public class Dropdown extends Control {
   }
 
   public void setSelectedIndex(final int index) {
+    if(index < 0 || index >= this.options.size()) {
+      this.selectedIndex = -1;
+      return;
+    }
+
     this.selectedIndex = index;
   }
 
@@ -123,6 +128,12 @@ public class Dropdown extends Control {
   }
 
   private void hover(final int index) {
+    if(index == -1) {
+      this.highlight.hide();
+    } else {
+      this.highlight.show();
+    }
+
     this.hoverIndex = index;
     this.highlight.setY(8 + index * 16);
   }
@@ -151,10 +162,10 @@ public class Dropdown extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    if(!this.options.isEmpty()) {
+    if(this.selectedIndex != -1) {
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
-      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, UI_TEXT);
       textZ_800bdf00 = oldZ;
     }
   }
@@ -191,7 +202,7 @@ public class Dropdown extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
+        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, UI_TEXT);
       }
 
       textZ_800bdf00 = oldZ;

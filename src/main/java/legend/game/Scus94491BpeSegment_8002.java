@@ -21,6 +21,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
@@ -108,7 +109,6 @@ import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
@@ -1490,6 +1490,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002437cL)
   public static void deallocateRenderables(final int a0) {
+    // Clear out UI render queue
+    renderables.clear();
+
     Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {
@@ -3366,54 +3369,71 @@ public final class Scus94491BpeSegment_8002 {
 
   private static final MV textTransforms = new MV();
 
-  /**
-   * @param trim Negative trims top, positive trims bottom
-   */
   @Method(0x80029300L)
-  public static void renderText(final String text, final float x, float y, final TextColour colour, int trim) {
-    trim = MathHelper.clamp(trim, -12, 12);
+  public static void renderText(final String text, final float originX, final float originY, final FontOptions options) {
+    float x = switch(options.getHorizontalAlign()) {
+      case LEFT -> originX;
+      case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
+      case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
+    };
 
-    int glyphNudge = 0;
+    final float height = 12.0f * options.getSize();
+    final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
 
-    for(int i = 0; i < text.length(); i++) {
-      final char c = text.charAt(i);
+    float y = originY;
+    float glyphNudge = 0.0f;
+
+    textTransforms.scaling(options.getSize());
+
+    for(int charIndex = 0; charIndex < text.length(); charIndex++) {
+      final char c = text.charAt(charIndex);
 
       if(c != ' ') {
         if(c == '\n') {
-          glyphNudge = 0;
-          y += 12;
+          x = switch(options.getHorizontalAlign()) {
+            case LEFT -> originX;
+            case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
+            case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
+          };
+
+          glyphNudge = 0.0f;
+          y += height;
         } else {
-          textTransforms.transfer.set(x + glyphNudge, y, textZ_800bdf00 * 4.0f);
+          for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+            final float offsetX = (i & 1) * options.getSize();
+            final float offsetY = (i >>> 1) * options.getSize();
 
-          if(trim < 0) {
-            textTransforms.transfer.y += trim;
-          }
+            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f);
 
-          final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
-            .texture(RENDERER.textTexture)
-            .vertices((c - 33) * 4, 4)
-            .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
 
-          if(trim != 0) {
             if(trim < 0) {
-              model.scissor(0, (int)y, displayWidth_1f8003e0, 12 + trim);
+              textTransforms.transfer.y += trim;
+            }
+
+            final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
+              .texture(RENDERER.textTexture)
+              .vertices((c - 33) * 4, 4)
+            ;
+
+            if(i == 0) {
+              model.colour(options.getRed(), options.getGreen(), options.getBlue());
             } else {
-              model.scissor(0, (int)y - trim, displayWidth_1f8003e0, 12);
+              model.colour(options.getShadowRed(), options.getShadowGreen(), options.getShadowBlue());
+            }
+
+            if(trim != 0) {
+              if(trim < 0) {
+                model.scissor(0, (int)y, displayWidth_1f8003e0, (int)(height + trim));
+              } else {
+                model.scissor(0, (int)(y - trim), displayWidth_1f8003e0, (int)height);
+              }
             }
           }
         }
       }
 
-      glyphNudge += charWidth(c);
+      glyphNudge += charWidth(c) * options.getSize();
     }
-  }
-
-  public static void renderCentredText(final String text, final float x, final float y, final TextColour colour, final int trim) {
-    renderText(text, x - textWidth(text) / 2.0f, y, colour, trim);
-  }
-
-  public static void renderRightText(final String text, final float x, final float y, final TextColour colour, final int trim) {
-    renderText(text, x - textWidth(text), y, colour, trim);
   }
 
   @Method(0x80029920L)
@@ -3619,9 +3639,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a0e4L)
   public static void renderTextboxes() {
-    final int oldZOffset = zOffset_1f8003e8;
-    zOffset_1f8003e8 = 0;
-
     for(int i = 0; i < 8; i++) {
       //LAB_8002a10c
       final Textbox4c textbox4c = textboxes_800be358[i];
@@ -3639,8 +3656,6 @@ public final class Scus94491BpeSegment_8002 {
         renderTextboxOverlays(i);
       }
     }
-
-    zOffset_1f8003e8 = oldZOffset;
   }
 
   private static void renderTextboxOverlays(final int textboxIndex) {
@@ -3777,10 +3792,6 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a59cL)
-  public static int textWidth(final LodString text) {
-    return textWidth(text.get());
-  }
-
   public static int textWidth(final String text) {
     int width = 0;
     int currentWidth = 0;
@@ -3794,6 +3805,19 @@ public final class Scus94491BpeSegment_8002 {
       if(currentWidth > width) {
         width = currentWidth;
       }
+    }
+
+    return width;
+  }
+
+  public static int lineWidth(final String text, final int start) {
+    int width = 0;
+    for(int index = start; index < text.length(); index++) {
+      if(text.charAt(index) == '\n') {
+        break;
+      }
+
+      width += charWidth(text.charAt(index));
     }
 
     return width;

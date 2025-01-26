@@ -39,7 +39,7 @@ public class GameVarParam extends Param {
     return switch(this.index) {
       case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-      case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc;
+      case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier();
       case 3 -> currentEngineState_8004dd04.getScriptInput(SCRIPTS.joypadInput);
       case 4 -> currentEngineState_8004dd04.getScriptInput(SCRIPTS.joypadPress);
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94;

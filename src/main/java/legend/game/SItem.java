@@ -13,6 +13,8 @@ import legend.game.input.InputAction;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -55,6 +57,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
@@ -73,6 +76,7 @@ import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.loadMenuTexture;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
@@ -106,16 +110,24 @@ public final class SItem {
   public static final MenuStack menuStack = new MenuStack();
   private static BackgroundMusic menuMusic;
 
+  public static final FontOptions UI_TEXT = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
+  public static final FontOptions UI_TEXT_DISABLED = new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN);
+  public static final FontOptions UI_TEXT_SELECTED = new FontOptions().colour(TextColour.RED).shadowColour(TextColour.MIDDLE_BROWN);
+  public static final FontOptions UI_TEXT_CENTERED = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_TEXT_DISABLED_CENTERED = new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_TEXT_SELECTED_CENTERED = new FontOptions().colour(TextColour.RED).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_WHITE = new FontOptions().colour(TextColour.WHITE);
+
   public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
   public static final MenuStatus08[] menuStatus_800fba7c = {
-    new MenuStatus08("Petrify", TextColour.MIDDLE_BROWN),
-    new MenuStatus08("Charmed", TextColour.MIDDLE_BROWN),
-    new MenuStatus08("Confused", TextColour.MIDDLE_BROWN),
-    new MenuStatus08("Fear", TextColour.PURPLE),
-    new MenuStatus08("Stunned", TextColour.MIDDLE_BROWN),
-    new MenuStatus08("", TextColour.MIDDLE_BROWN),
-    new MenuStatus08("Dspirit", TextColour.CYAN),
-    new MenuStatus08("Poison", TextColour.LIME),
+    new MenuStatus08("Petrify", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("Charmed", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("Confused", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("Fear", new FontOptions().colour(TextColour.PURPLE).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("Stunned", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("Dspirit", new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+    new MenuStatus08("Poison", new FontOptions().colour(TextColour.LIME).shadowColour(TextColour.GREEN).horizontalAlign(HorizontalAlign.CENTRE)),
   };
 
   /** Note: arrays run into the next array's first element */
@@ -528,7 +540,7 @@ public final class SItem {
   }
 
   private static void menuMusicLoaded(final List<FileData> files) {
-    menuMusic = new BackgroundMusic(files, 5815);
+    menuMusic = new BackgroundMusic(files, 5815, AUDIO_THREAD.getSequencer().getSampleRate());
   }
 
   /** FUN_8001e010 with param 0 */
@@ -755,36 +767,8 @@ public final class SItem {
     }
   }
 
-  @Method(0x80103cc4L)
-  public static void renderText(final String text, final int x, final int y, final TextColour colour) {
-    final TextColour shadowColour;
-    if(colour == TextColour.WHITE) {
-      shadowColour = TextColour.BLACK;
-    } else if(colour == TextColour.LIME) {
-      //LAB_80103d18
-      shadowColour = TextColour.GREEN;
-    } else if(colour == TextColour.MIDDLE_BROWN) {
-      //LAB_80103d20
-      shadowColour = TextColour.LIGHT_BROWN;
-    } else {
-      shadowColour = TextColour.MIDDLE_BROWN;
-    }
-
-    //LAB_80103d24
-    //LAB_80103d28
-    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
-    Scus94491BpeSegment_8002.renderText(text, x    , y + 1, shadowColour, 0);
-    Scus94491BpeSegment_8002.renderText(text, x + 1, y    , shadowColour, 0);
-    Scus94491BpeSegment_8002.renderText(text, x + 1, y + 1, shadowColour, 0);
-  }
-
   @Method(0x80103e90L)
-  public static void renderCentredText(final String text, final int x, final int y, final TextColour colour) {
-    renderText(text, x - textWidth(text) / 2, y, colour);
-  }
-
-  @Method(0x80103e90L)
-  public static void renderCentredText(final String text, final int x, int y, final TextColour colour, final int maxWidth) {
+  public static void renderMenuCentredText(final String text, final int x, int y, final int maxWidth) {
     final String[] split;
     if(textWidth(text) <= maxWidth) {
       split = new String[] {text};
@@ -796,7 +780,11 @@ public final class SItem {
         final char current = text.charAt(i);
         final int charWidth = Scus94491BpeSegment_8002.charWidth(current);
 
-        if(currentWidth + charWidth > maxWidth) {
+        if(current == '\n') {
+          temp.add(text.substring(startIndex, i));
+          currentWidth = 0;
+          startIndex = i + 1;
+        } else if(currentWidth + charWidth > maxWidth) {
           boolean advanceOverSpace = false;
           for(int backtrack = 0; backtrack < 10; backtrack++) {
             if(text.charAt(i - backtrack) == ' ') {
@@ -824,7 +812,7 @@ public final class SItem {
 
     for(int i = 0; i < split.length; i++) {
       final String str = split[i];
-      renderText(str, x - textWidth(str) / 2, y, colour);
+      renderText(str, x - textWidth(str) / 2, y, UI_TEXT);
       y += textHeight(str);
     }
   }
@@ -1387,7 +1375,7 @@ public final class SItem {
     //LAB_80107e90
     final int status = gameState_800babc8.charData_32c[charIndex].status_10;
 
-    if((tickCount_800bb0fc & 0x10) == 0) {
+    if(tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier() % 32 < 16) {
       return false;
     }
 
@@ -1434,7 +1422,7 @@ public final class SItem {
     }
 
     final MenuStatus08 menuStatus = menuStatus_800fba7c[statusIndex - 1];
-    renderCentredText(menuStatus.text_00, x + 24, y, menuStatus.colour_04);
+    renderText(menuStatus.text_00, x + 24, y, menuStatus.colour_04);
 
     //LAB_80107f8c
     return true;
@@ -1481,7 +1469,7 @@ public final class SItem {
 
       //LAB_80108218
       if(!renderCharacterStatusEffect(x + 46, y + 3, charId)) {
-        renderText(characterNames_801142dc[charId], x + 49, y + 3, TextColour.BROWN);
+        renderText(characterNames_801142dc[charId], x + 49, y + 3, UI_TEXT);
       }
     }
 
@@ -1595,7 +1583,7 @@ public final class SItem {
     //LAB_80108f98
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       if(charData.equipment_14.get(slot) != null) {
-        renderText(I18n.translate(charData.equipment_14.get(slot)), 220, 19 + slot.ordinal() * 14, TextColour.BROWN);
+        renderText(I18n.translate(charData.equipment_14.get(slot)), 220, 19 + slot.ordinal() * 14, UI_TEXT);
       }
     }
 
@@ -1614,7 +1602,7 @@ public final class SItem {
 //        nextNewLine = string.length();
 //      }
 
-      renderText(string, x + 2, y + 4, TextColour.BROWN);
+      renderText(string, x + 2, y + 4, UI_TEXT);
 //      pos = nextNewLine;
 //    }
   }
@@ -1629,7 +1617,7 @@ public final class SItem {
       final MenuEntryStruct04<?> menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+      renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
       renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
 
       final int s0 = menuItem.flags_02;
@@ -1722,7 +1710,7 @@ public final class SItem {
 
         if(messageBox.text_00 != null) {
           for(final String line : messageBox.text_00) {
-            renderCentredText(line, x, y, TextColour.BROWN);
+            renderText(line, x, y, UI_TEXT_CENTERED);
             y += 14;
           }
         }
@@ -1754,8 +1742,8 @@ public final class SItem {
           //LAB_8010ef64
           textZ_800bdf00 = 30;
 
-          renderCentredText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? TextColour.RED : TextColour.BROWN);
-          renderCentredText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? TextColour.BROWN : TextColour.RED);
+          renderText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? UI_TEXT_SELECTED_CENTERED : UI_TEXT_CENTERED);
+          renderText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
 
           textZ_800bdf00 = 33;
         }

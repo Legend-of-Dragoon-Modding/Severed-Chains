@@ -27,7 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Input.class);
 
-  public static final ControllerManager controllerManager = new JamepadControllerManager("./gamecontrollerdb.txt", Input::onControllerConnected, Input::onControllerDisconnected);
+  public static final ControllerManager controllerManager = new GlfwControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
@@ -175,20 +175,20 @@ public final class Input {
   }
 
   private static void keyPress(final Window window, final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
+    final int keyWithMods = key | mods << 9;
 
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(keyWithMods)) {
         inputBinding.setPressedForKeyboardInput();
       }
     }
   }
 
   private static void keyRelease(final Window window, final int key, final int scancode, final int mods) {
+    final int keyWithMods = key | mods << 9;
+
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(keyWithMods)) {
         inputBinding.setReleasedForKeyboardInput();
       }
     }
@@ -214,6 +214,10 @@ public final class Input {
       activeController = new DummyController();
       addKeyboardBindings(activeController);
     }
+  }
+
+  public static Controller getController() {
+    return activeController;
   }
 
   public static void rumble(final float bigIntensity, final float smallIntensity, final int ms) {
@@ -246,6 +250,10 @@ public final class Input {
     if(controllerFromConfig.isBlank() || controllerFromConfig.equals(controller.getGuid())) {
       useController(controller);
       CONFIG.setConfig(CoreMod.CONTROLLER_CONFIG.get(), controller.getGuid());
+
+      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get())) {
+        RENDERER.window().hideCursor();
+      }
     }
   }
 
@@ -254,6 +262,7 @@ public final class Input {
 
     if(activeController == controller) {
       useController(null);
+      RENDERER.window().showCursor();
     }
   }
 
@@ -290,5 +299,6 @@ public final class Input {
     controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE_HOLD, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.KILL_STUCK_SOUNDS, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.TOGGLE_FULL_SCREEN, controller, InputType.KEYBOARD));
   }
 }

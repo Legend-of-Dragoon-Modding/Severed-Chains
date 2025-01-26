@@ -74,6 +74,11 @@ public class RenderState {
     this.applyScissor();
   }
 
+  public void fullScreenScissor() {
+    this.tempScissorRect.set(0, 0, this.engine.getRenderWidth(), this.engine.getRenderHeight());
+    this.applyScissor();
+  }
+
   private void applyScissor() {
     if(!this.activeScissorRect.equals(this.tempScissorRect)) {
       glScissor(this.tempScissorRect.x, this.tempScissorRect.y, this.tempScissorRect.w, this.tempScissorRect.h);

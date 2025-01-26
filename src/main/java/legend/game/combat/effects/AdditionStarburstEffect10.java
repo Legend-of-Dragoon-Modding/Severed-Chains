@@ -162,8 +162,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
           .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
           .addVertex(x2, y2, 0.0f)
           .monochrome(0.0f)
-          .addVertex(x3, y3, 0.0f)
-          .monochrome(0.0f);
+          .addVertex(x3, y3, 0.0f);
       }
     }
 
@@ -211,7 +210,6 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
           .addVertex(xArray[0], yArray[0], 0.0f)
           .monochrome(0.0f)
           .addVertex(xArray[1], yArray[1], 0.0f)
-          .monochrome(0.0f)
           .addVertex(xArray[2], yArray[2], 0.0f)
           .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f);
       }

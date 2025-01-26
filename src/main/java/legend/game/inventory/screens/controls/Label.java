@@ -1,9 +1,10 @@
 package legend.game.inventory.screens.controls;
 
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
 
-import static legend.game.SItem.renderText;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -12,20 +13,12 @@ public class Label extends Control {
   private String text;
   private int textWidth;
   private int textHeight;
-  private HorizontalAlign horizontalAlign = HorizontalAlign.LEFT;
   private VerticalAlign verticalAlign = VerticalAlign.TOP;
   private boolean autoSize = true;
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Label(final String text) {
     this.setText(text);
-  }
-
-  public void setHorizontalAlign(final HorizontalAlign horizontalAlign) {
-    this.horizontalAlign = horizontalAlign;
-  }
-
-  public HorizontalAlign getHorizontalAlign() {
-    return this.horizontalAlign;
   }
 
   public void setVerticalAlign(final VerticalAlign verticalAlign) {
@@ -48,6 +41,10 @@ public class Label extends Control {
     return this.autoSize;
   }
 
+  public FontOptions getFontOptions() {
+    return this.fontOptions;
+  }
+
   public void setText(final String text) {
     this.text = text;
     this.textWidth = textWidth(text);
@@ -64,10 +61,10 @@ public class Label extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    final int offsetX = switch(this.horizontalAlign) {
+    final int offsetX = switch(this.fontOptions.getHorizontalAlign()) {
       case LEFT -> 0;
-      case CENTRE -> (this.getWidth() - this.textWidth) / 2;
-      case RIGHT -> this.getWidth() - this.textWidth;
+      case CENTRE -> this.getWidth() / 2;
+      case RIGHT -> this.getWidth();
     };
 
     final int offsetY = switch(this.verticalAlign) {
@@ -78,12 +75,8 @@ public class Label extends Control {
 
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderText(this.text, x + offsetX, y + offsetY, TextColour.BROWN);
+    renderText(this.text, x + offsetX, y + offsetY, this.fontOptions);
     textZ_800bdf00 = oldZ;
-  }
-
-  public enum HorizontalAlign {
-    LEFT, CENTRE, RIGHT,
   }
 
   public enum VerticalAlign {

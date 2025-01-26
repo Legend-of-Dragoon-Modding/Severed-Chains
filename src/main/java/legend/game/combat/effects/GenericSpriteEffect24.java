@@ -104,7 +104,7 @@ public class GenericSpriteEffect24 {
         //LAB_800e7a38
         final float zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8 * 0x1000 / 4.0f, finalTranslation.z / 4.0f);
 
-        this.transforms.transfer.set(GPU.getOffsetX() + x0, GPU.getOffsetY() + y0, z);
+        this.transforms.transfer.set(GPU.getOffsetX() + x0, GPU.getOffsetY() + y0, z * 4);
         this.transforms
           .rotationZ(this.angle_20)
           .scale(this.scaleX_1c / 8.0f * zDepth / 8.0f, this.scaleY_1e / 8.0f * zDepth / 8.0f, 1.0f);

@@ -30,6 +30,7 @@ import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
+import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -49,7 +50,6 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
-import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
@@ -58,8 +58,8 @@ import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
-import legend.lodmod.LodEquipment;
-import legend.lodmod.LodItems;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -162,6 +162,8 @@ import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
+
   private int fmvIndex_800bf0dc;
 
   private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
@@ -296,73 +298,6 @@ public class SMap extends EngineState {
   private final String smoke1_800d8e20 = "smoke_1.tim";
   private final String smoke2_800d9060 = "smoke_2.tim";
 
-  public static final ShopStruct40[] shops_800f4930 = {
-    new ShopStruct40(0, LodEquipment.BASTARD_SWORD::get, LodEquipment.SPARKLE_ARROW::get, LodEquipment.SCALE_ARMOR::get, LodEquipment.LEATHER_JACKET::get, LodEquipment.SALLET::get, LodEquipment.POISON_GUARD::get, LodEquipment.PANIC_GUARD::get, LodEquipment.STUN_GUARD::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.KNIGHT_SHIELD::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.SPEAR_FROST::get, LodItems.METEOR_FALL::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.LANCE::get, LodEquipment.CAPE::get, LodEquipment.LEGEND_CASQUE::get, LodEquipment.ACTIVE_RING::get, LodEquipment.PROTECTOR::get, LodEquipment.PANIC_GUARD::get, LodEquipment.POWER_WRIST::get, LodEquipment.WARGOD_CALLING::get, LodEquipment.PHANTOM_SHIELD::get, LodEquipment.DRAGON_SHIELD::get, LodEquipment.ANGEL_SCARF::get, LodEquipment.ULTIMATE_WARGOD::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.SPINNING_GALE::get, LodItems.GUSHING_MAGMA::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.HEAT_BLADE::get, LodEquipment.LONG_BOW::get, LodEquipment.ARMET::get, LodEquipment.IRON_KNEEPIECE::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DARK_MIST::get, LodItems.FATAL_BLIZZARD::get),
-    new ShopStruct40(0, LodEquipment.SHADOW_CUTTER::get, LodEquipment.CHAIN_MAIL::get, LodEquipment.SOFT_BOOTS::get, LodEquipment.POISON_GUARD::get, LodEquipment.ACTIVE_RING::get, LodEquipment.PROTECTOR::get, LodEquipment.PANIC_GUARD::get, LodEquipment.STUN_GUARD::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.MAGIC_EGO_BELL::get, LodEquipment.POWER_WRIST::get, LodEquipment.KNIGHT_SHIELD::get, LodEquipment.WARGOD_CALLING::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.TRANS_LIGHT::get, LodItems.BLACK_RAIN::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.SILVER_VEST::get, LodEquipment.TIARA::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.RAVE_TWISTER::get),
-    new ShopStruct40(0, LodEquipment.GLAIVE::get, LodEquipment.BEAST_FANG::get, LodEquipment.WARRIOR_DRESS::get, LodEquipment.STUN_GUARD::get, LodEquipment.MAGIC_EGO_BELL::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.TRANS_LIGHT::get, LodItems.DANCING_RAY::get),
-    new ShopStruct40(0, LodEquipment.FALCHION::get, LodEquipment.BEMUSING_ARROW::get, LodEquipment.MORNING_STAR::get, LodEquipment.PLATE_MAIL::get, LodEquipment.SPARKLE_DRESS::get, LodEquipment.KNIGHT_HELM::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.CHARM_POTION::get, LodItems.BURN_OUT::get, LodItems.GUSHING_MAGMA::get),
-    new ShopStruct40(0, LodEquipment.DANCING_DAGGER::get, LodEquipment.GIGANTO_HELM::get, LodEquipment.COMBAT_SHOES::get, LodEquipment.DESTONE_AMULET::get, LodEquipment.ATTACK_BADGE::get, LodEquipment.ELUDE_CLOAK::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.THUNDERBOLT::get),
-    new ShopStruct40(0, LodEquipment.TOMAHAWK::get, LodEquipment.SPEAR_OF_TERROR::get, LodEquipment.DIAMOND_CLAW::get, LodEquipment.BREAST_PLATE::get, LodEquipment.MASTERS_VEST::get, LodEquipment.SOUL_HEADBAND::get, LodEquipment.JEWELED_CROWN::get, LodEquipment.STARDUST_BOOTS::get, LodEquipment.PROTECTOR::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.DESTONE_AMULET::get, LodEquipment.ARMOR_OF_LEGEND::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.SPARK_NET::get, LodItems.THUNDERBOLT::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.WAR_HAMMER::get, LodEquipment.MAGICAL_RING::get, LodEquipment.SPIRITUAL_RING::get, LodEquipment.SPIRIT_CLOAK::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.SUN_RHAPSODY::get, LodItems.HEALING_BREEZE::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.DARK_MIST::get, LodItems.BLACK_RAIN::get),
-    new ShopStruct40(0, LodEquipment.PARTISAN::get, LodEquipment.HEAVY_MACE::get, LodEquipment.GIGANTO_ARMOR::get, LodEquipment.ENERGY_GIRDLE::get, LodEquipment.GIGANTO_RING::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.FAIRY_SWORD::get, LodEquipment.ARROW_OF_FORCE::get, LodEquipment.THUNDER_FIST::get, LodEquipment.MAGICAL_GREAVES::get, LodEquipment.MAGICAL_RING::get, LodEquipment.SPIRITUAL_RING::get, LodEquipment.ELUDE_CLOAK::get, LodEquipment.SPIRIT_CLOAK::get, LodEquipment.SAGES_CLOAK::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.CHARM_POTION::get, LodItems.PANIC_BELL::get, LodItems.STUNNING_HAMMER::get, LodItems.POISON_NEEDLE::get, LodItems.MIDNIGHT_TERROR::get, LodItems.ATTACK_BALL::get, LodItems.RECOVERY_BALL::get),
-    new ShopStruct40(0, LodEquipment.ATTACK_BADGE::get, LodEquipment.GUARD_BADGE::get, LodEquipment.GIGANTO_RING::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.PANIC_BELL::get),
-    new ShopStruct40(0, LodEquipment.CLAYMORE::get, LodEquipment.HALBERD::get, LodEquipment.BASHER::get, LodEquipment.DESTROYER_MACE::get, LodEquipment.RED_DG_ARMOR::get, LodEquipment.JADE_DG_ARMOR::get, LodEquipment.GOLD_DG_ARMOR::get, LodEquipment.VIOLET_DG_ARMOR::get, LodEquipment.SILVER_DG_ARMOR::get, LodEquipment.DARK_DG_ARMOR::get, LodEquipment.BLUE_DG_ARMOR::get, LodEquipment.MAGICAL_RING::get, LodEquipment.SPIRITUAL_RING::get, LodEquipment.ATTACK_BADGE::get, LodEquipment.GUARD_BADGE::get, LodEquipment.GIGANTO_RING::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.PANIC_BELL::get, LodItems.POISON_NEEDLE::get),
-    new ShopStruct40(3, LodItems.HEALING_POTION::get, LodItems.ANGELS_PRAYER::get, LodItems.SPARK_NET::get),
-    new ShopStruct40(0, LodEquipment.MIND_CRUSH::get, LodEquipment.BATTLE_AXE::get, LodEquipment.FLAMBERGE::get, LodEquipment.VIRULENT_ARROW::get, LodEquipment.SAINT_ARMOR::get, LodEquipment.ROBE::get, LodEquipment.GUARD_BADGE::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.HEALING_BREEZE::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.BODY_PURIFIER::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.RUBY_RING::get, LodEquipment.SAPPHIRE_PIN::get, LodEquipment.EMERALD_EARRING::get, LodEquipment.PLATINUM_COLLAR::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.BODY_PURIFIER::get, LodItems.BURN_OUT::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(0, LodEquipment.FAKE_POWER_WRIST::get, LodEquipment.FAKE_SHIELD::get),
-    new ShopStruct40(1, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.DANCING_RAY::get, LodItems.PELLET::get),
-    new ShopStruct40(0, LodEquipment.GREAT_AXE::get, LodEquipment.GLADIUS::get, LodEquipment.RED_DG_ARMOR::get, LodEquipment.JADE_DG_ARMOR::get, LodEquipment.DARK_DG_ARMOR::get, LodEquipment.BLUE_DG_ARMOR::get, LodEquipment.PANIC_GUARD::get, LodEquipment.BRAVERY_AMULET::get, LodEquipment.DESTONE_AMULET::get),
-    new ShopStruct40(1, LodItems.HEALING_FOG::get, LodItems.SUN_RHAPSODY::get, LodItems.HEALING_BREEZE::get, LodItems.ANGELS_PRAYER::get, LodItems.DEPETRIFIER::get, LodItems.MIND_PURIFIER::get, LodItems.BODY_PURIFIER::get, LodItems.CHARM_POTION::get),
-    new ShopStruct40(3, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get, LodItems.MIND_PURIFIER::get, LodItems.MIDNIGHT_TERROR::get, LodItems.THUNDERBOLT::get),
-    new ShopStruct40(0, LodItems.HEALING_POTION::get, LodItems.SUN_RHAPSODY::get, LodItems.ANGELS_PRAYER::get),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-    new ShopStruct40(0),
-  };
-
   /** Related to indicator being disabled for cutscenes/conversations */
   private boolean indicatorDisabledForCutscene_800f64ac;
 
@@ -376,7 +311,7 @@ public class SMap extends EngineState {
     new ChapterStruct08(710, 0),
     new ChapterStruct08(745, 58),
   };
-  private boolean _800f7e4c;
+  private boolean transitioning_800f7e4c;
   private int scriptSetOffsetMode_800f7e50;
   /**
    * <ul>
@@ -1000,6 +935,7 @@ public class SMap extends EngineState {
 
           final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+            .depthOffset(model.zOffset_a0)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
@@ -2067,7 +2003,7 @@ public class SMap extends EngineState {
   private FlowControl scriptCheckSobjCollision(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
+    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false, false);
     script.params_20[1].set(collisionPrimitiveIndex);
     sobj.collidedPrimitiveIndex_16c = collisionPrimitiveIndex;
     return FlowControl.CONTINUE;
@@ -2739,11 +2675,8 @@ public class SMap extends EngineState {
       .addVertex(v0.x, v0.y, 0.0f)
       .rgb(r, g, b)
       .addVertex(v1.x, v0.y, 0.0f)
-      .rgb(r, g, b)
       .addVertex(v0.x, v1.y, 0.0f)
-      .rgb(r, g, b)
       .addVertex(v1.x, v1.y, 0.0f)
-      .rgb(r, g, b)
       .build();
     final MV transforms = new MV();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 148.0f);
@@ -3318,9 +3251,13 @@ public class SMap extends EngineState {
       return false;
     }
 
-    this.encounterAccumulator_800c6ae8 += this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / 2.0f;
+    final var encounterAccumulatorLimit = 0x1400;
+    final var encounterAccumulatorStepModifier = 2.0f;
+    final var encounterAccumulatorStep = this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / encounterAccumulatorStepModifier;
+    final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
+    this.encounterAccumulator_800c6ae8 += submapEncounterAccumulatorEvent.encounterAccumulatedStep;
 
-    if(this.encounterAccumulator_800c6ae8 <= 0x1400) {
+    if(this.encounterAccumulator_800c6ae8 <= submapEncounterAccumulatorEvent.encounterAccumulatorLimit) {
       return false;
     }
 
@@ -3463,8 +3400,8 @@ public class SMap extends EngineState {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      final Vector2f transformed = new Vector2f();
-      final Vector3f middle = new Vector3f();
+      // final Vector2f transformed = new Vector2f();
+      // final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();
@@ -3592,9 +3529,11 @@ public class SMap extends EngineState {
       return;
     }
 
-    if(this._800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
+    if(this.transitioning_800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
       return;
     }
+
+    LOGGER.info("Transitioning to cut %d scene %d", newCut, newScene);
 
     if(this.smapTicks_800c6ae0 > 15 * (3 - vsyncMode_8007a3b8)) {
       this.returnedToSameSubmapAfterBattle_800cb448 = false;
@@ -3611,7 +3550,7 @@ public class SMap extends EngineState {
       this.mapTransitionTicks_800cab28++;
     }
 
-    this._800f7e4c = true;
+    this.transitioning_800f7e4c = true;
 
     if(newCut > 0x7ff) {
       this.fmvIndex_800bf0dc = newCut - 0x800;
@@ -3860,14 +3799,14 @@ public class SMap extends EngineState {
 
           case UNLOAD_SAVE_GAME_MENU_20 -> {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-            this._800f7e4c = false;
+            this.transitioning_800f7e4c = false;
             this.mapTransition(this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00, this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04);
             collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[0].submapScene_04;
           }
 
           case QUIT -> {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-            this._800f7e4c = false;
+            this.transitioning_800f7e4c = false;
             this.mapTransition(-1, 0x3fb);
             drgnBinIndex_800bc058 = 1;
           }
@@ -3878,7 +3817,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         SCRIPTS.resume();
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
 
         if(loadingNewGameState_800bdc34) {
@@ -3921,11 +3860,15 @@ public class SMap extends EngineState {
 
         //LAB_800e624c
         //LAB_800e6250
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
       }
 
       case TRANSITION_TO_WORLD_MAP_18 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
+
+        if(this.isScriptLoaded(0)) {
+          this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
+        }
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -3946,7 +3889,7 @@ public class SMap extends EngineState {
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
         pregameLoadingStage_800bb10c = 0;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
 
@@ -3955,7 +3898,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
         pregameLoadingStage_800bb10c = 0;
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
 
@@ -3986,7 +3929,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
 
         //LAB_800e6490
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
 
@@ -4012,7 +3955,7 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
         pregameLoadingStage_800bb10c = 0;
-        this._800f7e4c = false;
+        this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
     }
@@ -5078,11 +5021,7 @@ public class SMap extends EngineState {
     this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
     this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
-    if(gameState_800babc8.indicatorsDisabled_4e3) {
-      return;
-    }
-
-    if(fullScreenEffect_800bb140.currentColour_28 != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_WORLD_MAP_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
       return;
     }
 

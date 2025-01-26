@@ -30,9 +30,11 @@ public class PolyBuilder {
   private final List<Vertex> vertices = new ArrayList<>();
   private final Vector2i lastVramPos = new Vector2i();
   private final Vector2i lastClut = new Vector2i();
+  private final Vector3f lastColour = new Vector3f();
   private Vertex current;
   private Bpp bpp = Bpp.BITS_4;
   private Translucency translucency;
+  private boolean disableBackfaceCulling;
 
   private int flags;
 
@@ -51,16 +53,18 @@ public class PolyBuilder {
 
   public PolyBuilder addVertex(final Vector3f pos) {
     this.current = new Vertex(pos.x, pos.y, pos.z);
-    this.current.clut = new Vector2i().set(this.lastClut);
-    this.current.vramPos = new Vector2i().set(this.lastVramPos);
+    this.current.clut.set(this.lastClut);
+    this.current.vramPos.set(this.lastVramPos);
+    this.current.colour.set(this.lastColour);
     this.vertices.add(this.current);
     return this;
   }
 
   public PolyBuilder addVertex(final float x, final float y, final float z) {
     this.current = new Vertex(x, y, z);
-    this.current.clut = new Vector2i().set(this.lastClut);
-    this.current.vramPos = new Vector2i().set(this.lastVramPos);
+    this.current.clut.set(this.lastClut);
+    this.current.vramPos.set(this.lastVramPos);
+    this.current.colour.set(this.lastColour);
     this.vertices.add(this.current);
     return this;
   }
@@ -107,18 +111,21 @@ public class PolyBuilder {
 
   public PolyBuilder rgb(final Vector3f colour) {
     this.current.colour.set(colour);
+    this.lastColour.set(colour);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public PolyBuilder rgb(final float r, final float g, final float b) {
     this.current.colour.set(r, g, b);
+    this.lastColour.set(r, g, b);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public PolyBuilder monochrome(final float shade) {
     this.current.colour.set(shade);
+    this.lastColour.set(shade);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
@@ -132,6 +139,11 @@ public class PolyBuilder {
   public PolyBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
     this.flags |= TRANSLUCENT_FLAG;
+    return this;
+  }
+
+  public PolyBuilder disableBackfaceCulling() {
+    this.disableBackfaceCulling = true;
     return this;
   }
 
@@ -193,15 +205,15 @@ public class PolyBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, VERTEX_SIZE);
 
-    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0);
+    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0 && !this.disableBackfaceCulling);
   }
 
   private static class Vertex {
     private final Vector3f pos = new Vector3f();
     private final Vector2f uv = new Vector2f();
     private final Vector3f colour = new Vector3f();
-    private Vector2i clut;
-    private Vector2i vramPos;
+    private final Vector2i clut = new Vector2i();
+    private final Vector2i vramPos = new Vector2i();
 
     private Vertex(final float x, final float y, final float z) {
       this.pos.set(x, y, z);

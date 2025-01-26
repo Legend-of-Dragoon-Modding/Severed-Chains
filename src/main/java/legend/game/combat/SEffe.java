@@ -6,9 +6,6 @@ import legend.core.QueuedModelBattleTmd;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.RenderEngine;
-import legend.core.gpu.Gpu;
-import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
-import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -28,8 +25,6 @@ import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
-import legend.game.combat.deff.LmbType1;
-import legend.game.combat.deff.LmbType2;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
@@ -56,7 +51,6 @@ import legend.game.combat.effects.MoonlightStarsEffectInstance3c;
 import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
-import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDarkeningEffect;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
 import legend.game.combat.effects.ShadowEffect;
@@ -124,7 +118,6 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
@@ -362,6 +355,7 @@ public final class SEffe {
     zMin = oldZMin;
 
     final QueuedModelBattleTmd model = RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
+      .depthOffset(effectParams.z_22 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
@@ -470,10 +464,10 @@ public final class SEffe {
 
   /** Used in Astral Drain (ground glow) */
   @Method(0x800e75acL)
-  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix) {
+  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix, final int depthOffset) {
     final MV finalTransform = new MV();
     transformMatrix.compose(worldToScreenMatrix_800c3548, finalTransform);
-    final float z = java.lang.Math.min(0x3ff8, zOffset_1f8003e8 + finalTransform.transfer.z / 4.0f);
+    final float z = java.lang.Math.min(0x3ff8, depthOffset + finalTransform.transfer.z / 4.0f);
 
     if(z >= 40) {
       //LAB_800e7610
@@ -494,7 +488,8 @@ public final class SEffe {
       obj.delete(); // Mark for deletion after this frame
 
       RENDERER.queueModel(obj, transformMatrix, QueuedModelStandard.class)
-        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
+        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
+        .depthOffset(depthOffset * 4);
     }
     //LAB_800e7930
   }
@@ -730,22 +725,21 @@ public final class SEffe {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
-    if(managerInner.flags_00 >= 0) { // No errors
-      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(managerInner.flags_00, metrics);
-      spriteEffect.r_14 = managerInner.colour_1c.x & 0xff;
-      spriteEffect.g_15 = managerInner.colour_1c.y & 0xff;
-      spriteEffect.b_16 = managerInner.colour_1c.z & 0xff;
-      spriteEffect.scaleX_1c = managerInner.scale_16.x;
-      spriteEffect.scaleY_1e = managerInner.scale_16.y;
-      spriteEffect.angle_20 = managerInner.rot_10.z;
+  public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> effectParams, final MV transformMatrix) {
+    if(effectParams.flags_00 >= 0) { // No errors
+      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(effectParams.flags_00, metrics);
+      spriteEffect.r_14 = effectParams.colour_1c.x & 0xff;
+      spriteEffect.g_15 = effectParams.colour_1c.y & 0xff;
+      spriteEffect.b_16 = effectParams.colour_1c.z & 0xff;
+      spriteEffect.scaleX_1c = effectParams.scale_16.x;
+      spriteEffect.scaleY_1e = effectParams.scale_16.y;
+      spriteEffect.angle_20 = effectParams.rot_10.z;
 
-      if((managerInner.flags_00 & 0x400_0000) != 0) {
-        zOffset_1f8003e8 = managerInner.z_22;
-        FUN_800e75ac(spriteEffect, transformMatrix);
+      if((effectParams.flags_00 & 0x400_0000) != 0) {
+        FUN_800e75ac(spriteEffect, transformMatrix, effectParams.z_22);
       } else {
         //LAB_800e9574
-        spriteEffect.render(transformMatrix.transfer, managerInner.z_22);
+        spriteEffect.render(transformMatrix.transfer, effectParams.z_22);
         spriteEffect.delete();
       }
     }
@@ -1841,53 +1835,22 @@ public final class SEffe {
   @ScriptDescription("Allocates a screen capture effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position; no longer used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position; no longer used")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "w", description = "The width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "h", description = "The height")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010b1d8L)
   public static FlowControl scriptAllocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
-    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c();
+    final int captureW = script.params_20[4].get();
+    final int captureH = script.params_20[5].get();
+    final int rendererIndex = script.params_20[6].get();
+    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c(captureW, captureH, rendererIndex);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen capture", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    effect.captureW_04 = script.params_20[4].get();
-    effect.captureH_08 = script.params_20[5].get();
-    effect.rendererIndex_0c = script.params_20[6].get();
     effect.screenspaceW_10 = 0;
     script.params_20[0].set(state.index);
     effect.setDeff(script.params_20[1].get());
-
-    final int v0 = effect.rendererIndex_0c;
-    if(v0 == 0) {
-      //LAB_8010b2e4
-      final int x = script.params_20[2].get() + 160;
-      final int y = script.params_20[3].get() + 120;
-      final int w = effect.captureW_04 / 2;
-      final int h = effect.captureH_08 / 2;
-
-      //LAB_8010b308
-      for(int i = 0; i < 4; i++) {
-        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, metrics.u_00, metrics.v_02 + i * 64, w, h));
-        GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
-      }
-    } else if(v0 < 3) {
-      //LAB_8010b3f0
-      final int x = script.params_20[2].get() + 160 - effect.captureW_04 / 2;
-      final int y = script.params_20[3].get() + 120 - effect.captureH_08 / 2;
-      final int w = effect.captureW_04 / 5;
-      final int h = effect.captureH_08 / 3;
-
-      //LAB_8010b468
-      for(int i = 0; i < 15; i++) {
-        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + i % 5 * w, y + i / 5 * h, metrics.u_00 + i % 2 * 32, metrics.v_02 + i / 2 * 32, w, h));
-        GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
-      }
-    }
 
     //LAB_8010b548
     manager.params_10.flags_00 |= 0x5000_0000;
@@ -1920,37 +1883,25 @@ public final class SEffe {
 
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
-    effect._00 = 5;
-    effect._02 = 0;
 
     //LAB_8010c4a4
     for(int i = 0; i < 5; i++) {
-      final LensFlareEffectInstance3c s0 = effect.instances_38[i];
-      s0.onScreen_03 = true;
-      s0.x_04 = 0;
-      s0.y_06 = 0;
-      s0._08 = 0;
-      s0._0c = 0;
-      s0._0e = 0;
-      s0._10 = 0;
-      s0._14 = 0;
-      s0._16 = 0;
-      s0._18 = 0;
-      s0._28 = 0;
-      s0.widthScale_2e = 0x1600;
-      s0.heightScale_30 = 0x1600;
-      s0._32 = 0;
-      s0._34 = 0;
+      final LensFlareEffectInstance3c instance = effect.instances_38[i];
+      instance.onScreen_03 = true;
+      instance.x_04 = 0;
+      instance.y_06 = 0;
+      instance.widthScale_2e = 1.375f;
+      instance.heightScale_30 = 1.375f;
 
-      final int a1 = script.params_20[5 + i].get();
-      if(a1 == -1) {
-        s0.enabled_02 = false;
+      final int deffFlags = script.params_20[5 + i].get();
+      if(deffFlags == -1) {
+        instance.enabled_02 = false;
       } else {
         //LAB_8010c500
-        s0.enabled_02 = true;
+        instance.enabled_02 = true;
 
-        if((a1 & 0xf_ff00) == 0xf_ff00) {
-          final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[a1 & 0xff];
+        if((deffFlags & 0xf_ff00) == 0xf_ff00) {
+          final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[deffFlags & 0xff];
           effect.u_04[i] = metrics.u_00;
           effect.v_0e[i] = metrics.v_02;
           effect.w_18[i] = metrics.w_04;
@@ -1958,7 +1909,7 @@ public final class SEffe {
           effect.clut_2c[i] = metrics.clut_06;
         } else {
           //LAB_8010c5a8
-          final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(a1 | 0x400_0000);
+          final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(deffFlags | 0x400_0000);
           final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
           effect.u_04[i] = deffMetrics.u_00;
           effect.v_0e[i] = deffMetrics.v_02;
@@ -1967,7 +1918,6 @@ public final class SEffe {
           effect.clut_2c[i] = GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a);
         }
       }
-
       //LAB_8010c608
     }
 
@@ -2061,7 +2011,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates a gold dragoon transformation effect")
+  @ScriptDescription("Allocates erupting rocks during gold dragoon transformation effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The effect instance count")
@@ -2069,8 +2019,8 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalMax", description = "The maximum position deviation on the XZ plane")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalMin", description = "The minimum deviation on the Y axis")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalMax", description = "The maximum deviation on the Y axis")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p8")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicksMax", description = "The maximum number of ticks a rock can move/exist")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "preMovementTicksMax", description = "The maximum number of ticks before a rock starts moving")
   @Method(0x8010d7dcL)
   public static FlowControl scriptAllocateGoldDragoonTransformEffect(final RunningScript<? extends BattleObject> script) {
     final int deffFlags = script.params_20[1].get();
@@ -2079,8 +2029,8 @@ public final class SEffe {
     final int horizontalMax = script.params_20[4].get();
     final int verticalMin = script.params_20[5].get();
     final int verticalMax = script.params_20[6].get();
-    final int sp2c = script.params_20[7].get();
-    final int sp30 = script.params_20[8].get();
+    final int movementTicksMax = script.params_20[7].get();
+    final int preMovementTicksMax = script.params_20[8].get();
 
     final GoldDragoonTransformEffect20 effect = new GoldDragoonTransformEffect20(count);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GoldDragoonTransformEffect20", script.scriptState_04, effect);
@@ -2090,9 +2040,6 @@ public final class SEffe {
       final GoldDragoonTransformEffectInstance84 instance = effect.parts_08[i];
       instance.used_00 = true;
       instance.counter_04 = 0;
-      instance._68 = 0x7f;
-      instance._69 = 0x7f;
-      instance._6a = 0x7f;
 
       final int horizontalOffset = rand() % (horizontalMax - horizontalMin + 1) + horizontalMin;
       final int theta = rand() % 4096;
@@ -2106,16 +2053,16 @@ public final class SEffe {
       instance.rotStep_48.y = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
       instance.rotStep_48.z = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
 
-      if(sp2c != 0) {
+      if(movementTicksMax != 0) {
         //LAB_8010dbc4
-        instance._7c = (short)(rand() % (sp2c + 1));
+        instance.movementTicksRemaining_7c = rand() % (movementTicksMax + 1);
       } else {
-        instance._7c = 0;
+        instance.movementTicksRemaining_7c = 0;
       }
 
       //LAB_8010dbe8
-      instance._7e = (short)(rand() % (sp30 + 2));
-      instance._80 = -1;
+      instance.preMovementTicks_7e = rand() % (preMovementTicksMax + 2);
+      instance.preMovementTick_80 = -1;
 
       if((deffFlags & 0xf_ff00) == 0xf_ff00) {
         instance.tmd_70 = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
@@ -2128,6 +2075,9 @@ public final class SEffe {
       //LAB_8010dc60
       instance.trans_08.zero();
     }
+
+    // Confirmed in debugger and by checking script calls that only one deff flag/tmd is ever used
+    effect.rockObjster = TmdObjLoader.fromObjTable("Kongol rock", effect.parts_08[0].tmd_70);
 
     //LAB_8010dc8c
     script.params_20[0].set(state.index);
@@ -4350,62 +4300,12 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "LMB animation",
       script.scriptState_04,
-      new LmbAnimationEffect5c(),
+      new LmbAnimationEffect5c(lmbFlags),
       new EffectManagerParams.AnimType()
     );
 
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0;
-
-    final DeffPart.LmbType lmbType;
-    if((lmbFlags & 0xf_ff00) == 0xf_ff00) {
-      lmbType = deffManager_800c693c.lmbs_390[lmbFlags & 0xff];
-    } else {
-      //LAB_80117f58
-      lmbType = (DeffPart.LmbType)deffManager_800c693c.getDeffPart(lmbFlags);
-    }
-
-    //LAB_80117f68
-    final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
-    effect.lmbType_00 = lmbType.type_04;
-    effect.previousTick_04 = 0;
-    effect.lmb_0c = lmbType.lmb_08;
-    effect.lmbTransforms_10 = null;
-    effect.totalSubFrames_38 = 1;
-    effect.subTickStep_3c = 0x1000;
-    effect.deffTmdFlags_48 = -1;
-    effect.deffSpriteFlags_50 = -1;
-
-    //LAB_80117fc4
-    for(int i = 0; i < 8; i++) {
-      effect.deffFlags_14[i] = 0;
-    }
-
-    final int type = effect.lmbType_00 & 0x7;
-    if(type == 0) {
-      //LAB_80118004
-      final LmbType0 lmb = (LmbType0)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.partAnimations_08[0].keyframeCount_04;
-    } else if(type == 1) {
-      //LAB_80118018
-      final LmbType1 lmb = (LmbType1)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.keyframeCount_0a;
-      effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04];
-
-      for(int i = 0; i < lmb.objectCount_04; i++) {
-        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.transforms_10[i]);
-      }
-    } else if(type == 2) {
-      //LAB_80118068
-      final LmbType2 lmb = (LmbType2)effect.lmb_0c;
-      effect.keyframeCount_08 = lmb.keyframeCount_0a;
-      effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04 * 2];
-
-      for(int i = 0; i < lmb.objectCount_04; i++) {
-        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
-        effect.lmbTransforms_10[i + lmb.objectCount_04] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
-      }
-    }
 
     //LAB_801180e0
     //LAB_801180e8

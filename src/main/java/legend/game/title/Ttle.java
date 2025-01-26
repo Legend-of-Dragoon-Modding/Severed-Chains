@@ -29,6 +29,7 @@ import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
 import legend.game.inventory.screens.OptionsCategoryScreen;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
@@ -614,6 +615,10 @@ public class Ttle extends EngineState {
 
   private void addInputHandlers() {
     onMouseMove = RENDERER.events().onMouseMove((window, x, y) -> {
+      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+        return;
+      }
+
       final float aspect = 4.0f / 3.0f;
 
       float w = window.getWidth();
@@ -655,6 +660,10 @@ public class Ttle extends EngineState {
     });
 
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
+      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+        return;
+      }
+
       if(button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
         return;
       }

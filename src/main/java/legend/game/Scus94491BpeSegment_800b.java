@@ -78,6 +78,7 @@ public final class Scus94491BpeSegment_800b {
    * </ul>
    */
   public static int battleFlags_800bc960;
+  public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
   public static int[] livingCharIds_800bc968 = new int[3];
   /**

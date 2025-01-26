@@ -1,8 +1,8 @@
 package legend.game.saves;
 
-import com.github.slugify.Slugify;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import legend.core.IoHelper;
 import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
@@ -10,7 +10,6 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,10 +52,8 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 public final class SaveManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SaveManager.class);
 
-  private static final Slugify slug = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").build();
-
   private final Path dir = Paths.get("saves");
-  private final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.dsav");
+  public static final PathMatcher SAVE_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.dsav");
 
   private final Map<Function<FileData, FileData>, SaveDeserializer> deserializers = new HashMap<>();
   private final int serializerMagic;
@@ -84,16 +80,12 @@ public final class SaveManager {
     }
   }
 
+  public Path resolve(final String path) {
+    return this.dir.resolve(path);
+  }
+
   public boolean campaignExists(final String campaign) {
-    return Files.exists(this.dir.resolve(campaign));
-  }
-
-  public String slugName(final String name) {
-    return slug.slugify(name);
-  }
-
-  public boolean saveExists(final String campaign, final String saveName) {
-    return Files.exists(this.dir.resolve(campaign).resolve(this.slugName(saveName) + ".dsav"));
+    return Files.exists(this.dir.resolve(IoHelper.slugName(campaign)));
   }
 
   private static final Pattern SAVE_NUMBER_PATTERN = Pattern.compile("^(.+?)\\s(\\d+)$");
@@ -108,12 +100,16 @@ public final class SaveManager {
       location = submapNames_8011c108[submapId_800bd808];
     }
 
+    return this.generateSaveName(existingSaves, location);
+  }
+
+  public String generateSaveName(final List<SavedGame> existingSaves, final String name) {
     int highestSaveNumber = 0;
 
     for(final SavedGame save : existingSaves) {
       final Matcher matcher = SAVE_NUMBER_PATTERN.matcher(save.saveName);
 
-      if(matcher.matches() && matcher.group(1).equals(location)) {
+      if(matcher.matches() && matcher.group(1).equals(name)) {
         final int saveNumber = Integer.parseInt(matcher.group(2));
 
         if(highestSaveNumber < saveNumber) {
@@ -122,14 +118,14 @@ public final class SaveManager {
       }
     }
 
-    return location + ' ' + (highestSaveNumber + 1);
+    return name + ' ' + (highestSaveNumber + 1);
   }
 
   /** Look for saves from before campaigns were a thing */
   public List<Path> findUncategorizedSaves() {
     try(final Stream<Path> stream = Files.list(this.dir)) {
       return stream
-        .filter(file -> !Files.isDirectory(file) && this.matcher.matches(file.getFileName()))
+        .filter(file -> !Files.isDirectory(file) && SAVE_MATCHER.matches(file.getFileName()))
         .toList();
     } catch(final IOException e) {
       LOGGER.error("Failed to list uncategorized saves");
@@ -183,7 +179,7 @@ public final class SaveManager {
     if(!saves.isEmpty()) {
       LOGGER.info("Upgrading legacy saves to campaign");
 
-      final Path campaignDir = this.dir.resolve(campaignName);
+      final Path campaignDir = this.dir.resolve(IoHelper.slugName(campaignName));
       Files.createDirectories(campaignDir);
 
       for(final Path save : saves) {
@@ -201,13 +197,13 @@ public final class SaveManager {
       bootMods(Set.of(CoreMod.MOD_ID, LodMod.MOD_ID));
       bootRegistries();
 
-      final Path campaignDir = this.dir.resolve(campaignName);
-      Files.createDirectories(campaignDir);
+      final Campaign campaign = Campaign.create(this, campaignName);
+      Files.createDirectories(campaign.path);
 
       final List<SavedGame> saves = new ArrayList<>();
 
       for(final Path memcard : memcards) {
-        this.splitMemcard(campaignName, new FileData(Files.readAllBytes(memcard)), saves);
+        this.splitMemcard(campaign, new FileData(Files.readAllBytes(memcard)), saves);
       }
 
       saves.sort(Comparator.comparingInt(save -> save.state.timestamp_a0));
@@ -266,16 +262,16 @@ public final class SaveManager {
     }
   }
 
-  private void splitMemcard(final String campaignName, final FileData memcard, final List<SavedGame> saves) throws InvalidSaveException {
+  private void splitMemcard(final Campaign campaign, final FileData memcard, final List<SavedGame> saves) throws InvalidSaveException {
     for(int i = 1; i <= 15; i++) {
       final int offset = i * 0x80;
       if(memcard.readByte(offset) == 0x51 && "BASCUS-94491drgn".equals(memcard.readFixedLengthAscii(offset + 0xa, 0x10))) {
-        saves.add(this.loadGame(campaignName, "", memcard.slice(i * 0x2000, 0x720)));
+        saves.add(this.loadData(campaign, "", memcard.slice(i * 0x2000, 0x720)));
       }
     }
   }
 
-  private List<Path> getCampaigns() {
+  private List<Path> getCampaignPaths() {
     try {
       Files.createDirectories(this.dir);
     } catch(final IOException e) {
@@ -293,70 +289,50 @@ public final class SaveManager {
           }
         })
         .sorted(Comparator.comparingLong((final Path path) -> {
-          try(final Stream<Path> children = this.childrenSortedByDate(path)) {
+          try(final Stream<Path> children = IoHelper.childrenSortedByDate(path, SAVE_MATCHER)) {
             return children
               .findFirst()
-              .map(this::getModifiedTime)
+              .map(IoHelper::getModifiedTime)
               .orElse(0L);
           } catch(final IOException e) {
             throw new RuntimeException(e);
           }
         }).reversed())
-        .map(Path::getFileName)
         .collect(Collectors.toList());
     } catch(final IOException e) {
       throw new RuntimeException("Failed to get save files", e);
     }
   }
 
-  private List<Path> getSaves(final String campaign) {
-    final Path campaignPath = this.dir.resolve(campaign);
-
-    try {
-      Files.createDirectories(campaignPath);
-    } catch(final IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    try(final Stream<Path> children = this.childrenSortedByDate(campaignPath)) {
-      return children
-        .map(Path::getFileName)
-        .collect(Collectors.toList());
-    } catch(final IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private Stream<Path> childrenSortedByDate(final Path path) throws IOException {
-    return Files.list(path)
-      .filter(file -> !Files.isDirectory(file) && this.matcher.matches(file.getFileName()))
-      .sorted(Comparator.comparingLong(this::getModifiedTime).reversed());
-  }
-
-  private long getModifiedTime(final Path path) {
-    try {
-      return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
-    } catch(final IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   public boolean hasCampaigns() {
-    return !this.getCampaigns().isEmpty();
+    return !this.getCampaignPaths().isEmpty();
+  }
+
+  public List<Campaign> loadAllCampaigns() {
+    final List<Campaign> campaigns = new ArrayList<>();
+
+    for(final Path campaignPath : this.getCampaignPaths()) {
+      final Campaign campaign = Campaign.load(this, campaignPath);
+
+      if(campaign.latestSave != null) {
+        campaigns.add(campaign);
+      }
+    }
+
+    return campaigns;
   }
 
   public Path overwriteSave(final String fileName, final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
     try {
-      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
 
       final FileData data = new FileData(new byte[0x4000]); // Lots of extra space
       data.writeInt(0x0, this.serializerMagic);
       final int length = this.serializer.serializer(saveName, data.slice(0x4), state, activeStats);
 
-      final Path dir = this.dir.resolve(state.campaignName);
-      final Path file = dir.resolve(fileName + ".dsav");
+      final Path file = state.campaign.path.resolve(fileName + ".dsav");
 
-      Files.createDirectories(dir);
+      Files.createDirectories(state.campaign.path);
       Files.write(file, data.slice(0x0, length + 0x4).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
       return file;
     } catch(final IOException e) {
@@ -365,88 +341,21 @@ public final class SaveManager {
   }
 
   public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
-    return this.overwriteSave(slug.slugify(saveName), saveName, state, activeStats);
+    return this.overwriteSave(IoHelper.slugName(saveName), saveName, state, activeStats);
   }
 
-  public SavedGame loadGame(final String campaign, final String filename) throws InvalidSaveException {
-    final Path file = this.dir.resolve(campaign).resolve(filename + ".dsav");
-
-    if(!Files.exists(file)) {
-      throw new InvalidSaveException("No saved game " + filename);
-    }
-
-    final FileData data;
-    try {
-      data = new FileData(Files.readAllBytes(file));
-    } catch(final IOException e) {
-      throw new InvalidSaveException("Failed to load saved game " + filename, e);
-    }
-
-    return this.loadGame(campaign, filename, data);
-  }
-
-  public SavedGame loadGame(final String campaign, final String filename, final FileData data) throws InvalidSaveException {
+  public SavedGame loadData(final Campaign campaign, final String filename, final FileData data) throws InvalidSaveException {
     //LAB_80109e38
     for(final var entry : this.deserializers.entrySet()) {
       final FileData slice = entry.getKey().apply(data);
 
       if(slice != null) {
         final SavedGame savedGame = entry.getValue().deserialize(filename, slice);
-        savedGame.state.campaignName = campaign;
+        savedGame.state.campaign = campaign;
         return savedGame;
       }
     }
 
     throw new InvalidSaveException("Invalid save data " + filename);
-  }
-
-  public List<Campaign> loadAllCampaigns() {
-    final List<Campaign> campaigns = new ArrayList<>();
-
-    campaignLoop:
-    for(final Path child : this.getCampaigns()) {
-      final String filename = child.getFileName().toString();
-
-      final List<SavedGame> saves = this.loadAllSaves(filename);
-
-      if(!saves.isEmpty()) {
-        // Display the first valid save, and use the first save if no valid ones are found
-        for(final SavedGame save : saves) {
-          if(save.isValid()) {
-            campaigns.add(new Campaign(filename, save));
-            continue campaignLoop;
-          }
-        }
-
-        campaigns.add(new Campaign(filename, saves.get(0)));
-      }
-    }
-
-    return campaigns;
-  }
-
-  public List<SavedGame> loadAllSaves(final String campaign) {
-    final List<SavedGame> saves = new ArrayList<>();
-
-    for(final Path child : this.getSaves(campaign)) {
-      final String filename = child.getFileName().toString();
-      final String name = filename.substring(0, filename.lastIndexOf('.'));
-
-      try {
-        saves.add(this.loadGame(campaign, name));
-      } catch(final InvalidSaveException e) {
-        saves.add(SavedGame.invalid(name));
-      }
-    }
-
-    return saves;
-  }
-
-  public void deleteCampaign(final String campaignName) throws IOException {
-    FileUtils.deleteDirectory(this.dir.resolve(campaignName).toFile());
-  }
-
-  public void deleteSave(final String campaignName, final String saveName) throws IOException {
-    Files.delete(this.dir.resolve(campaignName).resolve(saveName + ".dsav"));
   }
 }

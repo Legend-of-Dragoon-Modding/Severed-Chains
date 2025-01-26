@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.IoHelper.pathToByteBuffer;
+import static org.lwjgl.opengl.GL11.glGetTexImage;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
@@ -182,6 +184,20 @@ public final class Texture {
     final int error = glGetError();
     if(error != GL_NO_ERROR) {
       throw new RuntimeException("Failed to upload data, rect: (" + x + ", " + y + ", " + w + ", " + h + "), glError: " + Long.toString(error, 16));
+    }
+  }
+
+  public void getData(final ByteBuffer data) {
+    if(data.capacity() != this.width * this.height * 4) {
+      throw new RuntimeException("Buffer capacity does not match texture dimensions, Buffer size: " + data.capacity() + ", Texture size: " + this.width * this.height * 4);
+    }
+
+    RENDERER.getLastFrame().use();
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    final int error = glGetError();
+    if(error != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to acquire texture data, glError: " + Long.toString(error, 16));
     }
   }
 

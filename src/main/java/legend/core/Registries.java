@@ -21,12 +21,15 @@ import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistry;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.ShopRegistry;
+import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.Spell;
 import legend.game.inventory.SpellRegistry;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistry;
 import legend.game.saves.ConfigRegistryEvent;
+import legend.game.types.ShopStruct40;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.registries.Registry;
 
@@ -39,6 +42,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<BattleEntityType> battleEntityTypes = this.addRegistry(new BattleEntityTypeRegistry(), BattleEntityTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
+  public final Registry<ShopStruct40> shop = this.addRegistry(new ShopRegistry(), ShopRegistryEvent::new);
   public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);

@@ -49,6 +49,66 @@ public class CharSwapScreen extends MenuScreen {
         this.primaryCharIndex = 0;
         this.secondaryCharIndex = 0;
 
+        /* When unlock party is disabled, rearrange party to fit retail expectations. */
+        if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get())) {
+          boolean sortPrimary = false;
+          boolean requiredInSecondary = false;
+          int primarySlotIndex;
+          int secondarySlotIndex;
+
+          /* Check current party for empty slots or swappable characters above locked characters. */
+          for(primarySlotIndex = 0; primarySlotIndex < 2 && !sortPrimary; primarySlotIndex++) {
+            final int charA = gameState_800babc8.charIds_88[primarySlotIndex];
+            final int charB = gameState_800babc8.charIds_88[primarySlotIndex + 1];
+            sortPrimary = charA == -1 || charB == -1 || (gameState_800babc8.charData_32c[charA].partyFlags_04 & 0x20) == 0 && (gameState_800babc8.charData_32c[charB].partyFlags_04 & 0x20) != 0;
+          }
+          /* Check for locked characters not in the active party. */
+          for(secondarySlotIndex = 0; secondarySlotIndex < 6 && !sortPrimary && !requiredInSecondary; secondarySlotIndex++) {
+            requiredInSecondary = secondaryCharIds_800bdbf8[secondarySlotIndex] != -1 && (gameState_800babc8.charData_32c[secondaryCharIds_800bdbf8[secondarySlotIndex]].partyFlags_04 & 0x20) != 0;
+          }
+
+          /* Check for swappable character in first slot. */
+          if(sortPrimary || requiredInSecondary || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[0]].partyFlags_04 & 0x20) == 0) {
+            final int[] slots = {-1, -1, -1};
+            int charIndex;
+
+            /* Building new party. Priority by loop.
+                1. Locked/required characters.
+                2. Available characters in current party.
+                3. Available characters not in current party. */
+            for(charIndex = 0, primarySlotIndex = 0; charIndex < 9 && primarySlotIndex < 3; charIndex++) {
+              if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) != 0) {
+                slots[primarySlotIndex++] = charIndex;
+              }
+            }
+            for(int i = 0; i < 3 && primarySlotIndex < 3; i++) {
+              charIndex = gameState_800babc8.charIds_88[i];
+              if(charIndex != -1 && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) != 0 && charIndex != slots[0] && charIndex != slots[1] && charIndex != slots[2]) {
+                slots[primarySlotIndex++] = charIndex;
+              }
+            }
+            for(charIndex = 0; charIndex < 9 && primarySlotIndex < 3; charIndex++) {
+              if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) != 0 && charIndex != slots[0] && charIndex != slots[1] && charIndex != slots[2]) {
+                slots[primarySlotIndex++] = charIndex;
+              }
+            }
+
+            /* Rebuilding secondary characters to avoid duplicates. */
+            for(charIndex = 0, secondarySlotIndex = 0; charIndex < 9 && secondarySlotIndex < 6; charIndex++) {
+              if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x1) != 0 && charIndex != slots[0] && charIndex != slots[1] && charIndex != slots[2]) {
+                secondaryCharIds_800bdbf8[secondarySlotIndex++] = charIndex;
+              }
+            }
+            while(secondarySlotIndex < 6) {
+              secondaryCharIds_800bdbf8[secondarySlotIndex++] = -1;
+            }
+
+            gameState_800babc8.charIds_88[0] = slots[0];
+            gameState_800babc8.charIds_88[1] = slots[1];
+            gameState_800babc8.charIds_88[2] = slots[2];
+          }
+        }
+
         for(int i = 0; i < 3; i++) {
           if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[i] == -1 || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[i]].partyFlags_04 & 0x20) == 0) {
             this.primaryCharIndex = i;
@@ -179,20 +239,13 @@ public class CharSwapScreen extends MenuScreen {
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
         if(MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
-          if(gameState_800babc8.charIds_88[i] != -1) {
+          if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[i] != -1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[i]].partyFlags_04 & 0x20) == 0) {
             playMenuSound(2);
             this.primaryCharIndex = i;
             this.primaryCharHighlight.y_44 = this.getSlotY(i);
-
-            final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
-            if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || charIndex == -1 || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
-              playMenuSound(2);
-              this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
-              FUN_80104b60(this.secondaryCharHighlight);
-              this.loadingStage = 3;
-            } else {
-              playMenuSound(40);
-            }
+            this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
+            FUN_80104b60(this.secondaryCharHighlight);
+            this.loadingStage = 3;
           } else {
             playMenuSound(40);
           }
@@ -217,7 +270,7 @@ public class CharSwapScreen extends MenuScreen {
 
           final int secondaryCharIndex = secondaryCharIds_800bdbf8[this.secondaryCharIndex];
 
-          if(((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
+          if((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && charCount >= 2) || secondaryCharIndex != -1 && (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0) {
             playMenuSound(2);
             final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
             gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;
@@ -242,7 +295,7 @@ public class CharSwapScreen extends MenuScreen {
 
   private void menuStage2NavigateUp() {
     playMenuSound(1);
-    if(this.primaryCharIndex > 0 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[this.primaryCharIndex - 1] == -1 || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[this.primaryCharIndex - 1]].partyFlags_04 & 0x20) == 0)) {
+    if(this.primaryCharIndex > 0 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[this.primaryCharIndex - 1] != -1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[this.primaryCharIndex - 1]].partyFlags_04 & 0x20) == 0)) {
       this.primaryCharIndex--;
     }
 
@@ -251,7 +304,7 @@ public class CharSwapScreen extends MenuScreen {
 
   private void menuStage2NavigateDown() {
     playMenuSound(1);
-    if(this.primaryCharIndex < 2 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[this.primaryCharIndex + 1] == -1 || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[this.primaryCharIndex + 1]].partyFlags_04 & 0x20) == 0)) {
+    if(this.primaryCharIndex < 2 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[this.primaryCharIndex + 1] != -1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[this.primaryCharIndex + 1]].partyFlags_04 & 0x20) == 0)) {
       this.primaryCharIndex++;
     }
 
@@ -260,7 +313,7 @@ public class CharSwapScreen extends MenuScreen {
 
   private void menuStage2Select() {
     final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
-    if(charIndex != -1 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0)) {
+    if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || charIndex != -1 && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
       playMenuSound(2);
       this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
       FUN_80104b60(this.secondaryCharHighlight);
@@ -333,7 +386,7 @@ public class CharSwapScreen extends MenuScreen {
 
     final int secondaryCharIndex = secondaryCharIds_800bdbf8[this.secondaryCharIndex];
 
-    if(((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
+    if((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && charCount >= 2) || secondaryCharIndex != -1 && (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0) {
       playMenuSound(2);
       final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
       gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;

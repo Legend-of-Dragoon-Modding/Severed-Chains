@@ -1,0 +1,62 @@
+Haschel leaves party, replace with first available character
+Skip flag resets for other characters
+Unlock party fix
+--- original
++++ modified
+@@ -2720,6 +2720,7 @@
+ data 0xffffff9c
+ data 0xfffffce0
+ LABEL_289:
++jmp inl[:HASCHEL_CHECK]
+ mov var[17][1], stor[24]
+ mov var[17][2], stor[25]
+ jmp_cmp !=, 0x4, stor[24], inl[:LABEL_290]
+@@ -2745,6 +2746,43 @@
+ andor 0x40, 0x0, var[115 + 7]
+ andor 0x40, 0x0, var[115 + 8]
+ return
++CHARACTER:
++data 0
++CHARACTER_FLAG:
++data 0
++HASCHEL_CHECK:
+# stor[24]: Index position for Haschel in active party
++andor 0x40, 0x0, var[115 + 4]
++mov 0, stor[24]
++FIND_HASCHEL:
++jmp_cmp ==, 4, var[17][stor[24]], inl[:REMOVE_HASCHEL]
++incr stor[24]
++jmp_cmp !=, 3, stor[24], inl[:FIND_HASCHEL]
++jmp inl[:BREAK]
++REMOVE_HASCHEL:
+# stor[25]: Index for active party loop
++mov 0xffffffff, var[17][stor[24]]
++mov 0, stor[25]
++jmp inl[:PARTY_LOOP]
++CHARACTER_LOOP:
++incr inl[:CHARACTER]
++jmp_cmp ==, 9, inl[:CHARACTER], inl[:BREAK]
++mov 0, stor[25]
++PARTY_LOOP:
+# Check active party for character in loop
++jmp_cmp ==, inl[:CHARACTER], var[17][stor[25]], inl[:CHARACTER_LOOP]
++incr stor[25]
++jmp_cmp ==, 3, stor[25], inl[:CHECK_FLAG]
++jmp inl[:PARTY_LOOP]
++CHECK_FLAG:
+# Check party flag for character in loop
+# stor[25]: Character index
++mov inl[:CHARACTER], stor[25]
++mov var[115 + stor[25]], inl[:CHARACTER_FLAG]
++and 0x3, inl[:CHARACTER_FLAG]
++jmp_cmp !=, 0, inl[:CHARACTER_FLAG], inl[:REPLACE_HASCHEL]
++jmp inl[:CHARACTER_LOOP]
++REPLACE_HASCHEL:
++mov inl[:CHARACTER], var[17][stor[24]]
++BREAK:
++mov var[17][1], stor[24]
++mov var[17][2], stor[25]
++return
+ LABEL_294:
+ gosub inl[:LABEL_56]
+ memcpy 0x3, inl[:LABEL_295], stor[stor[stor[0], 24], 11]

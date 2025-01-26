@@ -126,19 +126,14 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
       .rgb(r, g, b)
       .addVertex(1.0f, y, 0.0f)
       .uv(x / 320.0f + 1.0f, v)
-      .rgb(r, g, b)
       .addVertex(0.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b)
       .addVertex(1.0f, y, 0.0f)
       .uv(x / 320.0f + 1.0f, v)
-      .rgb(r, g, b)
       .addVertex(0.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b)
       .addVertex(1.0f, y + 1.0f, 0.0f)
-      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b);
+      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f);
   }
 
   @Method(0x801097e0L)

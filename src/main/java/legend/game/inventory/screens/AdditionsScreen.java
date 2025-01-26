@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_SELECTED;
 import static legend.game.SItem.additionGlyphs_801141e4;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
@@ -18,11 +20,11 @@ import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -107,7 +109,7 @@ public class AdditionsScreen extends MenuScreen {
     final int charIndex = characterIndices_800bdbb8[charSlot];
 
     if(additions[0].offset_00 == -1) {
-      renderText(Addition_cannot_be_used_8011c340, 106, 150, TextColour.BROWN);
+      renderText(Addition_cannot_be_used_8011c340, 106, 150, UI_TEXT);
     } else {
       if(allocate) {
         renderGlyphs(additionGlyphs_801141e4, 0, 0);
@@ -124,7 +126,7 @@ public class AdditionsScreen extends MenuScreen {
         final int index = additions[i].index_01;
 
         if(offset != -1) {
-          renderText(additions_8011a064[offset], 33, y - 2, offset != selectedAdditionOffset ? TextColour.BROWN : TextColour.RED);
+          renderText(additions_8011a064[offset], 33, y - 2, offset != selectedAdditionOffset ? UI_TEXT : UI_TEXT_SELECTED);
 
           if(allocate) {
             final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];

@@ -30,6 +30,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.scripting.DrgnFileEvent;
+import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -106,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8004.gameStateOverlays_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.getSequenceFlags;
 import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
+import static legend.game.Scus94491BpeSegment_8004.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.pauseMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
@@ -163,7 +165,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
-import static legend.game.combat.environment.StageData.stageData_80109a98;
+import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
@@ -184,6 +186,7 @@ public final class Scus94491BpeSegment {
   public static int centreScreenY_1f8003de;
   public static int displayWidth_1f8003e0;
   public static int displayHeight_1f8003e4;
+  /** Deprecated */
   public static int zOffset_1f8003e8;
   public static int tmdGp0Tpage_1f8003ec;
   public static int tmdGp0CommandId_1f8003ee;
@@ -397,7 +400,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      RENDERER.window().setFpsLimit(60 / frames);
+      RENDERER.window().setFpsLimit(60 / frames * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
 
@@ -476,7 +479,7 @@ public final class Scus94491BpeSegment {
 
       // Failsafe if we run too far behind (also applies to pausing in IDE)
       if(interval >= NANOS_PER_TICK * 3) {
-        LOGGER.warn("Sequencer running behind, skipping ticks to catch up");
+        LOGGER.debug("Sequencer running behind, skipping ticks to catch up");
         interval = NANOS_PER_TICK;
         time = System.nanoTime() - interval;
       }
@@ -1357,6 +1360,10 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019710L)
   public static void prepareOverlay() {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05 || engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
+      lastSavableEngineState = engineState_8004dd20;
+    }
+
     if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05 && previousEngineState_8004dd28 == EngineStateEnum.SUBMAP_05) {
       sssqResetStuff();
     }
@@ -2342,7 +2349,7 @@ public final class Scus94491BpeSegment {
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
-    playMusicPackage(new BackgroundMusic(files, fileIndex), startSequence);
+    playMusicPackage(new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate()), startSequence);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
   }
 
@@ -2366,7 +2373,7 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8];
+    final StageData2c stageData = getEncounterStageData(encounterId_800bb0f8);
 
     if(stageData.musicIndex_04 != 0xff) {
       stopMusicSequence();
@@ -2386,9 +2393,11 @@ public final class Scus94491BpeSegment {
         default -> parseMelbuVictory(stageData.musicIndex_04 & 0x1f);
       };
 
+      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(victoryType, musicIndex, stageData));
+
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4000);
 
-      loadEncounterMusic(musicIndex, victoryType);
+      loadEncounterMusic(battleMusicEvent.musicIndex, battleMusicEvent.victoryType);
     }
 
     //LAB_8001df9c
@@ -2852,8 +2861,8 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001fb44L)
   public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
-    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex);
-    bgm.setVolume(40);
+    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate());
+    bgm.setVolume(40 / 128.0f);
 
     loadDrgnDir(0, victoryType, victoryFiles -> loadVictoryMusic(victoryFiles, bgm));
 
@@ -2872,7 +2881,7 @@ public final class Scus94491BpeSegment {
 
   private static void loadVictoryMusic(final List<FileData> files, final BackgroundMusic battleMusic) {
     victoryMusic = battleMusic.createVictoryMusic(files);
-    victoryMusic.setVolume(40);
+    victoryMusic.setVolume(40 / 128.0f);
   }
 
   @ScriptDescription("Load some kind of audio package")
