@@ -959,7 +959,7 @@ public class BattleHud {
       final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
         .uv(72, 128)
         .size(36.0f, 16.0f);
-      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
+      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x88, null);
       this.miss = builderMiss.build();
     }
 
@@ -1264,12 +1264,6 @@ public class BattleHud {
                 if(num.translucent_08) {
                   model.alpha(num.shade_0c / 128.0f);
                 }
-
-                if((num.state_00 & 97) == 0) {
-                  //LAB_800f4118
-                  break;
-                }
-
                 //LAB_800f4110
             }
           }
