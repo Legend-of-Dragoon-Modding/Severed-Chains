@@ -66,8 +66,6 @@ public class ScriptPatcher {
   }
 
   private boolean needsUpdate(@Nullable final ScriptPatch cachedPatch, final ScriptPatch newPatch) throws IOException {
-    if(true)return true;
-
     // Patch isn't cached, definitely needs update
     if(cachedPatch == null) {
       return true;
