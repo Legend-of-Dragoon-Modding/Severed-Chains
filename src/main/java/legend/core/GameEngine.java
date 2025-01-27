@@ -220,7 +220,7 @@ public final class GameEngine {
             return;
           }
 
-          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches")).apply();
+          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
 
           loadXpTables();
 
