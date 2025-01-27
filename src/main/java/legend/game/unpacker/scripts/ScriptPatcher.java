@@ -84,6 +84,7 @@ public class ScriptPatcher {
   private Map<String, Integer> getCrc32s(final Path baseBath, final ScriptPatch patch) throws IOException {
     final Map<String, Integer> crc32s = new HashMap<>();
     this.getCrc32s(baseBath, patch.patchFile, crc32s);
+    this.getCrc32s(baseBath, this.resolvePatchConfigName(patch.patchFile), crc32s);
     return crc32s;
   }
 
@@ -100,6 +101,7 @@ public class ScriptPatcher {
     // Insert nulls for missing files
     if(!Files.exists(fullPath)) {
       crc32s.put(path, null);
+      return;
     }
 
     // CRC32 for this file
@@ -154,6 +156,7 @@ public class ScriptPatcher {
 
     // Cache changes
     if(changed) {
+      FileUtils.deleteDirectory(this.cacheDir.toFile());
       FileUtils.copyDirectory(this.patchesDir.toFile(), this.cacheDir.toFile());
     }
   }
@@ -240,10 +243,12 @@ public class ScriptPatcher {
     return SCRIPTS.compile(path, patched);
   }
 
+  private String resolvePatchConfigName(final String diffName) {
+    return diffName.substring(0, diffName.lastIndexOf('.')) + ".config.csv";
+  }
+
   private Path resolvePatchConfigPath(final Path diffPath) {
-    final String patchLocationStr = diffPath.getFileName().toString();
-    final String patchName = patchLocationStr.substring(0, patchLocationStr.lastIndexOf('.')) + ".config.csv";
-    return diffPath.resolveSibling(patchName);
+    return diffPath.resolveSibling(this.resolvePatchConfigName(diffPath.getFileName().toString()));
   }
 
   private void getPatchConfigs(final Path configPath, final List<Integer> branchList, final Map<Integer, Integer> tableLengthList) {
@@ -253,7 +258,7 @@ public class ScriptPatcher {
       try {
         patchConfig = loadCsvFile(configPath);
       } catch(final CsvException | IOException err) {
-        LOGGER.error("Patch config error for config: " + configPath);
+        LOGGER.error("Patch config error for config: %s", configPath);
       }
     }
 
