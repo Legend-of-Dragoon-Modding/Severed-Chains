@@ -133,6 +133,11 @@ public final class AudioThread implements Runnable {
 
   public void destroy() {
     synchronized(this) {
+      if(!this.running && this.audioDevice != 0) {
+        this.destroyInternal();
+        return;
+      }
+
       this.running = false;
     }
 
