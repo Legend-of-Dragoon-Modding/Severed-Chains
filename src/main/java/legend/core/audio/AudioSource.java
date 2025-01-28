@@ -26,7 +26,7 @@ public abstract class AudioSource {
 
   private boolean playing;
 
-  private final IntBuffer tmp = MemoryUtil.memAllocInt(1);
+  private IntBuffer tmp;
 
   public AudioSource(final int bufferCount) {
     this.buffers = new int[bufferCount];
@@ -35,6 +35,7 @@ public abstract class AudioSource {
 
   void init() {
     this.sourceId = alGenSources();
+    this.tmp = MemoryUtil.memAllocInt(1);
 
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
