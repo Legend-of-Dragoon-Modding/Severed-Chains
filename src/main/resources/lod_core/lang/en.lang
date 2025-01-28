@@ -9,6 +9,9 @@ lod_core.config.category.audio.label=Audio
 lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
+# Config general text
+lod_core.config.help_hotkey.label=%s Help
+
 # Global config
 lod_core.config.controller.label=Controller
 lod_core.config.controller_keybinds.label=Controller Keybinds

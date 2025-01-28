@@ -67,6 +67,10 @@ public class VerticalLayoutScreen extends MenuScreen {
     return label;
   }
 
+  public Control getHighlightedRow() {
+    return this.rows.get(this.highlightedRow);
+  }
+
   private void highlightRow(final int index) {
     if(this.highlightedRow != index) {
       if(this.highlightedRow != -1 && this.configControls.get(this.highlightedRow) != null && this.configControls.get(this.highlightedRow).isHovered()) {
