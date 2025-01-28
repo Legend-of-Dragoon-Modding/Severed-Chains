@@ -14,6 +14,11 @@ public class SubmapWidescreenModeConfig extends EnumConfigEntry<SubmapWidescreen
   }
 
   @Override
+  public boolean hasHelp() {
+    return true;
+  }
+
+  @Override
   public void onChange(final ConfigCollection configCollection, final SubmapWidescreenMode oldValue, final SubmapWidescreenMode newValue) {
     RENDERER.updateProjections();
   }

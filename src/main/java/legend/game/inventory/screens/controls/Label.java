@@ -68,6 +68,7 @@ public class Label extends Control {
   private void updateAutoSize() {
     if(this.autoSize) {
       this.setSize((int)Math.ceil(this.textWidth), (int)Math.ceil(this.textHeight));
+      this.autoSize = true; // setSize will disable autoSize
     }
   }
 

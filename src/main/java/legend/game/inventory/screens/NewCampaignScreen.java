@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -25,7 +24,6 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
@@ -50,34 +48,40 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.addControl(new Background());
 
-    this.campaignName = this.addRow("Campaign name", new Textbox());
+    this.campaignName = new Textbox();
     this.campaignName.setText(SAVES.generateCampaignName());
     this.campaignName.setMaxLength(15);
     this.campaignName.setZ(35);
+    this.addRow("Campaign name", this.campaignName);
 
-    this.addRow("", new Button("Options")).onPressed(() ->
-      SItem.menuStack.pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+    final Button options = new Button("Options");
+    this.addRow("", options);
+    options.onPressed(() ->
+      this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
         startFadeEffect(2, 10);
-        SItem.menuStack.popScreen();
+        this.getStack().popScreen();
 
         // Update global config but don't save campaign config until an actual save file is made so we don't end up with orphan campaigns
         ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       }))
     );
 
-    this.addRow("", new Button("Mods")).onPressed(() ->
-      SItem.menuStack.pushScreen(new ModsScreen(this.enabledMods, () -> {
+    final Button mods = new Button("Mods");
+    this.addRow("", mods);
+    mods.onPressed(() ->
+      this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
         bootMods(this.enabledMods);
 
         startFadeEffect(2, 10);
-        SItem.menuStack.popScreen();
+        this.getStack().popScreen();
       }))
     );
 
-    final Button startGame = this.addRow("", new Button("Start Game"));
-    startGame.onPressed(() -> {
+    final Button startGame = new Button("Start Game");
+    this.addRow("", startGame);
+      startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
+        this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
       } else {
         this.unload = true;
       }

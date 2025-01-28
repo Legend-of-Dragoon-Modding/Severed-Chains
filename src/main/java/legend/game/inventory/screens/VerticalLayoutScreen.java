@@ -38,7 +38,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));
   }
 
-  public <T extends Control> T addRow(final String name, @Nullable final T control) {
+  public <T extends Control> Label addRow(final String name, @Nullable final T control) {
     final Label label = this.addControl(new Label(name));
     label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     label.setSize(this.getWidth() - 64, 11);
@@ -64,7 +64,7 @@ public class VerticalLayoutScreen extends MenuScreen {
       this.highlightRow(0);
     }
 
-    return control;
+    return label;
   }
 
   private void highlightRow(final int index) {

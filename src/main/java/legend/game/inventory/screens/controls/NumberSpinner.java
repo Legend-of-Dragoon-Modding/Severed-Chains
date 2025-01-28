@@ -40,6 +40,10 @@ public class NumberSpinner<T extends Number> extends Control {
     return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
   }
 
+  public static NumberSpinner<Float> percentSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> Math.round(num * 100) + "%");
+  }
+
   public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp) {
     this(number, step, bigStep, add, subtract, scroll, clamp, T::toString);
   }

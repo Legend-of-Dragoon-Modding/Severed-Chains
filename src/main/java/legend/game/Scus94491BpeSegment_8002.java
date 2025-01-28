@@ -3832,7 +3832,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static int textHeight(final String text) {
-    return 12;
+    int lines = 1;
+    int newlinePos = -1;
+    while((newlinePos = text.indexOf('\n', newlinePos + 1)) != -1) {
+      lines++;
+    }
+
+    return lines * 12;
   }
 
   @Method(0x8002a6fcL)
