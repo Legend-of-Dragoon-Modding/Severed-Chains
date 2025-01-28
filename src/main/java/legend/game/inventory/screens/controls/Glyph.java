@@ -50,6 +50,13 @@ public class Glyph extends Control {
   }
 
   @Override
+  public void setScale(final float scale) {
+    super.setScale(scale);
+    this.renderable.widthScale = scale;
+    this.renderable.heightScale_38 = scale;
+  }
+
+  @Override
   protected void render(final int x, final int y) {
     uploadRenderable(this.renderable, x, y);
   }

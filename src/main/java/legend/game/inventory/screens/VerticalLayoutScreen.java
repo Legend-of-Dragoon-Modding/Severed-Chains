@@ -15,7 +15,7 @@ import java.util.List;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 
 public class VerticalLayoutScreen extends MenuScreen {
-  private static final int MAX_VISIBLE_ENTRIES = 9;
+  private static final int MAX_VISIBLE_ENTRIES = 14;
 
   private final Brackets highlight;
   private int highlightedRow = -1;
@@ -31,7 +31,7 @@ public class VerticalLayoutScreen extends MenuScreen {
   public VerticalLayoutScreen() {
     this.highlight = this.addControl(new Brackets());
     this.highlight.setPos(26, 30);
-    this.highlight.setSize(320, 20);
+    this.highlight.setSize(320, 14);
     this.highlight.setClut(0xfc29);
 
     this.upArrow = this.addControl(Glyph.uiElement(61, 68));
@@ -41,14 +41,16 @@ public class VerticalLayoutScreen extends MenuScreen {
   public <T extends Control> T addRow(final String name, @Nullable final T control) {
     final Label label = this.addControl(new Label(name));
     label.setVerticalAlign(Label.VerticalAlign.CENTRE);
-    label.setSize(this.getWidth() - 64, 16);
-    label.setPos(32, 32 + this.rows.size() * 20);
+    label.setSize(this.getWidth() - 64, 11);
+    label.setPos(32, 32 + this.rows.size() * 13);
+    label.setScale(0.66f);
 
     if(control != null) {
       label.onGotFocus(() -> this.setFocus(control));
 
-      control.setSize(140, 16);
-      control.setPos(label.getWidth() - control.getWidth(), 0);
+      control.setSize(140, 11);
+      control.setPos(this.getWidth() - 64 - control.getWidth(), 0);
+      control.setScale(0.66f);
       label.addControl(control);
       this.configControls.add(control);
     } else {
@@ -93,13 +95,13 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void updateEntries() {
     for(int i = 0; i < this.rows.size(); i++) {
-      final Control save = this.rows.get(i);
+      final Control control = this.rows.get(i);
 
       if(i >= this.scroll && i < this.scroll + MAX_VISIBLE_ENTRIES) {
-        save.setY(32 + (i - this.scroll) * 20);
-        save.show();
+        control.setY(32 + (i - this.scroll) * 13);
+        control.show();
       } else {
-        save.hide();
+        control.hide();
       }
     }
 
@@ -111,7 +113,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     this.upArrow.setVisibility(this.scroll > 0);
-    this.upArrow.setPos(this.getWidth() - 20, 0);
+    this.upArrow.setPos(this.getWidth() - 20, 6);
 
     this.downArrow.setVisibility(this.rows.size() - this.scroll > MAX_VISIBLE_ENTRIES);
     this.downArrow.setPos(this.getWidth() - 20, this.getHeight() - 24);
@@ -129,7 +131,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox(x, y, 34, 30 + i * 20, 320, 20) && this.highlightedRow != this.scroll + i) {
+      if(MathHelper.inBox(x, y, 34, 30 + i * 13, 320, 13) && this.highlightedRow != this.scroll + i) {
         playMenuSound(1);
         this.highlightRow(this.scroll + i);
         return InputPropagation.HANDLED;

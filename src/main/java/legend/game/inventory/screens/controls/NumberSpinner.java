@@ -3,23 +3,25 @@ package legend.game.inventory.screens.controls;
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 
 import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class NumberSpinner<T extends Number> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
   private final Brackets highlight;
+  private final Label label;
 
   private T number;
   private T step;
   private T bigStep;
-  private String numberStr;
   private final BiFunction<T, T, T> add;
   private final BiFunction<T, T, T> subtract;
   private final BiFunction<T, Integer, T> scroll;
@@ -43,6 +45,11 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp, final Function<T, String> toString) {
+    this.label = this.addControl(new Label(""));
+    this.label.setVerticalAlign(Label.VerticalAlign.CENTRE);
+    this.label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
+    this.label.ignoreInput();
+
     this.upArrow = this.addControl(Glyph.uiElement(61, 68));
     this.upArrow.ignoreInput();
 
@@ -66,9 +73,9 @@ public class NumberSpinner<T extends Number> extends Control {
 
   public void setNumber(final T number) {
     this.number = this.clamp.apply(number);
-    this.numberStr = this.toString.apply(this.number);
-    this.highlight.setWidth(this.numberStr.length() * 6 + 10);
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 - 8);
+    this.label.setText(this.toString.apply(this.number));
+    this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
 
     if(this.changeHandler != null) {
       this.changeHandler.change(this.number);
@@ -93,12 +100,25 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   @Override
+  public void setScale(final float scale) {
+    super.setScale(scale);
+    this.label.setScale(scale);
+    this.upArrow.setScale(scale);
+    this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
+    this.downArrow.setScale(scale);
+    this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
+    this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
+  }
+
+  @Override
   protected void onResize() {
     super.onResize();
-    this.upArrow.setPos(this.getWidth() - 10, -1);
-    this.downArrow.setPos(this.getWidth(), -2);
+    this.label.setSize(this.getWidth(), this.getHeight());
+    this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
+    this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
     this.highlight.setHeight(this.getHeight());
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 - 8);
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
   }
 
   @Override
@@ -183,7 +203,7 @@ public class NumberSpinner<T extends Number> extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    this.renderNumber(x + (this.getWidth() - this.numberStr.length() * 6) / 2, y + 3, this.numberStr, this.numberStr.length());
+
   }
 
   public void onChange(final Change<T> change) {
