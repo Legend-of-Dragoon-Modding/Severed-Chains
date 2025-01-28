@@ -11,8 +11,8 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Label extends Control {
   private String text;
-  private int textWidth;
-  private int textHeight;
+  private float textWidth;
+  private float textHeight;
   private VerticalAlign verticalAlign = VerticalAlign.TOP;
   private boolean autoSize = true;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
@@ -31,10 +31,7 @@ public class Label extends Control {
 
   public void setAutoSize(final boolean autoSize) {
     this.autoSize = autoSize;
-
-    if(this.autoSize) {
-      this.setSize(this.textWidth, this.textHeight);
-    }
+    this.updateAutoSize();
   }
 
   public boolean getAutoSize() {
@@ -47,12 +44,8 @@ public class Label extends Control {
 
   public void setText(final String text) {
     this.text = text;
-    this.textWidth = textWidth(text);
-    this.textHeight = textHeight(text);
-
-    if(this.autoSize) {
-      this.setSize(this.textWidth, this.textHeight);
-    }
+    this.updateTextSize();
+    this.updateAutoSize();
   }
 
   public String getText() {
@@ -60,14 +53,40 @@ public class Label extends Control {
   }
 
   @Override
+  public void setScale(final float scale) {
+    super.setScale(scale);
+    this.fontOptions.size(scale);
+    this.updateTextSize();
+    this.updateAutoSize();
+  }
+
+  private void updateTextSize() {
+    this.textWidth = textWidth(this.text) * this.getScale();
+    this.textHeight = textHeight(this.text) * this.getScale();
+  }
+
+  private void updateAutoSize() {
+    if(this.autoSize) {
+      this.setSize((int)Math.ceil(this.textWidth), (int)Math.ceil(this.textHeight));
+      this.autoSize = true; // setSize will disable autoSize
+    }
+  }
+
+  @Override
+  protected void onResize() {
+    this.autoSize = false;
+    super.onResize();
+  }
+
+  @Override
   protected void render(final int x, final int y) {
-    final int offsetX = switch(this.fontOptions.getHorizontalAlign()) {
+    final float offsetX = switch(this.fontOptions.getHorizontalAlign()) {
       case LEFT -> 0;
-      case CENTRE -> this.getWidth() / 2;
+      case CENTRE -> this.getWidth() / 2.0f;
       case RIGHT -> this.getWidth();
     };
 
-    final int offsetY = switch(this.verticalAlign) {
+    final float offsetY = switch(this.verticalAlign) {
       case TOP -> 0;
       case CENTRE -> (this.getHeight() - this.textHeight) / 2;
       case BOTTOM -> this.getHeight() - this.textHeight;

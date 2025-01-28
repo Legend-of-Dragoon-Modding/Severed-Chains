@@ -13,6 +13,11 @@ public class HighQualityProjectionConfigEntry extends BoolConfigEntry {
   }
 
   @Override
+  public boolean hasHelp() {
+    return true;
+  }
+
+  @Override
   public void onChange(final ConfigCollection configCollection, final Boolean oldValue, final Boolean newValue) {
     RENDERER.updateProjections();
   }

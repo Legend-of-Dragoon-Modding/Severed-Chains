@@ -9,4 +9,9 @@ public class EncounterRateConfigEntry extends EnumConfigEntry<EncounterRateMode>
   public EncounterRateConfigEntry() {
     super(EncounterRateMode.class, EncounterRateMode.AVERAGE, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
   }
+
+  @Override
+  public boolean hasHelp() {
+    return true;
+  }
 }

@@ -14,6 +14,11 @@ public class ResolutionConfig extends EnumConfigEntry<Resolution> {
   }
 
   @Override
+  public boolean hasHelp() {
+    return true;
+  }
+
+  @Override
   public void onChange(final ConfigCollection configCollection, final Resolution oldValue, final Resolution newValue) {
     RENDERER.updateResolution();
   }

@@ -28,9 +28,11 @@ import legend.game.modding.coremod.config.MusicSampleRateConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
+import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
 import legend.game.modding.coremod.config.SubmapWidescreenModeConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
+import legend.game.modding.coremod.config.UnlockPartyConfig;
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.CampaignNameConfigEntry;
 import legend.game.saves.ConfigCategory;
@@ -150,13 +152,13 @@ public class CoreMod {
   public static final RegistryDelegate<TransformationModeConfigEntry> TRANSFORMATION_MODE_CONFIG = CONFIG_REGISTRAR.register("transformation_mode", TransformationModeConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
-  public static final RegistryDelegate<BoolConfigEntry> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<SaveAnywhereConfig> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", SaveAnywhereConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_STATUS_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("disable_status_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<BoolConfigEntry> ENEMY_HP_BARS_CONFIG = CONFIG_REGISTRAR.register("enemy_hp_bars", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<MashModeConfigEntry> MASH_MODE_CONFIG = CONFIG_REGISTRAR.register("mash_mode", MashModeConfigEntry::new);
   public static final RegistryDelegate<SecondaryCharacterXpMultiplierConfigEntry> SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG = CONFIG_REGISTRAR.register("secondary_character_xp_multiplier", SecondaryCharacterXpMultiplierConfigEntry::new);
   public static final RegistryDelegate<BattleTransitionModeConfigEntry> BATTLE_TRANSITION_MODE_CONFIG = CONFIG_REGISTRAR.register("battle_transition_mode", BattleTransitionModeConfigEntry::new);
-  public static final RegistryDelegate<BoolConfigEntry> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
 
   public static final Formula<Integer, Integer> PHYSICAL_DAMAGE_FORMULA = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
     .then(PhysicalDamageFormula::applyElementalInteractions)

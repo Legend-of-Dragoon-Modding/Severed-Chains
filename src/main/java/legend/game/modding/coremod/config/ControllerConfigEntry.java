@@ -28,7 +28,7 @@ public class ControllerConfigEntry extends ConfigEntry<String> {
     this.setEditControl((current, gameState) -> {
       final List<Controller> joypads = new ArrayList<>();
 
-      final Dropdown dropdown = new Dropdown();
+      final Dropdown<String> dropdown = new Dropdown<>();
       dropdown.onSelection(index -> gameState.setConfig(this, index == 0 ? "" : joypads.get(index - 1).getGuid()));
       dropdown.addOption("<none>");
 

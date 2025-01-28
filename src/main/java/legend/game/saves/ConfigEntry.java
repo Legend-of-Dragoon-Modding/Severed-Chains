@@ -35,6 +35,18 @@ public class ConfigEntry<T> extends RegistryEntry {
     return this.editControl.apply(value, config);
   }
 
+  public String getLabelTranslationKey() {
+    return this.getTranslationKey("label");
+  }
+
+  public String getHelpTranslationKey() {
+    return this.getTranslationKey("help");
+  }
+
+  public boolean hasHelp() {
+    return false;
+  }
+
   public void onChange(final ConfigCollection configCollection, final T oldValue, final T newValue) {
 
   }

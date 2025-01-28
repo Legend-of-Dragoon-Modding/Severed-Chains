@@ -11,10 +11,15 @@ public class SecondaryCharacterXpMultiplierConfigEntry extends ConfigEntry<Float
     super(0.5f, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY, SecondaryCharacterXpMultiplierConfigEntry::serializer, SecondaryCharacterXpMultiplierConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
-      final NumberSpinner<Float> spinner = NumberSpinner.floatSpinner(number, 0.01f, 0.05f, 0.0f, 1.0f);
+      final NumberSpinner<Float> spinner = NumberSpinner.percentSpinner(number, 0.01f, 0.05f, 0.0f, 1.0f);
       spinner.onChange(val -> gameState.setConfig(this, val));
       return spinner;
     });
+  }
+
+  @Override
+  public boolean hasHelp() {
+    return true;
   }
 
   private static byte[] serializer(final float val) {
