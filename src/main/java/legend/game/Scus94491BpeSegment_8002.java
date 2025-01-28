@@ -3374,26 +3374,26 @@ public final class Scus94491BpeSegment_8002 {
     final float height = 12.0f * options.getSize();
     final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
 
-    float y = originY;
-    float glyphNudge = 0.0f;
-
     textTransforms.scaling(options.getSize());
 
-    for(int charIndex = 0; charIndex < text.length(); charIndex++) {
-      final char c = text.charAt(charIndex);
+    for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+      float y = originY;
+      float glyphNudge = 0.0f;
 
-      if(c != ' ') {
-        if(c == '\n') {
-          x = switch(options.getHorizontalAlign()) {
-            case LEFT -> originX;
-            case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
-            case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
-          };
+      for(int charIndex = 0; charIndex < text.length(); charIndex++) {
+        final char c = text.charAt(charIndex);
 
-          glyphNudge = 0.0f;
-          y += height;
-        } else {
-          for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+        if(c != ' ') {
+          if(c == '\n') {
+            x = switch(options.getHorizontalAlign()) {
+              case LEFT -> originX;
+              case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
+              case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
+            };
+
+            glyphNudge = 0.0f;
+            y += height;
+          } else {
             final float offsetX = (i & 1) * options.getSize();
             final float offsetY = (i >>> 1) * options.getSize();
 
@@ -3424,9 +3424,9 @@ public final class Scus94491BpeSegment_8002 {
             }
           }
         }
-      }
 
-      glyphNudge += charWidth(c) * options.getSize();
+        glyphNudge += charWidth(c) * options.getSize();
+      }
     }
   }
 
