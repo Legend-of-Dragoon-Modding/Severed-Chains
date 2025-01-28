@@ -14,7 +14,7 @@ public class MusicVolumeConfigEntry extends ConfigEntry<Float> {
     super(1.0f, ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO, MusicVolumeConfigEntry::serializer, MusicVolumeConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
-      final NumberSpinner<Float> spinner = NumberSpinner.floatSpinner(number, 0.05f, 0.25f, 0.0f, 1.0f);
+      final NumberSpinner<Float> spinner = NumberSpinner.percentSpinner(number, 0.05f, 0.25f, 0.0f, 1.0f);
       spinner.onChange(val -> gameState.setConfig(this, val));
       return spinner;
     });
