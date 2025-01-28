@@ -10,23 +10,30 @@ import legend.game.inventory.screens.TextColour;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
-public class Dropdown extends Control {
+public class Dropdown<T> extends Control {
   private final Panel background;
   private final Panel panel;
   private final Glyph downArrow;
   private final Brackets highlight;
 
-  private final List<String> options = new ArrayList<>();
+  private final List<T> options = new ArrayList<>();
+  private final Function<T, String> toString;
   private int hoverIndex;
   private int selectedIndex = -1;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Dropdown() {
+    this(String::valueOf);
+  }
+
+  public Dropdown(final Function<T, String> toString) {
+    this.toString = toString;
     this.background = this.addControl(Panel.subtle());
 
     this.panel = Panel.panel();
@@ -73,7 +80,7 @@ public class Dropdown extends Control {
     this.selectedIndex = -1;
   }
 
-  public void addOption(final String option) {
+  public void addOption(final T option) {
     this.options.add(option);
     this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
 
@@ -95,7 +102,7 @@ public class Dropdown extends Control {
     return this.selectedIndex;
   }
 
-  public String getSelectedOption() {
+  public T getSelectedOption() {
     if(this.selectedIndex == -1) {
       return null;
     }
@@ -176,7 +183,7 @@ public class Dropdown extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(this.selectedIndex != -1) {
-      final String text = this.options.get(this.selectedIndex);
+      final String text = this.toString.apply(this.options.get(this.selectedIndex));
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
@@ -217,7 +224,7 @@ public class Dropdown extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
+        renderText(Dropdown.this.toString.apply(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
       }
 
       textZ_800bdf00 = oldZ;

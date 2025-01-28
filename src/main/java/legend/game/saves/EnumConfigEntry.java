@@ -20,7 +20,7 @@ public class EnumConfigEntry<T extends Enum<T>> extends ConfigEntry<T> {
     this.cls = cls;
 
     this.setEditControl((current, gameState) -> {
-      final Dropdown dropdown = new Dropdown();
+      final Dropdown<String> dropdown = new Dropdown<>();
       dropdown.onSelection(index -> gameState.setConfig(this, this.cls.getEnumConstants()[index]));
 
       for(final T mode : this.cls.getEnumConstants()) {
