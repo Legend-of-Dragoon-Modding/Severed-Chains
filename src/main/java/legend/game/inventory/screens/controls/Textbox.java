@@ -92,7 +92,7 @@ public class Textbox extends Control {
 
   private void updateTextSize() {
     this.textHeight = textHeight(this.text) * this.getScale();
-    this.caretX = this.calculateCaretX(this.caretIndex);
+    this.setCaretIndex(this.caretIndex);
   }
 
   @Override
