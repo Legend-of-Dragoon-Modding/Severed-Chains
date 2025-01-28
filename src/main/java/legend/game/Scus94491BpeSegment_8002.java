@@ -3365,18 +3365,18 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options) {
-    float x = switch(options.getHorizontalAlign()) {
-      case LEFT -> originX;
-      case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
-      case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
-    };
-
     final float height = 12.0f * options.getSize();
     final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
 
     textTransforms.scaling(options.getSize());
 
     for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+      float x = switch(options.getHorizontalAlign()) {
+        case LEFT -> originX;
+        case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
+        case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
+      };
+
       float y = originY;
       float glyphNudge = 0.0f;
 

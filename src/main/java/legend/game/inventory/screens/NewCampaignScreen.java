@@ -5,6 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
@@ -79,13 +80,18 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     final Button startGame = new Button("Start Game");
     this.addRow("", startGame);
-      startGame.onPressed(() -> {
+    startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
         this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
       } else {
         this.unload = true;
       }
     });
+
+    final Label saveSlots = this.addControl(new Label("Severed Chains has unlimited save slots and we recommend\nyou save in a new slot each time."));
+    saveSlots.setWidth(this.getWidth());
+    saveSlots.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
+    saveSlots.setY(200);
   }
 
   @Override
@@ -107,6 +113,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       playMenuSound(2);
       whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }
+
+
   }
 
   private void menuEscape() {
