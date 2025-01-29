@@ -1416,7 +1416,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(AUDIO_THREAD.isMusicPlaying()) {
+    if(!AUDIO_THREAD.isMusicPlaying()) {
       return -2;
     }
 
