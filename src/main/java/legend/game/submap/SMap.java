@@ -1150,7 +1150,7 @@ public class SMap extends EngineState {
 
     //LAB_800de7a8
     //LAB_800de8e8
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e1f90);
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
 
     sobj.flags_190 &= ~0x8000_0000;
     return FlowControl.CONTINUE;
@@ -1182,7 +1182,7 @@ public class SMap extends EngineState {
     sobj.movementType_170 = 2;
     sobj.ignoreCollision_172 = 1;
     sobj.movementStepAccelerationY_18c = 7 / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjArcMovement);
     return FlowControl.CONTINUE;
   }
 
@@ -1212,7 +1212,7 @@ public class SMap extends EngineState {
     final float stepY = (sobj.movementDestination_138.y - sobj.model_00.coord2_14.coord.transfer.y) / sobj.movementTicks_144;
     sobj.movementStepY_134 = stepY - sobj.movementStepAccelerationY_18c / 2 * (sobj.movementTicks_144 - 1);
 
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjArcMovement);
     return FlowControl.CONTINUE;
   }
 
@@ -2915,7 +2915,7 @@ public class SMap extends EngineState {
 
   /** Handles cutscene movement */
   @Method(0x800e1f90L)
-  private boolean FUN_800e1f90(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  private boolean tickSobjMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     if((sobj.flags_190 & 0x8000_0000) != 0) {
@@ -3060,7 +3060,7 @@ public class SMap extends EngineState {
 
   /** Used in teleporter just before Melbu */
   @Method(0x800e3e74L)
-  private boolean tickSobjMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  private boolean tickSobjArcMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     model.coord2_14.coord.transfer.y += sobj.movementStepY_134;
