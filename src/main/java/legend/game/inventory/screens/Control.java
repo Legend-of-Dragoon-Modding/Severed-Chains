@@ -17,6 +17,7 @@ public abstract class Control extends ControlHost {
   private int z = 35;
   private int width;
   private int height;
+  private float scale = 1.0f;
 
   private boolean visible = true;
   private boolean acceptsInput = true;
@@ -101,6 +102,14 @@ public abstract class Control extends ControlHost {
   public void setHeight(final int height) {
     this.height = height;
     this.onResize();
+  }
+
+  public float getScale() {
+    return this.scale;
+  }
+
+  public void setScale(final float scale) {
+    this.scale = scale;
   }
 
   public boolean isVisible() {

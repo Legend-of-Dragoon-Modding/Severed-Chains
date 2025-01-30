@@ -85,9 +85,11 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
@@ -3365,35 +3367,35 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options) {
-    float x = switch(options.getHorizontalAlign()) {
-      case LEFT -> originX;
-      case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
-      case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
-    };
-
     final float height = 12.0f * options.getSize();
     final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
 
-    float y = originY;
-    float glyphNudge = 0.0f;
-
     textTransforms.scaling(options.getSize());
 
-    for(int charIndex = 0; charIndex < text.length(); charIndex++) {
-      final char c = text.charAt(charIndex);
+    for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+      float x = switch(options.getHorizontalAlign()) {
+        case LEFT -> originX;
+        case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
+        case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
+      };
 
-      if(c != ' ') {
-        if(c == '\n') {
-          x = switch(options.getHorizontalAlign()) {
-            case LEFT -> originX;
-            case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
-            case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
-          };
+      float y = originY;
+      float glyphNudge = 0.0f;
 
-          glyphNudge = 0.0f;
-          y += height;
-        } else {
-          for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+      for(int charIndex = 0; charIndex < text.length(); charIndex++) {
+        final char c = text.charAt(charIndex);
+
+        if(c != ' ') {
+          if(c == '\n') {
+            x = switch(options.getHorizontalAlign()) {
+              case LEFT -> originX;
+              case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
+              case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
+            };
+
+            glyphNudge = 0.0f;
+            y += height;
+          } else {
             final float offsetX = (i & 1) * options.getSize();
             final float offsetY = (i >>> 1) * options.getSize();
 
@@ -3424,9 +3426,9 @@ public final class Scus94491BpeSegment_8002 {
             }
           }
         }
-      }
 
-      glyphNudge += charWidth(c) * options.getSize();
+        glyphNudge += charWidth(c) * options.getSize();
+      }
     }
   }
 
@@ -3832,7 +3834,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static int textHeight(final String text) {
-    return 12;
+    int lines = 1;
+    int newlinePos = -1;
+    while((newlinePos = text.indexOf('\n', newlinePos + 1)) != -1) {
+      lines++;
+    }
+
+    return lines * 12;
   }
 
   @Method(0x8002a6fcL)
@@ -3940,6 +3948,7 @@ public final class Scus94491BpeSegment_8002 {
     submapCutBeforeBattle_80052c3c = -1;
     shouldRestoreCameraPosition_80052c40 = false;
     submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
+    bootMods(MODS.getAllModIds());
   }
 
   @Method(0x8002bb38L)

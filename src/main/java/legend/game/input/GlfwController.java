@@ -39,6 +39,10 @@ public class GlfwController extends Controller {
     this.bindings.addAll(ControllerDatabase.createBindings(this.getGuid(), this));
   }
 
+  public int getGlfwControllerId() {
+    return this.glfwControllerId;
+  }
+
   @Override
   public String getName() {
     return this.glfwJoystickName;

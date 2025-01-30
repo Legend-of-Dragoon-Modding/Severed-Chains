@@ -69,6 +69,11 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   @Override
+  public void setFocus(@Nullable final Control control) {
+    super.setFocus(this.saveList);
+  }
+
+  @Override
   protected void render() {
     renderText("Save Game", 188, 10, UI_TEXT_CENTERED);
     renderText("\u011f Delete", 297, 226, UI_TEXT);

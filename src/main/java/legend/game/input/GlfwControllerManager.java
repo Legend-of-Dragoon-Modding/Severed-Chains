@@ -81,13 +81,12 @@ public class GlfwControllerManager implements ControllerManager {
       }
     }
 
-    final Controller controller = this.addController(id);
-    this.onConnect.accept(controller);
+    this.addController(id);
   }
 
   private void onControllerDisconnected(final Window window, final int id) {
     for(final Controller controller : this.connectedControllers) {
-      if(controller.getGuid().equals(glfwGetJoystickGUID(id))) {
+      if(((GlfwController)controller).getGlfwControllerId() == id) {
         this.connectedControllers.remove(controller);
         this.onDisconnect.accept(controller);
         break;

@@ -946,20 +946,20 @@ public class BattleHud {
         final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
           .uv(floatingTextType1DigitUs_800c7028[i], 32)
           .size(8.0f, 8.0f);
-        this.setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
+        this.setGpuPacketClutAndTpageAndQueue(builder1, 0x88, null);
         this.type1FloatingDigits[i] = builder1.build();
 
         final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
           .uv(floatingTextType3DigitUs_800c70e0[i], 40)
           .size(8.0f, 16.0f);
-        this.setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
+        this.setGpuPacketClutAndTpageAndQueue(builder3, 0x88, null);
         this.type3FloatingDigits[i] = builder3.build();
       }
 
       final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
         .uv(72, 128)
         .size(36.0f, 16.0f);
-      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
+      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x88, null);
       this.miss = builderMiss.build();
     }
 
@@ -1257,18 +1257,14 @@ public class BattleHud {
 
             if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
-              for(int s3 = 1; s3 < 3; s3++) {
                 num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
-                RENDERER.queueOrthoModel(digit.obj, num.transforms, QueuedModelStandard.class)
+                final QueuedModelStandard model = RENDERER.queueOrthoModel(digit.obj, num.transforms, QueuedModelStandard.class)
                   .colour(num.colour);
 
-                if((num.state_00 & 97) == 0) {
-                  //LAB_800f4118
-                  break;
+                if(num.translucent_08) {
+                  model.alpha(num.shade_0c / 128.0f);
                 }
-
                 //LAB_800f4110
-              }
             }
           }
         }

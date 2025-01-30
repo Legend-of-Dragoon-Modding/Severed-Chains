@@ -5,11 +5,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.IoHelper;
 import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
-import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -100,12 +98,16 @@ public final class SaveManager {
       location = submapNames_8011c108[submapId_800bd808];
     }
 
+    return this.generateSaveName(existingSaves, location);
+  }
+
+  public String generateSaveName(final List<SavedGame> existingSaves, final String name) {
     int highestSaveNumber = 0;
 
     for(final SavedGame save : existingSaves) {
       final Matcher matcher = SAVE_NUMBER_PATTERN.matcher(save.saveName);
 
-      if(matcher.matches() && matcher.group(1).equals(location)) {
+      if(matcher.matches() && matcher.group(1).equals(name)) {
         final int saveNumber = Integer.parseInt(matcher.group(2));
 
         if(highestSaveNumber < saveNumber) {
@@ -114,7 +116,7 @@ public final class SaveManager {
       }
     }
 
-    return location + ' ' + (highestSaveNumber + 1);
+    return name + ' ' + (highestSaveNumber + 1);
   }
 
   /** Look for saves from before campaigns were a thing */
@@ -190,7 +192,7 @@ public final class SaveManager {
     if(!memcards.isEmpty()) {
       LOGGER.info("Converting memcards to campaign");
 
-      bootMods(Set.of(CoreMod.MOD_ID, LodMod.MOD_ID));
+      bootMods(Set.of());
       bootRegistries();
 
       final Campaign campaign = Campaign.create(this, campaignName);
