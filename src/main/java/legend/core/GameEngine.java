@@ -91,7 +91,7 @@ public final class GameEngine {
   private static LangManager.Access LANG_ACCESS;
   private static EventManager.Access EVENT_ACCESS;
   private static Registries.Access REGISTRY_ACCESS;
-  public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access);
+  public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access, "lod", "lod_core");
   public static final LangManager LANG = new LangManager(access -> LANG_ACCESS = access);
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
   public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
@@ -189,7 +189,7 @@ public final class GameEngine {
   public static void start() throws IOException {
     final Thread thread = new Thread(() -> {
       try {
-        LOGGER.info("Severed Chains %s commit %s starting", Version.VERSION, Version.HASH);
+        LOGGER.info("Severed Chains %s commit %s starting", Version.FULL_VERSION, Version.HASH);
 
         loading = true;
         RENDERER.setRenderCallback(GameEngine::loadGfx);
@@ -220,7 +220,7 @@ public final class GameEngine {
             return;
           }
 
-          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches")).apply();
+          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
 
           loadXpTables();
 
@@ -236,7 +236,7 @@ public final class GameEngine {
     thread.start();
 
     // Find and load all mods so their global config can be shown in the title screen options menu
-    MOD_ACCESS.findMods();
+    MOD_ACCESS.findMods(Path.of("./mods"), Version.VERSION);
     bootMods(MODS.getAllModIds());
 
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
@@ -253,10 +253,14 @@ public final class GameEngine {
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     Input.init();
     GPU.init();
-    RENDERER.run();
 
-    RENDERER.delete();
-    Input.destroy();
+    try {
+      RENDERER.run();
+    } finally {
+      AUDIO_THREAD.destroy();
+      RENDERER.delete();
+      Input.destroy();
+    }
   }
 
   /** Returns missing mod IDs, if any */

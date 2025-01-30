@@ -23,7 +23,7 @@ public class MonitorConfigEntry extends ConfigEntry<Integer> {
     );
 
     this.setEditControl((current, gameState) -> {
-      final Dropdown dropdown = new Dropdown();
+      final Dropdown<String> dropdown = new Dropdown<>();
       dropdown.onSelection(index -> gameState.setConfig(this, index));
 
       final PointerBuffer monitorPtrs = glfwGetMonitors();

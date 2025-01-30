@@ -158,7 +158,6 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -1939,20 +1938,13 @@ public class Battle extends EngineState {
       this.mcqOffsetX_800c6774 += this.mcqStepX_800c676c;
       this.mcqOffsetY_800c6778 += this.mcqStepY_800c6770;
       final int x0 = (this.mcqBaseOffsetX_800c66cc * MathHelper.radToPsxDeg(this.camera_800c67f0.calculateXAngleFromRefpointToViewpoint()) / 0x1000 + this.mcqOffsetX_800c6774) % mcq.screenWidth_14;
-      final int x1 = x0 - mcq.screenWidth_14;
-      final int x2 = x0 + mcq.screenWidth_14;
       int y = this.mcqOffsetY_800c6778 - MathHelper.radToPsxDeg(MathHelper.floorMod(this.camera_800c67f0.calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, 60000.0f);
-      RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
-        .monochrome(this.mcqColour_800fa6dc / 128.0f);
+      final float totalWidth = RENDERER.getProjectionWidth() * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+      final int segments = (int)Math.ceil(totalWidth / mcq.screenWidth_14);
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, 60000.0f);
-      RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
-        .monochrome(this.mcqColour_800fa6dc / 128.0f);
-
-      if(x2 <= centreScreenX_1f8003dc * 2) {
-        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, 60000.0f);
+      for(int i = -1; i < segments + 1; i++) {
+        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(-totalWidth / 2.0f + i * mcq.screenWidth_14 + x0, y, 60000.0f);
         RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
           .monochrome(this.mcqColour_800fa6dc / 128.0f);
       }

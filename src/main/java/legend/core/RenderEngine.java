@@ -63,6 +63,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F2;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F4;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
@@ -163,9 +164,10 @@ public class RenderEngine {
       final Shader<ShaderOptionsStandard>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
       final Shader<ShaderOptionsStandard>.UniformVec2 clutOverride = shader.new UniformVec2("clutOverride");
       final Shader<ShaderOptionsStandard>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
-      final Shader<ShaderOptionsStandard>.UniformFloat translucency = shader.new UniformFloat("translucency");
       final Shader<ShaderOptionsStandard>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
-      return () -> new ShaderOptionsStandard(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, translucency);
+      final Shader<ShaderOptionsStandard>.UniformFloat translucency = shader.new UniformFloat("translucency");
+      final Shader<ShaderOptionsStandard>.UniformFloat alpha = shader.new UniformFloat("alpha");
+      return () -> new ShaderOptionsStandard(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, translucency, alpha);
     }
   );
 
@@ -437,7 +439,7 @@ public class RenderEngine {
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
-    this.window = new Window("Severed Chains " + Version.VERSION, Config.windowWidth(), Config.windowHeight());
+    this.window = new Window("Severed Chains " + Version.FULL_VERSION, Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
 
     glEnable(GL_LINE_SMOOTH);
@@ -837,6 +839,11 @@ public class RenderEngine {
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_QUARTER_F);
         }
+
+        if(entry.shouldRender(Translucency.ALPHA)) {
+          Translucency.HALF_B_PLUS_HALF_F.setGlState();
+          entry.render(Translucency.ALPHA);
+        }
       }
     }
   }
@@ -993,8 +1000,8 @@ public class RenderEngine {
     try {
       this.window.run();
     } catch(final Throwable t) {
-      LOGGER.error("Shutting down due to exception:", t);
       this.window.close();
+      throw t;
     } finally {
       FontManager.free();
       Window.free();
@@ -1150,6 +1157,8 @@ public class RenderEngine {
       this.wireframeMode = !this.wireframeMode;
     } else if(key == GLFW_KEY_F5) {
       this.reloadShaders = true;
+    } else if(key == GLFW_KEY_F4 && (mods & GLFW_MOD_CONTROL) != 0 && (mods & GLFW_MOD_SHIFT) != 0) {
+      throw new RuntimeException("Can't say I didn't warn you");
     }
 
     if(key == GLFW_KEY_M && (mods & GLFW_MOD_CONTROL) != 0) {

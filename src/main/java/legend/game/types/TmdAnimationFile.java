@@ -1,10 +1,11 @@
 package legend.game.types;
 
+import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.game.combat.deff.Anim;
 import legend.game.unpacker.FileData;
 
-import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.applyKeyframe;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 
@@ -62,17 +63,14 @@ public class TmdAnimationFile extends Anim {
       totalFrames = model.totalFrames_9a;
       frame = animationTicks % totalFrames;
       model.currentKeyframe_94 = frame / 2;
+      model.subFrameIndex = animationTicks % framesPerKeyframe;
 
-      if(model.subFrameIndex == framesPerKeyframe - 1 || model.ub_a3 != 0) {
-        if(model.currentKeyframe_94 > 0 && (frame & 0x1) == 0) {
-          model.currentKeyframe_94--;
-        }
-
+      // Last condition checks if this is a repeat frame (this was causing Haschel's twitching during transform, Gehrich teabagging, etc.)
+      // GH#1664, GH#1687
+      if(model.subFrameIndex == 0 || model.ub_a3 != 0) {
         applyKeyframe(model);
-        model.subFrameIndex = 0;
       } else {
-        applyInterpolationFrame(model, framesPerKeyframe);
-        model.subFrameIndex++;
+        this.applyInterpolationFrame(model, framesPerKeyframe);
       }
     }
 
@@ -85,6 +83,21 @@ public class TmdAnimationFile extends Anim {
     } else {
       //LAB_800dd618
       model.animationState_9c = 1;
+    }
+  }
+
+  @Method(0x800213c4L)
+  private void applyInterpolationFrame(final Model124 model, final int framesPerKeyframe) {
+    //LAB_80021404
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
+      final Transforms params = coord2.transforms;
+
+      // Differs from standard applyInterpolationFrame by considering frame 0 the keyframe
+      final float interpolationScale = (float)model.subFrameIndex / framesPerKeyframe;
+      params.trans.lerp(model.keyframes_90[Math.min(model.currentKeyframe_94 + 1, model.keyframes_90.length - 1)][i].translate_06, interpolationScale, coord2.coord.transfer);
+      params.quat.nlerp(model.keyframes_90[Math.min(model.currentKeyframe_94 + 1, model.keyframes_90.length - 1)][i].quat, interpolationScale, params.quat);
+      coord2.coord.rotation(params.quat);
     }
   }
 }
