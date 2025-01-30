@@ -41,7 +41,7 @@ public class SubmapObject210 {
   public int movementType_170;
   /** Forced movement geometry collision detection */
   public int ignoreCollision_172;
-  /** Used to restore ignoreCollision_172 after scriptSobjAccelerateAlongArc */
+  /** Used to restore ignoreCollision_172 after SMap::scriptSobjMoveAlongArc2 */
   public int ignoreCollisionMemory_174;
 
   public final Vector3f interpMovementStart = new Vector3f();
