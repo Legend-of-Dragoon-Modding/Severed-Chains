@@ -5,7 +5,7 @@ import legend.game.scripting.ScriptState;
 
 public class MoonSerenadeItem extends RecoverMpItem {
   public MoonSerenadeItem() {
-    super(34, 100,true , 100);
+    super(34, 100, true, 100);
   }
 
   @Override
