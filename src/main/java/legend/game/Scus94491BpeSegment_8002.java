@@ -85,9 +85,11 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
@@ -3946,6 +3948,7 @@ public final class Scus94491BpeSegment_8002 {
     submapCutBeforeBattle_80052c3c = -1;
     shouldRestoreCameraPosition_80052c40 = false;
     submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
+    bootMods(MODS.getAllModIds());
   }
 
   @Method(0x8002bb38L)

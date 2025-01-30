@@ -75,7 +75,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_ALT;
 
 /** Core mod that contains engine-level content. Game can not run without it. */
-@Mod(id = CoreMod.MOD_ID)
+@Mod(id = CoreMod.MOD_ID, version = "^3.0.0")
 @EventListener
 public class CoreMod {
   public static final String MOD_ID = "lod_core";

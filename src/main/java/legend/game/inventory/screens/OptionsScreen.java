@@ -102,6 +102,6 @@ public class OptionsScreen extends VerticalLayoutScreen {
   @Override
   protected void render() {
     super.render();
-    renderText(I18n.translate("lod_core.config.help_hotkey.label", "\u0120"), 334, 226, this.fontOptions);
+    renderText(I18n.translate("lod_core.ui.options.help_hotkey", "\u0120"), 334, 226, this.fontOptions);
   }
 }

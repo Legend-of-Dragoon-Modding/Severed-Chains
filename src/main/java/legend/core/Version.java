@@ -8,5 +8,6 @@ public final class Version {
   public static final String REVISION = "0";
   public static final String BUILD = "SNAPSHOT";
   public static final String HASH = "COMMIT";
-  public static final String VERSION = MAJOR + '.' + MINOR + '.' + REVISION + '-' + BUILD;
+  public static final String VERSION = MAJOR + '.' + MINOR + '.' + REVISION;
+  public static final String FULL_VERSION = VERSION + '-' + BUILD;
 }

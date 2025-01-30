@@ -61,7 +61,7 @@ public final class Main {
 
       LOGGER.error("----------------------------------------------------------------------------");
       LOGGER.error("Crash detected");
-      LOGGER.error("Severed Chains %s commit %s", Version.VERSION, Version.HASH);
+      LOGGER.error("Severed Chains %s commit %s", Version.FULL_VERSION, Version.HASH);
 
       if(generatedCrashSave) {
         LOGGER.error("We have attempted to generate a recovery save. You can load it next time you run Severed Chains.");

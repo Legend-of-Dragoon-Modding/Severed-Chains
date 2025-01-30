@@ -5,11 +5,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.IoHelper;
 import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
-import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -194,7 +192,7 @@ public final class SaveManager {
     if(!memcards.isEmpty()) {
       LOGGER.info("Converting memcards to campaign");
 
-      bootMods(Set.of(CoreMod.MOD_ID, LodMod.MOD_ID));
+      bootMods(Set.of());
       bootRegistries();
 
       final Campaign campaign = Campaign.create(this, campaignName);

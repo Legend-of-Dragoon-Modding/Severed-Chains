@@ -148,7 +148,7 @@ public class Gpu {
         avg += this.fps[i];
       }
 
-      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
     }
   }
 
