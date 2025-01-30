@@ -17,6 +17,7 @@ import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -134,6 +135,11 @@ public class CampaignSelectionScreen extends MenuScreen {
         }
       }));
     }
+  }
+
+  @Override
+  public void setFocus(@Nullable final Control control) {
+    super.setFocus(this.campaignList);
   }
 
   @Override
