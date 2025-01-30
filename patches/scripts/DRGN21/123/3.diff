@@ -1,9 +1,13 @@
+Widescreen patch
+Prairie, escape from Hellena Prison cutscene #2
+Shana
 --- original
 +++ modified
 @@ -385,6 +385,20 @@
  gosub inl[:LABEL_2]
  call 106, 0x0
  mov 0x20, stor[24]
+# Move from behind tree instead of suddenly appearing on the path.
 +call 267, stor[24], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
 +call 677, stor[0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
 +mov 20, inl[:WS_FRAMES]

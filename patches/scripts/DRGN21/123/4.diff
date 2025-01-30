@@ -1,9 +1,13 @@
+Widescreen patch
+Prairie, escape from Hellena Prison cutscene #2
+Lavitz
 --- original
 +++ modified
 @@ -430,7 +430,27 @@
  mov 0x26, stor[24]
  gosub inl[:LABEL_2]
  call 106, 0x0
+# Move from behind tree instead of suddenly appearing on the path.
 +mov 40, inl[:WS_FRAMES]
 +wait inl[:WS_FRAMES]
 +call 267, 0x11, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
