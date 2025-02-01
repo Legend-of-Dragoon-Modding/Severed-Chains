@@ -254,7 +254,9 @@ public class Window {
     this.monitor = this.getMonitorFromConfig();
     this.moveToMonitor();
     glfwSetWindowAttrib(this.window, GLFW_DECORATED, GLFW_FALSE);
-    glfwSetWindowSize(this.window, this.vidMode.width(), this.vidMode.height());
+
+    // Overscan by 1 pixel to stop Windows from putting it into exclusive fullscreen
+    glfwSetWindowSize(this.window, this.vidMode.width(), this.vidMode.height() + 1);
   }
 
   public void makeWindowed() {
