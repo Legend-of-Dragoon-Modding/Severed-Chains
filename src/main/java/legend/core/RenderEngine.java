@@ -167,7 +167,8 @@ public class RenderEngine {
       final Shader<ShaderOptionsStandard>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
       final Shader<ShaderOptionsStandard>.UniformFloat translucency = shader.new UniformFloat("translucency");
       final Shader<ShaderOptionsStandard>.UniformFloat alpha = shader.new UniformFloat("alpha");
-      return () -> new ShaderOptionsStandard(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, translucency, alpha);
+      final Shader<ShaderOptionsStandard>.UniformFloat useTextureAlpha = shader.new UniformFloat("useTextureAlpha");
+      return () -> new ShaderOptionsStandard(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, translucency, alpha, useTextureAlpha);
     }
   );
 
@@ -844,11 +845,6 @@ public class RenderEngine {
         if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
           Translucency.B_PLUS_F.setGlState();
           entry.render(Translucency.B_PLUS_QUARTER_F);
-        }
-
-        if(entry.shouldRender(Translucency.ALPHA)) {
-          Translucency.HALF_B_PLUS_HALF_F.setGlState();
-          entry.render(Translucency.ALPHA);
         }
       }
     }

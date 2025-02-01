@@ -79,6 +79,12 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return (T)this;
   }
 
+  public T colour(final float r, final float g, final float b, final float a) {
+    this.colour.set(r, g, b);
+    //noinspection unchecked
+    return (T)this;
+  }
+
   public T monochrome(final float shade) {
     this.colour.set(shade);
     //noinspection unchecked
