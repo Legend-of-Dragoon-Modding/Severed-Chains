@@ -145,6 +145,7 @@ public final class GameEngine {
   private static Window.Events.Resize onResize;
   private static Window.Events.Key onKeyPress;
   private static Window.Events.Click onMouseRelease;
+  private static Window.Events.OnPressedThisFrame onPressedThisFrame;
   private static Runnable onShutdown;
 
   private static final ShaderType<EyeShaderOptions> EYE_SHADER = new ShaderType<>(
@@ -203,7 +204,7 @@ public final class GameEngine {
     UPDATE = null;
     UPDATER.check(release -> {
       synchronized(UPDATER_LOCK) {
-        UPDATE_CHECK_FINISHED = true;
+//        UPDATE_CHECK_FINISHED = true;
         UPDATE = release;
       }
     });
@@ -443,6 +444,11 @@ public final class GameEngine {
       onMouseRelease = null;
     }
 
+    if(onPressedThisFrame != null) {
+      RENDERER.events().removePressedThisFrame(onPressedThisFrame);
+      onPressedThisFrame = null;
+    }
+
     if(onShutdown != null) {
       RENDERER.events().removeShutdown(onShutdown);
       onShutdown = null;
@@ -513,6 +519,7 @@ public final class GameEngine {
 
     onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
+    onPressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> skip());
     onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
   }
 
