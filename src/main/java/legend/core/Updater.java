@@ -25,21 +25,9 @@ public class Updater {
 
   private static final String UPDATE_URL = "https://api.github.com/repos/Legend-of-Dragoon-Modding/Severed-Chains/releases";
 
-  private final AsyncHttpClient client;
+  private AsyncHttpClient client;
 
   private ListenableFuture<Response> activeCheck;
-
-  public Updater() {
-    AsyncHttpClient client;
-    try {
-      client = asyncHttpClient();
-    } catch(final Throwable r) {
-      LOGGER.error("Failed to initialize updater");
-      client = null;
-    }
-
-    this.client = client;
-  }
 
   public void delete() {
     try {
@@ -54,8 +42,16 @@ public class Updater {
   public void check(final Consumer<Release> onComplete) {
     synchronized(this) {
       if(this.client == null) {
-        onComplete.accept(null);
-        return;
+        try {
+          this.client = asyncHttpClient();
+        } catch(final Throwable r) {
+          LOGGER.error("Failed to initialize updater");
+        }
+
+        if(this.client == null) {
+          onComplete.accept(null);
+          return;
+        }
       }
 
       if(this.activeCheck != null) {
@@ -66,6 +62,7 @@ public class Updater {
       if(Version.TIMESTAMP == null) {
         // If the build timestamp is null, we're running in the IDE or using a custom build that was compiled manually
         LOGGER.info("Custom build, skipping update check");
+        onComplete.accept(null);
         return;
       }
 
