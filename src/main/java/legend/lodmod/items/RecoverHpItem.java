@@ -6,8 +6,6 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
-import java.util.function.BiFunction;
-
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class RecoverHpItem extends BattleItem {
@@ -41,11 +39,11 @@ public class RecoverHpItem extends BattleItem {
     }
 
     response._00 = this.canTarget(TargetType.ALL) ? 3 : 2;
-    response.value_04 = this.getRecoveryMethod().apply(charId, amount);
+    response.value_04 = this.recover(charId, amount);
   }
 
-  protected BiFunction<Integer, Integer, Integer> getRecoveryMethod() {
-    return Scus94491BpeSegment_8002::addHp;
+  protected int recover(final int charId,final int amount) {
+    return Scus94491BpeSegment_8002.addHp(charId, amount);
   }
 
   @Override

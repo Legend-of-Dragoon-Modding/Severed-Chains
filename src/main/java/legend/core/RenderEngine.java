@@ -566,21 +566,27 @@ public class RenderEngine {
           this.frameAdvanceSingle = false;
           this.frameAdvance = false;
           this.resetBatches();
+
+          // Delete stuff marked for deletion
+          Obj.deleteObjects();
+          Texture.deleteTextures();
+
+          this.scissorStack.reset();
         } else {
           this.renderCallback.run();
         }
       }
 
       if(this.frameAdvanceSingle || this.frameAdvance) {
-        this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
-        this.resetBatches();
-        this.renderCallback.run();
-
         // Delete stuff marked for deletion
         Obj.deleteObjects();
         Texture.deleteTextures();
 
         this.scissorStack.reset();
+
+        this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+        this.resetBatches();
+        this.renderCallback.run();
 
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
