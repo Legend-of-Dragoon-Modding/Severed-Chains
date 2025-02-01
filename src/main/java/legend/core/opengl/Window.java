@@ -39,6 +39,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_DONT_CARE;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_DEBUG_CONTEXT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -48,7 +49,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyCursor;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
@@ -62,6 +65,7 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
+import static org.lwjgl.glfw.GLFW.glfwSetCursor;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
@@ -131,6 +135,8 @@ public class Window {
   private long monitor;
   private GLFWVidMode vidMode;
 
+  private final long pointerCursor;
+
   private final List<Action> actions = new ArrayList<>();
   private final Action render = this.addAction(new Action(this::tickFrame, 60));
 
@@ -168,6 +174,8 @@ public class Window {
     if(this.window == NULL) {
       throw new RuntimeException("Failed to create the GLFW window");
     }
+
+    this.pointerCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
     glfwSetFramebufferSizeCallback(this.window, this.events::onResize);
     glfwSetWindowFocusCallback(this.window,this.events::onFocus);
@@ -255,6 +263,14 @@ public class Window {
     if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
       this.makeFullscreen();
     }
+  }
+
+  public void useNormalCursor() {
+    glfwSetCursor(this.window, NULL);
+  }
+
+  public void usePointerCursor() {
+    glfwSetCursor(this.window, this.pointerCursor);
   }
 
   public Action addAction(final Action action) {
@@ -372,6 +388,7 @@ public class Window {
 
     this.events.onShutdown();
 
+    glfwDestroyCursor(this.pointerCursor);
     glfwFreeCallbacks(this.window);
     glfwDestroyWindow(this.window);
   }

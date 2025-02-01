@@ -35,6 +35,7 @@ public class LinksScreen extends VerticalLayoutScreen {
     this.addControl(new Background());
     this.addLink(I18n.translate("lod_core.ui.links.discord"), "https://discord.gg/legendofdragoon");
     this.addLink(I18n.translate("lod_core.ui.links.youtube"), "https://www.youtube.com/@legend-of-dragoon");
+    this.addLink(I18n.translate("lod_core.ui.links.fandom"), "https://legendofdragoon.org");
     this.addLink(I18n.translate("lod_core.ui.links.wiki"), "https://legendofdragoon.org/wiki/Main_Page");
     this.addLink(I18n.translate("lod_core.ui.links.project"), "https://legendofdragoon.org/projects/severed-chains");
     this.addLink(I18n.translate("lod_core.ui.links.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains");

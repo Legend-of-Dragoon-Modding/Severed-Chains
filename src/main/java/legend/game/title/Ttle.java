@@ -4,6 +4,7 @@ import com.vaadin.open.Open;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
+import legend.core.Updater;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
@@ -61,6 +62,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
+import static legend.core.GameEngine.getUpdate;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
@@ -109,6 +111,7 @@ public class Ttle extends EngineState {
   private int menuTransitionState_800c6728;
   private int menuState_800c672c;
   private final int[] menuOptionTransparency = new int[MENU_OPTIONS];
+  private int menuUpdateTransparency;
 
   private int fadeOutTimer_800c6754;
 
@@ -128,6 +131,9 @@ public class Ttle extends EngineState {
   private Obj logoObj;
   private Obj trademarkObj;
   private Obj menuTextObj;
+  private int updateAvailableIndex;
+  private int updateAvailableShadowIndex;
+  private int updateIconIndex;
   private Obj copyrightObj;
   private final MV flashTransforms = new MV();
 
@@ -142,8 +148,9 @@ public class Ttle extends EngineState {
   private boolean renderablesLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
-  private final int[] menuTextY_800ce8ac = {16, 34, 52, 70};
   private final int[] menuTextWidth = {407, 257, 227, 169, 141};
+
+  private Updater.Release update;
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
@@ -227,6 +234,8 @@ public class Ttle extends EngineState {
     this.loadingStage = 1;
 
     this.addInputHandlers();
+
+    this.update = getUpdate();
   }
 
   private void loadTextures() {
@@ -280,6 +289,33 @@ public class Ttle extends EngineState {
         .uv(512.0f / this.menuTextTex.width, i * 64.0f / this.menuTextTex.height)
       ;
     }
+
+    this.updateAvailableIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(512.0f, 64.0f)
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 6 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.updateAvailableShadowIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(512.0f, 64.0f)
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(512.0f / this.menuTextTex.width, 6 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.updateIconIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(64.0f, 64.0f)
+      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 7 * 64.0f / this.menuTextTex.height)
+    ;
 
     this.menuTextObj = menuTextBuilder.build();
 
@@ -644,6 +680,14 @@ public class Ttle extends EngineState {
               break;
             }
           }
+
+          if(this.update != null) {
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), 6, 5, 105, 14)) {
+              RENDERER.window().usePointerCursor();
+            } else {
+              RENDERER.window().useNormalCursor();
+            }
+          }
         }
       }
 
@@ -692,6 +736,12 @@ public class Ttle extends EngineState {
 
               this.menuState_800c672c = 3;
               break;
+            }
+          }
+
+          if(this.update != null) {
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), 6, 5, 105, 14)) {
+              Open.open(this.update.uri);
             }
           }
         }
@@ -777,6 +827,7 @@ public class Ttle extends EngineState {
         //LAB_800c86d8
         //LAB_800c86f4
         Arrays.fill(this.menuOptionTransparency, 0);
+        this.menuUpdateTransparency = 0;
 
         //LAB_800c8728
         this.menuState_800c672c = 1;
@@ -800,6 +851,11 @@ public class Ttle extends EngineState {
           }
 
           //LAB_800c8854
+        }
+
+        this.menuUpdateTransparency += 4;
+        if(this.menuUpdateTransparency > 160) {
+          this.menuUpdateTransparency = 160;
         }
       }
 
@@ -902,7 +958,50 @@ public class Ttle extends EngineState {
         .texture(this.menuTextTex)
         .useTextureAlpha()
         .vertices(i * 4, 4);
+    }
 
+    if(this.update != null) {
+      transforms
+        .translation(20.0f, 5.0f, 100.0f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.updateAvailableIndex * 4, 4);
+
+      transforms
+        .translation(20.0f, 5.0f, 100.1f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(normalColour)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.updateAvailableShadowIndex * 4, 4);
+
+      transforms
+        .translation(6.0f, 5.0f, 100.1f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(normalColour)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.updateIconIndex * 4, 4);
     }
 
     //LAB_800c9390
