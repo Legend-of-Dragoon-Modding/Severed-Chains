@@ -83,6 +83,8 @@ lod_core.config.music_effects_over_time_granularity.label = Effects Granularity
 lod_core.config.music_effects_over_time_granularity.Retail = Retail
 lod_core.config.music_effects_over_time_granularity.Finer = Finer
 lod_core.config.music_effects_over_time_granularity.Finest = Finest
+lod_core.config.create_crash_save.label=Auto-Save on Crash
+lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press ENTER to skip
