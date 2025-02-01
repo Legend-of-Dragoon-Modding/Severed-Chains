@@ -1534,7 +1534,7 @@ public class SMap extends EngineState {
     throw new RuntimeException("Not implemented");
   }
 
-  @ScriptDescription("Sets submap object ignoreCollision_172")
+  @ScriptDescription("Sets this submap object's ignoreCollision_172")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
   @Method(0x800df530L)
   private FlowControl scriptSelfSetIgnoreCollision(final RunningScript<?> script) {
@@ -1684,11 +1684,11 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Something to do with forced movement")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ui_18c", description = "Use unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800df904L)
   private FlowControl scriptSelfMoveAlongArc2(final RunningScript<?> script) {
     script.params_20[5] = script.params_20[4];
