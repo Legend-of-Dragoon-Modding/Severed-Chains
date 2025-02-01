@@ -45,7 +45,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -287,6 +289,8 @@ public class RenderEngine {
 
   private int frameSkipIndex;
 
+  private final Deque<Runnable> tasks = new LinkedList<>();
+
   public RenderEngine() {
     this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
@@ -437,6 +441,13 @@ public class RenderEngine {
     return this.renderTextures[Math.floorMod(this.renderBufferIndex - 1, RENDER_BUFFER_COUNT)];
   }
 
+  /** Submit a task to be run at the start of the next frame */
+  public void addTask(final Runnable task) {
+    synchronized(this.tasks) {
+      this.tasks.push(task);
+    }
+  }
+
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
@@ -553,6 +564,13 @@ public class RenderEngine {
     this.renderBufferQuad.persistent = true;
 
     this.window.events.onDraw(() -> {
+      synchronized(this.tasks) {
+        Runnable task;
+        while((task = this.tasks.poll()) != null) {
+          task.run();
+        }
+      }
+
       if(this.frameSkipIndex == 0) {
         this.pre();
       }
