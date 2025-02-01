@@ -517,6 +517,12 @@ public final class GameEngine {
   }
 
   private static void skip() {
+    if(time == 0) {
+      synchronized(UPDATER_LOCK) {
+        UPDATE_CHECK_FINISHED = true;
+      }
+    }
+
     time = 0;
     fade1 = 0.0f;
     fade2 = 0.0f;

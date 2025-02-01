@@ -3,6 +3,7 @@ package legend.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Response;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public class Updater {
     synchronized(this) {
       if(this.client == null) {
         try {
-          this.client = asyncHttpClient();
+          this.client = asyncHttpClient(new DefaultAsyncHttpClientConfig.Builder().setConnectTimeout(Duration.ofSeconds(10)).setReadTimeout(Duration.ofSeconds(10)).build());
         } catch(final Throwable r) {
           LOGGER.error("Failed to initialize updater");
         }
