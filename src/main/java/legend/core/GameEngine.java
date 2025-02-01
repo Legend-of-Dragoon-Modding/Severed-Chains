@@ -204,7 +204,7 @@ public final class GameEngine {
     UPDATE = null;
     UPDATER.check(release -> {
       synchronized(UPDATER_LOCK) {
-//        UPDATE_CHECK_FINISHED = true;
+        UPDATE_CHECK_FINISHED = true;
         UPDATE = release;
       }
     });
@@ -516,6 +516,7 @@ public final class GameEngine {
 
     RENDERER.usePs1Gpu = false;
     RENDERER.setRenderCallback(GameEngine::renderIntro);
+    RENDERER.window().setWindowIcon(Path.of("gfx/textures/loading.png"));
 
     onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());

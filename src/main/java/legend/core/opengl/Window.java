@@ -14,6 +14,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowIcon;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
@@ -92,14 +95,17 @@ import static org.lwjgl.opengl.GL11C.GL_VENDOR;
 import static org.lwjgl.opengl.GL11C.GL_VERSION;
 import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.stb.STBImage.stbi_failure_reason;
+import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Window {
-  private static final Logger LOGGER = LogManager.getLogger(Window.class.getName());
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Window.class);
 
   static {
-    LOGGER.info("Initialising LWJGL version {}", Version.getVersion());
+    LOGGER.info("Initialising LWJGL version %s", Version.getVersion());
 
     GLFWErrorCallback.createPrint(System.err).set();
 
@@ -195,9 +201,9 @@ public class Window {
     this.makeContextCurrent();
     GL.createCapabilities();
 
-    LOGGER.info("OpenGL version: {}", glGetString(GL_VERSION));
-    LOGGER.info("GLSL version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOGGER.info("Device manufacturer: {}", glGetString(GL_VENDOR));
+    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
+    LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
 
     if("true".equals(System.getenv("opengl_debug"))) {
       GLUtil.setupDebugMessageCallback(System.err);
@@ -271,6 +277,27 @@ public class Window {
 
   public void usePointerCursor() {
     glfwSetCursor(this.window, this.pointerCursor);
+  }
+
+  public void setWindowIcon(final Path path) {
+    try(final MemoryStack stack = stackPush()) {
+      final IntBuffer w = stack.mallocInt(1);
+      final IntBuffer h = stack.mallocInt(1);
+      final IntBuffer comp = stack.mallocInt(1);
+
+      final ByteBuffer data = stbi_load(path.toString(), w, h, comp, 4);
+      if(data == null) {
+        LOGGER.warn("Failed to load icon %s: %s", path, stbi_failure_reason());
+        return;
+      }
+
+      final GLFWImage image = GLFWImage.malloc(stack);
+      final GLFWImage.Buffer buffer = GLFWImage.malloc(1, stack);
+      image.set(w.get(0), h.get(0), data);
+      buffer.put(0, image);
+      glfwSetWindowIcon(this.window, buffer);
+      memFree(data);
+    }
   }
 
   public Action addAction(final Action action) {
