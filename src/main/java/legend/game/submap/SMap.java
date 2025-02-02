@@ -310,6 +310,13 @@ public class SMap extends EngineState {
     new ChapterStruct08(745, 58),
   };
   private boolean transitioning_800f7e4c;
+  /**
+   * <ul>
+   *   <li>0 - 2D elements</li>
+   *   <li>1 - 3D elements</li>
+   *   <li>2 - 2D and 3D elements</li>
+   * </ul>
+   */
   private int scriptSetOffsetMode_800f7e50;
   /**
    * <ul>
@@ -4128,12 +4135,14 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800e6b64L)
   private FlowControl scriptGetCollisionPrimitivePos(final RunningScript<?> script) {
-    final Vector3f pos = new Vector3f();
-    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
+    if(script.params_20[0].get() >= 0) {
+      final Vector3f pos = new Vector3f();
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
 
-    script.params_20[1].set(Math.round(pos.x));
-    script.params_20[2].set(Math.round(pos.y));
-    script.params_20[3].set(Math.round(pos.z));
+      script.params_20[1].set(Math.round(pos.x));
+      script.params_20[2].set(Math.round(pos.y));
+      script.params_20[3].set(Math.round(pos.z));
+    }
 
     //LAB_800e6bc8
     return FlowControl.CONTINUE;
