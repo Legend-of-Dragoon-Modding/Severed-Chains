@@ -260,7 +260,7 @@ public class Ttle extends EngineState {
 
     this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture((VramTextureSingle)this.tmPalettes[0]);
     this.trademarkObj = new QuadBuilder("Title Screen Trademark")
-      .pos(326.0f, 86.0f, 99.0f)
+      .pos(326.0f, 86.0f, 0.0f)
       .posSize(16.0f, 8.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
@@ -321,7 +321,7 @@ public class Ttle extends EngineState {
 
     this.copyrightTex = ((VramTextureSingle)this.copyrightTexture).createOpenglTexture((VramTextureSingle)this.copyrightPalettes[0]);
     this.copyrightObj = new QuadBuilder("Title Screen Copyright")
-      .pos(92.0f, 220.0f, 100.0f)
+      .pos(92.0f, 220.0f, 0.0f)
       .size(184.0f, 16.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
@@ -1021,11 +1021,13 @@ public class Ttle extends EngineState {
       this.copyrightFadeInAmount = 1.0f;
     }
 
+    final Matrix4f transforms = new Matrix4f().translation(0.0f, 0.0f, 200.0f);
+
     //LAB_800cabb8
     //LAB_800cabcc
     //LAB_800cabe8
     RENDERER
-      .queueOrthoModel(this.copyrightObj, QueuedModelStandard.class)
+      .queueOrthoModel(this.copyrightObj, transforms, QueuedModelStandard.class)
       .monochrome(this.copyrightFadeInAmount)
       .texture(this.copyrightTex);
   }
@@ -1052,8 +1054,10 @@ public class Ttle extends EngineState {
       .useTextureAlpha()
       .texture(this.logoTex);
 
+    transforms.translation(0.0f, 0.0f, 200.0f);
+
     RENDERER
-      .queueOrthoModel(this.trademarkObj, QueuedModelStandard.class)
+      .queueOrthoModel(this.trademarkObj, transforms, QueuedModelStandard.class)
       .monochrome(this.logoFadeInAmount)
       .texture(this.trademarkTex);
   }
