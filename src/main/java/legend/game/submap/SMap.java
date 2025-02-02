@@ -404,18 +404,18 @@ public class SMap extends EngineState {
     functions[108] = this::scriptSelfMoveAlongArc;
     functions[109] = this::scriptCheckSelfCollision;
     functions[110] = this::FUN_800df500;
-    functions[111] = this::FUN_800df530;
+    functions[111] = this::scriptSelfSetIgnoreCollision;
     functions[112] = this::FUN_800df560;
     functions[113] = this::scriptSelfEnableTextureAnimation;
     functions[114] = this::FUN_800df590;
     functions[115] = this::scriptSelfDisableTextureAnimation;
-    functions[116] = this::FUN_800df620;
+    functions[116] = this::scriptSelfGetMovementType;
     functions[117] = this::scriptSelfAttachCameraToSobj;
     functions[118] = this::scriptSelfIsCameraAttached;
     functions[119] = this::scriptSetCameraPos;
     functions[120] = this::scriptRotateSobj;
     functions[121] = this::scriptRotateSobjAbsolute;
-    functions[122] = this::FUN_800df904;
+    functions[122] = this::scriptSelfMoveAlongArc2;
     functions[123] = this::scriptMovePlayer;
     functions[124] = this::scriptFacePlayer;
     functions[125] = this::FUN_800df9a8;
@@ -484,14 +484,14 @@ public class SMap extends EngineState {
     functions[679] = this::scriptSobjMoveToPosition;
     functions[680] = this::scriptSobjMoveAlongArc;
     functions[681] = this::scriptCheckSobjCollision;
-    functions[682] = this::FUN_800e0148;
+    functions[682] = this::scriptGetSobjIgnoreCollision;
     functions[683] = this::FUN_800e01bc;
     functions[684] = this::scriptEnableTextureAnimation;
     functions[685] = this::FUN_800e0204;
     functions[686] = this::scriptDisableTextureAnimation;
-    functions[687] = this::FUN_800e02c0;
+    functions[687] = this::scriptGetSobjMovementType;
     functions[688] = this::scriptAttachCameraToSobj;
-    functions[689] = this::FUN_800deba0;
+    functions[689] = this::scriptSobjMoveAlongArc2;
     functions[690] = this::scriptGetSobjNobj;
     functions[691] = this::scriptHideModelPart;
     functions[692] = this::scriptShowModelPart;
@@ -500,7 +500,7 @@ public class SMap extends EngineState {
     functions[695] = this::scriptGetSobjFlag;
     functions[696] = this::loadInterpolatedSobjAnimation;
     functions[697] = this::loadUninterpolatedSobjAnimation;
-    functions[698] = this::FUN_800e0184;
+    functions[698] = this::scriptSetSobjIgnoreCollision;
     functions[699] = this::scriptSetChapterTitleCardReadyToRender;
     functions[700] = this::scriptGetChapterTitleCardAnimationComplete;
     functions[701] = this::scriptLoadChapterTitleCard;
@@ -1048,7 +1048,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800de2cc
-      player.us_170 = 0;
+      player.movementType_170 = 0;
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -1142,7 +1142,7 @@ public class SMap extends EngineState {
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
-    sobj.us_170 = 1;
+    sobj.movementType_170 = 1;
 
     if(sobj.movementTicks_144 != 0) {
       // GH#777: These are load-bearing casts // NOTE: no longer needed due to collision code improvements
@@ -1157,7 +1157,7 @@ public class SMap extends EngineState {
 
     //LAB_800de7a8
     //LAB_800de8e8
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e1f90);
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
 
     sobj.flags_190 &= ~0x8000_0000;
     return FlowControl.CONTINUE;
@@ -1186,10 +1186,10 @@ public class SMap extends EngineState {
     //LAB_800dea34
     final float deltaY = sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y;
     sobj.movementStepY_134 = (deltaY * 2 - movementTicks * 7 * (movementTicks - 1)) / (movementTicks * 2) / (3 - vsyncMode_8007a3b8);
-    sobj.us_170 = 2;
-    sobj.s_172 = 1;
+    sobj.movementType_170 = 2;
+    sobj.ignoreCollision_172 = 1;
     sobj.movementStepAccelerationY_18c = 7 / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjArcMovement);
     return FlowControl.CONTINUE;
   }
 
@@ -1201,7 +1201,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800deba0L)
-  private FlowControl FUN_800deba0(final RunningScript<?> script) {
+  private FlowControl scriptSobjMoveAlongArc2(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     sobj.finishInterpolatedMovement();
@@ -1212,14 +1212,14 @@ public class SMap extends EngineState {
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
     //LAB_800decbc
-    sobj.s_174 = sobj.s_172;
-    sobj.s_172 = 1;
-    sobj.us_170 = 2;
+    sobj.ignoreCollisionMemory_174 = sobj.ignoreCollision_172;
+    sobj.ignoreCollision_172 = 1;
+    sobj.movementType_170 = 2;
 
     final float stepY = (sobj.movementDestination_138.y - sobj.model_00.coord2_14.coord.transfer.y) / sobj.movementTicks_144;
     sobj.movementStepY_134 = stepY - sobj.movementStepAccelerationY_18c / 2 * (sobj.movementTicks_144 - 1);
 
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjArcMovement);
     return FlowControl.CONTINUE;
   }
 
@@ -1369,7 +1369,7 @@ public class SMap extends EngineState {
     }
 
     sobj.lastMovementTick = this.smapTicks_800c6ae0;
-    sobj.us_170 = 0;
+    sobj.movementType_170 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -1541,13 +1541,13 @@ public class SMap extends EngineState {
     throw new RuntimeException("Not implemented");
   }
 
-  @ScriptDescription("Sets submap object s_172")
+  @ScriptDescription("Sets this submap object's ignoreCollision_172")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
   @Method(0x800df530L)
-  private FlowControl FUN_800df530(final RunningScript<?> script) {
+  private FlowControl scriptSelfSetIgnoreCollision(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800e0184(script);
+    return this.scriptSetSobjIgnoreCollision(script);
   }
 
   @ScriptDescription("Something related to submap object animated textures")
@@ -1582,13 +1582,13 @@ public class SMap extends EngineState {
     return this.scriptDisableTextureAnimation(script);
   }
 
-  @ScriptDescription("Get a submap object's us_170")
+  @ScriptDescription("Get this submap object's movementType_170")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x800df620L)
-  private FlowControl FUN_800df620(final RunningScript<?> script) {
+  private FlowControl scriptSelfGetMovementType(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800e02c0(script);
+    return this.scriptGetSobjMovementType(script);
   }
 
   @ScriptDescription("Attaches the camera to this submap object")
@@ -1691,20 +1691,20 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Something to do with forced movement")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ui_18c", description = "Use unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800df904L)
-  private FlowControl FUN_800df904(final RunningScript<?> script) {
+  private FlowControl scriptSelfMoveAlongArc2(final RunningScript<?> script) {
     script.params_20[5] = script.params_20[4];
     script.params_20[4] = script.params_20[3];
     script.params_20[3] = script.params_20[2];
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800deba0(script);
+    return this.scriptSobjMoveAlongArc2(script);
   }
 
   @ScriptDescription("Rotates this submap object to face the player")
@@ -2010,23 +2010,23 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Returns submap object s_172")
+  @ScriptDescription("Returns submap object ignoreCollision_172")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "Return value")
   @Method(0x800e0148L)
-  private FlowControl FUN_800e0148(final RunningScript<?> script) {
+  private FlowControl scriptGetSobjIgnoreCollision(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(sobj.s_172);
+    script.params_20[1].set(sobj.ignoreCollision_172);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets submap object s_172")
+  @ScriptDescription("Sets submap object ignoreCollision_172")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
   @Method(0x800e0184L)
-  private FlowControl FUN_800e0184(final RunningScript<?> script) {
+  private FlowControl scriptSetSobjIgnoreCollision(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.s_172 = script.params_20[1].get();
+    sobj.ignoreCollision_172 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
@@ -2070,13 +2070,13 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Get a submap object's us_170")
+  @ScriptDescription("Get a submap object's movementType_170")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x800e02c0L)
-  private FlowControl FUN_800e02c0(final RunningScript<?> script) {
+  private FlowControl scriptGetSobjMovementType(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(sobj.us_170);
+    script.params_20[1].set(sobj.movementType_170);
     return FlowControl.CONTINUE;
   }
 
@@ -2647,7 +2647,7 @@ public class SMap extends EngineState {
       this.queueCollisionRectPacket(v0, v1, 0.5f, 0.0f, 0.0f);
     }
 
-    if(sobj.us_170 != 0) {
+    if(sobj.movementType_170 != 0) {
       this.transformVertex(v0, sobj.model_00.coord2_14.coord.transfer);
       this.transformVertex(v1, sobj.movementDestination_138);
       this.queueMovementLinePacket(v0, v1, 0.5f, 0.0f, 0.5f);
@@ -2922,7 +2922,7 @@ public class SMap extends EngineState {
 
   /** Handles cutscene movement */
   @Method(0x800e1f90L)
-  private boolean FUN_800e1f90(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  private boolean tickSobjMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     if((sobj.flags_190 & 0x8000_0000) != 0) {
@@ -2933,7 +2933,7 @@ public class SMap extends EngineState {
     //LAB_800e20d8
     sobj.movementTicks_144--;
 
-    if(sobj.s_172 == 0) {
+    if(sobj.ignoreCollision_172 == 0) {
       final Vector3f movement = new Vector3f();
 
       if((sobj.flags_190 & 0x1) != 0) { // Is player
@@ -2968,7 +2968,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e2200
-    sobj.us_170 = 0;
+    sobj.movementType_170 = 0;
 
     //LAB_800e2204
     return true;
@@ -3067,7 +3067,7 @@ public class SMap extends EngineState {
 
   /** Used in teleporter just before Melbu */
   @Method(0x800e3e74L)
-  private boolean tickSobjMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  private boolean tickSobjArcMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     model.coord2_14.coord.transfer.y += sobj.movementStepY_134;
@@ -3083,10 +3083,10 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e3f7c
-    sobj.us_170 = 0;
+    sobj.movementType_170 = 0;
     sobj.movementStepY_134 = 0;
     model.coord2_14.coord.transfer.set(sobj.movementDestination_138);
-    sobj.s_172 = sobj.s_174;
+    sobj.ignoreCollision_172 = sobj.ignoreCollisionMemory_174;
     return true;
   }
 
