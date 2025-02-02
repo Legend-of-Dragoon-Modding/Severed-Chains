@@ -16,6 +16,7 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 
 public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T extends QueuedModel<Options, T>> {
@@ -184,7 +185,7 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     this.texturesUsed = false;
     this.worldScissor.set(this.batch.engine.scissorStack.top());
     this.opaqueDepthComparator = GL_LESS;
-    this.translucentDepthComparator = GL_LESS;
+    this.translucentDepthComparator = GL_LEQUAL;
   }
 
   void setTransforms(final MV transforms) {
