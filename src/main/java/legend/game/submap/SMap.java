@@ -156,6 +156,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -940,7 +941,10 @@ public class SMap extends EngineState {
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            // Fix for chest shadow rendering on top of lid (GH#1408)
+            .translucentDepthComparator(GL_LESS)
+          ;
 
           if(texture != null) {
             queue.texture(texture);

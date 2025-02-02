@@ -64,7 +64,16 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
-  void render(@Nullable final Translucency translucency) {
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    if(this.hasTranslucencyOverride) {
+      return this.translucency == translucency;
+    }
+
+    return super.shouldRender(translucency, layer);
+  }
+
+  @Override
+  void render(@Nullable final Translucency translucency, final int layer) {
     if(translucency != null) {
       this.shaderOptions.translucency(translucency);
     } else {
@@ -77,10 +86,10 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
     if(this.hasTranslucencyOverride) {
       // Translucency override
       this.updateColours(translucency);
-      this.obj.render(this.startVertex, this.vertexCount);
+      this.obj.render(layer, this.startVertex, this.vertexCount);
       return;
     }
 
-    super.render(translucency);
+    super.render(translucency, layer);
   }
 }
