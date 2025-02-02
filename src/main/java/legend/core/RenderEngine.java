@@ -60,6 +60,7 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -79,12 +80,9 @@ import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_FILL;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
@@ -96,7 +94,6 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
-import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
@@ -294,7 +291,7 @@ public class RenderEngine {
   public RenderEngine() {
     this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
-    this.state = new RenderState(this, this.scissorStack);
+    this.state = new RenderState(this);
   }
 
   /**
@@ -663,7 +660,7 @@ public class RenderEngine {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // set render states
-        glDisable(GL_DEPTH_TEST);
+        this.state.disableDepthTest();
         glDepthMask(true); // enable depth writes so glClear won't ignore clearing the depth buffer
         glDisable(GL_BLEND);
 
@@ -756,10 +753,6 @@ public class RenderEngine {
       return;
     }
 
-    // Render if the depth is less than what is currently in the depth buffer
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
     // Update the depth mask so nothing further away than this will render
     glDepthMask(true);
 
@@ -782,27 +775,30 @@ public class RenderEngine {
 
       final QueuedModel<?, ?> entry = pool.get(i);
       entry.useShader(modelIndex, 1);
+      this.state.enableDepthTest(entry.opaqueDepthComparator);
 
       this.state.scissor(entry);
 
-      if(entry.shouldRender(null)) {
-        if(backFaceCulling) {
-          this.state.backfaceCulling(entry.obj.useBackfaceCulling());
+      for(int layer = 0; layer < entry.getLayers(); layer++) {
+        if(entry.shouldRender(null, layer)) {
+          if(backFaceCulling) {
+            this.state.backfaceCulling(entry.obj.useBackfaceCulling());
+          }
+
+          entry.useTexture();
+          entry.render(null, layer);
         }
 
-        entry.useTexture();
-        entry.render(null);
-      }
+        // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
+        if(entry.hasTranslucency()) {
+          for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+            final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
-      // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
-      if(entry.hasTranslucency()) {
-        for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-          final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
-
-          if(entry.shouldRender(translucency)) {
-            this.state.backfaceCulling(false);
-            entry.useTexture();
-            entry.render(translucency);
+            if(entry.shouldRender(translucency, layer)) {
+              this.state.backfaceCulling(false);
+              entry.useTexture();
+              entry.render(translucency, layer);
+            }
           }
         }
       }
@@ -818,8 +814,6 @@ public class RenderEngine {
 
     // Do not update the depth mask so that we don't prevent things further away than this from rendering
     glDepthMask(false);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
 
     glEnable(GL_BLEND);
 
@@ -840,29 +834,32 @@ public class RenderEngine {
 
       if(entry.hasTranslucency()) {
         entry.useShader(modelIndex, 2);
+        this.state.enableDepthTest(entry.translucentDepthComparator);
 
         this.state.scissor(entry);
 
         entry.useTexture();
 
-        if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-          Translucency.HALF_B_PLUS_HALF_F.setGlState();
-          entry.render(Translucency.HALF_B_PLUS_HALF_F);
-        }
+        for(int layer = 0; layer < entry.getLayers(); layer++) {
+          if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F, layer)) {
+            Translucency.HALF_B_PLUS_HALF_F.setGlState();
+            entry.render(Translucency.HALF_B_PLUS_HALF_F, layer);
+          }
 
-        if(entry.shouldRender(Translucency.B_PLUS_F)) {
-          Translucency.B_PLUS_F.setGlState();
-          entry.render(Translucency.B_PLUS_F);
-        }
+          if(entry.shouldRender(Translucency.B_PLUS_F, layer)) {
+            Translucency.B_PLUS_F.setGlState();
+            entry.render(Translucency.B_PLUS_F, layer);
+          }
 
-        if(entry.shouldRender(Translucency.B_MINUS_F)) {
-          Translucency.B_MINUS_F.setGlState();
-          entry.render(Translucency.B_MINUS_F);
-        }
+          if(entry.shouldRender(Translucency.B_MINUS_F, layer)) {
+            Translucency.B_MINUS_F.setGlState();
+            entry.render(Translucency.B_MINUS_F, layer);
+          }
 
-        if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
-          Translucency.B_PLUS_F.setGlState();
-          entry.render(Translucency.B_PLUS_QUARTER_F);
+          if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F, layer)) {
+            Translucency.B_PLUS_F.setGlState();
+            entry.render(Translucency.B_PLUS_QUARTER_F, layer);
+          }
         }
       }
     }
@@ -871,26 +868,38 @@ public class RenderEngine {
   private void handleMovement() {
     if(this.movingLeft) {
       this.camera3d.strafe(-MOVE_SPEED * 200);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
 
     if(this.movingRight) {
       this.camera3d.strafe(MOVE_SPEED * 200);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
 
     if(this.movingForward) {
       this.camera3d.move(-MOVE_SPEED * 200);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
 
     if(this.movingBackward) {
       this.camera3d.move(MOVE_SPEED * 200);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
 
     if(this.movingUp) {
       this.camera3d.jump(-MOVE_SPEED * 200);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
 
     if(this.movingDown) {
       this.camera3d.jump(MOVE_SPEED * 200);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
   }
 
@@ -1126,6 +1135,8 @@ public class RenderEngine {
       this.lastY = y;
 
       this.camera3d.look(-this.yaw, -this.pitch);
+      this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
+      this.camera3d.getView().getTranslation(worldToScreenMatrix_800c3548.transfer);
     }
   }
 

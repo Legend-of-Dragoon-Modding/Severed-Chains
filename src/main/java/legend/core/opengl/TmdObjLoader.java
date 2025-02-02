@@ -13,6 +13,7 @@ import legend.game.types.Translucency;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
@@ -289,7 +290,9 @@ public final class TmdObjLoader {
       meshes[meshIndex++] = createMesh(tmdMeshes.translucent[i], vertexSize);
     }
 
-    return new TmdMeshObj(name, meshes, backfaceCulling);
+    final Mesh[] reversed = new Mesh[meshes.length];
+    Arrays.setAll(reversed, i -> meshes[meshes.length - i - 1]);
+    return new TmdMeshObj(name, reversed, backfaceCulling);
   }
 
   private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh, final int vertexSize) {

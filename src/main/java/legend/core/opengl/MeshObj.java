@@ -72,26 +72,26 @@ public class MeshObj extends Obj {
   }
 
   @Override
-  public void render(final int startVertex, final int vertexCount) {
-    for(int i = 0; i < this.meshes.length; i++) {
-      this.meshes[i].draw(startVertex, vertexCount);
-    }
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    return this.meshes[layer].translucencyMode == translucency;
   }
 
   @Override
-  public void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount) {
-    if(translucency == null) {
-      for(int i = 0; i < this.meshes.length; i++) {
-        if(!this.meshes[i].translucent) {
-          this.meshes[i].draw(startVertex, vertexCount);
-        }
-      }
-    } else {
-      for(int i = 0; i < this.meshes.length; i++) {
-        if(this.meshes[i].translucent && this.meshes[i].translucencyMode == translucency) {
-          this.meshes[i].draw(startVertex, vertexCount);
-        }
-      }
+  public int getLayers() {
+    return this.meshes.length;
+  }
+
+  @Override
+  public void render(final int layer, final int startVertex, final int vertexCount) {
+    this.meshes[layer].draw(startVertex, vertexCount);
+  }
+
+  @Override
+  public void render(@Nullable final Translucency translucency, final int layer, final int startVertex, final int vertexCount) {
+    final Mesh mesh = this.meshes[layer];
+
+    if(!mesh.translucent && translucency == null || mesh.translucent && mesh.translucencyMode == translucency) {
+      mesh.draw(startVertex, vertexCount);
     }
   }
 

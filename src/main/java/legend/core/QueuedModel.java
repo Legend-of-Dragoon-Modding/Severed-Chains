@@ -16,6 +16,7 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static org.lwjgl.opengl.GL11C.GL_LESS;
 
 public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T extends QueuedModel<Options, T>> {
   protected final RenderBatch batch;
@@ -40,6 +41,9 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
 
   final Texture[] textures = new Texture[32];
   boolean texturesUsed;
+
+  int opaqueDepthComparator;
+  int translucentDepthComparator;
 
   public QueuedModel(final RenderBatch batch, final Shader<Options> shader, final Options shaderOptions) {
     this.batch = batch;
@@ -145,6 +149,18 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return this.texture(texture, 0);
   }
 
+  public T opaqueDepthComparator(final int comparator) {
+    this.opaqueDepthComparator = comparator;
+    //noinspection unchecked
+    return (T)this;
+  }
+
+  public T translucentDepthComparator(final int comparator) {
+    this.translucentDepthComparator = comparator;
+    //noinspection unchecked
+    return (T)this;
+  }
+
   void acquire(final Obj obj, final MV transforms) {
     this.transforms.set(transforms).setTranslation(transforms.transfer);
     this.acquire(obj);
@@ -167,6 +183,8 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     Arrays.fill(this.textures, null);
     this.texturesUsed = false;
     this.worldScissor.set(this.batch.engine.scissorStack.top());
+    this.opaqueDepthComparator = GL_LESS;
+    this.translucentDepthComparator = GL_LESS;
   }
 
   void setTransforms(final MV transforms) {
@@ -214,6 +232,10 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return this.obj.shouldRender(translucency);
   }
 
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    return this.obj.shouldRender(translucency, layer);
+  }
+
   protected void updateColours(@Nullable final Translucency translucency) {
     switch(translucency) {
       case B_PLUS_QUARTER_F -> this.shaderOptions.colour(this.colour.mul(0.25f, this.tempColour));
@@ -226,9 +248,13 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     this.screenspaceOffset.get(modelIndex * 20 + 16, transforms2Buffer);
   }
 
-  void render(@Nullable final Translucency translucency) {
+  int getLayers() {
+    return this.obj.getLayers();
+  }
+
+  void render(@Nullable final Translucency translucency, final int layer) {
     this.updateColours(translucency);
-    this.obj.render(translucency, this.startVertex, this.vertexCount);
+    this.obj.render(translucency, layer, this.startVertex, this.vertexCount);
   }
 
   @Override
