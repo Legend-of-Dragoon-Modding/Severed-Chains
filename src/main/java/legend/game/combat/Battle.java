@@ -1899,10 +1899,13 @@ public class Battle extends EngineState {
 
   @Method(0x800c8774L)
   public void loadStageTmdAndAnim(final String modelName, final List<FileData> files) {
+    LOGGER.info("Battle stage %s loaded", modelName);
+
     this.setStageHasNoModel();
 
     if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
+      stage.name = modelName;
       this.loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
@@ -1974,28 +1977,43 @@ public class Battle extends EngineState {
 
   @Method(0x800c8b20L)
   public void loadStage(final int stage) {
+    LOGGER.info("Loading battle stage %d", stage);
+
     if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
       battlePreloadedEntities_1f8003f4.skyboxObj.delete();
       battlePreloadedEntities_1f8003f4.skyboxObj = null;
     }
 
-    loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(1).hasVirtualSize()) {
-        this.loadStageMcq(new McqHeader(files.get(1)));
+    // GH#1931
+    // Disable texture animations so we don't corrupt the texture of the loading stage due to the old stage model still being loaded...
+    if(stage_800bda0c != null) {
+      for(int i = 0; i < 10; i++) {
+        stage_800bda0c._618[i] = 0;
       }
+    }
 
-      if(files.get(2).size() != 0) {
-        this.loadStageTim(files.get(2));
-      }
+    // ... and defer loading to the next frame so that any texture animations currently in the pipeline finish
+    RENDERER.addTask(() -> {
+      loadDrgnDir(0, 2497 + stage, files -> {
+        if(files.get(1).hasVirtualSize()) {
+          this.loadStageMcq(new McqHeader(files.get(1)));
+        }
+
+        if(files.get(2).size() != 0) {
+          this.loadStageTim(files.get(2));
+        }
+      });
+
+      loadDrgnDir(0, (2497 + stage) + "/0", files -> this.loadStageTmdAndAnim("DRGN0/" + (2497 + stage) + "/0", files));
     });
-
-    loadDrgnDir(0, (2497 + stage) + "/0", files -> this.loadStageTmdAndAnim("DRGN0/" + (2497 + stage) + "/0", files));
 
     this.currentStage_800c66a4 = stage;
   }
 
   @Method(0x800c8c84L)
   public void loadStageTim(final FileData data) {
+    LOGGER.info("Battle stage texture loaded");
+
     final Tim tim = new Tim(data);
 
     GPU.uploadData15(tim.getImageRect(), tim.getImageData());
@@ -2025,6 +2043,8 @@ public class Battle extends EngineState {
 
   @Method(0x800c8d64L)
   public void loadStageMcq(final McqHeader mcq) {
+    LOGGER.info("Battle stage skybox loaded");
+
     final int x;
     if((battleFlags_800bc960 & 0x80) != 0) {
       x = 320;

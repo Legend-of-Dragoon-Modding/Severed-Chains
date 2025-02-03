@@ -156,6 +156,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -310,6 +311,13 @@ public class SMap extends EngineState {
     new ChapterStruct08(745, 58),
   };
   private boolean transitioning_800f7e4c;
+  /**
+   * <ul>
+   *   <li>0 - 2D elements</li>
+   *   <li>1 - 3D elements</li>
+   *   <li>2 - 2D and 3D elements</li>
+   * </ul>
+   */
   private int scriptSetOffsetMode_800f7e50;
   /**
    * <ul>
@@ -318,7 +326,7 @@ public class SMap extends EngineState {
    */
   private int submapFlags_800f7e54;
 
-  private final float[] oldRotations_800f7f6c = new float[8];
+  private float oldRotation_800f7f6c;
   private boolean firstMovement;
 
   private int snowState_800f9e60;
@@ -933,7 +941,10 @@ public class SMap extends EngineState {
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            // Fix for chest shadow rendering on top of lid (GH#1408)
+            .translucentDepthComparator(GL_LESS)
+          ;
 
           if(texture != null) {
             queue.texture(texture);
@@ -2563,7 +2574,7 @@ public class SMap extends EngineState {
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
       }
 
-      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.dartRotationWasUpdated_800d1a8c) {
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.dartRotationWasUpdated_800d1a8c > 0) {
         model.coord2_14.transforms.rotate.y = this.smoothDartRotation();
       }
 
@@ -4128,12 +4139,14 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800e6b64L)
   private FlowControl scriptGetCollisionPrimitivePos(final RunningScript<?> script) {
-    final Vector3f pos = new Vector3f();
-    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
+    if(script.params_20[0].get() >= 0) {
+      final Vector3f pos = new Vector3f();
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
 
-    script.params_20[1].set(Math.round(pos.x));
-    script.params_20[2].set(Math.round(pos.y));
-    script.params_20[3].set(Math.round(pos.z));
+      script.params_20[1].set(Math.round(pos.x));
+      script.params_20[2].set(Math.round(pos.y));
+      script.params_20[3].set(Math.round(pos.z));
+    }
 
     //LAB_800e6bc8
     return FlowControl.CONTINUE;
@@ -4279,12 +4292,10 @@ public class SMap extends EngineState {
   private float smoothDartRotation() {
     if(this.firstMovement) {
       this.firstMovement = false;
-      Arrays.fill(this.oldRotations_800f7f6c, this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84);
+      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
     }
 
-    final int lastRotationIndex = java.lang.Math.floorMod(this.smapTicks_800c6ae0 - (3 - vsyncMode_8007a3b8), 4 * (3 - vsyncMode_8007a3b8));
-    final int newRotationIndex = this.smapTicks_800c6ae0 % (4 * (3 - vsyncMode_8007a3b8));
-    float rotationDelta = this.oldRotations_800f7f6c[lastRotationIndex] - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
+    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
 
     final boolean positive;
     if(Math.abs(rotationDelta) > MathHelper.PI) {
@@ -4297,24 +4308,28 @@ public class SMap extends EngineState {
     }
 
     //LAB_800ea63c
-    if(rotationDelta > 0.125f * MathHelper.TWO_PI) { // 45 degrees
-      rotationDelta /= 4.0f;
+    float maxRotation = MathHelper.PI / (6.0f * this.tickMultiplier());
+    if(this.collisionGeometry_800cbe08.dartRunning) {
+      maxRotation *= 1.5f;
+    }
+
+    if(rotationDelta > maxRotation) {
+      rotationDelta = maxRotation;
     }
 
     //LAB_800ea66c
-    final float newRotation;
     if(!positive) {
-      newRotation = this.oldRotations_800f7f6c[lastRotationIndex] - rotationDelta;
+      this.oldRotation_800f7f6c -= rotationDelta;
     } else {
       //LAB_800ea6a0
-      newRotation = this.oldRotations_800f7f6c[lastRotationIndex] + rotationDelta;
+      this.oldRotation_800f7f6c += rotationDelta;
     }
 
-    //LAB_800ea6a4
-    this.oldRotations_800f7f6c[newRotationIndex] = newRotation;
+    this.oldRotation_800f7f6c %= MathHelper.TWO_PI;
 
+    //LAB_800ea6a4
     //LAB_800ea6dc
-    return newRotation;
+    return this.oldRotation_800f7f6c;
   }
 
   /** Used in Snow Field (disk 3) */

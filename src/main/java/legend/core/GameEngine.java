@@ -112,6 +112,8 @@ public final class GameEngine {
   public static final Thread hardwareThread;
   public static final Thread openalThread;
 
+  private static final Updater UPDATER = new Updater();
+
   static {
     try {
       if(!Config.exists()) {
@@ -134,11 +136,16 @@ public final class GameEngine {
     openalThread.setName("OPEN_AL");
   }
 
-  private static final Object LOCK = new Object();
+  private static final Object INIT_LOCK = new Object();
+  private static final Object UPDATER_LOCK = new Object();
+
+  private static Updater.Release UPDATE;
+  private static boolean UPDATE_CHECK_FINISHED;
 
   private static Window.Events.Resize onResize;
   private static Window.Events.Key onKeyPress;
   private static Window.Events.Click onMouseRelease;
+  private static Window.Events.OnPressedThisFrame onPressedThisFrame;
   private static Runnable onShutdown;
 
   private static final ShaderType<EyeShaderOptions> EYE_SHADER = new ShaderType<>(
@@ -186,10 +193,25 @@ public final class GameEngine {
     return loading;
   }
 
+  public static Updater.Release getUpdate() {
+    synchronized(UPDATER_LOCK) {
+      return UPDATE;
+    }
+  }
+
   public static void start() throws IOException {
+    UPDATE_CHECK_FINISHED = false;
+    UPDATE = null;
+    UPDATER.check(release -> {
+      synchronized(UPDATER_LOCK) {
+        UPDATE_CHECK_FINISHED = true;
+        UPDATE = release;
+      }
+    });
+
     final Thread thread = new Thread(() -> {
       try {
-        LOGGER.info("Severed Chains %s commit %s starting", Version.FULL_VERSION, Version.HASH);
+        LOGGER.info("Severed Chains %s commit %s built %s starting", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
         loading = true;
         RENDERER.setRenderCallback(GameEngine::loadGfx);
@@ -201,7 +223,7 @@ public final class GameEngine {
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
         SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
 
-        synchronized(LOCK) {
+        synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> {
             synchronized(statusTextLock) {
               newStatusText = status;
@@ -225,6 +247,13 @@ public final class GameEngine {
           loadXpTables();
 
           Scus94491BpeSegment_8002.start();
+
+          synchronized(UPDATER_LOCK) {
+            if(!UPDATE_CHECK_FINISHED) {
+              newStatusText = "Checking for updates...";
+            }
+          }
+
           loading = false;
         }
       } catch(final Exception e) {
@@ -260,6 +289,7 @@ public final class GameEngine {
       AUDIO_THREAD.destroy();
       RENDERER.delete();
       Input.destroy();
+      UPDATER.delete();
     }
   }
 
@@ -414,6 +444,11 @@ public final class GameEngine {
       onMouseRelease = null;
     }
 
+    if(onPressedThisFrame != null) {
+      RENDERER.events().removePressedThisFrame(onPressedThisFrame);
+      onPressedThisFrame = null;
+    }
+
     if(onShutdown != null) {
       RENDERER.events().removeShutdown(onShutdown);
       onShutdown = null;
@@ -422,7 +457,7 @@ public final class GameEngine {
     RENDERER.usePs1Gpu = true;
     openalThread.start();
 
-    synchronized(LOCK) {
+    synchronized(INIT_LOCK) {
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
@@ -481,13 +516,21 @@ public final class GameEngine {
 
     RENDERER.usePs1Gpu = false;
     RENDERER.setRenderCallback(GameEngine::renderIntro);
+    RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
     onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
+    onPressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> skip());
     onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
   }
 
   private static void skip() {
+    if(time == 0) {
+      synchronized(UPDATER_LOCK) {
+        UPDATE_CHECK_FINISHED = true;
+      }
+    }
+
     time = 0;
     fade1 = 0.0f;
     fade2 = 0.0f;
@@ -534,10 +577,12 @@ public final class GameEngine {
       if(loadingFade > 1.0f) {
         loadingFade = 1.0f;
       }
-    } else {
-      if(!loading) {
-        transitionToGame();
-        return;
+    } else if(!loading) {
+      synchronized(UPDATER_LOCK) {
+        if(UPDATE_CHECK_FINISHED) {
+          transitionToGame();
+          return;
+        }
       }
     }
 

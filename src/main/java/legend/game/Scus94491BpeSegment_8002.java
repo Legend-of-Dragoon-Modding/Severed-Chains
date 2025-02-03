@@ -152,6 +152,7 @@ import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubm
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
+import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1420,10 +1421,14 @@ public final class Scus94491BpeSegment_8002 {
               .queueOrthoModel(renderable.uiType_20.obj, transforms, QueuedModelStandard.class)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
-              .clutOverride(clutX, clut >>> 6);
+              .clutOverride(clutX, clut >>> 6)
+            ;
 
             if((metrics.clut_04 & 0x8000) != 0) {
-              model.translucency(Translucency.of(tpage >>> 5 & 0b11));
+              model
+                .translucency(Translucency.of(tpage >>> 5 & 0b11))
+                .translucentDepthComparator(GL_LEQUAL)
+              ;
             }
 
             if(renderable.widthCut != 0 || renderable.heightCut != 0) {

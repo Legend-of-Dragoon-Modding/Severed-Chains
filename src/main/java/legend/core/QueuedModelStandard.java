@@ -11,6 +11,7 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   private Translucency translucency;
   private boolean hasTranslucencyOverride;
   private float alpha;
+  private boolean useTextureAlpha;
 
   public QueuedModelStandard(final RenderBatch batch, final Shader<ShaderOptionsStandard> shader, final ShaderOptionsStandard shaderOptions) {
     super(batch, shader, shaderOptions);
@@ -20,7 +21,7 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
     this.translucency = translucency;
     this.hasTranslucencyOverride = true;
 
-    if(translucency == Translucency.HALF_B_PLUS_HALF_F || translucency == Translucency.ALPHA) {
+    if(translucency == Translucency.HALF_B_PLUS_HALF_F) {
       this.batch.needsSorting = true;
     }
 
@@ -30,14 +31,22 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   /** Changes translucency mode to true alpha */
   public QueuedModelStandard alpha(final float alpha) {
     this.alpha = alpha;
-    return this.translucency(Translucency.ALPHA);
+    this.batch.needsSorting = true;
+    return this;
+  }
+
+  /** Use texture's alpha channel */
+  public QueuedModelStandard useTextureAlpha() {
+    this.useTextureAlpha = true;
+    return this;
   }
 
   @Override
   void acquire(final Obj obj) {
     super.acquire(obj);
     this.hasTranslucencyOverride = false;
-    this.alpha = 1.0f;
+    this.alpha = -1.0f;
+    this.useTextureAlpha = false;
   }
 
   @Override
@@ -55,24 +64,32 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
-  void render(@Nullable final Translucency translucency) {
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    if(this.hasTranslucencyOverride) {
+      return this.translucency == translucency;
+    }
+
+    return super.shouldRender(translucency, layer);
+  }
+
+  @Override
+  void render(@Nullable final Translucency translucency, final int layer) {
     if(translucency != null) {
       this.shaderOptions.translucency(translucency);
-
-      if(translucency == Translucency.ALPHA) {
-        this.shaderOptions.alpha(this.alpha);
-      }
     } else {
       this.shaderOptions.opaque();
     }
 
+    this.shaderOptions.alpha(this.alpha);
+    this.shaderOptions.useTextureAlpha(this.useTextureAlpha);
+
     if(this.hasTranslucencyOverride) {
       // Translucency override
       this.updateColours(translucency);
-      this.obj.render(this.startVertex, this.vertexCount);
+      this.obj.render(layer, this.startVertex, this.vertexCount);
       return;
     }
 
-    super.render(translucency);
+    super.render(translucency, layer);
   }
 }

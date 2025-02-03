@@ -155,6 +155,15 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
   }
 
   @Override
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    if(this.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
+      return translucency != null && this.tmdTranslucency == translucency.ordinal();
+    }
+
+    return super.shouldRender(translucency, layer) || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal();
+  }
+
+  @Override
   void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer) {
     super.storeTransforms(modelIndex, transforms2Buffer);
 
@@ -166,14 +175,14 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
   }
 
   @Override
-  void render(@Nullable final Translucency translucency) {
+  void render(@Nullable final Translucency translucency, final int layer) {
     if(this.isTranslucent() || this.obj.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
       // Translucency override
       this.updateColours(translucency);
-      this.obj.render(this.startVertex, this.vertexCount);
+      this.obj.render(layer, this.startVertex, this.vertexCount);
       return;
     }
 
-    super.render(translucency);
+    super.render(translucency, layer);
   }
 }

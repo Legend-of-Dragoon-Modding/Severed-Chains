@@ -1262,7 +1262,9 @@ public class BattleHud {
                   .colour(num.colour);
 
                 if(num.translucent_08) {
-                  model.alpha(num.shade_0c / 128.0f);
+                  model
+                    .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                    .alpha(num.shade_0c / 128.0f);
                 }
                 //LAB_800f4110
             }

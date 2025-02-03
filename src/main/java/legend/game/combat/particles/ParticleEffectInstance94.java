@@ -163,9 +163,9 @@ public abstract class ParticleEffectInstance94 {
     }
 
     if((this.particle.effectInner_08.particleInnerStuff_1c & 0x400_0000) != 0) {
-      this.r_84 = manager.params_10.colour_1c.x / (float)0xff;
-      this.g_86 = manager.params_10.colour_1c.y / (float)0xff;
-      this.b_88 = manager.params_10.colour_1c.z / (float)0xff;
+      this.r_84 = manager.params_10.colour_1c.x / (float)0x80;
+      this.g_86 = manager.params_10.colour_1c.y / (float)0x80;
+      this.b_88 = manager.params_10.colour_1c.z / (float)0x80;
 
       if((manager.params_10.flags_24 & 0x1) == 0) {
         this.stepR_8a = 0;

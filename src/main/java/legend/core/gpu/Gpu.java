@@ -883,7 +883,7 @@ public class Gpu {
     final int b;
 
     switch(mode) {
-      case HALF_B_PLUS_HALF_F, ALPHA -> {
+      case HALF_B_PLUS_HALF_F -> {
         r = (br + fr) / 2;
         g = (bg + fg) / 2;
         b = (bb + fb) / 2;
