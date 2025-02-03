@@ -125,9 +125,18 @@ public class CollisionGeometry {
     if(!this.playerCollisionLatch_800cbe34) {
       this.playerCollisionLatch_800cbe34 = true;
 
+      this.dartRunning = movement.x * movement.x + movement.z * movement.z > 64.0f;
+
       //LAB_800e8908
       this.collidedPrimitiveIndex_800cbd94 = this.handleMovementAndCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
+
+      if(this.collidedPrimitiveIndex_800cbd94 != -1) {
+        if(this.dartRotationWasUpdated_800d1a8c == 0) {
+          this.dartRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
+          this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+        }
+      }
     } else {
       //LAB_800e8954
       movement.set(this.cachedPlayerMovement_800cbd98);
@@ -384,11 +393,9 @@ public class CollisionGeometry {
     final int distanceMultiplier;
     if(movement.x * movement.x + movement.z * movement.z > 64.0f) {
       distanceMultiplier = 12;
-      this.dartRunning = true;
     } else {
       //LAB_800e94e4
       distanceMultiplier = 4;
-      this.dartRunning = false;
     }
 
     //LAB_800e94ec
@@ -412,11 +419,6 @@ public class CollisionGeometry {
 
       //LAB_800ea390
       //LAB_800ea3b4
-      if(this.dartRotationWasUpdated_800d1a8c == 0) {
-        this.dartRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-      }
-
       //LAB_800ea3e0
       return closestPrimitiveIndex;
     }
@@ -451,11 +453,6 @@ public class CollisionGeometry {
 
           //LAB_800ea390
           //LAB_800ea3b4
-          if(this.dartRotationWasUpdated_800d1a8c == 0) {
-            this.dartRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-            this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-          }
-
           //LAB_800ea3e0
           return destinationPrimitiveIndex;
         }
@@ -566,11 +563,6 @@ public class CollisionGeometry {
       movement.z = offsetZ - z;
       movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
 
-      if(this.dartRotationWasUpdated_800d1a8c == 0) {
-        this.dartRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-      }
-
       return s2;
     }
 
@@ -592,11 +584,6 @@ public class CollisionGeometry {
 
     //LAB_800ea390
     //LAB_800ea3b4
-    if(this.dartRotationWasUpdated_800d1a8c == 0) {
-      this.dartRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-      this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-    }
-
     //LAB_800ea3e0
     return destinationPrimitiveIndex;
   }
