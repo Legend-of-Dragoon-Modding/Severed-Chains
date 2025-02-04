@@ -574,7 +574,7 @@ public class SMap extends EngineState {
       textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
       if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-        textboxText.flags_08 |= 0x20;
+        textboxText.flags_08 |= TextboxText84.NO_INPUT;
       }
 
       //LAB_80025370

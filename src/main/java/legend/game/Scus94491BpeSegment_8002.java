@@ -1737,7 +1737,7 @@ public final class Scus94491BpeSegment_8002 {
       clearTextboxText(textboxIndex);
 
       if(textType == 1 && (packed & 0x1000) != 0) {
-        textboxText.flags_08 |= 0x20;
+        textboxText.flags_08 |= TextboxText84.NO_INPUT;
       }
 
       //LAB_8002562c
@@ -2194,7 +2194,7 @@ public final class Scus94491BpeSegment_8002 {
             setTextboxArrowPosition(textboxIndex, true);
           }
           //LAB_8002684c
-        } else if((textboxText.flags_08 & 0x20) != 0) {
+        } else if((textboxText.flags_08 & TextboxText84.NO_INPUT) != 0) {
           textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
           textboxText.flags_08 |= 0x1;
         } else {
@@ -2232,7 +2232,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80026928
-        if((textboxText.flags_08 & 0x20) == 0) {
+        if((textboxText.flags_08 & TextboxText84.NO_INPUT) == 0) {
           if(Input.getButtonState(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
             boolean found = false;
 
@@ -2350,7 +2350,7 @@ public final class Scus94491BpeSegment_8002 {
         } while(textboxText.state_00 != TextboxTextState._15);
 
         //LAB_80026b6c
-        if((textboxText.flags_08 & 0x20) != 0) {
+        if((textboxText.flags_08 & TextboxText84.NO_INPUT) != 0) {
           setTextboxArrowPosition(textboxIndex, false);
         }
 
@@ -2400,7 +2400,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _15 -> {
         //LAB_80026cb0
-        if((textboxText.flags_08 & 0x20) != 0) {
+        if((textboxText.flags_08 & TextboxText84.NO_INPUT) != 0) {
           textboxText.state_00 = TextboxTextState._16;
         } else {
           //LAB_80026cd0
@@ -3593,8 +3593,8 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029eccL)
   public static FlowControl FUN_80029ecc(final RunningScript<?> script) {
     final TextboxText84 textboxText = textboxText_800bdf38[script.params_20[0].get()];
-    if(textboxText.state_00 == TextboxTextState._16 && (textboxText.flags_08 & 0x20) != 0) {
-      textboxText.flags_08 ^= 0x20;
+    if(textboxText.state_00 == TextboxTextState._16 && (textboxText.flags_08 & TextboxText84.NO_INPUT) != 0) {
+      textboxText.flags_08 ^= TextboxText84.NO_INPUT;
     }
 
     //LAB_80029f18
