@@ -587,7 +587,7 @@ public class SMap extends EngineState {
 
       //LAB_800253d4
       /* This is not a retail flag. Used in a script patch to remove arrows from 3 of 4 overlapping textboxes for Phantom Ship's code-locked chest. */
-      if((script.params_20[2].get() & 0x2000) == 0) {
+      if((packed & 0x2000) == 0) {
         textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
       }
       textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
