@@ -54,7 +54,7 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
-import legend.game.types.TextboxType;
+import legend.game.types.BackgroundType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
@@ -1691,7 +1691,7 @@ public final class Scus94491BpeSegment_8002 {
   /** Allocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @ScriptDescription("Adds a textbox to a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles, boolean in 12th bit")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Bit flags for textbox properties")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The textbox x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The textbox y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
@@ -1699,25 +1699,23 @@ public final class Scus94491BpeSegment_8002 {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
   @Method(0x800254bcL)
   public static FlowControl scriptAddTextbox(final RunningScript<?> script) {
-    final int textboxIndex = script.params_20[0].get();
+    final int packed = script.params_20[1].get();
 
-    if(script.params_20[1].get() != 0) {
-      final int packed = script.params_20[1].get();
-      final TextboxType mode = TextboxType.fromInt(textboxMode_80052b88[packed >>> 4 & 0xf]);
-      final boolean renderBorder = renderBorder_80052b68[packed & 0xf];
-      final int type = textboxTextType_80052ba8[packed >>> 8 & 0xf];
+    if(packed != 0) {
+      final int textboxIndex = script.params_20[0].get();
+      final int textType = textboxTextType_80052ba8[packed >>> 8 & 0xf];
       clearTextbox(textboxIndex);
 
       final Textbox4c textbox = textboxes_800be358[textboxIndex];
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-      textbox.type_04 = mode;
-      textbox.renderBorder_06 = renderBorder;
+      textbox.backgroundType_04 = BackgroundType.fromInt(textboxMode_80052b88[packed >>> 4 & 0xf]);
+      textbox.renderBorder_06 = renderBorder_80052b68[packed & 0xf];
       textbox.x_14 = script.params_20[2].get();
       textbox.y_16 = script.params_20[3].get();
       textbox.chars_18 = script.params_20[4].get() + 1;
       textbox.lines_1a = script.params_20[5].get() + 1;
-      textboxText.type_04 = type;
+      textboxText.type_04 = textType;
       textboxText.str_24 = LodString.fromParam(script.params_20[6]);
 
       // This is a stupid hack to allow inns to display 99,999,999 gold without the G falling down to the next line (see GH#546)
@@ -1727,18 +1725,18 @@ public final class Scus94491BpeSegment_8002 {
 
       clearTextboxText(textboxIndex);
 
-      if(type == 1 && (packed & 0x1000) != 0) {
+      if(textType == 1 && (packed & 0x1000) != 0) {
         textboxText.flags_08 |= 0x20;
       }
 
       //LAB_8002562c
       //LAB_80025630
-      if(type == 3) {
+      if(textType == 3) {
         textboxText.selectionIndex_6c = -1;
       }
 
       //LAB_80025660
-      if(type == 4) {
+      if(textType == 4) {
         textboxText.flags_08 |= TextboxText84.HAS_NAME;
       }
 
@@ -1903,7 +1901,7 @@ public final class Scus94491BpeSegment_8002 {
 
     switch(textbox.state_00) {
       case _1 -> {
-        switch(textbox.type_04) {
+        switch(textbox.backgroundType_04) {
           case NO_BACKGROUND -> {
             //LAB_80025ab8
             textbox.state_00 = TextboxState._4;
@@ -1944,7 +1942,7 @@ public final class Scus94491BpeSegment_8002 {
       case _2 -> {
         textbox.flags_08 |= Textbox4c.RENDER_BACKGROUND;
 
-        if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
+        if(textbox.backgroundType_04 == BackgroundType.ANIMATE_IN_OUT) {
           textbox.animationWidth_20 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.animationHeight_22 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.width_1c = textbox.chars_18 * 9 / 2 * textbox.animationWidth_20 >> 12;
@@ -1989,7 +1987,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case ANIMATE_OUT_3 -> {
-        if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
+        if(textbox.backgroundType_04 == BackgroundType.ANIMATE_IN_OUT) {
           textbox.animationWidth_20 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.animationHeight_22 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.width_1c = textbox.chars_18 * 9 / 2 * textbox.animationWidth_20 >> 12;
@@ -2012,7 +2010,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _4, _5 -> {
         if(textboxText_800bdf38[textboxIndex].state_00 == TextboxTextState.UNINITIALIZED_0) {
-          if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
+          if(textbox.backgroundType_04 == BackgroundType.ANIMATE_IN_OUT) {
             textbox.state_00 = TextboxState.ANIMATE_OUT_3;
             textbox.flags_08 |= Textbox4c.ANIMATING;
 
@@ -2038,7 +2036,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80025f7c
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
 
-    if(textbox.type_04 != TextboxType.NO_BACKGROUND) {
+    if(textbox.backgroundType_04 != BackgroundType.NO_BACKGROUND) {
       if(textbox.state_00 != TextboxState._1) {
         if(textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
           textbox.backgroundTransforms.transfer.set(textbox.x_14, textbox.y_16, textbox.z_0c * 4.0f + 1.0f);
@@ -3323,7 +3321,7 @@ public final class Scus94491BpeSegment_8002 {
     clearTextbox(0);
 
     final Textbox4c struct4c = textboxes_800be358[0];
-    struct4c.type_04 = TextboxType.fromInt(textboxMode_80052b88[2]);
+    struct4c.backgroundType_04 = BackgroundType.fromInt(textboxMode_80052b88[2]);
     struct4c.x_14 = 260;
     struct4c.y_16 = 120;
     struct4c.chars_18 = 6;
@@ -3475,7 +3473,7 @@ public final class Scus94491BpeSegment_8002 {
     clearTextbox(textboxIndex);
 
     final Textbox4c struct4c = textboxes_800be358[textboxIndex];
-    struct4c.type_04 = TextboxType.fromInt(script.params_20[1].get());
+    struct4c.backgroundType_04 = BackgroundType.fromInt(script.params_20[1].get());
     struct4c.x_14 = script.params_20[2].get();
     struct4c.y_16 = script.params_20[3].get();
     struct4c.chars_18 = script.params_20[4].get() + 1;
@@ -3716,7 +3714,7 @@ public final class Scus94491BpeSegment_8002 {
     clearTextbox(textboxIndex);
 
     final Textbox4c struct = textboxes_800be358[textboxIndex];
-    struct.type_04 = animateInOut ? TextboxType.ANIMATE_IN_OUT : TextboxType.NORMAL;
+    struct.backgroundType_04 = animateInOut ? BackgroundType.ANIMATE_IN_OUT : BackgroundType.NORMAL;
     struct.renderBorder_06 = true;
     struct.flags_08 |= Textbox4c.NO_ANIMATE_OUT;
 
