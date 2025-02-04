@@ -26,6 +26,10 @@ public class TextboxText84 {
   public static final int PROCESSED_NEW_LINE = 0x400;
   public static final int SELECTION = 0x800;
   public static final int SHOW_ARROW = 0x1000;
+  /**
+   * Added option to remove arrows. Used for special chest in phantom ship.
+   */
+  public static final int NO_ARROW = 0x2000;
 
   public TextboxTextState state_00;
   /**

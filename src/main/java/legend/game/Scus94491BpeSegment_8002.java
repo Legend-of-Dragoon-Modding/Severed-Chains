@@ -1752,7 +1752,10 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80025690
-      textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
+      /* Not a retail flag. Used to remove arrows from overlapping textboxes for Phantom Ship's code-locked chest. */
+      if((packed & TextboxText84.NO_ARROW) == 0) {
+        textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
+      }
       textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
       Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
       calculateAppropriateTextboxBounds(textboxIndex, textboxText.x_14, textboxText.y_16);
