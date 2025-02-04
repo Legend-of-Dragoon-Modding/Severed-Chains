@@ -2,18 +2,23 @@ package legend.game.inventory.screens.controls;
 
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 
-import static legend.game.SItem.renderCentredText;
+import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class Button extends Control {
   private final Highlight hover;
   private String text;
-  private TextColour textColour = TextColour.BROWN;
+  private float textHeight;
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
 
   public Button(final String text) {
     this.hover = this.addControl(new Highlight());
@@ -37,14 +42,22 @@ public class Button extends Control {
 
   public void setText(final String text) {
     this.text = text;
-  }
-
-  public TextColour getTextColour() {
-    return this.textColour;
+    this.updateTextSize();
   }
 
   public void setTextColour(final TextColour colour) {
-    this.textColour = colour;
+    this.fontOptions.colour(colour);
+  }
+
+  @Override
+  public void setScale(final float scale) {
+    super.setScale(scale);
+    this.fontOptions.size(scale);
+    this.updateTextSize();
+  }
+
+  private void updateTextSize() {
+    this.textHeight = textHeight(this.text) * this.getScale();
   }
 
   public void press() {
@@ -104,7 +117,7 @@ public class Button extends Control {
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderCentredText(this.text, x + this.getWidth() / 2, y + (this.getHeight() - 11) / 2, this.isDisabled() ? TextColour.MIDDLE_BROWN : this.textColour);
+    renderText(this.text, x + this.getWidth() / 2, y + (this.getHeight() - this.textHeight) / 2, this.isDisabled() ? UI_TEXT_DISABLED_CENTERED : this.fontOptions);
     textZ_800bdf00 = oldZ;
   }
 

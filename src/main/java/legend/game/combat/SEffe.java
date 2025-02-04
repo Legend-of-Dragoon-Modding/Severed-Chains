@@ -6,9 +6,6 @@ import legend.core.QueuedModelBattleTmd;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.RenderEngine;
-import legend.core.gpu.Gpu;
-import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
-import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -54,7 +51,6 @@ import legend.game.combat.effects.MoonlightStarsEffectInstance3c;
 import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
-import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDarkeningEffect;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
 import legend.game.combat.effects.ShadowEffect;
@@ -1839,53 +1835,22 @@ public final class SEffe {
   @ScriptDescription("Allocates a screen capture effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position; no longer used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position; no longer used")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "w", description = "The width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "h", description = "The height")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010b1d8L)
   public static FlowControl scriptAllocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
-    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c();
+    final int captureW = script.params_20[4].get();
+    final int captureH = script.params_20[5].get();
+    final int rendererIndex = script.params_20[6].get();
+    final ScreenCaptureEffect1c effect = new ScreenCaptureEffect1c(captureW, captureH, rendererIndex);
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen capture", script.scriptState_04, effect);
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    effect.captureW_04 = script.params_20[4].get();
-    effect.captureH_08 = script.params_20[5].get();
-    effect.rendererIndex_0c = script.params_20[6].get();
     effect.screenspaceW_10 = 0;
     script.params_20[0].set(state.index);
     effect.setDeff(script.params_20[1].get());
-
-    final int v0 = effect.rendererIndex_0c;
-    if(v0 == 0) {
-      //LAB_8010b2e4
-      final int x = script.params_20[2].get() + 160;
-      final int y = script.params_20[3].get() + 120;
-      final int w = effect.captureW_04 / 2;
-      final int h = effect.captureH_08 / 2;
-
-      //LAB_8010b308
-      for(int i = 0; i < 4; i++) {
-        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, metrics.u_00, metrics.v_02 + i * 64, w, h));
-        GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
-      }
-    } else if(v0 < 3) {
-      //LAB_8010b3f0
-      final int x = script.params_20[2].get() + 160 - effect.captureW_04 / 2;
-      final int y = script.params_20[3].get() + 120 - effect.captureH_08 / 2;
-      final int w = effect.captureW_04 / 5;
-      final int h = effect.captureH_08 / 3;
-
-      //LAB_8010b468
-      for(int i = 0; i < 15; i++) {
-        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
-
-        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + i % 5 * w, y + i / 5 * h, metrics.u_00 + i % 2 * 32, metrics.v_02 + i / 2 * 32, w, h));
-        GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
-      }
-    }
 
     //LAB_8010b548
     manager.params_10.flags_00 |= 0x5000_0000;

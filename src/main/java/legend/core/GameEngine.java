@@ -1,6 +1,10 @@
 package legend.core;
 
 import legend.core.audio.AudioThread;
+import legend.core.audio.EffectsOverTimeGranularity;
+import legend.core.audio.InterpolationPrecision;
+import legend.core.audio.PitchResolution;
+import legend.core.audio.SampleRate;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
@@ -87,7 +91,7 @@ public final class GameEngine {
   private static LangManager.Access LANG_ACCESS;
   private static EventManager.Access EVENT_ACCESS;
   private static Registries.Access REGISTRY_ACCESS;
-  public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access);
+  public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access, "lod", "lod_core");
   public static final LangManager LANG = new LangManager(access -> LANG_ACCESS = access);
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
   public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
@@ -108,6 +112,8 @@ public final class GameEngine {
   public static final Thread hardwareThread;
   public static final Thread openalThread;
 
+  private static final Updater UPDATER = new Updater();
+
   static {
     try {
       if(!Config.exists()) {
@@ -122,7 +128,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(100, true, 24, 9);
+    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000, EffectsOverTimeGranularity.Finer);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -130,11 +136,16 @@ public final class GameEngine {
     openalThread.setName("OPEN_AL");
   }
 
-  private static final Object LOCK = new Object();
+  private static final Object INIT_LOCK = new Object();
+  private static final Object UPDATER_LOCK = new Object();
+
+  private static Updater.Release UPDATE;
+  private static boolean UPDATE_CHECK_FINISHED;
 
   private static Window.Events.Resize onResize;
   private static Window.Events.Key onKeyPress;
   private static Window.Events.Click onMouseRelease;
+  private static Window.Events.OnPressedThisFrame onPressedThisFrame;
   private static Runnable onShutdown;
 
   private static final ShaderType<EyeShaderOptions> EYE_SHADER = new ShaderType<>(
@@ -182,10 +193,25 @@ public final class GameEngine {
     return loading;
   }
 
+  public static Updater.Release getUpdate() {
+    synchronized(UPDATER_LOCK) {
+      return UPDATE;
+    }
+  }
+
   public static void start() throws IOException {
+    UPDATE_CHECK_FINISHED = false;
+    UPDATE = null;
+    UPDATER.check(release -> {
+      synchronized(UPDATER_LOCK) {
+        UPDATE_CHECK_FINISHED = true;
+        UPDATE = release;
+      }
+    });
+
     final Thread thread = new Thread(() -> {
       try {
-        LOGGER.info("Severed Chains %s commit %s starting", Version.VERSION, Version.HASH);
+        LOGGER.info("Severed Chains %s commit %s built %s starting", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
         loading = true;
         RENDERER.setRenderCallback(GameEngine::loadGfx);
@@ -197,7 +223,7 @@ public final class GameEngine {
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
         SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
 
-        synchronized(LOCK) {
+        synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> {
             synchronized(statusTextLock) {
               newStatusText = status;
@@ -216,11 +242,18 @@ public final class GameEngine {
             return;
           }
 
-          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches")).apply();
+          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
 
           loadXpTables();
 
           Scus94491BpeSegment_8002.start();
+
+          synchronized(UPDATER_LOCK) {
+            if(!UPDATE_CHECK_FINISHED) {
+              newStatusText = "Checking for updates...";
+            }
+          }
+
           loading = false;
         }
       } catch(final Exception e) {
@@ -232,23 +265,32 @@ public final class GameEngine {
     thread.start();
 
     // Find and load all mods so their global config can be shown in the title screen options menu
-    MOD_ACCESS.findMods();
+    MOD_ACCESS.findMods(Path.of("./mods"), Version.VERSION);
     bootMods(MODS.getAllModIds());
 
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
     AUDIO_THREAD.init();
     AUDIO_THREAD.getSequencer().setVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()));
+    AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get()));
+    AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
+    AUDIO_THREAD.changeSampleRate(CONFIG.getConfig(CoreMod.MUSIC_SAMPLE_RATE_CONFIG.get()));
+    AUDIO_THREAD.changeEffectsOverTimeGranularity(CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get()));
 
     SPU.init();
     RENDERER.init();
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     Input.init();
     GPU.init();
-    RENDERER.run();
 
-    RENDERER.delete();
-    Input.destroy();
+    try {
+      RENDERER.run();
+    } finally {
+      AUDIO_THREAD.destroy();
+      RENDERER.delete();
+      Input.destroy();
+      UPDATER.delete();
+    }
   }
 
   /** Returns missing mod IDs, if any */
@@ -402,6 +444,11 @@ public final class GameEngine {
       onMouseRelease = null;
     }
 
+    if(onPressedThisFrame != null) {
+      RENDERER.events().removePressedThisFrame(onPressedThisFrame);
+      onPressedThisFrame = null;
+    }
+
     if(onShutdown != null) {
       RENDERER.events().removeShutdown(onShutdown);
       onShutdown = null;
@@ -410,7 +457,7 @@ public final class GameEngine {
     RENDERER.usePs1Gpu = true;
     openalThread.start();
 
-    synchronized(LOCK) {
+    synchronized(INIT_LOCK) {
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
@@ -469,13 +516,21 @@ public final class GameEngine {
 
     RENDERER.usePs1Gpu = false;
     RENDERER.setRenderCallback(GameEngine::renderIntro);
+    RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
     onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
+    onPressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> skip());
     onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
   }
 
   private static void skip() {
+    if(time == 0) {
+      synchronized(UPDATER_LOCK) {
+        UPDATE_CHECK_FINISHED = true;
+      }
+    }
+
     time = 0;
     fade1 = 0.0f;
     fade2 = 0.0f;
@@ -522,10 +577,12 @@ public final class GameEngine {
       if(loadingFade > 1.0f) {
         loadingFade = 1.0f;
       }
-    } else {
-      if(!loading) {
-        transitionToGame();
-        return;
+    } else if(!loading) {
+      synchronized(UPDATER_LOCK) {
+        if(UPDATE_CHECK_FINISHED) {
+          transitionToGame();
+          return;
+        }
       }
     }
 

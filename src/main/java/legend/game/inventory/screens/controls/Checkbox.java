@@ -9,6 +9,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 
 import java.nio.file.Path;
@@ -23,7 +24,7 @@ public class Checkbox extends Control {
   private final Texture uncheckedTexture;
   private final Texture checkedTexture;
 
-  private Label.HorizontalAlign horizontalAlign = Label.HorizontalAlign.CENTRE;
+  private HorizontalAlign horizontalAlign = HorizontalAlign.CENTRE;
   private Label.VerticalAlign verticalAlign = Label.VerticalAlign.CENTRE;
   private boolean checked;
 
@@ -33,18 +34,18 @@ public class Checkbox extends Control {
 
     this.obj = new QuadBuilder("Checkbox")
       .bpp(Bpp.BITS_24)
-      .posSize(14.0f, 14.0f)
+      .posSize(1.0f, 1.0f)
       .uvSize(1.0f, 1.0f)
       .build();
 
     this.setSize(14, 14);
   }
 
-  public void setHorizontalAlign(final Label.HorizontalAlign horizontalAlign) {
+  public void setHorizontalAlign(final HorizontalAlign horizontalAlign) {
     this.horizontalAlign = horizontalAlign;
   }
 
-  public Label.HorizontalAlign getHorizontalAlign() {
+  public HorizontalAlign getHorizontalAlign() {
     return this.horizontalAlign;
   }
 
@@ -80,19 +81,22 @@ public class Checkbox extends Control {
 
   @Override
   protected void render(final int controlX, final int controlY) {
+    final int scale = Math.min(this.getWidth(), this.getHeight());
+
     final int x = switch(this.horizontalAlign) {
       case LEFT -> controlX;
-      case CENTRE -> controlX + (this.getWidth() - 14) / 2;
-      case RIGHT -> controlX + this.getWidth() - 14;
+      case CENTRE -> controlX + (this.getWidth() - scale) / 2;
+      case RIGHT -> controlX + this.getWidth() - scale;
     };
 
     final int y = switch(this.verticalAlign) {
       case TOP -> controlY;
-      case CENTRE -> controlY + (this.getHeight() - 14) / 2;
-      case BOTTOM -> controlY + this.getHeight() - 14;
+      case CENTRE -> controlY + (this.getHeight() - scale) / 2;
+      case BOTTOM -> controlY + this.getHeight() - scale;
     };
 
     this.transforms.transfer.set(x, y, this.getZ() * 4.0f);
+    this.transforms.scaling(scale, scale, 1.0f);
     final QueuedModelStandard model = RENDERER
       .queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class);
 

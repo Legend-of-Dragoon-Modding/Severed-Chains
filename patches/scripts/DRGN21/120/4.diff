@@ -1,0 +1,18 @@
+Widescreen patch
+Prairie, escape from Hellena Prison cutscene #1
+Lavitz
+--- original
++++ modified
+@@ -957,9 +957,9 @@
+ mov 0xc, stor[25]
+ gosub inl[:LABEL_26]
+ wait stor[25]
+# Move completely off screen
+-mov 0xfffffe34, stor[8]
++mov 0xfffffe52, stor[8]
+ mov 0xffffea84, stor[9]
+-mov 0xd0, stor[10]
++mov 0x63, stor[10]
+ mov 0x10, stor[24]
+ mov 0x32, stor[25]
+ gosub inl[:LABEL_22]

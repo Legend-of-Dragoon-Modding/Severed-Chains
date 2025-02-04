@@ -111,6 +111,8 @@ public final class Scus94491BpeSegment_8004 {
   public static EngineStateEnum engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
   /** The previous state before the file finished loading */
   public static EngineStateEnum previousEngineState_8004dd28;
+  /** The last savable state we were in, used for generating crash recovery saves */
+  public static EngineStateEnum lastSavableEngineState;
 
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;
@@ -641,7 +643,13 @@ public final class Scus94491BpeSegment_8004 {
       soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 8;
       soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 8;
 
-      AUDIO_THREAD.fadeOut(fadeTime);
+      // Retail bug: due to the way fade volume is lerped, fade out over 1
+      // tick doesn't fade out at all. This was breaking music after Lenus 2.
+      // See GH#1623
+      if(fadeTime > 1) {
+        AUDIO_THREAD.fadeOut(fadeTime);
+      }
+
       return 0;
     }
 

@@ -1,0 +1,77 @@
+Widescreen patch
+Hellena Prison, cutscene before fighting Fruegel (I)
+Warden
+--- original
++++ modified
+@@ -58,11 +58,13 @@
+ yield
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ call 116, stor[24]
+# Inside walking loop for LABEL_4 subroutine
++gosub inl[:WS_WAIT_TIME]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_6]
+ call 294, 0x0, 0x1
+ call 97, 0x0
+ call 111, 0x0
+ return
++#include ../../../../patches/libs/widescreen.txt
+ LABEL_7:
+ mov var[64][stor[28]], stor[28]
+ call 102, stor[28], stor[29], stor[30], stor[31]
+@@ -176,18 +178,48 @@
+ rel :JMP_630_0
+ rel :JMP_630_0
+ JMP_630_1:
+# New entrance at top of stairs
+-mov 0x10, stor[24]
++mov 0x21, stor[24]
+ gosub inl[:LABEL_3]
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 311, stor[0]
+# Wait for series of flags, then follow a series of collision primitives downstairs
++mov 0x79, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++mov 0x78, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++call 2, 0x78, 1
++call 96, 0x4
++call 106, 0x0
++mov 0x7a, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_OFFSET]
++mov 0x28, stor[24]
++gosub inl[:LABEL_4]
++mov 0x1d, stor[24]
++gosub inl[:LABEL_4]
+# Wait halfway down flight of stairs
++mov 0x78, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++call 2, 0x78, 1
++mov 0x23, stor[24]
++gosub inl[:LABEL_4]
++mov 0x17, stor[24]
++gosub inl[:LABEL_4]
++mov 0x2e, stor[24]
++gosub inl[:LABEL_4]
++mov 0xf, stor[24]
++gosub inl[:LABEL_4]
+ LABEL_18:
+ yield
+ call 3, 0x7a, stor[24]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_18]
+# Move to old start location
+-call 96, 0x4
+-call 106, 0x0
++mov 0x10, stor[24]
++gosub inl[:LABEL_4]
+ mov 0x3c, stor[24]
+# Reduce wait time to match retail
++jmp_cmp >, inl[:WS_WAIT_OFFSET], stor[24], inl[:NO_WAIT]
++sub inl[:WS_WAIT_OFFSET], stor[24]
+ wait stor[24]
++NO_WAIT:
+ mov 0x18, stor[24]
+ gosub inl[:LABEL_4]
+ mov 0x1, stor[25]

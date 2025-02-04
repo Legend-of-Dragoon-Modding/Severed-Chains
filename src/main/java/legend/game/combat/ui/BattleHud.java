@@ -10,7 +10,6 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.Battle;
@@ -25,7 +24,6 @@ import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -40,10 +38,12 @@ import java.util.Arrays;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.SItem.UI_WHITE;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -809,7 +809,7 @@ public class BattleHud {
         }
 
         this.battleUiName.render(element.colour);
-        Scus94491BpeSegment_8002.renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
+        renderText(str, 160 - textWidth(str) / 2, 24, UI_WHITE);
       }
     }
     //LAB_800f0f2c
@@ -946,20 +946,20 @@ public class BattleHud {
         final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
           .uv(floatingTextType1DigitUs_800c7028[i], 32)
           .size(8.0f, 8.0f);
-        this.setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
+        this.setGpuPacketClutAndTpageAndQueue(builder1, 0x88, null);
         this.type1FloatingDigits[i] = builder1.build();
 
         final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
           .uv(floatingTextType3DigitUs_800c70e0[i], 40)
           .size(8.0f, 16.0f);
-        this.setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
+        this.setGpuPacketClutAndTpageAndQueue(builder3, 0x88, null);
         this.type3FloatingDigits[i] = builder3.build();
       }
 
       final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
         .uv(72, 128)
         .size(36.0f, 16.0f);
-      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
+      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x88, null);
       this.miss = builderMiss.build();
     }
 
@@ -1257,18 +1257,16 @@ public class BattleHud {
 
             if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
-              for(int s3 = 1; s3 < 3; s3++) {
                 num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
-                RENDERER.queueOrthoModel(digit.obj, num.transforms, QueuedModelStandard.class)
+                final QueuedModelStandard model = RENDERER.queueOrthoModel(digit.obj, num.transforms, QueuedModelStandard.class)
                   .colour(num.colour);
 
-                if((num.state_00 & 97) == 0) {
-                  //LAB_800f4118
-                  break;
+                if(num.translucent_08) {
+                  model
+                    .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                    .alpha(num.shade_0c / 128.0f);
                 }
-
                 //LAB_800f4110
-              }
             }
           }
         }

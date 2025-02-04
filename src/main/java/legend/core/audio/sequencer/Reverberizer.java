@@ -1,6 +1,7 @@
 package legend.core.audio.sequencer;
 
-import legend.core.MathHelper;
+
+import legend.core.audio.SampleRate;
 import legend.core.spu.Reverb;
 import legend.game.sound.ReverbConfig;
 
@@ -13,6 +14,9 @@ final class Reverberizer {
 
   private float outputLeft;
   private float outputRight;
+
+  private float volumeLeft = 0x3000 / 32_768f;
+  private float volumeRight = 0x3000 / 32_768f;
 
   void processReverb(final float lInput, final float rInput) {
     final int dAPF1 = this.reverb.dAPF1;
@@ -53,52 +57,48 @@ final class Reverberizer {
     final float Rin = vRIN * rInput;
 
     // Same side reflection L->L and R->R
-    final float mlSame = this.saturateSample((Lin + this.loadReverb(dLSAME) * vWALL - this.loadReverb(mLSAME - 1)) * vIIR + this.loadReverb(mLSAME - 1));
-    final float mrSame = this.saturateSample((Rin + this.loadReverb(dRSAME) * vWALL - this.loadReverb(mRSAME - 1)) * vIIR + this.loadReverb(mRSAME - 1));
+    final float mlSame = (Lin + this.loadReverb(dLSAME) * vWALL - this.loadReverb(mLSAME - 1)) * vIIR + this.loadReverb(mLSAME - 1);
+    final float mrSame = (Rin + this.loadReverb(dRSAME) * vWALL - this.loadReverb(mRSAME - 1)) * vIIR + this.loadReverb(mRSAME - 1);
 
     this.writeReverb(mLSAME, mlSame);
     this.writeReverb(mRSAME, mrSame);
 
     // Different side reflection L->R and R->L
-    final float mlDiff = this.saturateSample((Lin + this.loadReverb(dRDIFF) * vWALL - this.loadReverb(mLDIFF - 1)) * vIIR + this.loadReverb(mLDIFF - 1));
-    final float mrDiff = this.saturateSample((Rin + this.loadReverb(dLDIFF) * vWALL - this.loadReverb(mRDIFF - 1)) * vIIR + this.loadReverb(mRDIFF - 1));
+    final float mlDiff = (Lin + this.loadReverb(dRDIFF) * vWALL - this.loadReverb(mLDIFF - 1)) * vIIR + this.loadReverb(mLDIFF - 1);
+    final float mrDiff = (Rin + this.loadReverb(dLDIFF) * vWALL - this.loadReverb(mRDIFF - 1)) * vIIR + this.loadReverb(mRDIFF - 1);
 
     this.writeReverb(mLDIFF, mlDiff);
     this.writeReverb(mRDIFF, mrDiff);
 
     // Early echo (comb filter with input from buffer)
-    float l = this.saturateSample(vCOMB1 * this.loadReverb(mLCOMB1) + vCOMB2 * this.loadReverb(mLCOMB2) + vCOMB3 * this.loadReverb(mLCOMB3) + vCOMB4 * this.loadReverb(mLCOMB4));
-    float r = this.saturateSample(vCOMB1 * this.loadReverb(mRCOMB1) + vCOMB2 * this.loadReverb(mRCOMB2) + vCOMB3 * this.loadReverb(mRCOMB3) + vCOMB4 * this.loadReverb(mRCOMB4));
+    float l = vCOMB1 * this.loadReverb(mLCOMB1) + vCOMB2 * this.loadReverb(mLCOMB2) + vCOMB3 * this.loadReverb(mLCOMB3) + vCOMB4 * this.loadReverb(mLCOMB4);
+    float r = vCOMB1 * this.loadReverb(mRCOMB1) + vCOMB2 * this.loadReverb(mRCOMB2) + vCOMB3 * this.loadReverb(mRCOMB3) + vCOMB4 * this.loadReverb(mRCOMB4);
 
     // Late reverb APF1 (All pass filter 1 with input from COMB)
-    l = this.saturateSample(l - this.saturateSample(vAPF1 * this.loadReverb(mLAPF1 - dAPF1)));
-    r = this.saturateSample(r - this.saturateSample(vAPF1 * this.loadReverb(mRAPF1 - dAPF1)));
+    l = l - vAPF1 * this.loadReverb(mLAPF1 - dAPF1);
+    r = r - vAPF1 * this.loadReverb(mRAPF1 - dAPF1);
 
     this.writeReverb(mLAPF1, l);
     this.writeReverb(mRAPF1, r);
 
-    l = this.saturateSample(l * vAPF1 + this.loadReverb(mLAPF1 - dAPF1));
-    r = this.saturateSample(r * vAPF1 + this.loadReverb(mRAPF1 - dAPF1));
+    l = l * vAPF1 + this.loadReverb(mLAPF1 - dAPF1);
+    r = r * vAPF1 + this.loadReverb(mRAPF1 - dAPF1);
 
     // Late reverb APF2 (All pass filter 2 with input from APF1)
-    l = this.saturateSample(l - this.saturateSample(vAPF2 * this.loadReverb(mLAPF2 - dAPF2)));
-    r = this.saturateSample(r - this.saturateSample(vAPF2 * this.loadReverb(mRAPF2 - dAPF2)));
+    l = l - vAPF2 * this.loadReverb(mLAPF2 - dAPF2);
+    r = r - vAPF2 * this.loadReverb(mRAPF2 - dAPF2);
 
     this.writeReverb(mLAPF2, l);
     this.writeReverb(mRAPF2, r);
 
-    l = this.saturateSample(l * vAPF2 + this.loadReverb(mLAPF2 - dAPF2));
-    r = this.saturateSample(r * vAPF2 + this.loadReverb(mRAPF2 - dAPF2));
+    l = l * vAPF2 + this.loadReverb(mLAPF2 - dAPF2);
+    r = r * vAPF2 + this.loadReverb(mRAPF2 - dAPF2);
 
     // Saturate address
     this.reverbCurrentAddress = this.reverbCurrentAddress + 1 & this.reverbWorkArea.length - 1;
 
-    this.outputLeft = l;
-    this.outputRight = r;
-  }
-
-  private float saturateSample(final float sample) {
-    return MathHelper.clamp(sample, -1.0f, 1.0f);
+    this.outputLeft = l * this.volumeLeft;
+    this.outputRight = r * this.volumeRight;
   }
 
   private void writeReverb(final int addr, final float value) {
@@ -111,8 +111,8 @@ final class Reverberizer {
     return this.reverbWorkArea[address];
   }
 
-  void setConfig(final ReverbConfig config) {
-    this.reverb.set(config);
+  void setConfig(final ReverbConfig config, final SampleRate sampleRate) {
+    this.reverb.set(config, sampleRate);
   }
 
   float getOutputLeft() {
@@ -123,7 +123,16 @@ final class Reverberizer {
     return this.outputRight;
   }
 
+  void setVolume(final float left, final float right) {
+    this.volumeLeft = left;
+    this.volumeRight = right;
+  }
+
   void clear() {
     Arrays.fill(this.reverbWorkArea, 0);
+  }
+
+  void changeSampleRate(final SampleRate sampleRate) {
+    this.reverb.changeSampleRate(sampleRate);
   }
 }

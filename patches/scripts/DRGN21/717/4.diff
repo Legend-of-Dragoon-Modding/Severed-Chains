@@ -1,0 +1,14 @@
+Widescreen patch
+Forest, intro chase cutscene
+Tree
+New: Do not hide tree
+--- original
++++ modified
+@@ -173,6 +173,7 @@
+ incr stor[8]
+ jmp_cmp !=, 0xf, stor[8], inl[:LABEL_4]
+ call 99, 0x1
++rewind
+ mov 0x32, stor[8]
+ wait stor[8]
+ call 691, stor[0], 0x15

@@ -34,7 +34,25 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
   public int type_1c;
   public float projectionPlaneDistanceDiv4_20;
 
-  final MV transforms = new MV();
+  private final Vector3f vert0 = new Vector3f();
+  private final Vector3f vert1 = new Vector3f();
+  private final Vector3f vert2 = new Vector3f();
+  private final Vector3f vert3 = new Vector3f();
+  private final Vector2f sxy0 = new Vector2f();
+  private final Vector2f sxy1 = new Vector2f();
+  private final Vector2f sxy2 = new Vector2f();
+  private final Vector2f sxy3 = new Vector2f();
+
+  private final Vector3f translation = new Vector3f();
+  private final Vector3f rotation = new Vector3f();
+
+  private final MV instanceTransforms = new MV();
+  private final MV managerTransforms = new MV();
+  private final MV tempTransforms = new MV();
+  private final MV finalTransforms = new MV();
+  private final MV renderTransforms = new MV();
+
+  private Obj obj;
 
   public GradientRaysEffect24(final int count) {
     this.rays_00 = new GradientRaysEffectInstance04[count];
@@ -94,69 +112,57 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-
+    if(this.obj != null) {
+      this.obj.delete();
+    }
   }
 
   /** Used in Rose transform */
   @Method(0x8010a860L)
   private void renderGradientRay(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final GradientRaysEffectInstance04 gradientRay) {
-    final Vector3f vert0 = new Vector3f();
-    final Vector3f vert1 = new Vector3f();
-    final Vector3f vert2 = new Vector3f();
-    final Vector3f vert3 = new Vector3f();
-    final Vector2f xy0 = new Vector2f();
-    final Vector2f xy1 = new Vector2f();
-    final Vector2f xy2 = new Vector2f();
-    final Vector2f xy3 = new Vector2f();
-
     final GradientRaysEffect24 effect = (GradientRaysEffect24)manager.effect_44;
 
     //LAB_8010a968
     if((effect.flags_18 & 0x4) == 0) {
       if(effect.yOuter_10 * 2 < gradientRay.vertColourAndYModifier_02 * effect.yInner_08) {
-        vert1.y = -effect.yOuter_10;
-        vert2.y = -effect.yOuter_10;
-        vert3.y = -effect.yOuter_10 * 2.0f;
+        this.vert1.y = -effect.yOuter_10;
+        this.vert2.y = -effect.yOuter_10;
+        this.vert3.y = -effect.yOuter_10 * 2.0f;
       } else {
         //LAB_8010a9ec
-        vert1.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08 / 2.0f;
-        vert2.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08 / 2.0f;
-        vert3.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08;
+        this.vert1.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08 / 2.0f;
+        this.vert2.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08 / 2.0f;
+        this.vert3.y = gradientRay.vertColourAndYModifier_02 * -effect.yInner_08;
       }
 
       //LAB_8010aa34
-      vert1.z = effect.midVertZ_0c;
-      vert2.z = -effect.midVertZ_0c;
+      this.vert1.z = effect.midVertZ_0c;
+      this.vert2.z = -effect.midVertZ_0c;
     }
 
     //LAB_8010aa54
-    final MV rotationMatrix = new MV();
-    final MV translationMatrix = new MV();
-    final MV effectTransforms = new MV();
-    final MV compositionMatrix = new MV();
-    final MV worldMatrix = new MV();
-    final MV transformMatrix = new MV();
+    this.translation.set(0.0f, gradientRay.vertColourAndYModifier_02 * effect.yInner_08, 0.0f);
+    this.rotation.set(gradientRay.angle_00, 0.0f, 0.0f);
+    this.instanceTransforms.rotationXYZ(this.rotation);
+    this.instanceTransforms.transfer.set(this.translation);
+    this.instanceTransforms.transfer.mul(this.instanceTransforms);
+    calculateEffectTransforms(this.managerTransforms, manager);
 
-    final Vector3f translation = new Vector3f(0.0f, gradientRay.vertColourAndYModifier_02 * effect.yInner_08, 0.0f);
-    final Vector3f rotation = new Vector3f(gradientRay.angle_00, 0.0f, 0.0f);
-    rotationMatrix.rotationXYZ(rotation);
-    translationMatrix.transfer.set(translation);
-    translationMatrix.compose(rotationMatrix, compositionMatrix);
-    calculateEffectTransforms(effectTransforms, manager);
-
+    // Transform to screenspace before performing instance transforms
     if((manager.params_10.flags_00 & 0x400_0000) == 0) {
-      rotationMatrix.rotationXYZ(manager.params_10.rot_10);
-      effectTransforms.compose(rotationMatrix, transformMatrix);
-      GTE.setTransforms(transformMatrix);
-    } else {
+      this.managerTransforms.compose(worldToScreenMatrix_800c3548, this.tempTransforms);
+      this.tempTransforms.rotationXYZ(manager.params_10.rot_10);
+      this.instanceTransforms.compose(this.tempTransforms, this.finalTransforms);
+      GTE.setTransforms(this.finalTransforms);
+    } else { // Transform to screenspace after performing instance transforms
       //LAB_8010ab10
-      compositionMatrix.compose(effectTransforms, worldMatrix);
-      worldMatrix.compose(worldToScreenMatrix_800c3548, transformMatrix);
-      GTE.setTransforms(transformMatrix);
+      this.instanceTransforms.compose(this.managerTransforms, this.tempTransforms);
+      this.tempTransforms.compose(worldToScreenMatrix_800c3548, this.finalTransforms);
+      GTE.setTransforms(this.finalTransforms);
     }
 
     //LAB_8010ab34
-    final float z = RotTransPers4(vert0, vert1, vert2, vert3, xy0, xy1, xy2, xy3);
+    final float z = RotTransPers4(this.vert0, this.vert1, this.vert2, this.vert3, this.sxy0, this.sxy1, this.sxy2, this.sxy3);
     if(z >= effect.projectionPlaneDistanceDiv4_20) {
       final float r, g, b;
       if(effect.type_1c == 1) {
@@ -177,35 +183,35 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       //LAB_8010ad6c
       final PolyBuilder builder = new PolyBuilder("GradientRay", GL_TRIANGLE_STRIP)
         .translucency(Translucency.B_PLUS_F)
-        .addVertex(xy0.x, xy0.y, 0)
+        .addVertex(this.sxy0.x, this.sxy0.y, 0)
         .monochrome(0);
 
       if(effect.type_1c == 1) {
         builder
-          .addVertex(xy1.x, xy1.y, 0)
-          .addVertex(xy2.x, xy2.y, 0)
+          .addVertex(this.sxy1.x, this.sxy1.y, 0)
+          .addVertex(this.sxy2.x, this.sxy2.y, 0)
           .rgb(r, g, b)
-          .addVertex(xy3.x, xy3.y, 0);
+          .addVertex(this.sxy3.x, this.sxy3.y, 0);
       } else if(effect.type_1c == 2) {
         builder
-          .addVertex(xy1.x, xy1.y, 0)
+          .addVertex(this.sxy1.x, this.sxy1.y, 0)
           .rgb(r / 2, g / 2, b / 2)
-          .addVertex(xy2.x, xy2.y, 0)
-          .addVertex(xy3.x, xy3.y, 0)
+          .addVertex(this.sxy2.x, this.sxy2.y, 0)
+          .addVertex(this.sxy3.x, this.sxy3.y, 0)
           .rgb(r, g, b);
       } else {
         // I don't think there is another type in the scripts, but just to be sure.
         builder
-          .addVertex(xy1.x, xy1.y, 0)
-          .addVertex(xy2.x, xy2.y, 0)
-          .addVertex(xy3.x, xy3.y, 0);
+          .addVertex(this.sxy1.x, this.sxy1.y, 0)
+          .addVertex(this.sxy2.x, this.sxy2.y, 0)
+          .addVertex(this.sxy3.x, this.sxy3.y, 0);
       }
 
-      final Obj obj = builder.build();
-      obj.delete();
+      this.obj = builder.build();
+      this.obj.delete();
 
-      this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z * 4);
-      RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
+      this.renderTransforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z * 4);
+      RENDERER.queueOrthoModel(this.obj, this.renderTransforms, QueuedModelStandard.class);
     }
     //LAB_8010ae18
   }

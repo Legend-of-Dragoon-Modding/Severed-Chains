@@ -3,27 +3,37 @@ package legend.game.inventory.screens.controls;
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
-import static legend.game.SItem.renderText;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
-public class Dropdown extends Control {
+public class Dropdown<T> extends Control {
   private final Panel background;
   private final Panel panel;
   private final Glyph downArrow;
   private final Brackets highlight;
 
-  private final List<String> options = new ArrayList<>();
+  private final List<T> options = new ArrayList<>();
+  private final Function<T, String> toString;
   private int hoverIndex;
   private int selectedIndex = -1;
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Dropdown() {
+    this(String::valueOf);
+  }
+
+  public Dropdown(final Function<T, String> toString) {
+    this.toString = toString;
     this.background = this.addControl(Panel.subtle());
 
     this.panel = Panel.panel();
@@ -32,11 +42,11 @@ public class Dropdown extends Control {
     this.highlight = this.panel.addControl(new Brackets());
     this.highlight.setPos(6, 8);
     this.highlight.setZ(this.panel.getZ() - 2);
-    this.highlight.setHeight(16);
+    this.highlight.setHeight((int)(16 * this.getScale()));
 
     this.panel.onMouseMove((x, y) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 0, 10 + i * 16, this.getWidth(), 16)) {
+        if(MathHelper.inBox(x, y, 0, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.hover(i);
           return InputPropagation.HANDLED;
         }
@@ -47,7 +57,7 @@ public class Dropdown extends Control {
 
     this.panel.onMouseClick((x, y, button, mods) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 0, 10 + i * 16, this.getWidth(), 16)) {
+        if(MathHelper.inBox(x, y, 0, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.select(i);
           this.panel.getScreen().getStack().popScreen();
           return InputPropagation.HANDLED;
@@ -66,13 +76,13 @@ public class Dropdown extends Control {
 
   public void clearOptions() {
     this.options.clear();
-    this.panel.setHeight(18);
+    this.panel.setHeight(17);
     this.selectedIndex = -1;
   }
 
-  public void addOption(final String option) {
+  public void addOption(final T option) {
     this.options.add(option);
-    this.panel.setHeight(18 + this.options.size() * 16);
+    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
 
     if(this.selectedIndex == -1) {
       this.setSelectedIndex(0);
@@ -80,6 +90,11 @@ public class Dropdown extends Control {
   }
 
   public void setSelectedIndex(final int index) {
+    if(index < 0 || index >= this.options.size()) {
+      this.selectedIndex = -1;
+      return;
+    }
+
     this.selectedIndex = index;
   }
 
@@ -87,7 +102,7 @@ public class Dropdown extends Control {
     return this.selectedIndex;
   }
 
-  public String getSelectedOption() {
+  public T getSelectedOption() {
     if(this.selectedIndex == -1) {
       return null;
     }
@@ -100,11 +115,21 @@ public class Dropdown extends Control {
   }
 
   @Override
+  public void setScale(final float scale) {
+    super.setScale(scale);
+    this.fontOptions.size(scale);
+    this.downArrow.setScale(scale);
+    this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
+    this.highlight.setHeight((int)(16 * this.getScale()));
+    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
+  }
+
+  @Override
   protected void onResize() {
     super.onResize();
     this.background.setSize(this.getWidth(), this.getHeight());
     this.highlight.setWidth(this.getWidth() + 7);
-    this.downArrow.setPos(this.getWidth() - 1, -1);
+    this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
   }
 
   @Override
@@ -123,8 +148,14 @@ public class Dropdown extends Control {
   }
 
   private void hover(final int index) {
+    if(index == -1) {
+      this.highlight.hide();
+    } else {
+      this.highlight.show();
+    }
+
     this.hoverIndex = index;
-    this.highlight.setY(8 + index * 16);
+    this.highlight.setY((int)(8 + index * 16 * this.getScale()));
   }
 
   private void select(final int index) {
@@ -151,10 +182,12 @@ public class Dropdown extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    if(!this.options.isEmpty()) {
+    if(this.selectedIndex != -1) {
+      final String text = this.toString.apply(this.options.get(this.selectedIndex));
+
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
-      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+      renderText(text, x + 4, y + (this.getHeight() - textHeight(text) * this.getScale()) / 2 + 0.5f, this.fontOptions);
       textZ_800bdf00 = oldZ;
     }
   }
@@ -191,7 +224,7 @@ public class Dropdown extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
+        renderText(Dropdown.this.toString.apply(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
       }
 
       textZ_800bdf00 = oldZ;

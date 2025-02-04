@@ -105,6 +105,7 @@ import static legend.game.Scus94491BpeSegment_8004.gameStateOverlays_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.getSequenceFlags;
 import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
+import static legend.game.Scus94491BpeSegment_8004.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.pauseMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
@@ -1349,6 +1350,10 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019710L)
   public static void prepareOverlay() {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05 || engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
+      lastSavableEngineState = engineState_8004dd20;
+    }
+
     if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05 && previousEngineState_8004dd28 == EngineStateEnum.SUBMAP_05) {
       sssqResetStuff();
     }
@@ -2334,7 +2339,7 @@ public final class Scus94491BpeSegment {
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
-    playMusicPackage(new BackgroundMusic(files, fileIndex), startSequence);
+    playMusicPackage(new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate()), startSequence);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
   }
 
@@ -2846,8 +2851,8 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001fb44L)
   public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
-    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex);
-    bgm.setVolume(40);
+    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate());
+    bgm.setVolume(40 / 128.0f);
 
     loadDrgnDir(0, victoryType, victoryFiles -> loadVictoryMusic(victoryFiles, bgm));
 
@@ -2866,7 +2871,7 @@ public final class Scus94491BpeSegment {
 
   private static void loadVictoryMusic(final List<FileData> files, final BackgroundMusic battleMusic) {
     victoryMusic = battleMusic.createVictoryMusic(files);
-    victoryMusic.setVolume(40);
+    victoryMusic.setVolume(40 / 128.0f);
   }
 
   @ScriptDescription("Load some kind of audio package")

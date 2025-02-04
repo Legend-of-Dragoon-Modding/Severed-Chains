@@ -1,0 +1,15 @@
+Widescreen patch
+Forest, intro chase cutscene
+Feyrbrand
+New: Do not hide model parts
+--- original
++++ modified
+@@ -196,6 +196,8 @@
+ call 312, stor[0]
+ call 305, stor[0], 0xa, 0xa
+ call 292, stor[0], 0x2000
++call 309, stor[0], 0x5f0, 0x5f0, 0x5f0
++return
+ mov 0xb, stor[8]
+ LABEL_3:
+ call 691, stor[0], stor[8]

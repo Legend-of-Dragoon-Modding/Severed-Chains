@@ -9,4 +9,9 @@ public class IndicatorModeConfigEntry extends EnumConfigEntry<IndicatorMode> {
   public IndicatorModeConfigEntry() {
     super(IndicatorMode.class, IndicatorMode.ON, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
   }
+
+  @Override
+  public boolean hasHelp() {
+    return true;
+  }
 }

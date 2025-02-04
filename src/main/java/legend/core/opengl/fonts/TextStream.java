@@ -61,13 +61,20 @@ public final class TextStream {
   }
 
   public void draw(final float xOffset, final float yOffset) {
+    this.draw(xOffset, yOffset, 1.0f, 1.0f);
+  }
+
+  public void draw(final float xOffset, final float yOffset, final float scaleX, final float scaleY) {
     this.font.use();
     this.shader.use();
 
     float x = xOffset;
 
     for(final TextStreamable streamable : this.elements) {
-      this.transforms.translation(x, yOffset, 1.0f);
+      this.transforms
+        .translation(x, yOffset, 1.0f)
+        .scale(scaleX, scaleY, 1.0f)
+      ;
       this.transforms.get(this.transformsBuffer);
       this.transforms2.set(this.transformsBuffer);
 

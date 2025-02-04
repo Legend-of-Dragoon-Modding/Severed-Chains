@@ -26,6 +26,8 @@ uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float translucency;
 uniform float discardTranslucency;
+uniform float alpha;
+uniform float useTextureAlpha;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -56,12 +58,15 @@ void main() {
 
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
+    } else if(vertBpp == 2) {
+      ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
+      texColour = texelFetch(tex24, ivec2(uv.x, uv.y), 0);
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }
 
-    // Discard if (0, 0, 0)
-    if(texColour.a == 0 && texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
+    // Discard if (0, 0, 0, 0), or if alpha is 0 and we're using texture alpha mode
+    if(texColour.a == 0 && (useTextureAlpha != 0 || texColour.r == 0 && texColour.g == 0 && texColour.b == 0)) {
       discard;
     }
 
@@ -80,10 +85,22 @@ void main() {
 
   outColour.rgb *= recolour;
 
-  // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if(translucent && translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
-    outColour.a = 0.5;
-  } else {
-    outColour.a = 1.0;
+  if(alpha != -1) {
+    if(useTextureAlpha == 0) {
+      outColour.a = alpha;
+    } else {
+      outColour.a *= alpha;
+
+      if(translucencyMode == 2 || translucencyMode == 3) {
+        outColour.rgb *= outColour.a;
+      }
+    }
+  } else if(useTextureAlpha == 0) {
+    // The or condition is to disable translucency if a texture's pixel has alpha disabled
+    if(translucent && translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
+      outColour.a = 0.5;
+    } else {
+      outColour.a = 1.0;
+    }
   }
 }

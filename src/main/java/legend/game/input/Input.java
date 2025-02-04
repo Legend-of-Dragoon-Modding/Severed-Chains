@@ -175,20 +175,20 @@ public final class Input {
   }
 
   private static void keyPress(final Window window, final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
+    final int keyWithMods = key | mods << 9;
 
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(keyWithMods)) {
         inputBinding.setPressedForKeyboardInput();
       }
     }
   }
 
   private static void keyRelease(final Window window, final int key, final int scancode, final int mods) {
+    final int keyWithMods = key | mods << 9;
+
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(keyWithMods)) {
         inputBinding.setReleasedForKeyboardInput();
       }
     }
@@ -299,5 +299,6 @@ public final class Input {
     controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.FRAME_ADVANCE_HOLD, controller, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.KILL_STUCK_SOUNDS, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.TOGGLE_FULL_SCREEN, controller, InputType.KEYBOARD));
   }
 }

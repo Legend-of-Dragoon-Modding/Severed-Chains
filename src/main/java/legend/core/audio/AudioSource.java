@@ -26,7 +26,7 @@ public abstract class AudioSource {
 
   private boolean playing;
 
-  private final IntBuffer tmp = MemoryUtil.memAllocInt(1);
+  private IntBuffer tmp;
 
   public AudioSource(final int bufferCount) {
     this.buffers = new int[bufferCount];
@@ -35,6 +35,7 @@ public abstract class AudioSource {
 
   void init() {
     this.sourceId = alGenSources();
+    this.tmp = MemoryUtil.memAllocInt(1);
 
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
@@ -110,5 +111,23 @@ public abstract class AudioSource {
     alDeleteSources(this.sourceId);
 
     memFree(this.tmp);
+  }
+
+  protected void resetBuffers() {
+    alSourceStop(this.sourceId);
+
+    final int processed = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+
+    for (int i = 0; i < processed; i++) {
+      alSourceUnqueueBuffers(this.sourceId, this.buffers);
+      alDeleteBuffers(this.buffers[0]);
+    }
+
+    alGenBuffers(this.buffers);
+    this.bufferIndex = this.buffers.length - 1;
+
+    if(this.playing) {
+      alSourcePlay(this.sourceId);
+    }
   }
 }

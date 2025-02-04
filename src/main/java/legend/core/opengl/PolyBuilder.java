@@ -34,6 +34,7 @@ public class PolyBuilder {
   private Vertex current;
   private Bpp bpp = Bpp.BITS_4;
   private Translucency translucency;
+  private boolean disableBackfaceCulling;
 
   private int flags;
 
@@ -141,6 +142,11 @@ public class PolyBuilder {
     return this;
   }
 
+  public PolyBuilder disableBackfaceCulling() {
+    this.disableBackfaceCulling = true;
+    return this;
+  }
+
   private void setVertex(final float[] vertices, final int index) {
     final Vertex vert = this.vertices.get(index);
     int i = index * VERTEX_SIZE;
@@ -199,7 +205,7 @@ public class PolyBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, VERTEX_SIZE);
 
-    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0);
+    return new MeshObj(this.name, new Mesh[] { mesh }, (this.flags & TEXTURED_FLAG) != 0 && !this.disableBackfaceCulling);
   }
 
   private static class Vertex {

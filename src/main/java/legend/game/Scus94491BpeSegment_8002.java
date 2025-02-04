@@ -21,6 +21,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
@@ -84,9 +85,11 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
@@ -149,6 +152,7 @@ import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubm
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
+import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1417,10 +1421,14 @@ public final class Scus94491BpeSegment_8002 {
               .queueOrthoModel(renderable.uiType_20.obj, transforms, QueuedModelStandard.class)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
-              .clutOverride(clutX, clut >>> 6);
+              .clutOverride(clutX, clut >>> 6)
+            ;
 
             if((metrics.clut_04 & 0x8000) != 0) {
-              model.translucency(Translucency.of(tpage >>> 5 & 0b11));
+              model
+                .translucency(Translucency.of(tpage >>> 5 & 0b11))
+                .translucentDepthComparator(GL_LEQUAL)
+              ;
             }
 
             if(renderable.widthCut != 0 || renderable.heightCut != 0) {
@@ -1483,6 +1491,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002437cL)
   public static void deallocateRenderables(final int a0) {
+    // Clear out UI render queue
+    renderables.clear();
+
     Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {
@@ -3357,54 +3368,71 @@ public final class Scus94491BpeSegment_8002 {
 
   private static final MV textTransforms = new MV();
 
-  /**
-   * @param trim Negative trims top, positive trims bottom
-   */
   @Method(0x80029300L)
-  public static void renderText(final String text, final float x, float y, final TextColour colour, int trim) {
-    trim = MathHelper.clamp(trim, -12, 12);
+  public static void renderText(final String text, final float originX, final float originY, final FontOptions options) {
+    final float height = 12.0f * options.getSize();
+    final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
 
-    int glyphNudge = 0;
+    textTransforms.scaling(options.getSize());
 
-    for(int i = 0; i < text.length(); i++) {
-      final char c = text.charAt(i);
+    for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+      float x = switch(options.getHorizontalAlign()) {
+        case LEFT -> originX;
+        case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
+        case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
+      };
 
-      if(c != ' ') {
-        if(c == '\n') {
-          glyphNudge = 0;
-          y += 12;
-        } else {
-          textTransforms.transfer.set(x + glyphNudge, y, textZ_800bdf00 * 4.0f);
+      float y = originY;
+      float glyphNudge = 0.0f;
 
-          if(trim < 0) {
-            textTransforms.transfer.y += trim;
-          }
+      for(int charIndex = 0; charIndex < text.length(); charIndex++) {
+        final char c = text.charAt(charIndex);
 
-          final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
-            .texture(RENDERER.textTexture)
-            .vertices((c - 33) * 4, 4)
-            .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
+        if(c != ' ') {
+          if(c == '\n') {
+            x = switch(options.getHorizontalAlign()) {
+              case LEFT -> originX;
+              case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
+              case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
+            };
 
-          if(trim != 0) {
+            glyphNudge = 0.0f;
+            y += height;
+          } else {
+            final float offsetX = (i & 1) * options.getSize();
+            final float offsetY = (i >>> 1) * options.getSize();
+
+            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f);
+
+
             if(trim < 0) {
-              model.scissor(0, (int)y, displayWidth_1f8003e0, 12 + trim);
+              textTransforms.transfer.y += trim;
+            }
+
+            final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
+              .texture(RENDERER.textTexture)
+              .vertices((c - 33) * 4, 4)
+            ;
+
+            if(i == 0) {
+              model.colour(options.getRed(), options.getGreen(), options.getBlue());
             } else {
-              model.scissor(0, (int)y - trim, displayWidth_1f8003e0, 12);
+              model.colour(options.getShadowRed(), options.getShadowGreen(), options.getShadowBlue());
+            }
+
+            if(trim != 0) {
+              if(trim < 0) {
+                model.scissor(0, (int)y, displayWidth_1f8003e0, (int)(height + trim));
+              } else {
+                model.scissor(0, (int)(y - trim), displayWidth_1f8003e0, (int)height);
+              }
             }
           }
         }
+
+        glyphNudge += charWidth(c) * options.getSize();
       }
-
-      glyphNudge += charWidth(c);
     }
-  }
-
-  public static void renderCentredText(final String text, final float x, final float y, final TextColour colour, final int trim) {
-    renderText(text, x - textWidth(text) / 2.0f, y, colour, trim);
-  }
-
-  public static void renderRightText(final String text, final float x, final float y, final TextColour colour, final int trim) {
-    renderText(text, x - textWidth(text), y, colour, trim);
   }
 
   @Method(0x80029920L)
@@ -3763,10 +3791,6 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a59cL)
-  public static int textWidth(final LodString text) {
-    return textWidth(text.get());
-  }
-
   public static int textWidth(final String text) {
     int width = 0;
     int currentWidth = 0;
@@ -3780,6 +3804,19 @@ public final class Scus94491BpeSegment_8002 {
       if(currentWidth > width) {
         width = currentWidth;
       }
+    }
+
+    return width;
+  }
+
+  public static int lineWidth(final String text, final int start) {
+    int width = 0;
+    for(int index = start; index < text.length(); index++) {
+      if(text.charAt(index) == '\n') {
+        break;
+      }
+
+      width += charWidth(text.charAt(index));
     }
 
     return width;
@@ -3800,7 +3837,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static int textHeight(final String text) {
-    return 12;
+    int lines = 1;
+    int newlinePos = -1;
+    while((newlinePos = text.indexOf('\n', newlinePos + 1)) != -1) {
+      lines++;
+    }
+
+    return lines * 12;
   }
 
   @Method(0x8002a6fcL)
@@ -3908,6 +3951,7 @@ public final class Scus94491BpeSegment_8002 {
     submapCutBeforeBattle_80052c3c = -1;
     shouldRestoreCameraPosition_80052c40 = false;
     submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
+    bootMods(MODS.getAllModIds());
   }
 
   @Method(0x8002bb38L)

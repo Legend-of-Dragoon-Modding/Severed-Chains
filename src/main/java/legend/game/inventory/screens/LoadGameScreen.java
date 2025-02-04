@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
@@ -12,14 +11,17 @@ import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import static legend.core.GameEngine.SAVES;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 
 public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
@@ -53,7 +55,7 @@ public class LoadGameScreen extends MenuScreen {
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);
 
-    for(final SavedGame save : SAVES.loadAllSaves(campaign.filename())) {
+    for(final SavedGame save : campaign.loadAllSaves()) {
       this.saveList.addEntry(save);
     }
   }
@@ -75,9 +77,14 @@ public class LoadGameScreen extends MenuScreen {
   }
 
   @Override
+  public void setFocus(@Nullable final Control control) {
+    super.setFocus(this.saveList);
+  }
+
+  @Override
   protected void render() {
-    SItem.renderCentredText("Load Game", 188, 10, TextColour.BROWN);
-    SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
+    renderText("Load Game", 188, 10, UI_TEXT_CENTERED);
+    renderText("\u011f Delete", 297, 226, UI_TEXT);
   }
 
   private void menuDelete() {
@@ -92,7 +99,7 @@ public class LoadGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteSave(this.campaign.filename(), this.saveList.getSelected().fileName);
+            this.campaign.deleteSave(this.saveList.getSelected().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
