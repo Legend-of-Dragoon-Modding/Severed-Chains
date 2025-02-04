@@ -3578,7 +3578,6 @@ public class Battle extends EngineState {
       case ITEM_ID -> script.params_20[2].set(bent.item_d4.getRegistryId());
       case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
       case ELEMENT -> script.params_20[2].set(bent.getElement().getRegistryId());
-      case ARCHER_SP ->  script.params_20[2].set(((PlayerBattleEntity)bent).getStat(BattleEntityStat.ARCHER_SP));
       default -> script.params_20[2].set(bent.getStat(stat));
     }
 

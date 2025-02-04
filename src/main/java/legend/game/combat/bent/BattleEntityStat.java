@@ -174,7 +174,7 @@ public enum BattleEntityStat {
   DRAGOON_TRANSFORM_DEFF,
   DRAGOON_ATTACK_DEFF,
   DRAGOON_ATTACK_SOUNDS,
-  ARCHER_SP
+  ARCHER_SP,
   ;
 
   public static BattleEntityStat fromLegacy(final int statIndex) {
