@@ -52,7 +52,7 @@ import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
-import legend.game.types.TextboxType;
+import legend.game.types.BackgroundType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
@@ -547,60 +547,63 @@ public class SMap extends EngineState {
   @ScriptDescription("Adds a textbox to a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapObjectIndex", description = "The submap object, but may also have the flag 0x1000 set (unknown meaning)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Bit flags for textbox properties")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The textbox height")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
   @Method(0x80025218L)
   private FlowControl scriptAddSobjTextbox(final RunningScript<?> script) {
-    if(script.params_20[2].get() == 0) {
-      return FlowControl.CONTINUE;
-    }
+    final int packed = script.params_20[2].get();
 
-    final int textboxIndex = script.params_20[0].get();
-    final int textType = textboxTextType_80052ba8[script.params_20[2].get() >>> 8 & 0xf];
-    clearTextbox(textboxIndex);
+    if(packed != 0) {
+      final int textboxIndex = script.params_20[0].get();
+      final int textType = textboxTextType_80052ba8[packed >>> 8 & 0xf];
+      clearTextbox(textboxIndex);
 
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    textbox.type_04 = TextboxType.fromInt(textboxMode_80052b88[script.params_20[2].get() >>> 4 & 0xf]);
-    textbox.renderBorder_06 = renderBorder_80052b68[script.params_20[2].get() & 0xf];
-    textbox.x_14 = 0;
-    textbox.y_16 = 0;
-    textbox.chars_18 = script.params_20[3].get() + 1;
-    textbox.lines_1a = script.params_20[4].get() + 1;
-    clearTextboxText(textboxIndex);
+      final Textbox4c textbox = textboxes_800be358[textboxIndex];
+      textbox.backgroundType_04 = BackgroundType.fromInt(textboxMode_80052b88[packed >>> 4 & 0xf]);
+      textbox.renderBorder_06 = renderBorder_80052b68[packed & 0xf];
+      textbox.x_14 = 0;
+      textbox.y_16 = 0;
+      textbox.chars_18 = script.params_20[3].get() + 1;
+      textbox.lines_1a = script.params_20[4].get() + 1;
+      clearTextboxText(textboxIndex);
 
-    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-    textboxText.type_04 = textType;
-    textboxText.str_24 = LodString.fromParam(script.params_20[5]);
+      final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+      textboxText.type_04 = textType;
+      textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
-    if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-      textboxText.flags_08 |= 0x20;
-    }
+      if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
+        textboxText.flags_08 |= TextboxText84.NO_INPUT;
+      }
 
-    //LAB_80025370
-    //LAB_80025374
-    if(textType == 3) {
-      textboxText.selectionIndex_6c = -1;
-    }
+      //LAB_80025370
+      //LAB_80025374
+      if(textType == 3) {
+        textboxText.selectionIndex_6c = -1;
+      }
 
-    //LAB_800253a4
-    if(textType == 4) {
-      textboxText.flags_08 |= TextboxText84.HAS_NAME;
-    }
+      //LAB_800253a4
+      if(textType == 4) {
+        textboxText.flags_08 |= TextboxText84.HAS_NAME;
+      }
 
-    //LAB_800253d4
-    textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
-    textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
-    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
-    this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
+      //LAB_800253d4
+      /* Not a retail flag. Used to remove arrows from overlapping textboxes for Phantom Ship's code-locked chest. */
+      if((packed & TextboxText84.NO_ARROW) == 0) {
+        textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
+      }
+      textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+      Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
+      this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
-    if(textType == 2) {
-      textbox._38 = textbox.x_14;
-      textbox._3c = textbox.y_16;
-      textbox.x_14 = textbox.currentX_28;
-      textbox.y_16 = textbox.currentY_2c;
-      textbox.flags_08 |= 0x2;
+      if(textType == 2) {
+        textbox._38 = textbox.x_14;
+        textbox._3c = textbox.y_16;
+        textbox.x_14 = textbox.currentX_28;
+        textbox.y_16 = textbox.currentY_2c;
+        textbox.flags_08 |= 0x2;
+      }
     }
 
     //LAB_80025494
