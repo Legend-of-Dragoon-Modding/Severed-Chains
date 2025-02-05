@@ -98,6 +98,13 @@ final class LookupTables {
       + this.interpolationWeights[0][this.interpolationStep - interpolationIndex] * array[position + 3];
   }
 
+  float interpolate(final float[] array, final int position, final int interpolationIndex) {
+    return this.interpolationWeights[0][interpolationIndex] * array[position]
+      + this.interpolationWeights[1][interpolationIndex] * array[position + 1]
+      + this.interpolationWeights[1][this.interpolationStep - interpolationIndex] * array[position + 2]
+      + this.interpolationWeights[0][this.interpolationStep - interpolationIndex] * array[position + 3];
+  }
+
   FloatFloatImmutablePair getPan(final int channelPan, final int instrumentPan, final int layerPan) {
     final int panIndex = mergePan(channelPan, mergePan(instrumentPan, layerPan));
 
@@ -110,7 +117,7 @@ final class LookupTables {
 
   // This will get scaled down later down the line, so we can to keep it in 128ths
   int modulate(final int finePitch, final float interpolatedBreath, final int modulation) {
-    return finePitch + (int)((interpolatedBreath * modulation) / 0x80);
+    return finePitch + Math.round(interpolatedBreath * modulation);
   }
 
   int adjustBreath(final int breath) {

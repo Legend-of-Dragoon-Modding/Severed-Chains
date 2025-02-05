@@ -40,7 +40,7 @@ final class Voice {
   private boolean isModulation;
   private int modulation;
   /** waveforms_800c4ab8.waveforms_02 */
-  private short[][] breathControls;
+  private float[][] breathControls;
   /** playingNote.breath_3c */
   private int breath;
   /** playingNote.breathControlListIndex_10 */
@@ -122,7 +122,7 @@ final class Voice {
     this.sampleRate = this.lookupTables.calculateSampleRate(this.layer.getKeyRoot(), this.note, finePitch, this.channel.getPitchBend(), this.pitchBendMultiplier);
   }
 
-  void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final short[][] breathControls, final int playingVoices) {
+  void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final float[][] breathControls, final int playingVoices) {
     LOGGER.info(VOICE_MARKER, "Voice %d Key On", this.index);
 
     this.channel = channel;
