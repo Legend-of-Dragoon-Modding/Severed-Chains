@@ -47,10 +47,10 @@ public class CollisionGeometry {
 
   private final int[] collisionPrimitiveIndices_800cbe48 = new int[8];
 
-  public float dartRotationAfterCollision_800d1a84;
+  public float playerRotationAfterCollision_800d1a84;
   /** Converted to an int so we can count how many frames it should be active for 60 FPS */
-  public int dartRotationWasUpdated_800d1a8c;
-  public boolean dartRunning;
+  public int playerRotationWasUpdated_800d1a8c;
+  public boolean playerRunning;
 
   private boolean collisionLoaded_800f7f14;
 
@@ -125,16 +125,16 @@ public class CollisionGeometry {
     if(!this.playerCollisionLatch_800cbe34) {
       this.playerCollisionLatch_800cbe34 = true;
 
-      this.dartRunning = movement.x * movement.x + movement.z * movement.z > 64.0f;
+      this.playerRunning = movement.x * movement.x + movement.z * movement.z > 64.0f;
 
       //LAB_800e8908
       this.collidedPrimitiveIndex_800cbd94 = this.handleMovementAndCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
 
       if(this.collidedPrimitiveIndex_800cbd94 != -1) {
-        if(this.dartRotationWasUpdated_800d1a8c == 0) {
-          this.dartRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-          this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+        if(this.playerRotationWasUpdated_800d1a8c == 0) {
+          this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
+          this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
         }
       }
     } else {
@@ -240,8 +240,8 @@ public class CollisionGeometry {
   public void tick() {
     this.playerCollisionLatch_800cbe34 = false;
 
-    if(this.dartRotationWasUpdated_800d1a8c > 0) {
-      this.dartRotationWasUpdated_800d1a8c--;
+    if(this.playerRotationWasUpdated_800d1a8c > 0) {
+      this.playerRotationWasUpdated_800d1a8c--;
     }
   }
 
@@ -434,7 +434,7 @@ public class CollisionGeometry {
       final CollisionPrimitiveInfo0c destinationPrimitive = this.primitiveInfo_14[destinationPrimitiveIndex];
 
       //LAB_800e9b50
-      // Check if movement would place Dart within 10 units of a boundary
+      // Check if movement would place the sObj within 10 units of a boundary
       int nearBoundary = -1;
       for(int vertexIndex = 0; vertexIndex < destinationPrimitive.vertexCount_00; vertexIndex++) {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[destinationPrimitive.vertexInfoOffset_02 + vertexIndex];
@@ -447,7 +447,7 @@ public class CollisionGeometry {
       if(nearBoundary == -1) {
         final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
-        // This allows Dart to move up/down a moderate slope
+        // This allows the sObj to move up/down a moderate slope
         if(Math.abs(y + (normal.x * endX + normal.z * endZ + destinationPrimitive._08) / normal.y) < 50) {
           //LAB_800e9e64
           movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + destinationPrimitive._08) / normal.y;
@@ -467,7 +467,7 @@ public class CollisionGeometry {
     }
 
     //LAB_800e9ca0
-    // Check if movement would place Dart out of bounds
+    // Check if movement would place the sObj out of bounds
     int onBoundary = -1;
     for(int i = 1; i < 4 && onBoundary == -1; i++) {
       final float endX2 = x + movement.x * i;
@@ -530,15 +530,15 @@ public class CollisionGeometry {
       final float angleStep = 0.09817477f * direction; // 5.625 degrees
 
       //LAB_800e9fd0
-      angle2 -= angleStep;
+      //angle2 -= angleStep;
 
       //LAB_800e9ff4
+      // Adjust approach angle until new destination is in-bounds
+      // Stop movement if +/- 45 degrees would still place the sObj out of bounds
       int s2 = -1;
       float offsetX = 0.0f;
       float offsetZ = 0.0f;
-      for(int i = 0; i < 8 && s2 == -1; i++) {
-        angle2 += angleStep;
-
+      for(int i = 0; i < 8 && s2 == -1; i++, angle2 += angleStep) {
         final float sin = MathHelper.sin(angle2);
         final float cos = MathHelper.cosFromSin(sin, angle2);
         offsetX = x + cos * distanceMultiplier;

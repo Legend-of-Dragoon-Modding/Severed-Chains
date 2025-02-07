@@ -2577,8 +2577,8 @@ public class SMap extends EngineState {
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
       }
 
-      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.dartRotationWasUpdated_800d1a8c > 0) {
-        model.coord2_14.transforms.rotate.y = this.smoothDartRotation();
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0) {
+        model.coord2_14.transforms.rotate.y = this.smoothPlayerRotation();
       }
 
       applyModelRotationAndScale(model);
@@ -4292,13 +4292,13 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ea4c8L)
-  private float smoothDartRotation() {
+  private float smoothPlayerRotation() {
     if(this.firstMovement) {
       this.firstMovement = false;
-      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
+      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84;
     }
 
-    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
+    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
 
     final boolean positive;
     if(Math.abs(rotationDelta) > MathHelper.PI) {
@@ -4312,7 +4312,7 @@ public class SMap extends EngineState {
 
     //LAB_800ea63c
     float maxRotation = MathHelper.PI / (6.0f * this.tickMultiplier());
-    if(this.collisionGeometry_800cbe08.dartRunning) {
+    if(this.collisionGeometry_800cbe08.playerRunning) {
       maxRotation *= 1.5f;
     }
 
