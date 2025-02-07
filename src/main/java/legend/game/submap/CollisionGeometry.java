@@ -116,9 +116,9 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e88a0L)
-  public int handlePlayerOrNpcMovementAndCollision(final boolean isNpc, final Vector3f position, final Vector3f movement) {
+  public int checkCollision(final boolean isNpc, final Vector3f position, final Vector3f movement) {
     if(isNpc) {
-      return this.handleSobjMovementAndCollision(position.x, position.y, position.z, movement);
+      return this.handleCollision(position.x, position.y, position.z, movement);
     }
 
     //LAB_800e88d8
@@ -128,7 +128,7 @@ public class CollisionGeometry {
       this.playerRunning = movement.x * movement.x + movement.z * movement.z > 64.0f;
 
       //LAB_800e8908
-      this.collidedPrimitiveIndex_800cbd94 = this.handleSobjMovementAndCollision(position.x, position.y, position.z, movement);
+      this.collidedPrimitiveIndex_800cbd94 = this.handleCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
 
       if(this.collidedPrimitiveIndex_800cbd94 != -1) {
@@ -176,7 +176,7 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e8b40L)
-  private void FUN_800e8b40(FileData a1) {
+  private void loadCollisionInfo(FileData a1) {
     if(a1.size() < this.primitiveCount_0c * 5 * 0xc) {
       LOGGER.warn("Submap file too short, padding with 0's");
       final byte[] newData = new byte[this.primitiveCount_0c * 5 * 0xc];
@@ -216,7 +216,7 @@ public class CollisionGeometry {
     this.dobj2Ptr_20.attribute_00 = 0x4000_0000;
 
     this.loadCollisionModel(tmd);
-    this.FUN_800e8b40(a2);
+    this.loadCollisionInfo(a2);
 
     this.collisionLoaded_800f7f14 = true;
 
@@ -380,7 +380,7 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e9430L)
-  private int handleSobjMovementAndCollision(final float x, final float y, final float z, final Vector3f movement) {
+  private int handleCollision(final float x, final float y, final float z, final Vector3f movement) {
     if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smap.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) {
       return -1;
     }
