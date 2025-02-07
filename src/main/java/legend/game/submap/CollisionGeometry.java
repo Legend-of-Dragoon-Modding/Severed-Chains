@@ -116,9 +116,9 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e88a0L)
-  public int handleCollisionAndMovement(final boolean isNpc, final Vector3f position, final Vector3f movement) {
+  public int handlePlayerOrNpcMovementAndCollision(final boolean isNpc, final Vector3f position, final Vector3f movement) {
     if(isNpc) {
-      return this.handleMovementAndCollision(position.x, position.y, position.z, movement);
+      return this.handleSobjMovementAndCollision(position.x, position.y, position.z, movement);
     }
 
     //LAB_800e88d8
@@ -128,7 +128,7 @@ public class CollisionGeometry {
       this.playerRunning = movement.x * movement.x + movement.z * movement.z > 64.0f;
 
       //LAB_800e8908
-      this.collidedPrimitiveIndex_800cbd94 = this.handleMovementAndCollision(position.x, position.y, position.z, movement);
+      this.collidedPrimitiveIndex_800cbd94 = this.handleSobjMovementAndCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
 
       if(this.collidedPrimitiveIndex_800cbd94 != -1) {
@@ -380,7 +380,7 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e9430L)
-  private int handleMovementAndCollision(final float x, final float y, final float z, final Vector3f movement) {
+  private int handleSobjMovementAndCollision(final float x, final float y, final float z, final Vector3f movement) {
     if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smap.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) {
       return -1;
     }
@@ -438,7 +438,7 @@ public class CollisionGeometry {
       int nearBoundary = -1;
       for(int vertexIndex = 0; vertexIndex < destinationPrimitive.vertexCount_00; vertexIndex++) {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[destinationPrimitive.vertexInfoOffset_02 + vertexIndex];
-        if(vertexInfo._08 && Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
+        if(vertexInfo.boundary_08 && Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
           nearBoundary = vertexIndex;
           break;
         }
@@ -461,13 +461,13 @@ public class CollisionGeometry {
     }
 
     //LAB_800e9c58
-    // This disables forced parallel movement along collision boundaries if you're standing in a shop/inn primitive
+    // This disables "sliding" along a boundary for shop/inn primitives
     if((this.getCollisionAndTransitionInfo(currentPrimitiveIndex) & 0x20) != 0) {
       return -1;
     }
 
     //LAB_800e9ca0
-    // Check if movement would place the sObj out of bounds
+    // Check if movement would place the sObj out-of-bounds
     int onBoundary = -1;
     for(int i = 1; i < 4 && onBoundary == -1; i++) {
       final float endX2 = x + movement.x * i;
@@ -477,14 +477,14 @@ public class CollisionGeometry {
       for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[currentPrimitiveIndex].vertexCount_00; vertexIndex++) {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + vertexIndex];
 
-        if(vertexInfo._08 && (vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
+        if(vertexInfo.boundary_08 && (vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
           onBoundary = vertexIndex;
           break;
         }
       }
     }
 
-    // Handle forced parallel movement along boundary
+    // Handle "sliding" movement along a boundary
     if(onBoundary != -1) {
       //LAB_800e9e78
 
@@ -498,7 +498,7 @@ public class CollisionGeometry {
       }
 
       //LAB_800e9f38
-      // Stop if movement is nearly perpendicular (73 to 107 degrees) towards the boundary
+      // Stop movement if approaching the boundary at a nearly perpendicular angle (73 to 107 degrees)
       final float baseAngle = MathHelper.PI / 2.0f; // 90 degrees
       final float deviation = 0.29670597283903602807702743064306f; // (+/-) 17 degrees
       if(angleDeltaAbs >= baseAngle - deviation && angleDeltaAbs <= baseAngle + deviation) {
@@ -530,21 +530,21 @@ public class CollisionGeometry {
       final float angleStep = 0.09817477f * direction; // 5.625 degrees
 
       //LAB_800e9fd0
-      //angle2 -= angleStep;
 
       //LAB_800e9ff4
       // Adjust approach angle until new destination is in-bounds
-      // Stop movement if +/- 45 degrees would still place the sObj out of bounds
+      // Stop movement if +/- 39.375 degrees would still place the sObj out-of-bounds
       int s2 = -1;
       float offsetX = 0.0f;
       float offsetZ = 0.0f;
-      for(int i = 0; i < 8 && s2 == -1; i++, angle2 += angleStep) {
+      for(int i = 0; i < 8 && s2 == -1; i++) {
         final float sin = MathHelper.sin(angle2);
         final float cos = MathHelper.cosFromSin(sin, angle2);
         offsetX = x + cos * distanceMultiplier;
         offsetZ = z + sin * distanceMultiplier;
 
         s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
+        angle2 += angleStep;
 
         //LAB_800ea22c
       }
@@ -557,7 +557,7 @@ public class CollisionGeometry {
       //LAB_800ea234
       final Vector3f normal = this.normals_08[s2];
 
-      // Prevent moving up/down a steep slope
+      // Stop movement up/down a steep slope
       if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
         return -1;
       }
@@ -575,7 +575,7 @@ public class CollisionGeometry {
 
     final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
-    // Prevent moving up/down a steep slope
+    // Stop movement up/down a steep slope
     if(Math.abs(y + (normal.x * endX + normal.z * endZ + this.primitiveInfo_14[destinationPrimitiveIndex]._08) / normal.y) >= 50) {
       return -1;
     }
