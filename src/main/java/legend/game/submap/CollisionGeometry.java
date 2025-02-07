@@ -434,19 +434,20 @@ public class CollisionGeometry {
       final CollisionPrimitiveInfo0c destinationPrimitive = this.primitiveInfo_14[destinationPrimitiveIndex];
 
       //LAB_800e9b50
-      int v0 = -1;
+      // Check if movement would place Dart within 10 units of a boundary
+      int nearBoundary = -1;
       for(int vertexIndex = 0; vertexIndex < destinationPrimitive.vertexCount_00; vertexIndex++) {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[destinationPrimitive.vertexInfoOffset_02 + vertexIndex];
         if(vertexInfo._08 && Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
-          v0 = vertexIndex;
+          nearBoundary = vertexIndex;
           break;
         }
       }
 
-      if(v0 == -1) {
+      if(nearBoundary == -1) {
         final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
-        // This causes Dart to move up/down a slope
+        // This allows Dart to move up/down a moderate slope
         if(Math.abs(y + (normal.x * endX + normal.z * endZ + destinationPrimitive._08) / normal.y) < 50) {
           //LAB_800e9e64
           movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + destinationPrimitive._08) / normal.y;
@@ -460,14 +461,15 @@ public class CollisionGeometry {
     }
 
     //LAB_800e9c58
-    // This disables "sliding" along collision boundaries if you're standing in a shop/inn primitive
+    // This disables forced parallel movement along collision boundaries if you're standing in a shop/inn primitive
     if((this.getCollisionAndTransitionInfo(currentPrimitiveIndex) & 0x20) != 0) {
       return -1;
     }
 
     //LAB_800e9ca0
-    int a1 = -1;
-    for(int i = 1; i < 4 && a1 == -1; i++) {
+    // Check if movement would place Dart out of bounds
+    int onBoundary = -1;
+    for(int i = 1; i < 4 && onBoundary == -1; i++) {
       final float endX2 = x + movement.x * i;
       final float endZ2 = z + movement.z * i;
 
@@ -476,18 +478,18 @@ public class CollisionGeometry {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + vertexIndex];
 
         if(vertexInfo._08 && (vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
-          a1 = vertexIndex;
+          onBoundary = vertexIndex;
           break;
         }
       }
     }
 
-    // Handle sliding along collision
-    if(a1 != -1) {
+    // Handle forced parallel movement along boundary
+    if(onBoundary != -1) {
       //LAB_800e9e78
 
       //LAB_800e9e7c
-      final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + a1];
+      final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + onBoundary];
       final float angle1 = MathHelper.atan2(endZ - z, endX - x);
       float angle2 = MathHelper.atan2(-vertexInfo.x_00, vertexInfo.z_02);
       float angleDeltaAbs = Math.abs(angle1 - angle2);
@@ -496,9 +498,9 @@ public class CollisionGeometry {
       }
 
       //LAB_800e9f38
-      // About 73 to 107 degrees (90 +- 17)
+      // Stop if movement is nearly perpendicular (73 to 107 degrees) towards the boundary
       final float baseAngle = MathHelper.PI / 2.0f; // 90 degrees
-      final float deviation = 0.29670597283903602807702743064306f; // 17 degrees
+      final float deviation = 0.29670597283903602807702743064306f; // (+/-) 17 degrees
       if(angleDeltaAbs >= baseAngle - deviation && angleDeltaAbs <= baseAngle + deviation) {
         return -1;
       }
@@ -555,6 +557,7 @@ public class CollisionGeometry {
       //LAB_800ea234
       final Vector3f normal = this.normals_08[s2];
 
+      // Prevent moving up/down a steep slope
       if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
         return -1;
       }
@@ -572,6 +575,7 @@ public class CollisionGeometry {
 
     final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
+    // Prevent moving up/down a steep slope
     if(Math.abs(y + (normal.x * endX + normal.z * endZ + this.primitiveInfo_14[destinationPrimitiveIndex]._08) / normal.y) >= 50) {
       return -1;
     }

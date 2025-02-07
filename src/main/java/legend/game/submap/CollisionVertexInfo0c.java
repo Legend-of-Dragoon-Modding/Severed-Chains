@@ -6,7 +6,7 @@ public class CollisionVertexInfo0c {
   public short x_00;
   public short z_02;
   public int _04;
-  public boolean _08;
+  public boolean _08; // Out-of-bounds edge
 
   public CollisionVertexInfo0c(final FileData data) {
     this.x_00 = data.readShort(0x00);
