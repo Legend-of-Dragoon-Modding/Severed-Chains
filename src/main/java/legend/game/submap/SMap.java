@@ -3136,8 +3136,9 @@ public class SMap extends EngineState {
 
         //LAB_800e44d0
         //LAB_800e44e0
-        if(size * size >= dx * dx + dz * dz && (colliderMaxY >= collideeMinY && colliderMinY <= collideeMinY || colliderMaxY >= collideeMaxY && colliderMinY <= collideeMaxY) && sobj.collidedWithSobjIndex_19c == -1) {
+        if(size * size >= dx * dx + dz * dz && (colliderMaxY >= collideeMinY && colliderMinY <= collideeMinY || colliderMaxY >= collideeMaxY && colliderMinY <= collideeMaxY)) {
           sobj.collidedWithSobjIndex_19c = i;
+          return;
         }
       }
     }
@@ -3172,8 +3173,9 @@ public class SMap extends EngineState {
 
         //LAB_800e46bc
         //LAB_800e46cc
-        if(size * size >= dx * dx + dz * dz && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY) && sobj.collidedWithSobjIndex_1a8 == -1) {
+        if(size * size >= dx * dx + dz * dz && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY)) {
           sobj.collidedWithSobjIndex_1a8 = i;
+          return;
         }
       }
 

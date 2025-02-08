@@ -6,7 +6,8 @@ public class CollisionVertexInfo0c {
   public short x_00;
   public short z_02;
   public int _04;
-  public boolean boundary_08; // Used for out-of-bounds detection
+  /** Used for out-of-bounds detection */
+  public boolean boundary_08;
 
   public CollisionVertexInfo0c(final FileData data) {
     this.x_00 = data.readShort(0x00);
