@@ -28,6 +28,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
 import legend.game.modding.events.inventory.GiveItemEvent;
+import legend.game.modding.events.inventory.TakeEquipmentEvent;
 import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
@@ -1013,7 +1014,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final Item item = gameState_800babc8.items_2e9.get(itemSlot);
 
-    final TakeItemEvent takeItemEvent = EVENTS.postEvent(new TakeItemEvent(item, true));
+    final TakeItemEvent takeItemEvent = EVENTS.postEvent(new TakeItemEvent(item, itemSlot, true));
 
     if(takeItemEvent.takeItem) {
       gameState_800babc8.items_2e9.remove(itemSlot);
@@ -1039,31 +1040,35 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    gameState_800babc8.equipment_1e8.remove(equipmentIndex);
+    final TakeEquipmentEvent takeEquipmentEvent = EVENTS.postEvent(new TakeEquipmentEvent(gameState_800babc8.equipment_1e8.get(equipmentIndex), equipmentIndex, true));
+
+    if(takeEquipmentEvent.takeEquip) {
+      gameState_800babc8.equipment_1e8.remove(equipmentIndex);
+    }
     return true;
   }
 
   @Method(0x80023484L)
   public static boolean giveItem(final Item item) {
-    final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(item));
+    final GiveItemEvent giveItemEvent = EVENTS.postEvent(new GiveItemEvent(item));
 
-    if(gameState_800babc8.items_2e9.size() + event.items.size() >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()) && !event.overflow) {
+    if(gameState_800babc8.items_2e9.size() + giveItemEvent.items.size() >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()) && !giveItemEvent.overflow) {
       return false;
     }
 
-    gameState_800babc8.items_2e9.addAll(event.items);
+    gameState_800babc8.items_2e9.addAll(giveItemEvent.items);
     return true;
   }
 
   @Method(0x80023484L)
   public static boolean giveEquipment(final Equipment equipment) {
-    final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment));
+    final GiveEquipmentEvent giveEquipmentEvent = EVENTS.postEvent(new GiveEquipmentEvent(equipment));
 
-    if(gameState_800babc8.equipment_1e8.size() + event.equips.size() >= 255) {
+    if(gameState_800babc8.equipment_1e8.size() + giveEquipmentEvent.equips.size() > 255) {
       return false;
     }
 
-    gameState_800babc8.equipment_1e8.addAll(event.equips);
+    gameState_800babc8.equipment_1e8.addAll(giveEquipmentEvent.equips);
     return true;
   }
 
