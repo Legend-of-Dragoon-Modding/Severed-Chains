@@ -1,6 +1,5 @@
 package legend.game.submap;
 
-import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -52,7 +51,7 @@ import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
-import legend.game.types.TextboxType;
+import legend.game.types.BackgroundType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
@@ -131,9 +130,7 @@ import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
 import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -156,6 +153,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -547,60 +545,63 @@ public class SMap extends EngineState {
   @ScriptDescription("Adds a textbox to a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapObjectIndex", description = "The submap object, but may also have the flag 0x1000 set (unknown meaning)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Bit flags for textbox properties")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The textbox height")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
   @Method(0x80025218L)
   private FlowControl scriptAddSobjTextbox(final RunningScript<?> script) {
-    if(script.params_20[2].get() == 0) {
-      return FlowControl.CONTINUE;
-    }
+    final int packed = script.params_20[2].get();
 
-    final int textboxIndex = script.params_20[0].get();
-    final int textType = textboxTextType_80052ba8[script.params_20[2].get() >>> 8 & 0xf];
-    clearTextbox(textboxIndex);
+    if(packed != 0) {
+      final int textboxIndex = script.params_20[0].get();
+      final int textType = textboxTextType_80052ba8[packed >>> 8 & 0xf];
+      clearTextbox(textboxIndex);
 
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    textbox.type_04 = TextboxType.fromInt(textboxMode_80052b88[script.params_20[2].get() >>> 4 & 0xf]);
-    textbox.renderBorder_06 = renderBorder_80052b68[script.params_20[2].get() & 0xf];
-    textbox.x_14 = 0;
-    textbox.y_16 = 0;
-    textbox.chars_18 = script.params_20[3].get() + 1;
-    textbox.lines_1a = script.params_20[4].get() + 1;
-    clearTextboxText(textboxIndex);
+      final Textbox4c textbox = textboxes_800be358[textboxIndex];
+      textbox.backgroundType_04 = BackgroundType.fromInt(textboxMode_80052b88[packed >>> 4 & 0xf]);
+      textbox.renderBorder_06 = renderBorder_80052b68[packed & 0xf];
+      textbox.x_14 = 0;
+      textbox.y_16 = 0;
+      textbox.chars_18 = script.params_20[3].get() + 1;
+      textbox.lines_1a = script.params_20[4].get() + 1;
+      clearTextboxText(textboxIndex);
 
-    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-    textboxText.type_04 = textType;
-    textboxText.str_24 = LodString.fromParam(script.params_20[5]);
+      final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+      textboxText.type_04 = textType;
+      textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
-    if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-      textboxText.flags_08 |= 0x20;
-    }
+      if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
+        textboxText.flags_08 |= TextboxText84.NO_INPUT;
+      }
 
-    //LAB_80025370
-    //LAB_80025374
-    if(textType == 3) {
-      textboxText.selectionIndex_6c = -1;
-    }
+      //LAB_80025370
+      //LAB_80025374
+      if(textType == 3) {
+        textboxText.selectionIndex_6c = -1;
+      }
 
-    //LAB_800253a4
-    if(textType == 4) {
-      textboxText.flags_08 |= TextboxText84.HAS_NAME;
-    }
+      //LAB_800253a4
+      if(textType == 4) {
+        textboxText.flags_08 |= TextboxText84.HAS_NAME;
+      }
 
-    //LAB_800253d4
-    textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
-    textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
-    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
-    this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
+      //LAB_800253d4
+      /* Not a retail flag. Used to remove arrows from overlapping textboxes for Phantom Ship's code-locked chest. */
+      if((packed & TextboxText84.NO_ARROW) == 0) {
+        textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
+      }
+      textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+      Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
+      this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
-    if(textType == 2) {
-      textbox._38 = textbox.x_14;
-      textbox._3c = textbox.y_16;
-      textbox.x_14 = textbox.currentX_28;
-      textbox.y_16 = textbox.currentY_2c;
-      textbox.flags_08 |= 0x2;
+      if(textType == 2) {
+        textbox._38 = textbox.x_14;
+        textbox._3c = textbox.y_16;
+        textbox.x_14 = textbox.currentX_28;
+        textbox.y_16 = textbox.currentY_2c;
+        textbox.flags_08 |= 0x2;
+      }
     }
 
     //LAB_80025494
@@ -764,8 +765,8 @@ public class SMap extends EngineState {
 
       case CHECK_TRANSITIONS_1_2:
         if((this.submapFlags_800f7e54 & 0x1) == 0) {
-          // If an encounter should start
-          if(this.handleEncounters()) {
+          if(this.canEncounter()) {
+            this.submap.prepareEncounter();
             this.mapTransition(-1, 0);
           }
         }
@@ -1032,7 +1033,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
           player.finishInterpolatedMovement();
@@ -1253,7 +1254,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
-      this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
+      this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
 
       //LAB_800def08
       angle = MathHelper.positiveAtan2(movement.z, movement.x);
@@ -2574,8 +2575,8 @@ public class SMap extends EngineState {
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
       }
 
-      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.dartRotationWasUpdated_800d1a8c > 0) {
-        model.coord2_14.transforms.rotate.y = this.smoothDartRotation();
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0) {
+        model.coord2_14.transforms.rotate.y = this.smoothPlayerRotation();
       }
 
       applyModelRotationAndScale(model);
@@ -2951,7 +2952,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e2140
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
       if(collidedPrimitiveIndex >= 0 && this.isWalkable(collidedPrimitiveIndex)) {
         model.coord2_14.coord.transfer.x += movement.x / (2.0f / vsyncMode_8007a3b8);
         model.coord2_14.coord.transfer.y = movement.y;
@@ -3133,8 +3134,9 @@ public class SMap extends EngineState {
 
         //LAB_800e44d0
         //LAB_800e44e0
-        if(size * size >= dx * dx + dz * dz && (colliderMaxY >= collideeMinY && colliderMinY <= collideeMinY || colliderMaxY >= collideeMaxY && colliderMinY <= collideeMaxY) && sobj.collidedWithSobjIndex_19c == -1) {
+        if(size * size >= dx * dx + dz * dz && (colliderMaxY >= collideeMinY && colliderMinY <= collideeMinY || colliderMaxY >= collideeMaxY && colliderMinY <= collideeMaxY)) {
           sobj.collidedWithSobjIndex_19c = i;
+          return;
         }
       }
     }
@@ -3169,8 +3171,9 @@ public class SMap extends EngineState {
 
         //LAB_800e46bc
         //LAB_800e46cc
-        if(size * size >= dx * dx + dz * dz && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY) && sobj.collidedWithSobjIndex_1a8 == -1) {
+        if(size * size >= dx * dx + dz * dz && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY)) {
           sobj.collidedWithSobjIndex_1a8 = i;
+          return;
         }
       }
 
@@ -3229,7 +3232,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e4b20L)
-  private boolean handleEncounters() {
+  private boolean canEncounter() {
     if(this.smapTicks_800c6ae0 < 15 * (3 - vsyncMode_8007a3b8) || Unpacker.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
       return false;
     }
@@ -3264,13 +3267,6 @@ public class SMap extends EngineState {
 
     if(this.encounterAccumulator_800c6ae8 <= submapEncounterAccumulatorEvent.encounterAccumulatorLimit) {
       return false;
-    }
-
-    // Start combat
-    this.submap.generateEncounter();
-
-    if(Config.combatStage()) {
-      battleStage_800bb0f4 = Config.getCombatStage();
     }
 
     return true;
@@ -3577,8 +3573,9 @@ public class SMap extends EngineState {
       return;
     }
 
+    SCRIPTS.pause();
+
     if(newScene == 0x3fa) {
-      SCRIPTS.pause();
       loadCharacterStats();
       cacheCharacterSlots();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
@@ -3588,20 +3585,17 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3fb) {
-      SCRIPTS.pause();
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_TITLE_20;
       return;
     }
 
     if(newScene == 0x3fc) {
-      SCRIPTS.pause();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, TooManyItemsScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3fd) {
-      SCRIPTS.pause();
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
@@ -3612,44 +3606,30 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3fe) {
-      SCRIPTS.pause();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3ff) {
-      SCRIPTS.pause();
       submapCutForSave_800cb450 = submapCut_80052c30;
       this.menuTransition = () -> initInventoryMenu();
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
-    final int encounterId;
-    if(newScene == 0) {
-      encounterId = encounterId_800bb0f8;
-    } else {
-      if(newScene > 0x1ff) {
-        SCRIPTS.pause();
-        return;
-      }
-
-      encounterId = newScene;
+    if(newScene != 0 && newScene >= stageData_80109a98.length) {
+      return;
     }
-
-    encounterId_800bb0f8 = encounterId;
 
     if(this.isScriptLoaded(0)) {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
-
       screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
       this.submap.storeStateBeforeBattle();
       playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
       shouldRestoreCameraPosition_80052c40 = true;
     }
 
-    SCRIPTS.pause();
     this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
   }
 
@@ -3997,6 +3977,10 @@ public class SMap extends EngineState {
   private FlowControl scriptMapTransition(final RunningScript<?> script) {
     final int scene = script.params_20[1].get();
 
+    if(script.params_20[0].get() == -1) {
+      this.submap.prepareEncounter(scene);
+    }
+
     this.mapTransition(script.params_20[0].get(), scene);
 
     if(scene == 0x3fa || scene == 0x3fc || scene == 0x3fe || scene == 0x3ff) {
@@ -4289,13 +4273,13 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ea4c8L)
-  private float smoothDartRotation() {
+  private float smoothPlayerRotation() {
     if(this.firstMovement) {
       this.firstMovement = false;
-      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
+      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84;
     }
 
-    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
+    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
 
     final boolean positive;
     if(Math.abs(rotationDelta) > MathHelper.PI) {
@@ -4309,7 +4293,7 @@ public class SMap extends EngineState {
 
     //LAB_800ea63c
     float maxRotation = MathHelper.PI / (6.0f * this.tickMultiplier());
-    if(this.collisionGeometry_800cbe08.dartRunning) {
+    if(this.collisionGeometry_800cbe08.playerRunning) {
       maxRotation *= 1.5f;
     }
 
