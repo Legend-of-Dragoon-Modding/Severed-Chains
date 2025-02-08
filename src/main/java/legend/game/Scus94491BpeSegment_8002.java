@@ -26,6 +26,8 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.GiveEquipmentEvent;
+import legend.game.modding.events.inventory.GiveItemEvent;
 import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
@@ -1043,21 +1045,25 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023484L)
   public static boolean giveItem(final Item item) {
-    if(gameState_800babc8.items_2e9.size() >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
+    final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(item));
+
+    if(gameState_800babc8.items_2e9.size() + event.items.size() >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()) && !event.overflow) {
       return false;
     }
 
-    gameState_800babc8.items_2e9.add(item);
+    gameState_800babc8.items_2e9.addAll(event.items);
     return true;
   }
 
   @Method(0x80023484L)
   public static boolean giveEquipment(final Equipment equipment) {
-    if(gameState_800babc8.equipment_1e8.size() >= 255) {
+    final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment));
+
+    if(gameState_800babc8.equipment_1e8.size() + event.equips.size() >= 255) {
       return false;
     }
 
-    gameState_800babc8.equipment_1e8.add(equipment);
+    gameState_800babc8.equipment_1e8.addAll(event.equips);
     return true;
   }
 
