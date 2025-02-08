@@ -1033,7 +1033,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
           player.finishInterpolatedMovement();
@@ -1254,7 +1254,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
-      this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
+      this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
 
       //LAB_800def08
       angle = MathHelper.positiveAtan2(movement.z, movement.x);
@@ -2575,8 +2575,8 @@ public class SMap extends EngineState {
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
       }
 
-      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.dartRotationWasUpdated_800d1a8c > 0) {
-        model.coord2_14.transforms.rotate.y = this.smoothDartRotation();
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0) {
+        model.coord2_14.transforms.rotate.y = this.smoothPlayerRotation();
       }
 
       applyModelRotationAndScale(model);
@@ -2952,7 +2952,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e2140
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
       if(collidedPrimitiveIndex >= 0 && this.isWalkable(collidedPrimitiveIndex)) {
         model.coord2_14.coord.transfer.x += movement.x / (2.0f / vsyncMode_8007a3b8);
         model.coord2_14.coord.transfer.y = movement.y;
@@ -3134,8 +3134,9 @@ public class SMap extends EngineState {
 
         //LAB_800e44d0
         //LAB_800e44e0
-        if(size * size >= dx * dx + dz * dz && (colliderMaxY >= collideeMinY && colliderMinY <= collideeMinY || colliderMaxY >= collideeMaxY && colliderMinY <= collideeMaxY) && sobj.collidedWithSobjIndex_19c == -1) {
+        if(size * size >= dx * dx + dz * dz && (colliderMaxY >= collideeMinY && colliderMinY <= collideeMinY || colliderMaxY >= collideeMaxY && colliderMinY <= collideeMaxY)) {
           sobj.collidedWithSobjIndex_19c = i;
+          return;
         }
       }
     }
@@ -3170,8 +3171,9 @@ public class SMap extends EngineState {
 
         //LAB_800e46bc
         //LAB_800e46cc
-        if(size * size >= dx * dx + dz * dz && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY) && sobj.collidedWithSobjIndex_1a8 == -1) {
+        if(size * size >= dx * dx + dz * dz && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY)) {
           sobj.collidedWithSobjIndex_1a8 = i;
+          return;
         }
       }
 
@@ -4271,13 +4273,13 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ea4c8L)
-  private float smoothDartRotation() {
+  private float smoothPlayerRotation() {
     if(this.firstMovement) {
       this.firstMovement = false;
-      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
+      this.oldRotation_800f7f6c = this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84;
     }
 
-    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
+    float rotationDelta = (this.oldRotation_800f7f6c - this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84) % MathHelper.TWO_PI;
 
     final boolean positive;
     if(Math.abs(rotationDelta) > MathHelper.PI) {
@@ -4291,7 +4293,7 @@ public class SMap extends EngineState {
 
     //LAB_800ea63c
     float maxRotation = MathHelper.PI / (6.0f * this.tickMultiplier());
-    if(this.collisionGeometry_800cbe08.dartRunning) {
+    if(this.collisionGeometry_800cbe08.playerRunning) {
       maxRotation *= 1.5f;
     }
 
