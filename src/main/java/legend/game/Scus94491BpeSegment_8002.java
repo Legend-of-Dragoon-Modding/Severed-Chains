@@ -1061,14 +1061,14 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    final boolean overflowed = event.currentItems.size() + event.givenItems.size() >= event.maxInventorySize;
+    final boolean overflowed = event.currentItems.size() + event.givenItems.size() > event.maxInventorySize;
 
     if(event.overflowMode == OverflowMode.FAIL && overflowed) {
       return false;
     }
 
     if(event.overflowMode == OverflowMode.TRUNCATE && overflowed) {
-      for(int i = 0; i < event.givenItems.size() && event.currentItems.size() < event.maxInventorySize; i++) {
+      for(int i = 0; i < event.givenItems.size() && event.currentItems.size() <= event.maxInventorySize; i++) {
         gameState_800babc8.items_2e9.add(event.givenItems.get(i));
       }
 
@@ -1087,14 +1087,14 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    final boolean overflowed = event.currentEquipment.size() + event.givenEquipment.size() >= event.maxInventorySize;
+    final boolean overflowed = event.currentEquipment.size() + event.givenEquipment.size() > event.maxInventorySize;
 
     if(event.overflowMode == OverflowMode.FAIL && overflowed) {
       return false;
     }
 
     if(event.overflowMode == OverflowMode.TRUNCATE && overflowed) {
-      for(int i = 0; i < event.givenEquipment.size() && event.currentEquipment.size() < event.maxInventorySize; i++) {
+      for(int i = 0; i < event.givenEquipment.size() && event.currentEquipment.size() <= event.maxInventorySize; i++) {
         gameState_800babc8.equipment_1e8.add(event.givenEquipment.get(i));
       }
 
