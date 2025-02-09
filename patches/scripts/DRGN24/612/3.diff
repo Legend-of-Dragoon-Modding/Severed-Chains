@@ -1,16 +1,17 @@
-Retail checks to see if the sobj is already at the target location, but the code for handling that situation is inadequate.
-Retail math precision issues means the sobj never reaches its destination exactly, so retail always bypasses these checks.
+Aglis, Entrance
+Meru
+Retail: Checks if Meru is already at the target location. Poor math precision means he never arrives to the exact
+location, so it never exits the subroutine early.
+Severed Chains: High precision meets early exit conditions. Early exit doesn't reset to an idle animation so she
+sometimes runs in place.
+Fix: Bypass unnecessary early exit.
 --- original
 +++ modified
-@@ -149,11 +149,6 @@
+@@ -149,6 +149,7 @@
  call 97, 0x2
  LABEL_23:
  call 102, stor[0], stor[29], stor[30], stor[31]
--jmp_cmp !=, stor[29], stor[24], inl[:LABEL_24]
--jmp_cmp !=, stor[30], stor[25], inl[:LABEL_24]
--jmp_cmp !=, stor[31], stor[26], inl[:LABEL_24]
--jmp inl[:LABEL_29]
--LABEL_24:
- sub stor[24], stor[29]
- sub stor[25], stor[30]
- sub stor[26], stor[31]
++jmp inl[:LABEL_24]
+ jmp_cmp !=, stor[29], stor[24], inl[:LABEL_24]
+ jmp_cmp !=, stor[30], stor[25], inl[:LABEL_24]
+ jmp_cmp !=, stor[31], stor[26], inl[:LABEL_24]

@@ -8,6 +8,10 @@ public class HealingPotionItem extends RecoverHpItem {
     super(33, 5, false, 50);
   }
 
+  public HealingPotionItem(final int icon, final int price, final boolean targetAll, final int percentage) {
+    super(icon, price, targetAll, percentage);
+  }
+
   @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;

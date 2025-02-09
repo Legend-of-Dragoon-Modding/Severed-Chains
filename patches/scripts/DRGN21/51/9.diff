@@ -3,22 +3,16 @@ Hellena Prison, cutscene before fighting Fruegel (I)
 Warden
 --- original
 +++ modified
-@@ -58,11 +58,13 @@
+@@ -58,6 +58,7 @@
  yield
  call 102, stor[0], stor[8], stor[9], stor[10]
  call 116, stor[24]
-# Inside walking loop for LABEL_4 subroutine
+# Inside walking loop for LABEL_4 subroutine, increment wait offset if specified flag is active
 +gosub inl[:WS_WAIT_TIME]
  jmp_cmp !=, 0x0, stor[24], inl[:LABEL_6]
  call 294, 0x0, 0x1
  call 97, 0x0
- call 111, 0x0
- return
-+#include ../../../../patches/libs/widescreen.txt
- LABEL_7:
- mov var[64][stor[28]], stor[28]
- call 102, stor[28], stor[29], stor[30], stor[31]
-@@ -176,18 +178,48 @@
+@@ -176,18 +177,48 @@
  rel :JMP_630_0
  rel :JMP_630_0
  JMP_630_1:
@@ -36,8 +30,8 @@ Warden
 +mov 0, inl[:WS_WAIT_FLAG_MATCH]
 +gosub inl[:WS_FLAG_WAIT]
 +call 2, 0x78, 1
-+call 96, 0x4
-+call 106, 0x0
++call 96, 4
++call 106, 0
 +mov 0x7a, inl[:WS_WAIT_FLAG]
 +mov 0, inl[:WS_WAIT_OFFSET]
 +mov 0x28, stor[24]
@@ -75,3 +69,8 @@ Warden
  mov 0x18, stor[24]
  gosub inl[:LABEL_4]
  mov 0x1, stor[25]
+@@ -295,3 +326,4 @@
+ yield
+ jmp inl[:LABEL_24]
+ data 0x49
++#include ../../../../patches/libs/widescreen.txt
