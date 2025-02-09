@@ -32,7 +32,7 @@ WS_WAIT_FLAG_SOBJ:
 data 0xffffffff
 ; Wait for flag to match a given value. Face sobj while waiting if provided.
 ; @param int WS_WAIT_FLAG - flags 1 bit
-; @param int WS_WAIT_FLAG_VALUE - match value
+; @param int WS_WAIT_FLAG_MATCH - match value
 ; @param int WS_WAIT_FLAG_SOBJ - sobj index
 WS_FLAG_WAIT:
 call 3, inl[:WS_WAIT_FLAG], inl[:WS_WAIT_FLAG_STATUS]
@@ -69,6 +69,8 @@ data 0
 WS_SPEED:
 data 0
 WS_FRAMES:
+data 0
+WS_COLLIDED:
 data 0
 ; Rotate self to face provided coordinates.
 ; @param int WS_TARGET_X - target x
@@ -109,7 +111,7 @@ return
 ; @param int WS_TARGET_Y - target y
 ; @param int WS_TARGET_Z - target z
 ; @param int WS_ANIMATION_0 - animation index (use -1 to return; use -2 to wait)
-; @param int WS_SPEED - movement speed
+; @param int WS_SPEED - movement speed (use negative values for very slow movement)
 ; @return int WS_FRAMES - remaining frames/movement ticks
 WS_MOVE:
 call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
@@ -122,6 +124,32 @@ call 99, 0
 call 97, inl[:WS_ANIMATION_0]
 WS_MOVE_WAIT:
 wait inl[:WS_FRAMES]
+return
+; Move self to provided coordinates. Includes collision detection for other sObjs. Meant for regular NPC movement.
+; @param int WS_TARGET_X - target x
+; @param int WS_TARGET_Y - target y
+; @param int WS_TARGET_Z - target z
+; @param int WS_ANIMATION_0 - animation index
+; @param int WS_SPEED - movement speed (use negative values for very slow movement)
+; @return int WS_FRAMES - remaining frames/movement ticks
+WS_NPC_MOVE:
+call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
+call 107, inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z], 1
+call 97, 0
+yield
+call 308, stor[0], inl[:WS_COLLIDED]
+jmp_cmp !=, inl[:WS_COLLIDED], 0xffffffff, inl[:WS_NPC_MOVE]
+gosub inl[:WS_GET_MOVE_TICKS]
+jmp_cmp <, inl[:WS_FRAMES], 0, inl[:RETURN]
+call 107, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z], inl[:WS_FRAMES]
+call 97, inl[:WS_ANIMATION_0]
+jmp_cmp ==, 0x0, inl[:WS_FRAMES], inl[:RETURN]
+WS_NPC_MOVE_0:
+yield
+call 308, stor[0], inl[:WS_COLLIDED]
+jmp_cmp !=, inl[:WS_COLLIDED], 0xffffffff, inl[:WS_NPC_MOVE]
+while inl[:WS_FRAMES], inl[:WS_NPC_MOVE_0]
+call 97, 0
 return
 ; Calculate movement ticks between two points.
 ; @param int WS_START_X - pointA x
@@ -145,6 +173,15 @@ mul inl[:WS_MOVE_Z], inl[:WS_MOVE_Z]
 add inl[:WS_MOVE_X], inl[:WS_MOVE_Y]
 add inl[:WS_MOVE_Y], inl[:WS_MOVE_Z]
 sqrt inl[:WS_MOVE_Z], inl[:WS_FRAMES]
+jmp_cmp ==, inl[:WS_SPEED], 0, inl[:WS_INVALID_SPEED]
+jmp_cmp >, inl[:WS_SPEED], 0, inl[:WS_NORMAL_SPEED]
+WS_SLOW_SPEED:
+abs inl[:WS_SPEED]
+mul inl[:WS_SPEED], inl[:WS_FRAMES]
+return
+WS_INVALID_SPEED:
+mov 1, inl[:WS_SPEED]
+WS_NORMAL_SPEED:
 div inl[:WS_SPEED], inl[:WS_FRAMES]
 return
 ; Load one animation and wait until complete
