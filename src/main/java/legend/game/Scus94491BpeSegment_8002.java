@@ -20,6 +20,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
+import legend.game.inventory.OverflowMode;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.MainMenuScreen;
@@ -77,6 +78,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -1013,13 +1015,13 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     final Item item = gameState_800babc8.items_2e9.get(itemSlot);
+    final TakeItemEvent event = EVENTS.postEvent(new TakeItemEvent(item, itemSlot));
 
-    final TakeItemEvent takeItemEvent = EVENTS.postEvent(new TakeItemEvent(item, itemSlot, true));
-
-    if(takeItemEvent.takeItem) {
-      gameState_800babc8.items_2e9.remove(itemSlot);
+    if(event.isCanceled()) {
+      return false;
     }
 
+    gameState_800babc8.items_2e9.remove(event.itemSlot);
     return true;
   }
 
@@ -1040,35 +1042,66 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    final TakeEquipmentEvent takeEquipmentEvent = EVENTS.postEvent(new TakeEquipmentEvent(gameState_800babc8.equipment_1e8.get(equipmentIndex), equipmentIndex, true));
+    final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
+    final TakeEquipmentEvent event = EVENTS.postEvent(new TakeEquipmentEvent(equipment, equipmentIndex));
 
-    if(takeEquipmentEvent.takeEquip) {
-      gameState_800babc8.equipment_1e8.remove(equipmentIndex);
+    if(event.isCanceled()) {
+      return false;
     }
+
+    gameState_800babc8.equipment_1e8.remove(equipmentIndex);
     return true;
   }
 
   @Method(0x80023484L)
   public static boolean giveItem(final Item item) {
-    final GiveItemEvent giveItemEvent = EVENTS.postEvent(new GiveItemEvent(item));
+    final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(item, Collections.unmodifiableList(gameState_800babc8.items_2e9), CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())));
 
-    if(gameState_800babc8.items_2e9.size() + giveItemEvent.items.size() >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()) && !giveItemEvent.overflow) {
+    if(event.isCanceled()) {
       return false;
     }
 
-    gameState_800babc8.items_2e9.addAll(giveItemEvent.items);
+    final boolean overflowed = event.currentItems.size() + event.givenItems.size() >= event.maxInventorySize;
+
+    if(event.overflowMode == OverflowMode.FAIL && overflowed) {
+      return false;
+    }
+
+    if(event.overflowMode == OverflowMode.TRUNCATE && overflowed) {
+      for(int i = 0; i < event.givenItems.size() && event.currentItems.size() < event.maxInventorySize; i++) {
+        gameState_800babc8.items_2e9.add(event.givenItems.get(i));
+      }
+
+      return true;
+    }
+
+    gameState_800babc8.items_2e9.addAll(event.givenItems);
     return true;
   }
 
   @Method(0x80023484L)
   public static boolean giveEquipment(final Equipment equipment) {
-    final GiveEquipmentEvent giveEquipmentEvent = EVENTS.postEvent(new GiveEquipmentEvent(equipment));
+    final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment, Collections.unmodifiableList(gameState_800babc8.equipment_1e8), 255));
 
-    if(gameState_800babc8.equipment_1e8.size() + giveEquipmentEvent.equips.size() > 255) {
+    if(event.isCanceled()) {
       return false;
     }
 
-    gameState_800babc8.equipment_1e8.addAll(giveEquipmentEvent.equips);
+    final boolean overflowed = event.currentEquipment.size() + event.givenEquipment.size() >= event.maxInventorySize;
+
+    if(event.overflowMode == OverflowMode.FAIL && overflowed) {
+      return false;
+    }
+
+    if(event.overflowMode == OverflowMode.TRUNCATE && overflowed) {
+      for(int i = 0; i < event.givenEquipment.size() && event.currentEquipment.size() < event.maxInventorySize; i++) {
+        gameState_800babc8.equipment_1e8.add(event.givenEquipment.get(i));
+      }
+
+      return true;
+    }
+
+    gameState_800babc8.equipment_1e8.addAll(event.givenEquipment);
     return true;
   }
 

@@ -1,16 +1,18 @@
 package legend.game.modding.events.inventory;
 
 import legend.game.inventory.Equipment;
-import org.legendofdragoon.modloader.events.Event;
 
-public class TakeEquipmentEvent extends Event {
+/**
+ * Fired any time the player's equipment is taken
+ */
+public class TakeEquipmentEvent extends InventoryEvent {
+  /** The equipment that was taken */
   public final Equipment equip;
-  public int equipmentIndex;
-  public boolean takeEquip = false;
+  /** The slot from which the equipment was taken. Modify this to take equipment from a different slot. */
+  public int equipmentSlot;
 
-  public TakeEquipmentEvent(final Equipment equip, final int equipmentIndex, final boolean takeEquip) {
+  public TakeEquipmentEvent(final Equipment equip, final int equipmentSlot) {
     this.equip = equip;
-    this.equipmentIndex = equipmentIndex;
-    this.takeEquip = takeEquip;
+    this.equipmentSlot = equipmentSlot;
   }
 }
