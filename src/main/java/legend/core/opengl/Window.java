@@ -14,6 +14,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_DONT_CARE;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_DEBUG_CONTEXT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -48,7 +51,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyCursor;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
@@ -62,6 +67,7 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
+import static org.lwjgl.glfw.GLFW.glfwSetCursor;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
@@ -73,6 +79,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowIcon;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
@@ -88,14 +95,17 @@ import static org.lwjgl.opengl.GL11C.GL_VENDOR;
 import static org.lwjgl.opengl.GL11C.GL_VERSION;
 import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.stb.STBImage.stbi_failure_reason;
+import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Window {
-  private static final Logger LOGGER = LogManager.getLogger(Window.class.getName());
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Window.class);
 
   static {
-    LOGGER.info("Initialising LWJGL version {}", Version.getVersion());
+    LOGGER.info("Initialising LWJGL version %s", Version.getVersion());
 
     GLFWErrorCallback.createPrint(System.err).set();
 
@@ -130,6 +140,8 @@ public class Window {
 
   private long monitor;
   private GLFWVidMode vidMode;
+
+  private final long pointerCursor;
 
   private final List<Action> actions = new ArrayList<>();
   private final Action render = this.addAction(new Action(this::tickFrame, 60));
@@ -169,6 +181,8 @@ public class Window {
       throw new RuntimeException("Failed to create the GLFW window");
     }
 
+    this.pointerCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+
     glfwSetFramebufferSizeCallback(this.window, this.events::onResize);
     glfwSetWindowFocusCallback(this.window,this.events::onFocus);
     glfwSetKeyCallback(this.window, this.events::onKey);
@@ -187,9 +201,9 @@ public class Window {
     this.makeContextCurrent();
     GL.createCapabilities();
 
-    LOGGER.info("OpenGL version: {}", glGetString(GL_VERSION));
-    LOGGER.info("GLSL version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOGGER.info("Device manufacturer: {}", glGetString(GL_VENDOR));
+    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
+    LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
 
     if("true".equals(System.getenv("opengl_debug"))) {
       GLUtil.setupDebugMessageCallback(System.err);
@@ -240,7 +254,9 @@ public class Window {
     this.monitor = this.getMonitorFromConfig();
     this.moveToMonitor();
     glfwSetWindowAttrib(this.window, GLFW_DECORATED, GLFW_FALSE);
-    glfwSetWindowSize(this.window, this.vidMode.width(), this.vidMode.height());
+
+    // Overscan by 1 pixel to stop Windows from putting it into exclusive fullscreen
+    glfwSetWindowSize(this.window, this.vidMode.width(), this.vidMode.height() + 1);
   }
 
   public void makeWindowed() {
@@ -254,6 +270,35 @@ public class Window {
 
     if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
       this.makeFullscreen();
+    }
+  }
+
+  public void useNormalCursor() {
+    glfwSetCursor(this.window, NULL);
+  }
+
+  public void usePointerCursor() {
+    glfwSetCursor(this.window, this.pointerCursor);
+  }
+
+  public void setWindowIcon(final Path path) {
+    try(final MemoryStack stack = stackPush()) {
+      final IntBuffer w = stack.mallocInt(1);
+      final IntBuffer h = stack.mallocInt(1);
+      final IntBuffer comp = stack.mallocInt(1);
+
+      final ByteBuffer data = stbi_load(path.toString(), w, h, comp, 4);
+      if(data == null) {
+        LOGGER.warn("Failed to load icon %s: %s", path, stbi_failure_reason());
+        return;
+      }
+
+      final GLFWImage image = GLFWImage.malloc(stack);
+      final GLFWImage.Buffer buffer = GLFWImage.malloc(1, stack);
+      image.set(w.get(0), h.get(0), data);
+      buffer.put(0, image);
+      glfwSetWindowIcon(this.window, buffer);
+      memFree(data);
     }
   }
 
@@ -372,6 +417,7 @@ public class Window {
 
     this.events.onShutdown();
 
+    glfwDestroyCursor(this.pointerCursor);
     glfwFreeCallbacks(this.window);
     glfwDestroyWindow(this.window);
   }

@@ -643,7 +643,13 @@ public final class Scus94491BpeSegment_8004 {
       soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 8;
       soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 8;
 
-      AUDIO_THREAD.fadeOut(fadeTime);
+      // Retail bug: due to the way fade volume is lerped, fade out over 1
+      // tick doesn't fade out at all. This was breaking music after Lenus 2.
+      // See GH#1623
+      if(fadeTime > 1) {
+        AUDIO_THREAD.fadeOut(fadeTime);
+      }
+
       return 0;
     }
 

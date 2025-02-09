@@ -1,22 +1,14 @@
 package legend.lodmod.items;
 
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.scripting.ScriptState;
 
-import java.util.function.BiFunction;
-
-public class MoonSerenadeItem extends RecoverHpItem {
+public class MoonSerenadeItem extends RecoverMpItem {
   public MoonSerenadeItem() {
     super(34, 100, true, 100);
   }
 
   public MoonSerenadeItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }
-
-  @Override
-  protected BiFunction<Integer, Integer, Integer> getRecoveryMethod() {
-    return Scus94491BpeSegment_8002::addMp;
-  }
 
   @Override
   protected int getUseItemScriptEntrypoint() {
@@ -25,7 +17,7 @@ public class MoonSerenadeItem extends RecoverHpItem {
 
   @Override
   protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
-    user.storage_44[8] = 0xfadf82; // Colour
+    user.storage_44[8] = 0x780078; // Colour
     user.storage_44[28] = targetBentIndex;
     user.storage_44[30] = user.index;
   }

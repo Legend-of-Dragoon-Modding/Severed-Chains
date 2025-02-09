@@ -2,6 +2,7 @@ package legend.game.submap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import legend.core.Config;
 import legend.core.QueuedModel;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
@@ -408,15 +409,26 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  public void generateEncounter() {
+  public void prepareEncounter(final int encounterId) {
     final var sceneId = encounterData_800f64c4[this.cut].scene_00;
     final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var encounterId = scene[this.randomEncounterIndex()];
-    final var battleStageId = encounterData_800f64c4[this.cut].stage_03;
+    final var battleStageId = encounterData_800f64c4[this.cut].stage_03 == 0 && battleStage_800bb0f4 > -1 ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
     final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
     encounterId_800bb0f8 = generateEncounterEvent.encounterId;
     battleStage_800bb0f4 = generateEncounterEvent.battleStageId;
+
+    if(Config.combatStage()) {
+      battleStage_800bb0f4 = Config.getCombatStage();
+    }
+  }
+
+  @Override
+  public void prepareEncounter() {
+    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final var scene = sceneEncounterIds_800f74c4[sceneId];
+    final var encounterId = scene[this.randomEncounterIndex()];
+    this.prepareEncounter(encounterId);
   }
 
   @Override
@@ -1416,7 +1428,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(AUDIO_THREAD.isMusicPlaying()) {
+    if(!AUDIO_THREAD.isMusicPlaying()) {
       return -2;
     }
 

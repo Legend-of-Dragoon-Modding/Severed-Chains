@@ -1,15 +1,14 @@
 package legend.lodmod.items;
 
 import legend.core.memory.Method;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
-import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
-public class RecoverMpItem extends Item {
+public class RecoverMpItem extends BattleItem {
   private final boolean targetAll;
   private final int percentage;
 
@@ -40,7 +39,11 @@ public class RecoverMpItem extends Item {
     }
 
     response._00 = this.canTarget(TargetType.ALL) ? 5 : 4;
-    response.value_04 = addMp(charId, amount);
+    response.value_04 = this.recover(charId, amount);
+  }
+
+  protected int recover(final int charId,final int amount) {
+    return Scus94491BpeSegment_8002.addMp(charId, amount);
   }
 
   @Override

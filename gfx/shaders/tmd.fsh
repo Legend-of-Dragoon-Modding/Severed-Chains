@@ -89,7 +89,7 @@ void main() {
   outColour.rgb *= recolour;
 
   // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if(translucencyMode == 0 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
+  if(translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;

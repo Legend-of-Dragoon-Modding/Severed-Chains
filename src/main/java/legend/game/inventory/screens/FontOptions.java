@@ -18,6 +18,19 @@ public class FontOptions {
     ;
   }
 
+  public FontOptions set(final FontOptions other) {
+    this.horizontalAlign = other.horizontalAlign;
+    this.trim = other.trim;
+    this.red = other.red;
+    this.green = other.green;
+    this.blue = other.blue;
+    this.shadow = other.shadow;
+    this.shadowRed = other.shadowRed;
+    this.shadowGreen = other.shadowGreen;
+    this.shadowBlue = other.shadowBlue;
+    return this;
+  }
+
   public FontOptions horizontalAlign(final HorizontalAlign align) {
     this.horizontalAlign = align;
     return this;

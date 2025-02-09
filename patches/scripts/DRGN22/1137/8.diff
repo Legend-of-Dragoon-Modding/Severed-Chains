@@ -10,7 +10,7 @@ New: Libria animation handled by File 8, now on screen with Lisa
  JMP_44_0:
  call 101, stor[0], 0x82, 0x32, 0xcd
  call 103, stor[0], 0x0, 0x0, 0x0
-+call 106, 0x1
++call 106, 1
 +gosub inl[:SC_LIBRIA_SCENE_0]
 +rewind
  call 127, stor[31]
@@ -32,9 +32,9 @@ New: Libria animation handled by File 8, now on screen with Lisa
 # Disable shadow, unhide, and set position/rotation
 +call 312, stor[0]
 +call 106, 0
-+call 101, stor[0], 0xac, inl[:S0_START_Y], 0xaa
++call 101, stor[0], 0xac, inl[:SCENE_0_START_Y], 0xaa
 +mov 0x7d, inl[:WS_TARGET_X]
-+mov inl[:S0_START_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_0_START_Y], inl[:WS_TARGET_Y]
 +mov 0xdc, inl[:WS_TARGET_Z]
 +mov 1, inl[:WS_ANIMATION_0]
 +mov 2, inl[:WS_SPEED]
@@ -54,33 +54,33 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:WS_FLAG_WAIT]
 +mov 0xffffffff, inl[:WS_WAIT_FLAG_SOBJ]
 # Compare distance with Libria's retail start and wait
-+mov inl[:S0_MARK_X], inl[:WS_TARGET_X]
-+mov inl[:S0_MARK_Y], inl[:WS_TARGET_Y]
-+mov inl[:S0_MARK_Z], inl[:WS_TARGET_Z]
-+mov inl[:S0_START_X], inl[:WS_START_X]
-+mov inl[:S0_START_Y], inl[:WS_START_Y]
-+mov inl[:S0_START_Z], inl[:WS_START_Z]
++mov inl[:SCENE_0_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_0_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_0_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_0_START_X], inl[:WS_START_X]
++mov inl[:SCENE_0_START_Y], inl[:WS_START_Y]
++mov inl[:SCENE_0_START_Z], inl[:WS_START_Z]
 +mov 2, inl[:WS_SPEED]
 +gosub inl[:WS_GET_MOVE_TICKS]
 +mov inl[:WS_FRAMES], stor[22]
 +call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
 +gosub inl[:WS_GET_MOVE_TICKS]
 +mov inl[:WS_FRAMES], stor[23]
-+jmp_cmp >, stor[23], stor[22], inl[:S0_NO_WAIT]
++jmp_cmp >, stor[23], stor[22], inl[:SCENE_0_NO_WAIT]
 +sub stor[23], stor[22]
 +wait stor[22]
-+S0_NO_WAIT:
++SCENE_0_NO_WAIT:
 # Rotate and move to greet party
-+mov inl[:S0_MARK_X], inl[:WS_TARGET_X]
-+mov inl[:S0_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_0_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_0_MARK_Z], inl[:WS_TARGET_Z]
 +mov 0xffffffff, inl[:WS_ANIMATION_0]
 +mov 16, inl[:WS_FRAMES]
 +gosub inl[:WS_ROTATE]
 +mov 10, inl[:WS_FRAMES]
 +wait inl[:WS_FRAMES]
-+mov inl[:S0_MARK_X], inl[:WS_TARGET_X]
-+mov inl[:S0_MARK_Y], inl[:WS_TARGET_Y]
-+mov inl[:S0_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_0_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_0_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_0_MARK_Z], inl[:WS_TARGET_Z]
 +mov 1, inl[:WS_ANIMATION_0]
 +mov 2, inl[:WS_SPEED]
 +gosub inl[:WS_MOVE]
@@ -100,7 +100,7 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:WS_FLAG_WAIT]
 # Exit
 +mov 0xac, inl[:WS_TARGET_X]
-+mov inl[:S0_START_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_0_START_Y], inl[:WS_TARGET_Y]
 +mov 0xab, inl[:WS_TARGET_Z]
 +mov 0xffffffff, inl[:WS_ANIMATION_0]
 +mov 16, inl[:WS_FRAMES]
@@ -112,17 +112,17 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:WS_MOVE]
 +rewind
 # First scene retail coords
-+S0_START_X:
++SCENE_0_START_X:
 +data 0x87
-+S0_START_Y:
++SCENE_0_START_Y:
 +data 0xfffffff6
-+S0_START_Z:
++SCENE_0_START_Z:
 +data 0x9b
-+S0_MARK_X:
++SCENE_0_MARK_X:
 +data 0x44
-+S0_MARK_Y:
++SCENE_0_MARK_Y:
 +data 0xfffffff6
-+S0_MARK_Z:
++SCENE_0_MARK_Z:
 +data 0xdc
 ## SECOND SCENE ##
 +SC_LIBRIA_SCENE_1:
@@ -133,9 +133,9 @@ New: Libria animation handled by File 8, now on screen with Lisa
 # Disable shadow, unhide, and set position/rotation
 +call 312, stor[0]
 +call 106, 0
-+call 101, stor[0], 0xac, inl[:S1_START_Y], 0xaa
++call 101, stor[0], 0xac, inl[:SCENE_1_START_Y], 0xaa
 +mov 0x7d, inl[:WS_TARGET_X]
-+mov inl[:S1_START_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_1_START_Y], inl[:WS_TARGET_Y]
 +mov 0xfa, inl[:WS_TARGET_Z]
 +mov 1, inl[:WS_ANIMATION_0]
 +mov 2, inl[:WS_SPEED]
@@ -154,33 +154,33 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:WS_FLAG_WAIT]
 +mov 0xffffffff, inl[:WS_WAIT_FLAG_SOBJ]
 # Compare distance with Libria's retail start and wait
-+mov inl[:S1_MARK_X], inl[:WS_TARGET_X]
-+mov inl[:S1_MARK_Y], inl[:WS_TARGET_Y]
-+mov inl[:S1_MARK_Z], inl[:WS_TARGET_Z]
-+mov inl[:S1_START_X], inl[:WS_START_X]
-+mov inl[:S1_START_Y], inl[:WS_START_Y]
-+mov inl[:S1_START_Z], inl[:WS_START_Z]
++mov inl[:SCENE_1_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_1_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_1_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_1_START_X], inl[:WS_START_X]
++mov inl[:SCENE_1_START_Y], inl[:WS_START_Y]
++mov inl[:SCENE_1_START_Z], inl[:WS_START_Z]
 +mov 2, inl[:WS_SPEED]
 +gosub inl[:WS_GET_MOVE_TICKS]
 +mov inl[:WS_FRAMES], stor[22]
 +call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
 +gosub inl[:WS_GET_MOVE_TICKS]
 +mov inl[:WS_FRAMES], stor[23]
-+jmp_cmp >, stor[23], stor[22], inl[:S1_NO_WAIT]
++jmp_cmp >, stor[23], stor[22], inl[:SCENE_1_NO_WAIT]
 +sub stor[23], stor[22]
 +wait stor[22]
-+S1_NO_WAIT:
++SCENE_1_NO_WAIT:
 # Rotate and move to greet party
-+mov inl[:S1_MARK_X], inl[:WS_TARGET_X]
-+mov inl[:S1_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_1_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_1_MARK_Z], inl[:WS_TARGET_Z]
 +mov 0xffffffff, inl[:WS_ANIMATION_0]
 +mov 16, inl[:WS_FRAMES]
 +gosub inl[:WS_ROTATE]
 +mov 10, inl[:WS_FRAMES]
 +wait inl[:WS_FRAMES]
-+mov inl[:S1_MARK_X], inl[:WS_TARGET_X]
-+mov inl[:S1_MARK_Y], inl[:WS_TARGET_Y]
-+mov inl[:S1_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_1_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_1_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_1_MARK_Z], inl[:WS_TARGET_Z]
 +mov 1, inl[:WS_ANIMATION_0]
 +mov 2, inl[:WS_SPEED]
 +gosub inl[:WS_MOVE]
@@ -200,7 +200,7 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:WS_FLAG_WAIT]
 # Exit
 +mov 0xac, inl[:WS_TARGET_X]
-+mov inl[:S1_START_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_1_START_Y], inl[:WS_TARGET_Y]
 +mov 0xab, inl[:WS_TARGET_Z]
 +mov 0xffffffff, inl[:WS_ANIMATION_0]
 +mov 16, inl[:WS_FRAMES]
@@ -212,16 +212,16 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +gosub inl[:WS_MOVE]
 +return
 # Second scene retail coords
-+S1_START_X:
++SCENE_1_START_X:
 +data 0x86
-+S1_START_Y:
++SCENE_1_START_Y:
 +data 0xfffffff6
-+S1_START_Z:
++SCENE_1_START_Z:
 +data 0xc0
-+S1_MARK_X:
++SCENE_1_MARK_X:
 +data 0x47
-+S1_MARK_Y:
++SCENE_1_MARK_Y:
 +data 0xfffffff6
-+S1_MARK_Z:
++SCENE_1_MARK_Z:
 +data 0xe1
 +#include ../../../../patches/libs/widescreen.txt

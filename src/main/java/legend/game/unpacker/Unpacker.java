@@ -1321,9 +1321,9 @@ public final class Unpacker {
     final int fileId = Integer.parseInt(node.fullPath, 15, slash, 10);
     final int index = Integer.parseInt(node.fullPath, slash + 1, node.fullPath.length(), 10);
 
-    final int[] monsters = battleAssetIdentifier(fileId - 778);
+    final int[] monsters = battleAssetIdentifierSfx(fileId - 778);
 
-    if(monsters!= null && index < monsters.length && monsters[index] != -1) {
+    if(monsters != null && index < monsters.length && monsters[index] != -1) {
       transformations.addNode("monsters/" + monsters[index] + "/sounds/", node.data);
     }
   }
@@ -1348,6 +1348,14 @@ public final class Unpacker {
     if(monsters != null && index < monsters.length && monsters[index] != -1) {
       transformations.addNode("monsters/" + monsters[index] + "/textures/combat", node.data);
     }
+  }
+
+  private static int[] battleAssetIdentifierSfx(final int encounterId) {
+    if(encounterId == 397) {
+      return new int[] {279, -1, 294};
+    }
+
+    return battleAssetIdentifier(encounterId);
   }
 
   private static int[] battleAssetIdentifier(final int encounterId) {

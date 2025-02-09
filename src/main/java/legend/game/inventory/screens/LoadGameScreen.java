@@ -11,6 +11,7 @@ import legend.game.types.MessageBoxResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -73,6 +74,11 @@ public class LoadGameScreen extends MenuScreen {
     if(result == MessageBoxResult.YES) {
       this.saveSelected.accept(save);
     }
+  }
+
+  @Override
+  public void setFocus(@Nullable final Control control) {
+    super.setFocus(this.saveList);
   }
 
   @Override

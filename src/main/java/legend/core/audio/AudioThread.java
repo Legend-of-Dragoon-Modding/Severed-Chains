@@ -59,7 +59,7 @@ public final class AudioThread implements Runnable {
   private ALCapabilities alCapabilities;
   private ALCCapabilities alcCapabilities;
 
-  private final IntBuffer tmp = MemoryUtil.memAllocInt(1);
+  private IntBuffer tmp;
 
   public static List<String> getDevices() {
     if(ALC.getCapabilities().ALC_ENUMERATE_ALL_EXT) {
@@ -109,6 +109,7 @@ public final class AudioThread implements Runnable {
 
   private void initInternal() {
     this.openDevice();
+    this.tmp = MemoryUtil.memAllocInt(1);
 
     if(this.audioDevice != 0) {
       final int[] attributes = {0};
@@ -133,6 +134,11 @@ public final class AudioThread implements Runnable {
 
   public void destroy() {
     synchronized(this) {
+      if(!this.running && this.audioDevice != 0) {
+        this.destroyInternal();
+        return;
+      }
+
       this.running = false;
     }
 

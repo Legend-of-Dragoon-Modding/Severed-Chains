@@ -161,7 +161,6 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -1925,10 +1924,13 @@ public class Battle extends EngineState {
 
   @Method(0x800c8774L)
   public void loadStageTmdAndAnim(final String modelName, final List<FileData> files) {
+    LOGGER.info("Battle stage %s loaded", modelName);
+
     this.setStageHasNoModel();
 
     if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
+      stage.name = modelName;
       this.loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
@@ -1964,20 +1966,13 @@ public class Battle extends EngineState {
       this.mcqOffsetX_800c6774 += this.mcqStepX_800c676c;
       this.mcqOffsetY_800c6778 += this.mcqStepY_800c6770;
       final int x0 = (this.mcqBaseOffsetX_800c66cc * MathHelper.radToPsxDeg(this.camera_800c67f0.calculateXAngleFromRefpointToViewpoint()) / 0x1000 + this.mcqOffsetX_800c6774) % mcq.screenWidth_14;
-      final int x1 = x0 - mcq.screenWidth_14;
-      final int x2 = x0 + mcq.screenWidth_14;
       int y = this.mcqOffsetY_800c6778 - MathHelper.radToPsxDeg(MathHelper.floorMod(this.camera_800c67f0.calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, 60000.0f);
-      RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
-        .monochrome(this.mcqColour_800fa6dc / 128.0f);
+      final float totalWidth = RENDERER.getProjectionWidth() * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+      final int segments = (int)Math.ceil(totalWidth / mcq.screenWidth_14);
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, 60000.0f);
-      RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
-        .monochrome(this.mcqColour_800fa6dc / 128.0f);
-
-      if(x2 <= centreScreenX_1f8003dc * 2) {
-        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, 60000.0f);
+      for(int i = -1; i < segments + 1; i++) {
+        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(-totalWidth / 2.0f + i * mcq.screenWidth_14 + x0, y, 60000.0f);
         RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
           .monochrome(this.mcqColour_800fa6dc / 128.0f);
       }
@@ -2007,28 +2002,43 @@ public class Battle extends EngineState {
 
   @Method(0x800c8b20L)
   public void loadStage(final int stage) {
+    LOGGER.info("Loading battle stage %d", stage);
+
     if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
       battlePreloadedEntities_1f8003f4.skyboxObj.delete();
       battlePreloadedEntities_1f8003f4.skyboxObj = null;
     }
 
-    loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(1).hasVirtualSize()) {
-        this.loadStageMcq(new McqHeader(files.get(1)));
+    // GH#1931
+    // Disable texture animations so we don't corrupt the texture of the loading stage due to the old stage model still being loaded...
+    if(stage_800bda0c != null) {
+      for(int i = 0; i < 10; i++) {
+        stage_800bda0c._618[i] = 0;
       }
+    }
 
-      if(files.get(2).size() != 0) {
-        this.loadStageTim(files.get(2));
-      }
+    // ... and defer loading to the next frame so that any texture animations currently in the pipeline finish
+    RENDERER.addTask(() -> {
+      loadDrgnDir(0, 2497 + stage, files -> {
+        if(files.get(1).hasVirtualSize()) {
+          this.loadStageMcq(new McqHeader(files.get(1)));
+        }
+
+        if(files.get(2).size() != 0) {
+          this.loadStageTim(files.get(2));
+        }
+      });
+
+      loadDrgnDir(0, (2497 + stage) + "/0", files -> this.loadStageTmdAndAnim("DRGN0/" + (2497 + stage) + "/0", files));
     });
-
-    loadDrgnDir(0, (2497 + stage) + "/0", files -> this.loadStageTmdAndAnim("DRGN0/" + (2497 + stage) + "/0", files));
 
     this.currentStage_800c66a4 = stage;
   }
 
   @Method(0x800c8c84L)
   public void loadStageTim(final FileData data) {
+    LOGGER.info("Battle stage texture loaded");
+
     final Tim tim = new Tim(data);
 
     GPU.uploadData15(tim.getImageRect(), tim.getImageData());
@@ -2058,6 +2068,8 @@ public class Battle extends EngineState {
 
   @Method(0x800c8d64L)
   public void loadStageMcq(final McqHeader mcq) {
+    LOGGER.info("Battle stage skybox loaded");
+
     final int x;
     if((battleFlags_800bc960 & 0x80) != 0) {
       x = 320;

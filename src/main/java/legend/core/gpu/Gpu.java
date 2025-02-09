@@ -148,7 +148,7 @@ public class Gpu {
         avg += this.fps[i];
       }
 
-      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
     }
   }
 
@@ -883,7 +883,7 @@ public class Gpu {
     final int b;
 
     switch(mode) {
-      case HALF_B_PLUS_HALF_F, ALPHA -> {
+      case HALF_B_PLUS_HALF_F -> {
         r = (br + fr) / 2;
         g = (bg + fg) / 2;
         b = (bb + fb) / 2;

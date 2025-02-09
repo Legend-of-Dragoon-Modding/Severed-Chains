@@ -40,7 +40,6 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.ShopStruct40;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.equipment.DestroyerMaceEquipment;
@@ -62,7 +61,7 @@ import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
-@Mod(id = LodMod.MOD_ID)
+@Mod(id = LodMod.MOD_ID, version = "^3.0.0")
 @EventListener
 public class LodMod {
   public static final String MOD_ID = "lod";

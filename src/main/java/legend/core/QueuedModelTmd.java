@@ -95,6 +95,15 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
   }
 
   @Override
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    if(this.hasTranslucency() && !this.obj.hasTexture()) {
+      return translucency != null && this.tmdTranslucency == translucency.ordinal();
+    }
+
+    return super.shouldRender(translucency, layer);
+  }
+
+  @Override
   void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer) {
     super.storeTransforms(modelIndex, transforms2Buffer);
 
@@ -106,14 +115,14 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
   }
 
   @Override
-  void render(@Nullable final Translucency translucency) {
+  void render(@Nullable final Translucency translucency, final int layer) {
     if(this.obj.hasTranslucency() && !this.obj.hasTexture()) {
       // Translucency override
       this.updateColours(translucency);
-      this.obj.render(this.startVertex, this.vertexCount);
+      this.obj.render(layer, this.startVertex, this.vertexCount);
       return;
     }
 
-    super.render(translucency);
+    super.render(translucency, layer);
   }
 }

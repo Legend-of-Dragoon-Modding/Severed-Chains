@@ -3661,10 +3661,7 @@ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_329] ; operand, left, right, addr
 jmp_cmp &, 0x2, stor[7], inl[:LABEL_329] ; operand, left, right, addr
 jmp_cmp &, 0x10, var[45][105], inl[:LABEL_329] ; operand, left, right, addr
 call Battle::scriptGetBentStat, stor[0], DLEVEL, stor[8] ; bentIndex, statIndex, value
-call Battle::scriptArcherSp, stor[0], stor[8], stor[8] ; bentIndex, dlv, sp
-jmp inl[:LABEL_327] ; addr
-LABEL_326:
-mov 0x0, stor[8] ; source, dest
+call Battle::scriptGetBentStat, stor[0], ARCHER_SP, stor[8] ; bentIndex, statIndex, value
 LABEL_327:
 call Battle::scriptGetBentStat, stor[0], SP_MULTIPLIER, stor[9] ; bentIndex, statIndex, value
 add 0x64, stor[9] ; amount, operand

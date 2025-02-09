@@ -16,7 +16,7 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
     super("", ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO, AudioDeviceConfig::serialize, bytes -> deserialize(bytes, ""));
 
     this.setEditControl((current, gameState) -> {
-      final Dropdown dropdown = new Dropdown();
+      final Dropdown<String> dropdown = new Dropdown<>(s -> s.replace("OpenAL Soft on ", ""));
       dropdown.onSelection(index -> gameState.setConfig(this, dropdown.getSelectedOption()));
       dropdown.addOption("<default>");
 

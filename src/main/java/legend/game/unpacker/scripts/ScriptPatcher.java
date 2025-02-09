@@ -40,8 +40,10 @@ public class ScriptPatcher {
   private final Path patchesDir;
   private final Path filesDir;
   private final Path cacheDir;
+  private final Path backupsDir;
 
-  public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir) {
+  public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir, final Path backupsDir) {
+    this.backupsDir = backupsDir;
     this.disassembler = new Disassembler(SCRIPTS.meta());
     this.patches = this.loadPatchList(filesDir, patchDir.resolve("scripts.csv"));
     this.patchesDir = patchDir;
@@ -84,6 +86,7 @@ public class ScriptPatcher {
   private Map<String, Integer> getCrc32s(final Path baseBath, final ScriptPatch patch) throws IOException {
     final Map<String, Integer> crc32s = new HashMap<>();
     this.getCrc32s(baseBath, patch.patchFile, crc32s);
+    this.getCrc32s(baseBath, this.resolvePatchConfigName(patch.patchFile), crc32s);
     return crc32s;
   }
 
@@ -100,6 +103,7 @@ public class ScriptPatcher {
     // Insert nulls for missing files
     if(!Files.exists(fullPath)) {
       crc32s.put(path, null);
+      return;
     }
 
     // CRC32 for this file
@@ -154,13 +158,14 @@ public class ScriptPatcher {
 
     // Cache changes
     if(changed) {
+      FileUtils.deleteDirectory(this.cacheDir.toFile());
       FileUtils.copyDirectory(this.patchesDir.toFile(), this.cacheDir.toFile());
     }
   }
 
   public void patchFile(final ScriptPatch patch) throws IOException, PatchFailedException {
     // Back up the original file (if we're doing a replacement and the original doesn't exist, that's fine)
-    if(!Files.exists(this.cacheDir.resolve("backups").resolve(patch.sourceFile)) && (patch.type != PatchType.REPLACEMENT || Files.exists(this.filesDir.resolve(patch.sourceFile)))) {
+    if(!Files.exists(this.backupsDir.resolve(patch.sourceFile)) && (patch.type != PatchType.REPLACEMENT || Files.exists(this.filesDir.resolve(patch.sourceFile)))) {
       this.backupFile(patch.sourceFile);
     }
 
@@ -174,7 +179,7 @@ public class ScriptPatcher {
   }
 
   public void patchFile(final String source, final String patch) throws IOException, PatchFailedException {
-    this.patchFile(this.filesDir.resolve(source), this.cacheDir.resolve("backups").resolve(source), this.patchesDir.resolve(patch));
+    this.patchFile(this.filesDir.resolve(source), this.backupsDir.resolve(source), this.patchesDir.resolve(patch));
   }
 
   public void patchFile(final Path sourceFile, final Path backupFile, final Path patchFile) throws IOException, PatchFailedException {
@@ -205,7 +210,7 @@ public class ScriptPatcher {
 
   private void backupFile(final String scriptPath) throws IOException {
     final Path sourcePath = this.filesDir.resolve(scriptPath);
-    final Path destPath = this.cacheDir.resolve("backups").resolve(scriptPath);
+    final Path destPath = this.backupsDir.resolve(scriptPath);
     if(!Files.exists(destPath.getParent())) {
       Files.createDirectories(destPath.getParent());
     }
@@ -214,11 +219,11 @@ public class ScriptPatcher {
 
   private void restoreFile(final ScriptPatch cachedPatch) throws IOException {
     final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
-    final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
+    final Path backupPath = this.backupsDir.resolve(cachedPatch.sourceFile);
     Files.move(backupPath, sourcePath, StandardCopyOption.REPLACE_EXISTING);
 
     Path currentPath = backupPath.getParent();
-    while(!currentPath.equals(this.cacheDir.resolve("backups"))) {
+    while(!currentPath.equals(this.backupsDir)) {
       if(Objects.requireNonNull(currentPath.toFile().listFiles()).length == 0) {
         Files.delete(currentPath);
       }
@@ -240,10 +245,12 @@ public class ScriptPatcher {
     return SCRIPTS.compile(path, patched);
   }
 
+  private String resolvePatchConfigName(final String diffName) {
+    return diffName.substring(0, diffName.lastIndexOf('.')) + ".config.csv";
+  }
+
   private Path resolvePatchConfigPath(final Path diffPath) {
-    final String patchLocationStr = diffPath.getFileName().toString();
-    final String patchName = patchLocationStr.substring(0, patchLocationStr.lastIndexOf('.')) + ".config.csv";
-    return diffPath.resolveSibling(patchName);
+    return diffPath.resolveSibling(this.resolvePatchConfigName(diffPath.getFileName().toString()));
   }
 
   private void getPatchConfigs(final Path configPath, final List<Integer> branchList, final Map<Integer, Integer> tableLengthList) {
@@ -253,7 +260,7 @@ public class ScriptPatcher {
       try {
         patchConfig = loadCsvFile(configPath);
       } catch(final CsvException | IOException err) {
-        LOGGER.error("Patch config error for config: " + configPath);
+        LOGGER.error("Patch config error for config: %s", configPath);
       }
     }
 

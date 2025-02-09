@@ -8,7 +8,9 @@ import legend.game.modding.coremod.CoreMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glScissor;
@@ -22,14 +24,15 @@ public class RenderState {
   private float w;
   private float h;
 
-  private final ScissorStack scissorStack;
   private final Rect4i tempScissorRect = new Rect4i();
   private final Rect4i activeScissorRect = new Rect4i();
   private boolean scissor;
 
-  public RenderState(final RenderEngine engine, final ScissorStack scissorStack) {
+  private boolean depthTest;
+  private int depthComparator;
+
+  public RenderState(final RenderEngine engine) {
     this.engine = engine;
-    this.scissorStack = scissorStack;
   }
 
   public void initBatch(final RenderBatch batch) {
@@ -54,6 +57,25 @@ public class RenderState {
       } else {
         glDisable(GL_CULL_FACE);
       }
+    }
+  }
+
+  public void enableDepthTest(final int comparator) {
+    if(!this.depthTest) {
+      glEnable(GL_DEPTH_TEST);
+      this.depthTest = true;
+    }
+
+    if(this.depthComparator != comparator) {
+      glDepthFunc(comparator);
+      this.depthComparator = comparator;
+    }
+  }
+
+  public void disableDepthTest() {
+    if(this.depthTest) {
+      glDisable(GL_DEPTH_TEST);
+      this.depthTest = false;
     }
   }
 
