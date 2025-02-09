@@ -1057,7 +1057,7 @@ public final class Scus94491BpeSegment_8002 {
   public static boolean giveItem(final Item item) {
     final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(item, Collections.unmodifiableList(gameState_800babc8.items_2e9), CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())));
 
-    if(event.isCanceled()) {
+    if(event.isCanceled() || event.givenItems.isEmpty()) {
       return false;
     }
 
@@ -1083,7 +1083,7 @@ public final class Scus94491BpeSegment_8002 {
   public static boolean giveEquipment(final Equipment equipment) {
     final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment, Collections.unmodifiableList(gameState_800babc8.equipment_1e8), 255));
 
-    if(event.isCanceled()) {
+    if(event.isCanceled() || event.givenEquipment.isEmpty()) {
       return false;
     }
 
