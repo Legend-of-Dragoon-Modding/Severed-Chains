@@ -497,7 +497,7 @@ public final class SItem {
     //LAB_800fc6ac
     final int level = gameState_800babc8.charData_32c[charIndex].level_12;
 
-    if(level >= 60) {
+    if(level >= CoreMod.MAX_CHARACTER_LEVEL) {
       return 0; // Max level
     }
 
