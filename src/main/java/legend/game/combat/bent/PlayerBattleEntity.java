@@ -6,6 +6,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.ArcherSpEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -366,6 +368,20 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
+  protected int getArcherSp() {
+    int sp;
+    switch(this.dlevel_06) {
+      case 1 -> sp = 35;
+      case 2 -> sp = 50;
+      case 3 -> sp = 70;
+      case 4 -> sp = 100;
+      case 5 -> sp = 150;
+      default -> sp = 0;
+    }
+    sp = EVENTS.postEvent(new ArcherSpEvent(this, sp)).sp;
+    return sp;
+  }
+
   @Override
   public int getStat(final BattleEntityStat statIndex) {
     int disableStatusFlag = 0x0;
@@ -430,6 +446,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case DRAGOON_TRANSFORM_DEFF -> this.getDragoonTransformDeff();
       case DRAGOON_ATTACK_DEFF -> this.getDragoonAttackDeff();
       case DRAGOON_ATTACK_SOUNDS -> this.getDragoonAttackSounds();
+      case ARCHER_SP -> this.getArcherSp();
 
       default -> super.getStat(statIndex);
     };

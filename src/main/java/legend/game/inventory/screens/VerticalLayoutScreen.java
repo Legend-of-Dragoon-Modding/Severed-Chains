@@ -22,7 +22,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private int scroll;
 
-  private final List<Control> rows = new ArrayList<>();
+  private final List<Label> rows = new ArrayList<>();
   private final List<Control> configControls = new ArrayList<>();
 
   private final Glyph upArrow;
@@ -67,7 +67,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     return label;
   }
 
-  public Control getHighlightedRow() {
+  public Label getHighlightedRow() {
     return this.rows.get(this.highlightedRow);
   }
 
@@ -183,9 +183,9 @@ public class VerticalLayoutScreen extends MenuScreen {
         } else {
           this.deferAction(control::focus);
         }
-      }
 
-      return InputPropagation.HANDLED;
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;

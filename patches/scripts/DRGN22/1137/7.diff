@@ -6,7 +6,7 @@ New: No more hiding, added animation
 --- original
 +++ modified
 ## FIRST SCENE ##
-@@ -153,6 +153,15 @@
+@@ -153,6 +153,17 @@
  call 99, 0x0
  call 97, 0x0
  LABEL_23:
@@ -27,7 +27,7 @@ New: No more hiding, added animation
  call 257, stor[24], stor[25]
  jmp_cmp <, 0xfffffff1, stor[24], inl[:LABEL_23]
 ## SECOND SCENE ##
-@@ -165,20 +174,21 @@
+@@ -165,20 +176,21 @@
  call 99, 0x0
  call 97, 0xb
  call 99, 0x1

@@ -8,6 +8,8 @@ import legend.game.types.CContainerSubfile2;
 import legend.game.types.Keyframe0c;
 
 public class BattleStage {
+  public String name;
+
   public ModelPart10[] dobj2s_00;
 //  public final GsCOORDINATE2[] coord2s_a0 = new GsCOORDINATE2[10]; // Use coord2 on dobj2
 //  public final Transforms[] params_3c0 = new Transforms[10]; // Use dobj2.coord2.transforms

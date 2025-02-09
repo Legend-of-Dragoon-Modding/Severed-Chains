@@ -2,6 +2,7 @@ package legend.game;
 
 import legend.core.GameEngine;
 import legend.core.Version;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.lastSavableEngineState;
@@ -39,7 +41,7 @@ public final class Main {
     } catch(final Throwable e) {
       boolean generatedCrashSave = false;
 
-      if(gameState_800babc8 != null) {
+      if(gameState_800babc8 != null && CONFIG.getConfig(CoreMod.CREATE_CRASH_SAVE_CONFIG.get())) {
         final List<SavedGame> saves = gameState_800babc8.campaign.loadAllSaves();
         final String name = SAVES.generateSaveName(saves, "Crash Recovery");
 
@@ -61,7 +63,7 @@ public final class Main {
 
       LOGGER.error("----------------------------------------------------------------------------");
       LOGGER.error("Crash detected");
-      LOGGER.error("Severed Chains %s commit %s", Version.FULL_VERSION, Version.HASH);
+      LOGGER.error("Severed Chains %s commit %s built %s", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
       if(generatedCrashSave) {
         LOGGER.error("We have attempted to generate a recovery save. You can load it next time you run Severed Chains.");

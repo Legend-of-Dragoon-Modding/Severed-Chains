@@ -17,7 +17,7 @@ public class Textbox4c {
    *   <li>2 - animate in/out</li>
    * </ul>
    */
-  public TextboxType type_04 = TextboxType.NO_BACKGROUND;
+  public BackgroundType backgroundType_04 = BackgroundType.NO_BACKGROUND;
   public boolean renderBorder_06;
   /**
    * <ul>

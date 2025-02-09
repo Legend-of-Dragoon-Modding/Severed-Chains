@@ -24,6 +24,15 @@ lod_core.ui.mods.hotkeys=%s Help
 
 lod_core.ui.options.help_hotkey=%s Help
 
+lod_core.ui.links.hotkeys=%s Open Link %s View Link %s Back
+lod_core.ui.links.discord=Legend of Dragoon & Severed Chains Discord Community
+lod_core.ui.links.youtube=Legend of Dragoon & Severed Chains YouTube
+lod_core.ui.links.fandom=Legend of Dragoon Global Fandom Website
+lod_core.ui.links.wiki=Legend of Dragoon Wiki
+lod_core.ui.links.project=Severed Chains Project Page
+lod_core.ui.links.github=Severed Chains GitHub Page
+lod_core.ui.links.issue=Report an Issue
+
 # Global config
 lod_core.config.controller.label=Controller
 lod_core.config.controller_keybinds.label=Controller Keybinds
@@ -74,6 +83,8 @@ lod_core.config.music_effects_over_time_granularity.label = Effects Granularity
 lod_core.config.music_effects_over_time_granularity.Retail = Retail
 lod_core.config.music_effects_over_time_granularity.Finer = Finer
 lod_core.config.music_effects_over_time_granularity.Finest = Finest
+lod_core.config.create_crash_save.label=Auto-Save on Crash
+lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press ENTER to skip
