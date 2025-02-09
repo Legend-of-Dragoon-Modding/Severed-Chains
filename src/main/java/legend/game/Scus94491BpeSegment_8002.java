@@ -1207,7 +1207,7 @@ public final class Scus94491BpeSegment_8002 {
     final List<MenuEntryStruct04<Item>> items = new ArrayList<>();
 
     for(final Item item : gameState_800babc8.items_2e9) {
-      items.add(MenuEntryStruct04.make(item));
+      items.add(MenuEntryStruct04.make(item, item.getIcon()));
     }
 
     sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
