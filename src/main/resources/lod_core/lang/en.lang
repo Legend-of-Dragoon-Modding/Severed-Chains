@@ -21,6 +21,7 @@ lod_core.ui.mods.required=Required mod
 lod_core.ui.mods.error=Crashed: %s
 lod_core.ui.mods.wrong_version=Wrong version: %s
 lod_core.ui.mods.hotkeys=%s Help
+lod_core.ui.mods.error=Error
 
 lod_core.ui.options.help_hotkey=%s Help
 
