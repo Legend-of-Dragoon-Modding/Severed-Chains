@@ -92,7 +92,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
   private Label createErrorLabel(final String log, final Object obj, final boolean setSize) {
     LOGGER.warn(log, obj);
-    final Label l = new Label("Error");
+    final Label l = new Label(I18n.translate("lod_core.ui.mods.error"));
     l.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
 
     if(setSize) {
@@ -108,11 +108,10 @@ public class OptionsScreen extends VerticalLayoutScreen {
     final Label row = this.getHighlightedRow();
     if(row != null) {
       row.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
-      final Control c = row.findControlAt(0);
-      if(c != null) {
-        row.removeControl(c);
-        row.addControl(this.createErrorLabel(log, obj, true));
+      for (int i = row.getControls().size() - 1; i > -1; i--) {
+        row.removeControl(row.getControl(i));
       }
+      row.addControl(this.createErrorLabel(log, obj, true));
     }
   }
 
@@ -148,11 +147,16 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
   @Override
   protected void render() {
+    super.render();
+    renderText(I18n.translate("lod_core.ui.options.help_hotkey", "\u0120"), 334, 226, this.fontOptions);
+  }
+
+  @Override
+  protected void renderControls(final int parentX, final int parentY) {
     try {
-      super.render();
-      renderText(I18n.translate("lod_core.ui.options.help_hotkey", "\u0120"), 334, 226, this.fontOptions);
+      super.renderControls(parentX, parentY);
     } catch(final Throwable ex) {
-      this.replaceControlWithErrorLabel("Error on render", ex);
+      this.replaceControlWithErrorLabel("Error on renderControls", ex);
     }
   }
 
