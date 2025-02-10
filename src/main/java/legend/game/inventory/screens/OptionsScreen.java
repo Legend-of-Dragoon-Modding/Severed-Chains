@@ -65,7 +65,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
           try {
             editControl = configEntry.makeEditControl(config.getConfig(configEntry), config);
-          } catch(final Throwable ex){
+          } catch(final Throwable ex) {
             editControl = this.createErrorLabel("Error creating control", ex, false);
             error = true;
           }
