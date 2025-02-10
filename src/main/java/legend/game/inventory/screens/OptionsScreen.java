@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.core.RenderEngine;
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
