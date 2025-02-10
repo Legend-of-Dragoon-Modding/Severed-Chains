@@ -8,6 +8,10 @@ public class ShieldItem extends BuffItem {
     super(useItemEntrypoint, 42, 200, TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, physicalImmunity, magicalImmunity, 0, 0, 0, 0, 0, 0);
   }
 
+  public ShieldItem(final int icon, final int price, final int useItemEntrypoint, final boolean physicalImmunity, final boolean magicalImmunity) {
+    super(useItemEntrypoint, icon, price, TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, physicalImmunity, magicalImmunity, 0, 0, 0, 0, 0, 0);
+  }
+
   @Override
   protected void loadDeff(final ScriptState<? extends BattleEntity27c> user, final int entrypoint, final int param) {
     // no-op

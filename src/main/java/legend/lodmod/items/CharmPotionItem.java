@@ -13,6 +13,8 @@ public class CharmPotionItem extends BattleItem {
     super(45, 2);
   }
 
+  public CharmPotionItem(final int icon, final int price) { super(icon, price); }
+
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return true;

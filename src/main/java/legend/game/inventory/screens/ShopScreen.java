@@ -13,6 +13,9 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
+import legend.game.modding.events.inventory.ShopTypeEvent;
+import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
+import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
@@ -136,14 +139,14 @@ public class ShopScreen extends MenuScreen {
         startFadeEffect(2, 10);
 
         final ShopStruct40 shop = REGISTRIES.shop.getEntry(LodMod.id(LodMod.SHOP_IDS[shopId_8007a3b4])).get();
-        this.shopType = shop.shopType_00 & 1;
+        this.shopType = EVENTS.postEvent(new ShopTypeEvent(shop.shopType_00 & 1, shopId_8007a3b4)).shopType;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
           for(int i = 0; i < shop.getItemCount(); i++) {
             final Equipment equipment = (Equipment)shop.getItem(i);
-            shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2));
+            shopEntries.add(new ShopEntry<>(equipment, equipment.price * 2, EVENTS.postEvent(new EquipMenuEntryIconEvent(equipment)).icon));
           }
 
           final ShopEquipmentEvent event = EVENTS.postEvent(new ShopEquipmentEvent(shopId_8007a3b4, shopEntries));
@@ -153,7 +156,7 @@ public class ShopScreen extends MenuScreen {
 
           for(int i = 0; i < shop.getItemCount(); i++) {
             final Item item = (Item)shop.getItem(i);
-            shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
+            shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon));
           }
 
           final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4, shopEntries));
@@ -1311,10 +1314,12 @@ public class ShopScreen extends MenuScreen {
   public static class ShopEntry<T extends InventoryEntry> {
     public final T item;
     public final int price;
+    public final int icon;
 
-    public ShopEntry(final T item, final int price) {
+    public ShopEntry(final T item, final int price, final int icon) {
       this.item = item;
       this.price = price;
+      this.icon = icon;
     }
   }
 
