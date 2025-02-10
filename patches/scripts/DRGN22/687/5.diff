@@ -1,0 +1,26 @@
+Widescreen patch
+Twin Castle, guest bedroom (Nighttime)
+Albert
+Old: Disappears on-screen.
+New: Move completely off-screen first.
+--- original
++++ modified
+@@ -267,14 +267,14 @@
+ mov 0x5, stor[24]
+ mov 0xffffffff, stor[25]
+ gosub inl[:LABEL_5]
+-mov 0xbd, stor[24]
+-mov 0xffffff86, stor[25]
++mov 0xf0, stor[24]
++mov 0xffffff70, stor[25]
+ mov 0xb, stor[26]
+ mov 0x0, stor[27]
+ gosub inl[:LABEL_14]
+-mov 0xbd, stor[24]
++mov 0xf0, stor[24]
+ mov 0x0, stor[25]
+-mov 0xffffff86, stor[26]
++mov 0xffffff70, stor[26]
+ mov 0x4, stor[27]
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_9]
