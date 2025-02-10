@@ -108,7 +108,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
     final Label row = this.getHighlightedRow();
     if(row != null) {
       row.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
-      for (int i = row.getControls().size() - 1; i > -1; i--) {
+      for(int i = row.getControls().size() - 1; i > -1; i--) {
         row.removeControl(row.getControl(i));
       }
       row.addControl(this.createErrorLabel(log, obj, true));
