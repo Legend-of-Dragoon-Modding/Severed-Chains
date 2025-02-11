@@ -90,9 +90,9 @@ public class OptionsScreen extends VerticalLayoutScreen {
       });
   }
 
-  private Label createErrorLabel(final String log, final Object obj, final boolean setSize) {
-    LOGGER.warn(log, obj);
-    final Label l = new Label(I18n.translate("lod_core.ui.mods.error"));
+  private Label createErrorLabel(final String log, final Throwable ex, final boolean setSize) {
+    LOGGER.warn(log, ex);
+    final Label l = new Label(I18n.translate("lod_core.ui.options.error"));
     l.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
 
     if(setSize) {
@@ -104,14 +104,14 @@ public class OptionsScreen extends VerticalLayoutScreen {
     return l;
   }
 
-  private void replaceControlWithErrorLabel(final String log, final Object obj) {
+  private void replaceControlWithErrorLabel(final String log, final Throwable ex) {
     final Label row = this.getHighlightedRow();
     if(row != null) {
       row.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
       for(int i = row.getControls().size() - 1; i > -1; i--) {
         row.removeControl(row.getControl(i));
       }
-      row.addControl(this.createErrorLabel(log, obj, true));
+      row.addControl(this.createErrorLabel(log, ex, true));
     }
   }
 
