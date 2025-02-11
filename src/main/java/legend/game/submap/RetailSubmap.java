@@ -33,7 +33,7 @@ import legend.game.types.MoonMusic08;
 import legend.game.types.NewRootStruct;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -215,7 +215,7 @@ public class RetailSubmap extends Submap {
 
       loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> allLoaded(assetsCount, 3, () -> assets.addAll(files), prepareSobjsAndComplete));
       loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> allLoaded(assetsCount, 3, () -> scripts.addAll(files), prepareSobjsAndComplete));
-      Unpacker.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
+      Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
 
       // Load 3D overlay
       if(cutFileIndex != 0) {

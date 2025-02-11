@@ -39,7 +39,7 @@ import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import legend.lodmod.equipment.DestroyerMaceEquipment;
 import legend.lodmod.equipment.DetonateArrowEquipment;
 import legend.lodmod.equipment.UltimateWargodEquipment;
@@ -163,7 +163,7 @@ public class LodMod {
           case 0x2c -> new DestroyerMaceEquipment(itemPrices_80114310[equipmentId]);
           case 0x9c -> new WargodCallingEquipment(itemPrices_80114310[equipmentId]);
           case 0x9d -> new UltimateWargodEquipment(itemPrices_80114310[equipmentId]);
-          default -> Equipment.fromFile(itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
+          default -> Equipment.fromFile(itemPrices_80114310[equipmentId], Loader.loadFile("equipment/" + equipmentId + ".deqp"));
         });
       }
     }
@@ -180,7 +180,7 @@ public class LodMod {
       if(spellStats_800fa0b8[spellId] == null) {
         final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
         final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/" + spellId + ".dspl"));
+        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }

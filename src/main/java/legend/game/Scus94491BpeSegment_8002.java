@@ -66,7 +66,7 @@ import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -271,7 +271,7 @@ public final class Scus94491BpeSegment_8002 {
     final AtomicInteger count = new AtomicInteger(0);
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      if(Unpacker.exists(path + '/' + monsterSlot)) {
+      if(Loader.exists(path + '/' + monsterSlot)) {
         count.incrementAndGet();
       }
     }
@@ -281,7 +281,7 @@ public final class Scus94491BpeSegment_8002 {
       file.id_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists(path + '/' + monsterSlot)) {
+      if(Loader.exists(path + '/' + monsterSlot)) {
         final int finalMonsterSlot = monsterSlot;
         loadDir(path + '/' + monsterSlot, files -> {
           final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
@@ -4108,7 +4108,7 @@ public final class Scus94491BpeSegment_8002 {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
 
       //LAB_8002c448
-      AUDIO_THREAD.loadXa(Unpacker.loadFile("XA/LODXA0%d.XA/%d.opus".formatted(xaArchiveIndex, xaFileIndex)));
+      AUDIO_THREAD.loadXa(Loader.loadFile("XA/LODXA0%d.XA/%d.opus".formatted(xaArchiveIndex, xaFileIndex)));
       _800bf0cf = 4;
     }
 

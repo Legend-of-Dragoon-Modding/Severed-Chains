@@ -128,6 +128,7 @@ import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -1315,7 +1316,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c7524L)
   public void initBattle() {
-    new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
+    new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
 
     this.FUN_800c8624();
 
@@ -1562,7 +1563,7 @@ public class Battle extends EngineState {
 
       final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
 
-      if(Unpacker.exists("monsters/%d/textures/combat".formatted(enemyIndex))) {
+      if(Loader.exists("monsters/%d/textures/combat".formatted(enemyIndex))) {
         loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> this.loadCombatantTim(a0, files));
       }
     }
@@ -1646,7 +1647,7 @@ public class Battle extends EngineState {
       return;
     }
 
-    if(Unpacker.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
+    if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
       this.currentTurnBent_800c66c8.storage_44[7] &= 0xffff_efff;
@@ -5943,15 +5944,15 @@ public class Battle extends EngineState {
 
     for(int i = 0; i < dragoonDeffsWithExtraTims_800fb040.length; i++) {
       if(dragoonDeffsWithExtraTims_800fb040[i] == index) {
-        if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
+        if(Loader.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
           loadDrgnDir(0, 4115 + i, this::uploadTims);
         }
       }
     }
 
     this.loadDeff(
-      Unpacker.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
-      Unpacker.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
+      Loader.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
+      Loader.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
   }
 
@@ -5969,8 +5970,8 @@ public class Battle extends EngineState {
     this.allocateDeffEffectManager(parent, flags, bentIndex, _08, entrypoint, effect);
 
     this.loadDeff(
-      Unpacker.resolve("SECT/DRGN0.BIN/" + (4307 + s0)),
-      Unpacker.resolve("SECT/DRGN0.BIN/" + (4308 + s0))
+      Loader.resolve("SECT/DRGN0.BIN/" + (4307 + s0)),
+      Loader.resolve("SECT/DRGN0.BIN/" + (4308 + s0))
     );
   }
 
@@ -5986,8 +5987,8 @@ public class Battle extends EngineState {
 
     if(monsterIndex < 256) {
       this.loadDeff(
-        Unpacker.resolve("SECT/DRGN0.BIN/" + (4433 + monsterIndex * 2)),
-        Unpacker.resolve("SECT/DRGN0.BIN/" + (4434 + monsterIndex * 2))
+        Loader.resolve("SECT/DRGN0.BIN/" + (4433 + monsterIndex * 2)),
+        Loader.resolve("SECT/DRGN0.BIN/" + (4434 + monsterIndex * 2))
       );
     } else {
       final int a0_0 = monsterIndex >>> 4;
@@ -5999,8 +6000,8 @@ public class Battle extends EngineState {
       fileIndex = (fileIndex - 1) * 2;
 
       this.loadDeff(
-        Unpacker.resolve("SECT/DRGN0.BIN/" + (4945 + fileIndex)),
-        Unpacker.resolve("SECT/DRGN0.BIN/" + (4946 + fileIndex))
+        Loader.resolve("SECT/DRGN0.BIN/" + (4945 + fileIndex)),
+        Loader.resolve("SECT/DRGN0.BIN/" + (4946 + fileIndex))
       );
     }
   }
@@ -6016,15 +6017,15 @@ public class Battle extends EngineState {
 
     for(int i = 0; i < cutsceneDeffsWithExtraTims_800fb05c.length; i++) {
       if(cutsceneDeffsWithExtraTims_800fb05c[i] == cutsceneIndex) {
-        if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
+        if(Loader.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
           loadDrgnDir(0, 5505 + i, this::uploadTims);
         }
       }
     }
 
     this.loadDeff(
-      Unpacker.resolve("SECT/DRGN0.BIN/" + (5511 + cutsceneIndex * 2)),
-      Unpacker.resolve("SECT/DRGN0.BIN/" + (5512 + cutsceneIndex * 2))
+      Loader.resolve("SECT/DRGN0.BIN/" + (5511 + cutsceneIndex * 2)),
+      Loader.resolve("SECT/DRGN0.BIN/" + (5512 + cutsceneIndex * 2))
     );
   }
 
@@ -6032,12 +6033,12 @@ public class Battle extends EngineState {
     this.loadedDeff_800c6938.script_14 = null;
     this.deffLoadingStage_800fafe8 = 1;
 
-    Unpacker.loadDirectory(tims, this::uploadTims);
-    Unpacker.loadDirectory(deff.resolve("0"), files -> {
+    Loader.loadDirectory(tims, this::uploadTims);
+    Loader.loadDirectory(deff.resolve("0"), files -> {
       this.loadDeffPackage(files, this.loadedDeff_800c6938.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      Unpacker.loadFile(deff.resolve("1"), file -> {
+      Loader.loadFile(deff.resolve("1"), file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
         this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
       });
@@ -8629,7 +8630,7 @@ public class Battle extends EngineState {
   private void loadStageDataAndControllerScripts() {
     this.currentStageData_800c6718 = getEncounterStageData(encounterId_800bb0f8);
 
-    this.playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
+    this.playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Loader.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", this::combatControllerScriptLoaded);
   }

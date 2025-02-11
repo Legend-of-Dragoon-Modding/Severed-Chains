@@ -7,7 +7,7 @@ import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 
 import java.util.Arrays;
 
@@ -94,7 +94,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6524L)
   public static void loadSystemFont() {
-    final Tim font = new Tim(Unpacker.loadFile("font.tim"));
+    final Tim font = new Tim(Loader.loadFile("font.tim"));
 
     final Rect4i imageRect = new Rect4i(832, 424, 64, 56);
     GPU.uploadData15(imageRect, font.getImageData());
@@ -109,11 +109,11 @@ public final class Scus94491BpeSegment_800e {
   public static void loadShadow() {
     submapId_800bd808 = 0;
 
-    new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
+    new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
 
     //LAB_800e6af0
-    final CContainer container = new CContainer("Shadow", Unpacker.loadFile("shadow.ctmd"));
-    final TmdAnimationFile animation = new TmdAnimationFile(Unpacker.loadFile("shadow.anim"));
+    final CContainer container = new CContainer("Shadow", Loader.loadFile("shadow.ctmd"));
+    final TmdAnimationFile animation = new TmdAnimationFile(Loader.loadFile("shadow.anim"));
 
     shadowModel_800bda10.modelParts_00 = new ModelPart10[animation.modelPartCount_0c];
     Arrays.setAll(shadowModel_800bda10.modelParts_00, i -> new ModelPart10());

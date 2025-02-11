@@ -4,7 +4,7 @@ import legend.core.audio.SampleRate;
 import legend.core.audio.sequencer.assets.sequence.Command;
 import legend.core.audio.sequencer.assets.sequence.bgm.SequenceBuilder;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public final class BackgroundMusic {
       final int bankCount = files.get(1).readUShort(0x0);
 
       for(int i = 1; i < bankCount; i++) {
-        final FileData extraBank = Unpacker.loadFile("SECT/DRGN0.BIN/" + (fileId + i));
+        final FileData extraBank = Loader.loadFile("SECT/DRGN0.BIN/" + (fileId + i));
         extraBank.copyFrom(0, soundBankData, offset, extraBank.size());
         offset += extraBank.size();
       }
