@@ -1,7 +1,5 @@
 package legend.game.unpacker;
 
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.IoHelper;
@@ -13,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -42,21 +39,20 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public final class Unpacker {
-  private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
-  private static final Pattern DRGN_BIN = Pattern.compile("^DRGN(?:0|1|2[1234])?.BIN$");
-
   private Unpacker() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
 
   private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
   private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
   private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+  private static final Pattern DRGN_BIN = Pattern.compile("^DRGN(?:0|1|2[1234])?.BIN$");
   private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/.*");
   private static final Pattern DRGN0_SUBFILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/\\d+");
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
@@ -64,20 +60,9 @@ public final class Unpacker {
   /** Update this any time we make a breaking change */
   private static final int VERSION = 4;
 
-  static {
-    System.setProperty("log4j.skipJansi", "false");
-    System.setProperty("log4j2.configurationFile", "log4j2.xml");
-  }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
-
   public static Path ROOT = Path.of(".", "files");
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
-
-  private static final int availableProcessors = Runtime.getRuntime().availableProcessors();
-  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(availableProcessors);
-  private static final AtomicInteger loadingCount = new AtomicInteger();
 
   /**
    * Note: the transformation pipeline is recursive and after a transformation, the file will be placed back into the transformation queue
@@ -143,244 +128,12 @@ public final class Unpacker {
   private static Consumer<String> statusListener = status -> { };
   private static boolean shouldStop;
 
-  public static void main(final String[] args) throws UnpackerException {
-    unpack();
-    EXECUTOR.shutdown();
-  }
-
   public static void stop() {
     shouldStop = true;
   }
 
   public static void setStatusListener(final Consumer<String> listener) {
     statusListener = listener;
-  }
-
-  public static void shutdownLoader() {
-    EXECUTOR.shutdown();
-  }
-
-  public static FileData loadFile(final Path path) {
-    LOGGER.info("Loading file %s", path);
-
-    try {
-      return new FileData(Files.readAllBytes(path));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load file " + path, e);
-    }
-  }
-
-  public static Path resolve(final String name) {
-    return ROOT.resolve(fixPath(name));
-  }
-
-  public static FileData loadFile(final String name) {
-    return loadFile(ROOT.resolve(fixPath(name)));
-  }
-
-  public static void loadFile(final Path path, final Consumer<FileData> onCompletion) {
-    final int total = loadingCount.incrementAndGet();
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Queueing file %s (total queued: %d) from %s.%s(%s:%d)", path, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadFile(path));
-      final int remaining = loadingCount.decrementAndGet();
-      LOGGER.info("File %s loaded (remaining queued: %d)", path, remaining);
-    });
-  }
-
-  public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
-    final int total = loadingCount.incrementAndGet();
-    LOGGER.info("Queueing file %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadFile(name));
-      final int remaining = loadingCount.decrementAndGet();
-      LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
-    });
-  }
-
-  public static void loadFiles(final Consumer<List<FileData>> onCompletion, final String... files) {
-    final int total = loadingCount.updateAndGet(i -> i + files.length);
-    LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
-
-    EXECUTOR.execute(() -> {
-      final List<FileData> fileData = new ArrayList<>();
-      for(final String file : files) {
-        final FileData data = Unpacker.loadFile(file);
-        fileData.add(data);
-      }
-
-      onCompletion.accept(fileData);
-      final int remaining = loadingCount.updateAndGet(i -> i - files.length);
-      LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
-    });
-  }
-
-  public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
-    final int total = loadingCount.incrementAndGet();
-    LOGGER.info("Queueing directory %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadDirectory(name));
-      final int remaining = loadingCount.decrementAndGet();
-      LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
-    });
-  }
-
-  public static void loadDirectory(final Path dir, final Consumer<List<FileData>> onCompletion) {
-    final int total = loadingCount.incrementAndGet();
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Queueing directory %s (total queued: %d) from %s.%s(%s:%d)", dir, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadDirectory(dir));
-      final int remaining = loadingCount.decrementAndGet();
-      LOGGER.info("Directory %s loaded (remaining queued: %d)", dir, remaining);
-    });
-  }
-
-  public static List<FileData> loadDirectory(final String name) {
-    return loadDirectory(ROOT.resolve(fixPath(name)));
-  }
-
-  public static List<FileData> loadDirectory(final Path dir) {
-    LOGGER.info("Loading directory %s", dir);
-
-    final Path mrg = dir.resolve("mrg");
-
-    if(Files.exists(mrg)) {
-      try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
-        final Int2IntMap fileMap = new Int2IntArrayMap();
-        final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
-
-        reader.lines().forEach(line -> {
-          final String[] parts = MRG_ENTRY.split(line);
-
-          if(parts.length != 3) {
-            throw new RuntimeException("Invalid MRG entry! " + line);
-          }
-
-          final int virtual = Integer.parseInt(parts[0]);
-
-          // Indicates no file
-          if(parts[1].isBlank()) {
-            fileMap.put(virtual, -1);
-            virtualSizeMap.put(virtual, 0);
-            return;
-          }
-
-          final int real = Integer.parseInt(parts[1]);
-          fileMap.put(virtual, real);
-          virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
-        });
-
-        final List<FileData> files = new ArrayList<>();
-
-        // Add real files
-        for(final var entry : fileMap.int2IntEntrySet()) {
-          final int virtual = entry.getIntKey();
-          final int real = entry.getIntValue();
-
-          // No file
-          if(real == -1) {
-            files.add(null);
-            continue;
-          }
-
-          try {
-            final Path file = dir.resolve(String.valueOf(real));
-            if(Files.isRegularFile(file)) {
-              if(virtual == real) {
-                files.add(new FileData(Files.readAllBytes(file)));
-              } else {
-                files.add(null);
-              }
-            } else if(Files.isDirectory(file)) {
-              files.add(new FileData(new byte[0]));
-            }
-          } catch(final IOException e) {
-            throw new RuntimeException("Failed to load directory " + dir, e);
-          }
-        }
-
-        // Add virtual files
-        for(final var entry : fileMap.int2IntEntrySet()) {
-          final int virtual = entry.getIntKey();
-          int real = entry.getIntValue();
-
-          if(virtual == real || real == -1) {
-            continue;
-          }
-
-          // Resolve to the realest file
-          while(fileMap.get(real) != real) {
-            real = fileMap.get(real);
-          }
-
-          final Path file = dir.resolve(String.valueOf(real));
-          if(Files.isRegularFile(file)) {
-            files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
-          }
-        }
-
-        return files;
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + dir, e);
-      }
-    } else {
-      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(dir)) {
-        final List<FileData> files = new ArrayList<>();
-
-        StreamSupport.stream(ds.spliterator(), false)
-          .filter(Files::isRegularFile)
-          .sorted((path1, path2) -> {
-            final String filename1 = path1.getFileName().toString();
-            final String filename2 = path2.getFileName().toString();
-
-            try {
-              return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
-            } catch(final NumberFormatException ignored) { }
-
-            return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
-          })
-          .forEach(child -> {
-            try {
-              files.add(new FileData(Files.readAllBytes(child)));
-            } catch(final IOException e) {
-              throw new RuntimeException("Failed to load directory " + dir, e);
-            }
-          });
-
-        return files;
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + dir, e);
-      }
-    }
-  }
-
-  public static int getLoadingFileCount() {
-    return loadingCount.get();
-  }
-
-  public static boolean exists(final String name) {
-    return Files.exists(ROOT.resolve(fixPath(name)));
-  }
-
-  public static boolean isDirectory(final String name) {
-    return Files.isDirectory(ROOT.resolve(fixPath(name)));
-  }
-
-  private static String fixPath(String name) {
-    if(name.contains(";")) {
-      name = name.substring(0, name.lastIndexOf(';'));
-    }
-
-    if(name.startsWith("\\")) {
-      name = name.substring(1);
-    }
-
-    return name.replace('\\', '/');
   }
 
   public static void unpack() throws UnpackerException {
@@ -397,6 +150,8 @@ public final class Unpacker {
         LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       }
 
+      statusListener.accept("Loading disk images...");
+
       final long start = System.nanoTime();
       final IsoReader[] readers = getIsoReaders();
       final DirectoryEntry[] roots = new DirectoryEntry[4];
@@ -405,8 +160,6 @@ public final class Unpacker {
       for(int i = 0; i < roots.length - 1; i++) {
         loadRoot(readers[i], root);
       }
-
-      statusListener.accept("Loading disk images...");
 
       final long fileTreeTime = System.nanoTime();
       LOGGER.info("Populating initial file tree...");

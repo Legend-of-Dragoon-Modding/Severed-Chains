@@ -9,7 +9,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
@@ -59,7 +59,7 @@ public abstract class BattleItem extends Item {
   }
 
   protected Path getUseItemScriptPath() {
-    return Unpacker.resolve("throw_item");
+    return Loader.resolve("throw_item");
   }
 
   protected int getUseItemScriptEntrypoint() {
@@ -98,7 +98,7 @@ public abstract class BattleItem extends Item {
   }
 
   protected void injectScript(final ScriptState<? extends BattleEntity27c> user, final Path path, final int entrypoint, final Runnable onLoad) {
-    Unpacker.loadFile(path, data -> {
+    Loader.loadFile(path, data -> {
       final ScriptFile file = new ScriptFile("throw_item", data.getBytes());
       user.pushFrame(new ScriptStackFrame(file, file.getEntry(entrypoint)));
       user.context.commandOffset_0c = user.frame().offset;
