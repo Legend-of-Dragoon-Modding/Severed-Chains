@@ -143,6 +143,8 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2102,7 +2104,13 @@ public class Battle extends EngineState {
 
         if(charSlot < 0) {
           combatant.flags_19e = 0x1;
-          combatant.vramSlot_1a0 = this.findFreeMonsterTextureSlot(a0);
+          try {
+            if(a0 < 0 || (Loader.exists("monsters/%d/textures/combat".formatted(a0)) && Files.size(Loader.resolve("monsters/%d/textures/combat".formatted(a0))) > 0)) {
+              combatant.vramSlot_1a0 = this.findFreeMonsterTextureSlot(a0);
+            }
+          } catch(final IOException e) {
+            LOGGER.error("Failed to find texture file for monster %d", a0);
+          }
         } else {
           //LAB_800c8f90
           combatant.flags_19e = 0x5;
