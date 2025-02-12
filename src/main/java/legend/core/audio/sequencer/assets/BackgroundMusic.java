@@ -17,7 +17,7 @@ public final class BackgroundMusic {
   private double tempoTicks;
   private double samplesPerTick;
 
-  private final float[][] breathControls;
+  private final Breath[] breathControls;
   private final byte[] velocityRamp = new byte[0x80];
 
   private final Channel[] channels;
@@ -83,30 +83,22 @@ public final class BackgroundMusic {
     sshd.copyFrom(subfileOffsets[1] + 2, this.velocityRamp, 0, 0x80);
 
     if(subfileOffsets[2] == -1) {
-      this.breathControls = new float[0][];
+      this.breathControls = new Breath[0];
     } else {
-      this.breathControls = new float[sshd.readUShort(subfileOffsets[2]) + 1][];
+      this.breathControls = new Breath[sshd.readUShort(subfileOffsets[2]) + 1];
     }
 
     for(int i = 0; i < this.breathControls.length; i++) {
       final int relativeOffset = sshd.readShort(2 + i * 2 + subfileOffsets[2]);
 
       if(relativeOffset != -1) {
-        this.breathControls[i] = new float[63];
         final int startingPosition = subfileOffsets[2] + relativeOffset;
-        for(int b = 0; b < 60; b++) {
-          this.breathControls[i][b + 1] = (float)Math.sin(Math.TAU * (b / 59.0f));
-//          this.breathControls[i][b + 1] = (short)(sshd.readUByte(startingPosition + b) - 0x80);
-        }
-
-        this.breathControls[i][0] = this.breathControls[i][59];
-        this.breathControls[i][61] = this.breathControls[i][2];
-        this.breathControls[i][62] = this.breathControls[i][3];
+        this.breathControls[i] = Breath.get(sshd.slice(startingPosition, 0x40), fileId, i);
       }
     }
   }
 
-  private BackgroundMusic(final List<FileData> files, final float[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont, final double tempoTicks) {
+  private BackgroundMusic(final List<FileData> files, final Breath[] breathControls, final byte[] velocityRamp, final SoundFont soundFont, final double tempoTicks) {
     this.songId = files.get(0).readUShort(0);
 
     this.breathControls = breathControls;
@@ -153,7 +145,7 @@ public final class BackgroundMusic {
     return this.samplesPerTick;
   }
 
-  public float[][] getBreathControls() {
+  public Breath[] getBreathControls() {
     return this.breathControls;
   }
 
