@@ -307,7 +307,7 @@ public class DebuggerController {
   @FXML
   private void startEncounter(final ActionEvent event) {
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
-      smap.submap.prepareEncounter(this.encounterId.getValue());
+      smap.submap.prepareEncounter(this.encounterId.getValue(), false);
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       encounterId_800bb0f8 = this.encounterId.getValue();
