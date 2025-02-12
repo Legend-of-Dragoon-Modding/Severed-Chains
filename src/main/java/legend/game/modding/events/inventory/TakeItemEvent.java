@@ -1,14 +1,18 @@
 package legend.game.modding.events.inventory;
 
 import legend.game.inventory.Item;
-import org.legendofdragoon.modloader.events.Event;
 
-public class TakeItemEvent extends Event {
+/**
+ * Fired any time the player's item is taken
+ */
+public class TakeItemEvent extends InventoryEvent {
+  /** The item that was taken */
   public final Item item;
-  public boolean takeItem;
+  /** The slot from which the item was taken. Modify this to take an item from a different slot. */
+  public int itemSlot;
 
-  public TakeItemEvent(final Item item, final boolean takeItem) {
+  public TakeItemEvent(final Item item, final int itemSlot) {
     this.item = item;
-    this.takeItem = takeItem;
+    this.itemSlot = itemSlot;
   }
 }

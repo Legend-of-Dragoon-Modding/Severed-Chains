@@ -9,6 +9,15 @@
  return
  JMP_70d4_7:
  data 0x13
+@@ -4396,7 +4396,7 @@
+ jmp_cmp !=, 0x0, stor[8], inl[:JMP_70d4_1]
+ or 0x20, stor[stor[stor[0], 28], 7]
+ mov 0x9, var[45][243]
+-call 498, 0xc3, stor[8]
++call 498, id[lod:burn_out], reg[0]
+ return
+ JMP_70d4_11:
+ gosub inl[:LABEL_166]
 @@ -4446,56 +4446,22 @@
  wait stor[23]
  return

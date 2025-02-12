@@ -1,93 +1,29 @@
-Adds movement animation to Lavitz's mother after the house tour ends.
-This positions her for Lavitz's hug in case the player starts the hug cutscene as soon as possible.
-Retail bug fix
+Bale, Lavitz's Home
+Lavitz's Mother
+Retail bug: Lavitz's hug script is hardcoded to expect his mother to be in her default position. Immediately after the
+house tour, she stands in a different position. This patch adds movement animation to reposition her after the cutscene.
 --- original
 +++ modified
-@@ -106,7 +106,83 @@
- yield
- call 1, stor[24]
- jmp_cmp !=, 0x0, stor[24], inl[:LABEL_16]
-# Rotate to target
-+call 102, stor[0], inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z]
-+mov 0x41, inl[:TARGET_X]
-+mov 0xffffffcd, inl[:TARGET_Y]
-+mov 0x5c, inl[:TARGET_Z]
-+gosub inl[:ROTATE_0]
-+COLLISION_CHECK:
-+call 102, stor[0], inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z]
-+call 107, inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z], 1
+@@ -169,7 +169,20 @@
+ mov 0x8, stor[25]
+ gosub inl[:LABEL_2]
+ gosub inl[:LABEL_16]
+# Rotate towards and move to default position
++mov 0x41, inl[:WS_TARGET_X]
++mov 0xffffffcd, inl[:WS_TARGET_Y]
++mov 0x5c, inl[:WS_TARGET_Z]
++mov 10, inl[:WS_FRAMES]
++mov 1, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_NPC_MOVE]
+# Rotate to face player
++call 102, var[64][0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 10, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
 +call 97, 0
-+yield
-+call 308, stor[0], inl[:TARGET_Z]
-+jmp_cmp ==, 0, inl[:TARGET_Z], inl[:COLLISION_CHECK]
-# Calculate movement ticks
-+mov 0x41, inl[:TARGET_X]
-+mov 0xffffffcd, inl[:TARGET_Y]
-+mov 0x5c, inl[:TARGET_Z]
-+sub inl[:TARGET_X], inl[:MOM_X]
-+sub inl[:TARGET_Y], inl[:MOM_Y]
-+sub inl[:TARGET_Z], inl[:MOM_Z]
-+mul inl[:MOM_X], inl[:MOM_X]
-+mul inl[:MOM_Y], inl[:MOM_Y]
-+mul inl[:MOM_Z], inl[:MOM_Z]
-+add inl[:MOM_X], inl[:MOM_Y]
-+add inl[:MOM_Y], inl[:MOM_Z]
-+sqrt inl[:MOM_Z], inl[:MOM_Z]
-+abs inl[:MOM_Z]
-+jmp_cmp <=, 2, inl[:MOM_Z], inl[:CONTINUE]
-+mov 2, inl[:MOM_Z]
-+CONTINUE:
-+div 2, inl[:MOM_Z]
-# Move to target
-+call 107, inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z], inl[:MOM_Z]
-+call 97, 1
-+gosub inl[:WALK]
-# Rotate to player
-+call 102, stor[0], inl[:MOM_X], inl[:MOM_Y], inl[:MOM_Z]
-+call 102, var[64][0], inl[:TARGET_X], inl[:TARGET_Y], inl[:TARGET_Z]
-+gosub inl[:ROTATE_0]
  return
-+ROTATE_0:
-+sub inl[:MOM_X], inl[:TARGET_X]
-+sub inl[:MOM_Z], inl[:TARGET_Z]
-+atan2_12 inl[:TARGET_X], inl[:TARGET_Z], inl[:TARGET_Y]
-+call 104, stor[0], inl[:TARGET_Z], inl[:TARGET_X], inl[:TARGET_Z]
-+and 0xfff, inl[:TARGET_X]
-+sub inl[:TARGET_X], inl[:TARGET_Y]
-+add 0x800, inl[:TARGET_Y]
-+360_NEG_BOUND:
-+jmp_cmp >=, inl[:TARGET_Y], 0xfffff800, inl[:360_POS_BOUND]
-+add 0x1000, inl[:TARGET_Y]
-+360_POS_BOUND:
-+jmp_cmp <, inl[:TARGET_Y], 0x800, inl[:ROTATE_1]
-+sub 0x1000, inl[:TARGET_Y]
-+ROTATE_1:
-+call 120, stor[0], 0, inl[:TARGET_Y], 0, 10
-+call 97, 1
-+wait 10
-+call 97, 0
-+return
-+WALK:
-+jmp_cmp ==, 0x0, inl[:MOM_Z], inl[:STOP]
-+yield
-+call 308, stor[0], inl[:TARGET_Z]
-+jmp_cmp ==, 0, inl[:TARGET_Z], inl[:COLLISION_CHECK]
-+while inl[:MOM_Z], inl[:WALK]
-+STOP:
-+call 97, 0
-+return
-+MOM_X:
-+data 0
-+MOM_Y:
-+data 0
-+MOM_Z:
-+data 0
-+TARGET_X:
-+data 0
-+TARGET_Y:
-+data 0
-+TARGET_Z:
-+data 0
- ENTRYPOINT_0:
- ENTRYPOINT_2:
- ENTRYPOINT_3:
++#include ../../../../patches/libs/widescreen.txt
+ LABEL_23:
+ call 106, 0x0
+ call 101, stor[0], 0xfffffffe, 0xffffffcd, 0x12a

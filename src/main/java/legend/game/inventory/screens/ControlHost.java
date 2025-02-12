@@ -84,6 +84,14 @@ public abstract class ControlHost implements Iterable<Control> {
     return this.controls.iterator();
   }
 
+  protected List<Control> getControls() {
+    return this.controls;
+  }
+
+  protected Control getControl(final int index) {
+    return index > -1 && index < this.controls.size() ? this.controls.get(index) : null;
+  }
+
   protected Control findControlAt(final int x, final int y) {
     return this.findControlAt(x, y, false);
   }

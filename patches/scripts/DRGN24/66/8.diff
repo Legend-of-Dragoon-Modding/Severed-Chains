@@ -1,0 +1,40 @@
+Widescreen patch
+Twin Castle, Main Hall (Daytime)
+Entrance Knight (mirrored)
+Old: Knight guarding the entrance is moved based on the camera offset to give the illusion of two guards.
+New: Mirror the retail knight with one that moves to the opposite side.
+--- original
++++ modified
+@@ -2,9 +2,31 @@
+ ENTRYPOINT_0:
+ mov var[65], stor[23]
+ incr stor[stor[stor[0], 23], 8]
++call 96, 3
+ call 97, 0x0
+ call 106, 0x0
+ call 111, 0x1
+ call 311, stor[0]
++call 101, stor[0], 0x110, 0xffffffa6, 0x1
++call 103, stor[0], 0, 0x400, 0
+# Hide for story scenes where no knights are posted
++jmp_cmp ==, 1, stor[stor[stor[0], 23], 31], inl[:HIDE]
++jmp_cmp ==, 2, stor[stor[stor[0], 23], 31], inl[:HIDE]
++jmp_cmp ==, 3, stor[stor[stor[0], 23], 31], inl[:HIDE]
++jmp inl[:DEFAULT]
++HIDE:
+ call 106, 0x1
+ rewind
++DEFAULT:
++call 101, stor[0], 0x110, 0xffffffa6, 0x1
++call 103, stor[0], 0, 0x400, 0
++RIGHT_SIDE:
++yield
++call 257, stor[24], stor[25]
++jmp_cmp >, 0xfffffff3, stor[24], inl[:LEFT_SIDE]
++call 101, stor[0], 0x110, 0xffffffa6, 0x1
++call 103, stor[0], 0, 0x400, 0
++jmp inl[:RIGHT_SIDE]
++LEFT_SIDE:
++call 101, stor[0], 0xfffffefa, 0xffffffa6, 0x1
++call 103, stor[0], 0, 0xfffffc00, 0
++jmp inl[:RIGHT_SIDE]

@@ -21,7 +21,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -260,7 +260,7 @@ public final class Fmv {
 
     submapId_800bd808 = -1;
 
-    rumbleData = RumbleData.load(Unpacker.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
+    rumbleData = RumbleData.load(Loader.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
     rumbleFrames = 0;
 
     Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
@@ -330,7 +330,7 @@ public final class Fmv {
     final ByteBuffer demuxed = ByteBuffer.wrap(demuxedRaw);
     final FrameHeader frameHeader = new FrameHeader(demuxedRaw);
 
-    final FileData fileData = Unpacker.loadFile(file);
+    final FileData fileData = Loader.loadFile(file);
     sector = 0;
     frame = 0;
 

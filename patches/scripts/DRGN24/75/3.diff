@@ -1,0 +1,27 @@
+Widescreen patch
+Twin Castle, Docks
+Kayla
+Old: Teleports to default position in front of boarding ramp.
+New: Run all the way to default position.
+--- original
++++ modified
+@@ -506,6 +506,18 @@
+ mov 0xfffffffe, stor[28]
+ gosub inl[:LABEL_29]
+ call 2, 0x1f, 0x1
+# Series of movement commands so Kayla runs to her normal position instead of teleporting there
++mov 0xe6, stor[24]
++mov 0xffffff60, stor[25]
++mov 0xfffff31c, stor[26]
++mov 4, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
++mov 0x165, stor[24]
++mov 0xffffff3c, stor[25]
++mov 0xfffff68b, stor[26]
++mov 6, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
+ call 101, stor[0], 0x165, 0xffffff3c, 0xfffff68b
+ call 103, stor[0], 0x0, 0xf3c, 0x0
+ call 99, 0x0

@@ -24,7 +24,7 @@ public final class Finderator {
     final MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
 
     final Path drgnBin = Path.of("./files/SECT/DRGN2" + num + ".BIN");
-    final List<FileData> dirs = Unpacker.loadDirectory("SECT/DRGN2" + num + ".BIN");
+    final List<FileData> dirs = Loader.loadDirectory("SECT/DRGN2" + num + ".BIN");
 
     final Map<String, List<String>> modelHashes = new HashMap<>();
     final Map<String, List<String>> animHashes = new HashMap<>();
@@ -33,7 +33,7 @@ public final class Finderator {
       final Path dirPath = drgnBin.resolve(Integer.toString(dirIndex * 3 + 2));
 
       if(Files.isDirectory(dirPath)) {
-        final List<FileData> modelsAndAnims = Unpacker.loadDirectory("SECT/DRGN2" + num + ".BIN/" + (dirIndex * 3 + 2));
+        final List<FileData> modelsAndAnims = Loader.loadDirectory("SECT/DRGN2" + num + ".BIN/" + (dirIndex * 3 + 2));
 
         for(int sobjIndex = 0; sobjIndex < modelsAndAnims.size() / 33; sobjIndex++) {
           final String modelHash = hashToString(sha1.digest(modelsAndAnims.get(sobjIndex * 33).getBytes()));
