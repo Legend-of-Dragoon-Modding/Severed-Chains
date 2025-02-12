@@ -23,6 +23,7 @@ lod_core.ui.mods.wrong_version=Wrong version: %s
 lod_core.ui.mods.hotkeys=%s Help
 
 lod_core.ui.options.help_hotkey=%s Help
+lod_core.ui.options.error=Error
 
 lod_core.ui.links.hotkeys=%s Open Link %s View Link %s Back
 lod_core.ui.links.discord=Legend of Dragoon & Severed Chains Discord Community
