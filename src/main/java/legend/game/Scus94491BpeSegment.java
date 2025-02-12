@@ -29,6 +29,7 @@ import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
+import legend.game.modding.events.scripting.DrgnFileEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -861,7 +862,9 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file, onCompletion);
+    final DrgnFileEvent event = EVENTS.postEvent(new DrgnFileEvent("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
+
+    Loader.loadFile(event.location, onCompletion);
   }
 
   public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
