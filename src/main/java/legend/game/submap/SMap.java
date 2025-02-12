@@ -766,7 +766,7 @@ public class SMap extends EngineState {
       case CHECK_TRANSITIONS_1_2:
         if((this.submapFlags_800f7e54 & 0x1) == 0) {
           if(this.canEncounter()) {
-            this.submap.prepareEncounter();
+            this.submap.prepareEncounter(false);
             this.mapTransition(-1, 0);
           }
         }
@@ -3978,7 +3978,7 @@ public class SMap extends EngineState {
     final int scene = script.params_20[1].get();
 
     if(script.params_20[0].get() == -1) {
-      this.submap.prepareEncounter(scene);
+      this.submap.prepareEncounter(scene, true);
     }
 
     this.mapTransition(script.params_20[0].get(), scene);
