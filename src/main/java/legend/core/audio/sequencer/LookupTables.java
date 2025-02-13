@@ -9,7 +9,7 @@ import legend.core.audio.SampleRate;
 
 import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
 
-final class LookupTables {
+final public class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
   private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION);
   public static final int BREATH_BASE_SHIFT = 22;
@@ -98,6 +98,13 @@ final class LookupTables {
       + this.interpolationWeights[0][this.interpolationStep - interpolationIndex] * array[position + 3];
   }
 
+  public float interpolate(final float[] array, final int position, final int interpolationIndex) {
+    return this.interpolationWeights[0][interpolationIndex] * array[position]
+      + this.interpolationWeights[1][interpolationIndex] * array[position + 1]
+      + this.interpolationWeights[1][this.interpolationStep - interpolationIndex] * array[position + 2]
+      + this.interpolationWeights[0][this.interpolationStep - interpolationIndex] * array[position + 3];
+  }
+
   FloatFloatImmutablePair getPan(final int channelPan, final int instrumentPan, final int layerPan) {
     final int panIndex = mergePan(channelPan, mergePan(instrumentPan, layerPan));
 
@@ -110,7 +117,7 @@ final class LookupTables {
 
   // This will get scaled down later down the line, so we can to keep it in 128ths
   int modulate(final int finePitch, final float interpolatedBreath, final int modulation) {
-    return finePitch + (int)((interpolatedBreath * modulation) / 0x80);
+    return finePitch + Math.round(interpolatedBreath * modulation);
   }
 
   int adjustBreath(final int breath) {
@@ -146,6 +153,9 @@ final class LookupTables {
 
   public PitchResolution getPitchResolution() {
     return this.pitchResolution;
+  }
+  public int getInterpolationStep() {
+    return this.interpolationStep;
   }
 
   int getEffectsOverTimeScale() {

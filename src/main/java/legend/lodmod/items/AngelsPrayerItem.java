@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class AngelsPrayerItem extends BattleItem {
   public AngelsPrayerItem() {
-    super(36, 15);
+    super(ItemIcon.ANGELS_PRAYER, 15);
   }
 
   @Override

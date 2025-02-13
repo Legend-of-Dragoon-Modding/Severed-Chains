@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class AttackItem extends BattleItem {
@@ -9,7 +10,7 @@ public class AttackItem extends BattleItem {
   private final Element element;
   private final int damageMultiplier;
 
-  public AttackItem(final int icon, final int price, final boolean targetAll, final Element element, final int damageMultiplier) {
+  public AttackItem(final ItemIcon icon, final int price, final boolean targetAll, final Element element, final int damageMultiplier) {
     super(icon, price);
     this.targetAll = targetAll;
     this.element = element;

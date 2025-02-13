@@ -10,7 +10,7 @@ public class AdditionHitProperties10 {
   public int spValue_05;
   public int audioFile_06;
   public int isFinalHit_07;
-  public int _08; // related to camera or voice? index into array?
+  public int panDistance_08; // related to camera or voice? index into array?
   public int _09; // related to camera or voice? index into array?
   public int _0a; // related to camera? index into array?
   public int hitDistanceFromTarget_0b;
@@ -20,7 +20,7 @@ public class AdditionHitProperties10 {
   public int _0e;
   public int overlayStartingFrameOffset_0f;
 
-  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
+  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int panDistance, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
     this.flags_00 = flags;
     this.totalFrames_01 = totalFrames;
     this.overlayHitFrameOffset_02 = overlayHitFrameOffset;
@@ -29,7 +29,7 @@ public class AdditionHitProperties10 {
     this.spValue_05 = spValue;
     this.audioFile_06 = audioFile;
     this.isFinalHit_07 = isFinalHit;
-    this._08 = _08;
+    this.panDistance_08 = panDistance;
     this._09 = _09;
     this._0a = _0a;
     this.hitDistanceFromTarget_0b = hitDistanceFromTarget;
@@ -49,7 +49,7 @@ public class AdditionHitProperties10 {
       case 5 -> this.spValue_05;
       case 6 -> this.audioFile_06;
       case 7 -> this.isFinalHit_07;
-      case 8 -> this._08;
+      case 8 -> this.panDistance_08;
       case 9 -> this._09;
       case 10 -> this._0a;
       case 11 -> this.hitDistanceFromTarget_0b;

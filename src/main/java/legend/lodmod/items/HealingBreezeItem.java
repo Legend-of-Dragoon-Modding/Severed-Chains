@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class HealingBreezeItem extends RecoverHpItem {
   public HealingBreezeItem() {
-    super(33, 25, true, 50);
+    super(ItemIcon.BLUE_POTION, 25, true, 50);
   }
 
   @Override

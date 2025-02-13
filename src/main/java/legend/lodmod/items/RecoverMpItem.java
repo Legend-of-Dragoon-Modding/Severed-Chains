@@ -3,6 +3,7 @@ package legend.lodmod.items;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
@@ -12,7 +13,7 @@ public class RecoverMpItem extends BattleItem {
   private final boolean targetAll;
   private final int percentage;
 
-  public RecoverMpItem(final int icon, final int price, final boolean targetAll, final int percentage) {
+  public RecoverMpItem(final ItemIcon icon, final int price, final boolean targetAll, final int percentage) {
     super(icon, price);
     this.targetAll = targetAll;
     this.percentage = percentage;

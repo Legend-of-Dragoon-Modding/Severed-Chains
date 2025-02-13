@@ -2,12 +2,13 @@ package legend.lodmod.items;
 
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
 
 public class SignetStoneItem extends BattleItem {
   public SignetStoneItem() {
-    super(46, 200);
+    super(ItemIcon.SACK, 200);
   }
 
   @Override
