@@ -34,7 +34,7 @@ public enum ItemIcon {
   AMULET(24),
   STONE(25),
   JEWELLERY(26),
-  ANKH(27),
+  PIN(27),
   BELL(28),
   BAG(29),
   CLOAK(30),

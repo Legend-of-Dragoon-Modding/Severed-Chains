@@ -28,6 +28,7 @@ import static legend.game.SItem.useItemGlyphs_801141fc;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
+import static legend.game.Scus94491BpeSegment_8002.menuItemIconComparator;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -204,7 +205,7 @@ public class UseItemScreen extends MenuScreen {
       }
     }
 
-    this.menuItems.sort();
+    this.menuItems.sort(menuItemIconComparator());
     return this.menuItems.size();
   }
 
