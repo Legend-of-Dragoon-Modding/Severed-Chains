@@ -835,7 +835,7 @@ public class WMap extends EngineState {
         if(loadWait-- > 0) break;
 
         //Prevents queen fury shadow renderer rendering before map model loads GH#2077
-        if((this.filesLoadedFlags_800c66b8.get() & 0x4) != 0x0){
+        if((this.filesLoadedFlags_800c66b8.get() & 0x4) != 0x0) {
           this.playerState_800c669c = PlayerState.RENDER_5;
         }
       }
