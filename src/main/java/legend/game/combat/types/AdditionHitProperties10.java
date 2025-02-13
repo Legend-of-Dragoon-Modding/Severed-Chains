@@ -18,10 +18,11 @@ public class AdditionHitProperties10 {
   public int hitDistanceFromTarget_0b;
   public int framesToHitPosition_0c;
   public int _0d; // always 32 (except for a few for Haschel), could be length of properties array
-  public int framesPostFailure_0e;
+  /** Used in player_combat_script as an index into an animation table, 18 -> 24, 19 -> 25, all other values are 0 */
+  public int _0e;
   public int overlayStartingFrameOffset_0f;
 
-  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int panDistance_08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int framesPostFailure, final int overlayStartingFrameOffset) {
+  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int panDistance, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
     this.flags_00 = flags;
     this.totalFrames_01 = totalFrames;
     this.overlayHitFrameOffset_02 = overlayHitFrameOffset;
@@ -30,13 +31,13 @@ public class AdditionHitProperties10 {
     this.spValue_05 = spValue;
     this.audioFile_06 = audioFile;
     this.isFinalHit_07 = isFinalHit;
-    this.panDistance_08 = panDistance_08;
+    this.panDistance_08 = panDistance;
     this._09 = _09;
     this._0a = _0a;
     this.hitDistanceFromTarget_0b = hitDistanceFromTarget;
     this.framesToHitPosition_0c = framesToHitPosition;
     this._0d = _0d;
-    this.framesPostFailure_0e = framesPostFailure;
+    this._0e = _0e;
     this.overlayStartingFrameOffset_0f = overlayStartingFrameOffset;
   }
 
@@ -57,14 +58,14 @@ public class AdditionHitProperties10 {
     final int hitDistance = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 11);
     final int frameToHit = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 12);
     final int unknown_0d = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 13);
-    final int framesPostFailure = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 14);
+    final int _0e = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 14);
     final int overlayFrameOffset = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 15);
 
-    return new AdditionHitProperties10(flags, totalFrames, overlayHitFrameOffset, totalSuccessFrames, damageMultiplier, spValue, audioFile, isFinalHit, panDistance, unknown_09, unknown_0a, hitDistance, frameToHit, unknown_0d, framesPostFailure, overlayFrameOffset);
+    return new AdditionHitProperties10(flags, totalFrames, overlayHitFrameOffset, totalSuccessFrames, damageMultiplier, spValue, audioFile, isFinalHit, panDistance, unknown_09, unknown_0a, hitDistance, frameToHit, unknown_0d, _0e, overlayFrameOffset);
   }
 
-  public int get(final int propertyIndex) {
-    return switch(propertyIndex) {
+  public int get(final int index) {
+    return switch(index) {
       case 0 -> this.flags_00;
       case 1 -> this.totalFrames_01;
       case 2 -> this.overlayHitFrameOffset_02;
@@ -79,9 +80,9 @@ public class AdditionHitProperties10 {
       case 11 -> this.hitDistanceFromTarget_0b;
       case 12 -> this.framesToHitPosition_0c;
       case 13 -> this._0d;
-      case 14 -> this.framesPostFailure_0e;
+      case 14 -> this._0e;
       case 15 -> this.overlayStartingFrameOffset_0f;
-      default -> throw new IllegalArgumentException("Invalid property index " + propertyIndex);
+      default -> throw new IllegalArgumentException("Invalid property index " + index);
     };
   }
 }
