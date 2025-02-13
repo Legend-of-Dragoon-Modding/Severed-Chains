@@ -4,11 +4,17 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.Transforms;
+import legend.core.opengl.MeshObj;
+import legend.core.opengl.Texture;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.Keyframe0c;
 
 public class BattleStage {
   public String name;
+
+  public MeshObj[] objs;
+  public Texture[] textures;
+  public int[] objTextures;
 
   public ModelPart10[] dobj2s_00;
 //  public final GsCOORDINATE2[] coord2s_a0 = new GsCOORDINATE2[10]; // Use coord2 on dobj2

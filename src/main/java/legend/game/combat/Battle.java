@@ -17,6 +17,9 @@ import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
+import legend.core.opengl.MeshObj;
+import legend.core.opengl.PolyBuilder;
+import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -114,7 +117,6 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
@@ -137,13 +139,24 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
 import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.lwjgl.assimp.AIColor4D;
+import org.lwjgl.assimp.AIFace;
+import org.lwjgl.assimp.AIMaterial;
+import org.lwjgl.assimp.AIMaterialProperty;
+import org.lwjgl.assimp.AIMesh;
+import org.lwjgl.assimp.AIScene;
+import org.lwjgl.assimp.AIString;
+import org.lwjgl.assimp.AIVector3D;
+import org.lwjgl.assimp.Assimp;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -202,10 +215,8 @@ import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -271,6 +282,7 @@ import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
@@ -1950,9 +1962,11 @@ public class Battle extends EngineState {
       final int segments = (int)Math.ceil(totalWidth / mcq.screenWidth_14);
 
       for(int i = -1; i < segments + 1; i++) {
+/*
         battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(-totalWidth / 2.0f + i * mcq.screenWidth_14 + x0, y, 60000.0f);
         RENDERER.queueOrthoModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms, QueuedModelStandard.class)
           .monochrome(this.mcqColour_800fa6dc / 128.0f);
+*/
       }
 
       //LAB_800c89d4
@@ -7338,7 +7352,115 @@ public class Battle extends EngineState {
     tmdGp0Tpage_1f8003ec = 0;
     zOffset_1f8003e8 = stage.z_5e8;
 
+    if(stage.objs == null) {
+      final String map = "guardian";
+      final Path path = Path.of("gfx/maps/" + map + '/' + map + ".obj").toAbsolutePath();
+      try(final AIScene scene = Assimp.aiImportFile(path.toString(), 0)) {
+        stage.objs = new MeshObj[scene.mNumMeshes()];
+        stage.textures = new Texture[scene.mNumMaterials()];
+        stage.objTextures = new int[scene.mNumMeshes()];
+
+        for(int materialIndex = 0; materialIndex < scene.mNumMaterials(); materialIndex++) {
+          final AIMaterial material = AIMaterial.create(scene.mMaterials().get(materialIndex));
+
+          for(int propertyIndex = 0; propertyIndex < material.mNumProperties(); propertyIndex++) {
+            final AIMaterialProperty property = AIMaterialProperty.create(material.mProperties().get(propertyIndex));
+            if("?mat.name".equals(property.mKey().dataString())) {
+              final AIString aiTexturePath = AIString.calloc();
+              Assimp.aiGetMaterialTexture(material, Assimp.aiTextureType_DIFFUSE, 0, aiTexturePath, (IntBuffer)null, null, null, null, null, null);
+
+              for(int i = 0; i < 22; i++) {
+                final int textureCount = Assimp.aiGetMaterialTextureCount(material, i);
+
+                if(textureCount != 0) {
+                  LOGGER.info("Material %d texture type %d count %d", materialIndex, i, textureCount);
+                }
+              }
+
+              String textureName = aiTexturePath.dataString();
+
+              if(textureName.isBlank()) {
+                final byte[] data = new byte[property.mDataLength() - 1];
+                property.mData().get(data);
+                textureName = new String(data, 4, data.length - 4) + ".png";
+              }
+
+              if(!textureName.isBlank()) {
+                final Path texturePath = Path.of("gfx/maps/" + map + '/' + textureName);
+
+                if(Files.exists(texturePath)) {
+                  stage.textures[materialIndex] = Texture.filteredPng(texturePath);
+                }
+              }
+            }
+          }
+        }
+
+        for(int meshIndex = 0; meshIndex < scene.mNumMeshes(); meshIndex++) {
+          final PolyBuilder builder = new PolyBuilder(map + ' ' + meshIndex, GL_TRIANGLES);
+          builder.bpp(Bpp.BITS_24);
+
+          try(final AIMesh mesh = AIMesh.create(scene.mMeshes().get(meshIndex))) {
+            final AIFace.Buffer faces = mesh.mFaces();
+            final AIVector3D.Buffer vertices = mesh.mVertices();
+            final AIVector3D.Buffer normals = mesh.mNormals();
+            final AIColor4D.Buffer colours = mesh.mColors(0);
+            final AIVector3D.Buffer uvs = mesh.mTextureCoords(0);
+            stage.objTextures[meshIndex] = mesh.mMaterialIndex();
+
+            while(faces.hasRemaining()) {
+              final AIFace face = faces.get();
+
+              for(int indexIndex = 0; indexIndex < face.mNumIndices(); indexIndex++) {
+                final int vertexIndex = face.mIndices().get(indexIndex);
+                final AIVector3D vertex = vertices.get(vertexIndex);
+                final AIVector3D normal = normals.get(vertexIndex);
+                builder.addVertex(vertex.x(), vertex.y(), vertex.z());
+                builder.normal(normal.x(), normal.y(), normal.z());
+
+                if(colours != null) {
+                  final AIColor4D colour = colours.get(vertexIndex);
+                  builder.rgb(colour.r() / 2, colour.g() / 2, colour.b() / 2);
+                } else {
+                  builder.monochrome(0.5f);
+                }
+
+                if(uvs != null) {
+                  final AIVector3D uv = uvs.get(vertexIndex);
+                  builder.uv(uv.x(), uv.y());
+                }
+              }
+            }
+          }
+
+          stage.objs[meshIndex] = builder.build();
+        }
+      }
+    }
+
     //LAB_800ec5a0
+    final Matrix4f transforms = new Matrix4f()
+      .translation(1750.0f, 80350.0f, 1750.0f)
+      .rotateX(MathHelper.PI)
+      .scale(500.0f)
+    ;
+
+    final MV lighting = new MV();
+    lighting.rotationX(MathHelper.PI);
+    lighting.transfer.set(1750.0f, 80350.0f, 1750.0f);
+
+    for(int i = 0; i < stage.objs.length; i++) {
+      RENDERER.queueModel(stage.objs[i], transforms, lighting, QueuedModelBattleTmd.class)
+//        .depthOffset(stage.z_5e8 * 4)
+        .lightDirection(lightDirectionMatrix_800c34e8)
+        .lightColour(lightColourMatrix_800c3508)
+        .backgroundColour(GTE.backgroundColour)
+        .battleColour(this._800c6930.colour_00)
+        .texture(stage.textures[stage.objTextures[i]])
+      ;
+    }
+
+/*
     int partBit = 0x1;
     for(int i = 0; i < stage.dobj2s_00.length; i++) {
       final ModelPart10 part = stage.dobj2s_00[i];
@@ -7356,19 +7478,23 @@ public class Battle extends EngineState {
         Renderer.renderDobj2(part, true, 0);
 
         if(part.obj != null) {
+          lw.scale(300.0f);
+
           RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
             .depthOffset(stage.z_5e8 * 4)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
             .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .battleColour(this._800c6930.colour_00);
+            .battleColour(this._800c6930.colour_00)
+          ;
         }
       }
 
       //LAB_800ec608
       partBit <<= 1;
     }
+*/
 
     //LAB_800ec618
   }
