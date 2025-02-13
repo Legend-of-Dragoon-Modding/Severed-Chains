@@ -8,6 +8,7 @@ import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopEquipmentEvent;
@@ -406,7 +407,7 @@ public class ShopScreen extends MenuScreen {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getPrice()));
           renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
-          renderItemIcon(58, 330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
+          renderItemIcon(ItemIcon.WARNING, 330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
         }
       }
 

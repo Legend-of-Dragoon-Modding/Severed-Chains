@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class SunRhapsodyItem extends RecoverMpItem {
   public SunRhapsodyItem() {
-    super(34, 25, false, 100);
+    super(ItemIcon.YELLOW_POTION, 25, false, 100);
   }
 
   @Override

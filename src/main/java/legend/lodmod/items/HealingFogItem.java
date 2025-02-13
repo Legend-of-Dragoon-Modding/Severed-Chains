@@ -1,13 +1,14 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodDeffs;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class HealingFogItem extends RecoverHpItem {
   public HealingFogItem() {
-    super(33, 15, false, 100);
+    super(ItemIcon.BLUE_POTION, 15, false, 100);
   }
 
   @Override

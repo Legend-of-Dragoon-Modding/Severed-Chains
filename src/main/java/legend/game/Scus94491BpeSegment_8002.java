@@ -1198,7 +1198,7 @@ public final class Scus94491BpeSegment_8002 {
 
   public static <T> Comparator<MenuEntryStruct04<T>> menuItemComparator() {
     return Comparator
-      .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon())
+      .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon().resolve().icon)
       .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
   }
 

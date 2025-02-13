@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class SpiritPotionItem extends RecoverHpItem {
   public SpiritPotionItem() {
-    super(35, 10, false, 100);
+    super(ItemIcon.RED_POTION, 10, false, 100);
   }
 
   @Override

@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
 
@@ -14,7 +15,7 @@ public class RecoverStatusItem extends BattleItem {
   private final int status;
 
   public RecoverStatusItem(final int price, final int status) {
-    super(37, price);
+    super(ItemIcon.GREEN_POTION, price);
     this.status = status;
   }
 

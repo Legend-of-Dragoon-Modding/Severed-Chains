@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemIcon;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
@@ -15,7 +16,7 @@ public class AttackBallItem extends Item {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AttackBallItem.class);
 
   public AttackBallItem() {
-    super(46, 50);
+    super(ItemIcon.SACK, 50);
   }
 
   @Override

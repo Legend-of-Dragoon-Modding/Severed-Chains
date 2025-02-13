@@ -1,6 +1,7 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
 import legend.game.submap.SMap;
@@ -10,7 +11,7 @@ import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class CharmPotionItem extends BattleItem {
   public CharmPotionItem() {
-    super(45, 2);
+    super(ItemIcon.CHARM, 2);
   }
 
   @Override

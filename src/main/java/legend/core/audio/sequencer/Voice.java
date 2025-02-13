@@ -2,6 +2,7 @@ package legend.core.audio.sequencer;
 
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.SampleRate;
+import legend.core.audio.sequencer.assets.Breath;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
@@ -40,7 +41,7 @@ final class Voice {
   private boolean isModulation;
   private int modulation;
   /** waveforms_800c4ab8.waveforms_02 */
-  private short[][] breathControls;
+  private Breath[] breathControls;
   /** playingNote.breath_3c */
   private int breath;
   /** playingNote.breathControlListIndex_10 */
@@ -115,14 +116,15 @@ final class Voice {
     final int breathControlInterpolationIndex = this.counter.getBreathInterpolationIndex();
 
     // TODO Since breathControlIndex is set based on the asset, we might want to get rid of it entirely and simply load a short[]
-    final float interpolatedBreath = this.lookupTables.interpolate(this.breathControls[this.breathControlIndex], breathControlPosition, breathControlInterpolationIndex);
+ //   final float interpolatedBreath = this.lookupTables.interpolate(this.breathControls[this.breathControlIndex], breathControlPosition, breathControlInterpolationIndex);
+    final float interpolatedBreath = this.breathControls[this.breathControlIndex].get(breathControlPosition, breathControlInterpolationIndex, this.lookupTables);
 
     final int finePitch = this.lookupTables.modulate(this.layer.getFinePitch(), interpolatedBreath, this.modulation);
 
     this.sampleRate = this.lookupTables.calculateSampleRate(this.layer.getKeyRoot(), this.note, finePitch, this.channel.getPitchBend(), this.pitchBendMultiplier);
   }
 
-  void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final short[][] breathControls, final int playingVoices) {
+  void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocityVolume, final Breath[] breathControls, final int playingVoices) {
     LOGGER.info(VOICE_MARKER, "Voice %d Key On", this.index);
 
     this.channel = channel;
