@@ -113,7 +113,7 @@
  call 356, stor[9]
  call 354, 0x0, stor[16], stor[9]
  call 355, stor[9]
-@@ -3048,3 +3067,32 @@
+@@ -3048,3 +3067,33 @@
  data 0xa0ff0006
  data 0x14
  data 0x1
@@ -144,5 +144,6 @@
 +NOT_FOUND:
 +return
 +SET_DEAD:
-+call 173, stor[10], 0x1
++mov inl[:P_INDEX], stor[10]
++call 173, var[34][stor[10]], 0x1
 +return

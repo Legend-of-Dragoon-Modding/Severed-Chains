@@ -67,16 +67,6 @@ public enum ItemIcon {
     EVENTS.postEvent(new IconMapEvent(ICON_MAP));
   }
 
-  public static ItemIcon lookup(final int icon) {
-    for(final ItemIcon itemIcon : ItemIcon.values()) {
-      if(itemIcon.icon == icon) {
-        return itemIcon;
-      }
-    }
-
-    return NONE;
-  }
-
   public final int icon;
 
   ItemIcon(final int icon) {
