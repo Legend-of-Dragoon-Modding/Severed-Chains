@@ -84,6 +84,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
@@ -3423,6 +3424,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options) {
+    renderText(text, originX, originY, options, null);
+  }
+
+  @Method(0x80029300L)
+  public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
     final float height = 12.0f * options.getSize();
     final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
 
@@ -3479,6 +3485,10 @@ public final class Scus94491BpeSegment_8002 {
               } else {
                 model.scissor(0, (int)(y - trim), displayWidth_1f8003e0, (int)height);
               }
+            }
+
+            if(queueCallback != null) {
+              queueCallback.accept(model);
             }
           }
         }

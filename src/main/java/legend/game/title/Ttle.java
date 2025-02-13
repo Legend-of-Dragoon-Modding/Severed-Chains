@@ -5,6 +5,7 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.Updater;
+import legend.core.Version;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
@@ -26,12 +27,15 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.FullScreenInputScreen;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.LinksScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
 import legend.game.inventory.screens.OptionsCategoryScreen;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -75,6 +79,7 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -149,6 +154,8 @@ public class Ttle extends EngineState {
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
   private final int[] menuTextWidth = {407, 257, 227, 169, 141};
+
+  public static final FontOptions VERSION_FONT = new FontOptions().size(0.5f).colour(TextColour.LIGHT_BROWN).noShadow().horizontalAlign(HorizontalAlign.RIGHT);
 
   private Updater.Release update;
 
@@ -1003,6 +1010,8 @@ public class Ttle extends EngineState {
         .useTextureAlpha()
         .vertices(this.updateIconIndex * 4, 4);
     }
+
+    renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, model -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
 
     //LAB_800c9390
     //LAB_800c939c
