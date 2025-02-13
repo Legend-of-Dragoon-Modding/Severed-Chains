@@ -2,6 +2,7 @@ package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
@@ -16,6 +17,7 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.renderCharacterPortrait;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
@@ -24,7 +26,7 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
   @Nullable
-  private final ToIntFunction<T> entryToIcon;
+  private final Function<T, ItemIcon> entryToIcon;
   @Nullable
   private final ToIntFunction<T> entryToRightIcon;
   @Nullable
@@ -42,7 +44,7 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, String> entryToString, @Nullable final ToIntFunction<T> entryToIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
+  public ListBox(final Function<T, String> entryToString, @Nullable final Function<T, ItemIcon> entryToIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
     this.entryToString = entryToString;
     this.entryToIcon = entryToIcon;
     this.entryToRightIcon = entryToRightIcon;
@@ -437,14 +439,14 @@ public class ListBox<T> extends Control {
       textZ_800bdf00 = oldZ;
 
       if(ListBox.this.entryToIcon != null) {
-        renderItemIcon(ListBox.this.entryToIcon.applyAsInt(this.data), x + 13, y + 1, 0x8);
+        renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8);
       }
 
       if(ListBox.this.entryToRightIcon != null) {
         final int icon = ListBox.this.entryToRightIcon.applyAsInt(this.data);
 
         if(icon != -1) {
-          renderItemIcon(48 | icon, x + this.getWidth() - 20, y + 1, 0x8).clut_30 = (500 + icon & 0x1ff) << 6 | 0x2b;
+          renderCharacterPortrait(icon, x + this.getWidth() - 20, y + 1, 0x8).clut_30 = (500 + icon & 0x1ff) << 6 | 0x2b;
         }
       }
     }

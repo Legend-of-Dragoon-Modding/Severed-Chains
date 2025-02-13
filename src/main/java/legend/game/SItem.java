@@ -13,6 +13,7 @@ import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
@@ -294,41 +295,6 @@ public final class SItem {
     "Albert", "Meru", "Kongol", "Miranda",
   };
 
-  public static final int[] itemPrices_80114310 = {
-    10, 30, 75, 125, 175, 200, 250, 225,
-    100, 150, 175, 200, 250, 30, 100, 150,
-    175, 200, 250, 80, 10, 50, 125, 150,
-    200, 250, 70, 10, 25, 75, 125, 175,
-    200, 250, 100, 125, 150, 200, 250, 200,
-    50, 125, 150, 225, 250, 175, 10, 25,
-    75, 100, 150, 400, 400, 75, 125, 200,
-    400, 30, 75, 125, 150, 400, 10, 25,
-    75, 100, 150, 400, 400, 400, 250, 250,
-    250, 250, 5000, 1, 5, 20, 50, 75,
-    100, 100, 5, 30, 75, 100, 125, 1,
-    300, 5000, 250, 250, 1, 5, 50, 75,
-    5, 50, 75, 150, 250, 150, 1, 100,
-    100, 100, 150, 100, 150, 150, 200, 100,
-    100, 300, 300, 500, 500, 500, 150, 150,
-    300, 500, 500, 500, 250, 250, 250, 250,
-    250, 250, 250, 250, 250, 250, 250, 250,
-    250, 250, 250, 250, 250, 100, 500, 500,
-    500, 1, 500, 1, 500, 5000, 2500, 2500,
-    5, 50, 50, 25, 500, 5000, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1,
-
-    2, 5, 5, 5, 1, 5, 5, 5,
-    50, 5, 5, 5, 15, 10, 5, 10,
-    10, 10, 10, 10, 10, 1, 10, 10,
-    10, 10, 10, 1, 10, 10, 15, 2,
-    200, 50, 1, 200, 200, 25, 200, 15,
-    200, 60, 100, 200, 200, 200, 200, 1,
-    200, 10, 10, 10, 10, 10, 10, 10,
-    10, 25, 200, 0, 0, 0, 0, 0,
-  };
   public static final MenuGlyph06[] glyphs_80114510 = {
     new MenuGlyph06(69, 0, 0),
     new MenuGlyph06(70, 192, 0),
@@ -765,12 +731,26 @@ public final class SItem {
   }
 
   @Method(0x80103910L)
-  public static Renderable58 renderItemIcon(final int glyph, final int x, final int y, final int flags) {
+  public static Renderable58 renderItemIcon(final ItemIcon icon, final int x, final int y, final int flags) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = glyph;
-    renderable.startGlyph_10 = glyph;
-    renderable.endGlyph_14 = glyph;
+    renderable.glyph_04 = icon.resolve().icon;
+    renderable.startGlyph_10 = renderable.glyph_04;
+    renderable.endGlyph_14 = renderable.glyph_04;
+    renderable.tpage_2c = 0x19;
+    renderable.clut_30 = 0;
+    renderable.x_40 = x;
+    renderable.y_44 = y;
+    return renderable;
+  }
+
+  @Method(0x80103910L)
+  public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
+    renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
+    renderable.glyph_04 = 48 + charId;
+    renderable.startGlyph_10 = renderable.glyph_04;
+    renderable.endGlyph_14 = renderable.glyph_04;
     renderable.tpage_2c = 0x19;
     renderable.clut_30 = 0;
     renderable.x_40 = x;
@@ -1681,10 +1661,10 @@ public final class SItem {
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {
-        renderItemIcon(48 | s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
+        renderCharacterPortrait(s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
       } else if((s0 & 0x2000) != 0) {
-        renderItemIcon(58, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
+        renderItemIcon(ItemIcon.WARNING, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
       }
 
       //LAB_801095a4

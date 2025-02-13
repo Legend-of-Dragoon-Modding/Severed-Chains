@@ -86,9 +86,9 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
-    // Equipment, spells, XP, and TIMs from lod_engine
+    // Spells, XP, and TIMs from lod_engine
     transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
-    transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
+    transformers.put(Unpacker::xpDiscriminator, Unpacker::xpExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
     // Savepoint etc. from SMAP
@@ -636,11 +636,11 @@ public final class Unpacker {
     transformations.replaceNode(node, new FileData(newData));
   }
 
-  private static boolean equipmentAndXpDiscriminator(final PathNode node, final Set<String> flags) {
+  private static boolean xpDiscriminator(final PathNode node, final Set<String> flags) {
     return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static void equipmentAndXpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void xpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     transformations.addNode(node);
@@ -653,10 +653,6 @@ public final class Unpacker {
     transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
     transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
     transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
-
-    for(int i = 0; i < 192; i++) {
-      transformations.addNode("equipment/" + i + ".deqp", node.data.slice(0x16878 + i * 0x1c, 0x1c));
-    }
   }
 
   private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {

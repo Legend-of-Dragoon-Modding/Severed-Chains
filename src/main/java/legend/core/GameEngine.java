@@ -25,6 +25,7 @@ import legend.game.Main;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
+import legend.game.inventory.ItemIcon;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
@@ -323,6 +324,7 @@ public final class GameEngine {
 
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
+    ItemIcon.loadIconMap();
   }
 
   private static void loadXpTables() throws IOException {

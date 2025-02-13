@@ -5,6 +5,7 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.effects.ScriptDeffManualLoadingEffect;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
@@ -27,7 +28,7 @@ public abstract class BattleItem extends Item {
 
   private int deffLoadingStage;
 
-  public BattleItem(final int icon, final int price) {
+  public BattleItem(final ItemIcon icon, final int price) {
     super(icon, price);
   }
 

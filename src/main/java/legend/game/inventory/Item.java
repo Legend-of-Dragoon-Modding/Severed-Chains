@@ -8,16 +8,16 @@ import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 public abstract class Item extends RegistryEntry implements InventoryEntry {
-  private final int icon;
+  private final ItemIcon icon;
   private final int price;
 
-  public Item(final int icon, final int price) {
+  public Item(final ItemIcon icon, final int price) {
     this.icon = icon;
     this.price = price;
   }
 
   @Override
-  public int getIcon() {
+  public ItemIcon getIcon() {
     return this.icon;
   }
 
