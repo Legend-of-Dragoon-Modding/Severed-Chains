@@ -175,7 +175,7 @@ public class WMap extends EngineState {
     UNUSED_1(1),
     LOAD_MODEL_2(2),
     INIT_PLAYER_MODEL_3(3),
-    NOOP_4(4),
+    WAIT_FOR_MODEL_TO_LOAD_4(4),
     RENDER_5(5),
     NOOP_6(6),
     UNUSED_DEALLOC_7(7),
@@ -828,12 +828,16 @@ public class WMap extends EngineState {
           TmdObjLoader.fromModel("WmapEntityModel (index " + i + ')', this.modelAndAnimData_800c66a8.models_0c[i]);
         }
 
-        this.playerState_800c669c = PlayerState.NOOP_4;
+        this.playerState_800c669c = PlayerState.WAIT_FOR_MODEL_TO_LOAD_4;
       }
 
-      case NOOP_4 -> {
+      case WAIT_FOR_MODEL_TO_LOAD_4 -> {
         if(loadWait-- > 0) break;
-        this.playerState_800c669c = PlayerState.RENDER_5;
+
+        //Prevents queen fury shadow renderer rendering before map model loads GH#2077
+        if((this.filesLoadedFlags_800c66b8.get() & 0x4) != 0x0) {
+          this.playerState_800c669c = PlayerState.RENDER_5;
+        }
       }
 
       case RENDER_5 -> this.renderPlayer();
