@@ -63,7 +63,7 @@ public class AdditionHitProperties10 {
     return new AdditionHitProperties10(flags, totalFrames, overlayHitFrameOffset, totalSuccessFrames, damageMultiplier, spValue, audioFile, isFinalHit, panDistance, unknown_09, unknown_0a, hitDistance, frameToHit, unknown_0d, framesPostFailure, overlayFrameOffset);
   }
 
-  public int getHitProperty(final int propertyIndex) {
+  public int get(final int propertyIndex) {
     return switch(propertyIndex) {
       case 0 -> this.flags_00;
       case 1 -> this.totalFrames_01;

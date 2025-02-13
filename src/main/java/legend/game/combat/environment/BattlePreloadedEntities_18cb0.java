@@ -34,11 +34,11 @@ public class BattlePreloadedEntities_18cb0 {
   @Method(0x800c7488L)
   public int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex) {
     if((battleState_8006e398.playerBents_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
-      return this.additionHits_38[charSlot + 3].hits_00[hitNum].getHitProperty(hitPropertyIndex);
+      return this.additionHits_38[charSlot + 3].hits_00[hitNum].get(hitPropertyIndex);
     }
 
     //LAB_800c74fc
-    return this.additionHits_38[charSlot].hits_00[hitNum].getHitProperty(hitPropertyIndex);
+    return this.additionHits_38[charSlot].hits_00[hitNum].get(hitPropertyIndex);
   }
 
   public static class Rendering1298 {
