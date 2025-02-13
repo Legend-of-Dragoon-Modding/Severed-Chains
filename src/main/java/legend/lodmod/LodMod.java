@@ -353,7 +353,7 @@ public class LodMod {
       event.addMapping(ItemIcon.AMULET, ItemIcon.RING);
       event.addMapping(ItemIcon.STONE, ItemIcon.RING);
       event.addMapping(ItemIcon.JEWELLERY, ItemIcon.RING);
-      event.addMapping(ItemIcon.ANKH, ItemIcon.RING);
+      event.addMapping(ItemIcon.PIN, ItemIcon.RING);
       event.addMapping(ItemIcon.BELL, ItemIcon.RING);
       event.addMapping(ItemIcon.BAG, ItemIcon.RING);
       event.addMapping(ItemIcon.CLOAK, ItemIcon.RING);

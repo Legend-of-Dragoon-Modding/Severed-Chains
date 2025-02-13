@@ -66,19 +66,9 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
   public final int _1a;
   public final int onHitStatus_1b;
 
-  public Equipment(final int price, final int flags, final int type, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
+  public Equipment(final int price, final int flags, final EquipmentSlot slot, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
     this.price = price;
-
-    EquipmentSlot slot = null;
-    for(int i = 0; i < EquipmentSlot.values().length; i++) {
-      if((type & 0x80 >> i) != 0) {
-        slot = EquipmentSlot.values()[i];
-        break;
-      }
-    }
-
     this.slot = slot;
-
     this.flags_00 = flags;
     this._02 = _02;
     this.equipableFlags_03 = equipableFlags;

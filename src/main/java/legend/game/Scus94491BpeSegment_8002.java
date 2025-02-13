@@ -1192,14 +1192,20 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023a2cL)
   public static <T> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count) {
-    display.sort(menuItemComparator());
+    display.sort(menuItemIconComparator());
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static <T> Comparator<MenuEntryStruct04<T>> menuItemComparator() {
+  public static <T> Comparator<MenuEntryStruct04<T>> menuItemIconComparator() {
     return Comparator
       .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon().resolve().icon)
       .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+  }
+
+  public static Comparator<MenuEntryStruct04<Equipment>> menuEquipmentSlotComparator() {
+    return Comparator
+      .comparingInt((MenuEntryStruct04<Equipment> equipment) -> equipment.item_00.slot.ordinal())
+      .thenComparing(equipment -> I18n.translate(equipment.getNameTranslationKey()));
   }
 
   @Method(0x80023a88L)

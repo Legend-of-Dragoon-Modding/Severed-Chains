@@ -34,7 +34,7 @@ public enum ItemIcon {
   AMULET(24),
   STONE(25),
   JEWELLERY(26),
-  ANKH(27),
+  PIN(27),
   BELL(28),
   BAG(29),
   CLOAK(30),
@@ -65,16 +65,6 @@ public enum ItemIcon {
   public static void loadIconMap() {
     ICON_MAP.clear();
     EVENTS.postEvent(new IconMapEvent(ICON_MAP));
-  }
-
-  public static ItemIcon lookup(final int icon) {
-    for(final ItemIcon itemIcon : ItemIcon.values()) {
-      if(itemIcon.icon == icon) {
-        return itemIcon;
-      }
-    }
-
-    return NONE;
   }
 
   public final int icon;
