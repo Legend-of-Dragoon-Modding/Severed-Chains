@@ -20,7 +20,7 @@ final class VoiceCounter {
 
   VoiceCounter(final InterpolationPrecision bitDepth) {
     this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
-    this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value;
+    this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value - 2;
     this.interpolationAnd = (1 << bitDepth.value) - 1;
   }
 
@@ -46,7 +46,7 @@ final class VoiceCounter {
   }
 
   int getCurrentBreathIndex() {
-    return this.breathCounter >>> BREATH_BASE_SHIFT;
+    return this.breathCounter >>> (BREATH_BASE_SHIFT - 2);
   }
 
   int getBreathInterpolationIndex() {
@@ -57,8 +57,7 @@ final class VoiceCounter {
     this.breathCounter += breath;
 
     if(this.breathCounter >= BREATH_BASE_VALUE) {
-      // Index 0 should be skipped
-      this.breathCounter -= BREATH_BASE_VALUE - (1 << BREATH_BASE_SHIFT);
+      this.breathCounter -= BREATH_BASE_VALUE;
     }
   }
 
@@ -69,7 +68,7 @@ final class VoiceCounter {
 
   void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
-    this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value;
+    this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value - 2;
     this.interpolationAnd = (1 << bitDepth.value) - 1;
   }
 }
