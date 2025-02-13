@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class EnemyHealingPotionItem extends RecoverHpItem {
   public EnemyHealingPotionItem() {
-    super(46, 5, false, 30);
+    super(ItemIcon.SACK, 5, false, 30);
   }
 
   @Override

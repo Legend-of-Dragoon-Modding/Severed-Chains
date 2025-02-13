@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class PandemoniumItem extends BattleItem {
   public PandemoniumItem() {
-    super(0x2d, 200);
+    super(ItemIcon.CHARM, 200);
   }
 
   @Override

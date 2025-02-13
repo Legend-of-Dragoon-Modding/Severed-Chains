@@ -82,7 +82,7 @@ public class EquipmentStatsEvent extends Event {
     this.mpRegen = equipment.mpRegen;
     this.spRegen = equipment.spRegen;
     this.escapeBonus = equipment.escapeBonus;
-    this.icon_0e = equipment.icon_0e;
+    this.icon_0e = equipment.icon_0e.resolve().icon;
     this.speed_0f = equipment.speed_0f;
     this.attack2_10 = equipment.attack2_10;
     this.magicAttack_11 = equipment.magicAttack_11;

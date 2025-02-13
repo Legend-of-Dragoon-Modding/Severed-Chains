@@ -2,6 +2,7 @@ package legend.game.inventory.screens.controls;
 
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.types.MenuEntryStruct04;
@@ -35,7 +36,7 @@ public class ItemList<T> extends Control {
     );
   }
 
-  public ItemList(final Function<MenuEntryStruct04<T>, String> getItemName, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getItemIcon, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getFaceIcon, @Nullable final Predicate<MenuEntryStruct04<T>> isDisabled) {
+  public ItemList(final Function<MenuEntryStruct04<T>, String> getItemName, @Nullable final Function<MenuEntryStruct04<T>, ItemIcon> getItemIcon, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getFaceIcon, @Nullable final Predicate<MenuEntryStruct04<T>> isDisabled) {
     this.setSize(173, 147);
 
     this.items = new ListBox<>(getItemName, getItemIcon, getFaceIcon, isDisabled);
