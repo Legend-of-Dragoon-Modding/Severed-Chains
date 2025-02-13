@@ -28,9 +28,9 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
+import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.scripting.DrgnFileEvent;
-import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -55,7 +55,7 @@ import legend.game.types.OverlayStruct;
 import legend.game.types.TextboxBorderMetrics0c;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -817,7 +817,7 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadFile(file, onCompletion);
+    Loader.loadFile(file, onCompletion);
   }
 
   public static void loadDir(final String dir, final Consumer<List<FileData>> onCompletion) {
@@ -828,7 +828,7 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadDirectory(dir, onCompletion);
+    Loader.loadDirectory(dir, onCompletion);
   }
 
   public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<FileData>> onCompletion, final String... files) {
@@ -844,7 +844,7 @@ public final class Scus94491BpeSegment {
       paths[i] = "SECT/DRGN" + drgnBinIndex + ".BIN/" + files[i];
     }
 
-    Unpacker.loadFiles(onCompletion, paths);
+    Loader.loadFiles(onCompletion, paths);
   }
 
   public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
@@ -865,7 +865,7 @@ public final class Scus94491BpeSegment {
 
     final DrgnFileEvent event = EVENTS.postEvent(new DrgnFileEvent("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
 
-    Unpacker.loadFile(event.location, onCompletion);
+    Loader.loadFile(event.location, onCompletion);
   }
 
   public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
@@ -876,7 +876,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Unpacker.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
+    onCompletion.accept(Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
   }
 
   public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
@@ -887,7 +887,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
+    Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
   }
 
   public static void loadDrgnDirSync(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
@@ -898,7 +898,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
+    onCompletion.accept(Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
   }
 
   public static void loadDrgnDirSync(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
@@ -909,7 +909,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
+    onCompletion.accept(Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
   }
 
   public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
@@ -920,7 +920,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
+    Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
   }
 
   @ScriptDescription("Does nothing")
@@ -1037,7 +1037,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80017564L)
   @ScriptDescription("Rewinds if there are files currently loading; pauses otherwise")
   public static FlowControl scriptWaitForFilesToLoad(final RunningScript<?> script) {
-    final int loadingCount = Unpacker.getLoadingFileCount();
+    final int loadingCount = Loader.getLoadingFileCount();
 
     if(loadingCount != 0) {
       LOGGER.info("%d files still loading; pausing and rewinding", loadingCount);
@@ -1158,7 +1158,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018944L)
   public static void waitForFilesToLoad() {
-    if(Unpacker.getLoadingFileCount() == 0) {
+    if(Loader.getLoadingFileCount() == 0) {
       pregameLoadingStage_800bb10c++;
     }
   }
@@ -1170,7 +1170,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800189b0L)
   public static void transitionBackFromBattle() {
-    if(Unpacker.getLoadingFileCount() == 0) {
+    if(Loader.getLoadingFileCount() == 0) {
       //LAB_800189e4
       //LAB_800189e8
       stopMusicSequence();
@@ -2219,7 +2219,7 @@ public final class Scus94491BpeSegment {
     final AtomicInteger count = new AtomicInteger(0);
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
+      if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
         count.incrementAndGet();
       }
     }
@@ -2229,7 +2229,7 @@ public final class Scus94491BpeSegment {
       file.id_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
+      if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
         final int finalMonsterSlot = monsterSlot;
         loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> {
           final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
@@ -2253,7 +2253,7 @@ public final class Scus94491BpeSegment {
       final EncounterData38 encounterData = new EncounterData38(file.getBytes(), encounterId * 0x38);
 
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Unpacker.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
+        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Loader.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
           count.incrementAndGet();
         }
       }
@@ -2263,7 +2263,7 @@ public final class Scus94491BpeSegment {
         soundFile.id_02 = -1;
         soundFile.used_00 = false;
 
-        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Unpacker.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
+        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Loader.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
           final int finalMonsterSlot = monsterSlot;
           loadDir("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds", files -> {
             final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));

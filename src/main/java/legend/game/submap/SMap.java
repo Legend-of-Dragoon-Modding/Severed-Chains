@@ -28,8 +28,8 @@ import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
-import legend.game.modding.events.submap.SubmapWarpEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
+import legend.game.modding.events.submap.SubmapWarpEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -43,6 +43,7 @@ import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
+import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsF_LIGHT;
@@ -53,10 +54,9 @@ import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
-import legend.game.types.BackgroundType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -768,7 +768,7 @@ public class SMap extends EngineState {
       case CHECK_TRANSITIONS_1_2:
         if((this.submapFlags_800f7e54 & 0x1) == 0) {
           if(this.canEncounter()) {
-            this.submap.prepareEncounter();
+            this.submap.prepareEncounter(false);
             this.mapTransition(-1, 0);
           }
         }
@@ -2385,12 +2385,12 @@ public class SMap extends EngineState {
   @Method(0x800e0b34L)
   private FlowControl scriptSwapShadowTexture(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
-      new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
+      new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b68
     if(script.params_20[0].get() == 1) {
-      new Tim(Unpacker.loadFile("SUBMAP/darker_shadow.tim")).uploadToGpu();
+      new Tim(Loader.loadFile("SUBMAP/darker_shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b8c
@@ -2758,7 +2758,7 @@ public class SMap extends EngineState {
   private void executeSubmapMediaLoadingStage(final int collisionPrimitiveIndexForInitialPlayerPosition) {
     switch(this.mediaLoadingStage_800c68e4) {
       case LOAD_SHADOW_AND_RESET_LIGHTING_0 -> {
-        new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
+        new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
 
         //LAB_800e1440
         this.GsF_LIGHT_0_800c66d8.direction_00.set(0.0f, 1.0f, 0.0f);
@@ -2911,7 +2911,7 @@ public class SMap extends EngineState {
 
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
-        new Tim(Unpacker.loadFile("SUBMAP/alert.tim")).uploadToGpu();
+        new Tim(Loader.loadFile("SUBMAP/alert.tim")).uploadToGpu();
         this.resetTriangleIndicators();
 
         //LAB_800e1ecc
@@ -3029,7 +3029,7 @@ public class SMap extends EngineState {
     this.submapEffectsState_800f9eac = -1;
     this.reloadSubmapEffects();
     this.triangleIndicator_800c69fc = null;
-    new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
+    new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
     this.mapIndicator.destroy();
   }
 
@@ -3239,7 +3239,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4b20L)
   private boolean canEncounter() {
-    if(this.smapTicks_800c6ae0 < 15 * (3 - vsyncMode_8007a3b8) || Unpacker.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
+    if(this.smapTicks_800c6ae0 < 15 * (3 - vsyncMode_8007a3b8) || Loader.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
       return false;
     }
 
@@ -3681,7 +3681,7 @@ public class SMap extends EngineState {
       }
 
       case WAIT_FOR_NEWROOT_2 -> {
-        if(Unpacker.getLoadingFileCount() == 0) {
+        if(Loader.getLoadingFileCount() == 0) {
           this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
         }
       }
@@ -3985,7 +3985,7 @@ public class SMap extends EngineState {
     final int scene = script.params_20[1].get();
 
     if(script.params_20[0].get() == -1) {
-      this.submap.prepareEncounter(scene);
+      this.submap.prepareEncounter(scene, true);
     }
 
     this.mapTransition(script.params_20[0].get(), scene);
@@ -5356,7 +5356,7 @@ public class SMap extends EngineState {
   private void loadMiscTextures(final int textureCount) {
     //LAB_800f47f0
     for(int textureIndex = 0; textureIndex < textureCount; textureIndex++) {
-      final Tim tim = new Tim(Unpacker.loadFile("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
+      final Tim tim = new Tim(Loader.loadFile("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
       GPU.uploadData15(tim.getImageRect(), tim.getImageData());
 
       this.texPages_800d6050[textureIndex] = GetTPage(Bpp.values()[tim.getFlags() & 0b11], this.miscTextureTransModes_800d6cf0[textureIndex], tim.getImageRect().x, tim.getImageRect().y);

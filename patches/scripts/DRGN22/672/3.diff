@@ -1,0 +1,39 @@
+Twin Castle, Main Hall (Nighttime)
+Libria
+Old: Suddenly appears on screen (overscan region). Ends in same spot. Albert ends up walking through her.
+New: Walk to old start from off screen, exit completely off-screen.
+--- original
++++ modified
+@@ -700,9 +700,16 @@
+ wait stor[24]
+ jmp inl[:LABEL_112]
+ JMP_1868_0:
+# New start position
+-call 101, stor[0], 0x8, 0xffffffb8, 0x1b0
++call 101, stor[0], 0x8, 0xffffff88, 0x212
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 106, 0x0
+# Move to old start position
++mov 0x8, stor[24]
++mov 0xffffffb8, stor[25]
++mov 0x1b0, stor[26]
++mov 0x4, stor[27]
++mov 0x1, stor[28]
++gosub inl[:LABEL_30]
+# Idle animation
++call 673, stor[0], 0
+ mov 0x0, stor[24]
+ mov 0x2, stor[25]
+ mov 0x0, stor[26]
+@@ -789,8 +796,8 @@
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_30]
+ mov 0x8, stor[24]
+# New end position
+-mov 0xffffffae, stor[25]
+-mov 0x1c4, stor[26]
++mov 0xffffff88, stor[25]
++mov 0x212, stor[26]
+ mov 0x4, stor[27]
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_30]

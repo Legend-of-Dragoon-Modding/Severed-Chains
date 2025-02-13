@@ -34,14 +34,12 @@ import legend.game.modding.coremod.elements.ThunderElement;
 import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
-import legend.game.modding.events.battle.SpellCombatDescriptionEvent;
-import legend.game.modding.events.battle.SpellCombatNameEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import legend.lodmod.equipment.DestroyerMaceEquipment;
 import legend.lodmod.equipment.DetonateArrowEquipment;
 import legend.lodmod.equipment.UltimateWargodEquipment;
@@ -54,7 +52,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Map;
 
-import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.itemPrices_80114310;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
@@ -166,7 +163,7 @@ public class LodMod {
           case 0x2c -> new DestroyerMaceEquipment(itemPrices_80114310[equipmentId]);
           case 0x9c -> new WargodCallingEquipment(itemPrices_80114310[equipmentId]);
           case 0x9d -> new UltimateWargodEquipment(itemPrices_80114310[equipmentId]);
-          default -> Equipment.fromFile(itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
+          default -> Equipment.fromFile(itemPrices_80114310[equipmentId], Loader.loadFile("equipment/" + equipmentId + ".deqp"));
         });
       }
     }
@@ -181,9 +178,9 @@ public class LodMod {
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
       if(spellStats_800fa0b8[spellId] == null) {
-        final String name = EVENTS.postEvent(new SpellCombatNameEvent(spellId, spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId)).name;
-        final String desc = EVENTS.postEvent(new SpellCombatDescriptionEvent(spellId, spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "")).description;
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/" + spellId + ".dspl"));
+        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
+        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
+        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }
