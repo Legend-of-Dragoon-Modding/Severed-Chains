@@ -72,9 +72,11 @@ public class Transformations {
     int previousSlash = 0;
     while((slash = path.indexOf('/', previousSlash + 1)) != -1) {
       final String pathSegment = path.substring(previousSlash == 0 ? 0 : previousSlash + 1, slash);
-      if(!current.children.containsKey(pathSegment)) {
+      final boolean finalSegment = slash == path.length() - 1; // Is this the final segment in the path?
+
+      if(!current.children.containsKey(pathSegment) || finalSegment) {
         final String fullPath = current.fullPath.isEmpty() ? "" : current.fullPath + '/';
-        current = current.addChild(new PathNode(fullPath + pathSegment, pathSegment, slash == path.length() - 1 ? data : null, current));
+        current = current.addChild(new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, current));
       } else {
         current = current.children.get(pathSegment);
       }
