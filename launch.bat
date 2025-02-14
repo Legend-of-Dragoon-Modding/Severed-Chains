@@ -1,5 +1,13 @@
 @echo off
 
+set compiled=@false@;
+
+if %compiled%==false (
+  echo You are trying to run the Severed Chains source code. Please see our installation instructions at https://legendofdragoon.org/projects/severed-chains/
+  pause
+  exit 1
+)
+
 if exist ".\jdk21\bin\java.exe" (
   goto LAUNCH
 )

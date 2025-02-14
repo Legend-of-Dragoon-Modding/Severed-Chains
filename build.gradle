@@ -153,6 +153,7 @@ task copySupportFiles(type: Copy) {
       case OperatingSystem.LINUX:
         from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: ["false": "true"])
           rename("-\\w+", "")
         }
         from('download-java') {
@@ -163,6 +164,7 @@ task copySupportFiles(type: Copy) {
       case OperatingSystem.MAC_OS:
         from('launch-macos') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: ["false": "true"])
           rename("-macos", "")
         }
         from('download-java') {
@@ -173,6 +175,7 @@ task copySupportFiles(type: Copy) {
       case OperatingSystem.WINDOWS:
         from('launch.bat') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: ["false": "true"])
         }
         break
     }
