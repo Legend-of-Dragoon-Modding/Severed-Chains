@@ -1059,6 +1059,10 @@ public class RenderEngine {
 
     this.renderAspectRatio = (float)this.renderWidth / (float)this.renderHeight;
 
+    // Force the internal resolution to an even multiple of 240 to fix lines in the UI
+    this.renderHeight = MathHelper.nextMultiple(this.renderHeight, 240);
+    this.renderWidth = (int)(this.renderHeight * this.renderAspectRatio);
+
     // glLineWidth has been removed on M3 macs
     if(!this.isMac()) {
       glLineWidth(Math.max(1, this.renderHeight / 480.0f));

@@ -111,6 +111,10 @@ public final class MathHelper {
     return (int)(Math.log10(number) + 1);
   }
 
+  public static int nextMultiple(final int number, final int multiple) {
+    return (number + multiple - 1) / multiple * multiple;
+  }
+
   public static int assertPositive(final int val) {
     assert val >= 0 : "Value must be positive";
     return val;
