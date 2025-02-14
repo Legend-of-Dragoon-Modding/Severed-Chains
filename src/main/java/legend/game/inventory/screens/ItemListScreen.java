@@ -31,7 +31,7 @@ public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
 
   private final ItemList<Item> itemList = new ItemList<>();
-  private final ItemList<Equipment> equipmentList = new ItemList<>();
+  private final ItemList<Equipment> equipmentList = new ItemList<>(i -> gameState_800babc8.equipment_1e8.size());
   private final Label description = new Label("");
 
   public ItemListScreen(final Runnable unload) {
