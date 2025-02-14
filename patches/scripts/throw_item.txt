@@ -66,12 +66,11 @@ mov var[45][stor[9]], stor[9] ; s9 = status
 and 0xf, stor[9] ; mask status effect index
 mov inl[:STATUS_AFFLICTION_FLAGS[stor[9]]], stor[9] ; s9 = status flag for status effect index
 and inl[:USE_PURIFIER_STATUS], stor[9] ; mask status effect that this item cures
-jmp_cmp ==, stor[9], 0x0, inl[:RET]
+jmp_cmp ==, stor[9], 0x0, inl[:USE_PURIFIER_STATUS_RETURN]
 gosub inl[:CLEAR_BENT_STATUS] ; addr
+USE_PURIFIER_STATUS_RETURN:
 return;
 
-RET:
-return
 
 ; @param int s28 bent index
 CLEAR_COMMAND_BLOCK:
