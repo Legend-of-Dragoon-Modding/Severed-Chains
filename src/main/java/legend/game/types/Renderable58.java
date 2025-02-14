@@ -44,6 +44,9 @@ public class Renderable58 {
   public int baseX;
   public int baseY;
 
+  /** The max number of parts of this glyph to render (can be used to truncate parts of a glyph) */
+  public int metricsCount = Integer.MAX_VALUE;
+
   /** We moved the UI textures into the vram region that the render buffers used to use so they could stay loaded. Some UIs like {@link PostBattleScreen} use their own textures so we have to use the normal tpage that's passed in. */
   public boolean useOriginalTpage;
 

@@ -49,12 +49,12 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderFiveDigitNumber;
+import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
-import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -324,17 +324,22 @@ public class ShopScreen extends MenuScreen {
     renderText(Carried_8011c6b8, 72, this.getShopMenuYOffset(2) + 2, selectedMenuItem != 2 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
     renderText(Leave_8011c6c8, 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
 
+    final int size;
+    final int current;
     if(isItemMenu != 0) {
-      renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
-      allocateOneFrameGlyph(94, 16, 16);
-      renderTwoDigitNumber(123, 36, CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0x2);
+      size = CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+      current = gameState_800babc8.items_2e9.size();
+      final Renderable58 renderable = allocateOneFrameGlyph(94, 16, 16);
+      renderable.metricsCount = 18; // truncate slash from renderable
     } else {
-      renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2);
-      allocateOneFrameGlyph(95, 16, 16);
-      renderThreeDigitNumber(117, 36, 255, 0x2);
+      size = 255;
+      current = gameState_800babc8.equipment_1e8.size();
+      final Renderable58 renderable = allocateOneFrameGlyph(95, 16, 16);
+      renderable.metricsCount = 18; // truncate slash from renderable
     }
 
     renderEightDigitNumber(87, 24, gameState_800babc8.gold_94, 0x2);
+    renderFraction(135, 36, current, size);
   }
 
   private void renderEquipmentStatChange(final Equipment equipment, final int charIndex) {

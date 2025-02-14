@@ -1388,7 +1388,7 @@ public final class Scus94491BpeSegment_8002 {
         final RenderableMetrics14[] metricses = entries[renderable.glyph_04].metrics_00();
 
         //LAB_80023e94
-        for(int metricsIndex = metricses.length - 1; metricsIndex >= 0; metricsIndex--) {
+        for(int metricsIndex = Math.min(metricses.length, renderable.metricsCount) - 1; metricsIndex >= 0; metricsIndex--) {
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
           final float x1;
