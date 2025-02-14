@@ -66,13 +66,14 @@ mov var[45][stor[9]], stor[9] ; s9 = status
 and 0xf, stor[9] ; mask status effect index
 mov inl[:STATUS_AFFLICTION_FLAGS[stor[9]]], stor[9] ; s9 = status flag for status effect index
 and inl[:USE_PURIFIER_STATUS], stor[9] ; mask status effect that this item cures
+jmp_cmp ==, stor[9], 0x0, inl[:USE_PURIFIER_STATUS_RETURN]
 gosub inl[:CLEAR_BENT_STATUS] ; addr
+USE_PURIFIER_STATUS_RETURN:
 return;
 
 
-
 ; @param int s28 bent index
-CLEAR_MENU_BLOCK:
+CLEAR_COMMAND_BLOCK:
 call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
 mov 0x0, var[128 + stor[9]][6] ; source, dest
 return
@@ -82,7 +83,7 @@ return
 USE_DEPETRIFIER:
 gosub inl[:USE_PURIFIER]
 
-mov 20, stor[23] ; source, dest
+mov 0x14, stor[23] ; source, dest
 wait stor[23] ; frames
 
 gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
@@ -92,32 +93,37 @@ return
 
 USE_BODY_PURIFIER:
 gosub inl[:USE_PURIFIER]
+jmp_cmp ==, 0x0, stor[9], inl[:CHECK_COMMAND_BLOCKING] ; nothing was cured
 
-mov 20, stor[23] ; source, dest
+mov 0x14, stor[23] ; source, dest
 wait stor[23] ; frames
 
 gosub inl[:SET_BENT_ANIMATION] ; addr
 gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
+CHECK_COMMAND_BLOCKING: ; - this handles polter and melbu's command block, arm-blocking is handled via USE_PURIFIER
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; s9 = my char id
+jmp_cmp ==, 0x0, var[128 + stor[9]][6], inl[:LABEL_118] ; if I'm not command blocked
+gosub inl[:LABEL_121] ; addr
 
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SET_BENT_ANIMATION] ; addr
+gosub inl[:CLEAR_COMMAND_BLOCK]
+
+LABEL_118:
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
 
 USE_MIND_PURIFIER:
 gosub inl[:USE_PURIFIER]
 
-jmp_cmp ==, 0x0, stor[9], inl[:SKIP_CLEAR_MENU_BLOCK_EFFECT] ; nothing was cured
-call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; s9 = my char id
-jmp_cmp ==, 0x0, var[128 + stor[9]][6], inl[:LABEL_118] ; if I'm not menu blocked
-gosub inl[:LABEL_121] ; addr
-SKIP_CLEAR_MENU_BLOCK_EFFECT:
-
-mov 20, stor[23] ; source, dest
+mov 0x14, stor[23] ; source, dest
 wait stor[23] ; frames
 
 gosub inl[:SET_BENT_ANIMATION] ; addr
-gosub inl[:CLEAR_MENU_BLOCK]
-
-LABEL_118:
 gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
 return
 
