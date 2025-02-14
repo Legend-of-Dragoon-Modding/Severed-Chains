@@ -1743,15 +1743,19 @@ public final class SItem {
       case 3:
         textZ_800bdf00 = 31;
         final int x = messageBox.x_1c + 60;
-        int y = messageBox.y_1e + 7;
+        int y = messageBox.y_1e + 14;
 
         messageBox.ticks_10++;
 
         if(messageBox.text_00 != null) {
+          y -= messageBox.text_00.length * 12 / 2;
+
           for(final String line : messageBox.text_00) {
             renderText(line, x, y, UI_TEXT_CENTERED);
-            y += 14;
+            y += 12;
           }
+
+          y -= (messageBox.text_00.length - 1) * 3;
         }
 
         //LAB_8010eeac
@@ -1771,7 +1775,7 @@ public final class SItem {
         if(messageBox.type_15 == 2) {
           //LAB_8010ef10
           if(messageBox.highlightRenderable_04 == null) {
-            renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 14 + y + 5);
+            renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 12 + y + 5);
             messageBox.highlightRenderable_04 = renderable;
             renderable.heightScale_38 = 0;
             renderable.widthScale = 0;
