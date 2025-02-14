@@ -454,7 +454,9 @@ public class WMap extends EngineState {
           renderText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, UI_WHITE_SHADOWED);
         }
 
-        this.handleMapTransitions();
+        if(this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
+          this.handleMapTransitions();
+        }
       }
     }
   }
