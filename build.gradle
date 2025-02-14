@@ -151,9 +151,13 @@ task copySupportFiles(type: Copy) {
   into(".") {
     switch(operatingSystem) {
       case OperatingSystem.LINUX:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath;
+        final var libs = "libs/" + archives*.name.join(":libs/")
+
         from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
-          filter(ReplaceTokens, tokens: ["false": "true"])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
           rename("-\\w+", "")
         }
         from('download-java') {
@@ -162,9 +166,13 @@ task copySupportFiles(type: Copy) {
         break
 
       case OperatingSystem.MAC_OS:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath;
+        final var libs = "libs/" + archives*.name.join(":libs/")
+
         from('launch-macos') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
-          filter(ReplaceTokens, tokens: ["false": "true"])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
           rename("-macos", "")
         }
         from('download-java') {
@@ -173,9 +181,13 @@ task copySupportFiles(type: Copy) {
         break
 
       case OperatingSystem.WINDOWS:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath;
+        final var libs = "libs/" + archives*.name.join(";libs/")
+
         from('launch.bat') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
-          filter(ReplaceTokens, tokens: ["false": "true"])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
         }
         break
     }

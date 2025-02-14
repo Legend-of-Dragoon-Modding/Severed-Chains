@@ -28,5 +28,5 @@ then
   ./download-java
 fi
 
-"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "libs/*:lod-game-@version@.jar" legend.game.Main -Xmx2G
+"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "@libs@:lod-game-@version@.jar" legend.game.Main -Xmx2G
 read -p "Press enter to exit"

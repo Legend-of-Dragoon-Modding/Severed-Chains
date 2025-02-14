@@ -1,8 +1,8 @@
 @echo off
 
-set compiled=@false@;
+set compiled="@false@";
 
-if %compiled%==false (
+if %compiled% NEQ "true" (
   echo You are trying to run the Severed Chains source code. Please see our installation instructions at https://legendofdragoon.org/projects/severed-chains/
   pause
   exit 1
@@ -28,4 +28,4 @@ move ".\jdk21.0.2_13" ".\jdk21"
 del ".\jdk.zip"
 
 : LAUNCH
-".\jdk21\bin\java" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar;libs/*" legend.game.MainWindows -Xmx2G -ea || pause
+".\jdk21\bin\java" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar;@libs@" legend.game.MainWindows -Xmx2G -ea || pause

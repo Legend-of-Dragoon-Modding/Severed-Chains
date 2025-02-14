@@ -28,5 +28,5 @@ then
   ./download-java
 fi
 
-"$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar:libs/*" legend.game.Main -Xmx2G -ea
+"$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar:@libs@" legend.game.Main -Xmx2G -ea
 read -p "Press enter to exit"
