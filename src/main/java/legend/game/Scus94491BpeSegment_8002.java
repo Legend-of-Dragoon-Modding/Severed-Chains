@@ -3288,10 +3288,11 @@ public final class Scus94491BpeSegment_8002 {
           final int x = (int)(textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc - nudgeX);
           final int y;
 
+          // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
           if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 && i < textboxText.chars_1c) {
-            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY);
+            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY) - 1;
           } else {
-            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY - textboxText.scrollAmount_2c);
+            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY - textboxText.scrollAmount_2c) - 1;
           }
 
           //LAB_80028544
@@ -3441,7 +3442,8 @@ public final class Scus94491BpeSegment_8002 {
         case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
       };
 
-      float y = originY;
+      // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
+      float y = originY - 1;
       float glyphNudge = 0.0f;
 
       for(int charIndex = 0; charIndex < text.length(); charIndex++) {
