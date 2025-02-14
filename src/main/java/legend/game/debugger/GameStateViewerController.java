@@ -400,8 +400,7 @@ public class GameStateViewerController {
     }, 0, 1000);
   }
 
-  @Override
-  protected void finalize() {
+  public void uninitialize() {
     this.updateUI.cancel();
   }
 
