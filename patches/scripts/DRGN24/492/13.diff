@@ -1,0 +1,37 @@
+Zenebatos
+Meru
+Skip hiding body parts during cutscene
+--- original
++++ modified
+@@ -294,6 +294,7 @@
+ call 97, 0x3
+ gosub inl[:LABEL_0]
+ call 97, 0x0
++jmp inl[:THE_DISMEMBERMENT_PLAN_1]
+ call 288, 0x0
+ call 288, 0x4
+ call 288, 0x5
+@@ -305,6 +306,7 @@
+ call 288, 0x11
+ call 288, 0x16
+ call 288, 0x17
++THE_DISMEMBERMENT_PLAN_1:
+ call 2, 0x1a, 0x0
+ jmp inl[:LABEL_31]
+ LABEL_38:
+@@ -321,6 +323,7 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_17]
++jmp inl[:THE_DISMEMBERMENT_PLAN_2]
+ call 288, 0x0
+ call 288, 0x4
+ call 288, 0x5
+@@ -332,6 +335,7 @@
+ call 288, 0x11
+ call 288, 0x16
+ call 288, 0x17
++THE_DISMEMBERMENT_PLAN_2:
+ mov 0x19, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_31]
