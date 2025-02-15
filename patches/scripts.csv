@@ -141,7 +141,7 @@ diff,SECT/DRGN22.BIN/687/6,scripts/DRGN22/687/6.diff,"Twin Castle, nighttime gue
 diff,SECT/DRGN22.BIN/795/1,scripts/DRGN22/795/1.diff,"Giganto Home Haschel solo cutscene, switch camera offset axis GH#1918"
 diff,SECT/DRGN22.BIN/798/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772"
 diff,SECT/DRGN22.BIN/801/1,scripts/DRGN22/801/1.diff,"Giganto Home throne room, Haschel leaves, fix unlock party GH#1772"
-diff,SECT/DRGN22.BIN/804/1,scripts/DRGN22/804/1.diff,"Giganto Home Gehrich cutscene, Haschel rejoins, fix unlock party GH#1772"
+diff,SECT/DRGN22.BIN/804/1,scripts/DRGN22/804/1.diff,"Giganto Home Gehrich cutscene, don't hide body parts, Haschel rejoins, fix unlock party, GH#1772, GH#2096"
 diff,SECT/DRGN22.BIN/807/1,scripts/DRGN22/807/1.diff,"Giganto Home below throne, party leaves, fix unlock party GH#1772"
 diff,SECT/DRGN22.BIN/861/1,scripts/DRGN22/861/1.diff,"Queen Fury, fix Meru rotation, GH#1705"
 diff,SECT/DRGN22.BIN/873/1,scripts/DRGN22/873/1.diff,"Phantom Ship, fix overlapping arrows for chest puzzle textbox, GH#1387"
