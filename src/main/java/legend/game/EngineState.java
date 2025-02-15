@@ -44,16 +44,19 @@ public abstract class EngineState {
     return true;
   }
 
-  public boolean allowsWidescreen() {
-    return true;
-  }
-
-  public boolean allowsHighQualityProjection() {
-    return true;
+  public RenderMode getRenderMode() {
+    return RenderMode.PERSPECTIVE;
   }
 
   /** Allows engine states to modify input before a script reads it */
   public int getScriptInput(final int input) {
     return input;
+  }
+
+  public enum RenderMode {
+    /** Used by submaps and title screen, pseudo-perspective using orthographic projection with H division */
+    LEGACY,
+    /** True perspective */
+    PERSPECTIVE,
   }
 }

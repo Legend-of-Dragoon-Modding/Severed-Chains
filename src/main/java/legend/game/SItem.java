@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
@@ -807,17 +809,22 @@ public final class SItem {
   }
 
   @Method(0x80103e90L)
-  public static void renderMenuCentredText(final String text, final int x, int y, final int maxWidth) {
+  public static void renderMenuCentredText(final String text, final int x, int y, final int maxWidth, final FontOptions options) {
+    renderMenuCentredText(text, x, y, maxWidth, options, null);
+  }
+
+  @Method(0x80103e90L)
+  public static void renderMenuCentredText(final String text, final int x, int y, final int maxWidth, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
     final String[] split;
-    if(textWidth(text) <= maxWidth) {
+    if(textWidth(text) * options.getSize() <= maxWidth) {
       split = new String[] {text};
     } else {
       final List<String> temp = new ArrayList<>();
-      int currentWidth = 0;
+      float currentWidth = 0.0f;
       int startIndex = 0;
       for(int i = 0; i < text.length(); i++) {
         final char current = text.charAt(i);
-        final int charWidth = Scus94491BpeSegment_8002.charWidth(current);
+        final float charWidth = Scus94491BpeSegment_8002.charWidth(current) * options.getSize();
 
         if(current == '\n') {
           temp.add(text.substring(startIndex, i));
@@ -851,7 +858,7 @@ public final class SItem {
 
     for(int i = 0; i < split.length; i++) {
       final String str = split[i];
-      renderText(str, x - textWidth(str) / 2, y, UI_TEXT);
+      renderText(str, x - textWidth(str) * options.getSize() / 2.0f, y, options, queueCallback);
       y += textHeight(str);
     }
   }

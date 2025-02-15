@@ -4,6 +4,7 @@ import legend.core.QueuedModel;
 import legend.core.RenderBatch;
 import legend.core.RenderEngine;
 import legend.core.gpu.Rect4i;
+import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 
 import static legend.core.GameEngine.CONFIG;
@@ -37,9 +38,9 @@ public class RenderState {
 
   public void initBatch(final RenderBatch batch) {
     this.batch = batch;
-    this.widescreen = batch.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
-    this.w = this.engine.getRenderWidth() / batch.projectionWidth;
-    this.h = this.engine.getRenderHeight() / batch.projectionHeight;
+    this.widescreen = batch.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CoreMod.ALLOW_WIDESCREEN_CONFIG.isValid() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || batch.getRenderMode() == EngineState.RenderMode.LEGACY && CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.isValid() && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
+    this.w = (float)this.engine.getRenderWidth() / batch.projectionWidth;
+    this.h = (float)this.engine.getRenderHeight() / batch.projectionHeight;
 
     this.backfaceCulling = false;
     glDisable(GL_CULL_FACE);
@@ -86,8 +87,8 @@ public class RenderState {
     this.tempScissorRect.set(worldScissor.x, this.engine.getRenderHeight() - (worldScissor.y + worldScissor.h), worldScissor.w, worldScissor.h);
 
     if(modelScissor.w != 0 || modelScissor.h != 0) {
-      if(this.widescreen || this.batch.expandedSubmap) {
-        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * (this.batch.expectedWidth / this.batch.projectionWidth) / this.batch.widthSquisher), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * (this.batch.expectedWidth / this.batch.projectionWidth) / this.batch.widthSquisher), Math.round(modelScissor.h * this.h));
+      if(this.widescreen) {
+        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * ((float)this.batch.expectedWidth / this.batch.projectionWidth)), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * ((float)this.batch.expectedWidth / this.batch.projectionWidth)), Math.round(modelScissor.h * this.h));
       } else {
         this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.w), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.w), Math.round(modelScissor.h * this.h));
       }

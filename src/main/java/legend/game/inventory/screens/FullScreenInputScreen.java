@@ -6,6 +6,7 @@ import legend.game.types.MessageBoxResult;
 
 import java.util.function.BiConsumer;
 
+import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -27,6 +28,6 @@ public class FullScreenInputScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderMenuCentredText(this.prompt, 188, 25, 240);
+    SItem.renderMenuCentredText(this.prompt, 188, 25, 240, UI_TEXT);
   }
 }

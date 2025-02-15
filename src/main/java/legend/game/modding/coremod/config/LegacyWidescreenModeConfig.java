@@ -8,8 +8,8 @@ import legend.game.saves.EnumConfigEntry;
 
 import static legend.core.GameEngine.RENDERER;
 
-public class SubmapWidescreenModeConfig extends EnumConfigEntry<SubmapWidescreenMode> {
-  public SubmapWidescreenModeConfig() {
+public class LegacyWidescreenModeConfig extends EnumConfigEntry<SubmapWidescreenMode> {
+  public LegacyWidescreenModeConfig() {
     super(SubmapWidescreenMode.class, SubmapWidescreenMode.EXPANDED, ConfigStorageLocation.GLOBAL, ConfigCategory.GRAPHICS);
   }
 

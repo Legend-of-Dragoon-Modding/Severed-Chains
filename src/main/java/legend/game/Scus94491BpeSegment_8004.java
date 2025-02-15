@@ -116,6 +116,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;
+  public static EngineState.RenderMode renderMode = EngineState.RenderMode.LEGACY;
 
   public static int reinitOrderingTableBits_8004dd38 = 14;
 

@@ -4,8 +4,8 @@ import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.Shader;
 import legend.core.opengl.SubmapWidescreenMode;
+import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.submap.SMap;
 import legend.game.types.Translucency;
 import org.joml.Matrix4f;
 
@@ -14,34 +14,27 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.MathHelper.PI;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class RenderBatch {
   public final RenderEngine engine;
 
   /** The PS1 native width (usually 320, sometimes 368) */
-  public float projectionWidth;
+  public int projectionWidth = 320;
   /** The PS1 native height */
-  public float projectionHeight;
+  public int projectionHeight = 240;
   /** The PS1 projection depth */
   public float projectionDepth;
   /** The ratio of 320 / {@link #projectionHeight} */
-  public float aspectRatio;
+  public float aspectRatio = (float)this.projectionWidth / this.projectionHeight;
   /** Field of view calculated from aspect ratio and projection depth */
   public float fieldOfView;
 
-  /** Enables or disables widescreen */
-  public boolean allowWidescreen;
-  /** Use a modern perspective projection instead of the PS1 H division */
-  public boolean allowHighQualityProjection;
+  /** The render mode for this batch */
+  public EngineState.RenderMode renderMode = EngineState.RenderMode.PERSPECTIVE;
   /** Used to center ortho rendering when not in 4:3 aspect ratio */
   public float widescreenOrthoOffsetX;
   /** Expected PS1 render width, always 320 except 368 when using expanded submaps */
-  public float expectedWidth = 320.0f;
-  /** Squishing factor used in conjunction with expanded submaps */
-  public float widthSquisher = 1.0f;
-  /** We're on a submap and expanded submaps is enabled */
-  public boolean expandedSubmap;
+  public int expectedWidth = 320;
 
   public boolean needsSorting;
 
@@ -67,12 +60,9 @@ public class RenderBatch {
     this.projectionDepth = current.projectionDepth;
     this.aspectRatio = current.aspectRatio;
     this.fieldOfView = current.fieldOfView;
-    this.allowWidescreen = current.allowWidescreen;
-    this.allowHighQualityProjection = current.allowHighQualityProjection;
+    this.renderMode = current.renderMode;
     this.widescreenOrthoOffsetX = current.widescreenOrthoOffsetX;
     this.expectedWidth = current.expectedWidth;
-    this.widthSquisher = current.widthSquisher;
-    this.expandedSubmap = current.expandedSubmap;
     this.perspectiveProjection.set(current.perspectiveProjection);
     this.orthographicProjection.set(current.orthographicProjection);
   }
@@ -90,35 +80,26 @@ public class RenderBatch {
     this.orthoPool.reset();
   }
 
-  /** NOTE: you must call {@link #updateProjections} yourself */
-  public void setAllowWidescreen(final boolean allowWidescreen) {
-    this.allowWidescreen = allowWidescreen;
+  public void setRenderMode(final EngineState.RenderMode renderMode) {
+    this.renderMode = renderMode;
+    this.updateProjections();
   }
 
-  public boolean getAllowWidescreen() {
-    return this.allowWidescreen;
+  public EngineState.RenderMode getRenderMode() {
+    return this.renderMode;
   }
 
-  /** NOTE: you must call {@link #updateProjections} yourself */
-  public void setAllowHighQualityProjection(final boolean allowHighQualityProjection) {
-    this.allowHighQualityProjection = allowHighQualityProjection;
-  }
-
-  public float getWidthSquisher() {
-    return this.widthSquisher;
-  }
-
-  public void setProjectionSize(final float width, final float height) {
+  public void setProjectionSize(final int width, final int height) {
     this.projectionWidth = width;
     this.projectionHeight = height;
     this.updateFieldOfView();
   }
 
-  public float getProjectionWidth() {
+  public int getProjectionWidth() {
     return this.projectionWidth;
   }
 
-  public float getProjectionHeight() {
+  public int getProjectionHeight() {
     return this.projectionHeight;
   }
 
@@ -135,9 +116,7 @@ public class RenderBatch {
   }
 
   public void updateProjections() {
-    this.widthSquisher = 1.0f;
-    this.expectedWidth = 320.0f;
-    this.expandedSubmap = false;
+    this.expectedWidth = 320;
 
     if(RenderEngine.legacyMode != 0) {
       this.perspectiveProjection.setPerspectiveLH(PI / 4.0f, (float)this.engine.getRenderWidth() / this.engine.getRenderHeight(), 0.1f, 500.0f);
@@ -146,13 +125,13 @@ public class RenderBatch {
     }
 
     // LOD uses a left-handed projection with a negated Y axis because reasons.
-    if(this.allowHighQualityProjection && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
+    if(this.renderMode == EngineState.RenderMode.PERSPECTIVE && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
       final float ratio;
-      if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      if(CoreMod.ALLOW_WIDESCREEN_CONFIG.isValid() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
         ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
         final float w = this.projectionHeight * ratio;
         final float h = this.projectionHeight;
-        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / this.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, w * ((float)this.projectionWidth / this.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
         this.widescreenOrthoOffsetX = (w - this.expectedWidth) / 2.0f;
       } else {
         ratio = this.aspectRatio;
@@ -163,22 +142,16 @@ public class RenderBatch {
       this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, ratio, 0.1f, 1000000.0f);
       this.perspectiveProjection.negateY();
     } else {
-      this.expandedSubmap = currentEngineState_8004dd04 instanceof SMap && CONFIG.getConfig(CoreMod.SUBMAP_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
-
       // Our perspective projection is actually a centred orthographic projection. We are doing a
       // projection plane division in the vertex shader to emulate perspective division on the GTE.
-      if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || this.expandedSubmap) {
-        if(this.expandedSubmap) {
-          this.expectedWidth = 368.0f;
-          this.widthSquisher = 368.0f / 320.0f;
-        }
-
+      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED) {
+        this.expectedWidth = 368;
         final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
-        final float w = this.projectionHeight * ratio;
-        final float h = this.projectionHeight;
-        this.perspectiveProjection.setOrthoLH(-w / 2.0f * this.widthSquisher, w / 2.0f * this.widthSquisher, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);
-        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / this.expectedWidth) * this.widthSquisher, h, 0.0f, 0.0f, 1000000.0f);
-        this.widescreenOrthoOffsetX = (w * this.widthSquisher - this.expectedWidth) / 2.0f;
+        final int h = this.projectionHeight;
+        final int w = Math.round(h * ratio) + 1 & ~1;
+        this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, w, h, 0.0f, 0.0f, 1000000.0f);
+        this.widescreenOrthoOffsetX = (w - this.projectionWidth) / 2.0f;
       } else {
         this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.0f, 1000000.0f);
         this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.0f, 1000000.0f);

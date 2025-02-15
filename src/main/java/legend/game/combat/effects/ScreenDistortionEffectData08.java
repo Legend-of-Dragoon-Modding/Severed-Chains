@@ -7,6 +7,7 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
+import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -60,7 +61,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     final float multiplierHeight = (int)(manager.params_10.scale_16.y * 0x1000) >> 11;
     final float rowLimit = (int)(manager.params_10.scale_16.z * 0x1000) * 15 >> 9;
 
-    final boolean widescreen = RENDERER.getAllowWidescreen() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final boolean widescreen = RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
     final float fullWidth;
     if(widescreen) {
       fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
@@ -141,7 +142,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     // Make sure effect fills the whole screen
-    final boolean widescreen = RENDERER.getAllowWidescreen() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final boolean widescreen = RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
     final float fullWidth;
     if(widescreen) {
       fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);

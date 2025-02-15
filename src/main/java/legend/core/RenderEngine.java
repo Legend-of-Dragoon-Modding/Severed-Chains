@@ -28,6 +28,7 @@ import legend.core.opengl.VoidShaderOptions;
 import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
+import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -320,33 +321,28 @@ public class RenderEngine {
     return this.mainBatch.aspectRatio;
   }
 
-  /** NOTE: you must call {@link #updateProjections} yourself */
-  public void setAllowWidescreen(final boolean allowWidescreen) {
-    this.mainBatch.setAllowWidescreen(allowWidescreen);
+  public void setRenderMode(final EngineState.RenderMode renderMode) {
+    this.mainBatch.setRenderMode(renderMode);
   }
 
-  public boolean getAllowWidescreen() {
-    return this.mainBatch.allowWidescreen;
+  public EngineState.RenderMode getRenderMode() {
+    return this.mainBatch.getRenderMode();
   }
 
-  /** NOTE: you must call {@link #updateProjections} yourself */
-  public void setAllowHighQualityProjection(final boolean allowHighQualityProjection) {
-    this.mainBatch.setAllowHighQualityProjection(allowHighQualityProjection);
+  public float getWidescreenOrthoOffsetX() {
+    return this.mainBatch.widescreenOrthoOffsetX;
   }
 
-  public float getWidthSquisher() {
-    return this.mainBatch.widthSquisher;
-  }
-
-  public void setProjectionSize(final float width, final float height) {
+  public void setProjectionSize(final int width, final int height) {
     this.mainBatch.setProjectionSize(width, height);
+    this.updateResolution();
   }
 
-  public float getProjectionWidth() {
+  public int getProjectionWidth() {
     return this.mainBatch.getProjectionWidth();
   }
 
-  public float getProjectionHeight() {
+  public int getProjectionHeight() {
     return this.mainBatch.getProjectionHeight();
   }
 
@@ -368,10 +364,6 @@ public class RenderEngine {
 
   public void updateProjections() {
     this.mainBatch.updateProjections();
-  }
-
-  public boolean expandedSubmap() {
-    return this.mainBatch.expandedSubmap;
   }
 
   public Window.Events events() {
@@ -930,7 +922,7 @@ public class RenderEngine {
   }
 
   public void setProjectionMode(final RenderBatch batch, final ProjectionMode projectionMode) {
-    final boolean highQualityProjection = batch.allowHighQualityProjection && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
+    final boolean highQualityProjection = batch.renderMode == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
 
     // znear
     this.projectionBuffer.put(0, 0.0f);
@@ -1050,10 +1042,10 @@ public class RenderEngine {
 
     final Resolution res = CONFIG.getConfig(CoreMod.RESOLUTION_CONFIG.get());
     if(res == Resolution.NATIVE) {
-      this.renderWidth = width;
+      this.renderWidth = (int)(width * (this.mainBatch.projectionWidth / 320.0f));
       this.renderHeight = height;
     } else {
-      this.renderWidth = (int)((float)res.verticalResolution / height * width);
+      this.renderWidth = (int)((float)res.verticalResolution / height * width * (this.mainBatch.projectionWidth / 320.0f));
       this.renderHeight = res.verticalResolution;
     }
 
