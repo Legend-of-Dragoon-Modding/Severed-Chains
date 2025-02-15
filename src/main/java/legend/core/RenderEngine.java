@@ -231,6 +231,8 @@ public class RenderEngine {
   private final Texture[] renderTextures = new Texture[RENDER_BUFFER_COUNT];
   private Texture depthTexture;
   private int renderBufferIndex;
+  /** Set when resizing the window so that the render buffers will be resized on the next frame */
+  private boolean resizeRenderBuffers;
 
   // Text
   public Texture textTexture;
@@ -558,6 +560,11 @@ public class RenderEngine {
         while((task = this.tasks.poll()) != null) {
           task.run();
         }
+      }
+
+      if(this.resizeRenderBuffers) {
+        this.resizeRenderBuffers = false;
+        this.resizeRenderBuffers();
       }
 
       if(this.frameSkipIndex == 0) {
@@ -1063,6 +1070,10 @@ public class RenderEngine {
     // Projections
     this.updateProjections();
 
+    this.resizeRenderBuffers = true;
+  }
+
+  private void resizeRenderBuffers() {
     for(int i = 0; i < this.batches.size(); i++) {
       this.batches.get(i).updateProjections();
     }
@@ -1093,7 +1104,6 @@ public class RenderEngine {
       builder.dataFormat(GL_DEPTH_COMPONENT);
       builder.dataType(GL_FLOAT);
     });
-
 
     // Render buffers
     for(int i = 0; i < this.renderBuffers.length; i++) {
