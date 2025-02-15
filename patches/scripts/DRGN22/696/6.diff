@@ -1,0 +1,64 @@
+Widescreen patch
+Twin Castle, Throne room cutscene
+Meru: Start on-screen. Replace disappearance with movement and animation loop.
+--- original
++++ modified
+@@ -125,7 +125,12 @@
+ JMP_440_1:
+ call 101, stor[0], 0x58, 0xa, 0xffffffe4
+ call 103, stor[0], 0x0, 0x0, 0x0
+# Start on screen, rotated towards throne
+-call 106, 0x1
++mov 0xffffffc8, stor[24]
++mov 0x2c, stor[25]
++mov 1, stor[26]
++mov 0, stor[27]
++gosub inl[:LABEL_14]
++call 99, 1
+ mov 0x15, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+@@ -162,5 +167,43 @@
+ call 99, 0x0
+ call 97, 0x2
+ gosub inl[:LABEL_0]
++LOOP:
++mov 10, stor[24]
++mov 0xffffffff, stor[25]
++gosub inl[:LABEL_5]
++mov 10, stor[24]
++mov 0xffffffff, stor[25]
++gosub inl[:LABEL_5]
++mov 11, stor[24]
++mov 0xffffffff, stor[25]
++gosub inl[:LABEL_5]
++mov 0xaf, stor[24]
++mov 0xa, stor[25]
++mov 0x37, stor[26]
++mov 9, stor[27]
++mov 2, stor[28]
++gosub inl[:LABEL_9]
++mov 10, stor[24]
++mov 0xffffffff, stor[25]
++gosub inl[:LABEL_5]
++mov 11, stor[24]
++mov 0xffffffff, stor[25]
++gosub inl[:LABEL_5]
++mov 0x87, stor[24]
++mov 0xa, stor[25]
++mov 0xffffff6f, stor[26]
++mov 9, stor[27]
++mov 2, stor[28]
++gosub inl[:LABEL_9]
++mov 11, stor[24]
++mov 0xffffffff, stor[25]
++gosub inl[:LABEL_5]
++mov 0x58, stor[24]
++mov 0xa, stor[25]
++mov 0xffffffe4, stor[26]
++mov 9, stor[27]
++mov 2, stor[28]
++gosub inl[:LABEL_9]
++jmp inl[:LOOP]
+ call 106, 0x1
+ return

@@ -1,0 +1,23 @@
+Widescreen patch
+Twin Castle, Emille's painting prison
+Dart
+Old: Looked in Emille's current (hidden) position to face mirror.
+New: Replace Emille reference with static position.
+--- original
++++ modified
+@@ -611,10 +611,11 @@
+ call 97, 0xb
+ mov 0x7, stor[24]
+ wait stor[24]
+-mov 0x1, stor[24]
+-mov 0x8, stor[25]
+-mov 0xffffffff, stor[26]
+-gosub inl[:LABEL_57]
++mov 0xfffffe54, stor[24]
++mov 0x167, stor[25]
++mov 0x8, stor[26]
++mov 0xffffffff, stor[27]
++gosub inl[:LABEL_51]
+ mov 0x0, stor[24]
+ gosub inl[:LABEL_33]
+ gosub inl[:LABEL_17]
