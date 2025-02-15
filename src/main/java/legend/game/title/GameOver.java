@@ -34,8 +34,8 @@ public class GameOver extends EngineState {
   private final MV transforms = new MV();
 
   @Override
-  public boolean allowsWidescreen() {
-    return false;
+  public RenderMode getRenderMode() {
+    return RenderMode.LEGACY;
   }
 
   @Method(0x800c7558L)
