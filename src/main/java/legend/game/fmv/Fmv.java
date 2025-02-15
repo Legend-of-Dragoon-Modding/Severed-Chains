@@ -339,7 +339,7 @@ public final class Fmv {
     oldWidescreen = RENDERER.getAllowWidescreen();
     RENDERER.window().setFpsLimit(15);
     RENDERER.setAllowWidescreen(true);
-    RENDERER.setProjectionSize(320.0f, 240.0f);
+    RENDERER.setProjectionSize(320.0f / 1.25f, 240.0f);
 
     final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     final SimpleShaderOptions simpleShaderOptions = simpleShader.makeOptions();
