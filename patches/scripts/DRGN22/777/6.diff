@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -317,6 +317,7 @@
+ mov var[64][0], stor[24]
+ jmp_cmp !=, stor[stor[stor[0], 24], 22], stor[22], inl[:LABEL_8]
+ call 102, stor[0], stor[8], stor[9], stor[10]
++decr stor[9]
+ call 101, stor[24], stor[8], stor[9], stor[10]
+ LABEL_8:
+ yield

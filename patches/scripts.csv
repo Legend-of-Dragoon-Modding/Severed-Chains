@@ -138,6 +138,7 @@ diff,SECT/DRGN22.BIN/681/1,scripts/DRGN22/681/1.diff,"Adjust text placement for 
 diff,SECT/DRGN22.BIN/681/2,scripts/DRGN22/681/2.diff,"Adjust text placement for conversation with Kongol in training room, GH#1839"
 diff,SECT/DRGN22.BIN/687/5,scripts/DRGN22/687/5.diff,"Twin Castle, nighttime guest bedroom, adjust Albert exit, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/687/6,scripts/DRGN22/687/6.diff,"Twin Castle, nighttime guest bedroom, adjust Rose exit, widescreen patch, GH#2027"
+diff,SECT/DRGN22.BIN/777/6,scripts/DRGN22/777/6.diff,"Vally, rock"
 diff,SECT/DRGN22.BIN/795/1,scripts/DRGN22/795/1.diff,"Giganto Home Haschel solo cutscene, switch camera offset axis GH#1918"
 diff,SECT/DRGN22.BIN/798/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772"
 diff,SECT/DRGN22.BIN/801/1,scripts/DRGN22/801/1.diff,"Giganto Home throne room, Haschel leaves, fix unlock party GH#1772"
