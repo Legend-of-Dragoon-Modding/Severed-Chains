@@ -38,6 +38,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import org.joml.Math;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -362,7 +363,7 @@ public class WMap extends EngineState {
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
-  private final MV fastTravelTransforms = new MV();
+  private final Matrix4f fastTravelTransforms = new Matrix4f();
   /** Temporary solution until text refactoring */
   private final String[] startLabelNames = new String[8];
   private final float[] startLabelXs = new float[8];
@@ -3491,8 +3492,7 @@ public class WMap extends EngineState {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   private void renderFastTravelScreenDistortionEffect() {
-    this.fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
-    this.fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
+    this.fastTravelTransforms.scaling(320.0f * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio(), 240.0f, 1.0f);
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.fastTravelTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())

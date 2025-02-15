@@ -349,7 +349,7 @@ public final class Fmv {
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
 
     keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
-      if(key == GLFW_KEY_ENTER && isValidSkipInput(InputSource.KEYBOARD)) {
+      if(mods == 0 && key == GLFW_KEY_ENTER && isValidSkipInput(InputSource.KEYBOARD)) {
         shouldStop = true;
       } else {
         isKeyboardInput = true;
