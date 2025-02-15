@@ -111,6 +111,7 @@ import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.pauseMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
+import static legend.game.Scus94491BpeSegment_8004.renderMode;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMaxSounds;
 import static legend.game.Scus94491BpeSegment_8004.setSoundSequenceVolume;
@@ -525,8 +526,8 @@ public final class Scus94491BpeSegment {
     //LAB_80012ad8
     currentEngineState_8004dd04 = overlay.constructor_00.get();
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
-    RENDERER.setAllowWidescreen(currentEngineState_8004dd04.allowsWidescreen());
-    RENDERER.setAllowHighQualityProjection(currentEngineState_8004dd04.allowsHighQualityProjection());
+    renderMode = currentEngineState_8004dd04.getRenderMode();
+    RENDERER.setRenderMode(currentEngineState_8004dd04.getRenderMode());
     RENDERER.updateProjections();
   }
 
@@ -569,6 +570,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80013060
     GsInitGraph(width_8004dd34, height_8004dd34);
+    RENDERER.setRenderMode(renderMode);
 
     //LAB_80013080
     setDrawOffset();
@@ -595,6 +597,10 @@ public final class Scus94491BpeSegment {
       syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
       width_8004dd34 = width;
       height_8004dd34 = height;
+
+      if(currentEngineState_8004dd04 != null) {
+        renderMode = currentEngineState_8004dd04.getRenderMode();
+      }
     }
   }
 
@@ -738,10 +744,11 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.getWidthSquisher();
-      final float extraWidth = fullWidth - displayWidth_1f8003e0;
-      fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-      fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
+      final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+      fullScreenEffect_800bb140.transforms
+        .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
+        .translate(0.0f, 0.0f, 120.0f)
+      ;
 
       //LAB_800139c4
       RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
@@ -753,10 +760,11 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.getWidthSquisher();
-      final float extraWidth = fullWidth - displayWidth_1f8003e0;
-      fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-      fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 156.0f);
+      final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+      fullScreenEffect_800bb140.transforms
+        .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
+        .translate(0.0f, 0.0f, 120.0f)
+      ;
 
       //LAB_80013b10
       RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
@@ -769,10 +777,11 @@ public final class Scus94491BpeSegment {
   @Method(0x80013c3cL)
   public static void drawFullScreenRect(final int colour, final Translucency transMode) {
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4) * RENDERER.getWidthSquisher();
-    final float extraWidth = fullWidth - RENDERER.getProjectionWidth();
-    fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-    fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+    fullScreenEffect_800bb140.transforms
+      .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
+      .translate(0.0f, 0.0f, 120.0f)
+    ;
 
     RENDERER.queueOrthoModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
       .monochrome(colour / 255.0f);
@@ -1918,13 +1927,13 @@ public final class Scus94491BpeSegment {
       final float offset;
 
       // Make sure effect fills the whole screen
-      if(RENDERER.getAllowWidescreen() && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
         squish = 1.0f;
         width = dissolveDisplayWidth;
         offset = 0.0f;
       } else {
         squish = dissolveDisplayWidth / 320.0f;
-        width = RENDERER.getLastFrame().width / (RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
+        width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
         offset = width - 320.0f;
       }
 
@@ -1994,13 +2003,13 @@ public final class Scus94491BpeSegment {
     final float offset;
 
     // Make sure effect fills the whole screen
-    if(RENDERER.getAllowWidescreen() && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+    if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
       squish = 1.0f;
       width = dissolveDisplayWidth;
       offset = 0.0f;
     } else {
       squish = dissolveDisplayWidth / 320.0f;
-      width = RENDERER.getLastFrame().width / (RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
+      width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
       offset = width - 320.0f;
     }
 

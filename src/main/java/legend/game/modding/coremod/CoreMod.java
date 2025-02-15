@@ -32,7 +32,7 @@ import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
 import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
-import legend.game.modding.coremod.config.SubmapWidescreenModeConfig;
+import legend.game.modding.coremod.config.LegacyWidescreenModeConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
 import legend.game.saves.BoolConfigEntry;
@@ -91,7 +91,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_MOUSE_INPUT_CONFIG = CONFIG_REGISTRAR.register("disable_mouse_input", DisableMouseInputConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> RUMBLE_CONFIG = CONFIG_REGISTRAR.register("rumble", () -> new BoolConfigEntry(true, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS));
   public static final RegistryDelegate<BoolConfigEntry> ALLOW_WIDESCREEN_CONFIG = CONFIG_REGISTRAR.register("allow_widescreen", AllowWidescreenConfigEntry::new);
-  public static final RegistryDelegate<SubmapWidescreenModeConfig> SUBMAP_WIDESCREEN_MODE_CONFIG = CONFIG_REGISTRAR.register("submap_widescreen_mode", SubmapWidescreenModeConfig::new);
+  public static final RegistryDelegate<LegacyWidescreenModeConfig> LEGACY_WIDESCREEN_MODE_CONFIG = CONFIG_REGISTRAR.register("submap_widescreen_mode", LegacyWidescreenModeConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> HIGH_QUALITY_PROJECTION_CONFIG = CONFIG_REGISTRAR.register("high_quality_projection", HighQualityProjectionConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> FULLSCREEN_CONFIG = CONFIG_REGISTRAR.register("fullscreen", FullscreenConfigEntry::new);
   public static final RegistryDelegate<ResolutionConfig> RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("resolution", ResolutionConfig::new);

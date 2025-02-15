@@ -3,6 +3,7 @@ package legend.core.opengl;
 import legend.core.RenderBatch;
 import legend.core.RenderEngine;
 import legend.core.gpu.Rect4i;
+import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 
 import java.util.Arrays;
@@ -65,12 +66,12 @@ public class ScissorStack {
 
   /** Equivalent to {@link #set} but rescales engine coords to projection coords */
   public ScissorStack setRescale(final int x, final int y, final int w, final int h) {
-    final boolean widescreen = this.mainBatch.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
-    final float widthMultiplier = this.engine.getRenderWidth() / this.mainBatch.projectionWidth;
-    final float heightMultiplier = this.engine.getRenderHeight() / this.mainBatch.projectionHeight;
+    final boolean widescreen = this.mainBatch.renderMode == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || this.mainBatch.renderMode == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
+    final float widthMultiplier = (float)this.engine.getRenderWidth() / this.mainBatch.projectionWidth;
+    final float heightMultiplier = (float)this.engine.getRenderHeight() / this.mainBatch.projectionHeight;
 
-    if(widescreen || this.mainBatch.expandedSubmap) {
-      return this.set(Math.round((x + this.mainBatch.widescreenOrthoOffsetX) * heightMultiplier * (this.mainBatch.expectedWidth / this.mainBatch.projectionWidth) / this.mainBatch.widthSquisher), this.engine.getRenderHeight() - Math.round((y + h) * heightMultiplier), Math.round(w * heightMultiplier * (this.mainBatch.expectedWidth / this.mainBatch.projectionWidth) / this.mainBatch.widthSquisher), Math.round(h * heightMultiplier));
+    if(widescreen) {
+      return this.set(Math.round((x + this.mainBatch.widescreenOrthoOffsetX) * heightMultiplier * ((float)this.mainBatch.expectedWidth / this.mainBatch.projectionWidth)), this.engine.getRenderHeight() - Math.round((y + h) * heightMultiplier), Math.round(w * heightMultiplier * ((float)this.mainBatch.expectedWidth / this.mainBatch.projectionWidth)), Math.round(h * heightMultiplier));
     }
 
     return this.set(Math.round((x + this.mainBatch.widescreenOrthoOffsetX) * widthMultiplier), this.engine.getRenderHeight() - Math.round((y + h) * heightMultiplier), Math.round(w * widthMultiplier), Math.round(h * heightMultiplier));

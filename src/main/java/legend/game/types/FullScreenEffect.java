@@ -1,6 +1,6 @@
 package legend.game.types;
 
-import legend.core.gte.MV;
+import org.joml.Matrix4f;
 
 public class FullScreenEffect {
   public int type_00;
@@ -15,5 +15,5 @@ public class FullScreenEffect {
   public int _24;
   public int currentColour_28;
 
-  public final MV transforms = new MV();
+  public final Matrix4f transforms = new Matrix4f();
 }

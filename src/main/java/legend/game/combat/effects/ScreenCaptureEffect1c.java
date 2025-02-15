@@ -73,8 +73,8 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     this.texture.data(0, 0, w, h, data.flip());
 
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
-    final float normalizedCaptureW = captureW / RENDERER.getProjectionWidth() / widthFactor;
-    final float normalizedCaptureH = captureH / RENDERER.getProjectionHeight();
+    final float normalizedCaptureW = (float)captureW / RENDERER.getProjectionWidth() / widthFactor;
+    final float normalizedCaptureH = (float)captureH / RENDERER.getProjectionHeight();
 
     if(rendererIndex == 0) {
       this.screenshot = new PolyBuilder("Screen Capture")

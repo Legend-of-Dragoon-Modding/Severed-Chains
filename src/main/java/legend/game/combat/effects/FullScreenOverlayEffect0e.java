@@ -7,7 +7,6 @@ import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 
 public class FullScreenOverlayEffect0e implements Effect<EffectManagerParams.VoidType> {
@@ -50,10 +49,11 @@ public class FullScreenOverlayEffect0e implements Effect<EffectManagerParams.Voi
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
-    final float extraWidth = fullWidth - displayWidth_1f8003e0;
-    fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-    fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+    fullScreenEffect_800bb140.transforms
+      .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
+      .translate(0.0f, 0.0f, 120.0f)
+    ;
 
     //LAB_800139c4
     RENDERER.queueOrthoModel(RENDERER.opaqueQuad, fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)

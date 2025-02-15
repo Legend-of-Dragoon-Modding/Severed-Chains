@@ -15,6 +15,7 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.XaAdpcm;
+import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.i18n.I18n;
 import legend.game.input.Input;
@@ -25,7 +26,7 @@ import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
@@ -42,13 +43,13 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glViewport;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 public final class Fmv {
   private Fmv() { }
@@ -241,8 +242,8 @@ public final class Fmv {
   private static Shader.UniformBuffer transforms2Uniform;
   private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
   private static final Matrix4f transforms = new Matrix4f();
-  private static final Vector2f oldProjectionSize = new Vector2f();
-  private static boolean oldWidescreen;
+  private static final Vector2i oldProjectionSize = new Vector2i();
+  private static EngineState.RenderMode oldRenderMode;
 
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
@@ -336,10 +337,10 @@ public final class Fmv {
 
     oldFps = RENDERER.window().getFpsLimit();
     oldProjectionSize.set(RENDERER.getProjectionWidth(), RENDERER.getProjectionHeight());
-    oldWidescreen = RENDERER.getAllowWidescreen();
+    oldRenderMode = RENDERER.getRenderMode();
     RENDERER.window().setFpsLimit(15);
-    RENDERER.setAllowWidescreen(true);
-    RENDERER.setProjectionSize(320.0f, 240.0f);
+    RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
+    RENDERER.setProjectionSize(320, 240);
 
     final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     final SimpleShaderOptions simpleShaderOptions = simpleShader.makeOptions();
@@ -653,7 +654,7 @@ public final class Fmv {
       RENDERER.usePs1Gpu = true;
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
-      RENDERER.setAllowWidescreen(oldWidescreen);
+      RENDERER.setRenderMode(oldRenderMode);
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
       oldRenderer = null;
 

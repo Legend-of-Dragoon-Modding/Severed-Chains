@@ -95,6 +95,7 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.renderMode;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;

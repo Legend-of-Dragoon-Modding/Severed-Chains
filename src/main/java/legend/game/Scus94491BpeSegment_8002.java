@@ -118,6 +118,7 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.renderMode;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
@@ -786,6 +787,7 @@ public final class Scus94491BpeSegment_8002 {
 
     renderablePtr_800bdc5c = null;
     resizeDisplay(384, 240);
+    renderMode = EngineState.RenderMode.LEGACY;
     textZ_800bdf00 = 33;
 
     whichMenu_800bdc38 = destMenu;
