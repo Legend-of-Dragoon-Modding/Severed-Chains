@@ -144,6 +144,7 @@ diff,SECT/DRGN22.BIN/681/2,scripts/DRGN22/681/2.diff,"Adjust text placement for 
 diff,SECT/DRGN22.BIN/687/5,scripts/DRGN22/687/5.diff,"Twin Castle, nighttime guest bedroom, adjust Albert exit, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/687/6,scripts/DRGN22/687/6.diff,"Twin Castle, nighttime guest bedroom, adjust Rose exit, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/696/6,scripts/DRGN22/696/6.diff,"Twin Castle, throne room cutscene, Meru, widescreen patch, GH#2027"
+diff,SECT/DRGN22.BIN/717/1,scripts/DRGN22/717/1.diff,"Twin Castle, daytime main hall, stop hiding body parts, GH#2093"
 diff,SECT/DRGN22.BIN/717/3,scripts/DRGN22/717/3.diff,"Twin Castle, daytime main hall, Haschel, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/717/5,scripts/DRGN22/717/5.diff,"Twin Castle, daytime main hall, Rose, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/717/6,scripts/DRGN22/717/6.diff,"Twin Castle, daytime main hall, Albert and knight, widescreen patch, GH#2027"
