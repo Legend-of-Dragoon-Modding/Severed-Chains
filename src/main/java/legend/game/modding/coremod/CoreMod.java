@@ -15,12 +15,15 @@ import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
+import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
+import legend.game.modding.coremod.config.FmvVolumeConfigEntry;
 import legend.game.modding.coremod.config.FullscreenConfigEntry;
 import legend.game.modding.coremod.config.HighQualityProjectionConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
+import legend.game.modding.coremod.config.LegacyWidescreenModeConfig;
 import legend.game.modding.coremod.config.MashModeConfigEntry;
 import legend.game.modding.coremod.config.MonitorConfigEntry;
 import legend.game.modding.coremod.config.MusicEffectsOverTimeGranularityConfigEntry;
@@ -28,11 +31,10 @@ import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry
 import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
 import legend.game.modding.coremod.config.MusicSampleRateConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
-import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
 import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
-import legend.game.modding.coremod.config.LegacyWidescreenModeConfig;
+import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
 import legend.game.saves.BoolConfigEntry;
@@ -99,6 +101,8 @@ public class CoreMod {
 
   public static final RegistryDelegate<AudioDeviceConfig> AUDIO_DEVICE_CONFIG = CONFIG_REGISTRAR.register("audio_device", AudioDeviceConfig::new);
   public static final RegistryDelegate<MusicVolumeConfigEntry> MUSIC_VOLUME_CONFIG = CONFIG_REGISTRAR.register("music_volume", MusicVolumeConfigEntry::new);
+  public static final RegistryDelegate<SfxVolumeConfigEntry> SFX_VOLUME_CONFIG = CONFIG_REGISTRAR.register("sfx_volume", SfxVolumeConfigEntry::new);
+  public static final RegistryDelegate<FmvVolumeConfigEntry> FMV_VOLUME_CONFIG = CONFIG_REGISTRAR.register("fmv_volume", FmvVolumeConfigEntry::new);
   public static final RegistryDelegate<MusicInterpolationPrecisionConfigEntry> MUSIC_INTERPOLATION_PRECISION_CONFIG = CONFIG_REGISTRAR.register("music_interpolation_precision", MusicInterpolationPrecisionConfigEntry::new);
   public static final RegistryDelegate<MusicPitchResolutionConfigEntry> MUSIC_PITCH_RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("music_pitch_resolution", MusicPitchResolutionConfigEntry::new);
   public static final RegistryDelegate<MusicSampleRateConfigEntry> MUSIC_SAMPLE_RATE_CONFIG = CONFIG_REGISTRAR.register("music_sample_rate", MusicSampleRateConfigEntry::new);

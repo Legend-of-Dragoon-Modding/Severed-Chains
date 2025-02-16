@@ -15,6 +15,7 @@ import legend.game.EngineStateEnum;
 import legend.game.i18n.I18n;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.UI_WHITE;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
@@ -217,6 +219,7 @@ public final class Fmv {
   private static int sector;
   private static int frame;
 
+  private static float volume = 1.0f;
   private static GenericSource source;
 
   private static Window.Events.Key keyPress;
@@ -309,6 +312,7 @@ public final class Fmv {
     RENDERER.setProjectionSize(320, 240);
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
+    volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get());
 
     keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
       if(mods == 0 && key == GLFW_KEY_ENTER && isValidSkipInput(InputSource.KEYBOARD)) {
@@ -365,6 +369,7 @@ public final class Fmv {
           // Halve the volume
           for(int i = 0; i < decodedXaAdpcm.length; i++) {
             decodedXaAdpcm[i] >>= 1;
+            decodedXaAdpcm[i] *= volume;
           }
 
           synchronized(source) {
