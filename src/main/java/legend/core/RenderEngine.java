@@ -26,8 +26,6 @@ import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.VoidShaderOptions;
 import legend.core.opengl.Window;
-import legend.core.opengl.fonts.Font;
-import legend.core.opengl.fonts.FontManager;
 import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.input.Input;
@@ -108,7 +106,6 @@ public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
 
   public static int legacyMode;
-  public boolean usePs1Gpu = true;
 
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
@@ -464,12 +461,6 @@ public class RenderEngine {
     this.battleTmdShader = ShaderManager.addShader(BATTLE_TMD_SHADER);
     this.battleTmdShaderOptions = this.battleTmdShader.makeOptions();
 
-    try {
-      FontManager.add("default", new Font(Paths.get("gfx/fonts/consolas.ttf")));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load font", e);
-    }
-
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
@@ -630,7 +621,7 @@ public class RenderEngine {
         this.renderCallback.run();
       }
 
-      if(legacyMode == 0 && this.usePs1Gpu) {
+      if(legacyMode == 0) {
         // Gross hack bro
         if(currentEngineState_8004dd04 instanceof final Battle battle && battle._800c6930 != null) {
           this.battleTmdShader.use();
@@ -1031,7 +1022,6 @@ public class RenderEngine {
       this.window.close();
       throw t;
     } finally {
-      FontManager.free();
       Window.free();
     }
   }

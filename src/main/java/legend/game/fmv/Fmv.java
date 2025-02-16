@@ -1,41 +1,34 @@
 package legend.game.fmv;
 
 import legend.core.MathHelper;
-import legend.core.ProjectionMode;
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.audio.GenericSource;
-import legend.core.opengl.FrameBuffer;
-import legend.core.opengl.Mesh;
-import legend.core.opengl.Shader;
-import legend.core.opengl.ShaderManager;
-import legend.core.opengl.SimpleShaderOptions;
+import legend.core.gpu.Bpp;
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
-import legend.core.opengl.fonts.Font;
-import legend.core.opengl.fonts.FontManager;
-import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.i18n.I18n;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
-import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.SItem.UI_WHITE;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.startRumbleIntensity;
 import static legend.game.Scus94491BpeSegment_8002.stopRumble;
@@ -45,11 +38,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glViewport;
 
 public final class Fmv {
   private Fmv() { }
@@ -234,14 +222,10 @@ public final class Fmv {
   private static Window.Events.Key keyPress;
   private static Window.Events.Click click;
   private static Window.Events.OnPressedThisFrame pressedThisFrame;
-  private static Window.Events.Resize onResize;
   private static boolean shouldStop;
 
-  private static Mesh fullScrenMesh;
+  private static Obj texturedObj;
   private static Texture displayTexture;
-  private static Shader.UniformBuffer transforms2Uniform;
-  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
-  private static final Matrix4f transforms = new Matrix4f();
   private static final Vector2i oldProjectionSize = new Vector2i();
   private static EngineState.RenderMode oldRenderMode;
 
@@ -249,10 +233,8 @@ public final class Fmv {
   private static int rumbleFrames;
 
   private static InputSource currentInputSource = InputSource.NONE;
-  private static final Object skipTextLock = new Object();
   private static int skipTextFramesRemained;
-  private static Font font;
-  private static TextStream skipText;
+  private static String skipText;
   private static boolean isKeyboardInput;
   private static boolean isControllerInput;
 
@@ -270,21 +252,12 @@ public final class Fmv {
 
   private static void displaySkipText() {
     if(skipText != null) {
-      glEnable(GL_BLEND);
-      Translucency.HALF_B_PLUS_HALF_F.setGlState();
-      skipText.setColour(1.0f, 1.0f, 1.0f);
-      skipText.draw(10, 10, 0.5f, 0.5f);
-      glDisable(GL_BLEND);
+      renderText(skipText, 10.0f, 10.0f, UI_WHITE);
     }
   }
 
   private static void setSkipText(final String text, final InputSource inputSource) {
-    synchronized(skipTextLock) {
-      if(skipText != null) {
-        skipText.delete();
-      }
-      skipText = font.text(stream -> stream.text(text));
-    }
+    skipText = text;
     currentInputSource = inputSource;
     skipTextFramesRemained = 60;
   }
@@ -301,25 +274,17 @@ public final class Fmv {
     if(skipTextFramesRemained > 0) {
       skipTextFramesRemained--;
       if(skipTextFramesRemained == 0) {
-        synchronized(skipTextLock) {
-          if(skipText != null) {
-            skipText.delete();
-            skipText = null;
-          }
-        }
+        skipText = null;
         currentInputSource = InputSource.NONE;
       }
     }
   }
 
   private static boolean isValidSkipInput(final InputSource source) {
-    synchronized(skipTextLock) {
-      return skipText != null && currentInputSource == source;
-    }
+    return skipText != null && currentInputSource == source;
   }
 
   private static void play(final String file, final boolean doubleSpeed) {
-    font = FontManager.get("default");
     shouldStop = false;
 
     final byte[] data = new byte[2352];
@@ -334,6 +299,7 @@ public final class Fmv {
     final FileData fileData = Loader.loadFile(file);
     sector = 0;
     frame = 0;
+    skipText = null;
 
     oldFps = RENDERER.window().getFpsLimit();
     oldProjectionSize.set(RENDERER.getProjectionWidth(), RENDERER.getProjectionHeight());
@@ -341,11 +307,6 @@ public final class Fmv {
     RENDERER.window().setFpsLimit(15);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
-
-    final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
-    final SimpleShaderOptions simpleShaderOptions = simpleShader.makeOptions();
-
-    transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
 
@@ -368,10 +329,6 @@ public final class Fmv {
         setSkipText(I18n.translate("lod_core.config.fmv.skip_mouse"), InputSource.MOUSE);
       }
     });
-    onResize = RENDERER.events().onResize(Fmv::windowResize);
-    windowResize(RENDERER.window(), RENDERER.window().getWidth(), RENDERER.window().getHeight());
-
-    RENDERER.usePs1Gpu = false;
 
     oldRenderer = RENDERER.setRenderCallback(() -> {
       if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && isValidSkipInput(InputSource.CONTROLLER)) {
@@ -381,8 +338,6 @@ public final class Fmv {
       if(shouldStop) {
         stop();
       }
-
-      glDisable(GL_BLEND);
 
       int demuxedSize = 0;
 
@@ -572,20 +527,23 @@ public final class Fmv {
         displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
       }
 
-      FrameBuffer.unbind();
-      RENDERER.setProjectionMode(ProjectionMode._2D);
-      glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
+      if(texturedObj == null) {
+        texturedObj = new QuadBuilder("FMV")
+          .bpp(Bpp.BITS_24)
+          .size(1.0f, 1.0f)
+          .build();
+      }
 
-      transforms.translation((320.0f * (RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio()) - 320.0f) / 2, 0.0f, 0.0f);
-      transforms.get(transforms2Buffer);
-      transforms2Uniform.set(transforms2Buffer);
-
-      simpleShader.use();
-      simpleShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
-      simpleShaderOptions.apply();
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
-      fullScrenMesh.draw();
+
+      final MV transforms = new MV();
+      transforms.scaling(frameHeader.getWidth(), frameHeader.getHeight(), 1.0f);
+      transforms.transfer.set(0.0f, (240.0f - frameHeader.getHeight()) / 2.0f, 100.0f);
+
+      RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
+        .texture(displayTexture)
+      ;
 
       if(rumbleData != null) {
         for(final RumbleData rumble : rumbleData) {
@@ -604,6 +562,7 @@ public final class Fmv {
           stopRumble(0);
         }
       }
+
       handleSkipText();
       displaySkipText();
       frame++;
@@ -612,9 +571,9 @@ public final class Fmv {
 
   public static void stop() {
     RENDERER.setRenderCallback(() -> {
-      if(fullScrenMesh != null) {
-        fullScrenMesh.delete();
-        fullScrenMesh = null;
+      if(texturedObj != null) {
+        texturedObj.delete();
+        texturedObj = null;
       }
 
       if(displayTexture != null) {
@@ -637,21 +596,6 @@ public final class Fmv {
         pressedThisFrame = null;
       }
 
-      if(onResize != null) {
-        RENDERER.events().removeOnResize(onResize);
-        onResize = null;
-      }
-
-      if(font != null) {
-        font = null;
-      }
-
-      if(skipText != null) {
-        skipText.delete();
-        skipText = null;
-      }
-
-      RENDERER.usePs1Gpu = true;
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
       RENDERER.setRenderMode(oldRenderMode);
@@ -663,39 +607,6 @@ public final class Fmv {
 
       rumbleData = null;
     });
-  }
-
-  private static void windowResize(final Window window, int width, int height) {
-    if(fullScrenMesh != null) {
-      fullScrenMesh.delete();
-    }
-
-    width = (int)RENDERER.getProjectionWidth();
-    height = 240;
-
-    final float aspect = 4.0f / 3.0f;
-
-    float w = width;
-    float h = w / aspect;
-
-    if(h > height) {
-      h = height;
-      w = h * aspect;
-    }
-
-    final float l = (width - w) / 2;
-    final float t = (height - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
-    fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 1.0f, 0, 0,
-      l, b, 1.0f, 0, 1,
-      r, t, 1.0f, 1, 0,
-      r, b, 1.0f, 1, 1,
-    }, 4);
-    fullScrenMesh.attribute(0, 0L, 3, 5);
-    fullScrenMesh.attribute(1, 3L, 2, 5);
   }
 
   private static boolean getNextVlc(final VariableLengthCode vlc, final ArrayBitReader bitReader) {
