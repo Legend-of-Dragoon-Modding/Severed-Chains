@@ -12,6 +12,9 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.Translucency;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canSave_8011dc88;
@@ -47,8 +51,8 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
@@ -85,6 +89,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Inventory", this::showItemListScreen);
     this.addButton("Goods", this::showGoodsScreen);
     this.addButton("Diiig", this::showDabasScreen);
+    this.addButton("", () -> { }).hide();
     this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen("Quit to main menu?", 2, result -> {
       if(result == MessageBoxResult.YES) {
         this.menuEscape();
@@ -96,34 +101,32 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Replace", this::showCharSwapScreen);
     this.addButton("Options", this::showOptionsScreen);
     this.addButton("", () -> { }).hide();
+    this.addButton("", () -> { }).hide();
     this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88);
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
     }
 
-    this.setFocus(this.menuButtons.get(0));
+    this.setFocus(this.menuButtons.getFirst());
   }
 
   private Button addButton(final String text, final Runnable onClick) {
     final int index = this.menuButtons.size();
 
     final Button button = this.addControl(new Button(text));
-    button.setPos(30 + index / 6 * 65, 92 + (index % 6) * 13);
+    button.setPos(21 + index / 7 * 74, 79 + (index % 7) * 13);
+    button.setWidth(72);
 
-    button.onHoverIn(() -> this.setFocus(button));
+    button.onHoverIn(() -> {
+      playMenuSound(1);
+      this.setFocus(button);
+    });
 
     button.onLostFocus(() -> button.setTextColour(TextColour.BROWN));
     button.onGotFocus(() -> button.setTextColour(TextColour.RED));
 
-    button.onMouseClick((x, y, button1, mods) -> {
-      if(button1 == GLFW_MOUSE_BUTTON_LEFT && mods == 0) {
-        onClick.run();
-        return InputPropagation.HANDLED;
-      }
-
-      return InputPropagation.PROPAGATE;
-    });
+    button.onPressed(onClick::run);
 
     button.onPressedWithRepeatPulse(inputAction -> {
       switch(inputAction) {
@@ -165,7 +168,6 @@ public class MainMenuScreen extends MenuScreen {
             this.setFocus(otherButton);
           }
         }
-        case BUTTON_SOUTH -> onClick.run();
       }
 
       return InputPropagation.HANDLED;
@@ -249,6 +251,17 @@ public class MainMenuScreen extends MenuScreen {
       name = submapNames_8011c108[submapId_800bd808];
     } else {
       name = worldMapNames_8011c1ec[continentIndex_800bf0b0];
+    }
+
+    // The retail lines between the buttons are too short, so we just draw more line where the texture ends
+    final Matrix4f transforms = new Matrix4f();
+    for(int i = 0; i < 6; i++) {
+      final int x = 106;
+      final int y = 93 + i * 13;
+      RENDERER.queueLine(transforms, textZ_800bdf00 * 4.0f, new Vector2f(x, y), new Vector2f(x + 59, y))
+        .translucency(Translucency.B_MINUS_F)
+        .monochrome(0.05f)
+      ;
     }
 
     renderText(name, 90, 38, UI_TEXT_CENTERED);
