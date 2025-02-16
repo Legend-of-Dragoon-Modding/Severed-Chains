@@ -17,6 +17,7 @@ import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
@@ -658,8 +659,24 @@ public class Ttle extends EngineState {
         w = h * aspect;
       }
 
-      final float scaleX = w / GPU.getDisplayTextureWidth();
-      final float scaleY = h / GPU.getDisplayTextureHeight();
+      final float left;
+      final float top;
+      final float scaleX;
+      final float scaleY;
+
+      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED) {
+        scaleX = w / RENDERER.getProjectionWidth();
+        scaleY = h / RENDERER.getProjectionHeight();
+        left = (window.getWidth() - w) / 2;
+        top = (window.getHeight() - h) / 2;
+      } else {
+        scaleX = 1.0f;
+        scaleY = 1.0f;
+        left = 0.0f;
+        top = 0.0f;
+        x = x / window.getWidth() * RENDERER.getProjectionWidth();
+        y = y / window.getHeight() * RENDERER.getProjectionHeight();
+      }
 
       if(this.menuLoadingStage == 3) {
         if(this.menuState_800c672c < 3) {
@@ -670,8 +687,8 @@ public class Ttle extends EngineState {
 
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
-            final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)((134.0f + i * 16.0f) * scaleY);
+            final int menuX = (int)(left + (RENDERER.getProjectionWidth() * scaleX - menuWidth) / 2.0f);
+            final int menuY = (int)(top + (134.0f + i * 16.0f) * scaleY);
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(this.selectedMenuOption != i) {
@@ -684,7 +701,7 @@ public class Ttle extends EngineState {
           }
 
           if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), 6, 5, 105, 14)) {
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
               RENDERER.window().usePointerCursor();
             } else {
               RENDERER.window().useNormalCursor();
@@ -718,8 +735,24 @@ public class Ttle extends EngineState {
           w = h * aspect;
         }
 
-        final float scaleX = w / GPU.getDisplayTextureWidth();
-        final float scaleY = h / GPU.getDisplayTextureHeight();
+        final float left;
+        final float top;
+        final float scaleX;
+        final float scaleY;
+
+        if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED) {
+          scaleX = w / RENDERER.getProjectionWidth();
+          scaleY = h / RENDERER.getProjectionHeight();
+          left = (window.getWidth() - w) / 2;
+          top = (window.getHeight() - h) / 2;
+        } else {
+          scaleX = 1.0f;
+          scaleY = 1.0f;
+          left = 0.0f;
+          top = 0.0f;
+          x = x / window.getWidth() * RENDERER.getProjectionWidth();
+          y = y / window.getHeight() * RENDERER.getProjectionHeight();
+        }
 
         if(this.menuState_800c672c < 3) {
           for(int i = 0; i < MENU_OPTIONS; i++) {
@@ -729,8 +762,8 @@ public class Ttle extends EngineState {
 
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
-            final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)((134.0f + i * 16.0f) * scaleY);
+            final int menuX = (int)(left + (RENDERER.getProjectionWidth() * scaleX - menuWidth) / 2.0f);
+            final int menuY = (int)(top + (134.0f + i * 16.0f) * scaleY);
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               playSound(0, 2, (short)0, (short)0);
@@ -742,7 +775,7 @@ public class Ttle extends EngineState {
           }
 
           if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), 6, 5, 105, 14)) {
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
               Open.open(this.update.uri);
             }
           }

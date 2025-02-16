@@ -450,11 +450,5 @@ public class ListBox<T> extends Control {
         }
       }
     }
-
-    /** Override here to allow access above */
-    @Override
-    protected boolean containsPoint(final int x, final int y) {
-      return super.containsPoint(x, y);
-    }
   }
 }
