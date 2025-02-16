@@ -1,0 +1,16 @@
+Zenebatos
+Kongol
+Do not hide body parts during cutscene
+--- original
++++ modified
+@@ -421,10 +421,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_28]
+-call 288, 0x1
+-call 288, 0x6
+-call 288, 0xc
+-call 288, 0xe
+ call 2, 0x19, 0x0
+ jmp inl[:LABEL_52]
+ LABEL_57:
