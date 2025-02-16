@@ -148,6 +148,10 @@ task copySupportFiles(type: Copy) {
     from 'patches'
   }
 
+  into("lang") {
+    from 'lang'
+  }
+
   into(".") {
     switch(operatingSystem) {
       case OperatingSystem.LINUX:
