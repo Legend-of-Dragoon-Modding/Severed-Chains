@@ -19,6 +19,7 @@ import legend.game.EngineStateEnum;
 import legend.game.Main;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.input.Input;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
@@ -178,6 +179,8 @@ public final class GameEngine {
       }
     });
 
+    loadUnpackerLang();
+
     final Thread thread = new Thread(() -> {
       try {
         LOGGER.info("Severed Chains %s commit %s built %s starting", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
@@ -198,7 +201,7 @@ public final class GameEngine {
           try {
             Unpacker.unpack();
           } catch(final UnpackerException e) {
-            statusText = "Failed to unpack files: " + e.getMessage();
+            statusText = I18n.translate("unpacker.failed", e.getMessage());
             LOGGER.error("Failed to unpack files", e);
             skip();
             return;
@@ -207,6 +210,7 @@ public final class GameEngine {
             return;
           }
 
+          statusText = I18n.translate("unpacker.patching_scripts");
           new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
 
           loadXpTables();
@@ -215,7 +219,7 @@ public final class GameEngine {
 
           synchronized(UPDATER_LOCK) {
             if(!UPDATE_CHECK_FINISHED) {
-              statusText = "Checking for updates...";
+              statusText = I18n.translate("unpacker.checking_for_updates");
             }
           }
 
@@ -258,6 +262,14 @@ public final class GameEngine {
     }
   }
 
+  private static void loadUnpackerLang() {
+    try {
+      LANG_ACCESS.loadLang(LANG_ACCESS.getLangPath(Path.of("lang", "unpacker"), Main.ORIGINAL_LOCALE));
+    } catch(final IOException e) {
+      LOGGER.warn("Failed to load unpacker lang", e);
+    }
+  }
+
   /** Returns missing mod IDs, if any */
   public static Set<String> bootMods(final Set<String> modIds) {
     LOGGER.info("Booting mods...");
@@ -266,6 +278,7 @@ public final class GameEngine {
     LANG_ACCESS.reset();
     EVENT_ACCESS.reset();
     REGISTRY_ACCESS.reset();
+    loadUnpackerLang();
 
     LOGGER.info("Loading mods %s...", modIds);
 
@@ -527,7 +540,7 @@ public final class GameEngine {
         .colour(colour)
       ;
 
-      renderText("Loading...", 24.0f, 223.0f, UI_WHITE, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     if(!statusText.isBlank() && loadingFade != 0.0f) {
