@@ -4,7 +4,6 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
-import legend.core.opengl.FontShaderOptions;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
@@ -134,16 +133,6 @@ public class RenderEngine {
       final Shader<SimpleShaderOptions>.UniformVec2 shiftUv = shader.new UniformVec2("shiftUv");
       final Shader<SimpleShaderOptions>.UniformVec4 recolour = shader.new UniformVec4("recolour");
       return () -> new SimpleShaderOptions(shiftUv, recolour);
-    }
-  );
-
-  public static final ShaderType<FontShaderOptions> FONT_SHADER = new ShaderType<>(
-    options -> loadShader("simple", "font", options),
-    shader -> {
-      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      final Shader<FontShaderOptions>.UniformVec3 colour = shader.new UniformVec3("colour");
-      return () -> new FontShaderOptions(colour);
     }
   );
 
@@ -452,7 +441,6 @@ public class RenderEngine {
     this.window.events.onKeyRelease(this::onKeyRelease);
 
     ShaderManager.addShader(SIMPLE_SHADER);
-    ShaderManager.addShader(FONT_SHADER);
     final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
     this.standardShader = ShaderManager.addShader(STANDARD_SHADER);
     this.standardShaderOptions = this.standardShader.makeOptions();
