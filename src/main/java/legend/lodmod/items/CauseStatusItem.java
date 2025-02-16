@@ -1,6 +1,7 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -9,7 +10,7 @@ public class CauseStatusItem extends BattleItem {
   private final int useItemColour;
   private final int status;
 
-  public CauseStatusItem(final int useItemColour, final int icon, final int price, final int status) {
+  public CauseStatusItem(final int useItemColour, final ItemIcon icon, final int price, final int status) {
     super(icon, price);
     this.useItemColour = useItemColour;
     this.status = status;

@@ -4,6 +4,7 @@ import legend.game.characters.Element;
 import legend.game.characters.UnaryStatModConfig;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
 
@@ -27,7 +28,7 @@ public class BuffItem extends BattleItem {
   private final int spPerMagicalHit;
   private final int mpPerMagicalHit;
 
-  public BuffItem(final int useItemEntrypoint, final int icon, final int price, final TargetType target, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit) {
+  public BuffItem(final int useItemEntrypoint, final ItemIcon icon, final int price, final TargetType target, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit) {
     super(icon, price);
     this.useItemEntrypoint = useItemEntrypoint;
     this.target = target;

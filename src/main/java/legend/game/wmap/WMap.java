@@ -38,6 +38,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import org.joml.Math;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -94,6 +95,7 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.renderMode;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -175,7 +177,7 @@ public class WMap extends EngineState {
     UNUSED_1(1),
     LOAD_MODEL_2(2),
     INIT_PLAYER_MODEL_3(3),
-    NOOP_4(4),
+    WAIT_FOR_MODEL_TO_LOAD_4(4),
     RENDER_5(5),
     NOOP_6(6),
     UNUSED_DEALLOC_7(7),
@@ -362,7 +364,7 @@ public class WMap extends EngineState {
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
-  private final MV fastTravelTransforms = new MV();
+  private final Matrix4f fastTravelTransforms = new Matrix4f();
   /** Temporary solution until text refactoring */
   private final String[] startLabelNames = new String[8];
   private final float[] startLabelXs = new float[8];
@@ -454,7 +456,9 @@ public class WMap extends EngineState {
           renderText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, UI_WHITE_SHADOWED);
         }
 
-        this.handleMapTransitions();
+        if(this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
+          this.handleMapTransitions();
+        }
       }
     }
   }
@@ -828,12 +832,16 @@ public class WMap extends EngineState {
           TmdObjLoader.fromModel("WmapEntityModel (index " + i + ')', this.modelAndAnimData_800c66a8.models_0c[i]);
         }
 
-        this.playerState_800c669c = PlayerState.NOOP_4;
+        this.playerState_800c669c = PlayerState.WAIT_FOR_MODEL_TO_LOAD_4;
       }
 
-      case NOOP_4 -> {
+      case WAIT_FOR_MODEL_TO_LOAD_4 -> {
         if(loadWait-- > 0) break;
-        this.playerState_800c669c = PlayerState.RENDER_5;
+
+        //Prevents queen fury shadow renderer rendering before map model loads GH#2077
+        if((this.filesLoadedFlags_800c66b8.get() & 0x4) != 0x0) {
+          this.playerState_800c669c = PlayerState.RENDER_5;
+        }
       }
 
       case RENDER_5 -> this.renderPlayer();
@@ -3485,8 +3493,7 @@ public class WMap extends EngineState {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   private void renderFastTravelScreenDistortionEffect() {
-    this.fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
-    this.fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
+    this.fastTravelTransforms.scaling(320.0f * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio(), 240.0f, 1.0f);
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.fastTravelTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())

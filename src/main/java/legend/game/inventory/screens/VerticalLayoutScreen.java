@@ -135,7 +135,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox(x, y, 34, 30 + i * 13, 320, 13) && this.highlightedRow != this.scroll + i) {
+      if(MathHelper.inBox(x, y, 26, 30 + i * 13, 319, 13) && this.highlightedRow != this.scroll + i) {
         playMenuSound(1);
         this.highlightRow(this.scroll + i);
         return InputPropagation.HANDLED;

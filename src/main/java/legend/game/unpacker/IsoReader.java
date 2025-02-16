@@ -19,6 +19,10 @@ public class IsoReader {
     this.lba = (int)(this.file.length() / SECTOR_SIZE);
   }
 
+  public void close() throws IOException {
+    this.file.close();
+  }
+
   public long getPos() throws IOException {
     return this.file.getFilePointer();
   }

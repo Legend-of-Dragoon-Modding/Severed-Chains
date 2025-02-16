@@ -54,7 +54,7 @@ repositories {
 }
 
 dependencies {
-  api group: 'org.legendofdragoon', name: 'mod-loader', version: '4.1.0'
+  api group: 'org.legendofdragoon', name: 'mod-loader', version: '4.2.0'
   api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.5.6'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
@@ -151,8 +151,13 @@ task copySupportFiles(type: Copy) {
   into(".") {
     switch(operatingSystem) {
       case OperatingSystem.LINUX:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath;
+        final var libs = "libs/" + archives*.name.join(":libs/")
+
         from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
           rename("-\\w+", "")
         }
         from('download-java') {
@@ -161,8 +166,13 @@ task copySupportFiles(type: Copy) {
         break
 
       case OperatingSystem.MAC_OS:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath;
+        final var libs = "libs/" + archives*.name.join(":libs/")
+
         from('launch-macos') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
           rename("-macos", "")
         }
         from('download-java') {
@@ -171,8 +181,13 @@ task copySupportFiles(type: Copy) {
         break
 
       case OperatingSystem.WINDOWS:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath;
+        final var libs = "libs/" + archives*.name.join(";libs/")
+
         from('launch.bat') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
         }
         break
     }

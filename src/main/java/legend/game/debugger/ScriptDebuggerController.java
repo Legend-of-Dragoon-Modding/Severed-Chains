@@ -27,11 +27,12 @@ import org.legendofdragoon.modloader.events.EventListener;
 import java.util.HashSet;
 import java.util.Set;
 
-import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
+@EventListener
 public class ScriptDebuggerController {
   private static final Set<ScriptDebuggerController> INSTANCES = new HashSet<>();
+  private static boolean INITIALIZED = false;
 
   @FXML
   private ComboBox<ListItem> scriptSelector;
@@ -66,46 +67,50 @@ public class ScriptDebuggerController {
   public TextField childIndex;
 
   public void initialize() {
-    INSTANCES.add(this);
-
-    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
-      this.scripts.add(new ListItem(this::getScriptName, i));
-    }
-
-    this.scriptSelector.setItems(this.scripts);
-    this.scriptSelector.setConverter(new StringConverter<>() {
-      @Override
-      public String toString(final ListItem object) {
-        return object != null ? object.getName() : null;
+    synchronized(INSTANCES) {
+      for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
+        this.scripts.add(new ListItem(this::getScriptName, i));
       }
 
-      @Override
-      public ListItem fromString(final String string) {
-        return null;
-      }
-    });
-    this.scriptSelector.setValue(this.scripts.getFirst());
-    this.scriptSelector.onActionProperty().set(event -> this.updateScriptVars());
+      this.scriptSelector.setItems(this.scripts);
+      this.scriptSelector.setConverter(new StringConverter<>() {
+        @Override
+        public String toString(final ListItem object) {
+          return object != null ? object.getName() : null;
+        }
 
-    for(int i = 0; i < 33; i++) {
-      this.storage.add(new ListItem(paramIndex -> this.getScriptStorage(this.scriptSelector.getValue().index, paramIndex), i));
+        @Override
+        public ListItem fromString(final String string) {
+          return null;
+        }
+      });
+      this.scriptSelector.setValue(this.scripts.getFirst());
+      this.scriptSelector.onActionProperty().set(event -> this.updateScriptVars());
+
+      for(int i = 0; i < 33; i++) {
+        this.storage.add(new ListItem(paramIndex -> this.getScriptStorage(this.scriptSelector.getValue().index, paramIndex), i));
+      }
+
+      this.scriptStorage.setItems(this.storage);
+      this.scriptStorage.setCellFactory(param -> {
+        final TextFieldListCell<ListItem> cell = new TextFieldListCell<>();
+        cell.setConverter(this.scriptSelector.getConverter());
+        return cell;
+      });
+
+      this.commandStack.setItems(this.stack);
+      this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
+
+      INSTANCES.add(this);
     }
 
-    this.scriptStorage.setItems(this.storage);
-    this.scriptStorage.setCellFactory(param -> {
-      final TextFieldListCell<ListItem> cell = new TextFieldListCell<>();
-      cell.setConverter(this.scriptSelector.getConverter());
-      return cell;
-    });
-
-    this.commandStack.setItems(this.stack);
-    this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
-
-    EVENTS.register(this);
+    INITIALIZED = true;
   }
 
   public void uninitialize() {
-    INSTANCES.remove(this);
+    synchronized(INSTANCES) {
+      INSTANCES.remove(this);
+    }
   }
 
   public void scriptLogClick(final ActionEvent event) {
@@ -224,22 +229,44 @@ public class ScriptDebuggerController {
   }
 
   @EventListener
-  public void onScriptAllocated(final ScriptAllocatedEvent event) {
-    Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
+  public static void onScriptAllocated(final ScriptAllocatedEvent event) {
+    if(INITIALIZED) {
+      Platform.runLater(() -> {
+        synchronized(INSTANCES) {
+          for(final ScriptDebuggerController instance : INSTANCES) {
+            instance.updateScriptName(event.scriptIndex);
+          }
+        }
+      });
+    }
   }
 
   @EventListener
-  public void onScriptDeallocated(final ScriptDeallocatedEvent event) {
-    Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
+  public static void onScriptDeallocated(final ScriptDeallocatedEvent event) {
+    if(INITIALIZED) {
+      Platform.runLater(() -> {
+        synchronized(INSTANCES) {
+          for(final ScriptDebuggerController instance : INSTANCES) {
+            instance.updateScriptName(event.scriptIndex);
+          }
+        }
+      });
+    }
   }
 
   @EventListener
-  public void onScriptTick(final ScriptTickEvent event) {
-    Platform.runLater(() -> {
-      if(event.scriptIndex == this.scriptSelector.getValue().index) {
-        this.updateScriptVars();
-      }
-    });
+  public static void onScriptTick(final ScriptTickEvent event) {
+    if(INITIALIZED) {
+      Platform.runLater(() -> {
+        synchronized(INSTANCES) {
+          for(final ScriptDebuggerController instance : INSTANCES) {
+            if(event.scriptIndex == instance.scriptSelector.getValue().index) {
+              instance.updateScriptVars();
+            }
+          }
+        }
+      });
+    }
   }
 
   private static class ListItem {

@@ -535,13 +535,8 @@ public class SMap extends EngineState {
   }
 
   @Override
-  public boolean allowsWidescreen() {
-    return false;
-  }
-
-  @Override
-  public boolean allowsHighQualityProjection() {
-    return false;
+  public RenderMode getRenderMode() {
+    return RenderMode.LEGACY;
   }
 
   @ScriptDescription("Adds a textbox to a submap object")

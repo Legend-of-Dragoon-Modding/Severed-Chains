@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class HealingRainItem extends RecoverHpItem {
   public HealingRainItem() {
-    super(33, 60, true, 100);
+    super(ItemIcon.BLUE_POTION, 60, true, 100);
   }
 
   public HealingRainItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }

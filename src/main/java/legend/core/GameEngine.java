@@ -5,26 +5,25 @@ import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
 import legend.core.audio.SampleRate;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
-import legend.core.opengl.Mesh;
-import legend.core.opengl.Shader;
-import legend.core.opengl.ShaderManager;
-import legend.core.opengl.ShaderOptions;
-import legend.core.opengl.ShaderType;
-import legend.core.opengl.SimpleShaderOptions;
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
-import legend.core.opengl.fonts.Font;
-import legend.core.opengl.fonts.FontManager;
-import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
 import legend.game.EngineStateEnum;
 import legend.game.Main;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.input.Input;
+import legend.game.inventory.ItemIcon;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.character.CharacterData;
 import legend.game.saves.ConfigCollection;
@@ -38,6 +37,7 @@ import legend.game.saves.serializers.V3Serializer;
 import legend.game.saves.serializers.V4Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.types.Translucency;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -45,35 +45,33 @@ import legend.game.unpacker.UnpackerStoppedRuntimeException;
 import legend.game.unpacker.scripts.ScriptPatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.legendofdragoon.modloader.ModManager;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.i18n.LangManager;
-import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 import static legend.game.SItem.loadMenuAssets;
+import static legend.game.SItem.UI_WHITE;
+import static legend.game.SItem.renderMenuCentredText;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.startSound;
 import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
-import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glViewport;
 
 public final class GameEngine {
   private GameEngine() { }
@@ -141,44 +139,14 @@ public final class GameEngine {
   private static Window.Events.OnPressedThisFrame onPressedThisFrame;
   private static Runnable onShutdown;
 
-  private static final ShaderType<EyeShaderOptions> EYE_SHADER = new ShaderType<>(
-    options -> RenderEngine.loadShader("simple", "loading", options),
-    shader -> {
-      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      final Shader<EyeShaderOptions>.UniformFloat alpha = shader.new UniformFloat("alpha");
-      final Shader<EyeShaderOptions>.UniformFloat ticks = shader.new UniformFloat("ticks");
-      return () -> new EyeShaderOptions(alpha, ticks);
-    }
-  );
-
-  private static Shader<SimpleShaderOptions> shader;
-  private static SimpleShaderOptions shaderOptions;
   private static Texture title1Texture;
   private static Texture title2Texture;
-  private static Mesh fullScrenMesh;
+  private static Texture eyeTexture;
+  private static Obj texturedObj;
 
-  private static Shader<EyeShaderOptions> eyeShader;
-  private static EyeShaderOptions eyeOptions;
-  private static Texture eye;
-  private static Mesh eyeMesh;
+  private static final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE).noShadow().size(0.75f);
 
-  private static Texture loadingTexture;
-  private static Mesh loadingMesh;
-
-  private static Font font;
-
-  private static final Object statusTextLock = new Object();
-  private static String newStatusText;
-  private static TextStream statusText;
-  private static float screenWidth;
-
-  private static Shader.UniformBuffer transforms2;
-  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
-  private static final Matrix4f identity = new Matrix4f();
-  private static final Matrix4f textTransforms = new Matrix4f();
-  private static final Matrix4f eyeTransforms = new Matrix4f();
-  private static final Matrix4f loadingTransforms = new Matrix4f();
+  private static String statusText = "";
 
   private static boolean loading;
 
@@ -202,6 +170,8 @@ public final class GameEngine {
       }
     });
 
+    loadUnpackerLang();
+
     final Thread thread = new Thread(() -> {
       try {
         LOGGER.info("Severed Chains %s commit %s built %s starting", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
@@ -217,16 +187,12 @@ public final class GameEngine {
         SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
 
         synchronized(INIT_LOCK) {
-          Unpacker.setStatusListener(status -> {
-            synchronized(statusTextLock) {
-              newStatusText = status;
-            }
-          });
+          Unpacker.setStatusListener(status -> statusText = status);
 
           try {
             Unpacker.unpack();
           } catch(final UnpackerException e) {
-            newStatusText = "Failed to unpack files: " + e.getMessage();
+            statusText = I18n.translate("unpacker.failed", e.getMessage());
             LOGGER.error("Failed to unpack files", e);
             skip();
             return;
@@ -235,6 +201,7 @@ public final class GameEngine {
             return;
           }
 
+          statusText = I18n.translate("unpacker.patching_scripts");
           new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
 
           loadCharacterData();
@@ -243,7 +210,7 @@ public final class GameEngine {
 
           synchronized(UPDATER_LOCK) {
             if(!UPDATE_CHECK_FINISHED) {
-              newStatusText = "Checking for updates...";
+              statusText = I18n.translate("unpacker.checking_for_updates");
             }
           }
 
@@ -254,7 +221,6 @@ public final class GameEngine {
       }
     });
 
-    time = System.nanoTime();
     thread.start();
 
     // Find and load all mods so their global config can be shown in the title screen options menu
@@ -277,12 +243,21 @@ public final class GameEngine {
     GPU.init();
 
     try {
+      time = System.nanoTime();
       RENDERER.run();
     } finally {
       AUDIO_THREAD.destroy();
       RENDERER.delete();
       Input.destroy();
       UPDATER.delete();
+    }
+  }
+
+  private static void loadUnpackerLang() {
+    try {
+      LANG_ACCESS.loadLang(LANG_ACCESS.getLangPath(Path.of("lang", "unpacker"), Main.ORIGINAL_LOCALE));
+    } catch(final IOException e) {
+      LOGGER.warn("Failed to load unpacker lang", e);
     }
   }
 
@@ -294,6 +269,7 @@ public final class GameEngine {
     LANG_ACCESS.reset();
     EVENT_ACCESS.reset();
     REGISTRY_ACCESS.reset();
+    loadUnpackerLang();
 
     LOGGER.info("Loading mods %s...", modIds);
 
@@ -315,6 +291,7 @@ public final class GameEngine {
 
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
+    ItemIcon.loadIconMap();
   }
 
   private static void loadCharacterData() throws IOException {
@@ -332,14 +309,6 @@ public final class GameEngine {
 
   private static void transitionToGame() {
     glDisable(GL_BLEND);
-    identity.get(transforms2Buffer);
-    transforms2.set(transforms2Buffer);
-
-    shaderOptions = null;
-
-    if(shader != null) {
-      shader = null;
-    }
 
     if(title1Texture != null) {
       title1Texture.delete();
@@ -351,40 +320,14 @@ public final class GameEngine {
       title2Texture = null;
     }
 
-    if(fullScrenMesh != null) {
-      fullScrenMesh.delete();
-      fullScrenMesh = null;
+    if(eyeTexture != null) {
+      eyeTexture.delete();
+      eyeTexture = null;
     }
 
-    eyeOptions = null;
-
-    if(eyeShader != null) {
-      eyeShader.delete();
-      eyeShader = null;
-    }
-
-    if(eye != null) {
-      eye.delete();
-      eye = null;
-    }
-
-    if(eyeMesh != null) {
-      eyeMesh.delete();
-      eyeMesh = null;
-    }
-
-    if(loadingTexture != null) {
-      loadingTexture.delete();
-      loadingTexture = null;
-    }
-
-    if(loadingMesh != null) {
-      loadingMesh.delete();
-      loadingMesh = null;
-    }
-
-    if(font != null) {
-      font = null;
+    if(texturedObj != null) {
+      texturedObj.delete();
+      texturedObj = null;
     }
 
     if(onResize != null) {
@@ -412,7 +355,6 @@ public final class GameEngine {
       onShutdown = null;
     }
 
-    RENDERER.usePs1Gpu = true;
     openalThread.start();
 
     synchronized(INIT_LOCK) {
@@ -434,49 +376,24 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    final Path vsh = Paths.get("gfx", "shaders", "simple.vsh");
-    shader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
-    shaderOptions = shader.makeOptions();
-
     title1Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title1.png"));
     title2Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title2.png"));
-    loadingTexture = Texture.png(Path.of(".", "gfx", "textures", "intro", "loading.png"));
-    eye = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
+    eyeTexture = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
 
-    eyeShader = ShaderManager.addShader(EYE_SHADER);
-    eyeOptions = eyeShader.makeOptions();
+    texturedObj = new QuadBuilder("Textured Obj")
+      .bpp(Bpp.BITS_24)
+      .size(1.0f, 1.0f)
+      .uvSize(1.0f, 1.0f)
+      .build();
 
-    eyeMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-       0.0f,  0.0f, 1.0f, 0, 0,
-       0.0f, 32.0f, 1.0f, 0, 1,
-      32.0f,  0.0f, 1.0f, 1, 0,
-      32.0f, 32.0f, 1.0f, 1, 1,
-    }, 4);
-    eyeMesh.attribute(0, 0L, 3, 5);
-    eyeMesh.attribute(1, 3L, 2, 5);
-
-    loadingMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-        0.0f,  0.0f, 1.0f, 0, 0,
-        0.0f, 32.0f, 1.0f, 0, 1,
-      130.0f,  0.0f, 1.0f, 1, 0,
-      130.0f, 32.0f, 1.0f, 1, 1,
-    }, 4);
-    loadingMesh.attribute(0, 0L, 3, 5);
-    loadingMesh.attribute(1, 3L, 2, 5);
-
-    transforms2 = ShaderManager.getUniformBuffer("transforms2");
-    identity.identity();
-
-    font = FontManager.get("default");
-
-    onResize = RENDERER.events().onResize(GameEngine::windowResize);
-    windowResize(RENDERER.window(), (int)(RENDERER.window().getWidth() * RENDERER.window().getScale()), (int)(RENDERER.window().getHeight() * RENDERER.window().getScale()));
-
-    RENDERER.usePs1Gpu = false;
     RENDERER.setRenderCallback(GameEngine::renderIntro);
     RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
-    onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
+    onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
+      if(mods == 0) {
+        skip();
+      }
+    });
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
     onPressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> skip());
     onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
@@ -501,11 +418,9 @@ public final class GameEngine {
   private static float fade2;
   private static float loadingFade;
   private static float eyeFade;
+  private static float eyeColour;
 
   private static void renderIntro() {
-    RENDERER.setProjectionMode(ProjectionMode._2D);
-    glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
-
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 
     if(deltaMs < 5000) {
@@ -544,124 +459,50 @@ public final class GameEngine {
       }
     }
 
-    shader.use();
-    shaderOptions.shiftUv(0.0f, 0.0f);
-    shaderOptions.apply();
+    final int oldTextZ = textZ_800bdf00;
+    textZ_800bdf00 = 5;
 
-    identity.get(transforms2Buffer);
-    transforms2.set(transforms2Buffer);
-    shaderOptions.recolour(fade1 * fade1 * fade1);
-    shaderOptions.apply();
-    title1Texture.use();
-    fullScrenMesh.draw();
+    final MV transforms = new MV();
+    transforms.scaling(320.0f, 240.0f, 1.0f);
+    transforms.transfer.z = 30.0f;
+    RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
+      .monochrome(fade1 * fade1 * fade1)
+      .texture(title1Texture)
+    ;
 
-    textTransforms.get(transforms2Buffer);
-    transforms2.set(transforms2Buffer);
-    shaderOptions.recolour(fade2 * fade2 * fade2);
-    shaderOptions.apply();
-    title2Texture.use();
-    fullScrenMesh.draw();
+    transforms.scaling(320.0f, 240.0f, 1.0f);
+    transforms.transfer.z = 29.0f;
+    RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .monochrome(fade2 * fade2 * fade2)
+      .texture(title2Texture)
+      .useTextureAlpha()
+    ;
 
     if(loading) {
-      eyeTransforms.get(transforms2Buffer);
-      transforms2.set(transforms2Buffer);
-      eyeShader.use();
-      eyeOptions.alpha(eyeFade);
-      eyeOptions.ticks(deltaMs / 10_000.0f);
-      eyeOptions.apply();
-      eye.use();
-      eyeMesh.draw();
+      // Offset sine wave delta to quickly shift between colours and then wait for a moment before repeating
+      eyeColour += Math.max(0.0f, MathHelper.sin(deltaMs / 300.0f % MathHelper.TWO_PI) * 0.75f + 0.25f) / 500.0f;
 
-      loadingTransforms.get(transforms2Buffer);
-      transforms2.set(transforms2Buffer);
-      shader.use();
-      shaderOptions.recolour(loadingFade);
-      shaderOptions.apply();
-      loadingTexture.use();
-      loadingMesh.draw();
+      final Vector3f colour = new Vector3f();
+      MathHelper.hsvToRgb(eyeColour, 1.0f, 1.0f, colour);
+
+      transforms.scaling(16.0f, 16.0f, 1.0f);
+      transforms.transfer.set(4.0f, 220.0f, 29.0f);
+      RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
+        .translucency(Translucency.HALF_B_PLUS_HALF_F)
+        .texture(eyeTexture)
+        .useTextureAlpha()
+        .alpha(eyeFade)
+        .colour(colour)
+      ;
+
+      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
-    synchronized(statusTextLock) {
-      if(newStatusText != null) {
-        if(statusText != null) {
-          statusText.delete();
-        }
-
-        statusText = font.text(stream -> stream.text(newStatusText));
-      }
-
-      newStatusText = null;
+    if(!statusText.isBlank() && loadingFade != 0.0f) {
+      renderMenuCentredText(statusText, 160, 30, 300, fontOptions, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
-    if(statusText != null && loadingFade != 0.0f) {
-      statusText.setColour(loadingFade, loadingFade, loadingFade);
-      statusText.draw((screenWidth - statusText.width()) / 2, 100.0f);
-    }
-  }
-
-  private static void windowResize(final Window window, final int width, final int height) {
-    if(fullScrenMesh != null) {
-      fullScrenMesh.delete();
-    }
-
-    final float aspect = 4.0f / 3.0f;
-
-    float w = width;
-    float h = w / aspect;
-
-    if(h > height) {
-      h = height;
-      w = h * aspect;
-    }
-
-    screenWidth = w;
-
-    final float l = (width - w) / 2;
-    final float t = (height - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
-    fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 1.0f, 0, 0,
-      l, b, 1.0f, 0, 1,
-      r, t, 1.0f, 1, 0,
-      r, b, 1.0f, 1, 1,
-    }, 4);
-    fullScrenMesh.attribute(0, 0L, 3, 5);
-    fullScrenMesh.attribute(1, 3L, 2, 5);
-
-    eyeTransforms.translation(10.0f, height - 42.0f, 0.0f);
-    loadingTransforms.translation(46.0f, height - 42.0f, 0.0f);
-
-    GsInitGraph(width, height);
-  }
-
-  private static class EyeShaderOptions implements ShaderOptions<EyeShaderOptions> {
-    private final Shader<EyeShaderOptions>.UniformFloat alphaUniform;
-    private final Shader<EyeShaderOptions>.UniformFloat ticksUniform;
-
-    private float alpha;
-    private float ticks;
-
-    private EyeShaderOptions(final Shader<EyeShaderOptions>.UniformFloat alphaUniform, final Shader<EyeShaderOptions>.UniformFloat ticksUniform) {
-      this.alphaUniform = alphaUniform;
-      this.ticksUniform = ticksUniform;
-    }
-
-    public EyeShaderOptions alpha(final float alpha) {
-      this.alpha = alpha;
-      return this;
-    }
-
-    public EyeShaderOptions ticks(final float ticks) {
-      this.ticks = ticks;
-      return this;
-    }
-
-    @Override
-    public void apply() {
-      this.alphaUniform.set(this.alpha);
-      this.ticksUniform.set(this.ticks);
-    }
+    textZ_800bdf00 = oldTextZ;
   }
 }

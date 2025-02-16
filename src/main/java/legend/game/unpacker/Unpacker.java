@@ -7,6 +7,7 @@ import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.audio.xa.XaTranscoder;
 import legend.game.Scus94491BpeSegment;
+import legend.game.i18n.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,6 +50,7 @@ public final class Unpacker {
 
   private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
   private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
+  private static final String[] OTHER_REGION_NAMES = {"europe", "france", "germany", "italy", "spain", "japan", "asia"};
   private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
@@ -87,9 +89,9 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
-    // Equipment, spells, XP, and TIMs from lod_engine
+    // Spells, XP, and TIMs from lod_engine
     transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
-    transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
+    transformers.put(Unpacker::xpDiscriminator, Unpacker::xpExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
     // Savepoint etc. from SMAP
@@ -124,6 +126,8 @@ public final class Unpacker {
   static {
     // Convert submap PXLs into individual TIMs
     postTransformers.add(SubmapPxlTransformer::transform);
+
+    postTransformers.add(Unpacker::replaceBrokenClaireModel);
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -145,16 +149,45 @@ public final class Unpacker {
       if(getUnpackVersion() != VERSION) {
         final long start = System.nanoTime();
 
-        statusListener.accept("Deleting old unpacked files...");
+        statusListener.accept(I18n.translate("unpacker.deleting_old"));
         LOGGER.info("Deleting old unpacked files...");
         deleteUnpack();
         LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       }
 
-      statusListener.accept("Loading disk images...");
+      statusListener.accept(I18n.translate("unpacker.loading_disks"));
+
+      // Wait for disks
+      final IsoReader[] readers = new IsoReader[4];
+      final String[] errors = new String[4];
+
+      while(true) {
+        getIsoReaders(readers, errors);
+
+        int diskCount = 0;
+        for(int i = 0; i < readers.length; i++) {
+          if(readers[i] != null) {
+            diskCount++;
+          }
+        }
+
+        if(diskCount == readers.length) {
+          break;
+        }
+
+        String help = I18n.translate("unpacker.disk_help");
+
+        for(int i = 0; i < readers.length; i++) {
+          help += '\n' + I18n.translate("unpacker.disk_status", i + 1, errors[i]);
+        }
+
+        statusListener.accept(help);
+
+        DebugHelper.sleep(1000);
+      }
 
       final long start = System.nanoTime();
-      final IsoReader[] readers = getIsoReaders();
+
       final DirectoryEntry[] roots = new DirectoryEntry[4];
       final DirectoryEntry root = loadRoot(readers[3], null);
 
@@ -172,7 +205,7 @@ public final class Unpacker {
       LOGGER.info("Initial file tree populated in %fs", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f);
 
       if(!transformationQueue.isEmpty()) {
-        statusListener.accept("Transforming files...");
+        statusListener.accept(I18n.translate("unpacker.transforming_files", 0));
 
         final long leafTransformTime = System.nanoTime();
         LOGGER.info("Performing leaf transformations...");
@@ -185,7 +218,7 @@ public final class Unpacker {
         try(final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
           executor.execute(() -> {
             while(!transformations.isEmpty() && transformationThrowable.get() == null) {
-              statusListener.accept("Transforming %d files...".formatted(transformations.getRemaining()));
+              statusListener.accept(I18n.translate("unpacker.transforming_files", transformations.getRemaining()));
               DebugHelper.sleep(50);
             }
           });
@@ -221,7 +254,7 @@ public final class Unpacker {
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
 
-        statusListener.accept("Transforming directories...");
+        statusListener.accept(I18n.translate("unpacker.transforming_directories"));
 
         final long branchTransformTime = System.nanoTime();
         LOGGER.info("Performing branch transformations...");
@@ -240,7 +273,7 @@ public final class Unpacker {
 
           executor.execute(() -> {
             while(remaining.get() > 0) {
-              statusListener.accept("Writing %d files...".formatted(remaining.get()));
+              statusListener.accept(I18n.translate("unpacker.writing_files", remaining.get()));
               DebugHelper.sleep(50);
             }
           });
@@ -264,7 +297,7 @@ public final class Unpacker {
       LOGGER.info("Files unpacked in %fs", (System.nanoTime() - start) / 1_000_000_000.0f);
     } catch(final OutOfMemoryError e) {
       LOGGER.info("Ran out of memory while unpacking, switching to low memory unpacker. Please restart the game.");
-      statusListener.accept("Ran out of memory while unpacking, switching to low memory unpacker. Please restart the game.");
+      statusListener.accept(I18n.translate("unpacker.low_memory"));
 
       Config.enableLowMemoryUnpacker();
       try {
@@ -322,43 +355,31 @@ public final class Unpacker {
     }
   }
 
-  private static IsoReader[] getIsoReaders() throws IOException {
-    final IsoReader[] readers = new IsoReader[4];
-    int diskCount = 0;
+  private static void getIsoReaders(final IsoReader[] readers, final String[] errors) throws IOException {
+    Arrays.fill(errors, I18n.translate("unpacker.disk_not_found"));
 
     try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
       for(final Path child : children) {
-        final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
+        final Tuple<IsoReader, Integer> tuple = getIsoReader(child, errors);
 
         if(tuple != null) {
           final int diskNum = tuple.b();
 
+          errors[diskNum] = I18n.translate("unpacker.disk_found");
+
           if(readers[diskNum] != null) {
-            LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
+            tuple.a().close();
             continue;
           }
 
           LOGGER.info("Found disk %d: %s", diskNum + 1, child);
           readers[diskNum] = tuple.a();
-          diskCount++;
         }
       }
     }
-
-    if(diskCount < 4) {
-      for(int i = 0; i < readers.length; i++) {
-        if(readers[i] == null) {
-          LOGGER.error("Failed to find disk %d!", i + 1);
-        }
-      }
-
-      throw new UnpackerException("Failed to locate disk images");
-    }
-
-    return readers;
   }
 
-  private static Tuple<IsoReader, Integer> getIsoReader(final Path path) throws IOException {
+  private static Tuple<IsoReader, Integer> getIsoReader(final Path path, final String[] errors) throws IOException {
     final long fileSize = Files.size(path);
 
     if(fileSize < (PVD_SECTOR + 1) * IsoReader.SECTOR_SIZE) {
@@ -375,6 +396,7 @@ public final class Unpacker {
     reader.read(sectorData);
 
     if(sectorBuffer.get() != 1 || !"CD001".equals(IoHelper.readString(sectorBuffer, 5)) || sectorBuffer.get() != 0x1 || !"PLAYSTATION".equals(IoHelper.readString(sectorBuffer, 32).trim())) {
+      reader.close();
       return null;
     }
 
@@ -387,9 +409,11 @@ public final class Unpacker {
     }
 
     if(OTHER_REGION_IDS.contains(readId)) {
-      LOGGER.warn("Found disk %s from another region: %s", readId, path);
+      final int index = OTHER_REGION_IDS.indexOf(readId);
+      errors[index % 4] = I18n.translate("unpacker.disk_wrong_region", I18n.translate("unpacker.region." + OTHER_REGION_NAMES[index / 4]));
     }
 
+    reader.close();
     return null;
   }
 
@@ -637,11 +661,11 @@ public final class Unpacker {
     transformations.replaceNode(node, new FileData(newData));
   }
 
-  private static boolean equipmentAndXpDiscriminator(final PathNode node, final Set<String> flags) {
+  private static boolean xpDiscriminator(final PathNode node, final Set<String> flags) {
     return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static void equipmentAndXpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void xpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     transformations.addNode(node);
@@ -848,6 +872,13 @@ public final class Unpacker {
 
     newData[0xc] = (byte)expectedObjects;
     return newData;
+  }
+
+  /** Replaces the disk 2 Claire model (broken face UVs) with the good model from disk 3 */
+  private static void replaceBrokenClaireModel(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    final PathNode bad = root.children.get("SECT").children.get("DRGN22.BIN").children.get("863").children.get("33");
+    final PathNode good = root.children.get("SECT").children.get("DRGN23.BIN").children.get("506").children.get("33");
+    transformations.replaceNode(bad, good.data);
   }
 
   /**

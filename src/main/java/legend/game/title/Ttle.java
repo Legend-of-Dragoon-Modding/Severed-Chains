@@ -5,6 +5,7 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.Updater;
+import legend.core.Version;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
@@ -16,6 +17,7 @@ import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
@@ -26,12 +28,15 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.FullScreenInputScreen;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.LinksScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
 import legend.game.inventory.screens.OptionsCategoryScreen;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -75,6 +80,7 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -135,7 +141,7 @@ public class Ttle extends EngineState {
   private int updateAvailableShadowIndex;
   private int updateIconIndex;
   private Obj copyrightObj;
-  private final MV flashTransforms = new MV();
+  private final Matrix4f flashTransforms = new Matrix4f();
 
   private VramTexture backgroundTexture;
   private VramTexture[] backgroundPalettes;
@@ -150,6 +156,8 @@ public class Ttle extends EngineState {
   private final int[] _800ce7b0 = {255, 1, 255, 255};
   private final int[] menuTextWidth = {407, 257, 227, 169, 141};
 
+  public static final FontOptions VERSION_FONT = new FontOptions().size(0.5f).colour(TextColour.LIGHT_BROWN).noShadow().horizontalAlign(HorizontalAlign.RIGHT);
+
   private Updater.Release update;
 
   private static Window.Events.Cursor onMouseMove;
@@ -157,13 +165,8 @@ public class Ttle extends EngineState {
   private static Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
 
   @Override
-  public boolean allowsHighQualityProjection() {
-    return false;
-  }
-
-  @Override
-  public boolean allowsWidescreen() {
-    return false;
+  public RenderMode getRenderMode() {
+    return RenderMode.LEGACY;
   }
 
   @Override
@@ -246,7 +249,7 @@ public class Ttle extends EngineState {
     this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
     this.backgroundObj = new QuadBuilder("Title Screen Background")
       .pos(0.0f, 0.0f, 60000.0f)
-      .posSize(384.0f, 424.0f)
+      .posSize(368.0f, 424.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .build();
@@ -656,8 +659,24 @@ public class Ttle extends EngineState {
         w = h * aspect;
       }
 
-      final float scaleX = w / GPU.getDisplayTextureWidth();
-      final float scaleY = h / GPU.getDisplayTextureHeight();
+      final float left;
+      final float top;
+      final float scaleX;
+      final float scaleY;
+
+      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED) {
+        scaleX = w / RENDERER.getProjectionWidth();
+        scaleY = h / RENDERER.getProjectionHeight();
+        left = (window.getWidth() - w) / 2;
+        top = (window.getHeight() - h) / 2;
+      } else {
+        scaleX = 1.0f;
+        scaleY = 1.0f;
+        left = 0.0f;
+        top = 0.0f;
+        x = x / window.getWidth() * RENDERER.getProjectionWidth();
+        y = y / window.getHeight() * RENDERER.getProjectionHeight();
+      }
 
       if(this.menuLoadingStage == 3) {
         if(this.menuState_800c672c < 3) {
@@ -668,8 +687,8 @@ public class Ttle extends EngineState {
 
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
-            final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)((134.0f + i * 16.0f) * scaleY);
+            final int menuX = (int)(left + (RENDERER.getProjectionWidth() * scaleX - menuWidth) / 2.0f);
+            final int menuY = (int)(top + (134.0f + i * 16.0f) * scaleY);
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(this.selectedMenuOption != i) {
@@ -682,7 +701,7 @@ public class Ttle extends EngineState {
           }
 
           if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), 6, 5, 105, 14)) {
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
               RENDERER.window().usePointerCursor();
             } else {
               RENDERER.window().useNormalCursor();
@@ -716,8 +735,24 @@ public class Ttle extends EngineState {
           w = h * aspect;
         }
 
-        final float scaleX = w / GPU.getDisplayTextureWidth();
-        final float scaleY = h / GPU.getDisplayTextureHeight();
+        final float left;
+        final float top;
+        final float scaleX;
+        final float scaleY;
+
+        if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED) {
+          scaleX = w / RENDERER.getProjectionWidth();
+          scaleY = h / RENDERER.getProjectionHeight();
+          left = (window.getWidth() - w) / 2;
+          top = (window.getHeight() - h) / 2;
+        } else {
+          scaleX = 1.0f;
+          scaleY = 1.0f;
+          left = 0.0f;
+          top = 0.0f;
+          x = x / window.getWidth() * RENDERER.getProjectionWidth();
+          y = y / window.getHeight() * RENDERER.getProjectionHeight();
+        }
 
         if(this.menuState_800c672c < 3) {
           for(int i = 0; i < MENU_OPTIONS; i++) {
@@ -727,8 +762,8 @@ public class Ttle extends EngineState {
 
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
-            final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)((134.0f + i * 16.0f) * scaleY);
+            final int menuX = (int)(left + (RENDERER.getProjectionWidth() * scaleX - menuWidth) / 2.0f);
+            final int menuY = (int)(top + (134.0f + i * 16.0f) * scaleY);
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               playSound(0, 2, (short)0, (short)0);
@@ -740,7 +775,7 @@ public class Ttle extends EngineState {
           }
 
           if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), 6, 5, 105, 14)) {
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
               Open.open(this.update.uri);
             }
           }
@@ -931,7 +966,7 @@ public class Ttle extends EngineState {
       }
 
       transforms
-        .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f, 130.0f + i * 16.0f, 100.0f)
+        .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f + RENDERER.getWidescreenOrthoOffsetX(), 130.0f + i * 16.0f, 100.0f)
         .scale(scale, scale, 1.0f)
       ;
 
@@ -946,7 +981,7 @@ public class Ttle extends EngineState {
         .vertices((i + MENU_OPTIONS) * 4, 4);
 
       transforms
-        .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f, 130.0f + i * 16.0f, 100.1f)
+        .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f + RENDERER.getWidescreenOrthoOffsetX(), 130.0f + i * 16.0f, 100.1f)
         .scale(scale, scale, 1.0f)
       ;
 
@@ -962,7 +997,7 @@ public class Ttle extends EngineState {
 
     if(this.update != null) {
       transforms
-        .translation(20.0f, 5.0f, 100.0f)
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.0f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
@@ -976,7 +1011,7 @@ public class Ttle extends EngineState {
         .vertices(this.updateAvailableIndex * 4, 4);
 
       transforms
-        .translation(20.0f, 5.0f, 100.1f)
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
@@ -990,7 +1025,7 @@ public class Ttle extends EngineState {
         .vertices(this.updateAvailableShadowIndex * 4, 4);
 
       transforms
-        .translation(6.0f, 5.0f, 100.1f)
+        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
@@ -1003,6 +1038,8 @@ public class Ttle extends EngineState {
         .useTextureAlpha()
         .vertices(this.updateIconIndex * 4, 4);
     }
+
+    renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, model -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
 
     //LAB_800c9390
     //LAB_800c939c
@@ -1021,7 +1058,7 @@ public class Ttle extends EngineState {
       this.copyrightFadeInAmount = 1.0f;
     }
 
-    final Matrix4f transforms = new Matrix4f().translation(0.0f, 0.0f, 200.0f);
+    final Matrix4f transforms = new Matrix4f().translation(RENDERER.getWidescreenOrthoOffsetX(), 0.0f, 200.0f);
 
     //LAB_800cabb8
     //LAB_800cabcc
@@ -1044,7 +1081,7 @@ public class Ttle extends EngineState {
     //LAB_800cae48
     final Matrix4f transforms = new Matrix4f()
       .scaling(1.06f, 0.82f, 1.0f)
-      .translate(-4.0f, -4.0f, 10000.0f)
+      .translate(-4.0f + RENDERER.getWidescreenOrthoOffsetX(), -4.0f, 10000.0f)
     ;
 
     RENDERER
@@ -1054,7 +1091,7 @@ public class Ttle extends EngineState {
       .useTextureAlpha()
       .texture(this.logoTex);
 
-    transforms.translation(0.0f, 0.0f, 200.0f);
+    transforms.translation(RENDERER.getWidescreenOrthoOffsetX(), 0.0f, 200.0f);
 
     RENDERER
       .queueOrthoModel(this.trademarkObj, transforms, QueuedModelStandard.class)
@@ -1190,8 +1227,11 @@ public class Ttle extends EngineState {
     //LAB_800cba90
     final int colour = rsin(this.logoFlashColour) * 160 >> 12;
 
-    this.flashTransforms.transfer.set(0.0f, 0.0f, 30.0f);
-    this.flashTransforms.scaling(368.0f, 240.0f, 1.0f);
+    this.flashTransforms
+      .scaling(320.0f * (((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / RENDERER.getNativeAspectRatio()), 240.0f, 1.0f)
+      .translate(0.0f, 0.0f, 30.0f)
+    ;
+
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())
       .translucency(Translucency.B_PLUS_F)

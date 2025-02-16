@@ -8,6 +8,7 @@ import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopEquipmentEvent;
@@ -51,12 +52,12 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderFiveDigitNumber;
+import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
-import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -326,17 +327,22 @@ public class ShopScreen extends MenuScreen {
     renderText(Carried_8011c6b8, 72, this.getShopMenuYOffset(2) + 2, selectedMenuItem != 2 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
     renderText(Leave_8011c6c8, 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
 
+    final int size;
+    final int current;
     if(isItemMenu != 0) {
-      renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
-      allocateOneFrameGlyph(94, 16, 16);
-      renderTwoDigitNumber(123, 36, CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0x2);
+      size = CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+      current = gameState_800babc8.items_2e9.size();
+      final Renderable58 renderable = allocateOneFrameGlyph(94, 16, 16);
+      renderable.metricsCount = 18; // truncate slash from renderable
     } else {
-      renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2);
-      allocateOneFrameGlyph(95, 16, 16);
-      renderThreeDigitNumber(117, 36, 255, 0x2);
+      size = 255;
+      current = gameState_800babc8.equipment_1e8.size();
+      final Renderable58 renderable = allocateOneFrameGlyph(95, 16, 16);
+      renderable.metricsCount = 18; // truncate slash from renderable
     }
 
     renderEightDigitNumber(87, 24, gameState_800babc8.gold_94, 0x2);
+    renderFraction(135, 36, current, size);
   }
 
   private void renderEquipmentStatChange(final Equipment equipment, final int charIndex) {
@@ -409,7 +415,7 @@ public class ShopScreen extends MenuScreen {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getPrice()));
           renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
-          renderItemIcon(58, 330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
+          renderItemIcon(ItemIcon.WARNING, 330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
         }
       }
 
@@ -562,8 +568,6 @@ public class ShopScreen extends MenuScreen {
             this.equipCharIndex = this.FUN_8010a864((Equipment)this.inv.get(this.menuScroll_8011e0e4 + i).item);
           }
 
-          playMenuSound(2);
-
           final boolean hasSpace;
           if(this.shopType == 0) {
             hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
@@ -605,36 +609,38 @@ public class ShopScreen extends MenuScreen {
 
           menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
             if(result == MessageBoxResult.YES) {
+              if(canEquip((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex])) {
+                menuStack.pushScreen(new MessageBoxScreen("Equip item?", 2, result1 -> {
+                  if(result1 == MessageBoxResult.YES) {
+                    final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex]);
 
-              menuStack.pushScreen(new MessageBoxScreen("Equip item?", 2, result1 -> {
-                if(result1 == MessageBoxResult.YES && canEquip((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex])) {
-                  final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex]);
-
-                  if(equipResult.previousEquipment != null) {
-                    if(equipResult.success) {
-                      if(giveEquipment(equipResult.previousEquipment)) {
-                        gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
+                    if(equipResult.previousEquipment != null) {
+                      if(equipResult.success) {
+                        if(giveEquipment(equipResult.previousEquipment)) {
+                          gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
+                        } else {
+                          equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
+                          menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> {}));
+                        }
                       } else {
                         equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
-                        menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> {}));
+                        menuStack.pushScreen(new MessageBoxScreen("Failed to equip new item", 0, onResult -> {}));
                       }
-                    } else {
-                      equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
-                      menuStack.pushScreen(new MessageBoxScreen("Failed to equip new item", 0, onResult -> {}));
                     }
-                  }
-                } else {
-                  if(giveEquipment((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item)) {
-                    gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
                   } else {
-                    menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> { }));
+                    this.giveUnequipped((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
                   }
-                }
 
+                  this.menuState = MenuState.BUY_4;
+                  unloadRenderable(this.charHighlight);
+                  this.charHighlight = null;
+                }));
+              } else {
+                this.giveUnequipped((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
                 this.menuState = MenuState.BUY_4;
                 unloadRenderable(this.charHighlight);
                 this.charHighlight = null;
-              }));
+              }
             }
           }));
 
@@ -646,7 +652,6 @@ public class ShopScreen extends MenuScreen {
 
       for(int i = 0; i < Math.min(count, 6); i++) {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
-          playMenuSound(2);
           this.menuIndex_8011e0e0 = i;
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
 
@@ -956,39 +961,52 @@ public class ShopScreen extends MenuScreen {
   }
 
   private void menuSelectChar5Select() {
+    playMenuSound(2);
+
     menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
       if(result == MessageBoxResult.YES) {
-        menuStack.pushScreen(new MessageBoxScreen("Equip item?", 2, result1 -> {
-          if(result1 == MessageBoxResult.YES && canEquip((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex])) {
-            final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex]);
+        if(canEquip((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex])) {
+          menuStack.pushScreen(new MessageBoxScreen("Equip item?", 2, result1 -> {
+            if(result1 == MessageBoxResult.YES) {
+              final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex]);
 
-            if(equipResult.previousEquipment != null) {
-              if(equipResult.success) {
-                if(giveEquipment(equipResult.previousEquipment)) {
-                  gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
+              if(equipResult.previousEquipment != null) {
+                if(equipResult.success) {
+                  if(giveEquipment(equipResult.previousEquipment)) {
+                    gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
+                  } else {
+                    equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
+                    menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> {}));
+                  }
                 } else {
                   equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
-                  menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> {}));
+                  menuStack.pushScreen(new MessageBoxScreen("Failed to equip new item", 0, onResult -> {}));
                 }
-              } else {
-                equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
-                menuStack.pushScreen(new MessageBoxScreen("Failed to equip new item", 0, onResult -> {}));
               }
-            }
-          } else {
-            if(giveEquipment((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item)) {
-              gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
             } else {
-              menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> { }));
+              this.giveUnequipped((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
             }
-          }
 
+            this.menuState = MenuState.BUY_4;
+            unloadRenderable(this.charHighlight);
+            this.charHighlight = null;
+          }));
+        } else {
+          this.giveUnequipped((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
           this.menuState = MenuState.BUY_4;
           unloadRenderable(this.charHighlight);
           this.charHighlight = null;
-        }));
+        }
       }
     }));
+  }
+
+  private void giveUnequipped(final Equipment equipment) {
+    if(giveEquipment(equipment)) {
+      gameState_800babc8.gold_94 -= equipment.getPrice();
+    } else {
+      menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> { }));
+    }
   }
 
   private void menuSelectChar5NavigateLeft() {

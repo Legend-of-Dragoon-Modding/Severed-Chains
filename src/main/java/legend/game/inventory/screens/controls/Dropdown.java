@@ -46,7 +46,7 @@ public class Dropdown<T> extends Control {
 
     this.panel.onMouseMove((x, y) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 0, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
+        if(MathHelper.inBox(x, y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.hover(i);
           return InputPropagation.HANDLED;
         }
@@ -57,7 +57,7 @@ public class Dropdown<T> extends Control {
 
     this.panel.onMouseClick((x, y, button, mods) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 0, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
+        if(MathHelper.inBox(x, y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.select(i);
           this.panel.getScreen().getStack().popScreen();
           return InputPropagation.HANDLED;
@@ -128,7 +128,6 @@ public class Dropdown<T> extends Control {
   protected void onResize() {
     super.onResize();
     this.background.setSize(this.getWidth(), this.getHeight());
-    this.highlight.setWidth(this.getWidth() + 7);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
   }
 
@@ -205,7 +204,7 @@ public class Dropdown<T> extends Control {
       final Panel panel = Dropdown.this.panel;
 
       this.addControl(panel);
-      panel.setPos(Dropdown.this.calculateTotalX() - 9, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
+      panel.setPos(Dropdown.this.calculateTotalX() - 6, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
 
       if(panel.getY() + panel.getHeight() > this.getHeight()) {
         panel.setY(Dropdown.this.calculateTotalY() - panel.getHeight());
@@ -215,7 +214,8 @@ public class Dropdown<T> extends Control {
         panel.setY(0);
       }
 
-      panel.setWidth(Dropdown.this.getWidth() + 18);
+      panel.setWidth(Dropdown.this.getWidth() + 12);
+      Dropdown.this.highlight.setWidth(Dropdown.this.getWidth());
     }
 
     @Override

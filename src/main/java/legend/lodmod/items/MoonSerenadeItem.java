@@ -1,11 +1,12 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.inventory.ItemIcon;
 import legend.game.scripting.ScriptState;
 
 public class MoonSerenadeItem extends RecoverMpItem {
   public MoonSerenadeItem() {
-    super(34, 100, true, 100);
+    super(ItemIcon.YELLOW_POTION, 100, true, 100);
   }
 
   public MoonSerenadeItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }

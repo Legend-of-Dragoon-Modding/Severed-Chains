@@ -2,8 +2,10 @@ package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Window;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -11,6 +13,7 @@ import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -153,6 +156,11 @@ public class MenuStack {
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
+    if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+      this.input(screen -> screen.mouseMove((int)(x / window.getWidth() * RENDERER.getProjectionWidth()), (int)(y / window.getHeight() * RENDERER.getProjectionHeight())));
+      return;
+    }
+
     final float aspect = 4.0f / 3.0f;
 
     float w = window.getWidth();
@@ -166,8 +174,8 @@ public class MenuStack {
     final float left = (window.getWidth() - w) / 2;
     final float top = (window.getHeight() - h) / 2;
 
-    final float scaleX = w / GPU.getDisplayTextureWidth();
-    final float scaleY = h / GPU.getDisplayTextureHeight();
+    final float scaleX = w / RENDERER.getProjectionWidth();
+    final float scaleY = h / RENDERER.getProjectionHeight();
 
     this.input(screen -> screen.mouseMove((int)((x - left) / scaleX), (int)((y - top) / scaleY)));
   }
@@ -180,6 +188,11 @@ public class MenuStack {
     final Point2D point = this.mousePressCoords.remove(button);
 
     if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
+      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+        this.input(screen -> screen.mouseClick((int)(x / window.getWidth() * RENDERER.getProjectionWidth()), (int)(y / window.getHeight() * RENDERER.getProjectionHeight()), button, mods));
+        return;
+      }
+
       final float aspect = 4.0f / 3.0f;
 
       float w = window.getWidth();

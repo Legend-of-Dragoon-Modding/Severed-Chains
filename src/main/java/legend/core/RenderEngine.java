@@ -4,7 +4,6 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
-import legend.core.opengl.FontShaderOptions;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
@@ -26,8 +25,7 @@ import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.VoidShaderOptions;
 import legend.core.opengl.Window;
-import legend.core.opengl.fonts.Font;
-import legend.core.opengl.fonts.FontManager;
+import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -107,7 +105,6 @@ public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
 
   public static int legacyMode;
-  public boolean usePs1Gpu = true;
 
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
@@ -136,16 +133,6 @@ public class RenderEngine {
       final Shader<SimpleShaderOptions>.UniformVec2 shiftUv = shader.new UniformVec2("shiftUv");
       final Shader<SimpleShaderOptions>.UniformVec4 recolour = shader.new UniformVec4("recolour");
       return () -> new SimpleShaderOptions(shiftUv, recolour);
-    }
-  );
-
-  public static final ShaderType<FontShaderOptions> FONT_SHADER = new ShaderType<>(
-    options -> loadShader("simple", "font", options),
-    shader -> {
-      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      final Shader<FontShaderOptions>.UniformVec3 colour = shader.new UniformVec3("colour");
-      return () -> new FontShaderOptions(colour);
     }
   );
 
@@ -230,6 +217,8 @@ public class RenderEngine {
   private final Texture[] renderTextures = new Texture[RENDER_BUFFER_COUNT];
   private Texture depthTexture;
   private int renderBufferIndex;
+  /** Set when resizing the window so that the render buffers will be resized on the next frame */
+  private boolean resizeRenderBuffers;
 
   // Text
   public Texture textTexture;
@@ -320,33 +309,28 @@ public class RenderEngine {
     return this.mainBatch.aspectRatio;
   }
 
-  /** NOTE: you must call {@link #updateProjections} yourself */
-  public void setAllowWidescreen(final boolean allowWidescreen) {
-    this.mainBatch.setAllowWidescreen(allowWidescreen);
+  public void setRenderMode(final EngineState.RenderMode renderMode) {
+    this.mainBatch.setRenderMode(renderMode);
   }
 
-  public boolean getAllowWidescreen() {
-    return this.mainBatch.allowWidescreen;
+  public EngineState.RenderMode getRenderMode() {
+    return this.mainBatch.getRenderMode();
   }
 
-  /** NOTE: you must call {@link #updateProjections} yourself */
-  public void setAllowHighQualityProjection(final boolean allowHighQualityProjection) {
-    this.mainBatch.setAllowHighQualityProjection(allowHighQualityProjection);
+  public float getWidescreenOrthoOffsetX() {
+    return this.mainBatch.widescreenOrthoOffsetX;
   }
 
-  public float getWidthSquisher() {
-    return this.mainBatch.widthSquisher;
-  }
-
-  public void setProjectionSize(final float width, final float height) {
+  public void setProjectionSize(final int width, final int height) {
     this.mainBatch.setProjectionSize(width, height);
+    this.updateResolution();
   }
 
-  public float getProjectionWidth() {
+  public int getProjectionWidth() {
     return this.mainBatch.getProjectionWidth();
   }
 
-  public float getProjectionHeight() {
+  public int getProjectionHeight() {
     return this.mainBatch.getProjectionHeight();
   }
 
@@ -368,10 +352,6 @@ public class RenderEngine {
 
   public void updateProjections() {
     this.mainBatch.updateProjections();
-  }
-
-  public boolean expandedSubmap() {
-    return this.mainBatch.expandedSubmap;
   }
 
   public Window.Events events() {
@@ -461,7 +441,6 @@ public class RenderEngine {
     this.window.events.onKeyRelease(this::onKeyRelease);
 
     ShaderManager.addShader(SIMPLE_SHADER);
-    ShaderManager.addShader(FONT_SHADER);
     final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
     this.standardShader = ShaderManager.addShader(STANDARD_SHADER);
     this.standardShaderOptions = this.standardShader.makeOptions();
@@ -469,12 +448,6 @@ public class RenderEngine {
     this.tmdShaderOptions = this.tmdShader.makeOptions();
     this.battleTmdShader = ShaderManager.addShader(BATTLE_TMD_SHADER);
     this.battleTmdShaderOptions = this.battleTmdShader.makeOptions();
-
-    try {
-      FontManager.add("default", new Font(Paths.get("gfx/fonts/consolas.ttf")));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load font", e);
-    }
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
@@ -568,6 +541,11 @@ public class RenderEngine {
         }
       }
 
+      if(this.resizeRenderBuffers) {
+        this.resizeRenderBuffers = false;
+        this.resizeRenderBuffers();
+      }
+
       if(this.frameSkipIndex == 0) {
         this.pre();
       }
@@ -631,7 +609,7 @@ public class RenderEngine {
         this.renderCallback.run();
       }
 
-      if(legacyMode == 0 && this.usePs1Gpu) {
+      if(legacyMode == 0) {
         // Gross hack bro
         if(currentEngineState_8004dd04 instanceof final Battle battle && battle._800c6930 != null) {
           this.battleTmdShader.use();
@@ -930,7 +908,7 @@ public class RenderEngine {
   }
 
   public void setProjectionMode(final RenderBatch batch, final ProjectionMode projectionMode) {
-    final boolean highQualityProjection = batch.allowHighQualityProjection && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
+    final boolean highQualityProjection = batch.renderMode == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
 
     // znear
     this.projectionBuffer.put(0, 0.0f);
@@ -1032,7 +1010,6 @@ public class RenderEngine {
       this.window.close();
       throw t;
     } finally {
-      FontManager.free();
       Window.free();
     }
   }
@@ -1050,14 +1027,18 @@ public class RenderEngine {
 
     final Resolution res = CONFIG.getConfig(CoreMod.RESOLUTION_CONFIG.get());
     if(res == Resolution.NATIVE) {
-      this.renderWidth = width;
+      this.renderWidth = (int)(width * (this.mainBatch.projectionWidth / 320.0f));
       this.renderHeight = height;
     } else {
-      this.renderWidth = (int)((float)res.verticalResolution / height * width);
+      this.renderWidth = (int)((float)res.verticalResolution / height * width * (this.mainBatch.projectionWidth / 320.0f));
       this.renderHeight = res.verticalResolution;
     }
 
     this.renderAspectRatio = (float)this.renderWidth / (float)this.renderHeight;
+
+    // Force the internal resolution to an even multiple of 240 to fix lines in the UI
+    this.renderHeight = MathHelper.nextMultiple(this.renderHeight, 240);
+    this.renderWidth = (int)(this.renderHeight * this.renderAspectRatio);
 
     // glLineWidth has been removed on M3 macs
     if(!this.isMac()) {
@@ -1067,6 +1048,10 @@ public class RenderEngine {
     // Projections
     this.updateProjections();
 
+    this.resizeRenderBuffers = true;
+  }
+
+  private void resizeRenderBuffers() {
     for(int i = 0; i < this.batches.size(); i++) {
       this.batches.get(i).updateProjections();
     }
@@ -1097,7 +1082,6 @@ public class RenderEngine {
       builder.dataFormat(GL_DEPTH_COMPONENT);
       builder.dataType(GL_FLOAT);
     });
-
 
     // Render buffers
     for(int i = 0; i < this.renderBuffers.length; i++) {

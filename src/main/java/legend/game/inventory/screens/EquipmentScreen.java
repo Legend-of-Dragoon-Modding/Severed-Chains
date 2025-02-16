@@ -33,6 +33,7 @@ import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
+import static legend.game.Scus94491BpeSegment_8002.menuEquipmentSlotComparator;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
@@ -360,7 +361,7 @@ public class EquipmentScreen extends MenuScreen {
     playMenuSound(2);
     final MenuEntries<Equipment> equipment = new MenuEntries<>();
     loadItemsAndEquipmentForDisplay(equipment, null, 1);
-    equipment.sort();
+    equipment.sort(menuEquipmentSlotComparator());
     setInventoryFromDisplay(equipment, gameState_800babc8.equipment_1e8, equipment.size());
     this.loadingStage = 2;
   }
