@@ -6,10 +6,13 @@ import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.modding.events.screen.EquipDescriptionEvent;
+import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
@@ -130,7 +133,7 @@ public class EquipmentScreen extends MenuScreen {
       final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentSlot);
       if(canEquip(equipment, charIndex)) {
         if(equipment != gameState_800babc8.charData_32c[charIndex].equipment_14.get(equipment.slot)) {
-          final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+          final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment, EVENTS.postEvent(new EquipMenuEntryIconEvent(equipment)).icon);
           menuEntry.itemSlot_01 = equipmentSlot;
           this.menuItems.add(menuEntry);
         }
@@ -156,7 +159,8 @@ public class EquipmentScreen extends MenuScreen {
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
 
     if(slotIndex + slotScroll < this.menuItems.size()) {
-      renderString(194, 178, I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final Equipment equip = this.menuItems.get(slotIndex + slotScroll).item_00;
+      renderString(194, 178, EVENTS.postEvent(new EquipDescriptionEvent(equip, I18n.translate(equip.getDescriptionTranslationKey()))).description, allocate);
     }
   }
 

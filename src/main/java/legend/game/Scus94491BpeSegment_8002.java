@@ -859,7 +859,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final MagicStuff08 spellStuff = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[dlevel];
       final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
@@ -890,8 +890,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022a50
     //LAB_80022a64
     int unlockedSpells = 0;
-    for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
+    for(int i = 0; i < CoreMod.MAX_DRAGOON_LEVEL + 1; i++) {
+      if(CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i].spellIndex_02 != -1) {
         unlockedSpells++;
       }
 
@@ -1216,7 +1216,7 @@ public final class Scus94491BpeSegment_8002 {
     final List<MenuEntryStruct04<Item>> items = new ArrayList<>();
 
     for(final Item item : gameState_800babc8.items_2e9) {
-      items.add(MenuEntryStruct04.make(item));
+      items.add(MenuEntryStruct04.make(item, item.getIcon()));
     }
 
     sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());

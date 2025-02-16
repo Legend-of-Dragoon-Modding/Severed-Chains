@@ -6,11 +6,14 @@ import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
+import legend.game.modding.events.screen.ItemDescriptionEvent;
+import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -155,7 +158,8 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final Item item = this.menuItems.get(selectedSlot + slotScroll).item_00;
+      renderString(194, 16, EVENTS.postEvent(new ItemDescriptionEvent(item, I18n.translate(item.getDescriptionTranslationKey()))).description, allocate);
     }
   }
 
@@ -194,7 +198,7 @@ public class UseItemScreen extends MenuScreen {
       final Item item = gameState_800babc8.items_2e9.get(i);
 
       if(item.canBeUsed(Item.UsageLocation.MENU)) {
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon);
         menuEntry.flags_02 = 0;
 
         if(!item.canBeUsedNow(Item.UsageLocation.MENU)) {

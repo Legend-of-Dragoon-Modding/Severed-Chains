@@ -9,6 +9,8 @@ public class PandemoniumItem extends BattleItem {
     super(ItemIcon.CHARM, 200);
   }
 
+  public PandemoniumItem(final int icon, final int price) { super(icon, price); }
+
   @Override
   public boolean isRepeat() {
     return true;

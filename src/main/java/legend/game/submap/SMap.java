@@ -43,6 +43,7 @@ import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
+import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsF_LIGHT;
@@ -53,7 +54,6 @@ import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
-import legend.game.types.BackgroundType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Loader;
@@ -863,6 +863,7 @@ public class SMap extends EngineState {
   @Method(0x800d9d60L)
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
+
     if(!divineEvent.bypassOverride) {
       if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
         gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
