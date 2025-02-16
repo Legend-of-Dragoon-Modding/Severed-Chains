@@ -1,0 +1,39 @@
+Widescreen patch
+Twin Castle, Main Hall (Nighttime)
+Stand-in as mirrored entrance knight when Libria is present
+--- original
++++ modified
+@@ -443,6 +443,7 @@
+ call 106, 0x0
+ call 111, 0x1
+ call 311, stor[0]
++jmp_cmp ==, 2, stor[stor[stor[0], 23], 31], inl[:KNIGHT]
+ call 106, 0x1
+ rewind
+ ENTRYPOINT_1:
+@@ -456,6 +457,25 @@
+ LABEL_82:
+ rel :JMP_11b8_0
+ rel :JMP_11b8_1
++rel :KNIGHT
++KNIGHT:
++call 96, 4
++call 101, stor[0], 0x122, 0xffffffa6, 0xffffffe0
++call 103, stor[0], 0, 0x400, 0
++call 106, 0
++call 257, stor[24], stor[25]
++jmp_cmp >, 0xfffffff3, stor[24], inl[:LEFT_SIDE]
++RIGHT_SIDE:
++yield
++call 257, stor[24], stor[25]
++jmp_cmp >, 0xfffffff3, stor[24], inl[:LEFT_SIDE]
++call 101, stor[0], 0x122, 0xffffffa6, 0xffffffe0
++call 103, stor[0], 0, 0x400, 0
++jmp inl[:RIGHT_SIDE]
++LEFT_SIDE:
++call 101, stor[0], 0xfffffee8, 0xffffffa6, 0xffffffea
++call 103, stor[0], 0, 0xfffffc00, 0
++jmp inl[:RIGHT_SIDE]
+ JMP_11b8_1:
+ call 101, stor[0], 0xd, 0xfffffeca, 0x5e3
+ call 103, stor[0], 0x0, 0x0, 0x0
