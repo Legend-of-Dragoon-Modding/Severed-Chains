@@ -1,5 +1,6 @@
 package legend.game.fmv;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.audio.GenericSource;
@@ -307,7 +308,6 @@ public final class Fmv {
     oldFps = RENDERER.window().getFpsLimit();
     oldProjectionSize.set(RENDERER.getProjectionWidth(), RENDERER.getProjectionHeight());
     oldRenderMode = RENDERER.getRenderMode();
-    RENDERER.window().setFpsLimit(15);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
 
@@ -342,6 +342,8 @@ public final class Fmv {
       if(shouldStop) {
         stop();
       }
+
+      RENDERER.window().setFpsLimit(15 * Config.getGameSpeedMultiplier());
 
       int demuxedSize = 0;
 
