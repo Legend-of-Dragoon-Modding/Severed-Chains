@@ -9,6 +9,8 @@ public class SmokeBallItem extends BattleItem {
     super(ItemIcon.SACK, 200);
   }
 
+  public SmokeBallItem(final int icon, final int price) { super(icon, price); }
+
   @Override
   public boolean isRepeat() {
     return true;
