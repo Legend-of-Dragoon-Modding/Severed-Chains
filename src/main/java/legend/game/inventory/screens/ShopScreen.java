@@ -18,9 +18,7 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
-import legend.lodmod.LodItems;
 import legend.lodmod.LodMod;
-import org.legendofdragoon.modloader.events.EventListener;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -75,13 +73,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
-@EventListener
 public class ShopScreen extends MenuScreen {
-  @EventListener
-  public static void addSomeShits(final ShopContentsEvent event) {
-    event.contents.add(new ShopEntry<>(LodItems.PSYCHE_BOMB_X.get(), 1));
-  }
-
   private static final String Not_enough_money_8011c468 = "Not enough\nmoney";
   private static final String Which_item_do_you_want_to_sell_8011c4e4 = "Which item do you\nwant to sell?";
   private static final String Which_weapon_do_you_want_to_sell_8011c524 = "Which weapon do\nyou want to sell?";
@@ -164,13 +156,20 @@ public class ShopScreen extends MenuScreen {
         }
 
         this.renderShopMenu(this.menuIndex_8011e0dc);
-        this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+
+        if(!this.inv.isEmpty()) {
+          this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+        }
+
         this.menuState = MenuState.RENDER_3;
       }
 
       case RENDER_3 -> {
         this.renderShopMenu(this.menuIndex_8011e0dc);
-        this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+
+        if(!this.inv.isEmpty()) {
+          this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+        }
       }
 
       case BUY_4 -> {
@@ -694,6 +693,11 @@ public class ShopScreen extends MenuScreen {
   protected void handleSelectedMenu(final int i) {
     switch(i) {
       case 0 -> { // Buy
+        if(this.inv.isEmpty()) {
+          menuStack.pushScreen(new MessageBoxScreen("This shop has nothing\nto buy", 0, result -> {}));
+          return;
+        }
+
         this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.invIndex_8011e0e0));
         FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
 
