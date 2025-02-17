@@ -698,6 +698,11 @@ public class ShopScreen extends MenuScreen {
   protected void handleSelectedMenu(final int i) {
     switch(i) {
       case 0 -> { // Buy
+        if(this.inv.isEmpty()) {
+          menuStack.pushScreen(new MessageBoxScreen("The shop has nothing\nto buy", 0, result -> {}));
+          return;
+        }
+
         this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.menuIndex_8011e0e0));
         FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
 
