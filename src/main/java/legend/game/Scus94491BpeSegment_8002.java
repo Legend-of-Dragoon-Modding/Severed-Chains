@@ -800,13 +800,6 @@ public final class Scus94491BpeSegment_8002 {
   public static void initInventoryMenu() {
     initMenu(WhichMenu.RENDER_NEW_MENU, () -> new MainMenuScreen(() -> {
       menuStack.popScreen();
-
-      if(whichMenu_800bdc38 == WhichMenu.QUIT) {
-        deallocateRenderables(0xff);
-        startFadeEffect(2, 10);
-        textZ_800bdf00 = 13;
-      }
-
       whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }));
   }

@@ -75,6 +75,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
+import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
@@ -502,6 +503,7 @@ public final class Scus94491BpeSegment {
       prepareOverlay();
       vsyncMode_8007a3b8 = 2;
       loadGameStateOverlay(engineState_8004dd20);
+      menuStack.reset();
 
       if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) { // Starting combat
         clearCombatVars();
