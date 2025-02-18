@@ -1183,7 +1183,7 @@ public class RetailSubmap extends Submap {
         }
 
         //LAB_800e7d50
-        if(maxZ > metrics.z_20 || minZ < metrics.z_20) {
+        if(Math.round(maxZ) > metrics.z_20 || Math.round(minZ) < metrics.z_20) {
           //LAB_800e7d64
           envZs[i] = (maxZ + minZ) / 2;
         } else {
@@ -1341,7 +1341,7 @@ public class RetailSubmap extends Submap {
 
       RENDERER.queueModel(dobj2.obj, matrix, lw, QueuedModelTmd.class)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-        .depthOffset(model.zOffset_a0)
+        .depthOffset(model.zOffset_a0 * 4)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
