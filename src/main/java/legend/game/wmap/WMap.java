@@ -2618,7 +2618,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db698
-        this.lerp(modelAndAnimData.currPlayerPos_94, coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].destPosition_00, coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].destPosition_00, modelAndAnimData.coolonTravelAnimationTick_218 / (36.0f / vsyncMode_8007a3b8));
+        coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].destPosition_00.lerp(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].destPosition_00, modelAndAnimData.coolonTravelAnimationTick_218 / (36.0f / vsyncMode_8007a3b8), modelAndAnimData.currPlayerPos_94);
 
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x -= 0.041503906f / (3.0f / vsyncMode_8007a3b8); // ~1/24
 
@@ -2861,22 +2861,6 @@ public class WMap extends EngineState {
       }
     }
     //LAB_800dcc0c
-  }
-
-  @Method(0x800dcc20L)
-  private void lerp(final Vector3f out, final Vector3f a, final Vector3f b, final float ratio) {
-    if(ratio == 0.0f) {
-      out.set(a);
-    } else if(ratio == 1.0f) {
-      out.set(b);
-    } else {
-      //LAB_800dcca4
-      out.x = (b.x - a.x) * ratio + a.x;
-      out.y = (b.y - a.y) * ratio + a.y;
-      out.z = (b.z - a.z) * ratio + a.z;
-    }
-
-    //LAB_800dcddc
   }
 
   @Method(0x800dcde8L)
@@ -3228,14 +3212,7 @@ public class WMap extends EngineState {
     modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].coord2_14.coord.transfer.set(modelAndAnimData.coord2_34.coord.transfer);
 
     if(modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
-      final float cwAngle = modelAndAnimData.playerRotation_a4.y - modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].coord2_14.transforms.rotate.y;
-      final float ccwAngle = modelAndAnimData.playerRotation_a4.y - (modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].coord2_14.transforms.rotate.y - MathHelper.TWO_PI);
-      final float finalAngle;
-      if(Math.abs(ccwAngle) < Math.abs(cwAngle)) {
-        finalAngle = ccwAngle;
-      } else {
-        finalAngle = cwAngle;
-      }
+      final float finalAngle = MathHelper.closestAngle(modelAndAnimData.playerRotation_a4.y, modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].coord2_14.transforms.rotate.y);
 
       //LAB_800e15e4
       modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].coord2_14.transforms.rotate.y += finalAngle / 2.0f / (3.0f / vsyncMode_8007a3b8);
