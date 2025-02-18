@@ -96,7 +96,7 @@ public class BattleHud {
     "Albert", "Meru", "Kongol", "Miranda", "DivinDGDart",
   };
   /** Poisoned, Dispirited, Weapon blocked, Stunned, Fearful, Confused, Bewitched, Petrified */
-  private static final String[] ailments_800fb3a0 = {
+  public static final String[] ailments_800fb3a0 = {
     "Poisoned", "Dispirited", "Weapon blocked", "Stunned", "Fearful",
     "Confused", "Bewitched", "Petrified",
   };
