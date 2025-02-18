@@ -117,22 +117,26 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    playMenuSound(1);
-    this.messageBox.menuIndex_18 = 0;
+    if(this.messageBox.menuIndex_18 != 0) {
+      playMenuSound(1);
+      this.messageBox.menuIndex_18 = 0;
 
-    final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
-    if(this.messageBox.highlightRenderable_04 != null) {
-      this.messageBox.highlightRenderable_04.y_44 = selectionY - 2;
+      final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
+      if(this.messageBox.highlightRenderable_04 != null) {
+        this.messageBox.highlightRenderable_04.y_44 = selectionY - 2;
+      }
     }
   }
 
   private void menuNavigateDown() {
-    playMenuSound(1);
-    this.messageBox.menuIndex_18 = 1;
+    if(this.messageBox.menuIndex_18 != 1) {
+      playMenuSound(1);
+      this.messageBox.menuIndex_18 = 1;
 
-    final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
-    if(this.messageBox.highlightRenderable_04 != null) {
-      this.messageBox.highlightRenderable_04.y_44 = selectionY + 12;
+      final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
+      if(this.messageBox.highlightRenderable_04 != null) {
+        this.messageBox.highlightRenderable_04.y_44 = selectionY + 12;
+      }
     }
   }
 

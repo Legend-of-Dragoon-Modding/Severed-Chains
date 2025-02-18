@@ -294,8 +294,8 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage2NavigateUp() {
-    playMenuSound(1);
     if(this.primaryCharIndex > 0 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[this.primaryCharIndex - 1] != -1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[this.primaryCharIndex - 1]].partyFlags_04 & 0x20) == 0)) {
+      playMenuSound(1);
       this.primaryCharIndex--;
     }
 
@@ -303,8 +303,8 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage2NavigateDown() {
-    playMenuSound(1);
     if(this.primaryCharIndex < 2 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || gameState_800babc8.charIds_88[this.primaryCharIndex + 1] != -1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[this.primaryCharIndex + 1]].partyFlags_04 & 0x20) == 0)) {
+      playMenuSound(1);
       this.primaryCharIndex++;
     }
 
@@ -330,9 +330,8 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage3NavigateUp() {
-    playMenuSound(1);
-
     if(this.secondaryCharIndex > 2) {
+      playMenuSound(1);
       this.secondaryCharIndex -= 3;
     }
 
@@ -341,9 +340,8 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage3NavigateDown() {
-    playMenuSound(1);
-
     if(this.secondaryCharIndex < 3) {
+      playMenuSound(1);
       this.secondaryCharIndex += 3;
     }
 
@@ -352,9 +350,8 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage3NavigateLeft() {
-    playMenuSound(1);
-
     if(this.secondaryCharIndex > 0) {
+      playMenuSound(1);
       this.secondaryCharIndex--;
     }
 
@@ -363,9 +360,8 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage3NavigateRight() {
-    playMenuSound(1);
-
     if(this.secondaryCharIndex < 5) {
+      playMenuSound(1);
       this.secondaryCharIndex++;
     }
 
@@ -405,38 +401,58 @@ public class CharSwapScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       // primary character left side
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.menuStage2NavigateUp();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.menuStage2NavigateDown();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.BUTTON_EAST) {
-        this.menuStage2Escape();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.BUTTON_SOUTH) {
-        this.menuStage2Select();
-        return InputPropagation.HANDLED;
+      switch(inputAction) {
+        case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
+          this.menuStage2NavigateUp();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
+          this.menuStage2NavigateDown();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.BUTTON_EAST -> {
+          this.menuStage2Escape();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.BUTTON_SOUTH -> {
+          this.menuStage2Select();
+          return InputPropagation.HANDLED;
+        }
       }
     } else if(this.loadingStage == 3) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.menuStage3NavigateUp();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.menuStage3NavigateDown();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-        this.menuStage3NavigateLeft();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-        this.menuStage3NavigateRight();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.BUTTON_EAST) {
-        this.menuStage3Escape();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.BUTTON_SOUTH) {
-        this.menuStage3Select();
-        return InputPropagation.HANDLED;
+      switch(inputAction) {
+        case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
+          this.menuStage3NavigateUp();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
+          this.menuStage3NavigateDown();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT -> {
+          this.menuStage3NavigateLeft();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT -> {
+          this.menuStage3NavigateRight();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.BUTTON_EAST -> {
+          this.menuStage3Escape();
+          return InputPropagation.HANDLED;
+        }
+
+        case InputAction.BUTTON_SOUTH -> {
+          this.menuStage3Select();
+          return InputPropagation.HANDLED;
+        }
       }
     }
 

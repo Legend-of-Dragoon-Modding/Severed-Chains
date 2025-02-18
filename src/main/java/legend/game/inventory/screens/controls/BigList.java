@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.function.Function;
 
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class BigList<T> extends Control {
@@ -20,6 +24,9 @@ public class BigList<T> extends Control {
 
   private int scroll;
   private int slot;
+
+  /** Allows list wrapping, but only on new input */
+  private boolean allowWrap = true;
 
   private final List<Label> labels = new ArrayList<>();
   private final Brackets highlight;
@@ -148,6 +155,10 @@ public class BigList<T> extends Control {
       throw new IllegalArgumentException("Index must be > 0");
     }
 
+    if(index != this.slot) {
+      playMenuSound(1);
+    }
+
     this.slot = index;
     this.highlight.setY(this.labels.get(index).getY());
 
@@ -169,14 +180,12 @@ public class BigList<T> extends Control {
     }
 
     if(deltaY > 0 && this.scroll > 0) {
-      playMenuSound(1);
       this.scroll--;
       this.updateEntries();
       this.highlight(this.slot - 1);
     }
 
     if(deltaY < 0 && this.scroll < this.entries.size() - MAX_VISIBLE_ENTRIES) {
-      playMenuSound(1);
       this.scroll++;
       this.updateEntries();
       this.highlight(this.slot + 1);
@@ -185,18 +194,163 @@ public class BigList<T> extends Control {
     return InputPropagation.HANDLED;
   }
 
+  private void menuNavigateUp() {
+    final int entryCount = this.entries.size();
+    if(this.slot > this.scroll) {
+      this.highlight(this.slot - 1);
+    } else if(this.scroll > 0) {
+      this.scroll--;
+      this.updateEntries();
+      this.highlight(this.slot - 1);
+    } else if(entryCount > 1 && this.allowWrap) {
+      this.scroll = entryCount > MAX_VISIBLE_ENTRIES ? entryCount - MAX_VISIBLE_ENTRIES : 0;
+      this.updateEntries();
+      this.highlight(entryCount - 1);
+    }
+  }
+
+  private void menuNavigateDown() {
+    final int entryCount = this.entries.size();
+    if(this.slot < this.scroll + this.visibleEntries() - 1) {
+      this.highlight(this.slot + 1);
+    } else if(this.scroll + MAX_VISIBLE_ENTRIES < entryCount) {
+      this.scroll++;
+      this.updateEntries();
+      this.highlight(this.slot + 1);
+    } else if(entryCount > 1 && this.allowWrap) {
+      this.scroll = 0;
+      this.updateEntries();
+      this.highlight(0);
+    }
+  }
+
+  private void menuNavigateTop() {
+    if(this.scroll == 0 && this.slot != 0) {
+      playMenuSound(1);
+      this.slot = 0;
+    } else if(this.slot != this.scroll + MAX_VISIBLE_ENTRIES) {
+      playMenuSound(1);
+      this.slot = this.scroll;
+    }
+    this.highlight(this.slot);
+  }
+
+  private void menuNavigateBottom() {
+    final int count = this.entries.size();
+
+    if(this.slot - this.scroll != Math.min(MAX_VISIBLE_ENTRIES, count) - 1) {
+      playMenuSound(1);
+      this.slot = this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1;
+    }
+
+    this.highlight(this.slot);
+  }
+
+  private void menuNavigatePageUp() {
+    if(this.scroll - MAX_VISIBLE_ENTRIES >= 0) {
+      playMenuSound(1);
+      this.slot -= MAX_VISIBLE_ENTRIES;
+      this.scroll -= MAX_VISIBLE_ENTRIES;
+      this.updateEntries();
+    } else if(this.scroll != 0) {
+      playMenuSound(1);
+      this.slot -= this.scroll;
+      this.scroll = 0;
+      this.updateEntries();
+    }
+    this.highlight(this.slot);
+  }
+
+  private void menuNavigatePageDown() {
+    final int count = this.entries.size();
+    if(this.scroll + MAX_VISIBLE_ENTRIES < count - 1 - MAX_VISIBLE_ENTRIES) {
+      playMenuSound(1);
+      this.slot += MAX_VISIBLE_ENTRIES;
+      this.scroll += MAX_VISIBLE_ENTRIES;
+      this.updateEntries();
+    } else if(count > MAX_VISIBLE_ENTRIES && this.scroll != count - MAX_VISIBLE_ENTRIES) {
+      playMenuSound(1);
+      this.slot += count - MAX_VISIBLE_ENTRIES - this.scroll;
+      this.scroll = count - MAX_VISIBLE_ENTRIES;
+      this.updateEntries();
+    }
+
+    this.highlight(this.slot);
+  }
+
+  private void menuNavigateHome() {
+    if(this.slot != 0) {
+      this.scroll = 0;
+      this.updateEntries();
+      this.highlight(0);
+    }
+  }
+
+  private void menuNavigateEnd() {
+    final int count = this.entries.size();
+    if(this.slot != count - 1) {
+      playMenuSound(1);
+      this.scroll = Math.max(0, count - MAX_VISIBLE_ENTRIES);
+      this.updateEntries();
+      this.highlight(count - 1);
+    }
+  }
+
+  @Override
+  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    switch(key) {
+      case GLFW_KEY_HOME -> {
+        this.menuNavigateHome();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_END -> {
+        this.menuNavigateEnd();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_PAGE_UP -> {
+        this.menuNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_PAGE_DOWN -> {
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
   @Override
   protected InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
-      if(this.selectionHandler != null) {
-        this.selectionHandler.selection(this.getSelected());
+    switch(inputAction) {
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        this.menuNavigateTop();
+        return InputPropagation.HANDLED;
       }
 
-      return InputPropagation.HANDLED;
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        this.menuNavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.BUTTON_SOUTH -> {
+        if(this.selectionHandler != null) {
+          this.selectionHandler.selection(this.getSelected());
+        }
+
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;
@@ -210,106 +364,40 @@ public class BigList<T> extends Control {
 
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-        if(this.slot > this.scroll) {
-          playMenuSound(1);
-          this.highlight(this.slot - 1);
-          return InputPropagation.HANDLED;
-        } else if(this.scroll > 0) {
-          playMenuSound(1);
-          this.scroll--;
-          this.updateEntries();
-          this.highlight(this.slot - 1);
-          return InputPropagation.HANDLED;
-        }
-      }
-
-      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        if(this.slot < this.scroll + this.visibleEntries() - 1) {
-          playMenuSound(1);
-          this.highlight(this.slot + 1);
-          return InputPropagation.HANDLED;
-        } else if(this.scroll < this.entries.size() - MAX_VISIBLE_ENTRIES) {
-          playMenuSound(1);
-          this.scroll++;
-          this.updateEntries();
-          this.highlight(this.slot + 1);
-          return InputPropagation.HANDLED;
-        }
-      }
-
-      case BUTTON_SHOULDER_LEFT_1 -> {
-        playMenuSound(1);
-        if(this.scroll == 0) {
-          this.slot = 0;
-        } else {
-          this.slot = this.scroll;
-        }
-        this.highlight(this.slot);
+        this.menuNavigateUp();
+        this.allowWrap = false;
         return InputPropagation.HANDLED;
       }
 
-      case BUTTON_SHOULDER_LEFT_2 -> {
-        if(this.visibleEntries() >= MAX_VISIBLE_ENTRIES) {
-          if(this.scroll == 0) {
-            playMenuSound(1);
-            this.slot = MAX_VISIBLE_ENTRIES - 1;
-          } else {
-            playMenuSound(1);
-            this.slot = this.scroll + MAX_VISIBLE_ENTRIES - 1;
-          }
-          this.highlight(this.slot);
-          return InputPropagation.HANDLED;
-        }
-
-        playMenuSound(1);
-        this.slot = this.entries.size() - 1;
-        this.highlight(this.slot);
+      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
+        this.menuNavigateDown();
+        this.allowWrap = false;
         return InputPropagation.HANDLED;
       }
 
       case BUTTON_SHOULDER_RIGHT_1 -> {
-        if(this.entries.size() > MAX_VISIBLE_ENTRIES) {
-          if(this.slot - MAX_VISIBLE_ENTRIES > 0) {
-            playMenuSound(1);
-            this.slot -= MAX_VISIBLE_ENTRIES;
-            this.scroll = Math.max(0, this.slot - MAX_VISIBLE_ENTRIES);
-            this.updateEntries();
-            this.highlight(this.slot);
-            return InputPropagation.HANDLED;
-          }
-
-          if(this.slot != 0) {
-            playMenuSound(1);
-            this.slot = 0;
-            this.scroll = 0;
-            this.updateEntries();
-            this.highlight(this.slot);
-            return InputPropagation.HANDLED;
-          }
-        }
+        this.menuNavigatePageUp();
+        return InputPropagation.HANDLED;
       }
 
       case BUTTON_SHOULDER_RIGHT_2 -> {
-        if(this.entries.size() > MAX_VISIBLE_ENTRIES) {
-          if(this.slot + MAX_VISIBLE_ENTRIES < this.entries.size()) {
-            playMenuSound(1);
-            this.slot += MAX_VISIBLE_ENTRIES;
-            this.scroll = this.slot - MAX_VISIBLE_ENTRIES + 1;
-            this.updateEntries();
-            this.highlight(this.slot);
-            return InputPropagation.HANDLED;
-          }
-
-          if(this.slot != this.entries.size() - 1) {
-            playMenuSound(1);
-            this.slot = this.entries.size() - 1;
-            this.scroll = this.entries.size() - MAX_VISIBLE_ENTRIES;
-            this.updateEntries();
-            this.highlight(this.slot);
-            return InputPropagation.HANDLED;
-          }
-        }
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
       }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.allowWrap = true;
+      return InputPropagation.HANDLED;
     }
 
     return InputPropagation.PROPAGATE;

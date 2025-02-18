@@ -30,6 +30,10 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class AdditionsScreen extends MenuScreen {
@@ -43,6 +47,9 @@ public class AdditionsScreen extends MenuScreen {
   private int selectedSlot;
   private Renderable58 additionHighlight;
   private final MenuAdditionInfo[] additions = new MenuAdditionInfo[9];
+
+  /** Allows list wrapping, but only on new input */
+  private boolean allowWrap = true;
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;
@@ -227,6 +234,9 @@ public class AdditionsScreen extends MenuScreen {
     if(this.selectedSlot > 0) {
       playMenuSound(1);
       this.selectedSlot--;
+    } else if(this.allowWrap) {
+      playMenuSound(1);
+      this.selectedSlot = 6;
     }
 
     this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
@@ -236,6 +246,9 @@ public class AdditionsScreen extends MenuScreen {
     if(this.selectedSlot < 6) {
       playMenuSound(1);
       this.selectedSlot++;
+    } else if(this.allowWrap) {
+      playMenuSound(1);
+      this.selectedSlot = 0;
     }
 
     this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
@@ -247,6 +260,22 @@ public class AdditionsScreen extends MenuScreen {
 
   private void menuNavigateRight() {
     this.scrollAccumulator = -1.0d;
+  }
+
+  private void menuNavigateHome() {
+    if(this.selectedSlot != 0) {
+      playMenuSound(1);
+      this.selectedSlot = 0;
+      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+    }
+  }
+
+  private void menuNavigateEnd() {
+    if(this.selectedSlot != 6) {
+      playMenuSound(1);
+      this.selectedSlot = 6;
+      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+    }
   }
 
   private void menuSelect() {
@@ -281,6 +310,27 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
+  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    switch(key) {
+      case GLFW_KEY_HOME -> {
+        this.menuNavigateHome();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_END -> {
+        this.menuNavigateEnd();
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
   public InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
@@ -290,12 +340,26 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_SOUTH) {
-      this.menuSelect();
-      return InputPropagation.HANDLED;
+    switch(inputAction) {
+      case InputAction.BUTTON_SHOULDER_LEFT_1 -> {
+        this.menuNavigateHome();
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.BUTTON_SHOULDER_LEFT_2 -> {
+        this.menuNavigateEnd();
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.BUTTON_EAST -> {
+        this.menuEscape();
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.BUTTON_SOUTH -> {
+        this.menuSelect();
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;
@@ -311,17 +375,45 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-      this.menuNavigateUp();
+    switch(inputAction) {
+      case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
+        this.menuNavigateUp();
+        this.allowWrap = false;
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
+        this.menuNavigateDown();
+        this.allowWrap = false;
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT -> {
+        this.menuNavigateLeft();
+        return InputPropagation.HANDLED;
+      }
+
+      case InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT -> {
+        this.menuNavigateRight();
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  public InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.menuNavigateDown();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-      this.menuNavigateLeft();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-      this.menuNavigateRight();
+    }
+
+    if(this.loadingStage != 2) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.allowWrap = true;
       return InputPropagation.HANDLED;
     }
 

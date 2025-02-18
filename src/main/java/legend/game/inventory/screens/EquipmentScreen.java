@@ -36,6 +36,10 @@ import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 
 public class EquipmentScreen extends MenuScreen {
   private int loadingStage;
@@ -49,6 +53,9 @@ public class EquipmentScreen extends MenuScreen {
   private Renderable58 itemHighlight;
   private Renderable58 _800bdb9c;
   private Renderable58 _800bdba0;
+
+  /** Allows list wrapping, but only on new input */
+  private boolean allowWrap = true;
 
   private final MenuEntries<Equipment> menuItems = new MenuEntries<>();
 
@@ -94,7 +101,6 @@ public class EquipmentScreen extends MenuScreen {
           this.scrollAccumulator -= 1.0d;
 
           if(this.slotScroll > 0) {
-            playMenuSound(1);
             this.scroll(this.slotScroll - 1);
           }
         }
@@ -103,7 +109,6 @@ public class EquipmentScreen extends MenuScreen {
           this.scrollAccumulator += 1.0d;
 
           if(this.slotScroll < this.equipmentCount - 4) {
-            playMenuSound(1);
             this.scroll(this.slotScroll + 1);
           }
         }
@@ -119,6 +124,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void scroll(final int scroll) {
+    playMenuSound(1);
     this.slotScroll = scroll;
     this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
   }
@@ -261,19 +267,30 @@ public class EquipmentScreen extends MenuScreen {
     if(this.selectedSlot > 0) {
       playMenuSound(1);
       this.selectedSlot--;
-    } else {
-      this.scrollAccumulator = 1;
+    } else if(this.slotScroll > 0) {
+      playMenuSound(1);
+      this.slotScroll--;
+    } else if(this.equipmentCount > 1 && this.allowWrap) {
+      playMenuSound(1);
+      this.selectedSlot = this.equipmentCount > 3 ? 3 : this.equipmentCount - 1;
+      this.slotScroll = this.equipmentCount > 4 ? this.equipmentCount - 4 : 0;
     }
 
     this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
   }
 
   private void menuNavigateDown() {
-    if(this.selectedSlot < 3) {
+    if(this.slotScroll + this.selectedSlot < this.equipmentCount - 1) {
       playMenuSound(1);
-      this.selectedSlot++;
-    } else {
-      this.scrollAccumulator = -1;
+      if(this.selectedSlot < 3) {
+        this.selectedSlot++;
+      } else {
+        this.slotScroll++;
+      }
+    } else if(this.equipmentCount > 1 && this.allowWrap) {
+      playMenuSound(1);
+      this.selectedSlot = 0;
+      this.slotScroll = 0;
     }
 
     this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
@@ -297,23 +314,31 @@ public class EquipmentScreen extends MenuScreen {
 
   private void menuNavigatePageUp() {
     if(this.slotScroll - 3 >= 0) {
-      playMenuSound(1);
       this.scroll(this.slotScroll - 3);
-    } else {
-      if(this.slotScroll != 0) {
-        this.scroll(0);
-      }
+    } else if(this.slotScroll != 0) {
+      this.scroll(0);
     }
   }
 
   private void menuNavigatePageDown() {
     if(this.slotScroll + 3 < this.equipmentCount - 4) {
-      playMenuSound(1);
       this.scroll(this.slotScroll + 3);
-    } else {
-      if(this.equipmentCount > 4 && this.slotScroll != this.equipmentCount - 4) {
-        this.scroll(this.equipmentCount - 4);
-      }
+    } else if(this.equipmentCount > 4 && this.slotScroll != this.equipmentCount - 4) {
+      this.scroll(this.equipmentCount - 4);
+    }
+  }
+
+  private void menuNavigateHome() {
+    if(this.selectedSlot > 0 || this.slotScroll > 0) {
+      this.selectedSlot = 0;
+      this.scroll(0);
+    }
+  }
+
+  private void menuNavigateEnd() {
+    if(this.slotScroll + this.selectedSlot != this.equipmentCount - 1) {
+      this.selectedSlot = Math.min(3, this.equipmentCount - 1);
+      this.scroll(this.equipmentCount - 1 - this.selectedSlot);
     }
   }
 
@@ -363,6 +388,37 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   @Override
+  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    switch(key) {
+      case GLFW_KEY_HOME -> {
+        this.menuNavigateHome();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_END -> {
+        this.menuNavigateEnd();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_PAGE_UP -> {
+        this.menuNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_PAGE_DOWN -> {
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
   public InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
@@ -373,6 +429,16 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     switch(inputAction) {
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        this.menuNavigateTop();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        this.menuNavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
       case BUTTON_EAST -> {
         this.menuEscape();
         return InputPropagation.HANDLED;
@@ -385,26 +451,6 @@ public class EquipmentScreen extends MenuScreen {
 
       case BUTTON_NORTH -> {
         this.menuItemSort();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_LEFT_1 -> {
-        this.menuNavigateTop();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_LEFT_2 -> {
-        this.menuNavigateBottom();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_1 -> {
-        this.menuNavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_2 -> {
-        this.menuNavigatePageDown();
         return InputPropagation.HANDLED;
       }
     }
@@ -425,11 +471,13 @@ public class EquipmentScreen extends MenuScreen {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
+        this.allowWrap = false;
         return InputPropagation.HANDLED;
       }
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
+        this.allowWrap = false;
         return InputPropagation.HANDLED;
       }
 
@@ -452,6 +500,20 @@ public class EquipmentScreen extends MenuScreen {
         this.menuNavigatePageDown();
         return InputPropagation.HANDLED;
       }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  public InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.allowWrap = true;
+      return InputPropagation.HANDLED;
     }
 
     return InputPropagation.PROPAGATE;
