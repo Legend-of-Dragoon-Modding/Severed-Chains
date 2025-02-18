@@ -122,7 +122,7 @@ public class CombatDebuggerController {
     });
 
     this.statusCondition.getItems().add("None");
-    for(int i = BattleHud.ailments_800fb3a0.length - 1; i >= 0; i--){
+    for(int i = BattleHud.ailments_800fb3a0.length - 1; i >= 0; i--) {
       this.statusCondition.getItems().add(BattleHud.ailments_800fb3a0[i]);
     }
     this.statusCondition.getSelectionModel().select(0);
@@ -277,7 +277,7 @@ public class CombatDebuggerController {
     bent.magicAvoid_42 = this.mavd.getValue().shortValue();
   }
 
-  public void getStatusCondition(final ActionEvent event){
+  public void getStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
@@ -286,7 +286,7 @@ public class CombatDebuggerController {
     this.statusCondition.getSelectionModel().select(statusIndex);
   }
 
-  public void setStatusCondition(final ActionEvent event){
+  public void setStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
@@ -294,10 +294,10 @@ public class CombatDebuggerController {
     final int selectedStatusIndex = this.statusCondition.getSelectionModel().getSelectedIndex();
 
     //PCS does not check if combatant is affected by the same status
-    if(statusIndex == selectedStatusIndex - 1){
+    if(statusIndex == selectedStatusIndex - 1) {
       return;
     }
-    if(selectedStatusIndex == 0){
+    if(selectedStatusIndex == 0) {
       this.cureStatusCondition(event);
       return;
     }
@@ -309,7 +309,7 @@ public class CombatDebuggerController {
     state.scriptForkAndReenter();
   }
 
-  public void cureStatusCondition(final ActionEvent event){
+  public void cureStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
@@ -317,7 +317,7 @@ public class CombatDebuggerController {
     Scus94491BpeSegment_8006.battleState_8006e398.status_384[arrIndex].unpack(0);
   }
 
-  private int getStatusIndexFromFlags(int flags){
+  private int getStatusIndexFromFlags(int flags) {
     final int statusFlags = flags & 0xff;
     return statusFlags == 0 ? -1 : Integer.numberOfTrailingZeros(statusFlags);
   }
