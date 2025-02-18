@@ -347,22 +347,24 @@ public class EquipmentScreen extends MenuScreen {
     if(this.charSlot > 0) {
       playMenuSound(1);
       this.charSlot--;
+      this.loadingStage = 1;
     } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
       playMenuSound(1);
       this.charSlot = characterCount_8011d7c4 - 1;
+      this.loadingStage = 1;
     }
-    this.loadingStage = 1;
   }
 
   private void menuNavigateRight() {
     if(this.charSlot < characterCount_8011d7c4 - 1) {
       playMenuSound(1);
       this.charSlot++;
+      this.loadingStage = 1;
     } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
       playMenuSound(1);
       this.charSlot = 0;
+      this.loadingStage = 1;
     }
-    this.loadingStage = 1;
   }
 
   private void menuSelect() {

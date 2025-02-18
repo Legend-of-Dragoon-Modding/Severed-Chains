@@ -91,8 +91,6 @@ public class AdditionsScreen extends MenuScreen {
 
           if(this.charSlot > 0) {
             this.scroll(this.charSlot - 1);
-          } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
-            this.scroll(characterCount_8011d7c4 - 1);
           }
         }
 
@@ -101,8 +99,6 @@ public class AdditionsScreen extends MenuScreen {
 
           if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
-          } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
-            this.scroll(0);
           }
         }
       }
@@ -182,7 +178,7 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 7; i++) {
-      if(this.selectedSlot != i && MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
+      if(this.additions[0].offset_00 != -1 && this.selectedSlot != i && MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
         playMenuSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
@@ -234,35 +230,47 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    if(this.selectedSlot > 0) {
-      playMenuSound(1);
-      this.selectedSlot--;
-    } else if(this.allowWrapY) {
-      playMenuSound(1);
-      this.selectedSlot = 6;
-    }
+    if(this.additions[0].offset_00 != -1) {
+      if(this.selectedSlot > 0) {
+        playMenuSound(1);
+        this.selectedSlot--;
+      } else if(this.allowWrapY) {
+        playMenuSound(1);
+        this.selectedSlot = 6;
+      }
 
-    this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+    }
   }
 
   private void menuNavigateDown() {
-    if(this.selectedSlot < 6) {
-      playMenuSound(1);
-      this.selectedSlot++;
-    } else if(this.allowWrapY) {
-      playMenuSound(1);
-      this.selectedSlot = 0;
-    }
+    if(this.additions[0].offset_00 != -1) {
+      if(this.selectedSlot < 6) {
+        playMenuSound(1);
+        this.selectedSlot++;
+      } else if(this.allowWrapY) {
+        playMenuSound(1);
+        this.selectedSlot = 0;
+      }
 
-    this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+    }
   }
 
   private void menuNavigateLeft() {
-    this.scrollAccumulator = 1.0d;
+    if(this.charSlot > 0) {
+      this.scroll(this.charSlot - 1);
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+      this.scroll(characterCount_8011d7c4 - 1);
+    }
   }
 
   private void menuNavigateRight() {
-    this.scrollAccumulator = -1.0d;
+    if(this.charSlot < characterCount_8011d7c4 - 1) {
+      this.scroll(this.charSlot + 1);
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+      this.scroll(0);
+    }
   }
 
   private void menuNavigateHome() {

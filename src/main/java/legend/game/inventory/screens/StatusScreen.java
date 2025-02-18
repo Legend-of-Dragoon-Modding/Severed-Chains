@@ -64,8 +64,6 @@ public class StatusScreen extends MenuScreen {
 
           if(this.charSlot > 0) {
             this.scroll(this.charSlot - 1);
-          } else {
-            this.scroll(characterCount_8011d7c4 - 1);
           }
         }
 
@@ -74,8 +72,6 @@ public class StatusScreen extends MenuScreen {
 
           if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
-          } else {
-            this.scroll(0);
           }
         }
       }
@@ -204,11 +200,27 @@ public class StatusScreen extends MenuScreen {
 
     if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
+      this.allowWrapX = false;
       return InputPropagation.HANDLED;
     }
 
     if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
+      this.allowWrapX = false;
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  public InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT || inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.allowWrapX = true;
       return InputPropagation.HANDLED;
     }
 
