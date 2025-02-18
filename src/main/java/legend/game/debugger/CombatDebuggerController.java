@@ -289,13 +289,15 @@ public class CombatDebuggerController {
 
     this.statusCondition.getSelectionModel().select(statusIndex);
   }
+
   public void setStatusCondition(final ActionEvent event){
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
-    //PCS does not check if combatant is already affected by a status
     final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e);
     final int selectedStatusIndex = this.statusCondition.getSelectionModel().getSelectedIndex();
+
+    //PCS does not check if combatant is affected by the same status
     if(statusIndex == selectedStatusIndex - 1){
       return;
     }
@@ -311,16 +313,17 @@ public class CombatDebuggerController {
     state.scriptForkAndReenter();
   }
 
-  private int getStatusIndexFromFlags(int flags){
-    final int statusFlags = flags & 0xff;
-    return statusFlags == 0 ? -1 : Integer.numberOfTrailingZeros(statusFlags);
-  }
   public void cureStatusCondition(final ActionEvent event){
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
     final int arrIndex = state.innerStruct_00.combatantIndex_26c;
     Scus94491BpeSegment_8006.battleState_8006e398.status_384[arrIndex].unpack(0);
+  }
+
+  private int getStatusIndexFromFlags(int flags){
+    final int statusFlags = flags & 0xff;
+    return statusFlags == 0 ? -1 : Integer.numberOfTrailingZeros(statusFlags);
   }
 
   private static class ListItem {
