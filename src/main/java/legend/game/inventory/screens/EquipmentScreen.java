@@ -55,7 +55,8 @@ public class EquipmentScreen extends MenuScreen {
   private Renderable58 _800bdba0;
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapX = true;
+  private boolean allowWrapY = true;
 
   private final MenuEntries<Equipment> menuItems = new MenuEntries<>();
 
@@ -270,7 +271,7 @@ public class EquipmentScreen extends MenuScreen {
     } else if(this.slotScroll > 0) {
       playMenuSound(1);
       this.slotScroll--;
-    } else if(this.equipmentCount > 1 && this.allowWrap) {
+    } else if(this.equipmentCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.selectedSlot = this.equipmentCount > 3 ? 3 : this.equipmentCount - 1;
       this.slotScroll = this.equipmentCount > 4 ? this.equipmentCount - 4 : 0;
@@ -287,7 +288,7 @@ public class EquipmentScreen extends MenuScreen {
       } else {
         this.slotScroll++;
       }
-    } else if(this.equipmentCount > 1 && this.allowWrap) {
+    } else if(this.equipmentCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.selectedSlot = 0;
       this.slotScroll = 0;
@@ -343,27 +344,25 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateLeft() {
-    if(characterCount_8011d7c4 > 1) {
+    if(this.charSlot > 0) {
       playMenuSound(1);
-      if(this.charSlot > 0) {
-        this.charSlot--;
-      } else {
-        this.charSlot = characterCount_8011d7c4 - 1;
-      }
-      this.loadingStage = 1;
+      this.charSlot--;
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+      playMenuSound(1);
+      this.charSlot = characterCount_8011d7c4 - 1;
     }
+    this.loadingStage = 1;
   }
 
   private void menuNavigateRight() {
-    if(characterCount_8011d7c4 > 1) {
+    if(this.charSlot < characterCount_8011d7c4 - 1) {
       playMenuSound(1);
-      if(this.charSlot < characterCount_8011d7c4 - 1) {
-        this.charSlot++;
-      } else {
-        this.charSlot = 0;
-      }
-      this.loadingStage = 1;
+      this.charSlot++;
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+      playMenuSound(1);
+      this.charSlot = 0;
     }
+    this.loadingStage = 1;
   }
 
   private void menuSelect() {
@@ -479,23 +478,25 @@ public class EquipmentScreen extends MenuScreen {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
         this.menuNavigateLeft();
+        this.allowWrapX = false;
         return InputPropagation.HANDLED;
       }
 
       case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
         this.menuNavigateRight();
+        this.allowWrapX = false;
         return InputPropagation.HANDLED;
       }
 
@@ -520,7 +521,12 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.allowWrap = true;
+      this.allowWrapY = true;
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT || inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.allowWrapX = true;
       return InputPropagation.HANDLED;
     }
 

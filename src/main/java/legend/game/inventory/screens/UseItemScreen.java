@@ -62,7 +62,7 @@ public class UseItemScreen extends MenuScreen {
   private final Runnable unload;
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapY = true;
 
   private int charSlot;
   private int selectedSlot;
@@ -410,7 +410,7 @@ public class UseItemScreen extends MenuScreen {
     } else if(this.slotScroll > 0) {
       playMenuSound(1);
       this.slotScroll--;
-    } else if(this.itemCount > 1 && this.allowWrap) {
+    } else if(this.itemCount > 1 && this.allowWrapY) {
       this.selectedSlot = this.itemCount > 4 ? 4 : this.itemCount - 1;
       this.scroll(this.itemCount > 5 ? this.itemCount - 5 : 0);
     }
@@ -426,7 +426,7 @@ public class UseItemScreen extends MenuScreen {
       } else {
         this.slotScroll++;
       }
-    } else if(this.itemCount > 1 && this.allowWrap) {
+    } else if(this.itemCount > 1 && this.allowWrapY) {
       this.selectedSlot = 0;
       this.scroll(0);
     }
@@ -658,13 +658,13 @@ public class UseItemScreen extends MenuScreen {
     if(this.loadingStage == 2) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.menuStage2NavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage2NavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
@@ -700,7 +700,7 @@ public class UseItemScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.allowWrap = true;
+        this.allowWrapY = true;
         return InputPropagation.HANDLED;
       }
     }

@@ -12,8 +12,6 @@ import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 
-import java.awt.*;
-
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
@@ -56,7 +54,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private int mouseY;
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapY = true;
 
   private int dropIndex;
   private int invIndex;
@@ -326,7 +324,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.dropIndex > 0) {
       playMenuSound(1);
       this.dropIndex--;
-    } else if(dropCount > 1 && this.allowWrap) {
+    } else if(dropCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.dropIndex = dropCount - 1;
     }
@@ -339,7 +337,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.dropIndex < dropCount - 1) {
       playMenuSound(1);
       this.dropIndex++;
-    } else if(dropCount > 1 && this.allowWrap) {
+    } else if(dropCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.dropIndex = 0;
     }
@@ -407,7 +405,7 @@ public class TooManyItemsScreen extends MenuScreen {
       slotCount = gameState_800babc8.items_2e9.size();
     }
 
-    if(this.invScroll + this.invIndex > 0 || (slotCount > 1 && this.allowWrap)) {
+    if(this.invScroll + this.invIndex > 0 || (slotCount > 1 && this.allowWrapY)) {
       playMenuSound(1);
       this.handleInventoryScrollUp();
     }
@@ -424,7 +422,7 @@ public class TooManyItemsScreen extends MenuScreen {
       slotCount = gameState_800babc8.items_2e9.size();
     }
 
-    if(this.invScroll + this.invIndex < slotCount - 1 || (slotCount > 1 && this.allowWrap)) {
+    if(this.invScroll + this.invIndex < slotCount - 1 || (slotCount > 1 && this.allowWrapY)) {
       playMenuSound(1);
       this.handleInventoryScrollDown();
     }
@@ -673,13 +671,13 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.menuState == MenuState.DROPPED_8) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.droppedNavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.droppedNavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
@@ -689,13 +687,13 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.menuState == MenuState.INVENTORY_9) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.inventoryNavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.inventoryNavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
@@ -720,7 +718,7 @@ public class TooManyItemsScreen extends MenuScreen {
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.allowWrap = true;
+      this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 

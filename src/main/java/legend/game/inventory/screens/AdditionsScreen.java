@@ -32,8 +32,6 @@ import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class AdditionsScreen extends MenuScreen {
@@ -49,7 +47,8 @@ public class AdditionsScreen extends MenuScreen {
   private final MenuAdditionInfo[] additions = new MenuAdditionInfo[9];
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapX = true;
+  private boolean allowWrapY = true;
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;
@@ -92,7 +91,7 @@ public class AdditionsScreen extends MenuScreen {
 
           if(this.charSlot > 0) {
             this.scroll(this.charSlot - 1);
-          } else {
+          } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
             this.scroll(characterCount_8011d7c4 - 1);
           }
         }
@@ -102,7 +101,7 @@ public class AdditionsScreen extends MenuScreen {
 
           if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
-          } else {
+          } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
             this.scroll(0);
           }
         }
@@ -238,7 +237,7 @@ public class AdditionsScreen extends MenuScreen {
     if(this.selectedSlot > 0) {
       playMenuSound(1);
       this.selectedSlot--;
-    } else if(this.allowWrap) {
+    } else if(this.allowWrapY) {
       playMenuSound(1);
       this.selectedSlot = 6;
     }
@@ -250,7 +249,7 @@ public class AdditionsScreen extends MenuScreen {
     if(this.selectedSlot < 6) {
       playMenuSound(1);
       this.selectedSlot++;
-    } else if(this.allowWrap) {
+    } else if(this.allowWrapY) {
       playMenuSound(1);
       this.selectedSlot = 0;
     }
@@ -382,23 +381,25 @@ public class AdditionsScreen extends MenuScreen {
     switch(inputAction) {
       case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       case InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT -> {
         this.menuNavigateLeft();
+        this.allowWrapX = false;
         return InputPropagation.HANDLED;
       }
 
       case InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT -> {
         this.menuNavigateRight();
+        this.allowWrapX = false;
         return InputPropagation.HANDLED;
       }
     }
@@ -417,7 +418,12 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.allowWrap = true;
+      this.allowWrapY = true;
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT || inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.allowWrapX = true;
       return InputPropagation.HANDLED;
     }
 

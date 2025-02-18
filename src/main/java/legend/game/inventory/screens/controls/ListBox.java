@@ -21,7 +21,6 @@ import static legend.game.SItem.renderCharacterPortrait;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
@@ -45,7 +44,7 @@ public class ListBox<T> extends Control {
   private int slot;
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapY = true;
 
   private final Glyph highlight;
 
@@ -287,7 +286,7 @@ public class ListBox<T> extends Control {
       this.scroll--;
       this.updateEntries();
       this.select(this.slot);
-    } else if(this.visibleEntries() > 1 && this.allowWrap) {
+    } else if(this.visibleEntries() > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.scroll = this.getEntries().size() > 7 ? this.getEntries().size() - 7 : 0;
       this.updateEntries();
@@ -304,7 +303,7 @@ public class ListBox<T> extends Control {
       this.scroll++;
       this.updateEntries();
       this.select(this.slot);
-    } else if(this.visibleEntries() > 1 && this.allowWrap) {
+    } else if(this.visibleEntries() > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.scroll = 0;
       this.updateEntries();
@@ -446,13 +445,13 @@ public class ListBox<T> extends Control {
     switch(inputAction) {
       case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
@@ -477,7 +476,7 @@ public class ListBox<T> extends Control {
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.allowWrap = true;
+      this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 

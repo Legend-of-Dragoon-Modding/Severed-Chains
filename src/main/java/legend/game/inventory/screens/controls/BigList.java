@@ -26,7 +26,7 @@ public class BigList<T> extends Control {
   private int slot;
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapY = true;
 
   private final List<Label> labels = new ArrayList<>();
   private final Brackets highlight;
@@ -202,7 +202,7 @@ public class BigList<T> extends Control {
       this.scroll--;
       this.updateEntries();
       this.highlight(this.slot - 1);
-    } else if(entryCount > 1 && this.allowWrap) {
+    } else if(entryCount > 1 && this.allowWrapY) {
       this.scroll = entryCount > MAX_VISIBLE_ENTRIES ? entryCount - MAX_VISIBLE_ENTRIES : 0;
       this.updateEntries();
       this.highlight(entryCount - 1);
@@ -217,7 +217,7 @@ public class BigList<T> extends Control {
       this.scroll++;
       this.updateEntries();
       this.highlight(this.slot + 1);
-    } else if(entryCount > 1 && this.allowWrap) {
+    } else if(entryCount > 1 && this.allowWrapY) {
       this.scroll = 0;
       this.updateEntries();
       this.highlight(0);
@@ -365,13 +365,13 @@ public class BigList<T> extends Control {
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
-        this.allowWrap = false;
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
@@ -396,7 +396,7 @@ public class BigList<T> extends Control {
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.allowWrap = true;
+      this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 

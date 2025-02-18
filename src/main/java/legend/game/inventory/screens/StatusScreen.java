@@ -30,6 +30,7 @@ public class StatusScreen extends MenuScreen {
 
   private int charSlot;
 
+  private boolean allowWrapX = true;
   private double scrollAccumulator;
 
   private final Runnable unload;
@@ -88,9 +89,11 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void scroll(final int slot) {
-    playMenuSound(1);
-    this.charSlot = slot;
-    this.loadingStage = 1;
+    if(characterCount_8011d7c4 > 1) {
+      playMenuSound(1);
+      this.charSlot = slot;
+      this.loadingStage = 1;
+    }
   }
 
   private void renderStatusMenu(final int charSlot, final long a1) {
@@ -138,19 +141,17 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void menuNavigateLeft() {
-    playMenuSound(1);
     if(this.charSlot > 0) {
       this.scroll(this.charSlot - 1);
-    } else {
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
       this.scroll(characterCount_8011d7c4 - 1);
     }
   }
 
   private void menuNavigateRight() {
-    playMenuSound(1);
     if(this.charSlot < characterCount_8011d7c4 - 1) {
       this.scroll(this.charSlot + 1);
-    } else {
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
       this.scroll(0);
     }
   }

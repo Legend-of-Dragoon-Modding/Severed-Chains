@@ -92,7 +92,7 @@ public class ShopScreen extends MenuScreen {
   private MenuState confirmDest;
 
   /** Allows list wrapping, but only on new input */
-  private boolean allowWrap = true;
+  private boolean allowWrapY = true;
 
   private int equipCharIndex;
   private int menuIndex_8011e0dc;
@@ -814,7 +814,7 @@ public class ShopScreen extends MenuScreen {
     if(this.menuIndex_8011e0dc > 0) {
       playMenuSound(1);
       this.menuIndex_8011e0dc--;
-    } else if(this.allowWrap) {
+    } else {
       playMenuSound(1);
       this.menuIndex_8011e0dc = 3;
     }
@@ -825,11 +825,10 @@ public class ShopScreen extends MenuScreen {
   }
 
   private void menuMainShopRender3NavigateDown() {
-
     if(this.menuIndex_8011e0dc < 3) {
       playMenuSound(1);
       this.menuIndex_8011e0dc++;
-    } else if(this.allowWrap) {
+    } else {
       playMenuSound(1);
       this.menuIndex_8011e0dc = 0;
     }
@@ -885,7 +884,7 @@ public class ShopScreen extends MenuScreen {
     } else if(this.invScroll_8011e0e4 > 0) {
       playMenuSound(1);
       this.invScroll_8011e0e4--;
-    } else if(invCount > 1 && this.allowWrap) {
+    } else if(invCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = invCount > 5 ? 5 : invCount - 1;
       this.invScroll_8011e0e4 = invCount > 6 ? invCount - 6 : 0;
@@ -907,7 +906,7 @@ public class ShopScreen extends MenuScreen {
       } else {
         this.invScroll_8011e0e4++;
       }
-    } else if(invCount > 1 && this.allowWrap) {
+    } else if(invCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
       this.invScroll_8011e0e4 = 0;
@@ -1144,7 +1143,7 @@ public class ShopScreen extends MenuScreen {
     } else if(this.invScroll_8011e0e4 > 0) {
       playMenuSound(1);
       this.invScroll_8011e0e4--;
-    } else if(itemCount > 1 && this.allowWrap) {
+    } else if(itemCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = itemCount > 5 ? 5 : itemCount - 1;
       this.invScroll_8011e0e4 = itemCount > 6 ? itemCount - 6 : 0;
@@ -1172,7 +1171,7 @@ public class ShopScreen extends MenuScreen {
       } else {
         this.invScroll_8011e0e4++;
       }
-    } else if(itemCount > 1 && this.allowWrap) {
+    } else if(itemCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
       this.invScroll_8011e0e4 = 0;
@@ -1432,13 +1431,11 @@ public class ShopScreen extends MenuScreen {
       case RENDER_3 -> {
         if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuMainShopRender3NavigateUp();
-          this.allowWrap = false;
           return InputPropagation.HANDLED;
         }
 
         if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuMainShopRender3NavigateDown();
-          this.allowWrap = false;
           return InputPropagation.HANDLED;
         }
       }
@@ -1446,13 +1443,13 @@ public class ShopScreen extends MenuScreen {
       case BUY_4 -> {
         if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuBuy4NavigateUp();
-          this.allowWrap = false;
+          this.allowWrapY = false;
           return InputPropagation.HANDLED;
         }
 
         if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuBuy4NavigateDown();
-          this.allowWrap = false;
+          this.allowWrapY = false;
           return InputPropagation.HANDLED;
         }
 
@@ -1482,13 +1479,13 @@ public class ShopScreen extends MenuScreen {
       case SELL_10 -> {
         if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuSell10NavigateUp();
-          this.allowWrap = false;
+          this.allowWrapY = false;
           return InputPropagation.HANDLED;
         }
 
         if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuSell10NavigateDown();
-          this.allowWrap = false;
+          this.allowWrapY = false;
           return InputPropagation.HANDLED;
         }
 
@@ -1514,7 +1511,7 @@ public class ShopScreen extends MenuScreen {
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.allowWrap = true;
+      this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 
