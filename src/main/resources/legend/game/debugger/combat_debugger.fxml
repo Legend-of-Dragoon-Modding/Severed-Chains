@@ -206,7 +206,7 @@
                      <Insets right="4.0" />
                   </HBox.margin>
                </Label>
-               <ComboBox fx:id="statusCondition" onAction="#statusCondition" prefHeight="25.0" prefWidth="140.0" />
+               <ComboBox fx:id="statusCondition" prefHeight="25.0" prefWidth="140.0" />
                <Button fx:id="getStatus" mnemonicParsing="false" onAction="#getStatusCondition" prefHeight="26.0" prefWidth="48.0" text="Get">
                   <HBox.margin>
                      <Insets right="3.0" />

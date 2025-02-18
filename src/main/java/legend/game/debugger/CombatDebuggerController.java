@@ -93,10 +93,6 @@ public class CombatDebuggerController {
   @FXML
   public Button getStatus;
 
-  @FXML
-  public void statusCondition() {
-    //this.textCharacterData.setText(this.getCharacterStats());
-  }
 
   public void initialize() {
     for(int i = 0; i < 10; i++) {
