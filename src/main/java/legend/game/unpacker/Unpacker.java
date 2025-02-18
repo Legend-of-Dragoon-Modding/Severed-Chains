@@ -389,7 +389,15 @@ public final class Unpacker {
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-    final IsoReader reader = new IsoReader(path);
+    final IsoReader reader;
+
+    try {
+      reader = new IsoReader(path);
+    } catch(final IOException e) {
+      // Failed to open file, probably mid-copy
+      return null;
+    }
+
     reader.seekSector(PVD_SECTOR);
     reader.advance(IsoReader.SYNC_PATTER_SIZE);
     reader.read(sectorData);
