@@ -149,6 +149,7 @@ public class CombatDebuggerController {
     this.mhit.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
     this.aavd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
     this.mavd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+
     this.bentList.getSelectionModel().select(0);
   }
 
