@@ -343,17 +343,25 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateLeft() {
-    if(this.charSlot > 0) {
+    if(characterCount_8011d7c4 > 1) {
       playMenuSound(1);
-      this.charSlot--;
+      if(this.charSlot > 0) {
+        this.charSlot--;
+      } else {
+        this.charSlot = characterCount_8011d7c4 - 1;
+      }
       this.loadingStage = 1;
     }
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4 - 1) {
+    if(characterCount_8011d7c4 > 1) {
       playMenuSound(1);
-      this.charSlot++;
+      if(this.charSlot < characterCount_8011d7c4 - 1) {
+        this.charSlot++;
+      } else {
+        this.charSlot = 0;
+      }
       this.loadingStage = 1;
     }
   }

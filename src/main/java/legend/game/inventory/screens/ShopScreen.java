@@ -1065,6 +1065,8 @@ public class ShopScreen extends MenuScreen {
 
     if(this.equipCharIndex > 0) {
       this.equipCharIndex--;
+    } else {
+      this.equipCharIndex = characterCount_8011d7c4 - 1;
     }
 
     this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
@@ -1075,6 +1077,8 @@ public class ShopScreen extends MenuScreen {
 
     if(this.equipCharIndex < characterCount_8011d7c4 - 1) {
       this.equipCharIndex++;
+    } else {
+      this.equipCharIndex = 0;
     }
 
     this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
@@ -1381,16 +1385,6 @@ public class ShopScreen extends MenuScreen {
       }
 
       case BUY_SELECT_CHAR_5 -> {
-        if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-          this.menuSelectChar5NavigateLeft();
-          return InputPropagation.HANDLED;
-        }
-
-        if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-          this.menuSelectChar5NavigateRight();
-          return InputPropagation.HANDLED;
-        }
-
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuSelectChar5Escape();
           return InputPropagation.HANDLED;
@@ -1469,6 +1463,18 @@ public class ShopScreen extends MenuScreen {
 
         if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
           this.menuBuy4NavigatePageDown();
+          return InputPropagation.HANDLED;
+        }
+      }
+
+      case BUY_SELECT_CHAR_5 -> {
+        if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+          this.menuSelectChar5NavigateLeft();
+          return InputPropagation.HANDLED;
+        }
+
+        if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+          this.menuSelectChar5NavigateRight();
           return InputPropagation.HANDLED;
         }
       }

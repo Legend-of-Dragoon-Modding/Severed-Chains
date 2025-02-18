@@ -92,6 +92,8 @@ public class AdditionsScreen extends MenuScreen {
 
           if(this.charSlot > 0) {
             this.scroll(this.charSlot - 1);
+          } else {
+            this.scroll(characterCount_8011d7c4 - 1);
           }
         }
 
@@ -100,6 +102,8 @@ public class AdditionsScreen extends MenuScreen {
 
           if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
+          } else {
+            this.scroll(0);
           }
         }
       }
