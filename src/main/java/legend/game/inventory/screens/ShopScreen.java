@@ -274,7 +274,7 @@ public class ShopScreen extends MenuScreen {
         }
 
         this.renderShopMenu(this.menuIndex_8011e0dc);
-        this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+        this.renderShopTypeInfo(this.inv.isEmpty() || this.inv.getFirst().item instanceof Item);
       }
 
       case UNLOAD_19 -> whichMenu_800bdc38 = WhichMenu.UNLOAD;
@@ -316,10 +316,10 @@ public class ShopScreen extends MenuScreen {
     renderText(Leave_8011c6c8, 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
   }
 
-  private void renderShopTypeInfo(final boolean isItemShop) {
+  private void renderShopTypeInfo(final boolean useItemShop) {
     final int size;
     final int current;
-    if(isItemShop) {
+    if(useItemShop) {
       size = CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
       current = gameState_800babc8.items_2e9.size();
       final Renderable58 renderable = allocateOneFrameGlyph(94, 16, 16);
