@@ -188,7 +188,7 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
         obj.delete(); // mark for deletion at end of frame
 
         //LAB_800ce138
-        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), zFinal);
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), zFinal * 4.0f);
         RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
       }
 

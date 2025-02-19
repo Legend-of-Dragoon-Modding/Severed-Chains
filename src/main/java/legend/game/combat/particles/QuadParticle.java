@@ -157,7 +157,7 @@ public class QuadParticle extends ParticleEffectData98 {
           }
 
           //LAB_800fe548
-          this.transforms.transfer.z = instZ + effectZ;
+          this.transforms.transfer.z = (instZ + effectZ) * 4.0f;
           RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
             .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
             .colour(colour);

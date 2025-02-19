@@ -145,7 +145,7 @@ public class LineParticle extends ParticleEffectData98 {
         .addVertex(1.0f, 1.0f, 0.0f)
         .build();
 
-      RENDERER.queueLine(obj, this.identity, particleMetrics.z_04 + manager.params_10.z_22, particleMetrics.p0, particleMetrics.p1)
+      RENDERER.queueLine(obj, this.identity, (particleMetrics.z_04 + manager.params_10.z_22) * 4.0f, particleMetrics.p0, particleMetrics.p1)
         .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
 
       obj.delete(); // Mark for deletion after this frame
