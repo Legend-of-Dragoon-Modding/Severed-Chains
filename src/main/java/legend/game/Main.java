@@ -82,6 +82,7 @@ public final class Main {
       LOGGER.error("Please copy this crash log and send it to us in the Player Help channel in the Legend of Dragoon Discord server.");
       LOGGER.error("https://discord.gg/legendofdragoon");
 
+      LogManager.shutdown();
       System.exit(1);
     }
   }
