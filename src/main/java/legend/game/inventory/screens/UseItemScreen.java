@@ -99,8 +99,8 @@ public class UseItemScreen extends MenuScreen {
         this.itemHighlight = allocateUiElement(0x77, 0x77, 42, this.getItemSlotY(this.selectedSlot));
         FUN_80104b60(this.itemHighlight);
         this.itemCount = this.getUsableItemsInMenu();
-        if(this.slotScroll + 4 > this.itemCount - 1) {
-          this.slotScroll = this.itemCount - 5;
+        if(this.slotScroll > this.itemCount - 5) {
+          this.slotScroll = Math.max(0, this.itemCount - 5);
         }
         this.renderUseItemMenu(this.selectedSlot, this.slotScroll, 0xff);
         this.loadingStage++;
