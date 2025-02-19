@@ -1,0 +1,21 @@
+Zenebatos
+Dart
+Skip hiding body parts during cutscene
+--- original
++++ modified
+@@ -1294,6 +1294,7 @@
+ call 97, 0x7
+ gosub inl[:LABEL_14]
+ call 99, 0x1
++jmp inl[:THE_DISMEMBERMENT_PLAN]
+ call 288, 0x0
+ call 288, 0x1
+ call 288, 0x4
+@@ -1304,6 +1305,7 @@
+ call 288, 0xc
+ call 288, 0xd
+ call 288, 0xe
++THE_DISMEMBERMENT_PLAN:
+ call 236, 0x8, 0x4, 0x0, 0x0, 0x0, 0x0
+ gosub inl[:LABEL_194]
+ call 99, 0x0

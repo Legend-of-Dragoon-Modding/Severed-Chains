@@ -1,0 +1,35 @@
+Zenebatos
+Haschel
+Do not hide body parts during cutscene
+--- original
++++ modified
+@@ -356,14 +356,6 @@
+ call 97, 0x8
+ gosub inl[:LABEL_0]
+ call 97, 0x0
+-call 288, 0x0
+-call 288, 0x1
+-call 288, 0x4
+-call 288, 0x5
+-call 288, 0x6
+-call 288, 0xa
+-call 288, 0xc
+-call 288, 0xe
+ call 2, 0x1b, 0x0
+ jmp inl[:LABEL_41]
+ LABEL_48:
+@@ -380,14 +372,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_27]
+-call 288, 0x0
+-call 288, 0x1
+-call 288, 0x4
+-call 288, 0x5
+-call 288, 0x6
+-call 288, 0xa
+-call 288, 0xc
+-call 288, 0xe
+ mov 0x19, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_41]
