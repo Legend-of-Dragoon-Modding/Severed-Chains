@@ -64,7 +64,9 @@ public abstract class Obj {
   }
 
   public abstract boolean hasTexture();
+  public abstract boolean hasTexture(final int index);
   public abstract boolean hasTranslucency();
+  public abstract boolean hasTranslucency(final int index);
   public abstract boolean shouldRender(@Nullable final Translucency translucency);
   public abstract boolean shouldRender(@Nullable final Translucency translucency, final int layer);
   public abstract int getLayers();

@@ -220,6 +220,10 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return this.obj.hasTranslucency();
   }
 
+  public boolean hasTranslucency(final int index) {
+    return this.obj.hasTranslucency(index);
+  }
+
   public void useShader(final int modelIndex, final int discardMode) {
     this.shader.use();
     this.shaderOptions.discardMode(discardMode);

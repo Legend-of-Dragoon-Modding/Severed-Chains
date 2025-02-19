@@ -768,7 +768,7 @@ public class RenderEngine {
         }
 
         // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
-        if(entry.hasTranslucency()) {
+        if(entry.hasTranslucency(layer)) {
           for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
             final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 

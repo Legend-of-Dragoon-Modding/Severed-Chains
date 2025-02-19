@@ -18,7 +18,17 @@ public class TextObj extends Obj {
   }
 
   @Override
+  public boolean hasTexture(final int index) {
+    return true;
+  }
+
+  @Override
   public boolean hasTranslucency() {
+    return false;
+  }
+
+  @Override
+  public boolean hasTranslucency(final int index) {
     return false;
   }
 

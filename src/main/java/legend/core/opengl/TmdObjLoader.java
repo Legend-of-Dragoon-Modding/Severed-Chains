@@ -382,7 +382,7 @@ public final class TmdObjLoader {
     }
 
     if(untexturedTranslucentVertexSize != 0) {
-      meshes.untexturedTranslucent = new TmdObjLoaderMesh(untexturedTranslucentVertexSize, untexturedTranslucentIndexSize, anyTextured, true, null);
+      meshes.untexturedTranslucent = new TmdObjLoaderMesh(untexturedTranslucentVertexSize, untexturedTranslucentIndexSize, false, true, null);
     }
 
     final List<TmdObjLoaderMesh> translucent = new ArrayList<>();
