@@ -1,0 +1,69 @@
+Widescreen patch
+Twin Castle, Main Hall (Daytime)
+Knight: Mirror entrance knight
+Albert: Extend cutscene exit further left before disappearing
+--- original
++++ modified
+@@ -211,7 +211,10 @@
+ call 106, 0x0
+ call 111, 0x1
+ call 311, stor[0]
+# Load knight as default model and get scene index from submap controller
++call 96, 8
++mov stor[stor[stor[0], 23], 31], stor[22]
+ jmp_cmp ==, 0x1, stor[stor[stor[0], 23], 31], inl[:LABEL_36]
++jmp inl[:DEFAULT]
+ call 106, 0x1
+ rewind
+ ENTRYPOINT_1:
+@@ -222,6 +225,23 @@
+ ENTRYPOINT_2:
+ gosub_table stor[32], inl[:LABEL_35]
+ consume
+# Set right side as default, opposite retail entrance knight
++DEFAULT:
++call 101, stor[0], 0x122, 0xffffffa6, 0xffffffee
++call 103, stor[0], 0, 0x400, 0
++RIGHT_SIDE:
++yield
++call 257, stor[24], stor[25]
++jmp_cmp !=, stor[22], 1, inl[:ENTRANCE_ONLY]
+# If on scene 1 and in top half of scene, move knight to its retail position in front of the throne room
++jmp_cmp <, 0x1a, stor[25], inl[:LABEL_37]
++ENTRANCE_ONLY:
++jmp_cmp >, 0xfffffff3, stor[24], inl[:LEFT_SIDE]
++call 101, stor[0], 0x122, 0xffffffa6, 0xffffffee
++call 103, stor[0], 0, 0x400, 0
++jmp inl[:RIGHT_SIDE]
++LEFT_SIDE:
++call 101, stor[0], 0xfffffee8, 0xffffffa6, 0xffffffee
++call 103, stor[0], 0, 0xfffffc00, 0
++jmp inl[:RIGHT_SIDE]
+ LABEL_35:
+ rel :JMP_8cc_0
+ LABEL_36:
+@@ -233,8 +253,11 @@
+ call 294, 0x16, 0x1
+ LABEL_37:
+ yield
+# Copied position/rotation calls from LABEL_36
++call 101, stor[0], 0xc, 0xfffffede, 0x4a2
++call 103, stor[0], 0, 0, 0
+ call 257, stor[24], stor[25]
+# Adjusted camera y-offset trigger point
+-jmp_cmp <, 0x1e, stor[25], inl[:LABEL_37]
++jmp_cmp <, 0x1a, stor[25], inl[:LABEL_37]
+# Go back to entrance
++jmp inl[:RIGHT_SIDE]
+ call 106, 0x1
+ LABEL_38:
+ yield
+@@ -355,7 +378,7 @@
+ mov 0xffffffff, stor[28]
+ gosub inl[:LABEL_9]
+ gosub inl[:LABEL_0]
+-mov 0xfffffe4c, stor[24]
++mov 0xfffffe23, stor[24]
+ mov 0xffffff10, stor[25]
+ mov 0x260, stor[26]
+ mov 0x4, stor[27]
