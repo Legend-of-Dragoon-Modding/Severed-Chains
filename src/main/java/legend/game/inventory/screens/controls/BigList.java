@@ -237,7 +237,6 @@ public class BigList<T> extends Control {
 
   private void menuNavigateBottom() {
     final int count = this.entries.size();
-
     if(this.slot - this.scroll != Math.min(MAX_VISIBLE_ENTRIES, count) - 1) {
       playMenuSound(1);
       this.slot = this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1;
@@ -344,7 +343,7 @@ public class BigList<T> extends Control {
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SOUTH -> {
+      case BUTTON_SOUTH -> {
         if(this.selectionHandler != null) {
           this.selectionHandler.selection(this.getSelected());
         }

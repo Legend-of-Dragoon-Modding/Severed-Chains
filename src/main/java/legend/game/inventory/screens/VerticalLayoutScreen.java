@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 
 public class VerticalLayoutScreen extends MenuScreen {
   private static final int MAX_VISIBLE_ENTRIES = 14;
@@ -21,6 +25,8 @@ public class VerticalLayoutScreen extends MenuScreen {
   private int highlightedRow = -1;
 
   private int scroll;
+  /** Allows list wrapping, but only on new input */
+  private boolean allowWrapY = true;
 
   private final List<Label> rows = new ArrayList<>();
   private final List<Control> configControls = new ArrayList<>();
@@ -58,12 +64,12 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     this.rows.add(label);
-    this.updateEntries();
 
     if(this.rows.size() == 1) {
       this.highlightRow(0);
     }
 
+    this.updateEntries();
     return label;
   }
 
@@ -168,23 +174,164 @@ public class VerticalLayoutScreen extends MenuScreen {
     return InputPropagation.HANDLED;
   }
 
+  private void menuNavigateUp() {
+    final int optionCount = this.rows.size();
+    if(this.highlightedRow > this.scroll) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow - 1);
+    } else if(this.scroll > 0) {
+      playMenuSound(1);
+      this.scroll--;
+      this.updateEntries();
+      this.highlightRow(Math.floorMod(this.highlightedRow - 1, optionCount));
+    } else if(optionCount > 1 && this.allowWrapY) {
+      playMenuSound(1);
+      this.highlightRow(optionCount - 1);
+      this.scroll = Math.max(0, optionCount - MAX_VISIBLE_ENTRIES);
+      this.updateEntries();
+    }
+  }
+
+  private void menuNavigateDown() {
+    final int optionCount = this.rows.size();
+    if(this.highlightedRow < this.scroll + this.visibleEntries() - 1) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow + 1);
+    } else if(this.highlightedRow != optionCount - 1) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow + 1);
+      this.scroll++;
+      this.updateEntries();
+    } else if(optionCount > 1 && this.allowWrapY) {
+      playMenuSound(1);
+      this.highlightRow(0);
+      this.scroll = 0;
+      this.updateEntries();
+    }
+  }
+
+  private void menuNavigateTop() {
+    if(this.highlightedRow != this.scroll) {
+      playMenuSound(1);
+      this.highlightRow(this.scroll);
+    }
+  }
+
+  private void menuNavigateBottom() {
+    final int targetRow = this.scroll + this.visibleEntries() - 1;
+    if(this.highlightedRow != targetRow) {
+      playMenuSound(1);
+      this.highlightRow(targetRow);
+    }
+  }
+
+  private void menuNavigatePageUp() {
+    if(this.scroll - MAX_VISIBLE_ENTRIES > 0) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow - MAX_VISIBLE_ENTRIES);
+      this.scroll -= MAX_VISIBLE_ENTRIES;
+      this.updateEntries();
+    } else if(this.scroll != 0) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow - this.scroll);
+      this.scroll = 0;
+      this.updateEntries();
+    }
+  }
+
+  private void menuNavigatePageDown() {
+    final int optionCount = this.rows.size();
+    if(this.scroll + MAX_VISIBLE_ENTRIES < optionCount - MAX_VISIBLE_ENTRIES) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow + MAX_VISIBLE_ENTRIES);
+      this.scroll += MAX_VISIBLE_ENTRIES;
+      this.updateEntries();
+    } else if(this.scroll != optionCount - this.visibleEntries()) {
+      playMenuSound(1);
+      this.highlightRow(this.highlightedRow + (optionCount - this.visibleEntries() - this.scroll));
+      this.scroll = optionCount - this.visibleEntries();
+      this.updateEntries();
+    }
+  }
+
+  private void menuNavigateHome() {
+    if(this.highlightedRow != 0 || this.scroll != 0) {
+      playMenuSound(1);
+      this.highlightRow(0);
+      this.scroll = 0;
+      this.updateEntries();
+    }
+  }
+
+  private void menuNavigateEnd() {
+    final int optionCount = this.rows.size();
+    if(this.highlightedRow != optionCount - 1 || this.scroll != Math.max(0, optionCount - MAX_VISIBLE_ENTRIES)) {
+      playMenuSound(1);
+      this.highlightRow(optionCount - 1);
+      this.scroll = Math.max(0, optionCount - MAX_VISIBLE_ENTRIES);
+      this.updateEntries();
+    }
+  }
+
+  @Override
+  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    switch(key) {
+      case GLFW_KEY_HOME -> {
+        this.menuNavigateHome();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_END -> {
+        this.menuNavigateEnd();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_PAGE_UP -> {
+        this.menuNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      case GLFW_KEY_PAGE_DOWN -> {
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
   @Override
   protected InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
-      final Control control = this.configControls.get(this.highlightedRow);
-
-      if(control != null) {
-        if(control instanceof final Button button) {
-          this.deferAction(button::press);
-        } else {
-          this.deferAction(control::focus);
-        }
-
+    switch(inputAction) {
+      case BUTTON_SHOULDER_LEFT_1 -> {
+        this.menuNavigateTop();
         return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SHOULDER_LEFT_2 -> {
+        this.menuNavigateBottom();
+        return InputPropagation.HANDLED;
+      }
+
+      case BUTTON_SOUTH -> {
+        final Control control = this.configControls.get(this.highlightedRow);
+        if(control != null) {
+          if(control instanceof final Button button) {
+            this.deferAction(button::press);
+          } else {
+            this.deferAction(control::focus);
+          }
+
+          return InputPropagation.HANDLED;
+        }
       }
     }
 
@@ -199,107 +346,40 @@ public class VerticalLayoutScreen extends MenuScreen {
 
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-        if(this.highlightedRow > this.scroll) {
-          playMenuSound(1);
-          this.highlightRow(Math.floorMod(this.highlightedRow - 1, this.rows.size()));
-          return InputPropagation.HANDLED;
-        }
-
-        if(this.scroll > 0) {
-          playMenuSound(1);
-          this.scroll--;
-          this.updateEntries();
-          this.highlightRow(Math.floorMod(this.highlightedRow - 1, this.rows.size()));
-          return InputPropagation.HANDLED;
-        }
+        this.menuNavigateUp();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
       }
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        if(this.highlightedRow < this.scroll + this.visibleEntries() - 1) {
-          playMenuSound(1);
-          this.highlightRow(this.highlightedRow + 1);
-          return InputPropagation.HANDLED;
-        }
-
-        if(this.scroll < this.rows.size() - MAX_VISIBLE_ENTRIES) {
-          playMenuSound(1);
-          this.scroll++;
-          this.updateEntries();
-          this.highlightRow(this.highlightedRow + 1);
-          return InputPropagation.HANDLED;
-        }
-      }
-
-      case BUTTON_SHOULDER_LEFT_1 -> {
-        playMenuSound(1);
-        if(this.scroll == 0) {
-          this.highlightRow(0);
-        } else {
-          this.highlightRow(this.scroll);
-        }
+        this.menuNavigateDown();
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      case BUTTON_SHOULDER_LEFT_2 -> {
-        if(this.visibleEntries() >= MAX_VISIBLE_ENTRIES) {
-          if(this.scroll == 0) {
-            playMenuSound(1);
-            this.highlightRow(MAX_VISIBLE_ENTRIES - 1);
-          } else {
-            playMenuSound(1);
-            this.highlightRow(this.scroll + MAX_VISIBLE_ENTRIES - 1);
-          }
-          return InputPropagation.HANDLED;
-        }
-
-        playMenuSound(1);
-        this.highlightRow(this.rows.size() - 1);
+      case BUTTON_SHOULDER_RIGHT_1 -> {
+        this.menuNavigatePageUp();
         return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_1 ->  {
-        if(this.rows.size() > MAX_VISIBLE_ENTRIES) {
-          if(this.highlightedRow - MAX_VISIBLE_ENTRIES > 0) {
-            playMenuSound(1);
-            this.highlightedRow -= MAX_VISIBLE_ENTRIES;
-            this.scroll = Math.max(0, this.highlightedRow - MAX_VISIBLE_ENTRIES);
-            this.updateEntries();
-            this.highlightRow(this.highlightedRow);
-            return InputPropagation.HANDLED;
-          }
-
-          if(this.highlightedRow != 0) {
-            playMenuSound(1);
-            this.highlightedRow = 0;
-            this.scroll = 0;
-            this.updateEntries();
-            this.highlightRow(this.highlightedRow);
-            return InputPropagation.HANDLED;
-          }
-        }
       }
 
       case BUTTON_SHOULDER_RIGHT_2 -> {
-        if(this.rows.size() > MAX_VISIBLE_ENTRIES) {
-          if(this.highlightedRow + MAX_VISIBLE_ENTRIES < this.rows.size()) {
-            playMenuSound(1);
-            this.highlightedRow += MAX_VISIBLE_ENTRIES;
-            this.scroll = this.highlightedRow - MAX_VISIBLE_ENTRIES + 1;
-            this.updateEntries();
-            this.highlightRow(this.highlightedRow);
-            return InputPropagation.HANDLED;
-          }
-
-          if(this.highlightedRow != this.rows.size() - 1) {
-            playMenuSound(1);
-            this.highlightedRow = this.rows.size() - 1;
-            this.scroll = this.rows.size() - MAX_VISIBLE_ENTRIES;
-            this.updateEntries();
-            this.highlightRow(this.highlightedRow);
-            return InputPropagation.HANDLED;
-          }
-        }
+        this.menuNavigatePageDown();
+        return InputPropagation.HANDLED;
       }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.allowWrapY = true;
+      return InputPropagation.HANDLED;
     }
 
     return InputPropagation.PROPAGATE;

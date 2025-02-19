@@ -373,7 +373,7 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
+  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
     if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -410,17 +410,17 @@ public class ListBox<T> extends Control {
     }
 
     switch(inputAction) {
-      case InputAction.BUTTON_SHOULDER_LEFT_1 -> {
+      case BUTTON_SHOULDER_LEFT_1 -> {
         this.menuNavigateTop();
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SHOULDER_LEFT_2 -> {
+      case BUTTON_SHOULDER_LEFT_2 -> {
         this.menuNavigateBottom();
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SOUTH -> {
+      case BUTTON_SOUTH -> {
         if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {
           return InputPropagation.HANDLED;
         }
@@ -443,24 +443,24 @@ public class ListBox<T> extends Control {
     }
 
     switch(inputAction) {
-      case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
+      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
         this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
+      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
         this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SHOULDER_RIGHT_1 -> {
+      case BUTTON_SHOULDER_RIGHT_1 -> {
         this.menuNavigatePageUp();
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SHOULDER_RIGHT_2 -> {
+      case BUTTON_SHOULDER_RIGHT_2 -> {
         this.menuNavigatePageDown();
         return InputPropagation.HANDLED;
       }

@@ -352,22 +352,22 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     switch(inputAction) {
-      case InputAction.BUTTON_SHOULDER_LEFT_1 -> {
+      case BUTTON_SHOULDER_LEFT_1 -> {
         this.menuNavigateHome();
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SHOULDER_LEFT_2 -> {
+      case BUTTON_SHOULDER_LEFT_2 -> {
         this.menuNavigateEnd();
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_EAST -> {
+      case BUTTON_EAST -> {
         this.menuEscape();
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.BUTTON_SOUTH -> {
+      case BUTTON_SOUTH -> {
         this.menuSelect();
         return InputPropagation.HANDLED;
       }
@@ -387,25 +387,25 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     switch(inputAction) {
-      case InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP -> {
+      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         this.menuNavigateUp();
         this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN -> {
+      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         this.menuNavigateDown();
         this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT -> {
+      case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
         this.menuNavigateLeft();
         this.allowWrapX = false;
         return InputPropagation.HANDLED;
       }
 
-      case InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT -> {
+      case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
         this.menuNavigateRight();
         this.allowWrapX = false;
         return InputPropagation.HANDLED;
