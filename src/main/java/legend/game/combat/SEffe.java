@@ -191,7 +191,7 @@ public final class SEffe {
 
   private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
-  
+
   private static final MV seffeTransforms = new MV();
 
   @Method(0x800cea1cL)
@@ -952,17 +952,17 @@ public final class SEffe {
   @Method(0x80102f7cL)
   public static void renderSegmentGradient(final PolyBuilder builder, final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
     builder
-      .addVertex(xy[0].x, xy[0].y, a3 + a4)
+      .addVertex(xy[0].x, xy[0].y, (a3 + a4) * 4.0f)
       .monochrome(0.0f)
-      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .addVertex(xy[1].x, xy[1].y, (a3 + a4) * 4.0f)
       .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
-      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .addVertex(xy[2].x, xy[2].y, (a3 + a4) * 4.0f)
       .monochrome(0.0f)
-      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .addVertex(xy[1].x, xy[1].y, (a3 + a4) * 4.0f)
       .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
-      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .addVertex(xy[2].x, xy[2].y, (a3 + a4) * 4.0f)
       .monochrome(0.0f)
-      .addVertex(xy[3].x, xy[3].y, a3 + a4)
+      .addVertex(xy[3].x, xy[3].y, (a3 + a4) * 4.0f)
       .rgb((colour1.x >>> 8) / 255.0f, (colour1.y >>> 8) / 255.0f, (colour1.z >>> 8) / 255.0f);
   }
 

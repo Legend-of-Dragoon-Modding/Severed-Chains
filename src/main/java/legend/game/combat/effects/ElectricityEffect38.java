@@ -383,11 +383,11 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
 
               //LAB_80103834
               builder
-                .addVertex(baseX0, baseY0, manager.params_10.z_22 + zMod)
+                .addVertex(baseX0, baseY0, (manager.params_10.z_22 + zMod) * 4.0f)
                 .monochrome((baseColour >>> 9) / 255.0f)
-                .addVertex(centerLineOriginX, centerLineOriginY, manager.params_10.z_22 + zMod)
+                .addVertex(centerLineOriginX, centerLineOriginY, (manager.params_10.z_22 + zMod) * 4.0f)
                 .monochrome((baseColour >>> 8) / 255.0f)
-                .addVertex(baseX2, baseY2, manager.params_10.z_22 + zMod)
+                .addVertex(baseX2, baseY2, (manager.params_10.z_22 + zMod) * 4.0f)
                 .monochrome((baseColour >>> 9) / 255.0f);
             }
 
