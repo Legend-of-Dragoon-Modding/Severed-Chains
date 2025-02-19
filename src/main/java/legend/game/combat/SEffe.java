@@ -1084,7 +1084,7 @@ public final class SEffe {
     final Obj obj = builder.build();
     obj.delete();
 
-    data.transforms.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+    data.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
     RENDERER.queueOrthoModel(obj, data.transforms, QueuedModelStandard.class);
 
     //LAB_801059c8
