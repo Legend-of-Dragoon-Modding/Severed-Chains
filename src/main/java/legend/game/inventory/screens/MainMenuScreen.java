@@ -258,9 +258,9 @@ public class MainMenuScreen extends MenuScreen {
     for(int i = 0; i < 6; i++) {
       final int x = 106;
       final int y = 93 + i * 13;
-      RENDERER.queueLine(transforms, textZ_800bdf00 * 4.0f, new Vector2f(x, y), new Vector2f(x + 59, y))
+      RENDERER.queueLine(transforms, textZ_800bdf00 * 4.0f + 1, new Vector2f(x, y), new Vector2f(x + 59, y))
         .translucency(Translucency.B_MINUS_F)
-        .monochrome(0.05f)
+        .colour(2.0f / 256, 20.0f / 256, 12.0f / 256)
       ;
     }
 
