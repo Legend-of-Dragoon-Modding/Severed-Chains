@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -27,7 +28,7 @@ public class Dropdown<T> extends Control {
 
   private final List<T> options = new ArrayList<>();
   private final Function<T, String> toString;
-  private int hoverIndex;
+  private int hoverIndex = -1;
   private int selectedIndex = -1;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
@@ -140,6 +141,7 @@ public class Dropdown<T> extends Control {
       return InputPropagation.HANDLED;
     }
 
+    playMenuSound(2);
     this.showDropdown();
     return InputPropagation.HANDLED;
   }
@@ -153,6 +155,10 @@ public class Dropdown<T> extends Control {
     if(index == -1) {
       this.highlight.hide();
     } else {
+      if(this.hoverIndex != -1 && this.hoverIndex != index) {
+        playMenuSound(1);
+      }
+
       this.highlight.show();
     }
 
@@ -161,6 +167,7 @@ public class Dropdown<T> extends Control {
   }
 
   private void select(final int index) {
+    playMenuSound(2);
     this.setSelectedIndex(index);
 
     if(this.selectionHandler != null) {
@@ -175,6 +182,7 @@ public class Dropdown<T> extends Control {
     }
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
+      playMenuSound(2);
       this.showDropdown();
       return InputPropagation.HANDLED;
     }
@@ -239,6 +247,7 @@ public class Dropdown<T> extends Control {
         return InputPropagation.HANDLED;
       }
 
+      playMenuSound(3);
       this.getStack().popScreen();
       return InputPropagation.HANDLED;
     }
@@ -283,6 +292,7 @@ public class Dropdown<T> extends Control {
         this.getStack().popScreen();
         return InputPropagation.HANDLED;
       } else if(inputAction == InputAction.BUTTON_EAST) {
+        playMenuSound(3);
         this.getStack().popScreen();
         return InputPropagation.HANDLED;
       }

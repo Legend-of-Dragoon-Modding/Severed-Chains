@@ -131,7 +131,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
       if(inputAction == InputAction.BUTTON_NORTH) {
         final ConfigEntry<?> configEntry = this.helpEntries.get(this.getHighlightedRow());
         if(configEntry != null) {
-          playMenuSound(1);
+          playMenuSound(2);
           final Label helpLabel = this.helpLabels.get(this.getHighlightedRow());
           this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), helpLabel.calculateTotalX() + helpLabel.getWidth() / 2, helpLabel.calculateTotalY() + helpLabel.getHeight() / 2));
         }
