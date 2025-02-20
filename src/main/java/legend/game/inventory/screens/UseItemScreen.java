@@ -572,6 +572,10 @@ public class UseItemScreen extends MenuScreen {
     playMenuSound(2);
     takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
     this.itemCount = this.getUsableItemsInMenu();
+    if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
+      this.selectedSlot--;
+    }
+
     loadCharacterStats();
     this.getItemResponseText(this.useItemResponse);
     menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
