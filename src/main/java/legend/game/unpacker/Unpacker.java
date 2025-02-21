@@ -620,7 +620,7 @@ public final class Unpacker {
 
   private static void drgn21_402_3_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x107c];
-    node.data.copyFrom(newData);
+    node.data.read(newData);
     newData[0x1078] = 0x49;
     transformations.replaceNode(node, new FileData(newData));
   }
@@ -638,7 +638,7 @@ public final class Unpacker {
 
   private static void drgn21_693_0_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x190];
-    node.data.copyFrom(newData);
+    node.data.read(newData);
     MathHelper.set(newData, 0x188, 4, 0xffffffffL);
     MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
     transformations.replaceNode(node, new FileData(newData));
@@ -659,9 +659,9 @@ public final class Unpacker {
     final byte[] frame = {0x0e, (byte)0xe0, (byte)0xfe, (byte)0xde, (byte)0xff, (byte)0x9d, 0x1d, 0x00, 0x28, 0x03, (byte)0xcb, 0x00};
     // Note: we only create data for object 21, object 22 can be all 0's since it's not visible
 
-    node.data.copyFrom(0, newData, 0, 0x100);
+    node.data.read(0, newData, 0, 0x100);
     System.arraycopy(frame, 0, newData, 0x100, frame.length); // obj 21
-    node.data.copyFrom(0x100, newData, 0x118, 0xf0);
+    node.data.read(0x100, newData, 0x118, 0xf0);
     System.arraycopy(frame, 0, newData, 0x208, frame.length); // obj 21
     newData[0xc] = 22;
 
@@ -760,13 +760,13 @@ public final class Unpacker {
     final int subfunc273params1a = 0xffff_f000;
     final int subfunc273params1b = 0xffff_fffa;
 
-    node.data.copyFrom(0, newData, 0, 0x47c0);
+    node.data.read(0, newData, 0, 0x47c0);
     MathHelper.set(newData, 0x47c0, 4, jump);
     System.arraycopy(address1, 0, newData, 0x47c4, address1.length);
-    node.data.copyFrom(0x47cd, newData, 0x47cd, 0x73f);
+    node.data.read(0x47cd, newData, 0x47cd, 0x73f);
     MathHelper.set(newData, 0x4f0c, 4, jump);
     System.arraycopy(address2, 0, newData, 0x4f10, address2.length);
-    node.data.copyFrom(0x4f15, newData, 0x4f15, 0x2307);
+    node.data.read(0x4f15, newData, 0x4f15, 0x2307);
     System.arraycopy(subfunc160a, 0, newData, 0x721c, subfunc160a.length);
     System.arraycopy(subfunc160params12a, 0, newData, 0x7224, subfunc160params12a.length);
     MathHelper.set(newData, 0x722c, 4, subfunc273);
@@ -830,11 +830,11 @@ public final class Unpacker {
 
     final byte[] newData = new byte[data.size() + 0xc * keyframes * (expectedObjects - actualObjects)];
 
-    data.copyFrom(0, newData, 0, 0x10);
+    data.read(0, newData, 0, 0x10);
 
     for(int i = 0; i < keyframes; i++) {
       // This will fill the new objects with the first objects from the next keyframe to emulate retail behaviour. The last keyframe is an exception - it gets zero-filled.
-      data.copyFrom(0x10 + i * 0xc * actualObjects, newData, 0x10 + i * 0xc * expectedObjects, Math.min(0xc * expectedObjects, data.size() - (0x10 + i * 0xc * actualObjects)));
+      data.read(0x10 + i * 0xc * actualObjects, newData, 0x10 + i * 0xc * expectedObjects, Math.min(0xc * expectedObjects, data.size() - (0x10 + i * 0xc * actualObjects)));
     }
 
     newData[0xc] = (byte)expectedObjects;

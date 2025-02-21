@@ -1,5 +1,6 @@
 package legend.game.saves;
 
+import legend.core.memory.types.IntRef;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +11,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,10 +53,11 @@ public final class ConfigStorage {
     }
 
     final FileData data = new FileData(new byte[100 * 1024]);
-    final int size = saveConfig(configs, location, data);
+    final IntRef size = new IntRef();
+    saveConfig(configs, location, data, size);
 
     try {
-      Files.write(file, Arrays.copyOf(data.getBytes(), size));
+      Files.write(file, data.slice(0, size.get()).getBytes());
     } catch(final IOException e) {
       LOGGER.warn("Failed to save config file %s", file);
       LOGGER.warn("Exception", e);
@@ -106,9 +107,8 @@ public final class ConfigStorage {
     EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
   }
 
-  public static int saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data) {
+  public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data, final IntRef offset) {
     final Map<RegistryId, byte[]> config = new HashMap<>();
-    int offset = 0;
 
     for(final RegistryId configId : REGISTRIES.config) {
       //noinspection rawtypes
@@ -128,19 +128,11 @@ public final class ConfigStorage {
     }
 
     data.writeInt(offset, config.size());
-    offset += 4;
 
     for(final var entry : config.entrySet()) {
       data.writeRegistryId(offset, entry.getKey());
-      offset += entry.getKey().toString().length() + 3;
-
       data.writeInt(offset, entry.getValue().length);
-      offset += 4;
-
-      data.copyTo(0, entry.getValue(), offset, entry.getValue().length);
-      offset += entry.getValue().length;
+      data.write(0, entry.getValue(), offset, entry.getValue().length);
     }
-
-    return offset;
   }
 }

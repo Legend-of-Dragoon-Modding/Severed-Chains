@@ -350,7 +350,7 @@ public final class Fmv {
       // Demultiplex the sectors
       Arrays.fill(demuxedRaw, (byte)0);
       for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++, sector++) {
-        fileData.copyFrom(sector * data.length, data, 0, data.length);
+        fileData.read(sector * data.length, data, 0, data.length);
 
         if(header.submode.isEof()) {
           stop();
