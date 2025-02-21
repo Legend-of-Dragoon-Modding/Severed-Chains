@@ -182,6 +182,10 @@ public final class Unpacker {
 
         statusListener.accept(help);
 
+        if(shouldStop) {
+          throw new UnpackerStoppedRuntimeException("Game closed");
+        }
+
         DebugHelper.sleep(1000);
       }
 
