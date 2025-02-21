@@ -49,6 +49,7 @@ public class GoodsScreen extends MenuScreen {
     });
     this.leftList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        playMenuSound(1);
         this.setFocus(this.rightList);
         this.rightList.select(this.leftList.getSelectedIndex());
         return InputPropagation.HANDLED;
@@ -66,6 +67,7 @@ public class GoodsScreen extends MenuScreen {
     });
     this.rightList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+        playMenuSound(1);
         this.setFocus(this.leftList);
         this.leftList.select(this.rightList.getSelectedIndex());
         return InputPropagation.HANDLED;

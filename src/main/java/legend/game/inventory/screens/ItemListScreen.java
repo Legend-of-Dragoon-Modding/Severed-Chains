@@ -56,6 +56,7 @@ public class ItemListScreen extends MenuScreen {
     });
     this.itemList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        playMenuSound(1);
         this.setFocus(this.equipmentList);
         this.equipmentList.select(this.itemList.getSelectedIndex());
         return InputPropagation.HANDLED;
@@ -73,6 +74,7 @@ public class ItemListScreen extends MenuScreen {
     });
     this.equipmentList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+        playMenuSound(1);
         this.setFocus(this.itemList);
         this.itemList.select(this.equipmentList.getSelectedIndex());
         return InputPropagation.HANDLED;

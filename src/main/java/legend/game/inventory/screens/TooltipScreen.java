@@ -4,6 +4,8 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Panel;
 
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+
 public class TooltipScreen extends MenuScreen {
   private static final int PADDING = 3;
 
@@ -29,7 +31,8 @@ public class TooltipScreen extends MenuScreen {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH || inputAction == InputAction.BUTTON_EAST) {
+    if(inputAction == InputAction.BUTTON_NORTH || inputAction == InputAction.BUTTON_SOUTH || inputAction == InputAction.BUTTON_EAST) {
+      playMenuSound(3);
       this.deferAction(() -> this.getStack().popScreen());
       return InputPropagation.HANDLED;
     }

@@ -133,12 +133,39 @@ public class ItemList<T> extends Control {
   }
 
   @Override
+  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    return this.items.keyPress(key, scancode, mods);
+  }
+
+  @Override
+  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    return this.items.pressedThisFrame(inputAction);
+  }
+
+  @Override
   protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
     if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     return this.items.pressedWithRepeatPulse(inputAction);
+  }
+
+  @Override
+  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    return this.items.releasedThisFrame(inputAction);
   }
 
   @Override

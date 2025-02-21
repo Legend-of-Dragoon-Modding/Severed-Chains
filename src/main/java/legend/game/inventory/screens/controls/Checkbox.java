@@ -15,6 +15,7 @@ import legend.game.inventory.screens.InputPropagation;
 import java.nio.file.Path;
 
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class Checkbox extends Control {
@@ -114,6 +115,7 @@ public class Checkbox extends Control {
     }
 
     if(button == GLFW_MOUSE_BUTTON_LEFT) {
+      playMenuSound(2);
       this.setChecked(!this.isChecked());
       return InputPropagation.HANDLED;
     }
@@ -128,6 +130,7 @@ public class Checkbox extends Control {
     }
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
+      playMenuSound(2);
       this.setChecked(!this.isChecked());
       return InputPropagation.HANDLED;
     }

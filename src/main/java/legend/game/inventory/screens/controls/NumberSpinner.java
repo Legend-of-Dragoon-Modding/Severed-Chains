@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static legend.core.MathHelper.flEq;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -76,7 +78,11 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   public void setNumber(final T number) {
+    final T oldValue = this.number;
     this.number = this.clamp.apply(number);
+    if(oldValue != null && !flEq(this.number.floatValue(), oldValue.floatValue())) {
+      playMenuSound(1);
+    }
     this.label.setText(this.toString.apply(this.number));
     this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
@@ -137,8 +143,12 @@ public class NumberSpinner<T extends Number> extends Control {
       return InputPropagation.HANDLED;
     }
 
-    this.setNumber(this.scroll.apply(this.number, deltaY));
-    return InputPropagation.HANDLED;
+    if(this.highlight.isVisible()) {
+      this.setNumber(this.scroll.apply(this.number, deltaY));
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
@@ -148,6 +158,7 @@ public class NumberSpinner<T extends Number> extends Control {
     }
 
     if(button == GLFW_MOUSE_BUTTON_LEFT && mods == 0 && !this.highlight.isVisible()) {
+      playMenuSound(2);
       this.highlight.show();
     }
 
@@ -162,13 +173,13 @@ public class NumberSpinner<T extends Number> extends Control {
 
     if(this.highlight.isVisible()) {
       if(inputAction == InputAction.BUTTON_SOUTH || inputAction == InputAction.BUTTON_EAST) {
+        playMenuSound(2);
         this.highlight.hide();
         return InputPropagation.HANDLED;
       }
-    } else {
-      if(inputAction == InputAction.BUTTON_SOUTH) {
-        this.highlight.show();
-      }
+    } else if(inputAction == InputAction.BUTTON_SOUTH) {
+      playMenuSound(2);
+      this.highlight.show();
     }
 
     return InputPropagation.PROPAGATE;
