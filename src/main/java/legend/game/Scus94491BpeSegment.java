@@ -749,7 +749,7 @@ public final class Scus94491BpeSegment {
       final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
       fullScreenEffect_800bb140.transforms
         .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
-        .translate(0.0f, 0.0f, 120.0f)
+        .translate(0.0f, 0.0f, 156.0f)
       ;
 
       //LAB_800139c4
@@ -765,7 +765,7 @@ public final class Scus94491BpeSegment {
       final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
       fullScreenEffect_800bb140.transforms
         .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
-        .translate(0.0f, 0.0f, 120.0f)
+        .translate(0.0f, 0.0f, 156.0f)
       ;
 
       //LAB_80013b10
