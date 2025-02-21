@@ -568,7 +568,7 @@ public class Sequencer {
     final SequenceData124 sequenceData = sequenceData_800c4ac8[channelIndex];
 
     if(sequenceData.soundPlaying_02a && sshdPtr_800c4ac0.hasSubfile(4)) {
-      final Sssqish sssq = soundEnv_800c6630.sshdPtr_08.getSubfile(4, (data, offset) -> new Sssqish(data, offset, soundEnv_800c6630.sshdPtr_08.getSubfileSize(4)));
+      final Sssqish sssq = soundEnv_800c6630.sshdPtr_08.getSubfile(4, (name, data, offset) -> new Sssqish(name, data, offset, soundEnv_800c6630.sshdPtr_08.getSubfileSize(4)));
       final int data = sequenceData_800c4ac8[channelIndex].sssqReader_010.readByte(3);
 
       if(data < sssqish_800c4aa8.entries2_190.entries_02.length) {

@@ -4,10 +4,12 @@ import legend.game.unpacker.FileData;
 
 /** TODO patch is the wrong name */
 public class PatchList implements Sshd.Subfile {
+  public final String name;
   public final int patchCount_00;
   public final SequenceList[] patches_02;
 
-  public PatchList(final FileData data, final int offset) {
+  public PatchList(final String name, final FileData data, final int offset) {
+    this.name = name;
     this.patchCount_00 = data.readUShort(offset);
     this.patches_02 = new SequenceList[this.patchCount_00 + 1];
 

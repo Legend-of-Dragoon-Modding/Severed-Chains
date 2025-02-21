@@ -2025,7 +2025,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
     battleStartDelayTicks_8004f6ec = 0;
-    playSound(0, 16, (short)0, (short)0);
+    playSound(0, 16, (short)0, (short)0); // play battle transition sound
     vsyncMode_8007a3b8 = 1;
     _800bd740 = 2;
     dissolveDarkening_800bd700.active_00 = false;
@@ -2092,7 +2092,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001cc48
     //LAB_8001cc50
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     sound.used_00 = true;
 
     if(charSlot == 0 || charSlot == 1) {
@@ -2155,7 +2155,7 @@ public final class Scus94491BpeSegment {
     sound.name = soundName;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     sound.used_00 = true;
@@ -2308,7 +2308,7 @@ public final class Scus94491BpeSegment {
       soundFile.id_02 = files.get(0).readShort(0);
 
       //LAB_8001d80c
-      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0 + soundBufferOffset);
+      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(soundFile.name, files.get(2)), 0x5_a1e0 + soundBufferOffset);
 
       setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
       soundFile.used_00 = true;
@@ -2327,7 +2327,7 @@ public final class Scus94491BpeSegment {
     soundFile.spuRamOffset_14 = files.get(4).size();
     soundFile.numberOfExtraSoundbanks_18 = files.get(1).readUShort(0) - 1;
 
-    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(files.get(3)), 0x4_de90);
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(soundFile.name, files.get(3)), 0x4_de90);
     loadExtraBattleCutsceneSoundbanks();
     setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
   }
@@ -2575,7 +2575,7 @@ public final class Scus94491BpeSegment {
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x1010);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x1010);
     unloadSoundbank_800bd778();
   }
 
@@ -2629,7 +2629,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x5_a1e0);
     FUN_8001ea5c();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
   }
@@ -2659,7 +2659,7 @@ public final class Scus94491BpeSegment {
     soundFiles_800bcf80[8].ptr_0c = files.get(1);
     soundFiles_800bcf80[8].id_02 = files.get(0).readShort(0);
 
-    final Sshd sshd = new Sshd(files.get(3));
+    final Sshd sshd = new Sshd(soundName, files.get(3));
     if(files.get(4).size() != sshd.soundBankSize_04) {
       throw new RuntimeException("Size didn't match, need to resize array or something");
     }
@@ -2725,7 +2725,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(2));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(files.get(3)), 0x4_de90);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)), 0x4_de90);
     FUN_8001efcc();
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -2757,7 +2757,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x6_6930);
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x20);
@@ -2784,7 +2784,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x6_6930);
     FUN_8001f390();
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);

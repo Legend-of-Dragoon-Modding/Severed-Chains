@@ -3,6 +3,8 @@ package legend.game.sound;
 import legend.game.unpacker.FileData;
 
 public class InstrumentLayer10 implements Sshd.Subfile {
+  public final String name;
+
   public int minKeyRange_00;
   public int maxKeyRange_01;
   public int rootKey_02;
@@ -26,7 +28,8 @@ public class InstrumentLayer10 implements Sshd.Subfile {
    */
   public int flags_0f;
 
-  public InstrumentLayer10(final FileData data, final int offset) {
+  public InstrumentLayer10(final String name, final FileData data, final int offset) {
+    this.name = name;
     this.minKeyRange_00 = data.readUByte(offset);
     this.maxKeyRange_01 = data.readUByte(offset + 0x1);
     this.rootKey_02 = data.readUByte(offset + 0x2);
