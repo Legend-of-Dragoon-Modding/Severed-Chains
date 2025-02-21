@@ -288,7 +288,6 @@ public class BigList<T> extends Control {
   private void menuNavigateEnd() {
     final int count = this.entries.size();
     if(this.slot != count - 1) {
-      playMenuSound(1);
       this.scroll = Math.max(0, count - MAX_VISIBLE_ENTRIES);
       this.updateEntries();
       this.highlight(count - 1);
