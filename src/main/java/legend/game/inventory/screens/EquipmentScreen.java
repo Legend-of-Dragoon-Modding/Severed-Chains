@@ -384,6 +384,8 @@ public class EquipmentScreen extends MenuScreen {
       addHp(characterIndices_800bdbb8[this.charSlot], 0);
       addMp(characterIndices_800bdbb8[this.charSlot], 0);
       this.loadingStage = 2;
+    } else {
+      playMenuSound(40);
     }
   }
 
