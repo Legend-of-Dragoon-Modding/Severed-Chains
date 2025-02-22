@@ -1,0 +1,28 @@
+Aglis - Kraken cutscene
+Miranda
+Old: Model is hidden/shown after specific camera pans
+New: Stay on screen, rotate to face Kraken
+--- original
++++ modified
+@@ -122,7 +122,6 @@
+ gosub inl[:LABEL_4]
+ mov 0x1, stor[24]
+ gosub inl[:LABEL_0]
+-call 106, 0x1
+ mov 0x5, stor[24]
+ gosub inl[:LABEL_0]
+ call 106, 0x0
+@@ -139,7 +138,12 @@
+ gosub inl[:LABEL_0]
+ mov 0x5a, stor[24]
+ wait stor[24]
+-call 106, 0x1
++call 102, var[64][10], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 10, inl[:WS_FRAMES]
++mov 1, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++call 99, 1
+ rewind
+ data 0x140
+ data 0x900ff9e
++#include ../../../../patches/libs/widescreen.txt

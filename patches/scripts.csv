@@ -197,3 +197,8 @@ diff,SECT/DRGN24.BIN/492/9,scripts/DRGN24/492/9.diff,"Zenebatos, Kongol, don't h
 diff,SECT/DRGN24.BIN/492/12,scripts/DRGN24/492/12.diff,"Zenebatos, Coolon, don't hide, GH#2081"
 diff,SECT/DRGN24.BIN/492/13,scripts/DRGN24/492/13.diff,"Zenebatos, Meru, don't hide body parts, GH#2081"
 diff,SECT/DRGN24.BIN/612/3,scripts/DRGN24/612/3.diff,"Aglis, Meru running into walls fix, GH#1720"
+diff,SECT/DRGN24.BIN/918/3,scripts/DRGN24/918/3.diff,"Aglis, Kraken cutscene, Meru, don't hide body parts, GH#1720"
+diff,SECT/DRGN24.BIN/918/4,scripts/DRGN24/918/4.diff,"Aglis, Kraken cutscene, Albert, stay on screen, GH#1720"
+diff,SECT/DRGN24.BIN/918/5,scripts/DRGN24/918/5.diff,"Aglis, Kraken cutscene, Haschel, stay on screen, GH#1720"
+diff,SECT/DRGN24.BIN/918/6,scripts/DRGN24/918/6.diff,"Aglis, Kraken cutscene, Miranda, don't hide model, GH#1720"
+diff,SECT/DRGN24.BIN/918/10,scripts/DRGN24/918/10.diff,"Aglis, Kraken cutscene, Meru, don't hide body parts, GH#1720"
