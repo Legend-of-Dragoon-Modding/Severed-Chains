@@ -107,7 +107,7 @@ public class TmdParticle extends ParticleEffectData98 {
     if(particleMetrics.flags_00 >= 0) {
       this.initParticleTransforms(this.particleTransforms, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(particleMetrics.colour0_40.x * 0x20, particleMetrics.colour0_40.y * 0x20, particleMetrics.colour0_40.z * 0x20);
+        FUN_800e61e4(particleMetrics.colour0_40.x, particleMetrics.colour0_40.y, particleMetrics.colour0_40.z);
       }
 
       //LAB_800fcf94
