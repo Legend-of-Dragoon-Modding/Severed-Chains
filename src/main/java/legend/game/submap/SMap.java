@@ -2574,6 +2574,12 @@ public class SMap extends EngineState {
       if(sobj.rotationFrames_188 != 0) {
         sobj.rotationFrames_188--;
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
+
+        // Reset rotation smoothing to current facing after forced rotation
+        if(sobj.sobjIndex_12e == 0) {
+          this.collisionGeometry_800cbe08.playerRotationAfterCollision_800d1a84 = model.coord2_14.transforms.rotate.y;
+          this.firstMovement = true;
+        }
       }
 
       if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0) {
