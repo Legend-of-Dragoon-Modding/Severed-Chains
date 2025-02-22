@@ -84,7 +84,7 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
         zOffset_1f8003e8 = manager.params_10.z_22;
 
         if((manager.params_10.flags_00 & 0x40) == 0) {
-          FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
+          FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
         }
 
         //LAB_80118f9c

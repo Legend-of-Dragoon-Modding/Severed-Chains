@@ -139,7 +139,7 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           final int b = impact.opacity_8c[stageNum].z * manager.params_10.colour_1c.z >> 8;
 
           if((manager.params_10.flags_00 & 0x40) == 0) {
-            FUN_800e61e4(r / 128.0f, g / 128.0f, b / 128.0f);
+            FUN_800e61e4((r << 5) / (float)0x1000, (g << 5) / (float)0x1000, (b << 5) / (float)0x1000);
           }
 
           //LAB_8010f50c

@@ -44,7 +44,7 @@ public class ShadowEffect implements Effect<EffectManagerParams.VoidType> {
       transforms.transfer.y -= 0.05f; // Fix Z-fighting with ground
       tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
       zOffset_1f8003e8 = manager.params_10.z_22;
-      FUN_800e60e0(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
+      FUN_800e60e0((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager.params_10, transforms);
       FUN_800e6170();
     }
