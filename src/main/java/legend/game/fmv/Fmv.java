@@ -312,7 +312,7 @@ public final class Fmv {
     RENDERER.setProjectionSize(320, 240);
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
-    volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get());
+    volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
 
     keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
       if(mods == 0 && key == GLFW_KEY_ENTER && isValidSkipInput(InputSource.KEYBOARD)) {
