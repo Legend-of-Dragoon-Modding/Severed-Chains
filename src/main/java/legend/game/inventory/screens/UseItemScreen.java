@@ -306,13 +306,18 @@ public class UseItemScreen extends MenuScreen {
             this.useItemResponse.value_04 = responseValue;
           }
 
-          playMenuSound(2);
-          takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
-          this.itemCount = this.getUsableItemsInMenu();
-          loadCharacterStats();
-          this.getItemResponseText(this.useItemResponse);
-          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
-          this.loadingStage = 1;
+          if(this.useItemResponse.value_04 == -2) {
+            playMenuSound(40);
+          } else {
+            playMenuSound(2);
+            takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
+            this.itemCount = this.getUsableItemsInMenu();
+            loadCharacterStats();
+            this.getItemResponseText(this.useItemResponse);
+            menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
+            this.loadingStage = 1;
+          }
+
           return InputPropagation.HANDLED;
         }
       }
@@ -324,23 +329,23 @@ public class UseItemScreen extends MenuScreen {
   private void getItemResponseText(final UseItemResponse response) {
     switch(response._00) {
       case 2:
-        this.FUN_80104254(HP_8011d57c, response);
+        this.getRecoveryResponseText(HP_8011d57c, response);
         break;
 
       case 3:
-        this.FUN_80104254(HP_recovered_for_all_8011cfcc, response);
+        this.getRecoveryResponseText(HP_recovered_for_all_8011cfcc, response);
         break;
 
       case 4:
-        this.FUN_80104254(MP_8011d584, response);
+        this.getRecoveryResponseText(MP_8011d584, response);
         break;
 
       case 5:
-        this.FUN_80104254(MP_recovered_for_all_8011cff8, response);
+        this.getRecoveryResponseText(MP_recovered_for_all_8011cff8, response);
         break;
 
       case 6:
-        this.FUN_80104254(SP_8011d58c, response);
+        this.getRecoveryResponseText(SP_8011d58c, response);
         break;
 
       case 8:
@@ -371,7 +376,7 @@ public class UseItemScreen extends MenuScreen {
     }
   }
 
-  private void FUN_80104254(final String baseString, final UseItemResponse response) {
+  private void getRecoveryResponseText(final String baseString, final UseItemResponse response) {
     if(response.value_04 == -2) {
       response.string_08 = Nothing_happened_8011d618;
     } else if(response.value_04 == -1) {
@@ -569,17 +574,22 @@ public class UseItemScreen extends MenuScreen {
       this.useItemResponse.value_04 = responseValue;
     }
 
-    playMenuSound(2);
-    takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
-    this.itemCount = this.getUsableItemsInMenu();
-    if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
-      this.selectedSlot--;
-    }
+    if(this.useItemResponse.value_04 == -2) {
+      playMenuSound(40);
+    } else {
+      playMenuSound(2);
+      takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
+      this.itemCount = this.getUsableItemsInMenu();
+      loadCharacterStats();
 
-    loadCharacterStats();
-    this.getItemResponseText(this.useItemResponse);
-    menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
-    this.loadingStage = 1;
+      if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
+        this.selectedSlot--;
+      }
+
+      this.getItemResponseText(this.useItemResponse);
+      menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
+      this.loadingStage = 1;
+    }
   }
 
   @Override
