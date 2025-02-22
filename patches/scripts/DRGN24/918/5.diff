@@ -1,0 +1,23 @@
+Aglis - Kraken cutscene
+Haschel
+Old: Model is hidden after camera pan
+New: Stay on screen
+--- original
++++ modified
+@@ -122,6 +122,8 @@
+ gosub inl[:LABEL_4]
+ mov 0x1, stor[24]
+ gosub inl[:LABEL_0]
++call 99, 1
++jmp inl[:STAY]
+ call 106, 0x1
+ mov 0x5, stor[24]
+ gosub inl[:LABEL_0]
+@@ -135,6 +137,7 @@
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_4]
+ call 106, 0x1
++STAY:
+ rewind
+ data 0x140
+ data 0x900ffad

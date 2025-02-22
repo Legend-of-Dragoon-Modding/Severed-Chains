@@ -1,0 +1,33 @@
+Aglis - Kraken cutscene
+Albert
+Old: Moves off/on screen for different camera pans
+New: Stay on screen
+--- original
++++ modified
+@@ -218,6 +218,7 @@
+ gosub inl[:LABEL_1]
+ mov 0x1, stor[24]
+ gosub inl[:LABEL_10]
++jmp inl[:STAY]
+ mov 0x600, stor[24]
+ mov 0xf, stor[25]
+ gosub inl[:LABEL_2]
+@@ -228,17 +229,11 @@
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_5]
+ call 106, 0x1
++STAY:
+ mov 0x1a, stor[24]
+ gosub inl[:LABEL_1]
+ call 106, 0x0
+ call 96, 0xb
+-call 97, 0x3
+-mov 0x10, stor[24]
+-mov 0xfffffe9d, stor[25]
+-mov 0x68, stor[26]
+-mov 0x8, stor[27]
+-mov 0x5, stor[28]
+-gosub inl[:LABEL_14]
+ call 97, 0x2
+ gosub inl[:LABEL_0]
+ call 99, 0x1
