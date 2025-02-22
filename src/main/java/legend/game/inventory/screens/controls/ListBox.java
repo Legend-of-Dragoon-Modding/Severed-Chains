@@ -421,6 +421,11 @@ public class ListBox<T> extends Control {
       }
 
       case BUTTON_SOUTH -> {
+        if(this.isEmpty()) {
+          playMenuSound(40);
+          return InputPropagation.HANDLED;
+        }
+
         if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {
           return InputPropagation.HANDLED;
         }

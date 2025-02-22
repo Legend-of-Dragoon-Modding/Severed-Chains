@@ -20,6 +20,18 @@ public class CharmPotionItem extends BattleItem {
   }
 
   @Override
+  public boolean canBeUsedNow(final UsageLocation location) {
+    float currentEncounterAccumulation = 0.0f;
+    if(currentEngineState_8004dd04 instanceof final WMap wmap) {
+      currentEncounterAccumulation = wmap.encounterAccumulator_800c6ae8;
+    } else if(currentEngineState_8004dd04 instanceof final SMap smap && smap.submap.hasEncounters()) {
+      currentEncounterAccumulation = smap.encounterAccumulator_800c6ae8;
+    }
+
+    return currentEncounterAccumulation != 0.0f;
+  }
+
+  @Override
   public boolean canTarget(final TargetType type) {
     return type == TargetType.ALLIES;
   }
