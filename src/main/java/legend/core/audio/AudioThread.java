@@ -292,6 +292,10 @@ public final class AudioThread implements Runnable {
     }
   }
 
+  public void setXaPlayerVolume(final float volume) {
+    this.xaPlayer.setPlayerVolume(volume);
+  }
+
   public void setMainVolume(final int left, final int right) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting main volume to %.2f, %.2f", left / 256.0f, right / 256.0f);
 
