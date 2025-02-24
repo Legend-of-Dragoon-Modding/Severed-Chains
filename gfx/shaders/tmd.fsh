@@ -45,9 +45,9 @@ void main() {
   bool textured = (vertFlags & 0x2) != 0;
   outColour = vertColour;
 
-  int translucencyMode = translucency;
+  int translucencyMode = translucency + 1;
   if(translucent && !textured) {
-    translucencyMode = tmdTranslucency;
+    translucencyMode = tmdTranslucency + 1;
   }
 
   // Textured
