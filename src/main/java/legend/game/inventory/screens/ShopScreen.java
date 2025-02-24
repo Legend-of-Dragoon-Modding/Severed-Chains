@@ -641,7 +641,7 @@ public class ShopScreen extends MenuScreen {
                       }
                     }
                   } else {
-                    this.giveUnequipped((Equipment)this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+                    this.giveUnequipped(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
                   }
 
                   this.menuState = MenuState.BUY_4;
@@ -649,7 +649,7 @@ public class ShopScreen extends MenuScreen {
                   this.charHighlight = null;
                 }));
               } else {
-                this.giveUnequipped((Equipment)this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+                this.giveUnequipped(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
                 this.menuState = MenuState.BUY_4;
                 unloadRenderable(this.charHighlight);
                 this.charHighlight = null;
@@ -1034,7 +1034,7 @@ public class ShopScreen extends MenuScreen {
                 }
               }
             } else {
-              this.giveUnequipped((Equipment)this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+              this.giveUnequipped(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
             }
 
             this.menuState = MenuState.BUY_4;
@@ -1042,7 +1042,7 @@ public class ShopScreen extends MenuScreen {
             this.charHighlight = null;
           }));
         } else {
-          this.giveUnequipped((Equipment)this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+          this.giveUnequipped(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
           this.menuState = MenuState.BUY_4;
           unloadRenderable(this.charHighlight);
           this.charHighlight = null;
@@ -1051,9 +1051,9 @@ public class ShopScreen extends MenuScreen {
     }));
   }
 
-  private void giveUnequipped(final Equipment equipment) {
-    if(giveEquipment(equipment)) {
-      gameState_800babc8.gold_94 -= equipment.getPrice();
+  private void giveUnequipped(final ShopEntry<? extends InventoryEntry> shopEntry) {
+    if(giveEquipment((Equipment)shopEntry.item)) {
+      gameState_800babc8.gold_94 -= shopEntry.price;
     } else {
       menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> { }));
     }
