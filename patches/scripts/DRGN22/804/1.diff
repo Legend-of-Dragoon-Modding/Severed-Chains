@@ -111,23 +111,7 @@ Home of Gigantos
  memcpy 0x3, inl[:LABEL_159], stor[8]
  call 677, stor[24], stor[8], stor[9], stor[10]
  jmp inl[:LABEL_151]
-@@ -1723,6 +1718,7 @@
- call 678, stor[24], 0x0
- call 698, stor[24], 0x1
- call 312, stor[24]
-+jmp inl[:THE_DISMEMBERMENT_PLAN_5]
- call 691, stor[24], 0x0
- call 691, stor[24], 0x1
- call 691, stor[24], 0x2
-@@ -1738,6 +1734,7 @@
- call 691, stor[24], 0x1d
- call 691, stor[24], 0x1e
- call 691, stor[24], 0x1f
-+THE_DISMEMBERMENT_PLAN_5:
- gosub inl[:LABEL_180]
- mov 0x5, stor[24]
- gosub inl[:LABEL_41]
-@@ -2972,6 +2969,8 @@
+@@ -2972,6 +2967,8 @@
  LABEL_326:
  mov var[17][1], var[17][2]
  mov 0x4, var[17][1]
