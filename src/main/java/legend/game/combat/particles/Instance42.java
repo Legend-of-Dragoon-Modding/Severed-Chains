@@ -24,8 +24,8 @@ public class Instance42 extends ParticleEffectInstance94 {
       this.particleVelocity_58.y = rsin(angle) * velocityMagnitude >> 12;
     } else {
       //LAB_80100328
-      this.particleVelocity_58.x = rcos(angle) >>> 7;
-      this.particleVelocity_58.y = rsin(angle) >>> 7;
+      this.particleVelocity_58.x = rcos(angle) >> 7;
+      this.particleVelocity_58.y = rsin(angle) >> 7;
     }
   }
 
