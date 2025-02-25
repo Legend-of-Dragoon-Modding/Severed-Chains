@@ -110,7 +110,7 @@ public final class Sequencer extends AudioSource {
     this.reverb.setConfig(reverbConfigs_80059f7c[2].config_02, sampleRate);
   }
 
-  public void setVolume(final float volume) {
+  public void setPlayerVolume(final float volume) {
     this.playerVolume = volume;
   }
 
@@ -549,6 +549,10 @@ public final class Sequencer extends AudioSource {
   }
 
   public int getSequenceVolume() {
+    if(this.backgroundMusic == null) {
+      return 0;
+    }
+
     return Math.round(this.backgroundMusic.getVolume() * 0x80);
   }
 
@@ -605,7 +609,9 @@ public final class Sequencer extends AudioSource {
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
   public void changeSampleRate(final SampleRate sampleRate, final EffectsOverTimeGranularity effectsGranularity) {
-    this.resetBuffers();
+    if(this.isInitialized()) {
+      this.resetBuffers();
+    }
 
     final SampleRate old = this.sampleRate;
     this.sampleRate = sampleRate;

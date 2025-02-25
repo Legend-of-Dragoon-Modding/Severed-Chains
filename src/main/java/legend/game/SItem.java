@@ -568,7 +568,7 @@ public final class SItem {
   }
 
   private static void menuMusicLoaded(final List<FileData> files) {
-    menuMusic = new BackgroundMusic(files, 5815, AUDIO_THREAD.getSequencer().getSampleRate());
+    menuMusic = new BackgroundMusic(files, 5815, AUDIO_THREAD.getSampleRate());
   }
 
   /** FUN_8001e010 with param 0 */

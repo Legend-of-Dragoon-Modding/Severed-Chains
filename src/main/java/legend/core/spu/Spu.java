@@ -76,8 +76,10 @@ public class Spu {
   }
 
   public void init() {
-    this.source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, BASE_SAMPLE_RATE));
-    this.playerVolume = CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+    synchronized(this) {
+      this.source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, BASE_SAMPLE_RATE));
+      this.playerVolume = CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+    }
   }
 
   public void setPlayerVolume(final float volume) {
@@ -172,10 +174,8 @@ public class Spu {
         this.spuOutput[dataIndex++] = (short)(sumRight * this.playerVolume);
       }
 
-      synchronized(this.source) {
-        if(this.source.canBuffer()) {
-          this.source.bufferOutput(this.spuOutput);
-        }
+      if(this.source.canBuffer()) {
+        this.source.bufferOutput(this.spuOutput);
       }
     }
   }

@@ -10,6 +10,6 @@ public class MusicVolumeConfigEntry extends VolumeConfigEntry {
   @Override
   public void onChange(final ConfigCollection configCollection, final Float oldValue, final Float newValue) {
     super.onChange(configCollection, oldValue, newValue);
-    AUDIO_THREAD.getSequencer().setVolume(newValue * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
+    AUDIO_THREAD.setMusicPlayerVolume(newValue * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
   }
 }
