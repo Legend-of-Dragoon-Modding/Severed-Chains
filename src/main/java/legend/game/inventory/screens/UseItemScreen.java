@@ -166,6 +166,8 @@ public class UseItemScreen extends MenuScreen {
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
       renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+    } else {
+      renderString(194, 16, "", allocate);
     }
   }
 
