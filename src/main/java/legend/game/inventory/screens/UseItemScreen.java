@@ -583,7 +583,7 @@ public class UseItemScreen extends MenuScreen {
       loadCharacterStats();
 
       if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
-        this.selectedSlot--;
+        this.selectedSlot = Math.max(0, --this.selectedSlot);
       }
 
       this.getItemResponseText(this.useItemResponse);
