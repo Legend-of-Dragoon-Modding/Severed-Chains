@@ -249,8 +249,6 @@ public final class GameEngine {
     Input.init();
     GPU.init();
 
-    Scus94491BpeSegment_8002.start();
-
     try {
       time = System.nanoTime();
       RENDERER.run();
@@ -402,6 +400,8 @@ public final class GameEngine {
     openalThread.start();
 
     synchronized(INIT_LOCK) {
+      Scus94491BpeSegment_8002.start();
+
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
