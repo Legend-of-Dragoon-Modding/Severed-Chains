@@ -1,0 +1,27 @@
+Lohan
+Child walking from left to right and back in market
+Retail checks for out-of-bounds to queue next destination
+SC's higher precision results in the sobj not going OOB, so it moves to the same destination in a loop off-screen.
+--- original
++++ modified
+@@ -985,6 +985,12 @@
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_24]
+ call 116, stor[24]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_28]
++gosub inl[:LABEL_29]
++call 102, stor[0], stor[28], stor[29], stor[30]
++jmp_cmp !=, stor[24], stor[28], inl[:LABEL_24]
++jmp_cmp !=, stor[25], stor[29], inl[:LABEL_24]
++jmp_cmp !=, stor[26], stor[30], inl[:LABEL_24]
++jmp inl[:NEXT]
+ LABEL_24:
+ call 111, 0x0
+ call 102, stor[0], stor[24], stor[25], stor[26]
+@@ -995,6 +1001,7 @@
+ call 102, stor[0], stor[28], stor[29], stor[30]
+ call 109, stor[27]
+ jmp_cmp !=, 0xffffffff, stor[27], inl[:LABEL_26]
++NEXT:
+ gosub inl[:LABEL_17]
+ gosub inl[:LABEL_15]
+ gosub inl[:LABEL_15]
