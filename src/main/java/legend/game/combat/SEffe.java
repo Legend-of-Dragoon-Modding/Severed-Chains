@@ -810,7 +810,7 @@ public final class SEffe {
 
     //LAB_800ec370
     shadow.zOffset_a0 = model.zOffset_a0 + 16;
-    shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
+    shadow.coord2_14.transforms.scale.set(model.shadowSize_10c).div(4.0f);
     shadow.coord2_14.coord.scaling(shadow.coord2_14.transforms.scale);
     shadow.coord2_14.coord.rotateXYZ(shadow.coord2_14.transforms.rotate);
     shadow.coord2_14.flg = 0;
