@@ -8,8 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.sdl.SDL_DisplayMode;
 import org.lwjgl.sdl.SDL_Rect;
+import org.lwjgl.sdl.SDL_Surface;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.EnumSet;
@@ -20,8 +22,13 @@ import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLMouse.SDL_CreateSystemCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_DestroyCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_GetDefaultCursor;
+import static org.lwjgl.sdl.SDLMouse.SDL_HideCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_SYSTEM_CURSOR_POINTER;
 import static org.lwjgl.sdl.SDLMouse.SDL_SetCursor;
+import static org.lwjgl.sdl.SDLMouse.SDL_ShowCursor;
+import static org.lwjgl.sdl.SDLPixels.SDL_PIXELFORMAT_ARGB8888;
+import static org.lwjgl.sdl.SDLSurface.SDL_CreateSurfaceFrom;
+import static org.lwjgl.sdl.SDLSurface.SDL_DestroySurface;
 import static org.lwjgl.sdl.SDLVideo.SDL_CreateWindow;
 import static org.lwjgl.sdl.SDLVideo.SDL_DestroyWindow;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_DEBUG_FLAG;
@@ -41,15 +48,20 @@ import static org.lwjgl.sdl.SDLVideo.SDL_GetDisplayBounds;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetDisplays;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetPrimaryDisplay;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetWindowSize;
+import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowIcon;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMinimumSize;
+import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMouseGrab;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowPosition;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowTitle;
 import static org.lwjgl.sdl.SDLVideo.SDL_ShowWindow;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_HIDDEN;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_OPENGL;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_RESIZABLE;
+import static org.lwjgl.stb.STBImage.stbi_failure_reason;
+import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class SdlWindow extends Window {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SdlWindow.class);
@@ -240,17 +252,19 @@ public class SdlWindow extends Window {
 
   @Override
   public void disableCursor() {
-    //TODO
+    SDL_SetWindowMouseGrab(this.window, true);
   }
 
   @Override
   public void showCursor() {
-    //TODO
+    SDL_SetWindowMouseGrab(this.window, false);
+    SDL_ShowCursor();
   }
 
   @Override
   public void hideCursor() {
-    //TODO
+    SDL_SetWindowMouseGrab(this.window, false);
+    SDL_HideCursor();
   }
 
   @Override
@@ -265,7 +279,28 @@ public class SdlWindow extends Window {
 
   @Override
   public void setWindowIcon(final Path path) {
-    //TODO
+    try(final MemoryStack stack = stackPush()) {
+      final IntBuffer w = stack.mallocInt(1);
+      final IntBuffer h = stack.mallocInt(1);
+      final IntBuffer comp = stack.mallocInt(1);
+
+      final ByteBuffer data = stbi_load(path.toString(), w, h, comp, 4);
+      if(data == null) {
+        LOGGER.warn("Failed to load icon %s: %s", path, stbi_failure_reason());
+        return;
+      }
+
+      final SDL_Surface surface = SDL_CreateSurfaceFrom(w.get(0), h.get(0), SDL_PIXELFORMAT_ARGB8888, data, w.get(0) * 4);
+
+      if(surface != null) {
+        SDL_SetWindowIcon(this.window, surface);
+        SDL_DestroySurface(surface);
+      } else {
+        LOGGER.error("Failed to set window icon: %s", SDL_GetError());
+      }
+
+      memFree(data);
+    }
   }
 
   @Override

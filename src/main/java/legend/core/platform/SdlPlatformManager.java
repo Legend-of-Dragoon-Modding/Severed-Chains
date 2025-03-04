@@ -16,6 +16,7 @@ import legend.core.platform.input.InputBinding;
 import legend.core.platform.input.InputBindings;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputClass;
+import legend.core.platform.input.InputGamepadType;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
@@ -83,12 +84,16 @@ import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_BUTTON_START;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_BUTTON_WEST;
+import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepadStringForAxis;
+import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepadStringForButton;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepads;
 import static org.lwjgl.sdl.SDLGamepad.SDL_OpenGamepad;
 import static org.lwjgl.sdl.SDLInit.SDL_INIT_GAMEPAD;
 import static org.lwjgl.sdl.SDLInit.SDL_INIT_VIDEO;
 import static org.lwjgl.sdl.SDLInit.SDL_Init;
 import static org.lwjgl.sdl.SDLInit.SDL_Quit;
+import static org.lwjgl.sdl.SDLKeyboard.SDL_GetKeyName;
+import static org.lwjgl.sdl.SDLKeyboard.SDL_GetScancodeName;
 import static org.lwjgl.sdl.SDLKeycode.SDLK_0;
 import static org.lwjgl.sdl.SDLKeycode.SDLK_1;
 import static org.lwjgl.sdl.SDLKeycode.SDLK_2;
@@ -361,6 +366,11 @@ public class SdlPlatformManager extends PlatformManager {
   @Override
   public boolean hasGamepad() {
     return !this.gamepads.isEmpty();
+  }
+
+  @Override
+  public InputGamepadType getGamepadType() {
+    return this.lastGamepad != null ? this.lastGamepad.type : InputGamepadType.STANDARD;
   }
 
   @Override
@@ -750,6 +760,30 @@ public class SdlPlatformManager extends PlatformManager {
       window.currentInputClass = classification;
       window.events().onInputClassChanged(classification);
     }
+  }
+
+  @Override
+  public String getKeyName(final InputKey key) {
+    final int code = this.getKeyCode(key);
+    return SDL_GetKeyName(code);
+  }
+
+  @Override
+  public String getScancodeName(final InputKey key) {
+    final int code = this.getScanCode(key);
+    return SDL_GetScancodeName(code);
+  }
+
+  @Override
+  public String getButtonName(final InputButton button) {
+    final int code = this.getButtonCode(button);
+    return SDL_GetGamepadStringForButton(code);
+  }
+
+  @Override
+  public String getAxisName(final InputAxis axis) {
+    final int code = this.getAxisCode(axis);
+    return SDL_GetGamepadStringForAxis(code);
   }
 
   private void decodeMods(final SDL_KeyboardEvent key, final Set<InputMod> mods) {

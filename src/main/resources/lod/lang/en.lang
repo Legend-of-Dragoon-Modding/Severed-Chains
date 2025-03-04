@@ -433,7 +433,7 @@ lod.items.sachet.name=Sachet
 lod.items.sachet.description=Gives subtle\ngood aroma.
 lod.items.sachet.battle_description=Gives subtle good aroma.
 lod.items.psyche_bomb.name=Psyche Bomb
-lod.items.psyche_bomb.description=Unbased\nattack for all\n(multi).
+lod.items.psyche_bomb.description=Non-elemental\nattack for all\n(multi).
 lod.items.psyche_bomb.battle_description=A attack(non, multi).
 lod.items.burning_wave.name=Burning Wave
 lod.items.burning_wave.description=Fire-based\npowerful attack \nfor all.
@@ -460,5 +460,34 @@ lod.items.healing_breeze.name=Healing Breeze
 lod.items.healing_breeze.description=Recover half of\nHP for all.
 lod.items.healing_breeze.battle_description=Recovers 1/2 HP for all.
 lod.items.psyche_bomb_x.name=Psyche Bomb X
-lod.items.psyche_bomb_x.description=Unbased attack\nfor all (multi) \n(repeat).
+lod.items.psyche_bomb_x.description=Non-elemental attack\nfor all (multi) \n(repeat).
 lod.items.psyche_bomb_x.battle_description=A attack (non, multi, rep).
+
+lod.input_actions.general_open_inventory.name=General: open inventory
+lod.input_actions.general_move_up.name=General: move up
+lod.input_actions.general_move_down.name=General: move down
+lod.input_actions.general_move_left.name=General: move left
+lod.input_actions.general_move_right.name=General: move right
+lod.input_actions.general_run.name=General: run
+
+lod.input_actions.wmap_rotate_right.name=World map: rotate camera right
+lod.input_actions.wmap_rotate_left.name=World map: rotate camera left
+lod.input_actions.wmap_zoom_out.name=World map: zoom out
+lod.input_actions.wmap_zoom_in.name=World map: zoom in
+lod.input_actions.wmap_coolon.name=World map: open Coolon map
+lod.input_actions.wmap_queen_fury.name=World map: enter Queen Fury
+lod.input_actions.wmap_services.name=World map: view services
+lod.input_actions.wmap_destinations.name=World map: view destinations
+
+lod.input_actions.smap_interact.name=Sub map: interact
+lod.input_actions.smap_toggle_indicators.name=Sub map: toggle indicators
+
+lod.input_actions.bttl_attack.name=Battle: attack
+lod.input_actions.bttl_counter.name=Battle: counter
+lod.input_actions.bttl_rotate_camera.name=Battle: change camera
+lod.input_actions.bttl_additions.name=Battle: change additions
+lod.input_actions.bttl_transform.name=Battle: transform
+lod.input_actions.bttl_special.name=Battle: special
+lod.input_actions.bttl_escape.name=Battle: escape
+lod.input_actions.bttl_guard.name=Battle: guard
+lod.input_actions.bttl_items.name=Battle: items/spells

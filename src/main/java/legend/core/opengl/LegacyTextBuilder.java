@@ -49,8 +49,8 @@ public class LegacyTextBuilder {
     final int v = chr / 16 * 16;
     offset = this.setVertex(offset, vertices, 0.0f,  0.0f, u, v);
     offset = this.setVertex(offset, vertices, 0.0f, 16.0f, u, v + 16.0f);
-    offset = this.setVertex(offset, vertices, 8.0f,  0.0f, u + 8.0f, v);
-    offset = this.setVertex(offset, vertices, 8.0f, 16.0f, u + 8.0f, v + 16.0f);
+    offset = this.setVertex(offset, vertices, 16.0f,  0.0f, u + 16.0f, v);
+    offset = this.setVertex(offset, vertices, 16.0f, 16.0f, u + 16.0f, v + 16.0f);
     return offset;
   }
 

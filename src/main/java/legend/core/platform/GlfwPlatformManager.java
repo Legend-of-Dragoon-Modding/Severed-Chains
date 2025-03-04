@@ -1,6 +1,10 @@
 package legend.core.platform;
 
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputGamepadType;
+import legend.core.platform.input.InputKey;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -40,6 +44,11 @@ public class GlfwPlatformManager extends PlatformManager {
   @Override
   public boolean hasGamepad() {
     return false;
+  }
+
+  @Override
+  public InputGamepadType getGamepadType() {
+    return InputGamepadType.STANDARD;
   }
 
   @Override
@@ -93,6 +102,26 @@ public class GlfwPlatformManager extends PlatformManager {
   @Override
   public void stopRumble() {
 
+  }
+
+  @Override
+  public String getKeyName(final InputKey key) {
+    return "";
+  }
+
+  @Override
+  public String getScancodeName(InputKey key) {
+    return "";
+  }
+
+  @Override
+  public String getButtonName(InputButton button) {
+    return "";
+  }
+
+  @Override
+  public String getAxisName(InputAxis axis) {
+    return "";
   }
 
   @Override

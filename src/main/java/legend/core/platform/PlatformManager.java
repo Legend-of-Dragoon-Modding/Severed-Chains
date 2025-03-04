@@ -3,6 +3,10 @@ package legend.core.platform;
 import legend.core.DebugHelper;
 import legend.core.opengl.Action;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputGamepadType;
+import legend.core.platform.input.InputKey;
 import legend.game.modding.coremod.CoreMod;
 
 import java.util.ArrayList;
@@ -29,6 +33,7 @@ public abstract class PlatformManager {
   public abstract boolean isContextCurrent();
 
   public abstract boolean hasGamepad();
+  public abstract InputGamepadType getGamepadType();
   public abstract int getMouseButton(final int index);
 
   public abstract String[] listDisplays();
@@ -114,6 +119,11 @@ public abstract class PlatformManager {
   public abstract void adjustRumble(final float intensity, final int ms);
   public abstract void adjustRumble(final float bigIntensity, final float smallIntensity, final int ms);
   public abstract void stopRumble();
+
+  public abstract String getKeyName(final InputKey key);
+  public abstract String getScancodeName(final InputKey key);
+  public abstract String getButtonName(final InputButton button);
+  public abstract String getAxisName(final InputAxis axis);
 
   public abstract boolean isActionPressed(final InputAction action);
   public abstract boolean isActionRepeat(final InputAction action);
