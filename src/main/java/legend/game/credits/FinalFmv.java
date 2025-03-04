@@ -12,6 +12,8 @@ public class FinalFmv extends EngineState {
   @Override
   @Method(0x800d9e08L)
   public void tick() {
+    super.tick();
+
     if(this.ticks++ > 94) {
       Fmv.playCurrentFmv(17, EngineStateEnum.CREDITS_04);
     }

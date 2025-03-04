@@ -206,81 +206,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static float rumbleDampener_800bee80;
 
-  /**
-   * Remains set for the duration of the button press
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x100 - Start</li>
-   *   <li>0x200 - Left thumb</li>
-   *   <li>0x400 - Right thumb</li>
-   *   <li>0x800 - Select</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int input_800bee90;
-  /**
-   * Only set for an instant after buttons are pressed
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x100 - Start</li>
-   *   <li>0x200 - Left thumb</li>
-   *   <li>0x400 - Right thumb</li>
-   *   <li>0x800 - Select</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int press_800bee94;
-  /**
-   * Only set for an instant after buttons are pressed, but repeats while button is held
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x100 - Start</li>
-   *   <li>0x200 - Left thumb</li>
-   *   <li>0x400 - Right thumb</li>
-   *   <li>0x800 - Select</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int repeat_800bee98;
-  public static int analogAngle_800bee9c;
-
   public static int _800beea4;
 
   public static int _800beeac;
-
-  public static int analogMagnitude_800beeb4;
-
-  public static int analogInput_800beebc;
 
   public static int continentIndex_800bf0b0;
 

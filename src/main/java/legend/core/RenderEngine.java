@@ -1,5 +1,7 @@
 package legend.core;
 
+import javafx.application.Application;
+import javafx.application.Platform;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
@@ -24,11 +26,14 @@ import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.VoidShaderOptions;
-import legend.core.opengl.Window;
+import legend.core.platform.Window;
+import legend.core.platform.WindowEvents;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
 import legend.game.EngineState;
 import legend.game.combat.Battle;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
+import legend.game.debugger.Debugger;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +41,8 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -49,31 +56,35 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F2;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F4;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_OPEN_DEBUGGER;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_PAUSE;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_RELOAD_SHADERS;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_BACKWARD;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_FORWARD;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_TOGGLE;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SLOW_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SPEED_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
@@ -90,14 +101,18 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA16;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11C.GL_VENDOR;
+import static org.lwjgl.opengl.GL11C.GL_VERSION;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
 import static org.lwjgl.opengl.GL11C.glViewport;
+import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
 
@@ -243,7 +258,8 @@ public class RenderEngine {
 
   private long lastFrame;
   private double vsyncCount;
-  private float fps;
+  private final float[] fps = new float[60];
+  private int fpsIndex;
 
   private Runnable renderCallback = () -> { };
 
@@ -354,8 +370,8 @@ public class RenderEngine {
     this.mainBatch.updateProjections();
   }
 
-  public Window.Events events() {
-    return this.window.events;
+  public WindowEvents events() {
+    return this.window.events();
   }
 
   public Window window() {
@@ -368,10 +384,6 @@ public class RenderEngine {
 
   public int getVsyncCount() {
     return (int)this.vsyncCount;
-  }
-
-  public float getFps() {
-    return this.fps;
   }
 
   public void setClearColour(final float red, final float green, final float blue) {
@@ -428,17 +440,29 @@ public class RenderEngine {
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
-    this.window = new Window("Severed Chains " + Version.FULL_VERSION, Config.windowWidth(), Config.windowHeight());
+    this.window = PLATFORM.addWindow("Severed Chains " + Version.FULL_VERSION, Config.windowWidth(), Config.windowHeight());
+    this.window.events().onClose(PLATFORM::stop);
     this.window.setFpsLimit(60);
+    PLATFORM.setInputTickRate(60);
+
+    GL.createCapabilities();
+
+    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
+    LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
+
+    if("true".equals(System.getenv("opengl_debug"))) {
+      GLUtil.setupDebugMessageCallback(System.err);
+    }
 
     glEnable(GL_LINE_SMOOTH);
 
-    this.window.events.onResize(this::onResize);
+    this.window.events().onResize(this::onResize);
 
-    this.window.events.onMouseMove(this::onMouseMove);
-    this.window.events.onPressedThisFrame(this::onPressedThisFrame);
-    this.window.events.onKeyPress(this::onKeyPress);
-    this.window.events.onKeyRelease(this::onKeyRelease);
+    this.window.events().onMouseMove(this::onMouseMove);
+    this.window.events().onKeyPress(this::onKeyPress);
+    this.window.events().onInputActionPressed(this::onInputActionPressed);
+    this.window.events().onInputActionReleased(this::onInputActionReleased);
 
     ShaderManager.addShader(SIMPLE_SHADER);
     final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
@@ -533,7 +557,7 @@ public class RenderEngine {
       .build();
     this.renderBufferQuad.persistent = true;
 
-    this.window.events.onDraw(() -> {
+    this.window.events().onDraw(() -> {
       synchronized(this.tasks) {
         Runnable task;
         while((task = this.tasks.poll()) != null) {
@@ -677,9 +701,22 @@ public class RenderEngine {
         this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
       }
 
-      this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
+      final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
+
+      final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
+      this.fps[this.fpsIndex] = fps;
+      this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
+
+      if(this.fpsIndex == 0) {
+        float avg = 0.0f;
+        for(int i = 0; i < fpsLimit; i++) {
+          avg += this.fps[i];
+        }
+
+        RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getProjectionWidth(), this.getProjectionHeight()));
+      }
 
       if(this.reloadShaders) {
         this.reloadShaders = false;
@@ -990,7 +1027,7 @@ public class RenderEngine {
   }
 
   private void pre() {
-    glViewport(0, 0, (int)(this.renderWidth * this.window.getScale()), (int)(this.renderHeight * this.window.getScale()));
+    glViewport(0, 0, this.renderWidth, this.renderHeight);
 
     // Update global transforms (default to 3D)
     this.setProjectionMode(ProjectionMode._3D);
@@ -1005,12 +1042,18 @@ public class RenderEngine {
     this.lastFrame = System.nanoTime();
 
     try {
-      this.window.run();
+      PLATFORM.run();
     } catch(final Throwable t) {
       this.window.close();
       throw t;
     } finally {
-      Window.free();
+      LOGGER.info("Shutting down...");
+
+      try {
+        Config.save();
+      } catch(final IOException e) {
+        System.err.println("Failed to save config");
+      }
     }
   }
 
@@ -1124,85 +1167,120 @@ public class RenderEngine {
     }
   }
 
-  private void onPressedThisFrame(final Window window, final InputAction inputAction) {
-    switch(inputAction) {
-      case InputAction.TOGGLE_FULL_SCREEN -> Config.switchFullScreen();
-      case InputAction.SPEED_UP -> Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() + 1, 16));
-      case InputAction.SLOW_DOWN -> Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() - 1, 1));
-      case InputAction.PAUSE -> this.togglePause = !this.togglePause;
-      case InputAction.FRAME_ADVANCE -> {
-        if(this.paused) {
-          this.frameAdvanceSingle = true;
+  private void onKeyPress(final Window window, final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
+    if(!this.allowMovement) {
+      if(key == InputKey.TAB) {
+        if(mods.contains(InputMod.SHIFT)) {
+          legacyMode = Math.floorMod(legacyMode - 1, 3);
+        } else {
+          legacyMode = (legacyMode + 1) % 3;
         }
-      }
-      case InputAction.FRAME_ADVANCE_HOLD -> {
-        if(this.paused) {
-          this.frameAdvance = true;
+
+        this.updateProjections();
+
+        switch(legacyMode) {
+          case 0 -> System.out.println("Switched to OpenGL rendering");
+          case 1 -> System.out.println("Switched to legacy rendering");
+          case 2 -> System.out.println("Switched to VRAM rendering");
         }
+      } else if(key == InputKey.F4 && mods.contains(InputMod.CTRL) && mods.contains(InputMod.SHIFT)) {
+        throw new RuntimeException("Can't say I didn't warn you");
       }
     }
   }
 
-  private void onKeyPress(final Window window, final int key, final int scancode, final int mods) {
-    if(this.allowMovement) {
-      switch(key) {
-        case GLFW_KEY_W -> this.movingForward = true;
-        case GLFW_KEY_S -> this.movingBackward = true;
-        case GLFW_KEY_A -> this.movingLeft = true;
-        case GLFW_KEY_D -> this.movingRight = true;
-        case GLFW_KEY_SPACE -> this.movingUp = true;
-        case GLFW_KEY_LEFT_SHIFT -> this.movingDown = true;
-        case GLFW_KEY_ESCAPE -> this.window.close();
-      }
-    } else if(key == GLFW_KEY_TAB) {
-      if((mods & GLFW_MOD_SHIFT) != 0) {
-        legacyMode = Math.floorMod(legacyMode - 1, 3);
-      } else {
-        legacyMode = (legacyMode + 1) % 3;
-      }
-
-      this.updateProjections();
-
-      switch(legacyMode) {
-        case 0 -> System.out.println("Switched to OpenGL rendering");
-        case 1 -> System.out.println("Switched to legacy rendering");
-        case 2 -> System.out.println("Switched to VRAM rendering");
-      }
-    } else if(key == GLFW_KEY_F2) {
-      this.wireframeMode = !this.wireframeMode;
-    } else if(key == GLFW_KEY_F5) {
-      this.reloadShaders = true;
-    } else if(key == GLFW_KEY_F4 && (mods & GLFW_MOD_CONTROL) != 0 && (mods & GLFW_MOD_SHIFT) != 0) {
-      throw new RuntimeException("Can't say I didn't warn you");
+  private void onInputActionPressed(final Window window, final InputAction action, final boolean repeat) {
+    if(repeat) {
+      return;
     }
 
-    if(key == GLFW_KEY_M && (mods & GLFW_MOD_CONTROL) != 0) {
+    if(action == INPUT_ACTION_FREECAM_TOGGLE.get()) {
       this.allowMovement = !this.allowMovement;
       LOGGER.info("Allow movement: %b", this.allowMovement);
 
       if(this.allowMovement) {
         this.window.disableCursor();
+      } else if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
+        this.window.hideCursor();
       } else {
-        if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
-          this.window.hideCursor();
-        } else {
-          this.window.showCursor();
-        }
+        this.window.showCursor();
       }
+
+      return;
+    }
+
+    if(this.allowMovement) {
+      if(action == INPUT_ACTION_FREECAM_FORWARD.get()) {
+        this.movingForward = true;
+      } else if(action == INPUT_ACTION_FREECAM_BACKWARD.get()) {
+        this.movingBackward = true;
+      } else if(action == INPUT_ACTION_FREECAM_LEFT.get()) {
+        this.movingLeft = true;
+      } else if(action == INPUT_ACTION_FREECAM_RIGHT.get()) {
+        this.movingRight = true;
+      } else if(action == INPUT_ACTION_FREECAM_UP.get()) {
+        this.movingUp = true;
+      } else if(action == INPUT_ACTION_FREECAM_DOWN.get()) {
+        this.movingDown = true;
+      }
+
+      return;
+    }
+
+    if(action == INPUT_ACTION_DEBUG_OPEN_DEBUGGER.get()) {
+      if(!Debugger.isRunning()) {
+        try {
+          Platform.setImplicitExit(false);
+          new Thread(() -> Application.launch(Debugger.class)).start();
+        } catch(final Exception e) {
+          LOGGER.info("Failed to start debugger", e);
+        }
+      } else {
+        Platform.runLater(Debugger::show);
+      }
+    } else if(action == INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN.get()) {
+      Config.switchFullScreen();
+    } else if(action == INPUT_ACTION_GENERAL_SPEED_UP.get()) {
+      Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() + 1, 16));
+    } else if(action == INPUT_ACTION_GENERAL_SLOW_DOWN.get()) {
+      Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() - 1, 1));
+    } else if(action == INPUT_ACTION_DEBUG_PAUSE.get()) {
+      this.togglePause = !this.togglePause;
+    } else if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE.get()) {
+      if(this.paused) {
+        this.frameAdvanceSingle = true;
+      }
+    } else if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD.get()) {
+      if(this.paused) {
+        this.frameAdvance = true;
+      }
+    } else if(action == INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME.get()) {
+      this.wireframeMode = !this.wireframeMode;
+    } else if(action == INPUT_ACTION_DEBUG_RELOAD_SHADERS.get()) {
+      this.reloadShaders = true;
     }
   }
 
-  private void onKeyRelease(final Window window, final int key, final int scancode, final int mods) {
+  private void onInputActionReleased(final Window window, final InputAction action) {
     if(this.allowMovement) {
-      switch(key) {
-        case GLFW_KEY_W -> this.movingForward = false;
-        case GLFW_KEY_S -> this.movingBackward = false;
-        case GLFW_KEY_A -> this.movingLeft = false;
-        case GLFW_KEY_D -> this.movingRight = false;
-        case GLFW_KEY_SPACE -> this.movingUp = false;
-        case GLFW_KEY_LEFT_SHIFT -> this.movingDown = false;
+      if(action == INPUT_ACTION_FREECAM_FORWARD.get()) {
+        this.movingForward = false;
+      } else if(action == INPUT_ACTION_FREECAM_BACKWARD.get()) {
+        this.movingBackward = false;
+      } else if(action == INPUT_ACTION_FREECAM_LEFT.get()) {
+        this.movingLeft = false;
+      } else if(action == INPUT_ACTION_FREECAM_RIGHT.get()) {
+        this.movingRight = false;
+      } else if(action == INPUT_ACTION_FREECAM_UP.get()) {
+        this.movingUp = false;
+      } else if(action == INPUT_ACTION_FREECAM_DOWN.get()) {
+        this.movingDown = false;
       }
-    } else if (key == GLFW_KEY_F10) {
+
+      return;
+    }
+
+    if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD.get()) {
       this.frameAdvance = false;
     }
   }

@@ -1,15 +1,19 @@
 package legend.game.inventory.screens;
 
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
 import legend.game.SItem;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.PLATFORM;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -84,8 +88,8 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
-    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
       return InputPropagation.HANDLED;
     }
 
@@ -100,13 +104,52 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
-  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  protected InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
+    if(super.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
-      return this.focus.keyPress(key, scancode, mods);
+      return this.focus.keyPress(key, scancode, mods, repeat);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation keyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods) {
+    if(super.keyRelease(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.focus != null && !this.focus.isDisabled()) {
+      return this.focus.keyRelease(key, scancode, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation buttonPress(final InputButton button, final boolean repeat) {
+    if(super.buttonPress(button, repeat) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.focus != null && !this.focus.isDisabled()) {
+      return this.focus.buttonPress(button, repeat);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation buttonRelease(final InputButton button) {
+    if(super.buttonRelease(button) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.focus != null && !this.focus.isDisabled()) {
+      return this.focus.buttonRelease(button);
     }
 
     return InputPropagation.PROPAGATE;
@@ -126,39 +169,26 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
-      return this.focus.pressedThisFrame(inputAction);
+      return this.focus.inputActionPressed(action, repeat);
     }
 
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
-      return this.focus.pressedWithRepeatPulse(inputAction);
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.focus != null && !this.focus.isDisabled()) {
-      return this.focus.releasedThisFrame(inputAction);
+      return this.focus.inputActionReleased(action);
     }
 
     return InputPropagation.PROPAGATE;

@@ -16,8 +16,6 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.OverflowMode;
@@ -43,6 +41,7 @@ import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.LodString;
@@ -59,7 +58,6 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
-import legend.game.types.BackgroundType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
@@ -92,6 +90,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
@@ -159,6 +158,9 @@ import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubm
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
 public final class Scus94491BpeSegment_8002 {
@@ -2248,7 +2250,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.flags_08 |= 0x1;
         } else {
           //LAB_8002686c
-          if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
             setTextboxArrowPosition(textboxIndex, false);
 
             if(textboxText.type_04 == 1 || textboxText.type_04 == 4) {
@@ -2267,7 +2269,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _6 -> {
         //LAB_800268dc
-        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
           textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
         }
       }
@@ -2282,7 +2284,7 @@ public final class Scus94491BpeSegment_8002 {
 
         //LAB_80026928
         if((textboxText.flags_08 & TextboxText84.NO_INPUT) == 0) {
-          if(Input.getButtonState(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
+          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
             boolean found = false;
 
             //LAB_80026954
@@ -2358,7 +2360,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _11 -> {
         //LAB_80026a98
-        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
           setTextboxArrowPosition(textboxIndex, false);
           clearTextboxChars(textboxIndex);
 
@@ -2453,7 +2455,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.state_00 = TextboxTextState._16;
         } else {
           //LAB_80026cd0
-          if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
             textboxText.delete();
             textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             setTextboxArrowPosition(textboxIndex, false);
@@ -2496,16 +2498,16 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_8002659c
       case _18 -> {
         //LAB_80026d94
-        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           playSound(0, 2, (short)0, (short)0);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68;
         } else {
           //LAB_80026df0
-          if(!Input.getButtonState(InputAction.DPAD_DOWN) && !Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+          if(!PLATFORM.isActionHeld(INPUT_ACTION_MENU_DOWN.get())) {
             //LAB_80026ee8
-            if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+            if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
               if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                 //LAB_80026f38
                 playSound(0, 1, (short)0, (short)0);
@@ -2596,7 +2598,7 @@ public final class Scus94491BpeSegment_8002 {
               playSound(0, 1, (short)0, (short)0);
 
               //LAB_80026ee8
-              if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+              if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
                 if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                   //LAB_80026f38
                   playSound(0, 1, (short)0, (short)0);
@@ -2788,14 +2790,14 @@ public final class Scus94491BpeSegment_8002 {
 
       case SELECTION_22 -> {
         //LAB_80027354
-        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           playSound(0, 2, (short)0, (short)0);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68 - textboxText.minSelectionLine_72;
         } else {
           //LAB_800273bc
-          if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
             textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
             textboxText.selectionLine_68--;
 
@@ -2809,7 +2811,7 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_80027420
-          if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_DOWN.get())) {
             textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
             textboxText.selectionLine_68++;
 
@@ -4024,23 +4026,23 @@ public final class Scus94491BpeSegment_8002 {
 
     switch(mode) {
       case 0 -> stopRumble(pad);
-      case 1 -> Input.rumble(0.25f, 0);
+      case 1 -> PLATFORM.rumble(0.25f, 0);
       case 2 -> {
         if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-          Input.rumble(0.3f, 0);
+          PLATFORM.rumble(0.3f, 0);
         } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-          Input.rumble(0.75f - rumbleDampener_800bee80, 0);
+          PLATFORM.rumble(0.75f - rumbleDampener_800bee80, 0);
         } else {
-          Input.rumble(0.75f, 0);
+          PLATFORM.rumble(0.75f, 0);
         }
       }
       case 3 -> {
         if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-          Input.rumble(0.4f, 0);
+          PLATFORM.rumble(0.4f, 0);
         } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-          Input.rumble(1.0f - rumbleDampener_800bee80, 0);
+          PLATFORM.rumble(1.0f - rumbleDampener_800bee80, 0);
         } else {
-          Input.rumble(1.0f, 0);
+          PLATFORM.rumble(1.0f, 0);
         }
       }
     }
@@ -4064,7 +4066,7 @@ public final class Scus94491BpeSegment_8002 {
       intensity -= rumbleDampener_800bee80;
     }
 
-    Input.rumble(intensity, 0);
+    PLATFORM.rumble(intensity, 0);
   }
 
   @Method(0x8002bda4L)
@@ -4089,13 +4091,13 @@ public final class Scus94491BpeSegment_8002 {
       divisor = vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier();
     }
 
-    Input.adjustRumble(intensity / (float)0x1ff, frames / divisor * 50);
+    PLATFORM.adjustRumble(intensity / (float)0x1ff, frames / divisor * 50);
   }
 
   @Method(0x8002c150L)
   public static void stopRumble(final int pad) {
     LOGGER.debug("stopRumble");
-    Input.stopRumble();
+    PLATFORM.stopRumble();
   }
 
   @Method(0x8002c178L)

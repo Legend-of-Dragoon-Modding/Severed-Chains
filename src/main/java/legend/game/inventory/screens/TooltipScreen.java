@@ -1,10 +1,13 @@
 package legend.game.inventory.screens;
 
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Panel;
 
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
 public class TooltipScreen extends MenuScreen {
   private static final int PADDING = 3;
@@ -26,12 +29,12 @@ public class TooltipScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_NORTH || inputAction == InputAction.BUTTON_SOUTH || inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_HELP.get() || action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) {
       playMenuSound(3);
       this.deferAction(() -> this.getStack().popScreen());
       return InputPropagation.HANDLED;

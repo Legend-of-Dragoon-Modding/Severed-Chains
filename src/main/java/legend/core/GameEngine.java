@@ -13,14 +13,16 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
-import legend.core.opengl.Window;
+import legend.core.platform.PlatformManager;
+import legend.core.platform.SdlPlatformManager;
+import legend.core.platform.WindowEvents;
+import legend.core.platform.input.InputBindings;
 import legend.core.spu.Spu;
 import legend.game.EngineStateEnum;
 import legend.game.Main;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
-import legend.game.input.Input;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
@@ -102,6 +104,7 @@ public final class GameEngine {
   public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
 
+  public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
 
   public static final Gte GTE;
@@ -142,10 +145,10 @@ public final class GameEngine {
   private static Updater.Release UPDATE;
   private static boolean UPDATE_CHECK_FINISHED;
 
-  private static Window.Events.Resize onResize;
-  private static Window.Events.Key onKeyPress;
-  private static Window.Events.Click onMouseRelease;
-  private static Window.Events.OnPressedThisFrame onPressedThisFrame;
+  private static WindowEvents.Resize onResize;
+  private static WindowEvents.KeyPressed onKeyPressed;
+  private static WindowEvents.ButtonPressed onButtonPressed;
+  private static WindowEvents.Click onMouseRelease;
   private static Runnable onShutdown;
 
   private static Texture title1Texture;
@@ -228,6 +231,8 @@ public final class GameEngine {
       }
     });
 
+    PLATFORM.init();
+
     thread.start();
 
     // Find and load all mods so their global config can be shown in the title screen options menu
@@ -245,8 +250,7 @@ public final class GameEngine {
 
     SPU.init();
     RENDERER.init();
-    RENDERER.events().onShutdown(Loader::shutdownLoader);
-    Input.init();
+    RENDERER.events().onClose(Loader::shutdownLoader);
     GPU.init();
 
     try {
@@ -255,8 +259,8 @@ public final class GameEngine {
     } finally {
       AUDIO_THREAD.destroy();
       RENDERER.delete();
-      Input.destroy();
       UPDATER.delete();
+      PLATFORM.destroy();
     }
   }
 
@@ -288,16 +292,21 @@ public final class GameEngine {
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);
 
-    // Initialize config registry and fire off config registry events
+    // Initialize config and input registries
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+    REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
 
     MOD_ACCESS.loadingComplete();
+
+    // Load default bindings for input actions
+    InputBindings.loadBindings();
 
     return missingMods;
   }
 
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
+    InputBindings.loadBindings();
     ItemIcon.loadIconMap();
   }
 
@@ -377,9 +386,9 @@ public final class GameEngine {
       onResize = null;
     }
 
-    if(onKeyPress != null) {
-      RENDERER.events().removeKeyPress(onKeyPress);
-      onKeyPress = null;
+    if(onKeyPressed != null) {
+      RENDERER.events().removeKeyPress(onKeyPressed);
+      onKeyPressed = null;
     }
 
     if(onMouseRelease != null) {
@@ -387,13 +396,13 @@ public final class GameEngine {
       onMouseRelease = null;
     }
 
-    if(onPressedThisFrame != null) {
-      RENDERER.events().removePressedThisFrame(onPressedThisFrame);
-      onPressedThisFrame = null;
+    if(onButtonPressed != null) {
+      RENDERER.events().removeButtonPress(onButtonPressed);
+      onButtonPressed = null;
     }
 
     if(onShutdown != null) {
-      RENDERER.events().removeShutdown(onShutdown);
+      RENDERER.events().removeClose(onShutdown);
       onShutdown = null;
     }
 
@@ -433,14 +442,16 @@ public final class GameEngine {
     RENDERER.setRenderCallback(GameEngine::renderIntro);
     RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
-    onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
-      if(mods == 0) {
+    onKeyPressed = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
+      if(mods.isEmpty()) {
         skip();
       }
     });
+
+    onButtonPressed = RENDERER.events().onButtonPress((window, button, repeat) -> skip());
+
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
-    onPressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> skip());
-    onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
+    onShutdown = RENDERER.events().onClose(Unpacker::stop);
   }
 
   private static void skip() {

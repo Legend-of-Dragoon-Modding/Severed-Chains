@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Checkbox;
 import legend.game.inventory.screens.controls.Label;
@@ -20,6 +20,8 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
 public class ModsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -84,18 +86,18 @@ public class ModsScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       playMenuSound(3);
       this.unload.run();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_NORTH) {
+    if(action == INPUT_ACTION_MENU_HELP.get() && !repeat) {
       final String text = this.helpText.get(this.getHighlightedRow());
       if(text != null) {
         playMenuSound(1);

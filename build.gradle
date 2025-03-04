@@ -23,7 +23,7 @@ java {
 
 compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.3.3"
+project.ext.lwjglVersion = "3.4.0-SNAPSHOT"
 project.ext.jomlVersion = "1.10.8"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
@@ -54,6 +54,7 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 repositories {
   mavenCentral()
   mavenLocal()
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
@@ -68,6 +69,7 @@ dependencies {
 
   api "org.lwjgl:lwjgl"
   api "org.lwjgl:lwjgl-glfw"
+  api "org.lwjgl:lwjgl-sdl"
   api "org.lwjgl:lwjgl-nuklear"
   api "org.lwjgl:lwjgl-opengl"
   api "org.lwjgl:lwjgl-openal"
@@ -75,14 +77,13 @@ dependencies {
   api "org.lwjgl:lwjgl-stb"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-sdl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
-
-  api group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.30.0.0'
 
   implementation group: 'com.vaadin', name: 'open', version: '8.5.0.4' // opening links in a web browser
   implementation group: 'org.asynchttpclient', name: 'async-http-client', version: '3.0.1' // update check

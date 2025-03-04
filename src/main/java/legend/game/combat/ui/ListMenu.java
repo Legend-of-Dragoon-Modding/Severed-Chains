@@ -8,15 +8,21 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.scripting.RunningScript;
 import legend.game.types.Translucency;
-import legend.lodmod.LodMod;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public abstract class ListMenu {
   private static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = new BattleMenuBackgroundUvMetrics04(224, 8, 16, 8);
@@ -153,7 +159,7 @@ public abstract class ListMenu {
       case 2 -> {
         this.flags_02 &= ~(0x100 | 0x200);
 
-        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_PAGE_UP.get())) {
           if(this.listIndex_24 != 0) {
             this.listIndex_24 = 0;
             this.menuState_00 = 5;
@@ -164,7 +170,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4d54
-        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_PAGE_DOWN.get())) {
           final int oldScroll = this.listIndex_24;
 
           if(this.getListCount() - 1 >= this.listScroll_1e + 6) {
@@ -185,7 +191,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4dc4
-        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_HOME.get())) {
           if(this.listScroll_1e == 0) {
             break;
           }
@@ -207,7 +213,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4e40
-        if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_END.get())) {
           if(this.listScroll_1e + 6 >= this.getListCount() - 1) {
             break;
           }
@@ -226,7 +232,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4ecc
-        if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+        if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
           if(this.listIndex_24 != 0) {
             this.menuState_00 = 5;
             this.listIndex_24--;
@@ -249,7 +255,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f4f74
-        if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+        if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_DOWN.get())) {
           if(this.listIndex_24 != this.getListCount() - 1) {
             if(this.listScroll_1e + this.listIndex_24 + 1 < this.getListCount()) {
               playMenuSound(1);
@@ -275,7 +281,7 @@ public abstract class ListMenu {
         //LAB_800f5044
         this.scrollCounter_90 = 0;
 
-        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           //LAB_800f5078
           this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
@@ -296,7 +302,7 @@ public abstract class ListMenu {
         }
 
         //LAB_800f5208
-        if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(3);
           this.menuState_00 = 8;
           this.flags_02 &= ~0x8;

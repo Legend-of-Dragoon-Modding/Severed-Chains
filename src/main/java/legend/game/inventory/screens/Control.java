@@ -1,9 +1,14 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
 import legend.game.SItem;
-import legend.game.input.InputAction;
 import legend.game.types.Renderable58;
+
+import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
@@ -296,7 +301,7 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
     }
@@ -347,17 +352,68 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
+  protected InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
     }
 
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+    if(super.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.keyPressHandler != null) {
-      return this.keyPressHandler.keyPress(key, scancode, mods);
+      return this.keyPressHandler.keyPress(key, scancode, mods, repeat);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation keyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(super.keyRelease(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.keyReleaseHandler != null) {
+      return this.keyReleaseHandler.keyRelease(key, scancode, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation buttonPress(final InputButton button, final boolean repeat) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(super.buttonPress(button, repeat) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.buttonPressHandler != null) {
+      return this.buttonPressHandler.buttonPress(button, repeat);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation buttonRelease(final InputButton button) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(super.buttonRelease(button) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.buttonReleaseHandler != null) {
+      return this.buttonReleaseHandler.buttonRelease(button);
     }
 
     return InputPropagation.PROPAGATE;
@@ -381,51 +437,34 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
     }
 
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.pressedThisFrameHandler != null) {
-      return this.pressedThisFrameHandler.pressedThisFrame(inputAction);
+    if(this.inputActionPressedHandler != null) {
+      return this.inputActionPressedHandler.pressed(action, repeat);
     }
 
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+  protected InputPropagation inputActionReleased(final InputAction action) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
     }
 
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.pressedWithRepeatPulseHandler != null) {
-      return this.pressedWithRepeatPulseHandler.pressedWithRepeatPulse(inputAction);
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(this.isDisabled()) {
-      return InputPropagation.PROPAGATE;
-    }
-
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.releasedThisFrameHandler != null) {
-      return this.releasedThisFrameHandler.releasedThisFrame(inputAction);
+    if(this.inputActionReleasedHandler != null) {
+      return this.inputActionReleasedHandler.release(action);
     }
 
     return InputPropagation.PROPAGATE;
@@ -467,20 +506,28 @@ public abstract class Control extends ControlHost {
     this.keyPressHandler = handler;
   }
 
+  public void onKeyRelease(final KeyRelease handler) {
+    this.keyReleaseHandler = handler;
+  }
+
+  public void onButtonPress(final ButtonPress handler) {
+    this.buttonPressHandler = handler;
+  }
+
+  public void onButtonRelease(final ButtonRelease handler) {
+    this.buttonReleaseHandler = handler;
+  }
+
   public void onCharPress(final CharPress handler) {
     this.charPressHandler = handler;
   }
 
-  public void onPressedThisFrame(final PressedThisFrame handler) {
-    this.pressedThisFrameHandler = handler;
+  public void onInputActionPressed(final InputActionPressed handler) {
+    this.inputActionPressedHandler = handler;
   }
 
-  public void onPressedWithRepeatPulse(final PressedWithRepeatPulse handler) {
-    this.pressedWithRepeatPulseHandler = handler;
-  }
-
-  public void onReleasedThisFrame(final ReleasedThisFrame handler) {
-    this.releasedThisFrameHandler = handler;
+  public void onInputActionReleased(final InputActionReleased handler) {
+    this.inputActionReleasedHandler = handler;
   }
 
   private HoverIn hoverInHandler;
@@ -492,22 +539,26 @@ public abstract class Control extends ControlHost {
   private MouseScroll mouseScrollHandler;
   private MouseScrollHighRes mouseScrollHighResHandler;
   private KeyPress keyPressHandler;
+  private KeyRelease keyReleaseHandler;
+  private ButtonPress buttonPressHandler;
+  private ButtonRelease buttonReleaseHandler;
   private CharPress charPressHandler;
-  private PressedThisFrame pressedThisFrameHandler;
-  private PressedWithRepeatPulse pressedWithRepeatPulseHandler;
-  private ReleasedThisFrame releasedThisFrameHandler;
+  private InputActionPressed inputActionPressedHandler;
+  private InputActionReleased inputActionReleasedHandler;
 
   @FunctionalInterface public interface HoverIn { void hoverIn(); }
   @FunctionalInterface public interface HoverOut { void hoverOut(); }
   @FunctionalInterface public interface GotFocus { void gotFocus(); }
   @FunctionalInterface public interface LostFocus { void lostFocus(); }
   @FunctionalInterface public interface MouseMove { InputPropagation mouseMove(final int x, final int y); }
-  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final int x, final int y, final int button, final int mods); }
+  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods); }
   @FunctionalInterface public interface MouseScroll { InputPropagation mouseScroll(final int deltaX, final int deltaY); }
   @FunctionalInterface public interface MouseScrollHighRes { InputPropagation mouseScroll(final double deltaX, final double deltaY); }
-  @FunctionalInterface public interface KeyPress { InputPropagation keyPress(final int key, final int scancode, final int mods); }
+  @FunctionalInterface public interface KeyPress { InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat); }
+  @FunctionalInterface public interface KeyRelease { InputPropagation keyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods); }
+  @FunctionalInterface public interface ButtonPress { InputPropagation buttonPress(final InputButton button, final boolean repeat); }
+  @FunctionalInterface public interface ButtonRelease { InputPropagation buttonRelease(final InputButton button); }
   @FunctionalInterface public interface CharPress { InputPropagation charPress(final int codepoint); }
-  @FunctionalInterface public interface PressedThisFrame { InputPropagation pressedThisFrame(final InputAction inputAction); }
-  @FunctionalInterface public interface PressedWithRepeatPulse { InputPropagation pressedWithRepeatPulse(final InputAction inputAction); }
-  @FunctionalInterface public interface ReleasedThisFrame { InputPropagation releasedThisFrame(final InputAction inputAction); }
+  @FunctionalInterface public interface InputActionPressed { InputPropagation pressed(final InputAction action, final boolean repeat); }
+  @FunctionalInterface public interface InputActionReleased { InputPropagation release(final InputAction action); }
 }

@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Glyph;
@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class VerticalLayoutScreen extends MenuScreen {
   private static final int MAX_VISIBLE_ENTRIES = 14;
@@ -210,21 +213,6 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
   }
 
-  private void menuNavigateTop() {
-    if(this.highlightedRow != this.scroll) {
-      playMenuSound(1);
-      this.highlightRow(this.scroll);
-    }
-  }
-
-  private void menuNavigateBottom() {
-    final int targetRow = this.scroll + this.visibleEntries() - 1;
-    if(this.highlightedRow != targetRow) {
-      playMenuSound(1);
-      this.highlightRow(targetRow);
-    }
-  }
-
   private void menuNavigatePageUp() {
     if(this.scroll - MAX_VISIBLE_ENTRIES > 0) {
       playMenuSound(1);
@@ -274,96 +262,52 @@ public class VerticalLayoutScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    switch(key) {
-      case GLFW_KEY_HOME -> {
-        this.menuNavigateHome();
-        return InputPropagation.HANDLED;
-      }
-
-      case GLFW_KEY_END -> {
-        this.menuNavigateEnd();
-        return InputPropagation.HANDLED;
-      }
-
-      case GLFW_KEY_PAGE_UP -> {
-        this.menuNavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      case GLFW_KEY_PAGE_DOWN -> {
-        this.menuNavigatePageDown();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+    if(action == INPUT_ACTION_MENU_UP.get()) {
+      this.menuNavigateUp();
+      this.allowWrapY = false;
       return InputPropagation.HANDLED;
     }
 
-    switch(inputAction) {
-      case BUTTON_SHOULDER_LEFT_1 -> {
-        this.menuNavigateTop();
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.menuNavigateDown();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
 
-      case BUTTON_SHOULDER_LEFT_2 -> {
-        this.menuNavigateBottom();
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_HOME.get()) {
+      this.menuNavigateHome();
+      return InputPropagation.HANDLED;
+    }
 
-      case BUTTON_SOUTH -> {
-        final Control control = this.configControls.get(this.highlightedRow);
-        if(control != null) {
-          if(control instanceof final Button button) {
-            this.deferAction(button::press);
-          } else {
-            this.deferAction(control::focus);
-          }
+    if(action == INPUT_ACTION_MENU_END.get()) {
+      this.menuNavigateEnd();
+      return InputPropagation.HANDLED;
+    }
 
-          return InputPropagation.HANDLED;
+    if(action == INPUT_ACTION_MENU_PAGE_UP.get()) {
+      this.menuNavigatePageUp();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
+      this.menuNavigatePageDown();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      final Control control = this.configControls.get(this.highlightedRow);
+      if(control != null) {
+        if(control instanceof final Button button) {
+          this.deferAction(button::press);
+        } else {
+          this.deferAction(control::focus);
         }
-      }
-    }
 
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    switch(inputAction) {
-      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-        this.menuNavigateUp();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        this.menuNavigateDown();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_1 -> {
-        this.menuNavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_2 -> {
-        this.menuNavigatePageDown();
         return InputPropagation.HANDLED;
       }
     }
@@ -372,12 +316,12 @@ public class VerticalLayoutScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
       this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }

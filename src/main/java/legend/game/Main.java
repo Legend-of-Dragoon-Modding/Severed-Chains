@@ -37,6 +37,7 @@ public final class Main {
 
   public static void main(final String[] args) {
     try {
+      LOGGER.info("Initialising LWJGL version %s", org.lwjgl.Version.getVersion());
       GameEngine.start();
     } catch(final Throwable e) {
       boolean generatedCrashSave = false;

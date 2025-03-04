@@ -3,11 +3,15 @@ package legend.game.inventory.screens.controls;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
+
+import java.util.Set;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.charWidth;
@@ -15,13 +19,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 public class Textbox extends Control {
   private final Panel background;
@@ -115,7 +112,7 @@ public class Textbox extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -133,47 +130,39 @@ public class Textbox extends Control {
   }
 
   @Override
-  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  protected InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
+    if(super.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(key == GLFW_KEY_LEFT) {
-      if(mods == 0) {
-        this.setCaretIndex(this.caretIndex - 1);
-      }
+    if(key == InputKey.LEFT && mods.isEmpty()) {
+      this.setCaretIndex(this.caretIndex - 1);
     }
 
-    if(key == GLFW_KEY_RIGHT) {
-      if(mods == 0) {
-        this.setCaretIndex(this.caretIndex + 1);
-      }
+    if(key == InputKey.RIGHT && mods.isEmpty()) {
+      this.setCaretIndex(this.caretIndex + 1);
     }
 
-    if(key == GLFW_KEY_UP) {
-      if(mods == 0) {
-        this.setCaretIndex(0);
-      }
+    if(key == InputKey.UP && mods.isEmpty()) {
+      this.setCaretIndex(0);
     }
 
-    if(key == GLFW_KEY_DOWN) {
-      if(mods == 0) {
-        this.setCaretIndex(this.text.length());
-      }
+    if(key == InputKey.DOWN && mods.isEmpty()) {
+      this.setCaretIndex(this.text.length());
     }
 
-    if(key == GLFW_KEY_BACKSPACE && this.caretIndex > 0) {
+    if(key == InputKey.BACKSPACE && this.caretIndex > 0) {
       this.updateText(this.text.substring(0, this.caretIndex - 1) + this.text.substring(this.caretIndex));
       this.setCaretIndex(this.caretIndex - 1);
       this.fireChangedEvent();
     }
 
-    if(key == GLFW_KEY_DELETE && this.caretIndex < this.text.length()) {
+    if(key == InputKey.DELETE && this.caretIndex < this.text.length()) {
       this.updateText(this.text.substring(0, this.caretIndex) + this.text.substring(this.caretIndex + 1));
       this.fireChangedEvent();
     }
 
-    if(key == GLFW_KEY_ESCAPE) {
+    if(key == InputKey.ESCAPE) {
       this.deferAction(this::unfocus);
     }
 
@@ -200,12 +189,12 @@ public class Textbox extends Control {
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
     return InputPropagation.HANDLED;
   }
 
   @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+  protected InputPropagation inputActionReleased(final InputAction action) {
     return InputPropagation.HANDLED;
   }
 

@@ -20,7 +20,6 @@ import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
@@ -40,8 +39,8 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier();
-      case 3 -> currentEngineState_8004dd04.getScriptInput(SCRIPTS.joypadInput);
-      case 4 -> currentEngineState_8004dd04.getScriptInput(SCRIPTS.joypadPress);
+      case 3 -> currentEngineState_8004dd04.getInputsHeld();
+      case 4 -> currentEngineState_8004dd04.getInputsPressed();
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0];
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8;
@@ -62,12 +61,12 @@ public class GameVarParam extends Param {
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0;
       case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-      case 26 -> SCRIPTS.joypadRepeat;
-      case 27 -> Scus94491BpeSegment_800b.analogInput_800beebc;
-      case 28 -> Scus94491BpeSegment_800b.analogAngle_800bee9c;
+      case 26 -> currentEngineState_8004dd04.getInputsRepeat();
+      case 27 -> currentEngineState_8004dd04.getAnalogueMagnitude() != 0.0f ? 1 : 0;
+      case 28 -> Math.floorMod((int)(currentEngineState_8004dd04.getAnalogueAngle() * 0x800 / Math.PI) + 0x400, 0x1000); // 0..0x1000, clockwise, up=0;
       case 29 -> Scus94491BpeSegment_800b._800beea4;
       case 30 -> Scus94491BpeSegment_800b._800beeac;
-      case 31 -> Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
+      case 31 -> (int)(currentEngineState_8004dd04.getAnalogueMagnitude() * 0xff);
       case 32 -> battleState_8006e398.allBents_e0c[0] != null ? battleState_8006e398.allBents_e0c[0].index : -1;
       case 33 -> battleState_8006e398.getAllBentCount();
       case 34 -> battleState_8006e398.playerBents_e40[0] != null ? battleState_8006e398.playerBents_e40[0].index : -1;
@@ -173,8 +172,6 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
-      case 3 -> Scus94491BpeSegment_800b.input_800bee90 = val;
-      case 4 -> Scus94491BpeSegment_800b.press_800bee94 = val;
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94 = val;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0] = val;
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8 = val;
@@ -195,12 +192,8 @@ public class GameVarParam extends Param {
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8 = val;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0 = val;
       case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8 = val;
-      case 26 -> Scus94491BpeSegment_800b.repeat_800bee98 = val;
-      case 27 -> Scus94491BpeSegment_800b.analogInput_800beebc = val;
-      case 28 -> Scus94491BpeSegment_800b.analogAngle_800bee9c = val;
       case 29 -> Scus94491BpeSegment_800b._800beea4 = val;
       case 30 -> Scus94491BpeSegment_800b._800beeac = val;
-      case 31 -> Scus94491BpeSegment_800b.analogMagnitude_800beeb4 = val;
       case 32 -> battleState_8006e398.allBents_e0c[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
 //      case 33 -> battleState_8006e398.allBentCount_800c66d0 = val;
       case 34 -> battleState_8006e398.playerBents_e40[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];

@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
@@ -31,6 +31,7 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 
 public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
@@ -125,8 +126,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -134,7 +135,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get()) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }

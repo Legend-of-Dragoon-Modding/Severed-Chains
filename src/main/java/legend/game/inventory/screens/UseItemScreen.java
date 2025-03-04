@@ -2,14 +2,17 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
+
+import java.util.Set;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
@@ -38,10 +41,16 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class UseItemScreen extends MenuScreen {
   private static final String HP_recovered_for_all_8011cfcc = "HP recovered for all";
@@ -251,12 +260,12 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(mods != 0) {
+    if(!mods.isEmpty()) {
       return InputPropagation.PROPAGATE;
     }
 
@@ -444,22 +453,6 @@ public class UseItemScreen extends MenuScreen {
     this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
   }
 
-  private void menuStage2NavigateTop() {
-    if(this.selectedSlot != 0) {
-      playMenuSound(1);
-      this.selectedSlot = 0;
-      this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
-    }
-  }
-
-  private void menuStage2NavigateBottom() {
-    if(this.selectedSlot != 4) {
-      playMenuSound(1);
-      this.selectedSlot = 4;
-      this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
-    }
-  }
-
   private void menuStage2NavigatePageUp() {
     if(this.slotScroll - 4 >= 0) {
       this.scroll(this.slotScroll - 4);
@@ -595,71 +588,70 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
-      switch(key) {
-        case GLFW_KEY_HOME -> {
-          this.menuStage2NavigateHome();
-          return InputPropagation.HANDLED;
-        }
-
-        case GLFW_KEY_END -> {
-          this.menuStage2NavigateEnd();
-          return InputPropagation.HANDLED;
-        }
-
-        case GLFW_KEY_PAGE_UP -> {
-          this.menuStage2NavigatePageUp();
-          return InputPropagation.HANDLED;
-        }
-
-        case GLFW_KEY_PAGE_DOWN -> {
-          this.menuStage2NavigatePageDown();
-          return InputPropagation.HANDLED;
-        }
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.loadingStage == 2) {
-      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_1) {
-        this.menuStage2NavigateTop();
+      if(action == INPUT_ACTION_MENU_HOME.get()) {
+        this.menuStage2NavigateHome();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_2) {
-        this.menuStage2NavigateBottom();
+      if(action == INPUT_ACTION_MENU_END.get()) {
+        this.menuStage2NavigateEnd();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_EAST) {
+      if(action == INPUT_ACTION_MENU_PAGE_UP.get()) {
+        this.menuStage2NavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
+        this.menuStage2NavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        this.menuStage2NavigateUp();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        this.menuStage2NavigateDown();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
         this.menuStage2Escape();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SOUTH) {
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
         this.menuStage2Select();
         return InputPropagation.HANDLED;
       }
     } else if(this.loadingStage == 3) {
-      if(inputAction == InputAction.BUTTON_EAST) {
+      if(action == INPUT_ACTION_MENU_LEFT.get()) {
+        this.menuStage3NavigateLeft();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_RIGHT.get()) {
+        this.menuStage3NavigateRight();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
         this.menuStage3Escape();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SOUTH) {
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
         this.menuStage3Select();
         return InputPropagation.HANDLED;
       }
@@ -669,56 +661,13 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.menuStage2NavigateUp();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.menuStage2NavigateDown();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
-        this.menuStage2NavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
-        this.menuStage2NavigatePageDown();
-        return InputPropagation.HANDLED;
-      }
-    } else if(this.loadingStage == 3) {
-      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-        this.menuStage3NavigateLeft();
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-        this.menuStage3NavigateRight();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.loadingStage == 2) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
         this.allowWrapY = true;
         return InputPropagation.HANDLED;
       }

@@ -1,7 +1,8 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
@@ -12,6 +13,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
@@ -22,10 +24,13 @@ import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
@@ -239,7 +244,7 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -311,20 +316,6 @@ public class ListBox<T> extends Control {
     }
   }
 
-  private void menuNavigateTop() {
-    if(this.slot != 0) {
-      playMenuSound(1);
-      this.select(0);
-    }
-  }
-
-  private void menuNavigateBottom() {
-    if(this.slot != this.maxVisibleEntries - 1) {
-      playMenuSound(1);
-      this.select(this.maxVisibleEntries - 1);
-    }
-  }
-
   private void menuNavigatePageUp() {
     if(this.scroll - this.maxVisibleEntries >= 0) {
       playMenuSound(1);
@@ -373,114 +364,70 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    switch(key) {
-      case GLFW_KEY_HOME -> {
-        this.menuNavigateHome();
+    if(action == INPUT_ACTION_MENU_HOME.get()) {
+      this.menuNavigateHome();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_END.get()) {
+      this.menuNavigateEnd();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_PAGE_UP.get()) {
+      this.menuNavigatePageUp();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
+      this.menuNavigatePageDown();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_UP.get()) {
+      this.menuNavigateUp();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.menuNavigateDown();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      if(this.isEmpty()) {
+        playMenuSound(40);
         return InputPropagation.HANDLED;
       }
 
-      case GLFW_KEY_END -> {
-        this.menuNavigateEnd();
+      if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {
         return InputPropagation.HANDLED;
       }
 
-      case GLFW_KEY_PAGE_UP -> {
-        this.menuNavigatePageUp();
-        return InputPropagation.HANDLED;
+      if(this.selectionHandler != null) {
+        this.selectionHandler.selection(this.getSelectedEntry());
       }
 
-      case GLFW_KEY_PAGE_DOWN -> {
-        this.menuNavigatePageDown();
-        return InputPropagation.HANDLED;
-      }
+      return InputPropagation.HANDLED;
     }
 
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    switch(inputAction) {
-      case BUTTON_SHOULDER_LEFT_1 -> {
-        this.menuNavigateTop();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_LEFT_2 -> {
-        this.menuNavigateBottom();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SOUTH -> {
-        if(this.isEmpty()) {
-          playMenuSound(40);
-          return InputPropagation.HANDLED;
-        }
-
-        if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {
-          return InputPropagation.HANDLED;
-        }
-
-        if(this.selectionHandler != null) {
-          this.selectionHandler.selection(this.getSelectedEntry());
-        }
-
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    switch(inputAction) {
-      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-        this.menuNavigateUp();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        this.menuNavigateDown();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_1 -> {
-        this.menuNavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      case BUTTON_SHOULDER_RIGHT_2 -> {
-        this.menuNavigatePageDown();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
       this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }

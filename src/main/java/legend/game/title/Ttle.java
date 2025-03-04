@@ -20,12 +20,12 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
-import legend.core.opengl.Window;
+import legend.core.platform.Window;
+import legend.core.platform.WindowEvents;
+import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.FontOptions;
@@ -51,7 +51,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -65,6 +64,7 @@ import java.util.function.Supplier;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.getUpdate;
@@ -92,6 +92,9 @@ import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class Ttle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Ttle.class);
@@ -160,9 +163,11 @@ public class Ttle extends EngineState {
 
   private Updater.Release update;
 
-  private static Window.Events.Cursor onMouseMove;
-  private static Window.Events.Click onMouseRelease;
-  private static Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
+  private static WindowEvents.Cursor onMouseMove;
+  private static WindowEvents.Click onMouseRelease;
+  private static WindowEvents.KeyPressed onKeyPressed;
+  private static WindowEvents.ButtonPressed onButtonPressed;
+  private static WindowEvents.InputActionPressed onInputActionPressed;
 
   @Override
   public RenderMode getRenderMode() {
@@ -172,6 +177,8 @@ public class Ttle extends EngineState {
   @Override
   @Method(0x800c7798L)
   public void tick() {
+    super.tick();
+
     switch(this.loadingStage) {
       case 0 -> this.initializeMainMenu();
       case 1 -> this.loadTextures();
@@ -609,10 +616,6 @@ public class Ttle extends EngineState {
     } else {
       if(this.menuLoadingStage == 3 || this.menuLoadingStage == 4) {
         //LAB_800c8388
-        if(this.menuLoadingStage == 3) {
-          this.handleMainInput();
-        }
-
         this.renderMenuOptions();
         this.renderMenuLogo();
         this.renderMenuLogoFire();
@@ -645,7 +648,7 @@ public class Ttle extends EngineState {
 
   private void addInputHandlers() {
     onMouseMove = RENDERER.events().onMouseMove((window, x, y) -> {
-      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
         return;
       }
 
@@ -714,11 +717,11 @@ public class Ttle extends EngineState {
     });
 
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
-      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && !Input.getController().getGuid().isEmpty()) {
+      if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
         return;
       }
 
-      if(button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+      if(button != PLATFORM.getMouseButton(0)) {
         return;
       }
 
@@ -783,55 +786,59 @@ public class Ttle extends EngineState {
       }
     });
 
-    onPressedWithRepeatPulse = RENDERER.events().onPressedWithRepeatPulse((window, inputAction) -> this.resetIdleTime());
+    onKeyPressed = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> this.resetIdleTime());
+    onButtonPressed = RENDERER.events().onButtonPress((window, button, repeat) -> this.resetIdleTime());
+
+    onInputActionPressed = RENDERER.events().onInputActionPressed(this::handleMainInput);
   }
 
   private static void removeInputHandlers() {
     RENDERER.events().removeMouseMove(onMouseMove);
     RENDERER.events().removeMouseRelease(onMouseRelease);
-    RENDERER.events().removePressedWithRepeatPulse(onPressedWithRepeatPulse);
+    RENDERER.events().removeKeyPress(onKeyPressed);
+    RENDERER.events().removeButtonPress(onButtonPressed);
+    RENDERER.events().removeInputActionPressed(onInputActionPressed);
     onMouseMove = null;
     onMouseRelease = null;
-    onPressedWithRepeatPulse = null;
+    onKeyPressed = null;
+    onButtonPressed = null;
   }
 
   @Method(0x800c8484L)
-  private void handleMainInput() {
-    if(this.menuState_800c672c < 3) {
-      if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
-        Open.open("https://github.com/Legend-of-Dragoon-Modding/Severed-Chains");
-      }
+  private void handleMainInput(final Window window, final InputAction action, final boolean repeat) {
+    if(this.menuLoadingStage == 3) {
+      if(this.menuState_800c672c < 3) {
+        if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+          playSound(0, 2, (short)0, (short)0);
 
-      if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) { // Menu button X
-        playSound(0, 2, (short)0, (short)0);
+          this.menuState_800c672c = 3;
+        } else if(action == INPUT_ACTION_MENU_UP.get()) {
+          playSound(0, 1, (short)0, (short)0);
 
-        this.menuState_800c672c = 3;
-      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
-        playSound(0, 1, (short)0, (short)0);
-
-        this.selectedMenuOption--;
-        if(this.selectedMenuOption < 0) {
-          this.selectedMenuOption = MENU_OPTIONS - 1;
-        }
-
-        if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
           this.selectedMenuOption--;
-        }
+          if(this.selectedMenuOption < 0) {
+            this.selectedMenuOption = MENU_OPTIONS - 1;
+          }
 
-        this.menuState_800c672c = 2;
-      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
-        playSound(0, 1, (short)0, (short)0);
+          if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
+            this.selectedMenuOption--;
+          }
 
-        this.selectedMenuOption++;
-        if(this.selectedMenuOption >= MENU_OPTIONS) {
-          this.selectedMenuOption = 0;
-        }
+          this.menuState_800c672c = 2;
+        } else if(action == INPUT_ACTION_MENU_DOWN.get()) {
+          playSound(0, 1, (short)0, (short)0);
 
-        if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
           this.selectedMenuOption++;
-        }
+          if(this.selectedMenuOption >= MENU_OPTIONS) {
+            this.selectedMenuOption = 0;
+          }
 
-        this.menuState_800c672c = 2;
+          if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
+            this.selectedMenuOption++;
+          }
+
+          this.menuState_800c672c = 2;
+        }
       }
     }
   }

@@ -1,8 +1,8 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
+import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
@@ -133,39 +133,21 @@ public class ItemList<T> extends Control {
   }
 
   @Override
-  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    return this.items.keyPress(key, scancode, mods);
+    return this.items.inputActionPressed(action, repeat);
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    return this.items.pressedThisFrame(inputAction);
-  }
-
-  @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    return this.items.pressedWithRepeatPulse(inputAction);
-  }
-
-  @Override
-  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    return this.items.releasedThisFrame(inputAction);
+    return this.items.inputActionReleased(action);
   }
 
   @Override

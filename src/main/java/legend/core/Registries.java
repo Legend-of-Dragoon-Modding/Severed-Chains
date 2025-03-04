@@ -1,5 +1,8 @@
 package legend.core;
 
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputActionRegistry;
+import legend.core.platform.input.InputActionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
@@ -36,6 +39,7 @@ import org.legendofdragoon.modloader.registries.Registry;
 import java.util.function.Consumer;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
+  public final Registry<InputAction> inputActions = this.addRegistry(new InputActionRegistry(), InputActionRegistryEvent::new);
   public final Registry<StatType<?>> statTypes = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
   public final Registry<StatModType<?, ?, ?>> statModTypes = this.addRegistry(new StatModTypeRegistry(), StatModTypeRegistryEvent::new);
   public final Registry<Element> elements = this.addRegistry(new ElementRegistry(), ElementRegistryEvent::new);

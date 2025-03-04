@@ -1,12 +1,15 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.Renderable58;
 
 import java.util.Arrays;
+import java.util.Set;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
@@ -30,9 +33,14 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class AdditionsScreen extends MenuScreen {
   private static final String Addition_cannot_be_used_8011c340 = "Additions cannot be used";
@@ -190,16 +198,16 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.loadingStage != 2 || mods != 0) {
+    if(this.loadingStage != 2 || !mods.isEmpty()) {
       return InputPropagation.PROPAGATE;
     }
 
-    if(button == GLFW_MOUSE_BUTTON_LEFT && this.additions[0].offset_00 != -1) {
+    if(button == PLATFORM.getMouseButton(0) && this.additions[0].offset_00 != -1) {
       for(int i = 0; i < 7; i++) {
         if(MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
           this.selectedSlot = i;
@@ -321,29 +329,8 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    switch(key) {
-      case GLFW_KEY_HOME -> {
-        this.menuNavigateHome();
-        return InputPropagation.HANDLED;
-      }
-
-      case GLFW_KEY_END -> {
-        this.menuNavigateEnd();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -351,34 +338,56 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    switch(inputAction) {
-      case BUTTON_SHOULDER_LEFT_1 -> {
-        this.menuNavigateHome();
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_HOME.get()) {
+      this.menuNavigateHome();
+      return InputPropagation.HANDLED;
+    }
 
-      case BUTTON_SHOULDER_LEFT_2 -> {
-        this.menuNavigateEnd();
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_END.get()) {
+      this.menuNavigateEnd();
+      return InputPropagation.HANDLED;
+    }
 
-      case BUTTON_EAST -> {
-        this.menuEscape();
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_UP.get()) {
+      this.menuNavigateUp();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
 
-      case BUTTON_SOUTH -> {
-        this.menuSelect();
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.menuNavigateDown();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_LEFT.get()) {
+      this.menuNavigateLeft();
+      this.allowWrapX = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_RIGHT.get()) {
+      this.menuNavigateRight();
+      this.allowWrapX = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+      this.menuEscape();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      this.menuSelect();
+      return InputPropagation.HANDLED;
     }
 
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -386,51 +395,12 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    switch(inputAction) {
-      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-        this.menuNavigateUp();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        this.menuNavigateDown();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
-        this.menuNavigateLeft();
-        this.allowWrapX = false;
-        return InputPropagation.HANDLED;
-      }
-
-      case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
-        this.menuNavigateRight();
-        this.allowWrapX = false;
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.loadingStage != 2) {
-      return InputPropagation.PROPAGATE;
-    }
-
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
       this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT || inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+    if(action == INPUT_ACTION_MENU_LEFT.get() || action == INPUT_ACTION_MENU_RIGHT.get()) {
       this.allowWrapX = true;
       return InputPropagation.HANDLED;
     }

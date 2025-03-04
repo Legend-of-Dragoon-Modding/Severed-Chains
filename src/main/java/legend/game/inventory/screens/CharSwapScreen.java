@@ -2,10 +2,13 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
+
+import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.FUN_80104b60;
@@ -26,6 +29,12 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class CharSwapScreen extends MenuScreen {
   private int loadingStage;
@@ -235,7 +244,7 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -426,35 +435,67 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
       // primary character left side
-      switch(inputAction) {
-        case BUTTON_EAST -> {
-          this.menuStage2Escape();
-          return InputPropagation.HANDLED;
-        }
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        this.menuStage2NavigateUp();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
 
-        case BUTTON_SOUTH -> {
-          this.menuStage2Select();
-          return InputPropagation.HANDLED;
-        }
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        this.menuStage2NavigateDown();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+        this.menuStage2Escape();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+        this.menuStage2Select();
+        return InputPropagation.HANDLED;
       }
     } else if(this.loadingStage == 3) {
-      switch(inputAction) {
-        case BUTTON_EAST -> {
-          this.menuStage3Escape();
-          return InputPropagation.HANDLED;
-        }
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        this.menuStage3NavigateUp();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
 
-        case BUTTON_SOUTH -> {
-          this.menuStage3Select();
-          return InputPropagation.HANDLED;
-        }
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        this.menuStage3NavigateDown();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_LEFT.get()) {
+        this.menuStage3NavigateLeft();
+        this.allowWrapX = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_RIGHT.get()) {
+        this.menuStage3NavigateRight();
+        this.allowWrapX = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+        this.menuStage3Escape();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+        this.menuStage3Select();
+        return InputPropagation.HANDLED;
       }
     }
 
@@ -462,73 +503,19 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.loadingStage == 2) {
-      // primary character left side
-      switch(inputAction) {
-        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-          this.menuStage2NavigateUp();
-          this.allowWrapY = false;
-          return InputPropagation.HANDLED;
-        }
-
-        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-          this.menuStage2NavigateDown();
-          this.allowWrapY = false;
-          return InputPropagation.HANDLED;
-        }
-      }
-    } else if(this.loadingStage == 3) {
-      switch(inputAction) {
-        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-          this.menuStage3NavigateUp();
-          this.allowWrapY = false;
-          return InputPropagation.HANDLED;
-        }
-
-        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-          this.menuStage3NavigateDown();
-          this.allowWrapY = false;
-          return InputPropagation.HANDLED;
-        }
-
-        case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
-          this.menuStage3NavigateLeft();
-          this.allowWrapX = false;
-          return InputPropagation.HANDLED;
-        }
-
-        case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
-          this.menuStage3NavigateRight();
-          this.allowWrapX = false;
-          return InputPropagation.HANDLED;
-        }
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+    if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 
-    switch(inputAction) {
-      case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP, DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        this.allowWrapY = true;
-        return InputPropagation.HANDLED;
-      }
-
-      case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT, DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
-        this.allowWrapX = true;
-        return InputPropagation.HANDLED;
-      }
+    if(action == INPUT_ACTION_MENU_LEFT.get() || action == INPUT_ACTION_MENU_RIGHT.get()) {
+      this.allowWrapX = true;
+      return InputPropagation.HANDLED;
     }
 
     return InputPropagation.PROPAGATE;

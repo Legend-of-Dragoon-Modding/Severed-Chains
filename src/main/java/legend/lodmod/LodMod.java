@@ -1,6 +1,16 @@
 package legend.lodmod;
 
 import legend.core.GameEngine;
+import legend.core.platform.input.AxisInputActivation;
+import legend.core.platform.input.ButtonInputActivation;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputActionRegistryEvent;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.KeyInputActivation;
+import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.FractionalStat;
@@ -39,6 +49,7 @@ import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
+import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.types.EquipmentSlot;
@@ -66,6 +77,37 @@ public class LodMod {
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
   }
+
+  private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_OPEN_INVENTORY = INPUT_ACTION_REGISTRAR.register("general_open_inventory", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_UP = INPUT_ACTION_REGISTRAR.register("general_move_up", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_DOWN = INPUT_ACTION_REGISTRAR.register("general_move_down", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_LEFT = INPUT_ACTION_REGISTRAR.register("general_move_left", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_RIGHT = INPUT_ACTION_REGISTRAR.register("general_move_right", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_RUN = INPUT_ACTION_REGISTRAR.register("general_run", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_RIGHT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_right", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_LEFT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_left", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_OUT = INPUT_ACTION_REGISTRAR.register("wmap_zoom_out", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_IN = INPUT_ACTION_REGISTRAR.register("wmap_zoom_in", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_coolon", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_SERVICES = INPUT_ACTION_REGISTRAR.register("wmap_services", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_DESTINATIONS = INPUT_ACTION_REGISTRAR.register("wmap_destinations", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_INTERACT = INPUT_ACTION_REGISTRAR.register("smap_interact", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_TOGGLE_INDICATORS = INPUT_ACTION_REGISTRAR.register("smap_toggle_indicators", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_COUNTER = INPUT_ACTION_REGISTRAR.register("bttl_counter", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ROTATE_CAMERA = INPUT_ACTION_REGISTRAR.register("bttl_rotate_camera", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ADDITIONS = INPUT_ACTION_REGISTRAR.register("bttl_additions", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_TRANSFORM = INPUT_ACTION_REGISTRAR.register("bttl_transform", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPECIAL = INPUT_ACTION_REGISTRAR.register("bttl_special", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ESCAPE = INPUT_ACTION_REGISTRAR.register("bttl_escape", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_GUARD = INPUT_ACTION_REGISTRAR.register("bttl_guard", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ITEMS = INPUT_ACTION_REGISTRAR.register("bttl_items", InputAction::new);
 
   private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
   public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
@@ -146,6 +188,70 @@ public class LodMod {
     , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
     "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
   };
+
+  @EventListener
+  public static void registerInputActions(final InputActionRegistryEvent event) {
+    INPUT_ACTION_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerDefaultInputBindings(final RegisterDefaultInputBindingsEvent event) {
+    event
+      .add(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get(), new ScancodeInputActivation(InputKey.E))
+      .add(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get(), new ButtonInputActivation(InputButton.Y))
+
+      .add(INPUT_ACTION_GENERAL_MOVE_UP.get(), new ButtonInputActivation(InputButton.DPAD_UP))
+      .add(INPUT_ACTION_GENERAL_MOVE_UP.get(), new AxisInputActivation(InputAxis.LEFT_Y, InputAxisDirection.NEGATIVE, 0.2f, 0.9f))
+      .add(INPUT_ACTION_GENERAL_MOVE_UP.get(), new ScancodeInputActivation(InputKey.UP))
+      .add(INPUT_ACTION_GENERAL_MOVE_UP.get(), new ScancodeInputActivation(InputKey.W))
+      .add(INPUT_ACTION_GENERAL_MOVE_DOWN.get(), new ButtonInputActivation(InputButton.DPAD_DOWN))
+      .add(INPUT_ACTION_GENERAL_MOVE_DOWN.get(), new AxisInputActivation(InputAxis.LEFT_Y, InputAxisDirection.POSITIVE, 0.2f, 0.9f))
+      .add(INPUT_ACTION_GENERAL_MOVE_DOWN.get(), new ScancodeInputActivation(InputKey.DOWN))
+      .add(INPUT_ACTION_GENERAL_MOVE_DOWN.get(), new ScancodeInputActivation(InputKey.S))
+      .add(INPUT_ACTION_GENERAL_MOVE_LEFT.get(), new ButtonInputActivation(InputButton.DPAD_LEFT))
+      .add(INPUT_ACTION_GENERAL_MOVE_LEFT.get(), new AxisInputActivation(InputAxis.LEFT_X, InputAxisDirection.NEGATIVE, 0.2f, 0.9f))
+      .add(INPUT_ACTION_GENERAL_MOVE_LEFT.get(), new ScancodeInputActivation(InputKey.LEFT))
+      .add(INPUT_ACTION_GENERAL_MOVE_LEFT.get(), new ScancodeInputActivation(InputKey.A))
+      .add(INPUT_ACTION_GENERAL_MOVE_RIGHT.get(), new ButtonInputActivation(InputButton.DPAD_RIGHT))
+      .add(INPUT_ACTION_GENERAL_MOVE_RIGHT.get(), new AxisInputActivation(InputAxis.LEFT_X, InputAxisDirection.POSITIVE, 0.2f, 0.9f))
+      .add(INPUT_ACTION_GENERAL_MOVE_RIGHT.get(), new ScancodeInputActivation(InputKey.RIGHT))
+      .add(INPUT_ACTION_GENERAL_MOVE_RIGHT.get(), new ScancodeInputActivation(InputKey.D))
+      .add(INPUT_ACTION_GENERAL_RUN.get(), new ScancodeInputActivation(InputKey.LEFT_SHIFT))
+      .add(INPUT_ACTION_GENERAL_RUN.get(), new ButtonInputActivation(InputButton.B))
+
+      .add(INPUT_ACTION_WMAP_ROTATE_LEFT.get(), new ScancodeInputActivation(InputKey.R))
+      .add(INPUT_ACTION_WMAP_ROTATE_LEFT.get(), new ButtonInputActivation(InputButton.LEFT_BUMPER))
+      .add(INPUT_ACTION_WMAP_ROTATE_RIGHT.get(), new ScancodeInputActivation(InputKey.T))
+      .add(INPUT_ACTION_WMAP_ROTATE_RIGHT.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+      .add(INPUT_ACTION_WMAP_ZOOM_OUT.get(), new ScancodeInputActivation(InputKey.Z))
+      .add(INPUT_ACTION_WMAP_ZOOM_OUT.get(), new AxisInputActivation(InputAxis.LEFT_TRIGGER, InputAxisDirection.POSITIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_WMAP_ZOOM_IN.get(), new ScancodeInputActivation(InputKey.X))
+      .add(INPUT_ACTION_WMAP_ZOOM_IN.get(), new AxisInputActivation(InputAxis.RIGHT_TRIGGER, InputAxisDirection.POSITIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_WMAP_COOLON.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_WMAP_COOLON.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_WMAP_QUEEN_FURY.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_WMAP_QUEEN_FURY.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_WMAP_SERVICES.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_WMAP_SERVICES.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_WMAP_DESTINATIONS.get(), new KeyInputActivation(InputKey.L))
+      .add(INPUT_ACTION_WMAP_DESTINATIONS.get(), new ButtonInputActivation(InputButton.START))
+
+      .add(INPUT_ACTION_SMAP_INTERACT.get(), new ScancodeInputActivation(InputKey.SPACE))
+      .add(INPUT_ACTION_SMAP_INTERACT.get(), new ScancodeInputActivation(InputKey.RETURN))
+      .add(INPUT_ACTION_SMAP_INTERACT.get(), new ButtonInputActivation(InputButton.A))
+      .add(INPUT_ACTION_SMAP_TOGGLE_INDICATORS.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_SMAP_TOGGLE_INDICATORS.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+
+      .add(INPUT_ACTION_BTTL_ATTACK.get(), new ScancodeInputActivation(InputKey.SPACE))
+      .add(INPUT_ACTION_BTTL_ATTACK.get(), new ButtonInputActivation(InputButton.A))
+      .add(INPUT_ACTION_BTTL_COUNTER.get(), new ScancodeInputActivation(InputKey.LEFT_SHIFT))
+      .add(INPUT_ACTION_BTTL_COUNTER.get(), new ButtonInputActivation(InputButton.B))
+      .add(INPUT_ACTION_BTTL_ROTATE_CAMERA.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_BTTL_ROTATE_CAMERA.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+      .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ScancodeInputActivation(InputKey.E))
+      .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ButtonInputActivation(InputButton.Y))
+    ;
+  }
 
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {

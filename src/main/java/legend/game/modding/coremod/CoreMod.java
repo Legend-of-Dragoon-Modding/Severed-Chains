@@ -1,16 +1,26 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.core.platform.input.AxisInputActivation;
+import legend.core.platform.input.ButtonInputActivation;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputActionRegistryEvent;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
+import legend.core.platform.input.KeyInputActivation;
+import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
-import legend.game.input.InputAction;
+import legend.game.input.InputActionOld;
 import legend.game.inventory.IconSetConfigEntry;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AllowWidescreenConfigEntry;
 import legend.game.modding.coremod.config.AudioDeviceConfig;
 import legend.game.modding.coremod.config.BattleTransitionModeConfigEntry;
-import legend.game.modding.coremod.config.ControllerConfigEntry;
 import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
@@ -33,11 +43,13 @@ import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
 import legend.game.modding.coremod.config.MusicSampleRateConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
+import legend.game.modding.coremod.config.RunByDefaultConfig;
 import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
 import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
+import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.CampaignNameConfigEntry;
 import legend.game.saves.ConfigCategory;
@@ -53,32 +65,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F4;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_ALT;
-
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID, version = "^3.0.0")
 @EventListener
@@ -88,7 +74,6 @@ public class CoreMod {
   private static final Registrar<ConfigEntry<?>, ConfigRegistryEvent> CONFIG_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.config, MOD_ID);
 
   // Global config
-  public static final RegistryDelegate<ControllerConfigEntry> CONTROLLER_CONFIG = CONFIG_REGISTRAR.register("controller", ControllerConfigEntry::new);
   public static final RegistryDelegate<ControllerDeadzoneConfigEntry> CONTROLLER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("controller_deadzone", ControllerDeadzoneConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG = CONFIG_REGISTRAR.register("receive_input_on_inactive_window", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS));
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_MOUSE_INPUT_CONFIG = CONFIG_REGISTRAR.register("disable_mouse_input", DisableMouseInputConfigEntry::new);
@@ -114,40 +99,7 @@ public class CoreMod {
   /** Config isn't actually used, but adds a button to the options screen to open the keybinds screen */
   public static final RegistryDelegate<ConfigEntry<Void>> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
 
-  public static final int ALT_ENTER_KEY = (GLFW_MOD_ALT << 9) | GLFW_KEY_ENTER;
-
-  public static final Map<InputAction, RegistryDelegate<ControllerKeybindConfigEntry>> KEYBIND_CONFIGS = new EnumMap<>(InputAction.class);
-  static {
-    KEYBIND_CONFIGS.put(InputAction.DPAD_UP, CONFIG_REGISTRAR.register("keybind_dpad_up", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_UP)));
-    KEYBIND_CONFIGS.put(InputAction.DPAD_RIGHT, CONFIG_REGISTRAR.register("keybind_dpad_right", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_RIGHT)));
-    KEYBIND_CONFIGS.put(InputAction.DPAD_DOWN, CONFIG_REGISTRAR.register("keybind_dpad_down", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_DOWN)));
-    KEYBIND_CONFIGS.put(InputAction.DPAD_LEFT, CONFIG_REGISTRAR.register("keybind_dpad_left", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_LEFT)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_NORTH, CONFIG_REGISTRAR.register("keybind_triangle", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_W)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_EAST, CONFIG_REGISTRAR.register("keybind_circle", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_D, GLFW_KEY_ESCAPE)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_SOUTH, CONFIG_REGISTRAR.register("keybind_cross", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_S, GLFW_KEY_ENTER)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_WEST, CONFIG_REGISTRAR.register("keybind_square", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_A)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_CENTER_1, CONFIG_REGISTRAR.register("keybind_select", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_SPACE)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_CENTER_2, CONFIG_REGISTRAR.register("keybind_start", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_ENTER)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_SHOULDER_LEFT_1, CONFIG_REGISTRAR.register("keybind_l1", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_Q)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_SHOULDER_RIGHT_1, CONFIG_REGISTRAR.register("keybind_r1", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_E)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_SHOULDER_LEFT_2, CONFIG_REGISTRAR.register("keybind_l2", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_1)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_SHOULDER_RIGHT_2, CONFIG_REGISTRAR.register("keybind_r2", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_3)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_THUMB_1, CONFIG_REGISTRAR.register("keybind_l3", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_Z)));
-    KEYBIND_CONFIGS.put(InputAction.BUTTON_THUMB_2, CONFIG_REGISTRAR.register("keybind_r3", () -> new ControllerKeybindConfigEntry(true, GLFW_KEY_C)));
-    KEYBIND_CONFIGS.put(InputAction.BATTLE_DRAGOON, CONFIG_REGISTRAR.register("keybind_dragoon", () -> new ControllerKeybindConfigEntry(false)));
-    KEYBIND_CONFIGS.put(InputAction.BATTLE_SPECIAL, CONFIG_REGISTRAR.register("keybind_special", () -> new ControllerKeybindConfigEntry(false)));
-    KEYBIND_CONFIGS.put(InputAction.BATTLE_ESCAPE, CONFIG_REGISTRAR.register("keybind_escape", () -> new ControllerKeybindConfigEntry(false)));
-    KEYBIND_CONFIGS.put(InputAction.BATTLE_GUARD, CONFIG_REGISTRAR.register("keybind_guard", () -> new ControllerKeybindConfigEntry(false)));
-    KEYBIND_CONFIGS.put(InputAction.BATTLE_ITEMS, CONFIG_REGISTRAR.register("keybind_items", () -> new ControllerKeybindConfigEntry(false)));
-    KEYBIND_CONFIGS.put(InputAction.SPEED_UP, CONFIG_REGISTRAR.register("keybind_speed_up", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_EQUAL)));
-    KEYBIND_CONFIGS.put(InputAction.SLOW_DOWN, CONFIG_REGISTRAR.register("keybind_slow_down", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_MINUS)));
-    KEYBIND_CONFIGS.put(InputAction.DEBUGGER, CONFIG_REGISTRAR.register("keybind_debugger", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_F12)));
-    KEYBIND_CONFIGS.put(InputAction.PAUSE, CONFIG_REGISTRAR.register("keybind_pause", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_F11)));
-    KEYBIND_CONFIGS.put(InputAction.FRAME_ADVANCE, CONFIG_REGISTRAR.register("keybind_frame_advance", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_F9)));
-    KEYBIND_CONFIGS.put(InputAction.FRAME_ADVANCE_HOLD, CONFIG_REGISTRAR.register("keybind_frame_advance_hold", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_F10)));
-    KEYBIND_CONFIGS.put(InputAction.KILL_STUCK_SOUNDS, CONFIG_REGISTRAR.register("keybind_kill_stuck_sounds", () -> new ControllerKeybindConfigEntry(false, GLFW_KEY_F4)));
-    KEYBIND_CONFIGS.put(InputAction.TOGGLE_FULL_SCREEN, CONFIG_REGISTRAR.register("keybind_toggle_full_screen", () -> new ControllerKeybindConfigEntry(false, ALT_ENTER_KEY)));
-  }
+  public static final Map<InputActionOld, RegistryDelegate<ControllerKeybindConfigEntry>> KEYBIND_CONFIGS = new EnumMap<>(InputActionOld.class);
 
   // Per-campaign config
   public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
@@ -169,6 +121,45 @@ public class CoreMod {
   public static final RegistryDelegate<BattleTransitionModeConfigEntry> BATTLE_TRANSITION_MODE_CONFIG = CONFIG_REGISTRAR.register("battle_transition_mode", BattleTransitionModeConfigEntry::new);
   public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
+  public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
+
+  private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_UP = INPUT_ACTION_REGISTRAR.register("menu_up", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DOWN = INPUT_ACTION_REGISTRAR.register("menu_down", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_LEFT = INPUT_ACTION_REGISTRAR.register("menu_left", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_RIGHT = INPUT_ACTION_REGISTRAR.register("menu_right", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HOME = INPUT_ACTION_REGISTRAR.register("menu_home", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_END = INPUT_ACTION_REGISTRAR.register("menu_end", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_UP = INPUT_ACTION_REGISTRAR.register("menu_page_up", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_DOWN = INPUT_ACTION_REGISTRAR.register("menu_page_down", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_confirm", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BACK = INPUT_ACTION_REGISTRAR.register("menu_back", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DELETE = INPUT_ACTION_REGISTRAR.register("menu_delete", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SLOW_DOWN = INPUT_ACTION_REGISTRAR.register("general_slow_down", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_TOGGLE = INPUT_ACTION_REGISTRAR.register("freecam_toggle", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_FORWARD = INPUT_ACTION_REGISTRAR.register("freecam_forward", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_BACKWARD = INPUT_ACTION_REGISTRAR.register("freecam_backward", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_LEFT = INPUT_ACTION_REGISTRAR.register("freecam_left", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_RIGHT = INPUT_ACTION_REGISTRAR.register("freecam_right", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_UP = INPUT_ACTION_REGISTRAR.register("freecam_up", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_DOWN = INPUT_ACTION_REGISTRAR.register("freecam_down", InputAction::new);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_OPEN_DEBUGGER = INPUT_ACTION_REGISTRAR.register("debug_open_debugger", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_PAUSE = INPUT_ACTION_REGISTRAR.register("debug_pause", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_FRAME_ADVANCE = INPUT_ACTION_REGISTRAR.register("debug_frame_advance", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD = INPUT_ACTION_REGISTRAR.register("debug_frame_advance_hold", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME = INPUT_ACTION_REGISTRAR.register("debug_toggle_wireframe", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_RELOAD_SHADERS = INPUT_ACTION_REGISTRAR.register("debug_reload_shaders", InputAction::new);
 
   public static final Formula<Integer, Integer> PHYSICAL_DAMAGE_FORMULA = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
     .then(PhysicalDamageFormula::applyElementalInteractions)
@@ -189,5 +180,76 @@ public class CoreMod {
   @EventListener
   public static void registerConfig(final ConfigRegistryEvent event) {
     CONFIG_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerInputActions(final InputActionRegistryEvent event) {
+    INPUT_ACTION_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerDefaultInputBindings(final RegisterDefaultInputBindingsEvent event) {
+    event
+      .add(INPUT_ACTION_MENU_UP.get(), new ButtonInputActivation(InputButton.DPAD_UP))
+      .add(INPUT_ACTION_MENU_UP.get(), new AxisInputActivation(InputAxis.LEFT_Y, InputAxisDirection.NEGATIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_MENU_UP.get(), new ScancodeInputActivation(InputKey.UP))
+      .add(INPUT_ACTION_MENU_UP.get(), new ScancodeInputActivation(InputKey.W))
+      .add(INPUT_ACTION_MENU_DOWN.get(), new ButtonInputActivation(InputButton.DPAD_DOWN))
+      .add(INPUT_ACTION_MENU_DOWN.get(), new AxisInputActivation(InputAxis.LEFT_Y, InputAxisDirection.POSITIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_MENU_DOWN.get(), new ScancodeInputActivation(InputKey.DOWN))
+      .add(INPUT_ACTION_MENU_DOWN.get(), new ScancodeInputActivation(InputKey.S))
+      .add(INPUT_ACTION_MENU_LEFT.get(), new ButtonInputActivation(InputButton.DPAD_LEFT))
+      .add(INPUT_ACTION_MENU_LEFT.get(), new AxisInputActivation(InputAxis.LEFT_X, InputAxisDirection.NEGATIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_MENU_LEFT.get(), new ScancodeInputActivation(InputKey.LEFT))
+      .add(INPUT_ACTION_MENU_LEFT.get(), new ScancodeInputActivation(InputKey.A))
+      .add(INPUT_ACTION_MENU_RIGHT.get(), new ButtonInputActivation(InputButton.DPAD_RIGHT))
+      .add(INPUT_ACTION_MENU_RIGHT.get(), new AxisInputActivation(InputAxis.LEFT_X, InputAxisDirection.POSITIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_MENU_RIGHT.get(), new ScancodeInputActivation(InputKey.RIGHT))
+      .add(INPUT_ACTION_MENU_RIGHT.get(), new ScancodeInputActivation(InputKey.D))
+      .add(INPUT_ACTION_MENU_HOME.get(), new AxisInputActivation(InputAxis.LEFT_TRIGGER, InputAxisDirection.POSITIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_MENU_HOME.get(), new KeyInputActivation(InputKey.HOME))
+      .add(INPUT_ACTION_MENU_END.get(), new AxisInputActivation(InputAxis.RIGHT_TRIGGER, InputAxisDirection.POSITIVE, 0.5f, 0.6f))
+      .add(INPUT_ACTION_MENU_END.get(), new KeyInputActivation(InputKey.END))
+      .add(INPUT_ACTION_MENU_PAGE_UP.get(), new ButtonInputActivation(InputButton.LEFT_BUMPER))
+      .add(INPUT_ACTION_MENU_PAGE_UP.get(), new KeyInputActivation(InputKey.PAGE_UP))
+      .add(INPUT_ACTION_MENU_PAGE_DOWN.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+      .add(INPUT_ACTION_MENU_PAGE_DOWN.get(), new KeyInputActivation(InputKey.PAGE_DOWN))
+      .add(INPUT_ACTION_MENU_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
+      .add(INPUT_ACTION_MENU_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
+      .add(INPUT_ACTION_MENU_BACK.get(), new ButtonInputActivation(InputButton.B))
+      .add(INPUT_ACTION_MENU_BACK.get(), new KeyInputActivation(InputKey.ESCAPE))
+      .add(INPUT_ACTION_MENU_DELETE.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_MENU_DELETE.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_MENU_SORT.get(), new ButtonInputActivation(InputButton.Y))
+      .add(INPUT_ACTION_MENU_SORT.get(), new KeyInputActivation(InputKey.X))
+      .add(INPUT_ACTION_MENU_HELP.get(), new ButtonInputActivation(InputButton.START))
+      .add(INPUT_ACTION_MENU_HELP.get(), new KeyInputActivation(InputKey.H))
+      .add(INPUT_ACTION_MENU_MODS.get(), new ButtonInputActivation(InputButton.Y))
+      .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
+
+      .add(INPUT_ACTION_FMV_SKIP.get(), new KeyInputActivation(InputKey.RETURN))
+      .add(INPUT_ACTION_FMV_SKIP.get(), new ButtonInputActivation(InputButton.Y))
+
+      .add(INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN.get(), new KeyInputActivation(InputKey.RETURN, InputMod.ALT))
+      .add(INPUT_ACTION_GENERAL_SPEED_UP.get(), new ScancodeInputActivation(InputKey.EQUALS))
+      .add(INPUT_ACTION_GENERAL_SPEED_UP.get(), new KeyInputActivation(InputKey.KP_PLUS))
+      .add(INPUT_ACTION_GENERAL_SLOW_DOWN.get(), new ScancodeInputActivation(InputKey.MINUS))
+      .add(INPUT_ACTION_GENERAL_SLOW_DOWN.get(), new KeyInputActivation(InputKey.KP_MINUS))
+
+      .add(INPUT_ACTION_FREECAM_TOGGLE.get(), new KeyInputActivation(InputKey.M, InputMod.CTRL))
+      .add(INPUT_ACTION_FREECAM_FORWARD.get(), new ScancodeInputActivation(InputKey.I))
+      .add(INPUT_ACTION_FREECAM_BACKWARD.get(), new ScancodeInputActivation(InputKey.K))
+      .add(INPUT_ACTION_FREECAM_LEFT.get(), new ScancodeInputActivation(InputKey.J))
+      .add(INPUT_ACTION_FREECAM_RIGHT.get(), new ScancodeInputActivation(InputKey.L))
+      .add(INPUT_ACTION_FREECAM_UP.get(), new ScancodeInputActivation(InputKey.O))
+      .add(INPUT_ACTION_FREECAM_DOWN.get(), new ScancodeInputActivation(InputKey.U))
+
+      .add(INPUT_ACTION_DEBUG_OPEN_DEBUGGER.get(), new KeyInputActivation(InputKey.F12))
+      .add(INPUT_ACTION_DEBUG_PAUSE.get(), new KeyInputActivation(InputKey.F11))
+      .add(INPUT_ACTION_DEBUG_FRAME_ADVANCE.get(), new KeyInputActivation(InputKey.F9))
+      .add(INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD.get(), new KeyInputActivation(InputKey.F10))
+      .add(INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME.get(), new KeyInputActivation(InputKey.F2))
+      .add(INPUT_ACTION_DEBUG_RELOAD_SHADERS.get(), new KeyInputActivation(InputKey.F5))
+    ;
   }
 }

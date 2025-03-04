@@ -65,6 +65,8 @@ public class NewGame extends EngineState {
   @Override
   @Method(0x800c7424L)
   public void tick() {
+    super.tick();
+
     this.setUpNewGameData();
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
   }

@@ -2,8 +2,10 @@ package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputKey;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
+import legend.game.input.InputActionOld;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
@@ -22,34 +24,27 @@ import java.util.stream.Collectors;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_9;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_APOSTROPHE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_COMMA;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_GRAVE_ACCENT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_INSERT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_BRACKET;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SEMICOLON;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_ALT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_BACKSPACE;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_DOWN;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_END;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_ESCAPE;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_EXCLAIM;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_F1;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_HOME;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_INSERT;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_LEFT;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_PAGEDOWN;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_PAGEUP;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_RETURN;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_RIGHT;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_SPACE;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_TAB;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_TILDE;
+import static org.lwjgl.sdl.SDLKeycode.SDLK_UP;
+import static org.lwjgl.sdl.SDLKeycode.SDL_KMOD_ALT;
+import static org.lwjgl.sdl.SDLKeycode.SDL_KMOD_CTRL;
+import static org.lwjgl.sdl.SDLKeycode.SDL_KMOD_SHIFT;
 
 public class KeybindsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -59,35 +54,29 @@ public class KeybindsScreen extends VerticalLayoutScreen {
   private final Map<Integer, String> validMods = new LinkedHashMap<>();
 
   public KeybindsScreen(final ConfigCollection config, final Runnable unload) {
-    this.addKey(GLFW_KEY_SPACE, "SPACE");
-    this.addRegularKey(GLFW_KEY_APOSTROPHE);
-    this.addRegularKeyRange(GLFW_KEY_COMMA, GLFW_KEY_9);
-    this.addRegularKey(GLFW_KEY_SEMICOLON);
-    this.addRegularKey(GLFW_KEY_EQUAL);
-    this.addRegularKey(GLFW_KEY_MINUS);
-    this.addRegularKeyRange(GLFW_KEY_A, GLFW_KEY_RIGHT_BRACKET);
-    this.addRegularKey(GLFW_KEY_GRAVE_ACCENT);
-    this.addKey(GLFW_KEY_ESCAPE, "ESC");
-    this.addKey(GLFW_KEY_ENTER, "ENTER");
-    this.addKey(GLFW_KEY_TAB, "TAB");
-    this.addKey(GLFW_KEY_BACKSPACE, "BACKSPACE");
-    this.addKey(GLFW_KEY_INSERT, "INSERT");
-    this.addKey(GLFW_KEY_RIGHT, "RIGHT");
-    this.addKey(GLFW_KEY_LEFT, "LEFT");
-    this.addKey(GLFW_KEY_DOWN, "DOWN");
-    this.addKey(GLFW_KEY_UP, "UP");
-    this.addKey(GLFW_KEY_PAGE_UP, "PGUP");
-    this.addKey(GLFW_KEY_PAGE_DOWN, "PGDN");
-    this.addKey(GLFW_KEY_HOME, "HOME");
-    this.addKey(GLFW_KEY_END, "END");
+    this.addKey(SDLK_SPACE, "SPACE");
+    this.addRegularKeyRange(SDLK_EXCLAIM, SDLK_TILDE);
+    this.addKey(SDLK_ESCAPE, "ESC");
+    this.addKey(SDLK_RETURN, "ENTER");
+    this.addKey(SDLK_TAB, "TAB");
+    this.addKey(SDLK_BACKSPACE, "BACKSPACE");
+    this.addKey(SDLK_INSERT, "INSERT");
+    this.addKey(SDLK_RIGHT, "RIGHT");
+    this.addKey(SDLK_LEFT, "LEFT");
+    this.addKey(SDLK_DOWN, "DOWN");
+    this.addKey(SDLK_UP, "UP");
+    this.addKey(SDLK_PAGEUP, "PGUP");
+    this.addKey(SDLK_PAGEDOWN, "PGDN");
+    this.addKey(SDLK_HOME, "HOME");
+    this.addKey(SDLK_END, "END");
 
     // Modifiers
-    this.addMod(GLFW_MOD_ALT, "ALT");
-    this.addMod(GLFW_MOD_CONTROL, "CTRL");
-    this.addMod(GLFW_MOD_SHIFT, "SHFT");
+    this.addMod(SDL_KMOD_ALT, "ALT");
+    this.addMod(SDL_KMOD_CTRL, "CTRL");
+    this.addMod(SDL_KMOD_SHIFT, "SHFT");
 
     for(int i = 0; i < 12; i++) {
-      this.addKey(GLFW_KEY_F1 + i, "F" + (i + 1));
+      this.addKey(SDLK_F1 + i, "F" + (i + 1));
     }
 
     deallocateRenderables(0xff);
@@ -115,7 +104,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
     final Map<ControllerKeybindConfigEntry, Textbox> textboxes = new HashMap<>();
 
-    for(final InputAction inputAction : InputAction.values()) {
+    for(final InputActionOld inputAction : InputActionOld.values()) {
       if(CoreMod.KEYBIND_CONFIGS.containsKey(inputAction)) {
         final Textbox textbox = new Textbox();
         textboxes.put(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), textbox);
@@ -133,7 +122,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         textbox.onLostFocus(() -> {
           final List<ControllerKeybindConfigEntry> dupes = new ArrayList<>();
 
-          for(final InputAction action : InputAction.values()) {
+          for(final InputActionOld action : InputActionOld.values()) {
             if(action != inputAction && CoreMod.KEYBIND_CONFIGS.containsKey(action) && config.getConfig(CoreMod.KEYBIND_CONFIGS.get(action).get()).intStream().anyMatch(keycodes::contains)) {
               dupes.add(CoreMod.KEYBIND_CONFIGS.get(action).get());
             }
@@ -159,16 +148,18 @@ public class KeybindsScreen extends VerticalLayoutScreen {
           }
         });
 
-        textbox.onKeyPress((key, scancode, mods) -> {
-          if(key == GLFW_KEY_DELETE) {
+        textbox.onKeyPress((key, scancode, mods, repeat) -> {
+          if(key == InputKey.DELETE) {
             textbox.unfocus();
             return InputPropagation.HANDLED;
           }
 
           if(this.validKeys.containsKey(key)) {
+/*TODO
             final int addedKey = key | (this.areModsValid(mods) ? mods << 9 : 0);
             keycodes.add(addedKey);
             textbox.setText(this.keysToString(keycodes));
+*/
           }
 
           return InputPropagation.HANDLED;
@@ -243,15 +234,15 @@ public class KeybindsScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
-      for(final InputAction action : InputAction.values()) {
-        if(CoreMod.KEYBIND_CONFIGS.containsKey(action)) {
-          final ControllerKeybindConfigEntry keybind = CoreMod.KEYBIND_CONFIGS.get(action).get();
+    if(action == INPUT_ACTION_MENU_BACK.get()) {
+      for(final InputActionOld actionOld : InputActionOld.values()) {
+        if(CoreMod.KEYBIND_CONFIGS.containsKey(actionOld)) {
+          final ControllerKeybindConfigEntry keybind = CoreMod.KEYBIND_CONFIGS.get(actionOld).get();
           if(keybind.required && this.config.getConfig(keybind).isEmpty()) {
             playMenuSound(4);
             this.getStack().pushScreen(new MessageBoxScreen(I18n.translate(CoreMod.MOD_ID + ".keybind.missing_input"), 0, result -> {}));

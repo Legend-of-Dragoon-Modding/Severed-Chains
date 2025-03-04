@@ -8,6 +8,7 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.platform.input.InputAction;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.ui.AdditionOverlayMode;
@@ -21,15 +22,17 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
 public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.VoidType> {
   public int attackerScriptIndex_00;
@@ -568,18 +571,21 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             if(this.autoCompleteType_3a < 1 || this.autoCompleteType_3a > 2) {
               //LAB_8010763c
               if(this.autoCompleteType_3a != 3) {
-                final int buttonType;
+                final InputAction right;
+                final InputAction wrong;
                 if(!hitOverlay.isCounter_1c) {
-                  buttonType = 0x20;
+                  right = INPUT_ACTION_BTTL_ATTACK.get();
+                  wrong = INPUT_ACTION_BTTL_COUNTER.get();
                 } else {
-                  buttonType = 0x40;
+                  right = INPUT_ACTION_BTTL_COUNTER.get();
+                  wrong = INPUT_ACTION_BTTL_ATTACK.get();
                 }
 
                 //LAB_80107664
-                if((press_800bee94 & 0x60) != 0) {
+                if(PLATFORM.isActionPressed(right) || PLATFORM.isActionPressed(wrong)) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
 
-                  if((press_800bee94 & buttonType) == 0 || (press_800bee94 & ~buttonType) != 0) {
+                  if(!PLATFORM.isActionPressed(right) || PLATFORM.isActionPressed(wrong)) {
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;

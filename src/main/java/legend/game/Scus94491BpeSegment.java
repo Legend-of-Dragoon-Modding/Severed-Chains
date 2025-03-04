@@ -1,6 +1,5 @@
 package legend.game;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
@@ -16,15 +15,14 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.spu.Voice;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
 import legend.game.combat.Battle;
 import legend.game.combat.BattleTransitionMode;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
-import legend.game.debugger.Debugger;
-import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
@@ -71,6 +69,7 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
@@ -167,10 +166,6 @@ import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -356,40 +351,29 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    RENDERER.events().onPressedThisFrame((window, inputAction) -> {
-      if(inputAction == InputAction.DEBUGGER) {
-        if(!Debugger.isRunning()) {
-          try {
-            Platform.setImplicitExit(false);
-            new Thread(() -> Application.launch(Debugger.class)).start();
-          } catch(final Exception e) {
-            LOGGER.info("Failed to start debugger", e);
-          }
-        } else {
-          Platform.runLater(Debugger::show);
-        }
-      }
-    });
-
-    RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
-      // Add killswitch in case sounds get stuck on
-      if(key == GLFW_KEY_DELETE) {
-        for(final Voice voice : SPU.voices) {
-          voice.volumeLeft.set(0);
-          voice.volumeRight.set(0);
-        }
-      }
-
-      if((mods & GLFW_MOD_CONTROL) != 0 && key == GLFW_KEY_W && currentEngineState_8004dd04 instanceof final Battle battle) {
+    RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
+      if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.W && currentEngineState_8004dd04 instanceof final Battle battle) {
         battle.endBattle();
       }
 
-      if((mods & GLFW_MOD_CONTROL) != 0 && key == GLFW_KEY_Q) {
+      if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.Q) {
         if(Config.getGameSpeedMultiplier() == 1) {
           Config.setGameSpeedMultiplier(Config.getLoadedGameSpeedMultiplier());
         } else {
           Config.setGameSpeedMultiplier(1);
         }
+      }
+    });
+
+    RENDERER.events().onInputActionPressed((window, action, repeat) -> {
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.inputActionPressed(action, repeat);
+      }
+    });
+
+    RENDERER.events().onInputActionReleased((window, action) -> {
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.inputActionReleased(action);
       }
     });
 
@@ -401,7 +385,9 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      RENDERER.window().setFpsLimit(60 / frames * Config.getGameSpeedMultiplier());
+      final int hz = 60 / frames * Config.getGameSpeedMultiplier();
+      RENDERER.window().setFpsLimit(hz);
+      PLATFORM.setInputTickRate(hz);
 
       loadQueuedOverlay();
 
@@ -442,7 +428,7 @@ public final class Scus94491BpeSegment {
       GPU.endFrame();
     });
 
-    RENDERER.events().onShutdown(() -> {
+    RENDERER.events().onClose(() -> {
       stopSound();
       AUDIO_THREAD.stop();
       Platform.exit();

@@ -1,8 +1,9 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
@@ -11,6 +12,8 @@ import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
+
+import java.util.Set;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
@@ -36,10 +39,15 @@ import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_END;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_HOME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class TooManyItemsScreen extends MenuScreen {
   private static final String This_item_cannot_be_thrown_away_8011c2a8 = "This item cannot\nbe thrown away";
@@ -269,7 +277,7 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -431,29 +439,6 @@ public class TooManyItemsScreen extends MenuScreen {
     this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
-  private void inventoryNavigateTop() {
-    if(this.invIndex != 0) {
-      playMenuSound(1);
-      this.invIndex = 0;
-      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
-    }
-  }
-
-  private void inventoryNavigateBottom() {
-    final int slotCount;
-    if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
-      slotCount = gameState_800babc8.equipment_1e8.size();
-    } else {
-      slotCount = gameState_800babc8.items_2e9.size();
-    }
-
-    if(this.invIndex != Math.min(6, slotCount - 1)) {
-      playMenuSound(1);
-      this.invIndex = Math.min(6, slotCount - 1);
-      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
-    }
-  }
-
   private void inventoryNavigatePageUp() {
     if(this.invScroll - 6 >= 0) {
       playMenuSound(1);
@@ -569,62 +554,40 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation keyPress(final int key, final int scancode, final int mods) {
-    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.menuState == MenuState.DROPPED_8) {
-      if(key == GLFW_KEY_HOME) {
+      if(action == INPUT_ACTION_MENU_HOME.get()) {
         this.droppedNavigateHome();
         return InputPropagation.HANDLED;
       }
 
-      if(key == GLFW_KEY_END) {
+      if(action == INPUT_ACTION_MENU_END.get()) {
         this.droppedNavigateEnd();
         return InputPropagation.HANDLED;
       }
 
-      return InputPropagation.PROPAGATE;
-    }
-    if(this.menuState == MenuState.INVENTORY_9) {
-      if(key == GLFW_KEY_HOME) {
-        this.inventoryNavigateHome();
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        this.droppedNavigateUp();
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      if(key == GLFW_KEY_END) {
-        this.inventoryNavigateEnd();
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        this.droppedNavigateDown();
+        this.allowWrapY = false;
         return InputPropagation.HANDLED;
       }
 
-      if(key == GLFW_KEY_PAGE_UP) {
-        this.inventoryNavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      if(key == GLFW_KEY_PAGE_DOWN) {
-        this.inventoryNavigatePageDown();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.menuState == MenuState.DROPPED_8) {
-      if(inputAction == InputAction.BUTTON_EAST) {
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
         this.escapeMenuState8();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SOUTH) {
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
         this.selectMenuState8();
         return InputPropagation.HANDLED;
       }
@@ -633,27 +596,49 @@ public class TooManyItemsScreen extends MenuScreen {
     }
 
     if(this.menuState == MenuState.INVENTORY_9) {
-      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_1) {
-        this.inventoryNavigateTop();
+      if(action == INPUT_ACTION_MENU_HOME.get()) {
+        this.inventoryNavigateHome();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SHOULDER_LEFT_2) {
-        this.inventoryNavigateBottom();
+      if(action == INPUT_ACTION_MENU_END.get()) {
+        this.inventoryNavigateEnd();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_EAST) {
+      if(action == INPUT_ACTION_MENU_PAGE_UP.get()) {
+        this.inventoryNavigatePageUp();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
+        this.inventoryNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        this.inventoryNavigateUp();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        this.inventoryNavigateDown();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
         this.escapeMenuState9();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SOUTH) {
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
         this.selectMenuState9();
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_NORTH) {
+      if(action == INPUT_ACTION_MENU_SORT.get() && !repeat) {
         this.sortMenuState9();
         return InputPropagation.HANDLED;
       }
@@ -663,61 +648,12 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.menuState == MenuState.DROPPED_8) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.droppedNavigateUp();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.droppedNavigateDown();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      return InputPropagation.PROPAGATE;
-    }
-
-    if(this.menuState == MenuState.INVENTORY_9) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.inventoryNavigateUp();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.inventoryNavigateDown();
-        this.allowWrapY = false;
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_1) {
-        this.inventoryNavigatePageUp();
-        return InputPropagation.HANDLED;
-      }
-
-      if(inputAction == InputAction.BUTTON_SHOULDER_RIGHT_2) {
-        this.inventoryNavigatePageDown();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  public InputPropagation releasedThisFrame(final InputAction inputAction) {
-    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP || inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
       this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }

@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.platform.input.InputAction;
 import legend.game.EngineStateEnum;
-import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
@@ -53,6 +53,11 @@ import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
@@ -128,49 +133,58 @@ public class MainMenuScreen extends MenuScreen {
 
     button.onPressed(onClick::run);
 
-    button.onPressedWithRepeatPulse(inputAction -> {
-      switch(inputAction) {
-        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-          for(int i = 1; i < this.menuButtons.size(); i++) {
-            final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
-
-            if(!otherButton.isDisabled() && otherButton.isVisible()) {
-              playMenuSound(1);
-              this.setFocus(otherButton);
-              break;
-            }
-          }
-        }
-        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-          for(int i = 1; i < this.menuButtons.size(); i++) {
-            final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
-
-            if(!otherButton.isDisabled() && otherButton.isVisible()) {
-              playMenuSound(1);
-              this.setFocus(otherButton);
-              break;
-            }
-          }
-        }
-        case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
-          final Button otherButton = this.menuButtons.get(Math.floorMod(index + this.menuButtons.size() / 2, this.menuButtons.size()));
+    button.onInputActionPressed((action, repeat) -> {
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        for(int i = 1; i < this.menuButtons.size(); i++) {
+          final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
             playMenuSound(1);
             this.setFocus(otherButton);
+            break;
           }
         }
-        case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
-          final Button otherButton = this.menuButtons.get(Math.floorMod(index - this.menuButtons.size() / 2, this.menuButtons.size()));
 
-          if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
-            this.setFocus(otherButton);
-          }
-        }
+        return InputPropagation.HANDLED;
       }
 
-      return InputPropagation.HANDLED;
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        for(int i = 1; i < this.menuButtons.size(); i++) {
+          final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
+
+          if(!otherButton.isDisabled() && otherButton.isVisible()) {
+            playMenuSound(1);
+            this.setFocus(otherButton);
+            break;
+          }
+        }
+
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_RIGHT.get()) {
+        final Button otherButton = this.menuButtons.get(Math.floorMod(index + this.menuButtons.size() / 2, this.menuButtons.size()));
+
+        if(!otherButton.isDisabled() && otherButton.isVisible()) {
+          playMenuSound(1);
+          this.setFocus(otherButton);
+        }
+
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_LEFT.get()) {
+        final Button otherButton = this.menuButtons.get(Math.floorMod(index - this.menuButtons.size() / 2, this.menuButtons.size()));
+
+        if(!otherButton.isDisabled() && otherButton.isVisible()) {
+          playMenuSound(1);
+          this.setFocus(otherButton);
+        }
+
+        return InputPropagation.HANDLED;
+      }
+
+      return InputPropagation.PROPAGATE;
     });
 
     this.menuButtons.add(button);
@@ -358,13 +372,13 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
-      if(inputAction == InputAction.BUTTON_EAST) {
+      if(action == INPUT_ACTION_MENU_BACK.get()) {
         this.menuEscape();
         return InputPropagation.HANDLED;
       }

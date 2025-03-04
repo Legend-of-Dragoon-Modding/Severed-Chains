@@ -9,13 +9,12 @@ import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.Window;
+import legend.core.platform.WindowEvents;
+import legend.core.platform.input.InputClass;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.i18n.I18n;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
@@ -28,6 +27,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.UI_WHITE;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
@@ -39,20 +39,13 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FMV_SKIP;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
 public final class Fmv {
   private Fmv() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
-
-  private enum InputSource {
-    KEYBOARD,
-    CONTROLLER,
-    MOUSE,
-    NONE
-  }
 
   private static final int[] _80052d6c = {0, 4, 7, 15};
   private static final String[][] diskFmvs_80052d7c = {
@@ -223,9 +216,11 @@ public final class Fmv {
   private static float volume = 1.0f;
   private static GenericSource source;
 
-  private static Window.Events.Key keyPress;
-  private static Window.Events.Click click;
-  private static Window.Events.OnPressedThisFrame pressedThisFrame;
+  private static WindowEvents.InputClassChanged inputClassChanged;
+  private static WindowEvents.KeyPressed keyPress;
+  private static WindowEvents.ButtonPressed buttonPressed;
+  private static WindowEvents.InputActionPressed inputActionPressed;
+  private static WindowEvents.Click click;
   private static boolean shouldStop;
 
   private static Obj texturedObj;
@@ -236,7 +231,7 @@ public final class Fmv {
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
 
-  private static InputSource currentInputSource = InputSource.NONE;
+  private static InputClass currentInputSource;
   private static int skipTextFramesRemained;
   private static String skipText;
   private static boolean isKeyboardInput;
@@ -260,7 +255,7 @@ public final class Fmv {
     }
   }
 
-  private static void setSkipText(final String text, final InputSource inputSource) {
+  private static void setSkipText(final String text, final InputClass inputSource) {
     skipText = text;
     currentInputSource = inputSource;
     skipTextFramesRemained = 60;
@@ -268,10 +263,10 @@ public final class Fmv {
 
   private static void handleSkipText() {
     if(isKeyboardInput) {
-      setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard"), InputSource.KEYBOARD);
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard"), InputClass.KEYBOARD);
       isKeyboardInput = false;
     } else if(isControllerInput) {
-      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller"), InputSource.CONTROLLER);
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller"), InputClass.GAMEPAD);
       isControllerInput = false;
     }
 
@@ -279,12 +274,12 @@ public final class Fmv {
       skipTextFramesRemained--;
       if(skipTextFramesRemained == 0) {
         skipText = null;
-        currentInputSource = InputSource.NONE;
+        currentInputSource = null;
       }
     }
   }
 
-  private static boolean isValidSkipInput(final InputSource source) {
+  private static boolean isValidSkipInput(final InputClass source) {
     return skipText != null && currentInputSource == source;
   }
 
@@ -314,36 +309,39 @@ public final class Fmv {
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
     volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
 
-    keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
-      if(mods == 0 && key == GLFW_KEY_ENTER && isValidSkipInput(InputSource.KEYBOARD)) {
-        shouldStop = true;
-      } else {
+    keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
+      if(!isControllerInput && !shouldStop && !repeat) {
         isKeyboardInput = true;
       }
     });
-    pressedThisFrame = RENDERER.events().onPressedThisFrame((window, inputAction) -> {
-      if(!isKeyboardInput && !shouldStop) {
+
+    buttonPressed = RENDERER.events().onButtonPress((window, action, repeat) -> {
+      if(!isKeyboardInput && !shouldStop && !repeat) {
         isControllerInput = true;
       }
     });
+
+    inputActionPressed = RENDERER.events().onInputActionPressed((window, action, repeat) -> {
+      if(action == INPUT_ACTION_FMV_SKIP.get() && isValidSkipInput(window.getInputClass())) {
+        shouldStop = true;
+      }
+    });
+
     click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
-      if(isValidSkipInput(InputSource.MOUSE)) {
+      if(isValidSkipInput(InputClass.MOUSE)) {
         shouldStop = true;
       } else {
-        setSkipText(I18n.translate("lod_core.config.fmv.skip_mouse"), InputSource.MOUSE);
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_mouse"), InputClass.MOUSE);
       }
     });
 
     oldRenderer = RENDERER.setRenderCallback(() -> {
-      if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && isValidSkipInput(InputSource.CONTROLLER)) {
-        shouldStop = true;
-      }
-
       if(shouldStop) {
         stop();
       }
 
       RENDERER.window().setFpsLimit(15 * Config.getGameSpeedMultiplier());
+      PLATFORM.setInputTickRate(15 * Config.getGameSpeedMultiplier());
 
       int demuxedSize = 0;
 
@@ -588,6 +586,16 @@ public final class Fmv {
         displayTexture = null;
       }
 
+      if(inputClassChanged != null) {
+        RENDERER.events().removeInputClassChanged(inputClassChanged);
+        inputClassChanged = null;
+      }
+
+      if(inputActionPressed != null) {
+        RENDERER.events().removeInputActionPressed(inputActionPressed);
+        inputActionPressed = null;
+      }
+
       if(keyPress != null) {
         RENDERER.events().removeKeyPress(keyPress);
         keyPress = null;
@@ -598,13 +606,14 @@ public final class Fmv {
         click = null;
       }
 
-      if(pressedThisFrame != null) {
-        RENDERER.events().removePressedThisFrame(pressedThisFrame);
-        pressedThisFrame = null;
+      if(buttonPressed != null) {
+        RENDERER.events().removeButtonPress(buttonPressed);
+        buttonPressed = null;
       }
 
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
+      PLATFORM.setInputTickRate(oldFps);
       RENDERER.setRenderMode(oldRenderMode);
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
       oldRenderer = null;

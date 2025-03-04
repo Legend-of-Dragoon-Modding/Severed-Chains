@@ -1,13 +1,17 @@
 package legend.game.wmap;
 
-import legend.game.input.InputAction;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.Arrays;
 
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 
 public final class WmapStatics {
   public static final Vector3f[] placePositionVectors_800c74b8 = new Vector3f[257];
@@ -204,26 +208,26 @@ public final class WmapStatics {
   public static final String[] regions_800f01ec = {"South of Serdio", "North of Serdio", "Tiberoa"};
 
   /** Each element is an input value mask, with values counter-clockwise from north */
-  public static final InputAction[][] positiveDirectionMovementMask_800f0204 = {
-    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
-    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP, InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
-    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
-    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT, InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
-    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
-    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN, InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
-    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
-    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT, InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
+  public static final RegistryDelegate[][] positiveDirectionMovementMask_800f0204 = {
+    {INPUT_ACTION_GENERAL_MOVE_UP},
+    {INPUT_ACTION_GENERAL_MOVE_UP, INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT, INPUT_ACTION_GENERAL_MOVE_DOWN},
+    {INPUT_ACTION_GENERAL_MOVE_DOWN},
+    {INPUT_ACTION_GENERAL_MOVE_DOWN, INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT, INPUT_ACTION_GENERAL_MOVE_UP},
   };
   /** Each element is an input value mask, with values counter-clockwise from south */
-  public static final InputAction[][] negativeDirectionMovementMask_800f0210 = {
-    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
-    {InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN, InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
-    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT},
-    {InputAction.DPAD_RIGHT, InputAction.JOYSTICK_LEFT_BUTTON_RIGHT, InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
-    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP},
-    {InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP, InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
-    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT},
-    {InputAction.DPAD_LEFT, InputAction.JOYSTICK_LEFT_BUTTON_LEFT, InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN},
+  public static final RegistryDelegate[][] negativeDirectionMovementMask_800f0210 = {
+    {INPUT_ACTION_GENERAL_MOVE_DOWN},
+    {INPUT_ACTION_GENERAL_MOVE_DOWN, INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT, INPUT_ACTION_GENERAL_MOVE_UP},
+    {INPUT_ACTION_GENERAL_MOVE_UP},
+    {INPUT_ACTION_GENERAL_MOVE_UP, INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT, INPUT_ACTION_GENERAL_MOVE_DOWN},
   };
 
   public static final Place0c[] places_800f0234 = {

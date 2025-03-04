@@ -35,13 +35,12 @@ lod_core.ui.links.github=Severed Chains GitHub Page
 lod_core.ui.links.issue=Report an Issue
 
 # Global config
-lod_core.config.controller.label=Controller
 lod_core.config.controller_keybinds.label=Controller Keybinds
 lod_core.config.controller_keybinds.configure=Configure...
 lod_core.config.controller_deadzone.label=Controller Deadzone
 lod_core.config.disable_mouse_input.label=Disable Mouse Input
 lod_core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
-lod_core.config.rumble.label=Rumble (not supported yet)
+lod_core.config.rumble.label=Rumble
 lod_core.config.allow_widescreen.label=3D Widescreen
 lod_core.config.allow_widescreen.help=Use widescreen mode in 3D areas (world map, battle)
 lod_core.config.submap_widescreen_mode.label=2D Widescreen Mode
@@ -142,6 +141,8 @@ lod_core.config.icon_set.label=Icon Set
 lod_core.config.icon_set.help=Enhanced changes some item and equipment icons to icons that were cut from the game
 lod_core.config.icon_set.ENHANCED=Enhanced
 lod_core.config.icon_set.RETAIL=Retail
+lod_core.config.run_by_default.label=Run by default
+lod_core.config.run_by_default.help=When enabled, the character will run by default and walk when the run input is held
 
 lod_core.keybind.help=Press DEL when done
 lod_core.keybind.mods=Supported combo keys:

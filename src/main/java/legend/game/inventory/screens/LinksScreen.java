@@ -1,8 +1,9 @@
 package legend.game.inventory.screens;
 
 import com.vaadin.open.Open;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
 
@@ -10,12 +11,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
 public class LinksScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -65,24 +70,24 @@ public class LinksScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       playMenuSound(2);
       Open.open(this.links.get(this.getHighlightedRow().getText()));
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       playMenuSound(3);
       this.unload.run();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_NORTH) {
+    if(action == INPUT_ACTION_MENU_HELP.get() && !repeat) {
       playMenuSound(1);
       final String text = this.links.get(this.getHighlightedRow().getText());
       final Label helpLabel = this.linkLabels.get(this.getHighlightedRow().getText());
@@ -94,7 +99,7 @@ public class LinksScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     final int linkIndex = Math.floorDiv(y - 32, 13);
 
     if(linkIndex >= 0 && linkIndex < this.linkText.size()) {

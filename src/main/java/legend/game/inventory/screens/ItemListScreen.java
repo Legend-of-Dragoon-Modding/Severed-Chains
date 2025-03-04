@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.controls.Background;
@@ -26,6 +26,11 @@ import static legend.game.Scus94491BpeSegment_8002.menuItemIconComparator;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 
 public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
@@ -54,8 +59,8 @@ public class ItemListScreen extends MenuScreen {
       this.equipmentList.hideHighlight();
       this.updateDescription(this.itemList.getSelectedItem());
     });
-    this.itemList.onPressedThisFrame(inputAction -> {
-      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+    this.itemList.onInputActionPressed((action, repeat) -> {
+      if(action == INPUT_ACTION_MENU_RIGHT.get()) {
         playMenuSound(1);
         this.setFocus(this.equipmentList);
         this.equipmentList.select(this.itemList.getSelectedIndex());
@@ -72,8 +77,8 @@ public class ItemListScreen extends MenuScreen {
       this.equipmentList.showHighlight();
       this.updateDescription(this.equipmentList.getSelectedItem());
     });
-    this.equipmentList.onPressedThisFrame(inputAction -> {
-      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+    this.equipmentList.onInputActionPressed((action, repeat) -> {
+      if(action == INPUT_ACTION_MENU_LEFT.get()) {
         playMenuSound(1);
         this.setFocus(this.itemList);
         this.itemList.select(this.equipmentList.getSelectedIndex());
@@ -177,22 +182,22 @@ public class ItemListScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_WEST) {
+    if(action == INPUT_ACTION_MENU_DELETE.get()) {
       this.menuDiscard();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_NORTH) {
+    if(action == INPUT_ACTION_MENU_SORT.get() && !repeat) {
       this.menuSort();
       return InputPropagation.HANDLED;
     }

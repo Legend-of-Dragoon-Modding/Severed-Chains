@@ -1,6 +1,6 @@
 package legend.game.input;
 
-public enum InputAction {
+public enum InputActionOld {
   DPAD_UP(0x1000),
   DPAD_DOWN(0x4000),
   DPAD_LEFT(0x8000),
@@ -33,26 +33,11 @@ public enum InputAction {
   JOYSTICK_RIGHT_BUTTON_DOWN(-1),
   JOYSTICK_RIGHT_BUTTON_LEFT(-1),
   JOYSTICK_RIGHT_BUTTON_RIGHT(-1),
-
-  BATTLE_DRAGOON(-1),
-  BATTLE_SPECIAL(-1),
-  BATTLE_ESCAPE(-1),
-  BATTLE_GUARD(-1),
-  BATTLE_ITEMS(-1),
-
-  SPEED_UP(-1),
-  SLOW_DOWN(-1),
-  DEBUGGER(-1),
-  PAUSE(-1),
-  FRAME_ADVANCE(-1),
-  FRAME_ADVANCE_HOLD(-1),
-  KILL_STUCK_SOUNDS(-1),
-  TOGGLE_FULL_SCREEN(-1),
   ;
 
   public final int hexCode;
 
-  InputAction(final int hexCode) {
+  InputActionOld(final int hexCode) {
     this.hexCode = hexCode;
   }
 }

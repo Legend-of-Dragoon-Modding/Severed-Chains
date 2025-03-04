@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputKey;
 import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Label;
@@ -12,8 +13,10 @@ import java.util.function.BiConsumer;
 
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class InputBoxScreen extends MenuScreen {
   private final BiConsumer<MessageBoxResult, String> onResult;
@@ -45,8 +48,8 @@ public class InputBoxScreen extends MenuScreen {
     this.text.setText(defaultText);
     this.text.setMaxLength(15);
 
-    this.text.onKeyPress((key, scancode, mods) -> {
-      if(key == GLFW_KEY_ESCAPE || key == GLFW_KEY_ENTER) {
+    this.text.onKeyPress((key, scancode, mods, repeat) -> {
+      if(key == InputKey.ESCAPE || key == InputKey.RETURN) {
         this.deferAction(() -> this.setFocus(null));
         return InputPropagation.HANDLED;
       }
@@ -148,27 +151,27 @@ public class InputBoxScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+    if(action == INPUT_ACTION_MENU_UP.get()) {
       this.menuNavigateUp();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
       this.menuNavigateDown();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       this.menuSelect();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuCancel();
       return InputPropagation.HANDLED;
     }
