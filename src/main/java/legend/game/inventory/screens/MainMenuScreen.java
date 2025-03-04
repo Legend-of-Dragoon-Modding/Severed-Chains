@@ -378,7 +378,7 @@ public class MainMenuScreen extends MenuScreen {
     }
 
     if(this.loadingStage == 2) {
-      if(action == INPUT_ACTION_MENU_BACK.get()) {
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
         this.menuEscape();
         return InputPropagation.HANDLED;
       }
