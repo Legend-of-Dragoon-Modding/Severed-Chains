@@ -80,34 +80,34 @@ public class LodMod {
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_OPEN_INVENTORY = INPUT_ACTION_REGISTRAR.register("general_open_inventory", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_UP = INPUT_ACTION_REGISTRAR.register("general_move_up", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_DOWN = INPUT_ACTION_REGISTRAR.register("general_move_down", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_LEFT = INPUT_ACTION_REGISTRAR.register("general_move_left", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_RIGHT = INPUT_ACTION_REGISTRAR.register("general_move_right", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_RUN = INPUT_ACTION_REGISTRAR.register("general_run", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_OPEN_INVENTORY = INPUT_ACTION_REGISTRAR.register("general_open_inventory", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_UP = INPUT_ACTION_REGISTRAR.register("general_move_up", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_DOWN = INPUT_ACTION_REGISTRAR.register("general_move_down", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_LEFT = INPUT_ACTION_REGISTRAR.register("general_move_left", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_RIGHT = INPUT_ACTION_REGISTRAR.register("general_move_right", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_RUN = INPUT_ACTION_REGISTRAR.register("general_run", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_RIGHT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_right", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_LEFT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_left", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_OUT = INPUT_ACTION_REGISTRAR.register("wmap_zoom_out", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_IN = INPUT_ACTION_REGISTRAR.register("wmap_zoom_in", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_coolon", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_SERVICES = INPUT_ACTION_REGISTRAR.register("wmap_services", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_DESTINATIONS = INPUT_ACTION_REGISTRAR.register("wmap_destinations", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_RIGHT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_right", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_LEFT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_left", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_OUT = INPUT_ACTION_REGISTRAR.register("wmap_zoom_out", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_IN = INPUT_ACTION_REGISTRAR.register("wmap_zoom_in", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_coolon", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_SERVICES = INPUT_ACTION_REGISTRAR.register("wmap_services", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_DESTINATIONS = INPUT_ACTION_REGISTRAR.register("wmap_destinations", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_INTERACT = INPUT_ACTION_REGISTRAR.register("smap_interact", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_TOGGLE_INDICATORS = INPUT_ACTION_REGISTRAR.register("smap_toggle_indicators", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_INTERACT = INPUT_ACTION_REGISTRAR.register("smap_interact", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_TOGGLE_INDICATORS = INPUT_ACTION_REGISTRAR.register("smap_toggle_indicators", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_COUNTER = INPUT_ACTION_REGISTRAR.register("bttl_counter", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ROTATE_CAMERA = INPUT_ACTION_REGISTRAR.register("bttl_rotate_camera", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ADDITIONS = INPUT_ACTION_REGISTRAR.register("bttl_additions", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_TRANSFORM = INPUT_ACTION_REGISTRAR.register("bttl_transform", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPECIAL = INPUT_ACTION_REGISTRAR.register("bttl_special", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ESCAPE = INPUT_ACTION_REGISTRAR.register("bttl_escape", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_GUARD = INPUT_ACTION_REGISTRAR.register("bttl_guard", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ITEMS = INPUT_ACTION_REGISTRAR.register("bttl_items", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_COUNTER = INPUT_ACTION_REGISTRAR.register("bttl_counter", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ROTATE_CAMERA = INPUT_ACTION_REGISTRAR.register("bttl_rotate_camera", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ADDITIONS = INPUT_ACTION_REGISTRAR.register("bttl_additions", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_TRANSFORM = INPUT_ACTION_REGISTRAR.register("bttl_transform", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPECIAL = INPUT_ACTION_REGISTRAR.register("bttl_special", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ESCAPE = INPUT_ACTION_REGISTRAR.register("bttl_escape", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_GUARD = INPUT_ACTION_REGISTRAR.register("bttl_guard", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ITEMS = INPUT_ACTION_REGISTRAR.register("bttl_items", InputAction::editable);
 
   private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
   public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));

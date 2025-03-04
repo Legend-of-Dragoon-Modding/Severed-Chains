@@ -14,7 +14,6 @@ import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
-import legend.game.input.InputActionOld;
 import legend.game.inventory.IconSetConfigEntry;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
@@ -22,7 +21,6 @@ import legend.game.modding.coremod.config.AllowWidescreenConfigEntry;
 import legend.game.modding.coremod.config.AudioDeviceConfig;
 import legend.game.modding.coremod.config.BattleTransitionModeConfigEntry;
 import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
-import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
@@ -62,9 +60,6 @@ import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID, version = "^3.0.0")
 @EventListener
@@ -99,8 +94,6 @@ public class CoreMod {
   /** Config isn't actually used, but adds a button to the options screen to open the keybinds screen */
   public static final RegistryDelegate<ConfigEntry<Void>> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
 
-  public static final Map<InputActionOld, RegistryDelegate<ControllerKeybindConfigEntry>> KEYBIND_CONFIGS = new EnumMap<>(InputActionOld.class);
-
   // Per-campaign config
   public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
@@ -125,41 +118,41 @@ public class CoreMod {
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_UP = INPUT_ACTION_REGISTRAR.register("menu_up", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DOWN = INPUT_ACTION_REGISTRAR.register("menu_down", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_LEFT = INPUT_ACTION_REGISTRAR.register("menu_left", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_RIGHT = INPUT_ACTION_REGISTRAR.register("menu_right", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HOME = INPUT_ACTION_REGISTRAR.register("menu_home", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_END = INPUT_ACTION_REGISTRAR.register("menu_end", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_UP = INPUT_ACTION_REGISTRAR.register("menu_page_up", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_DOWN = INPUT_ACTION_REGISTRAR.register("menu_page_down", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_confirm", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BACK = INPUT_ACTION_REGISTRAR.register("menu_back", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DELETE = INPUT_ACTION_REGISTRAR.register("menu_delete", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_UP = INPUT_ACTION_REGISTRAR.register("menu_up", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DOWN = INPUT_ACTION_REGISTRAR.register("menu_down", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_LEFT = INPUT_ACTION_REGISTRAR.register("menu_left", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_RIGHT = INPUT_ACTION_REGISTRAR.register("menu_right", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HOME = INPUT_ACTION_REGISTRAR.register("menu_home", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_END = INPUT_ACTION_REGISTRAR.register("menu_end", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_UP = INPUT_ACTION_REGISTRAR.register("menu_page_up", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_DOWN = INPUT_ACTION_REGISTRAR.register("menu_page_down", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_confirm", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BACK = INPUT_ACTION_REGISTRAR.register("menu_back", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DELETE = INPUT_ACTION_REGISTRAR.register("menu_delete", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SLOW_DOWN = INPUT_ACTION_REGISTRAR.register("general_slow_down", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SLOW_DOWN = INPUT_ACTION_REGISTRAR.register("general_slow_down", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_TOGGLE = INPUT_ACTION_REGISTRAR.register("freecam_toggle", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_FORWARD = INPUT_ACTION_REGISTRAR.register("freecam_forward", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_BACKWARD = INPUT_ACTION_REGISTRAR.register("freecam_backward", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_LEFT = INPUT_ACTION_REGISTRAR.register("freecam_left", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_RIGHT = INPUT_ACTION_REGISTRAR.register("freecam_right", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_UP = INPUT_ACTION_REGISTRAR.register("freecam_up", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_DOWN = INPUT_ACTION_REGISTRAR.register("freecam_down", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_TOGGLE = INPUT_ACTION_REGISTRAR.register("freecam_toggle", InputAction::hidden);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_FORWARD = INPUT_ACTION_REGISTRAR.register("freecam_forward", InputAction::hidden);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_BACKWARD = INPUT_ACTION_REGISTRAR.register("freecam_backward", InputAction::hidden);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_LEFT = INPUT_ACTION_REGISTRAR.register("freecam_left", InputAction::hidden);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_RIGHT = INPUT_ACTION_REGISTRAR.register("freecam_right", InputAction::hidden);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_UP = INPUT_ACTION_REGISTRAR.register("freecam_up", InputAction::hidden);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_DOWN = INPUT_ACTION_REGISTRAR.register("freecam_down", InputAction::hidden);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_OPEN_DEBUGGER = INPUT_ACTION_REGISTRAR.register("debug_open_debugger", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_PAUSE = INPUT_ACTION_REGISTRAR.register("debug_pause", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_FRAME_ADVANCE = INPUT_ACTION_REGISTRAR.register("debug_frame_advance", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD = INPUT_ACTION_REGISTRAR.register("debug_frame_advance_hold", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME = INPUT_ACTION_REGISTRAR.register("debug_toggle_wireframe", InputAction::new);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_RELOAD_SHADERS = INPUT_ACTION_REGISTRAR.register("debug_reload_shaders", InputAction::new);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_OPEN_DEBUGGER = INPUT_ACTION_REGISTRAR.register("debug_open_debugger", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_PAUSE = INPUT_ACTION_REGISTRAR.register("debug_pause", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_FRAME_ADVANCE = INPUT_ACTION_REGISTRAR.register("debug_frame_advance", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD = INPUT_ACTION_REGISTRAR.register("debug_frame_advance_hold", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME = INPUT_ACTION_REGISTRAR.register("debug_toggle_wireframe", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_DEBUG_RELOAD_SHADERS = INPUT_ACTION_REGISTRAR.register("debug_reload_shaders", InputAction::editable);
 
   public static final Formula<Integer, Integer> PHYSICAL_DAMAGE_FORMULA = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
     .then(PhysicalDamageFormula::applyElementalInteractions)

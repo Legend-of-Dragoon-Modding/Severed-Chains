@@ -14,6 +14,7 @@ import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
@@ -3445,6 +3446,7 @@ public final class Scus94491BpeSegment_8002 {
 
       for(int charIndex = 0; charIndex < text.length(); charIndex++) {
         final char c = text.charAt(charIndex);
+        int charWidth = charWidth(c);
 
         if(c != ' ') {
           if(c == '\n') {
@@ -3462,15 +3464,57 @@ public final class Scus94491BpeSegment_8002 {
 
             textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f);
 
-
             if(trim < 0) {
               textTransforms.transfer.y += trim;
             }
 
             final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
               .texture(RENDERER.textTexture)
-              .vertices((c - 33) * 4, 4)
             ;
+
+            if(c < 0xe000) {
+              model.vertices((c - 33) * 4, 4);
+            } else {
+              final char modifiedChar = InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), c);
+              charWidth = charWidth(modifiedChar);
+
+              final int index = switch(modifiedChar) {
+                case InputCodepoints.DPAD_UP -> 224;
+                case InputCodepoints.DPAD_DOWN -> 225;
+                case InputCodepoints.DPAD_LEFT -> 226;
+                case InputCodepoints.DPAD_RIGHT -> 227;
+                case InputCodepoints.SELECT-> 245;
+                case InputCodepoints.START -> 244;
+                case InputCodepoints.LEFT_BUMPER -> 230;
+                case InputCodepoints.LEFT_TRIGGER -> 231;
+                case InputCodepoints.LEFT_STICK -> 232;
+                case InputCodepoints.RIGHT_BUMPER -> 233;
+                case InputCodepoints.RIGHT_TRIGGER -> 234;
+                case InputCodepoints.RIGHT_STICK -> 235;
+                case InputCodepoints.LEFT_AXIS_X -> 240;
+                case InputCodepoints.LEFT_AXIS_Y -> 241;
+                case InputCodepoints.RIGHT_AXIS_X -> 242;
+                case InputCodepoints.RIGHT_AXIS_Y -> 243;
+                case InputCodepoints.A -> 236;
+                case InputCodepoints.B -> 237;
+                case InputCodepoints.X -> 238;
+                case InputCodepoints.Y -> 239;
+                case InputCodepoints.XBOX_BUTTON_BACK -> 245; //TODO uses select
+                case InputCodepoints.XBOX_BUTTON_MENU -> 228;
+                case InputCodepoints.XBOX_BUTTON_VIEW -> 229;
+                case InputCodepoints.PS_BUTTON_CROSS -> 252;
+                case InputCodepoints.PS_BUTTON_CIRCLE -> 253;
+                case InputCodepoints.PS_BUTTON_SQUARE -> 254;
+                case InputCodepoints.PS_BUTTON_TRIANGLE -> 255;
+                default -> 0;
+              };
+
+              if(index == 0) {
+                continue;
+              }
+
+              model.vertices(index * 4, 4);
+            }
 
             if(i == 0) {
               model.colour(options.getRed(), options.getGreen(), options.getBlue());
@@ -3492,7 +3536,7 @@ public final class Scus94491BpeSegment_8002 {
           }
         }
 
-        glyphNudge += charWidth(c) * options.getSize();
+        glyphNudge += charWidth * options.getSize();
       }
     }
   }
@@ -3885,6 +3929,36 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static int charWidth(final char chr) {
+    switch(chr) {
+      case InputCodepoints.DPAD_LEFT, InputCodepoints.DPAD_RIGHT -> {
+        return 5;
+      }
+      case InputCodepoints.DPAD_UP, InputCodepoints.DPAD_DOWN, InputCodepoints.B -> {
+        return 7;
+      }
+      case InputCodepoints.XBOX_BUTTON_MENU, InputCodepoints.XBOX_BUTTON_VIEW, InputCodepoints.Y, InputCodepoints.PS_BUTTON_CROSS, InputCodepoints.PS_BUTTON_CIRCLE, InputCodepoints.PS_BUTTON_SQUARE, InputCodepoints.PS_BUTTON_TRIANGLE -> {
+        return 8;
+      }
+      case InputCodepoints.LEFT_BUMPER, InputCodepoints.LEFT_STICK, InputCodepoints.RIGHT_STICK, InputCodepoints.A, InputCodepoints.X, InputCodepoints.START -> {
+        return 9;
+      }
+      case InputCodepoints.LEFT_TRIGGER, InputCodepoints.RIGHT_BUMPER -> {
+        return 10;
+      }
+      case InputCodepoints.RIGHT_TRIGGER -> {
+        return 11;
+      }
+      case InputCodepoints.LEFT_AXIS_X, InputCodepoints.LEFT_AXIS_Y -> {
+        return 12;
+      }
+      case InputCodepoints.RIGHT_AXIS_X, InputCodepoints.RIGHT_AXIS_Y -> {
+        return 13;
+      }
+      case InputCodepoints.SELECT -> {
+        return 15;
+      }
+    }
+
     final int nudge = switch(chr) {
       case '?', 'E', 'F', 'L', 'Y', 'Z', 'b', 'c', 'd', 'e', 'g', 'h', 'k', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'y', 'z' -> 1;
       case '.', '/', 'f', 't' -> 2;

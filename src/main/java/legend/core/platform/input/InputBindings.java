@@ -2,6 +2,7 @@ package legend.core.platform.input;
 
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,5 +29,19 @@ public final class InputBindings {
     }
 
     return list;
+  }
+
+  public static List<InputActivation> getActivationsForAction(final InputAction action) {
+    final List<InputActivation> activations = new ArrayList<>();
+
+    for(final List<InputBinding<?>> bindings : BINDINGS.values()) {
+      for(final InputBinding<?> binding : bindings) {
+        if(binding.action == action) {
+          activations.add(binding.activation);
+        }
+      }
+    }
+
+    return activations;
   }
 }
