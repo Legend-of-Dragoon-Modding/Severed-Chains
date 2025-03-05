@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
-import legend.core.platform.input.InputKey;
 import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Label;
@@ -44,18 +43,9 @@ public class InputBoxScreen extends MenuScreen {
     this.text = panel.addControl(new Textbox());
     this.text.setSize(165, 16);
     this.text.setPos(25, 28);
-    this.text.setZ(1);
+    this.text.setZ(3);
     this.text.setText(defaultText);
     this.text.setMaxLength(15);
-
-    this.text.onKeyPress((key, scancode, mods, repeat) -> {
-      if(key == InputKey.ESCAPE || key == InputKey.RETURN) {
-        this.deferAction(() -> this.setFocus(null));
-        return InputPropagation.HANDLED;
-      }
-
-      return InputPropagation.PROPAGATE;
-    });
 
     this.accept = panel.addControl(new Button("Accept"));
     this.accept.setSize(112, 14);

@@ -19,6 +19,8 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
+import static org.lwjgl.sdl.SDLKeyboard.SDL_StartTextInput;
+import static org.lwjgl.sdl.SDLKeyboard.SDL_StopTextInput;
 import static org.lwjgl.sdl.SDLMouse.SDL_CreateSystemCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_DestroyCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_GetDefaultCursor;
@@ -113,10 +115,6 @@ public class SdlWindow extends Window {
     SDL_SetWindowMinimumSize(this.window, 320, 240);
 
     this.pointerCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
-
-/* TODO
-    glfwSetCharCallback(this.window, (window, codepoint) -> this.events().onChar(codepoint));
-*/
 
     this.context = SDL_GL_CreateContext(this.window);
 
@@ -248,6 +246,16 @@ public class SdlWindow extends Window {
   @Override
   public InputClass getInputClass() {
     return this.currentInputClass;
+  }
+
+  @Override
+  public void startTextInput() {
+    SDL_StartTextInput(this.window);
+  }
+
+  @Override
+  public void stopTextInput() {
+    SDL_StopTextInput(this.window);
   }
 
   @Override

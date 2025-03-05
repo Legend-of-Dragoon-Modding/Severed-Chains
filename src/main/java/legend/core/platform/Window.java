@@ -29,6 +29,8 @@ public abstract class Window {
   public abstract boolean hasFocus();
 
   public abstract InputClass getInputClass();
+  public abstract void startTextInput();
+  public abstract void stopTextInput();
 
   public abstract void disableCursor();
   public abstract void showCursor();

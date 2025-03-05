@@ -171,6 +171,16 @@ public class GlfwWindow extends Window {
     return InputClass.GAMEPAD; //TODO
   }
 
+  @Override
+  public void startTextInput() {
+
+  }
+
+  @Override
+  public void stopTextInput() {
+
+  }
+
   private long getMonitorFromConfig() {
     if(CONFIG.getConfig(CoreMod.FULLSCREEN_CONFIG.get())) {
       final int monitorIndex = CONFIG.getConfig(CoreMod.MONITOR_CONFIG.get());

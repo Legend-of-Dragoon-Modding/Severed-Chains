@@ -35,6 +35,7 @@ import org.lwjgl.sdl.SDL_KeyboardEvent;
 import org.lwjgl.sdl.SDL_MouseButtonEvent;
 import org.lwjgl.sdl.SDL_MouseMotionEvent;
 import org.lwjgl.sdl.SDL_MouseWheelEvent;
+import org.lwjgl.sdl.SDL_TextInputEvent;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_MOUSE_BUTTON_DOWN;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_MOUSE_BUTTON_UP;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_MOUSE_MOTION;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_MOUSE_WHEEL;
+import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_TEXT_INPUT;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_WINDOW_CLOSE_REQUESTED;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_WINDOW_FOCUS_GAINED;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_WINDOW_FOCUS_LOST;
@@ -516,6 +518,17 @@ public class SdlPlatformManager extends PlatformManager {
                 EVENTS.postEvent(new InputReleasedEvent(binding.action));
               }
             }
+          }
+        }
+
+        case SDL_EVENT_TEXT_INPUT -> {
+          final SDL_TextInputEvent text = this.event.text();
+          final SdlWindow window = this.getWindow(this.event);
+          this.setWindowInputClass(window, InputClass.KEYBOARD);
+          final String string = text.textString();
+
+          for(int i = 0; i < string.length(); i++) {
+            window.events().onChar(string.charAt(i));
           }
         }
 
