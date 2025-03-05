@@ -323,6 +323,7 @@ public class SdlPlatformManager extends PlatformManager {
   private SDL_Event event;
 
   private final Map<InputAction, InputActionState> actionStates = new HashMap<>();
+  private boolean clearActionStates;
 
   private final Int2ObjectMap<SdlGamepadDevice> gamepads = new Int2ObjectOpenHashMap<>();
   private SdlGamepadDevice lastGamepad;
@@ -432,7 +433,7 @@ public class SdlPlatformManager extends PlatformManager {
 
   @Override
   public void resetActionStates() {
-    this.actionStates.clear();
+    this.clearActionStates = true;
   }
 
   @Override
@@ -582,7 +583,7 @@ public class SdlPlatformManager extends PlatformManager {
           final SDL_GamepadAxisEvent axis = this.event.gaxis();
 
           if(this.focus != null) {
-            if(axis.value() > 0x2666) { // 30% inner deadzone
+            if(Math.abs(axis.value()) > 0x2666) { // 30% inner deadzone
               this.setWindowInputClass(this.focus, InputClass.GAMEPAD);
               this.lastGamepad = this.gamepads.get(axis.which());
             }
@@ -686,6 +687,11 @@ public class SdlPlatformManager extends PlatformManager {
       if(time >= this.rumbleLerpDuration) {
         this.rumbleLerpStart = 0;
       }
+    }
+
+    if(this.clearActionStates) {
+      this.clearActionStates = false;
+      this.actionStates.clear();
     }
 
     super.tickInput();

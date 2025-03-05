@@ -10,22 +10,39 @@ lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
 # UI text
+lod_core.ui.hotkey=%s: %s
+
 lod_core.ui.campaign_selection.title=Campaigns
-lod_core.ui.campaign_selection.hotkeys=%s Mods %s Delete
+lod_core.ui.campaign_selection.mods=Mods
+lod_core.ui.campaign_selection.delete=Delete
+lod_core.ui.campaign_selection.back=Back
 lod_core.ui.campaign_selection.change_mods_confirm=Changing mods can cause\nproblems, continue?
 lod_core.ui.campaign_selection.delete_campaign_confirm=Are you sure you want to\ndelete this campaign?
 lod_core.ui.campaign_selection.missing_mods_confirm=Missing mods, continue?
 lod_core.ui.campaign_selection.failed_to_delete_campaign=Failed to delete campaign
 
+lod_core.ui.load_game.delete=Delete
+lod_core.ui.load_game.back=Back
+
+lod_core.ui.save_game.delete=Delete
+lod_core.ui.save_game.back=Back
+
 lod_core.ui.mods.required=Required mod
 lod_core.ui.mods.error=Crashed: %s
 lod_core.ui.mods.wrong_version=Wrong version: %s
-lod_core.ui.mods.hotkeys=%s Help
+lod_core.ui.mods.help=Help
+lod_core.ui.mods.back=Back
 
-lod_core.ui.options.help_hotkey=%s Help
+lod_core.ui.options.help=Help
+lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
 
-lod_core.ui.links.hotkeys=%s Open Link %s View Link %s Back
+lod_core.ui.options_category.back=Back
+
+lod_core.ui.links.click_on_any_link_to_open=Click on any link to open it
+lod_core.ui.links.view_link=View Link
+lod_core.ui.links.open_link=Open Link
+lod_core.ui.links.back=Back
 lod_core.ui.links.discord=Legend of Dragoon & Severed Chains Discord Community
 lod_core.ui.links.youtube=Legend of Dragoon & Severed Chains YouTube
 lod_core.ui.links.fandom=Legend of Dragoon Global Fandom Website

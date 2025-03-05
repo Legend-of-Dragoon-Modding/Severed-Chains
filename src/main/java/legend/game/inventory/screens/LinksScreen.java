@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import com.vaadin.open.Open;
-import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
@@ -16,7 +15,6 @@ import java.util.Set;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -24,8 +22,6 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
 public class LinksScreen extends VerticalLayoutScreen {
   private final Runnable unload;
-
-  private final FontOptions fontOptions = new FontOptions().size(0.66f).horizontalAlign(HorizontalAlign.RIGHT).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   private final List<String> linkText = new ArrayList<>();
   private final Map<String, String> links = new HashMap<>();
@@ -46,10 +42,14 @@ public class LinksScreen extends VerticalLayoutScreen {
     this.addLink(I18n.translate("lod_core.ui.links.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains");
     this.addLink(I18n.translate("lod_core.ui.links.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues");
 
-    final Label help = this.addControl(new Label("Click on any link to open it"));
+    final Label help = this.addControl(new Label(I18n.translate("lod_core.ui.links.click_on_any_link_to_open")));
     help.setWidth(this.getWidth());
     help.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
     help.setY(200);
+
+    this.addHotkey(I18n.translate("lod_core.ui.links.view_link"), INPUT_ACTION_MENU_HELP, this::viewLink);
+    this.addHotkey(I18n.translate("lod_core.ui.links.open_link"), INPUT_ACTION_MENU_CONFIRM, this::openLink);
+    this.addHotkey(I18n.translate("lod_core.ui.links.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
   private void addLink(final String text, final String url) {
@@ -64,38 +64,21 @@ public class LinksScreen extends VerticalLayoutScreen {
     this.linkLabels.put(text, label);
   }
 
-  @Override
-  protected void render() {
-    renderText(I18n.translate("lod_core.ui.links.hotkeys", "\u011d", "\u0120", "\u011e"), 334, 226, this.fontOptions);
+  private void openLink() {
+    playMenuSound(2);
+    Open.open(this.links.get(this.getHighlightedRow().getText()));
   }
 
-  @Override
-  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
-    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
+  private void viewLink() {
+    playMenuSound(1);
+    final String text = this.links.get(this.getHighlightedRow().getText());
+    final Label helpLabel = this.linkLabels.get(this.getHighlightedRow().getText());
+    this.getStack().pushScreen(new TooltipScreen(text, helpLabel.calculateTotalX() + helpLabel.getWidth() / 2, helpLabel.calculateTotalY() + helpLabel.getHeight() / 2));
+  }
 
-    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
-      playMenuSound(2);
-      Open.open(this.links.get(this.getHighlightedRow().getText()));
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
-      playMenuSound(3);
-      this.unload.run();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_HELP.get() && !repeat) {
-      playMenuSound(1);
-      final String text = this.links.get(this.getHighlightedRow().getText());
-      final Label helpLabel = this.linkLabels.get(this.getHighlightedRow().getText());
-      this.getStack().pushScreen(new TooltipScreen(text, helpLabel.calculateTotalX() + helpLabel.getWidth() / 2, helpLabel.calculateTotalY() + helpLabel.getHeight() / 2));
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
+  private void back() {
+    playMenuSound(3);
+    this.unload.run();
   }
 
   @Override

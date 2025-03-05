@@ -1,6 +1,6 @@
 package legend.game.inventory.screens;
 
-import legend.core.platform.input.InputAction;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
@@ -15,7 +15,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -60,6 +59,9 @@ public class LoadGameScreen extends MenuScreen {
     for(final SavedGame save : campaign.loadAllSaves()) {
       this.saveList.addEntry(save);
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.load_game.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(I18n.translate("lod_core.ui.load_game.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
   private void onSelection(final SavedGame save) {
@@ -86,7 +88,6 @@ public class LoadGameScreen extends MenuScreen {
   @Override
   protected void render() {
     renderText("Load Game", 188, 10, UI_TEXT_CENTERED);
-    renderText("\u011f Delete", 297, 226, UI_TEXT);
   }
 
   private void menuDelete() {
@@ -115,24 +116,5 @@ public class LoadGameScreen extends MenuScreen {
   private void menuEscape() {
     playMenuSound(3);
     this.closed.run();
-  }
-
-  @Override
-  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
-    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_DELETE.get()) {
-      this.menuDelete();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_BACK.get()) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
   }
 }

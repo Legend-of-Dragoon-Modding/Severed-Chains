@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.core.platform.input.InputAction;
 import legend.game.SItem;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
@@ -52,20 +51,12 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
         this.addRow(I18n.translate(CoreMod.MOD_ID + ".config.category." + category.name().toLowerCase(Locale.US) + ".label"), button);
       }
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.options_category.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
-  @Override
-  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
-    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
-      playMenuSound(3);
-      this.unload.run();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
+  private void back() {
+    playMenuSound(3);
+    this.unload.run();
   }
 }

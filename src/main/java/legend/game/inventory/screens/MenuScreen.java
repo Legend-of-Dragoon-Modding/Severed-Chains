@@ -2,18 +2,25 @@ package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputCodepoints;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.SItem;
+import legend.game.i18n.I18n;
 import legend.game.modding.coremod.CoreMod;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -22,6 +29,13 @@ public abstract class MenuScreen extends ControlHost {
 
   private Control hover;
   private Control focus;
+
+  private final FontOptions fontOptions = new FontOptions().size(0.66f).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
+  private final List<Hotkey> hotkeys = new ArrayList<>();
+
+  public void addHotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
+    this.hotkeys.add(new Hotkey(label, action, handler));
+  }
 
   void setStack(@Nullable final MenuStack stack) {
     this.stack = stack;
@@ -75,6 +89,14 @@ public abstract class MenuScreen extends ControlHost {
     this.runDeferredActions();
     this.render();
     this.renderControls(0, 0);
+
+    float offsetX = 0.0f;
+    for(int i = 0; i < this.hotkeys.size(); i++) {
+      final Hotkey hotkey = this.hotkeys.get(i);
+      final String string = I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get()));
+      renderText(string, 8 + offsetX, 228, this.fontOptions);
+      offsetX += (textWidth(string) + 12.0f) * this.fontOptions.getSize();
+    }
   }
 
   @Override
@@ -175,7 +197,20 @@ public abstract class MenuScreen extends ControlHost {
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
-      return this.focus.inputActionPressed(action, repeat);
+      if(this.focus.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    if(!repeat) {
+      for(int i = 0; i < this.hotkeys.size(); i++) {
+        final Hotkey hotkey = this.hotkeys.get(i);
+
+        if(action == hotkey.action.get()) {
+          hotkey.handler.run();
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     return InputPropagation.PROPAGATE;
@@ -259,6 +294,18 @@ public abstract class MenuScreen extends ControlHost {
       while((action = this.deferredActions.poll()) != null) {
         action.run();
       }
+    }
+  }
+
+  private static class Hotkey {
+    private final String label;
+    private final RegistryDelegate<InputAction> action;
+    private final Runnable handler;
+
+    private Hotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
+      this.label = label;
+      this.action = action;
+      this.handler = handler;
     }
   }
 }
