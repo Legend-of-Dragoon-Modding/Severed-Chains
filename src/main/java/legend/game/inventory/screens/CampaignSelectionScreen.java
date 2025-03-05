@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -27,7 +26,6 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -60,11 +58,6 @@ public class CampaignSelectionScreen extends MenuScreen {
     title.setPos(0, 10);
     title.setWidth(this.getWidth());
 
-    final Label hotkeys = this.addControl(new Label(I18n.translate("lod_core.ui.campaign_selection.hotkeys", "\u0120", "\u011f")));
-    hotkeys.getFontOptions().set(UI_TEXT).horizontalAlign(HorizontalAlign.RIGHT);
-    hotkeys.setPos(10, 226);
-    hotkeys.setWidth(this.getWidth() - 20);
-
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
 
@@ -85,6 +78,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     for(final Campaign campaign : SAVES.loadAllCampaigns()) {
       this.campaignList.addEntry(campaign);
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.mods"), INPUT_ACTION_MENU_MODS, this::menuMods);
+    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
   private void onSelection(final Campaign campaign) {
@@ -204,29 +201,5 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     // Restore all mods when going back to the title screen
     bootMods(MODS.getAllModIds());
-  }
-
-  @Override
-  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
-    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_MODS.get()) {
-      this.menuMods();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_DELETE.get()) {
-      this.menuDelete();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
   }
 }
