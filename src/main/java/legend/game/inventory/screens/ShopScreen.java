@@ -1258,12 +1258,12 @@ public class ShopScreen extends MenuScreen {
           return InputPropagation.HANDLED;
         }
 
-        if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+        if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
           this.menuMainShopRender3Escape();
           return InputPropagation.HANDLED;
         }
 
-        if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+        if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
           this.menuMainShopRender3Select();
           return InputPropagation.HANDLED;
         }
