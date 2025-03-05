@@ -38,6 +38,18 @@ public class Textbox extends Control {
   }
 
   @Override
+  protected void gotFocus() {
+    super.gotFocus();
+    RENDERER.window().startTextInput();
+  }
+
+  @Override
+  protected void lostFocus() {
+    super.lostFocus();
+    RENDERER.window().stopTextInput();
+  }
+
+  @Override
   public void setZ(final int z) {
     super.setZ(z);
     this.background.setZ(z + 1);
@@ -104,7 +116,7 @@ public class Textbox extends Control {
       final int caretY = y + 3;
 
       this.transforms.scaling(1.0f, this.getHeight() - 5.0f, 1.0f);
-      this.transforms.transfer.set(caretX, caretY, this.getZ() - 1.0f);
+      this.transforms.transfer.set(caretX, caretY, this.getZ() - 2.0f);
       RENDERER
         .queueOrthoModel(RENDERER.opaqueQuad, this.transforms, QueuedModelStandard.class)
         .colour(0xa0 / 255.0f, 0x80 / 255.0f, 0x50 / 255.0f);
@@ -125,6 +137,8 @@ public class Textbox extends Control {
         break;
       }
     }
+
+    this.deferAction(this::focus);
 
     return InputPropagation.HANDLED;
   }
@@ -153,7 +167,6 @@ public class Textbox extends Control {
 
     if(key == InputKey.BACKSPACE && this.caretIndex > 0) {
       this.updateText(this.text.substring(0, this.caretIndex - 1) + this.text.substring(this.caretIndex));
-      this.setCaretIndex(this.caretIndex - 1);
       this.fireChangedEvent();
     }
 
@@ -162,7 +175,7 @@ public class Textbox extends Control {
       this.fireChangedEvent();
     }
 
-    if(key == InputKey.ESCAPE) {
+    if(key == InputKey.ESCAPE || key == InputKey.RETURN) {
       this.deferAction(this::unfocus);
     }
 

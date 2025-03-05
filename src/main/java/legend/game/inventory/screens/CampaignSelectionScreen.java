@@ -157,6 +157,8 @@ public class CampaignSelectionScreen extends MenuScreen {
       return;
     }
 
+    playMenuSound(2);
+
     final Set<String> originalMods = Set.of(campaign.config.getConfig(CoreMod.ENABLED_MODS_CONFIG.get()));
     final Set<String> modIds = new HashSet<>(originalMods);
 
