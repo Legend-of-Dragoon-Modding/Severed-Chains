@@ -463,6 +463,11 @@ public class SdlPlatformManager extends PlatformManager {
         case SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP -> {
           final SDL_KeyboardEvent key = this.event.key();
           final SdlWindow window = this.getWindow(this.event);
+
+          if(window == null) {
+            continue;
+          }
+
           this.setWindowInputClass(window, InputClass.KEYBOARD);
           this.decodeMods(key, window.mods);
 
@@ -480,12 +485,12 @@ public class SdlPlatformManager extends PlatformManager {
             if(this.getKeyCode(binding.activation.key) == key.key()) {
               if(key.down()) {
                 if((binding.activation.mods.isEmpty() || window.mods.containsAll(binding.activation.mods)) && !key.repeat()) {
-                  this.focus.events().onInputActionPressed(binding.action, false);
+                  window.events().onInputActionPressed(binding.action, false);
                   this.getInputActionState(binding.action).press();
                   EVENTS.postEvent(new InputPressedEvent(binding.action, false));
                 }
               } else {
-                this.focus.events().onInputActionReleased(binding.action);
+                window.events().onInputActionReleased(binding.action);
                 this.getInputActionState(binding.action).release();
                 EVENTS.postEvent(new InputReleasedEvent(binding.action));
               }
@@ -500,12 +505,12 @@ public class SdlPlatformManager extends PlatformManager {
             if(this.getScanCode(binding.activation.key) == key.scancode()) {
               if(key.down()) {
                 if((binding.activation.mods.isEmpty() || window.mods.containsAll(binding.activation.mods)) && !key.repeat()) {
-                  this.focus.events().onInputActionPressed(binding.action, false);
+                  window.events().onInputActionPressed(binding.action, false);
                   this.getInputActionState(binding.action).press();
                   EVENTS.postEvent(new InputPressedEvent(binding.action, false));
                 }
               } else {
-                this.focus.events().onInputActionReleased(binding.action);
+                window.events().onInputActionReleased(binding.action);
                 this.getInputActionState(binding.action).release();
                 EVENTS.postEvent(new InputReleasedEvent(binding.action));
               }
