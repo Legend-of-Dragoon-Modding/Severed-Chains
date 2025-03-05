@@ -66,6 +66,7 @@ import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_WINDOW_FOCUS_LOST;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_WINDOW_RESIZED;
 import static org.lwjgl.sdl.SDLEvents.SDL_GetWindowFromEvent;
 import static org.lwjgl.sdl.SDLEvents.SDL_PollEvent;
+import static org.lwjgl.sdl.SDLGamepad.SDL_AddGamepadMappingsFromFile;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER;
@@ -347,6 +348,8 @@ public class SdlPlatformManager extends PlatformManager {
     }
 
     this.event = SDL_Event.malloc();
+
+    SDL_AddGamepadMappingsFromFile("gamecontrollerdb.txt");
 
     this.gamepads.clear();
     for(final SdlGamepadDevice gamepad : this.loadGamepads()) {
