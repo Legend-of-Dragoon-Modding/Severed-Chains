@@ -133,7 +133,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
 
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::fixed);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::editable);

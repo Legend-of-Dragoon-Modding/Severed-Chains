@@ -10,7 +10,14 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.platform.WindowEvents;
+import legend.core.platform.input.ButtonInputActivation;
+import legend.core.platform.input.InputActivation;
+import legend.core.platform.input.InputBindings;
+import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputClass;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.KeyInputActivation;
+import legend.core.platform.input.ScancodeInputActivation;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -24,6 +31,7 @@ import org.joml.Vector2i;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
@@ -234,6 +242,9 @@ public final class Fmv {
   private static InputClass currentInputSource;
   private static int skipTextFramesRemained;
   private static String skipText;
+  private static InputButton skipButton;
+  private static InputKey skipKey;
+  private static InputKey skipScancode;
   private static boolean isKeyboardInput;
   private static boolean isControllerInput;
 
@@ -263,10 +274,15 @@ public final class Fmv {
 
   private static void handleSkipText() {
     if(isKeyboardInput) {
-      setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard"), InputClass.KEYBOARD);
+      if(skipKey != null) {
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard", PLATFORM.getKeyName(skipKey)), InputClass.KEYBOARD);
+      } else if(skipScancode != null) {
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard", PLATFORM.getScancodeName(skipScancode)), InputClass.KEYBOARD);
+      }
+
       isKeyboardInput = false;
     } else if(isControllerInput) {
-      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller"), InputClass.GAMEPAD);
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller", skipButton.codepoint), InputClass.GAMEPAD);
       isControllerInput = false;
     }
 
@@ -308,6 +324,22 @@ public final class Fmv {
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
     volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+
+    skipButton = null;
+    skipKey = null;
+    skipScancode = null;
+
+    final List<InputActivation> activations = InputBindings.getActivationsForAction(INPUT_ACTION_FMV_SKIP.get());
+
+    for(final InputActivation activation : activations) {
+      if(activation instanceof final ButtonInputActivation button) {
+        skipButton = button.button;
+      } else if(activation instanceof final KeyInputActivation key) {
+        skipKey = key.key;
+      } else if(activation instanceof final ScancodeInputActivation key) {
+        skipScancode = key.key;
+      }
+    }
 
     keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
       if(!isControllerInput && !shouldStop && !repeat) {
