@@ -4078,18 +4078,6 @@ public class SMap extends EngineState {
         SCRIPTS.resume();
       }
     }
-
-    final FontOptions font = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).size(0.5f);
-    final InputAction[] actions = {INPUT_ACTION_GENERAL_MOVE_UP.get(), INPUT_ACTION_GENERAL_MOVE_DOWN.get(), INPUT_ACTION_GENERAL_MOVE_LEFT.get(), INPUT_ACTION_GENERAL_MOVE_RIGHT.get()};
-
-    for(int i = 0; i < actions.length; i++) {
-      final InputAction action = actions[i];
-      final boolean pressed = PLATFORM.isActionPressed(action);
-      final boolean repeat = PLATFORM.isActionRepeat(action);
-      final boolean held = PLATFORM.isActionHeld(action);
-      final float axis = PLATFORM.getAxis(action);
-      renderText("%s %b %b %b %.6f".formatted(action.getRegistryId().entryId(), pressed, repeat, held, axis), 4.0f, 4.0f + i * 8.0f, font);
-    }
   }
 
   /** Has to be done after scripts are ticked since the camera is attached to a sobj and it would use the position from the previous frame */
