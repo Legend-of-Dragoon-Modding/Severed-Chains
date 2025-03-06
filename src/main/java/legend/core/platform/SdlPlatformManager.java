@@ -243,6 +243,7 @@ import static org.lwjgl.sdl.SDLKeycode.SDLK_Z;
 import static org.lwjgl.sdl.SDLKeycode.SDL_KMOD_ALT;
 import static org.lwjgl.sdl.SDLKeycode.SDL_KMOD_CTRL;
 import static org.lwjgl.sdl.SDLKeycode.SDL_KMOD_SHIFT;
+import static org.lwjgl.sdl.SDLMisc.SDL_OpenURL;
 import static org.lwjgl.sdl.SDLMouse.SDL_BUTTON_LEFT;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_0;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_1;
@@ -863,6 +864,11 @@ public class SdlPlatformManager extends PlatformManager {
   public String getAxisName(final InputAxis axis) {
     final int code = this.getAxisCode(axis);
     return SDL_GetGamepadStringForAxis(code);
+  }
+
+  @Override
+  public void openUrl(final String url) {
+    SDL_OpenURL(url);
   }
 
   private void decodeMods(final SDL_KeyboardEvent key, final Set<InputMod> mods) {

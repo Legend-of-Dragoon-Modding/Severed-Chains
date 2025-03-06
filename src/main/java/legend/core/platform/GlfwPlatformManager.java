@@ -110,17 +110,17 @@ public class GlfwPlatformManager extends PlatformManager {
   }
 
   @Override
-  public String getScancodeName(InputKey key) {
+  public String getScancodeName(final InputKey key) {
     return "";
   }
 
   @Override
-  public String getButtonName(InputButton button) {
+  public String getButtonName(final InputButton button) {
     return "";
   }
 
   @Override
-  public String getAxisName(InputAxis axis) {
+  public String getAxisName(final InputAxis axis) {
     return "";
   }
 
@@ -141,6 +141,11 @@ public class GlfwPlatformManager extends PlatformManager {
 
   @Override
   public float getAxis(final InputAction action) {
+    throw new RuntimeException("Not yet implemented");
+  }
+
+  @Override
+  public void openUrl(final String url) {
     throw new RuntimeException("Not yet implemented");
   }
 }

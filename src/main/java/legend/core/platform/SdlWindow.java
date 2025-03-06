@@ -1,5 +1,6 @@
 package legend.core.platform;
 
+import legend.core.Config;
 import legend.core.opengl.Action;
 import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputMod;
@@ -18,6 +19,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static org.lwjgl.glfw.GLFW.glfwGetMonitorPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLKeyboard.SDL_StartTextInput;
 import static org.lwjgl.sdl.SDLKeyboard.SDL_StopTextInput;
@@ -50,10 +53,12 @@ import static org.lwjgl.sdl.SDLVideo.SDL_GetDisplayBounds;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetDisplays;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetPrimaryDisplay;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetWindowSize;
+import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowBordered;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowIcon;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMinimumSize;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMouseGrab;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowPosition;
+import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowSize;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowTitle;
 import static org.lwjgl.sdl.SDLVideo.SDL_ShowWindow;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_HIDDEN;
@@ -197,12 +202,20 @@ public class SdlWindow extends Window {
 
   @Override
   public void makeFullscreen() {
-    //TODO
+    this.monitor = this.getMonitorFromConfig();
+    this.vidMode = SDL_GetDesktopDisplayMode(this.monitor);
+    this.moveToMonitor();
+    SDL_SetWindowBordered(this.window, false);
+
+    // Overscan by 1 pixel to stop Windows from putting it into exclusive fullscreen
+    SDL_SetWindowSize(this.window, this.vidMode.w(), this.vidMode.h() + 1);
   }
 
   @Override
   public void makeWindowed() {
-    //TODO
+    SDL_SetWindowBordered(this.window, true);
+    SDL_SetWindowSize(this.window, Config.windowWidth(), Config.windowHeight());
+    this.centerWindow();
   }
 
   @Override
@@ -221,6 +234,19 @@ public class SdlWindow extends Window {
         displayRect.y() + (displayRect.h() - pHeight.get(0)) / 2
       );
     }
+  }
+
+  private void moveToMonitor() {
+    try(final MemoryStack stack = stackPush()) {
+      final SDL_Rect displayRect = SDL_Rect.malloc(stack);
+      SDL_GetDisplayBounds(this.monitor, displayRect);
+      SDL_SetWindowPosition(this.window, displayRect.x(), displayRect.y());
+    }
+
+    final int[] x = new int[1];
+    final int[] y = new int[1];
+    glfwGetMonitorPos(this.monitor, x, y);
+    glfwSetWindowPos(this.window, x[0], y[0]);
   }
 
   @Override

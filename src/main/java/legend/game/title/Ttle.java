@@ -1,6 +1,5 @@
 package legend.game.title;
 
-import com.vaadin.open.Open;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
@@ -779,7 +778,7 @@ public class Ttle extends EngineState {
 
           if(this.update != null) {
             if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
-              Open.open(this.update.uri);
+              PLATFORM.openUrl(this.update.uri);
             }
           }
         }
