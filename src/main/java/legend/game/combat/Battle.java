@@ -274,6 +274,7 @@ import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
 public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
@@ -598,6 +599,15 @@ public class Battle extends EngineState {
       this.inputRepeat |= 0x20;
       this.inputHeld |= 0x20;
     }
+
+    if(action == INPUT_ACTION_BTTL_COUNTER.get()) {
+      if(!repeat) {
+        this.inputPressed |= 0x40;
+      }
+
+      this.inputRepeat |= 0x40;
+      this.inputHeld |= 0x40;
+    }
   }
 
   @Override
@@ -606,6 +616,10 @@ public class Battle extends EngineState {
 
     if(action == INPUT_ACTION_BTTL_ATTACK.get()) {
       this.inputHeld &= ~0x20;
+    }
+
+    if(action == INPUT_ACTION_BTTL_COUNTER.get()) {
+      this.inputHeld &= ~0x40;
     }
   }
 
