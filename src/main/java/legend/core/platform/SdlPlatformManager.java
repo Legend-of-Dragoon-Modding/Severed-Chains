@@ -2,6 +2,8 @@ package legend.core.platform;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import legend.core.MathHelper;
@@ -441,6 +443,13 @@ public class SdlPlatformManager extends PlatformManager {
     this.clearActionStates = true;
   }
 
+  // These are used to disable keyboard input while controller buttons are held. This is a dumb
+  // workaround for dumb Steam's Steam Input repeating all controller input as keyboard input.
+  private final IntSet ignoredKeys = new IntOpenHashSet();
+  private final IntSet axesHeld = new IntOpenHashSet();
+  private int buttonsHeld;
+  //
+
   @Override
   protected void tickInput() {
     while(SDL_PollEvent(this.event)) {
@@ -468,6 +477,22 @@ public class SdlPlatformManager extends PlatformManager {
 
         case SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP -> {
           final SDL_KeyboardEvent key = this.event.key();
+
+          // Ignore keys if gamepad buttons are held. Workaround for Steam Input.
+          if(this.buttonsHeld != 0 || !this.axesHeld.isEmpty()) {
+            if(this.event.type() == SDL_EVENT_KEY_DOWN) {
+              this.ignoredKeys.add(key.scancode());
+            }
+
+            break;
+          }
+
+          if(this.event.type() == SDL_EVENT_KEY_UP && this.ignoredKeys.contains(key.scancode())) {
+            this.ignoredKeys.remove(key.scancode());
+            break;
+          }
+          //
+
           final SdlWindow window = this.getWindow(this.event);
 
           if(window == null) {
@@ -525,6 +550,11 @@ public class SdlPlatformManager extends PlatformManager {
         }
 
         case SDL_EVENT_TEXT_INPUT -> {
+          // Ignore keys if gamepad buttons are held. Workaround for Steam Input.
+          if(this.buttonsHeld != 0 || !this.axesHeld.isEmpty()) {
+            break;
+          }
+
           final SDL_TextInputEvent text = this.event.text();
           final SdlWindow window = this.getWindow(this.event);
           this.setWindowInputClass(window, InputClass.KEYBOARD);
@@ -602,6 +632,9 @@ public class SdlPlatformManager extends PlatformManager {
             if(Math.abs(axis.value()) > 0x2666) { // 30% inner deadzone
               this.setWindowInputClass(this.focus, InputClass.GAMEPAD);
               this.lastGamepad = this.gamepads.get(axis.which());
+              this.axesHeld.add(axis.axis());
+            } else {
+              this.axesHeld.remove(axis.axis());
             }
 
             final List<InputBinding<AxisInputActivation>> axisBindings = InputBindings.getBindings(AxisInputActivation.class);
@@ -636,6 +669,8 @@ public class SdlPlatformManager extends PlatformManager {
         }
 
         case SDL_EVENT_GAMEPAD_BUTTON_DOWN -> {
+          this.buttonsHeld++;
+
           final SDL_GamepadButtonEvent button = this.event.gbutton();
 
           if(this.focus != null) {
@@ -658,6 +693,8 @@ public class SdlPlatformManager extends PlatformManager {
         }
 
         case SDL_EVENT_GAMEPAD_BUTTON_UP -> {
+          this.buttonsHeld--;
+
           final SDL_GamepadButtonEvent button = this.event.gbutton();
 
           if(this.focus != null) {
