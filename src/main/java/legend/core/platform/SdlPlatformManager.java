@@ -673,7 +673,7 @@ public class SdlPlatformManager extends PlatformManager {
                     }
 
                     state.axis(value * Math.signum(axis.value()));
-                  } else if(state.isHeld()) {
+                  } else if(state.isHeld() && state.getAxis() != 0.0f) {
                     this.focus.events().onInputActionReleased(binding.action);
                     state.release();
                     EVENTS.postEvent(new InputReleasedEvent(binding.action));
