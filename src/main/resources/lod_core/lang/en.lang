@@ -105,6 +105,11 @@ lod_core.config.music_effects_over_time_granularity.Finer = Finer
 lod_core.config.music_effects_over_time_granularity.Finest = Finest
 lod_core.config.create_crash_save.label=Auto-Save on Crash
 lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
+lod_core.config.ignore_steam_input_mode.label=Steam Input Fix
+lod_core.config.ignore_steam_input_mode.help=Fixes duplicate keyboard input when Steam is running and Steam Input is\nenabled. Only change this if your keyboard isn't working.\n\nIgnore virtual - only allow input from real keyboards\nIgnore when gamepad used - ignores keyboard when gamepad buttons are pressed\nOff - allow duplicate inputs from Steam Input
+lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (recommended)
+lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
+lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press %s to skip
