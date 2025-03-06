@@ -10,6 +10,7 @@ import legend.core.MathHelper;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.FailedToLoadDeviceException;
+import legend.core.platform.input.IgnoreSteamInputMode;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActionState;
 import legend.core.platform.input.InputAxis;
@@ -47,7 +48,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.modding.coremod.CoreMod.IGNORE_STEAM_INPUT_MODE_CONFIG;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_ADDED;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_AXIS_MOTION;
@@ -93,6 +96,8 @@ import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepadStringForAxis;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepadStringForButton;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepads;
 import static org.lwjgl.sdl.SDLGamepad.SDL_OpenGamepad;
+import static org.lwjgl.sdl.SDLHints.SDL_HINT_WINDOWS_RAW_KEYBOARD;
+import static org.lwjgl.sdl.SDLHints.SDL_SetHint;
 import static org.lwjgl.sdl.SDLInit.SDL_INIT_GAMEPAD;
 import static org.lwjgl.sdl.SDLInit.SDL_INIT_VIDEO;
 import static org.lwjgl.sdl.SDLInit.SDL_Init;
@@ -349,6 +354,8 @@ public class SdlPlatformManager extends PlatformManager {
       throw new IllegalStateException("Unable to initialize SDL3");
     }
 
+    SDL_SetHint(SDL_HINT_WINDOWS_RAW_KEYBOARD, "1");
+
     this.event = SDL_Event.malloc();
 
     SDL_AddGamepadMappingsFromFile("gamecontrollerdb.txt");
@@ -478,20 +485,27 @@ public class SdlPlatformManager extends PlatformManager {
         case SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP -> {
           final SDL_KeyboardEvent key = this.event.key();
 
-          // Ignore keys if gamepad buttons are held. Workaround for Steam Input.
-          if(this.buttonsHeld != 0 || !this.axesHeld.isEmpty()) {
-            if(this.event.type() == SDL_EVENT_KEY_DOWN) {
-              this.ignoredKeys.add(key.scancode());
+          final IgnoreSteamInputMode ignoreSteamInputMode = CONFIG.getConfig(IGNORE_STEAM_INPUT_MODE_CONFIG.get());
+
+          if(ignoreSteamInputMode == IgnoreSteamInputMode.VIRTUAL_KEYBOARD_ID) {
+            if(key.which() == 0) {
+              break;
+            }
+          } else if(ignoreSteamInputMode == IgnoreSteamInputMode.IGNORE_WHEN_GAMEPAD_USED) {
+            // Ignore keys if gamepad buttons are held. Workaround for Steam Input.
+            if(this.buttonsHeld != 0 || !this.axesHeld.isEmpty()) {
+              if(this.event.type() == SDL_EVENT_KEY_DOWN) {
+                this.ignoredKeys.add(key.scancode());
+              }
+
+              break;
             }
 
-            break;
+            if(this.event.type() == SDL_EVENT_KEY_UP && this.ignoredKeys.contains(key.scancode())) {
+              this.ignoredKeys.remove(key.scancode());
+              break;
+            }
           }
-
-          if(this.event.type() == SDL_EVENT_KEY_UP && this.ignoredKeys.contains(key.scancode())) {
-            this.ignoredKeys.remove(key.scancode());
-            break;
-          }
-          //
 
           final SdlWindow window = this.getWindow(this.event);
 
@@ -550,6 +564,7 @@ public class SdlPlatformManager extends PlatformManager {
         }
 
         case SDL_EVENT_TEXT_INPUT -> {
+          // Text event doesn't tell us which device it came from so we have to ignore input the less good way
           // Ignore keys if gamepad buttons are held. Workaround for Steam Input.
           if(this.buttonsHeld != 0 || !this.axesHeld.isEmpty()) {
             break;
