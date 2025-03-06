@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import com.vaadin.open.Open;
 import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
@@ -66,7 +66,7 @@ public class LinksScreen extends VerticalLayoutScreen {
 
   private void openLink() {
     playMenuSound(2);
-    Open.open(this.links.get(this.getHighlightedRow().getText()));
+    PLATFORM.openUrl(this.links.get(this.getHighlightedRow().getText()));
   }
 
   private void viewLink() {
@@ -87,7 +87,7 @@ public class LinksScreen extends VerticalLayoutScreen {
 
     if(linkIndex >= 0 && linkIndex < this.linkText.size()) {
       playMenuSound(2);
-      Open.open(this.links.get(this.linkText.get(linkIndex)));
+      PLATFORM.openUrl(this.links.get(this.linkText.get(linkIndex)));
       return InputPropagation.HANDLED;
     }
 

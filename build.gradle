@@ -70,7 +70,6 @@ dependencies {
   api "org.lwjgl:lwjgl"
   api "org.lwjgl:lwjgl-glfw"
   api "org.lwjgl:lwjgl-sdl"
-  api "org.lwjgl:lwjgl-nuklear"
   api "org.lwjgl:lwjgl-opengl"
   api "org.lwjgl:lwjgl-openal"
   api "org.lwjgl:lwjgl-opus"
@@ -78,14 +77,12 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-sdl::$lwjglNatives"
-  runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
-  implementation group: 'com.vaadin', name: 'open', version: '8.5.0.4' // opening links in a web browser
   implementation group: 'org.asynchttpclient', name: 'async-http-client', version: '3.0.1' // update check
   implementation group: 'org.json', name: 'json', version: '20250107'
 

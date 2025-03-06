@@ -22,8 +22,10 @@ import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
+import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
@@ -105,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.srand;
@@ -4074,6 +4077,18 @@ public class SMap extends EngineState {
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
+    }
+
+    final FontOptions font = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).size(0.5f);
+    final InputAction[] actions = {INPUT_ACTION_GENERAL_MOVE_UP.get(), INPUT_ACTION_GENERAL_MOVE_DOWN.get(), INPUT_ACTION_GENERAL_MOVE_LEFT.get(), INPUT_ACTION_GENERAL_MOVE_RIGHT.get()};
+
+    for(int i = 0; i < actions.length; i++) {
+      final InputAction action = actions[i];
+      final boolean pressed = PLATFORM.isActionPressed(action);
+      final boolean repeat = PLATFORM.isActionRepeat(action);
+      final boolean held = PLATFORM.isActionHeld(action);
+      final float axis = PLATFORM.getAxis(action);
+      renderText("%s %b %b %b %.6f".formatted(action.getRegistryId().entryId(), pressed, repeat, held, axis), 4.0f, 4.0f + i * 8.0f, font);
     }
   }
 
