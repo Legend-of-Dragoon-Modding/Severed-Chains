@@ -58,6 +58,7 @@ lod_core.config.controller_deadzone.label=Controller Deadzone
 lod_core.config.disable_mouse_input.label=Disable Mouse Input
 lod_core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
 lod_core.config.rumble.label=Rumble
+lod_core.config.rumble_intensity.label=Rumble Intensity
 lod_core.config.allow_widescreen.label=3D Widescreen
 lod_core.config.allow_widescreen.help=Use widescreen mode in 3D areas (world map, battle)
 lod_core.config.submap_widescreen_mode.label=2D Widescreen Mode

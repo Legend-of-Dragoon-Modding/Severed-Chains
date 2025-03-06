@@ -2,6 +2,8 @@ package legend.core.platform.input;
 
 import java.util.Objects;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.game.modding.coremod.CoreMod.RUMBLE_INTENSITY_CONFIG;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_TYPE_PS3;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_TYPE_PS4;
@@ -51,8 +53,12 @@ public class SdlGamepadDevice extends InputDevice {
     };
   }
 
-  public void rumble(final float bigIntensity, final float smallIntensity, final int ms) {
-    SDL_RumbleGamepad(this.ptr, (short)(bigIntensity * 0xffff), (short)(smallIntensity * 0xffff), ms);
+  public void rumble(float bigIntensity, float smallIntensity, final int ms) {
+    final float scale = CONFIG.getConfig(RUMBLE_INTENSITY_CONFIG.get());
+    bigIntensity *= scale;
+    smallIntensity *= scale;
+
+    SDL_RumbleGamepad(this.ptr, (short)(Math.min(1.0f, bigIntensity) * 0xffff), (short)(Math.min(1.0f, smallIntensity) * 0xffff), ms);
   }
 
   public void stopRumble() {
