@@ -6,7 +6,7 @@ import legend.game.saves.ConfigStorageLocation;
 
 public class RunByDefaultConfig extends BoolConfigEntry {
   public RunByDefaultConfig() {
-    super(true, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(true, ConfigStorageLocation.CAMPAIGN, ConfigCategory.CONTROLS);
   }
 
   @Override
