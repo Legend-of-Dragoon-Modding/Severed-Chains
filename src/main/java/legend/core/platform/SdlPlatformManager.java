@@ -585,7 +585,9 @@ public class SdlPlatformManager extends PlatformManager {
           final SDL_MouseMotionEvent mouse = this.event.motion();
           final SdlWindow window = this.getWindow(this.event);
           this.setWindowInputClass(window, InputClass.KEYBOARD);
-          window.events().onMouseMove(mouse.x(), mouse.y());
+
+          final boolean relative = mouse.which() != 0;
+          window.events().onMouseMove(relative ? mouse.xrel() : mouse.x(), relative ? mouse.yrel() : mouse.y());
         }
 
         case SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP -> {
