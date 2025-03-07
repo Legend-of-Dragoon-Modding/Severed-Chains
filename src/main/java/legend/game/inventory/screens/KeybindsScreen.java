@@ -5,6 +5,7 @@ import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActivation;
 import legend.core.platform.input.InputBindings;
+import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.i18n.I18n;
@@ -17,6 +18,8 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
@@ -69,11 +72,9 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
     for(final InputActivation activation : activations) {
       if(activation instanceof final KeyInputActivation key) {
-        //TODO mods
-        text.add(PLATFORM.getKeyName(key.key));
+        text.add(this.modsToString(key.mods) + PLATFORM.getKeyName(key.key));
       } else if(activation instanceof final ScancodeInputActivation scancode) {
-        //TODO mods
-        text.add(PLATFORM.getScancodeName(scancode.key));
+        text.add(this.modsToString(scancode.mods) + PLATFORM.getScancodeName(scancode.key));
       } else if(activation instanceof final ButtonInputActivation button) {
         text.add(String.valueOf(button.button.codepoint));
       } else if(activation instanceof final AxisInputActivation axis) {
@@ -83,6 +84,16 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     }
 
     return String.join(", ", text);
+  }
+
+  private String modsToString(final Set<InputMod> mods) {
+    String str = mods.stream().map(mod -> mod.toString().toLowerCase()).collect(Collectors.joining("+"));
+
+    if(!str.isEmpty()) {
+      str += '+';
+    }
+
+    return str;
   }
 
   @Override
