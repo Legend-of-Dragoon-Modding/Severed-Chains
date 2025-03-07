@@ -89,7 +89,6 @@ public class KeybindsScreen extends VerticalLayoutScreen {
       } else if(activation instanceof final ButtonInputActivation button) {
         text.add(String.valueOf(button.button.codepoint));
       } else if(activation instanceof final AxisInputActivation axis) {
-        //TODO deadzones
         text.add(String.valueOf(axis.axis.codepoint));
       }
     }
