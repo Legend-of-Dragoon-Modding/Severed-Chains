@@ -25,10 +25,10 @@ public final class InputCodepoints {
   public static final char B = 0xe00d;
   public static final char X = 0xe00e;
   public static final char Y = 0xe00f;
-  public static final char LEFT_AXIS_X = 0xe011;
-  public static final char LEFT_AXIS_Y = 0xe010;
-  public static final char RIGHT_AXIS_X = 0xe013;
-  public static final char RIGHT_AXIS_Y = 0xe012;
+  public static final char LEFT_AXIS_X = 0xe010;
+  public static final char LEFT_AXIS_Y = 0xe011;
+  public static final char RIGHT_AXIS_X = 0xe012;
+  public static final char RIGHT_AXIS_Y = 0xe013;
 
   public static final char XBOX_BUTTON_BACK = 0xe100;
   /** Three lines */
