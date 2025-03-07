@@ -29,6 +29,7 @@ import static org.lwjgl.sdl.SDLMouse.SDL_HideCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_SYSTEM_CURSOR_POINTER;
 import static org.lwjgl.sdl.SDLMouse.SDL_SetCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_SetWindowRelativeMouseMode;
+import static org.lwjgl.sdl.SDLMouse.SDL_ShowCursor;
 import static org.lwjgl.sdl.SDLPixels.SDL_PIXELFORMAT_ARGB8888;
 import static org.lwjgl.sdl.SDLSurface.SDL_CreateSurfaceFrom;
 import static org.lwjgl.sdl.SDLSurface.SDL_DestroySurface;
@@ -284,6 +285,7 @@ public class SdlWindow extends Window {
   @Override
   public void showCursor() {
     SDL_SetWindowRelativeMouseMode(this.window, false);
+    SDL_ShowCursor();
   }
 
   @Override
