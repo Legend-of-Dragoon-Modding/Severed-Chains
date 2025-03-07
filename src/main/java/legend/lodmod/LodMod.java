@@ -81,10 +81,10 @@ public class LodMod {
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_OPEN_INVENTORY = INPUT_ACTION_REGISTRAR.register("general_open_inventory", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_UP = INPUT_ACTION_REGISTRAR.register("general_move_up", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_DOWN = INPUT_ACTION_REGISTRAR.register("general_move_down", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_LEFT = INPUT_ACTION_REGISTRAR.register("general_move_left", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_RIGHT = INPUT_ACTION_REGISTRAR.register("general_move_right", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_UP = INPUT_ACTION_REGISTRAR.register("general_move_up", InputAction.make().visible().editable().useMovementDeadzone().build());
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_DOWN = INPUT_ACTION_REGISTRAR.register("general_move_down", InputAction.make().visible().editable().useMovementDeadzone().build());
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_LEFT = INPUT_ACTION_REGISTRAR.register("general_move_left", InputAction.make().visible().editable().useMovementDeadzone().build());
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_RIGHT = INPUT_ACTION_REGISTRAR.register("general_move_right", InputAction.make().visible().editable().useMovementDeadzone().build());
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_RUN = INPUT_ACTION_REGISTRAR.register("general_run", InputAction::editable);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_RIGHT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_right", InputAction::editable);

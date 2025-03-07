@@ -20,7 +20,7 @@ import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AllowWidescreenConfigEntry;
 import legend.game.modding.coremod.config.AudioDeviceConfig;
 import legend.game.modding.coremod.config.BattleTransitionModeConfigEntry;
-import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
+import legend.game.modding.coremod.config.DeadzoneConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
@@ -71,7 +71,10 @@ public class CoreMod {
   private static final Registrar<ConfigEntry<?>, ConfigRegistryEvent> CONFIG_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.config, MOD_ID);
 
   // Global config
-  public static final RegistryDelegate<ControllerDeadzoneConfigEntry> CONTROLLER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("controller_deadzone", ControllerDeadzoneConfigEntry::new);
+  public static final RegistryDelegate<DeadzoneConfigEntry> MENU_INNER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("menu_inner_deadzone", () -> new DeadzoneConfigEntry(0.5f));
+  public static final RegistryDelegate<DeadzoneConfigEntry> MENU_OUTER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("menu_outer_deadzone", () -> new DeadzoneConfigEntry(0.6f));
+  public static final RegistryDelegate<DeadzoneConfigEntry> MOVEMENT_INNER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("movement_inner_deadzone", () -> new DeadzoneConfigEntry(0.2f));
+  public static final RegistryDelegate<DeadzoneConfigEntry> MOVEMENT_OUTER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("movement_outer_deadzone", () -> new DeadzoneConfigEntry(0.9f));
   public static final RegistryDelegate<BoolConfigEntry> RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG = CONFIG_REGISTRAR.register("receive_input_on_inactive_window", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS));
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_MOUSE_INPUT_CONFIG = CONFIG_REGISTRAR.register("disable_mouse_input", DisableMouseInputConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> RUMBLE_CONFIG = CONFIG_REGISTRAR.register("rumble", () -> new BoolConfigEntry(true, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS));

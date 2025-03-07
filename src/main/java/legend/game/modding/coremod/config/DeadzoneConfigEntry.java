@@ -6,9 +6,9 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
-public class ControllerDeadzoneConfigEntry extends ConfigEntry<Float> {
-  public ControllerDeadzoneConfigEntry() {
-    super(0.3f, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, ControllerDeadzoneConfigEntry::serializer, ControllerDeadzoneConfigEntry::deserializer);
+public class DeadzoneConfigEntry extends ConfigEntry<Float> {
+  public DeadzoneConfigEntry(final float defaultValue) {
+    super(defaultValue, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, DeadzoneConfigEntry::serializer, data -> deserializer(data, defaultValue));
 
     this.setEditControl((number, gameState) -> {
       final NumberSpinner<Float> spinner = NumberSpinner.percentSpinner(number, 0.05f, 0.25f, 0.0f, 0.95f);
@@ -21,11 +21,11 @@ public class ControllerDeadzoneConfigEntry extends ConfigEntry<Float> {
     return new byte[] {(byte)(Math.round(val * 100.0f))};
   }
 
-  private static float deserializer(final byte[] data) {
+  private static float deserializer(final byte[] data, final float defaultValue) {
     if(data.length == 1) {
       return IoHelper.readUByte(data, 0) / 100.0f;
     }
 
-    return 0.3f;
+    return defaultValue;
   }
 }

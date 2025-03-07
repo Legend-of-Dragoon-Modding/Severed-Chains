@@ -51,6 +51,10 @@ import java.util.Set;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.modding.coremod.CoreMod.IGNORE_STEAM_INPUT_MODE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.MENU_INNER_DEADZONE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.MENU_OUTER_DEADZONE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.MOVEMENT_INNER_DEADZONE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.MOVEMENT_OUTER_DEADZONE_CONFIG;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_ADDED;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_AXIS_MOTION;
@@ -647,7 +651,12 @@ public class SdlPlatformManager extends PlatformManager {
           final SDL_GamepadAxisEvent axis = this.event.gaxis();
 
           if(this.focus != null) {
-            if(Math.abs(axis.value()) > 0x2666) { // 30% inner deadzone
+            final float menuInnerDeadzone = CONFIG.getConfig(MENU_INNER_DEADZONE_CONFIG.get());
+            final float menuOuterDeadzone = CONFIG.getConfig(MENU_OUTER_DEADZONE_CONFIG.get());
+            final float movementInnerDeadzone = CONFIG.getConfig(MOVEMENT_INNER_DEADZONE_CONFIG.get());
+            final float movementOuterDeadzone = CONFIG.getConfig(MOVEMENT_OUTER_DEADZONE_CONFIG.get());
+
+            if(Math.abs(axis.value()) >= Math.min(menuInnerDeadzone, movementInnerDeadzone) * 0x7fff) {
               this.setWindowInputClass(this.focus, InputClass.GAMEPAD);
               this.lastGamepad = this.gamepads.get(axis.which());
               this.axesHeld.add(axis.axis());
@@ -664,8 +673,18 @@ public class SdlPlatformManager extends PlatformManager {
                 final InputAxisDirection direction = InputAxisDirection.getDirection(axis.value());
 
                 if(binding.activation.direction == direction) {
+                  final float inner;
+                  final float outer;
+                  if(binding.action.useMovementDeadzone) {
+                    inner = movementInnerDeadzone;
+                    outer = movementOuterDeadzone;
+                  } else {
+                    inner = menuInnerDeadzone;
+                    outer = menuOuterDeadzone;
+                  }
+
                   final InputActionState state = this.getInputActionState(binding.action);
-                  final float value = Math.min(1.0f, (Math.abs(axis.value()) - 0x7fff * binding.activation.threshold) / (0x7fff * Math.abs(binding.activation.threshold - binding.activation.deadzone)));
+                  final float value = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - inner) / (Math.abs(outer - inner)));
 
                   if(value >= 0.0f) {
                     if(!state.isHeld()) {
