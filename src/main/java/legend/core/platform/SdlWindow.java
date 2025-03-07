@@ -28,7 +28,7 @@ import static org.lwjgl.sdl.SDLMouse.SDL_GetDefaultCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_HideCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_SYSTEM_CURSOR_POINTER;
 import static org.lwjgl.sdl.SDLMouse.SDL_SetCursor;
-import static org.lwjgl.sdl.SDLMouse.SDL_ShowCursor;
+import static org.lwjgl.sdl.SDLMouse.SDL_SetWindowRelativeMouseMode;
 import static org.lwjgl.sdl.SDLPixels.SDL_PIXELFORMAT_ARGB8888;
 import static org.lwjgl.sdl.SDLSurface.SDL_CreateSurfaceFrom;
 import static org.lwjgl.sdl.SDLSurface.SDL_DestroySurface;
@@ -54,7 +54,6 @@ import static org.lwjgl.sdl.SDLVideo.SDL_GetWindowSize;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowBordered;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowIcon;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMinimumSize;
-import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMouseGrab;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowPosition;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowSize;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowTitle;
@@ -279,18 +278,16 @@ public class SdlWindow extends Window {
 
   @Override
   public void disableCursor() {
-    SDL_SetWindowMouseGrab(this.window, true);
+    SDL_SetWindowRelativeMouseMode(this.window, true);
   }
 
   @Override
   public void showCursor() {
-    SDL_SetWindowMouseGrab(this.window, false);
-    SDL_ShowCursor();
+    SDL_SetWindowRelativeMouseMode(this.window, false);
   }
 
   @Override
   public void hideCursor() {
-    SDL_SetWindowMouseGrab(this.window, false);
     SDL_HideCursor();
   }
 

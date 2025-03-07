@@ -266,9 +266,6 @@ public class RenderEngine {
   private static final float MOVE_SPEED = 0.96f;
   private static final float MOUSE_SPEED = 0.00175f;
 
-  private boolean firstMouse = true;
-  private double lastX = Config.windowWidth() / 2.0f;
-  private double lastY = Config.windowHeight() / 2.0f;
   private float yaw;
   private float pitch;
 
@@ -1146,20 +1143,11 @@ public class RenderEngine {
   }
 
   private void onMouseMove(final Window window, final double x, final double y) {
-    if(this.firstMouse) {
-      this.lastX = x;
-      this.lastY = y;
-      this.firstMouse = false;
-    }
-
     if(this.allowMovement) {
-      this.yaw += (x - this.lastX) * MOUSE_SPEED;
-      this.pitch += (this.lastY - y) * MOUSE_SPEED;
+      this.yaw += x * MOUSE_SPEED;
+      this.pitch -= y * MOUSE_SPEED;
 
       this.pitch = clamp(this.pitch, -PI / 2, PI / 2);
-
-      this.lastX = x;
-      this.lastY = y;
 
       this.camera3d.look(-this.yaw, -this.pitch);
       this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
