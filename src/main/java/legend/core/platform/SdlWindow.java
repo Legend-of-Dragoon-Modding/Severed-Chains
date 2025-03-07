@@ -19,8 +19,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorPos;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLKeyboard.SDL_StartTextInput;
 import static org.lwjgl.sdl.SDLKeyboard.SDL_StopTextInput;
@@ -242,11 +240,6 @@ public class SdlWindow extends Window {
       SDL_GetDisplayBounds(this.monitor, displayRect);
       SDL_SetWindowPosition(this.window, displayRect.x(), displayRect.y());
     }
-
-    final int[] x = new int[1];
-    final int[] y = new int[1];
-    glfwGetMonitorPos(this.monitor, x, y);
-    glfwSetWindowPos(this.window, x[0], y[0]);
   }
 
   @Override
