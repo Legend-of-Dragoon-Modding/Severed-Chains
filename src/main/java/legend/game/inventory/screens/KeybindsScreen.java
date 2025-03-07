@@ -70,6 +70,8 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     final List<InputActivation> activations = InputBindings.getActivationsForAction(action);
     final List<String> text = new ArrayList<>();
 
+    activations.sort(Comparator.comparing(activation -> activation.getClass().getSimpleName()));
+
     for(final InputActivation activation : activations) {
       if(activation instanceof final KeyInputActivation key) {
         text.add(this.modsToString(key.mods) + PLATFORM.getKeyName(key.key));
