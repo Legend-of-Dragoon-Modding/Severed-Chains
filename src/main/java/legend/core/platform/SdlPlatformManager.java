@@ -492,11 +492,11 @@ public class SdlPlatformManager extends PlatformManager {
 
           final IgnoreSteamInputMode ignoreSteamInputMode = CONFIG.getConfig(IGNORE_STEAM_INPUT_MODE_CONFIG.get());
 
-          if(ignoreSteamInputMode == IgnoreSteamInputMode.VIRTUAL_KEYBOARD_ID) {
+/*TODO          if(ignoreSteamInputMode == IgnoreSteamInputMode.VIRTUAL_KEYBOARD_ID) {
             if(key.which() == 0) {
               break;
             }
-          } else if(ignoreSteamInputMode == IgnoreSteamInputMode.IGNORE_WHEN_GAMEPAD_USED) {
+          } else */if(ignoreSteamInputMode == IgnoreSteamInputMode.IGNORE_WHEN_GAMEPAD_USED) {
             // Ignore keys if gamepad buttons are held. Workaround for Steam Input.
             if(this.buttonsHeld != 0 || !this.axesHeld.isEmpty()) {
               if(this.event.type() == SDL_EVENT_KEY_DOWN) {
@@ -671,6 +671,7 @@ public class SdlPlatformManager extends PlatformManager {
 
               if(this.getAxisCode(binding.activation.axis) == axis.axis()) {
                 final InputAxisDirection direction = InputAxisDirection.getDirection(axis.value());
+                final InputActionState state = this.getInputActionState(binding.action);
 
                 if(binding.activation.direction == direction) {
                   final float inner;
@@ -683,11 +684,11 @@ public class SdlPlatformManager extends PlatformManager {
                     outer = menuOuterDeadzone;
                   }
 
-                  final InputActionState state = this.getInputActionState(binding.action);
                   final float value = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - inner) / (Math.abs(outer - inner)));
 
                   if(value >= 0.0f) {
                     if(!state.isHeld()) {
+                      LOGGER.info("Action %s pressed due to axis %f", binding.action, Math.abs(axis.value()) / (float)0x7fff);
                       this.focus.events().onInputActionPressed(binding.action, false);
                       state.press();
                       EVENTS.postEvent(new InputPressedEvent(binding.action, false));
@@ -695,10 +696,16 @@ public class SdlPlatformManager extends PlatformManager {
 
                     state.axis(value * Math.signum(axis.value()));
                   } else if(state.isHeld() && state.getAxis() != 0.0f) {
+                    LOGGER.info("Action %s released due to axis", binding.action);
                     this.focus.events().onInputActionReleased(binding.action);
                     state.release();
                     EVENTS.postEvent(new InputReleasedEvent(binding.action));
                   }
+                } else if(state.isHeld() && state.getAxis() != 0.0f) {
+                  LOGGER.info("Action %s released due to axis", binding.action);
+                  this.focus.events().onInputActionReleased(binding.action);
+                  state.release();
+                  EVENTS.postEvent(new InputReleasedEvent(binding.action));
                 }
               }
             }

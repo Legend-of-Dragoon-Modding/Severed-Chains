@@ -7,7 +7,7 @@ import legend.game.saves.EnumConfigEntry;
 
 public class IgnoreSteamInputModeConfigEntry extends EnumConfigEntry<IgnoreSteamInputMode> {
   public IgnoreSteamInputModeConfigEntry() {
-    super(IgnoreSteamInputMode.class, IgnoreSteamInputMode.VIRTUAL_KEYBOARD_ID, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS);
+    super(IgnoreSteamInputMode.class, IgnoreSteamInputMode.IGNORE_WHEN_GAMEPAD_USED, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS);
   }
 
   @Override
