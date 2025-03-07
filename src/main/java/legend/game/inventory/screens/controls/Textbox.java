@@ -21,10 +21,6 @@ import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
-import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
-import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
-import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
-import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class Textbox extends Control {
   private final Panel background;
@@ -156,13 +152,31 @@ public class Textbox extends Control {
     }
 
     if(key == InputKey.BACKSPACE && this.caretIndex > 0) {
+      final int caretIndex = this.caretIndex;
       this.updateText(this.text.substring(0, this.caretIndex - 1) + this.text.substring(this.caretIndex));
+      this.setCaretIndex(caretIndex - 1);
       this.fireChangedEvent();
     }
 
     if(key == InputKey.DELETE && this.caretIndex < this.text.length()) {
       this.updateText(this.text.substring(0, this.caretIndex) + this.text.substring(this.caretIndex + 1));
       this.fireChangedEvent();
+    }
+
+    if(key == InputKey.LEFT && mods.isEmpty()) {
+      this.setCaretIndex(this.caretIndex - 1);
+    }
+
+    if(key == InputKey.RIGHT && mods.isEmpty()) {
+      this.setCaretIndex(this.caretIndex + 1);
+    }
+
+    if(key == InputKey.UP && mods.isEmpty()) {
+      this.setCaretIndex(0);
+    }
+
+    if(key == InputKey.DOWN && mods.isEmpty()) {
+      this.setCaretIndex(this.text.length());
     }
 
     return InputPropagation.HANDLED;
@@ -191,22 +205,6 @@ public class Textbox extends Control {
   protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
     if((action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
       this.deferAction(this::unfocus);
-    }
-
-    if(action == INPUT_ACTION_MENU_LEFT.get()) {
-      this.setCaretIndex(this.caretIndex - 1);
-    }
-
-    if(action == INPUT_ACTION_MENU_RIGHT.get()) {
-      this.setCaretIndex(this.caretIndex + 1);
-    }
-
-    if(action == INPUT_ACTION_MENU_UP.get()) {
-      this.setCaretIndex(0);
-    }
-
-    if(action == INPUT_ACTION_MENU_DOWN.get()) {
-      this.setCaretIndex(this.text.length());
     }
 
     return InputPropagation.HANDLED;
