@@ -3491,10 +3491,10 @@ public final class Scus94491BpeSegment_8002 {
                 case InputCodepoints.RIGHT_BUMPER -> 233;
                 case InputCodepoints.RIGHT_TRIGGER -> 234;
                 case InputCodepoints.RIGHT_STICK -> 235;
-                case InputCodepoints.LEFT_AXIS_X -> 240;
-                case InputCodepoints.LEFT_AXIS_Y -> 241;
-                case InputCodepoints.RIGHT_AXIS_X -> 242;
-                case InputCodepoints.RIGHT_AXIS_Y -> 243;
+                case InputCodepoints.LEFT_AXIS_X -> 241;
+                case InputCodepoints.LEFT_AXIS_Y -> 240;
+                case InputCodepoints.RIGHT_AXIS_X -> 243;
+                case InputCodepoints.RIGHT_AXIS_Y -> 242;
                 case InputCodepoints.A -> 236;
                 case InputCodepoints.B -> 237;
                 case InputCodepoints.X -> 238;

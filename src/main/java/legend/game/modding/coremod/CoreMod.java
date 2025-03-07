@@ -213,6 +213,7 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_PAGE_DOWN.get(), new KeyInputActivation(InputKey.PAGE_DOWN))
       .add(INPUT_ACTION_MENU_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
+      .add(INPUT_ACTION_MENU_CONFIRM.get(), new KeyInputActivation(InputKey.SPACE))
       .add(INPUT_ACTION_MENU_BACK.get(), new ButtonInputActivation(InputButton.B))
       .add(INPUT_ACTION_MENU_BACK.get(), new KeyInputActivation(InputKey.ESCAPE))
       .add(INPUT_ACTION_MENU_DELETE.get(), new ButtonInputActivation(InputButton.X))
@@ -227,7 +228,7 @@ public class CoreMod {
       .add(INPUT_ACTION_FMV_SKIP.get(), new KeyInputActivation(InputKey.RETURN))
       .add(INPUT_ACTION_FMV_SKIP.get(), new ButtonInputActivation(InputButton.Y))
 
-      .add(INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN.get(), new KeyInputActivation(InputKey.RETURN, InputMod.ALT))
+      .add(INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN.get(), new KeyInputActivation(InputKey.F1))
       .add(INPUT_ACTION_GENERAL_SPEED_UP.get(), new ScancodeInputActivation(InputKey.EQUALS))
       .add(INPUT_ACTION_GENERAL_SPEED_UP.get(), new KeyInputActivation(InputKey.KP_PLUS))
       .add(INPUT_ACTION_GENERAL_SLOW_DOWN.get(), new ScancodeInputActivation(InputKey.MINUS))
