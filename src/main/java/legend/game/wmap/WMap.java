@@ -3205,7 +3205,8 @@ public class WMap extends EngineState {
       //LAB_800e11b0
       final boolean autoRun = CONFIG.getConfig(RUN_BY_DEFAULT.get());
       final boolean runHeld = PLATFORM.isActionHeld(INPUT_ACTION_GENERAL_RUN.get());
-      if(autoRun != runHeld || this.getAnalogueMagnitude() >= 0.5f) { // World Map Running
+      final float mag = this.getAnalogueMagnitude();
+      if(mag != 0.0f && autoRun != runHeld || mag >= 0.5f) { // World Map Running
         //LAB_800e11d0
         modelAndAnimData.currAnimIndex_b0 = 4;
         this.handleEncounters(mode.worldMapRunModifier);
@@ -4934,15 +4935,13 @@ public class WMap extends EngineState {
       //LAB_800e9364
       final boolean autoRun = CONFIG.getConfig(RUN_BY_DEFAULT.get());
       final boolean runHeld = PLATFORM.isActionHeld(INPUT_ACTION_GENERAL_RUN.get());
-      if(autoRun != runHeld) {
+      final float mag = this.getAnalogueMagnitude();
+
+      if(mag == 0.0f && autoRun != runHeld) {
         //LAB_800e9384
         movement *= 2.0f;
-      } else {
-        final float mag = this.getAnalogueMagnitude();
-
-        if(mag != 0.0f) {
-          movement *= mag * 2.0f;
-        }
+      } else if(mag != 0.0f) {
+        movement *= mag * 2.0f;
       }
 
       if(movement != 0.0f) {
