@@ -23,9 +23,11 @@ import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 
 public class KeybindsScreen extends VerticalLayoutScreen {
@@ -64,6 +66,13 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         this.addRow(I18n.translate(action.getTranslationKey()), control);
       }
     }
+  }
+
+  private final FontOptions font = new FontOptions().set(UI_TEXT_CENTERED).size(0.6f);
+
+  @Override
+  protected void render() {
+    renderText("I didn't have time to add rebinding for the beta. Sorry bout it.", this.getWidth() / 2.0f, 14, this.font);
   }
 
   private String actionToString(final InputAction action) {
