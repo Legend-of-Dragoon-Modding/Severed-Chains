@@ -100,6 +100,7 @@ import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepadStringForAxis;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepadStringForButton;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GetGamepads;
 import static org.lwjgl.sdl.SDLGamepad.SDL_OpenGamepad;
+import static org.lwjgl.sdl.SDLHints.SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS;
 import static org.lwjgl.sdl.SDLHints.SDL_HINT_WINDOWS_RAW_KEYBOARD;
 import static org.lwjgl.sdl.SDLHints.SDL_SetHint;
 import static org.lwjgl.sdl.SDLInit.SDL_INIT_GAMEPAD;
@@ -355,11 +356,12 @@ public class SdlPlatformManager extends PlatformManager {
 
   @Override
   public void init() {
+    SDL_SetHint(SDL_HINT_WINDOWS_RAW_KEYBOARD, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+
     if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
       throw new IllegalStateException("Unable to initialize SDL3");
     }
-
-    SDL_SetHint(SDL_HINT_WINDOWS_RAW_KEYBOARD, "1");
 
     this.event = SDL_Event.malloc();
 
@@ -688,7 +690,6 @@ public class SdlPlatformManager extends PlatformManager {
 
                   if(value >= 0.0f) {
                     if(!state.isHeld()) {
-                      LOGGER.info("Action %s pressed due to axis %f", binding.action, Math.abs(axis.value()) / (float)0x7fff);
                       this.focus.events().onInputActionPressed(binding.action, false);
                       state.press();
                       EVENTS.postEvent(new InputPressedEvent(binding.action, false));
@@ -696,13 +697,11 @@ public class SdlPlatformManager extends PlatformManager {
 
                     state.axis(value * Math.signum(axis.value()));
                   } else if(state.isHeld() && state.getAxis() != 0.0f) {
-                    LOGGER.info("Action %s released due to axis", binding.action);
                     this.focus.events().onInputActionReleased(binding.action);
                     state.release();
                     EVENTS.postEvent(new InputReleasedEvent(binding.action));
                   }
                 } else if(state.isHeld() && state.getAxis() != 0.0f) {
-                  LOGGER.info("Action %s released due to axis", binding.action);
                   this.focus.events().onInputActionReleased(binding.action);
                   state.release();
                   EVENTS.postEvent(new InputReleasedEvent(binding.action));
