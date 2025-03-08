@@ -55,6 +55,7 @@ import static legend.game.modding.coremod.CoreMod.MENU_INNER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MENU_OUTER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MOVEMENT_INNER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MOVEMENT_OUTER_DEADZONE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_ADDED;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_AXIS_MOTION;
@@ -335,7 +336,7 @@ public class SdlPlatformManager extends PlatformManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SdlPlatformManager.class);
 
   private final Long2ObjectMap<SdlWindow> windows = new Long2ObjectOpenHashMap<>();
-  private SdlWindow focus;
+  private SdlWindow lastActiveWindow;
   private SDL_Event event;
 
   private final Map<InputAction, InputActionState> actionStates = new HashMap<>();
@@ -471,14 +472,13 @@ public class SdlPlatformManager extends PlatformManager {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED -> this.getWindow(this.event).close();
         case SDL_EVENT_WINDOW_FOCUS_GAINED -> {
           final SdlWindow window = this.getWindow(this.event);
-          this.focus = window;
+          this.lastActiveWindow = window;
           window.hasFocus = true;
           window.events().onFocus(true);
         }
 
         case SDL_EVENT_WINDOW_FOCUS_LOST -> {
           final SdlWindow window = this.getWindow(this.event);
-          this.focus = null;
           window.hasFocus = false;
           window.events().onFocus(false);
         }
@@ -652,14 +652,14 @@ public class SdlPlatformManager extends PlatformManager {
         case SDL_EVENT_GAMEPAD_AXIS_MOTION -> {
           final SDL_GamepadAxisEvent axis = this.event.gaxis();
 
-          if(this.focus != null) {
+          if(this.lastActiveWindow != null && (this.lastActiveWindow.hasFocus || CONFIG.getConfig(RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()))) {
             final float menuInnerDeadzone = CONFIG.getConfig(MENU_INNER_DEADZONE_CONFIG.get());
             final float menuOuterDeadzone = CONFIG.getConfig(MENU_OUTER_DEADZONE_CONFIG.get());
             final float movementInnerDeadzone = CONFIG.getConfig(MOVEMENT_INNER_DEADZONE_CONFIG.get());
             final float movementOuterDeadzone = CONFIG.getConfig(MOVEMENT_OUTER_DEADZONE_CONFIG.get());
 
             if(Math.abs(axis.value()) >= Math.min(menuInnerDeadzone, movementInnerDeadzone) * 0x7fff) {
-              this.setWindowInputClass(this.focus, InputClass.GAMEPAD);
+              this.setWindowInputClass(this.lastActiveWindow, InputClass.GAMEPAD);
               this.lastGamepad = this.gamepads.get(axis.which());
               this.axesHeld.add(axis.axis());
             } else {
@@ -690,19 +690,19 @@ public class SdlPlatformManager extends PlatformManager {
 
                   if(value >= 0.0f) {
                     if(!state.isHeld()) {
-                      this.focus.events().onInputActionPressed(binding.action, false);
+                      this.lastActiveWindow.events().onInputActionPressed(binding.action, false);
                       state.press();
                       EVENTS.postEvent(new InputPressedEvent(binding.action, false));
                     }
 
                     state.axis(value * Math.signum(axis.value()));
                   } else if(state.isHeld() && state.getAxis() != 0.0f) {
-                    this.focus.events().onInputActionReleased(binding.action);
+                    this.lastActiveWindow.events().onInputActionReleased(binding.action);
                     state.release();
                     EVENTS.postEvent(new InputReleasedEvent(binding.action));
                   }
                 } else if(state.isHeld() && state.getAxis() != 0.0f) {
-                  this.focus.events().onInputActionReleased(binding.action);
+                  this.lastActiveWindow.events().onInputActionReleased(binding.action);
                   state.release();
                   EVENTS.postEvent(new InputReleasedEvent(binding.action));
                 }
@@ -716,10 +716,10 @@ public class SdlPlatformManager extends PlatformManager {
 
           final SDL_GamepadButtonEvent button = this.event.gbutton();
 
-          if(this.focus != null) {
-            this.setWindowInputClass(this.focus, InputClass.GAMEPAD);
+          if(this.lastActiveWindow != null && (this.lastActiveWindow.hasFocus || CONFIG.getConfig(RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()))) {
+            this.setWindowInputClass(this.lastActiveWindow, InputClass.GAMEPAD);
             this.lastGamepad = this.gamepads.get(button.which());
-            this.focus.events().onButtonPress(this.getInputFromButton(button.button()), false);
+            this.lastActiveWindow.events().onButtonPress(this.getInputFromButton(button.button()), false);
 
             final List<InputBinding<ButtonInputActivation>> bindings = InputBindings.getBindings(ButtonInputActivation.class);
 
@@ -727,7 +727,7 @@ public class SdlPlatformManager extends PlatformManager {
               final InputBinding<ButtonInputActivation> binding = bindings.get(i);
 
               if(this.getButtonCode(binding.activation.button) == button.button()) {
-                this.focus.events().onInputActionPressed(binding.action, false);
+                this.lastActiveWindow.events().onInputActionPressed(binding.action, false);
                 this.getInputActionState(binding.action).press();
                 EVENTS.postEvent(new InputPressedEvent(binding.action, false));
               }
@@ -740,10 +740,10 @@ public class SdlPlatformManager extends PlatformManager {
 
           final SDL_GamepadButtonEvent button = this.event.gbutton();
 
-          if(this.focus != null) {
-            this.setWindowInputClass(this.focus, InputClass.GAMEPAD);
+          if(this.lastActiveWindow != null && (this.lastActiveWindow.hasFocus || CONFIG.getConfig(RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()))) {
+            this.setWindowInputClass(this.lastActiveWindow, InputClass.GAMEPAD);
             this.lastGamepad = this.gamepads.get(button.which());
-            this.focus.events().onButtonRelease(this.getInputFromButton(button.button()));
+            this.lastActiveWindow.events().onButtonRelease(this.getInputFromButton(button.button()));
 
             final List<InputBinding<ButtonInputActivation>> bindings = InputBindings.getBindings(ButtonInputActivation.class);
 
@@ -751,7 +751,7 @@ public class SdlPlatformManager extends PlatformManager {
               final InputBinding<ButtonInputActivation> binding = bindings.get(i);
 
               if(this.getButtonCode(binding.activation.button) == button.button()) {
-                this.focus.events().onInputActionReleased(binding.action);
+                this.lastActiveWindow.events().onInputActionReleased(binding.action);
                 this.getInputActionState(binding.action).release();
                 EVENTS.postEvent(new InputReleasedEvent(binding.action));
               }
@@ -761,14 +761,26 @@ public class SdlPlatformManager extends PlatformManager {
       }
     }
 
-    if(this.focus != null) {
-      for(final var entry : this.actionStates.entrySet()) {
-        final InputAction action = entry.getKey();
-        final InputActionState state = entry.getValue();
+    if(this.lastActiveWindow != null) {
+      if(this.lastActiveWindow.hasFocus || CONFIG.getConfig(RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get())) {
+        for(final var entry : this.actionStates.entrySet()) {
+          final InputAction action = entry.getKey();
+          final InputActionState state = entry.getValue();
 
-        if(state.repeat()) {
-          this.focus.events().onInputActionPressed(action, true);
-          EVENTS.postEvent(new InputPressedEvent(action, true));
+          if(state.repeat()) {
+            this.lastActiveWindow.events().onInputActionPressed(action, true);
+            EVENTS.postEvent(new InputPressedEvent(action, true));
+          }
+        }
+      } else {
+        for(final var entry : this.actionStates.entrySet()) {
+          final InputAction action = entry.getKey();
+          final InputActionState state = entry.getValue();
+
+          if(state.isHeld()) {
+            state.release();
+            EVENTS.postEvent(new InputReleasedEvent(action));
+          }
         }
       }
     }
