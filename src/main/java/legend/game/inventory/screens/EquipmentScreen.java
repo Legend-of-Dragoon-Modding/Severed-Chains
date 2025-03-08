@@ -40,6 +40,7 @@ import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
@@ -49,6 +50,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class EquipmentScreen extends MenuScreen {
@@ -307,6 +309,22 @@ public class EquipmentScreen extends MenuScreen {
     this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
   }
 
+  private void menuNavigateTop() {
+    if(this.selectedSlot != 0) {
+      playMenuSound(1);
+      this.selectedSlot = 0;
+      this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
+    }
+  }
+
+  private void menuNavigateBottom() {
+    if(this.selectedSlot != 3) {
+      playMenuSound(1);
+      this.selectedSlot = 3;
+      this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
+    }
+  }
+
   private void menuNavigatePageUp() {
     if(this.slotScroll - 3 >= 0) {
       this.scroll(this.slotScroll - 3);
@@ -331,7 +349,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateEnd() {
-    if(this.slotScroll + this.selectedSlot != this.equipmentCount - 1) {
+    if(this.equipmentCount > 0 && this.slotScroll + this.selectedSlot != this.equipmentCount - 1) {
       this.selectedSlot = Math.min(3, this.equipmentCount - 1);
       this.scroll(this.equipmentCount - 1 - this.selectedSlot);
     }
@@ -419,6 +437,16 @@ public class EquipmentScreen extends MenuScreen {
 
     if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
       this.menuNavigatePageDown();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_TOP.get()) {
+      this.menuNavigateTop();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_BOTTOM.get()) {
+      this.menuNavigateBottom();
       return InputPropagation.HANDLED;
     }
 

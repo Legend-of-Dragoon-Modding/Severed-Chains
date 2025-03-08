@@ -131,6 +131,8 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_RIGHT = INPUT_ACTION_REGISTRAR.register("menu_right", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HOME = INPUT_ACTION_REGISTRAR.register("menu_home", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_END = INPUT_ACTION_REGISTRAR.register("menu_end", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_TOP = INPUT_ACTION_REGISTRAR.register("menu_top", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BOTTOM = INPUT_ACTION_REGISTRAR.register("menu_bottom", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_UP = INPUT_ACTION_REGISTRAR.register("menu_page_up", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_PAGE_DOWN = INPUT_ACTION_REGISTRAR.register("menu_page_down", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_confirm", InputAction::fixed);

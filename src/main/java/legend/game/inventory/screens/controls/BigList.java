@@ -10,12 +10,14 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class BigList<T> extends Control {
@@ -227,6 +229,27 @@ public class BigList<T> extends Control {
     }
   }
 
+  private void menuNavigateTop() {
+    if(this.scroll == 0 && this.slot != 0) {
+      playMenuSound(1);
+      this.slot = 0;
+    } else if(this.slot != this.scroll + MAX_VISIBLE_ENTRIES) {
+      playMenuSound(1);
+      this.slot = this.scroll;
+    }
+    this.highlight(this.slot);
+  }
+
+  private void menuNavigateBottom() {
+    final int count = this.entries.size();
+    if(this.slot - this.scroll != Math.min(MAX_VISIBLE_ENTRIES, count) - 1) {
+      playMenuSound(1);
+      this.slot = this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1;
+    }
+
+    this.highlight(this.slot);
+  }
+
   private void menuNavigatePageUp() {
     if(this.scroll - MAX_VISIBLE_ENTRIES >= 0) {
       playMenuSound(1);
@@ -269,7 +292,7 @@ public class BigList<T> extends Control {
 
   private void menuNavigateEnd() {
     final int count = this.entries.size();
-    if(this.slot != count - 1) {
+    if(count > 0 && this.slot != count - 1) {
       this.scroll = Math.max(0, count - MAX_VISIBLE_ENTRIES);
       this.updateEntries();
       this.highlight(count - 1);
@@ -299,6 +322,16 @@ public class BigList<T> extends Control {
 
     if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
       this.menuNavigatePageDown();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_TOP.get()) {
+      this.menuNavigateTop();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_BOTTOM.get()) {
+      this.menuNavigateBottom();
       return InputPropagation.HANDLED;
     }
 

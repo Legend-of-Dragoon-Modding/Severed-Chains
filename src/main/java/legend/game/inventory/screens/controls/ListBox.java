@@ -24,12 +24,14 @@ import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class ListBox<T> extends Control {
@@ -316,6 +318,20 @@ public class ListBox<T> extends Control {
     }
   }
 
+  private void menuNavigateTop() {
+    if(this.slot != 0) {
+      playMenuSound(1);
+      this.select(0);
+    }
+  }
+
+  private void menuNavigateBottom() {
+    if(this.slot != this.maxVisibleEntries - 1) {
+      playMenuSound(1);
+      this.select(this.maxVisibleEntries - 1);
+    }
+  }
+
   private void menuNavigatePageUp() {
     if(this.scroll - this.maxVisibleEntries >= 0) {
       playMenuSound(1);
@@ -354,10 +370,11 @@ public class ListBox<T> extends Control {
   }
 
   private void menuNavigateEnd() {
-    if(this.scroll + this.slot != this.entries.size() - 1) {
+    final int count = this.entries.size();
+    if(count > 0 && this.scroll + this.slot != count - 1) {
       playMenuSound(1);
-      this.slot = Math.min(this.maxVisibleEntries - 1, this.entries.size() - 1);
-      this.scroll = this.entries.size() - 1 - this.slot;
+      this.slot = Math.min(this.maxVisibleEntries - 1, count - 1);
+      this.scroll = count - 1 - this.slot;
       this.updateEntries();
       this.select(this.slot);
     }
@@ -386,6 +403,16 @@ public class ListBox<T> extends Control {
 
     if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
       this.menuNavigatePageDown();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_TOP.get()) {
+      this.menuNavigateTop();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_BOTTOM.get()) {
+      this.menuNavigateBottom();
       return InputPropagation.HANDLED;
     }
 
