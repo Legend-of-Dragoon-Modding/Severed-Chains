@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class VerticalLayoutScreen extends MenuScreen {
@@ -242,6 +244,21 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
   }
 
+  private void menuNavigateTop() {
+    if(this.highlightedRow != this.scroll) {
+      playMenuSound(1);
+      this.highlightRow(this.scroll);
+    }
+  }
+
+  private void menuNavigateBottom() {
+    final int targetRow = this.scroll + this.visibleEntries() - 1;
+    if(this.highlightedRow != targetRow) {
+      playMenuSound(1);
+      this.highlightRow(targetRow);
+    }
+  }
+
   private void menuNavigateHome() {
     if(this.highlightedRow != 0 || this.scroll != 0) {
       playMenuSound(1);
@@ -253,7 +270,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void menuNavigateEnd() {
     final int optionCount = this.rows.size();
-    if(this.highlightedRow != optionCount - 1 || this.scroll != Math.max(0, optionCount - MAX_VISIBLE_ENTRIES)) {
+    if(optionCount > 0 && (this.highlightedRow != optionCount - 1 || this.scroll != Math.max(0, optionCount - MAX_VISIBLE_ENTRIES))) {
       playMenuSound(1);
       this.highlightRow(optionCount - 1);
       this.scroll = Math.max(0, optionCount - MAX_VISIBLE_ENTRIES);
@@ -276,6 +293,16 @@ public class VerticalLayoutScreen extends MenuScreen {
     if(action == INPUT_ACTION_MENU_DOWN.get()) {
       this.menuNavigateDown();
       this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_TOP.get()) {
+      this.menuNavigateTop();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_BOTTOM.get()) {
+      this.menuNavigateBottom();
       return InputPropagation.HANDLED;
     }
 

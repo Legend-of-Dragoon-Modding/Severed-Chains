@@ -40,6 +40,7 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
@@ -47,6 +48,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class TooManyItemsScreen extends MenuScreen {
@@ -439,6 +441,29 @@ public class TooManyItemsScreen extends MenuScreen {
     this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
+  private void inventoryNavigateTop() {
+    if(this.invIndex != 0) {
+      playMenuSound(1);
+      this.invIndex = 0;
+      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+    }
+  }
+
+  private void inventoryNavigateBottom() {
+    final int slotCount;
+    if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
+      slotCount = gameState_800babc8.equipment_1e8.size();
+    } else {
+      slotCount = gameState_800babc8.items_2e9.size();
+    }
+
+    if(this.invIndex != Math.min(6, slotCount - 1)) {
+      playMenuSound(1);
+      this.invIndex = Math.min(6, slotCount - 1);
+      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+    }
+  }
+
   private void inventoryNavigatePageUp() {
     if(this.invScroll - 6 >= 0) {
       playMenuSound(1);
@@ -613,6 +638,16 @@ public class TooManyItemsScreen extends MenuScreen {
 
       if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
         this.inventoryNavigatePageDown();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_TOP.get()) {
+        this.inventoryNavigateTop();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BOTTOM.get()) {
+        this.inventoryNavigateBottom();
         return InputPropagation.HANDLED;
       }
 
