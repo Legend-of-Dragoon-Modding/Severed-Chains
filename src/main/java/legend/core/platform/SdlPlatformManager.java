@@ -359,6 +359,7 @@ public class SdlPlatformManager extends PlatformManager {
   public void init() {
     SDL_SetHint(SDL_HINT_WINDOWS_RAW_KEYBOARD, "1");
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+//    SDL_SetHint("SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD", "1");
 
     if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
       throw new IllegalStateException("Unable to initialize SDL3");
@@ -415,6 +416,8 @@ public class SdlPlatformManager extends PlatformManager {
   }
 
   public List<SdlGamepadDevice> loadGamepads() {
+    LOGGER.info("Loading gamepads...");
+
     final IntBuffer ids = SDL_GetGamepads();
 
     if(ids == null) {
@@ -427,7 +430,9 @@ public class SdlPlatformManager extends PlatformManager {
     for(int i = 0; i < ids.limit(); i++) {
       try {
         final int id = ids.get(i);
-        gamepads.add(new SdlGamepadDevice(id, SDL_OpenGamepad(id)));
+        final SdlGamepadDevice gamepad = new SdlGamepadDevice(id, SDL_OpenGamepad(id));
+        gamepads.add(gamepad);
+        LOGGER.info("Found gamepad %s", gamepad.name);
       } catch(final FailedToLoadDeviceException e) {
         this.logLastError();
       }
