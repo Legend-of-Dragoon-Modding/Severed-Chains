@@ -73,6 +73,9 @@ public class MainMenuScreen extends MenuScreen {
   private final CharacterCard[] charCards = new CharacterCard[3];
   private final List<Button> menuButtons = new ArrayList<>();
 
+  private final Button saveButton;
+  private final Button loadButton;
+
   public MainMenuScreen(final Runnable unload) {
     this.unload = unload;
 
@@ -113,8 +116,11 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Replace", this::showCharSwapScreen);
     this.addButton("Options", this::showOptionsScreen);
     this.addButton("", () -> { }).hide();
-    this.addButton("Load", this::showLoadScreen).setDisabled(gameState_800babc8.campaign.loadAllSaves().isEmpty());
-    this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88);
+    this.loadButton = this.addButton("Load", this::showLoadScreen);
+    this.saveButton = this.addButton("Save", this::showSaveScreen);
+
+    this.loadButton.setDisabled(gameState_800babc8.campaign.loadAllSaves().isEmpty());
+    this.saveButton.setDisabled(!canSave_8011dc88);
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
@@ -340,17 +346,9 @@ public class MainMenuScreen extends MenuScreen {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
       menuStack.popScreen();
       this.loadingStage = 0;
-      for(int i = 0; i < this.menuButtons.size(); i++) {
-        if(Objects.equals(this.menuButtons.get(i).getText(), "Save")) {
-          if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-            canSave_8011dc88 = true;
-          } else {
-            canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
-          }
-          this.menuButtons.get(i).setDisabled(!canSave_8011dc88);
-          break;
-        }
-      }
+
+      canSave_8011dc88 = engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 || CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
+      this.saveButton.setDisabled(!canSave_8011dc88);
     }));
   }
 
@@ -387,12 +385,7 @@ public class MainMenuScreen extends MenuScreen {
         menuStack.popScreen();
         this.fadeOutArrows();
         this.loadingStage = 0;
-        for(int i = 0; i < this.menuButtons.size(); i++) {
-          if(Objects.equals(this.menuButtons.get(i).getText(), "Load")) {
-            this.menuButtons.get(i).setDisabled(gameState_800babc8.campaign.loadAllSaves().isEmpty());
-            break;
-          }
-        }
+        this.loadButton.setDisabled(gameState_800babc8.campaign.loadAllSaves().isEmpty());
       }));
     } else {
       playMenuSound(40);

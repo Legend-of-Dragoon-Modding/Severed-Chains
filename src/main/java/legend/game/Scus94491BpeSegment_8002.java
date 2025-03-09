@@ -2256,7 +2256,7 @@ public final class Scus94491BpeSegment_8002 {
             autoTextDelayStart = System.nanoTime();
           }
           //LAB_8002686c
-          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 1_000_000_000)) {
             autoTextDelayStart = 0;
             setTextboxArrowPosition(textboxIndex, false);
 
@@ -2279,7 +2279,7 @@ public final class Scus94491BpeSegment_8002 {
           autoTextDelayStart = System.nanoTime();
         }
         //LAB_800268dc
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 1_000_000_000)) {
           autoTextDelayStart = 0;
           textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
         }
@@ -2374,7 +2374,7 @@ public final class Scus94491BpeSegment_8002 {
           autoTextDelayStart = System.nanoTime();
         }
         //LAB_80026a98
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 1_000_000_000)) {
           autoTextDelayStart = 0;
           setTextboxArrowPosition(textboxIndex, false);
           clearTextboxChars(textboxIndex);
@@ -2473,7 +2473,7 @@ public final class Scus94491BpeSegment_8002 {
             autoTextDelayStart = System.nanoTime();
           }
           //LAB_80026cd0
-          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 1_000_000_000)) {
             autoTextDelayStart = 0;
             textboxText.delete();
             textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
