@@ -1,0 +1,16 @@
+Moon - Before Melbu
+Kongol
+Skip hiding model parts
+--- original
++++ modified
+@@ -109,10 +109,6 @@
+ call 307, stor[0], 0x14, 0x28, 0xa
+ call 294, 0x14, 0x1
+ call 294, 0x16, 0x1
+-call 288, 0x3
+-call 288, 0x4
+-call 288, 0x9
+-call 288, 0xa
+ rewind
+ ENTRYPOINT_1:
+ consume

@@ -1,0 +1,21 @@
+Moon - Before Melbu
+Albert
+Skip hiding model parts
+--- original
++++ modified
+@@ -320,15 +320,6 @@
+ gosub inl[:LABEL_31]
+ return
+ LABEL_31:
+-call 288, 0x0
+-call 288, 0x5
+-call 288, 0x6
+-call 288, 0x8
+-call 288, 0xd
+-call 288, 0xe
+-call 288, 0xf
+-call 288, 0x14
+-call 288, 0x15
+ return
+ LABEL_32:
+ call 289, 0x0

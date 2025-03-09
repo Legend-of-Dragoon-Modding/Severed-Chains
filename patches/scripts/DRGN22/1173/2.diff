@@ -1,0 +1,21 @@
+Fletz - Return from HoG cutscene
+Albert
+Skip hiding model parts. Move start position off-camera.
+--- original
++++ modified
+@@ -399,14 +399,8 @@
+ call 2, 0x8, 0x1
+ rewind
+ JMP_bc0_1:
+-call 101, stor[0], 0x58, 0x0, 0xfffffac4
++call 101, stor[0], 0x64, 0x0, 0xfffffac4
+ call 103, stor[0], 0x0, 0x0, 0x0
+-call 288, 0x8
+-call 288, 0x11
+-call 288, 0x12
+-call 288, 0x13
+-call 288, 0x14
+-call 288, 0x15
+ mov 0x1, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_15]
