@@ -1,0 +1,33 @@
+Ulara - Entrance Teleport Pad
+Kongol
+Skip hiding model parts
+--- original
++++ modified
+@@ -106,14 +106,6 @@
+ call 101, stor[0], 0x0, 0x0, 0xfffffe16
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 106, 0x0
+-call 288, 0x3
+-call 288, 0x4
+-call 288, 0x5
+-call 288, 0x6
+-call 288, 0x9
+-call 288, 0xa
+-call 288, 0xf
+-call 288, 0x10
+ mov 0x0, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_0]
+@@ -128,12 +120,6 @@
+ mov 0xe, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_0]
+-call 288, 0x0
+-call 288, 0x1
+-call 288, 0x2
+-call 288, 0x8
+-call 288, 0xd
+-call 288, 0xe
+ mov 0x28, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_0]

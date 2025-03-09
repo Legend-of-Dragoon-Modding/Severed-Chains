@@ -1,0 +1,19 @@
+Fletz - Return from HoG cutscene
+Kongol
+Skip hiding model parts.
+--- original
++++ modified
+@@ -101,13 +101,6 @@
+ JMP_3a0_1:
+ call 101, stor[0], 0x74, 0x0, 0xfffffab4
+ call 103, stor[0], 0x0, 0x0, 0x0
+-call 288, 0x1
+-call 288, 0x4
+-call 288, 0x6
+-call 288, 0xa
+-call 288, 0xc
+-call 288, 0xe
+-call 288, 0x10
+ mov 0x1, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_0]

@@ -1,0 +1,17 @@
+Aglis - Teleporter to Zenebatos
+Miranda
+Skip hiding model parts
+--- original
++++ modified
+@@ -233,11 +233,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_12]
+-call 288, 0x3
+-call 288, 0x4
+-call 288, 0x6
+-call 288, 0xa
+-call 288, 0xe
+ mov 0x2, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_26]
