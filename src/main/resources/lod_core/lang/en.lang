@@ -147,6 +147,7 @@ lod_core.config.transformation_mode.NORMAL=Normal
 lod_core.config.transformation_mode.SHORT=Short
 lod_core.config.quick_text.label=Quick Text
 lod_core.config.auto_text.label=Automatic Text Advance
+lod_core.config.auto_text_delay.label=Automatic Text Delay (seconds)
 lod_core.config.save_anywhere.label=Save Anywhere
 lod_core.config.save_anywhere.help=WARNING: do not save during story events, while crossing stepping stones, etc.
 lod_core.config.disable_status_effects.label=Disable Status Effects

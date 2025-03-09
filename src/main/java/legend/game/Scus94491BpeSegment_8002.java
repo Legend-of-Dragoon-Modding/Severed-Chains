@@ -179,6 +179,8 @@ public final class Scus94491BpeSegment_8002 {
   private static Obj textboxSelectionObj;
   private static final MV textboxSelectionTransforms = new MV();
 
+  private static long autoTextDelayStart = 0;
+
   @Method(0x80020008L)
   public static void sssqResetStuff() {
     stopAndResetSoundsAndSequences();
@@ -2250,8 +2252,12 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
           textboxText.flags_08 |= 0x1;
         } else {
+          if(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && autoTextDelayStart == 0) {
+            autoTextDelayStart = System.nanoTime();
+          }
           //LAB_8002686c
-          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+            autoTextDelayStart = 0;
             setTextboxArrowPosition(textboxIndex, false);
 
             if(textboxText.type_04 == 1 || textboxText.type_04 == 4) {
@@ -2269,8 +2275,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case _6 -> {
+        if(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && autoTextDelayStart == 0) {
+          autoTextDelayStart = System.nanoTime();
+        }
         //LAB_800268dc
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+          autoTextDelayStart = 0;
           textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
         }
       }
@@ -2360,8 +2370,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case _11 -> {
+        if(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && autoTextDelayStart == 0) {
+          autoTextDelayStart = System.nanoTime();
+        }
         //LAB_80026a98
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+          autoTextDelayStart = 0;
           setTextboxArrowPosition(textboxIndex, false);
           clearTextboxChars(textboxIndex);
 
@@ -2455,8 +2469,12 @@ public final class Scus94491BpeSegment_8002 {
         if((textboxText.flags_08 & TextboxText84.NO_INPUT) != 0) {
           textboxText.state_00 = TextboxTextState._16;
         } else {
+          if(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && autoTextDelayStart == 0) {
+            autoTextDelayStart = System.nanoTime();
+          }
           //LAB_80026cd0
-          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || (CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()) && System.nanoTime() - autoTextDelayStart >= CONFIG.getConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get()) * 0x3B9A_CA00)) {
+            autoTextDelayStart = 0;
             textboxText.delete();
             textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             setTextboxArrowPosition(textboxIndex, false);
