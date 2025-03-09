@@ -2080,15 +2080,6 @@ public final class Scus94491BpeSegment {
     //LAB_8001cc50
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     sound.used_00 = true;
-
-    if(charSlot == 0 || charSlot == 1) {
-      //LAB_8001cc30
-      FUN_8001e8cc();
-    } else {
-      //LAB_8001cc38
-      //LAB_8001cc40
-      FUN_8001e8d4();
-    }
   }
 
   @Method(0x8001cce8L)
@@ -2397,14 +2388,25 @@ public final class Scus94491BpeSegment {
     //LAB_8001df9c
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x8);
 
+    final AtomicInteger remaining = new AtomicInteger(0);
+
     // Player combat sounds for current party composition (example file: 764)
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex != -1) {
+        remaining.incrementAndGet();
+
         final String name = getCharacterName(charIndex).toLowerCase();
         final int finalCharSlot = charSlot;
-        loadDir("characters/%s/sounds/combat".formatted(name), files -> charSoundEffectsLoaded(files, finalCharSlot));
+        loadDir("characters/%s/sounds/combat".formatted(name), files -> {
+          charSoundEffectsLoaded(files, finalCharSlot);
+          if(remaining.decrementAndGet() == 0){
+            //LAB_8001cc38
+            //LAB_8001cc40
+            FUN_8001e8d4();
+          }
+        });
       }
     }
 
@@ -2576,10 +2578,6 @@ public final class Scus94491BpeSegment {
     throw new RuntimeException("Not implemented");
   }
 
-  @Method(0x8001e8ccL)
-  public static void FUN_8001e8cc() {
-    // empty
-  }
 
   @Method(0x8001e8d4L)
   public static void FUN_8001e8d4() {
