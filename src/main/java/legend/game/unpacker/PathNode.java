@@ -2,10 +2,10 @@ package legend.game.unpacker;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PathNode {
   public final String fullPath;
@@ -13,7 +13,7 @@ public class PathNode {
   public final FileData data;
   @Nullable
   public final PathNode parent;
-  public final Map<String, PathNode> children = new HashMap<>();
+  public final Map<String, PathNode> children = new ConcurrentHashMap<>();
   public final Set<String> flags = new HashSet<>();
 
   public PathNode(final String fullPath, final String pathSegment, final FileData data, @Nullable final PathNode parent) {
