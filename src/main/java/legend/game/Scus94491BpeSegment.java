@@ -2401,7 +2401,7 @@ public final class Scus94491BpeSegment {
         final int finalCharSlot = charSlot;
         loadDir("characters/%s/sounds/combat".formatted(name), files -> {
           charSoundEffectsLoaded(files, finalCharSlot);
-          if(remaining.decrementAndGet() == 0){
+          if(remaining.decrementAndGet() == 0) {
             //LAB_8001cc38
             //LAB_8001cc40
             FUN_8001e8d4();
