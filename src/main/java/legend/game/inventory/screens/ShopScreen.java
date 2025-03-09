@@ -1125,6 +1125,16 @@ public class ShopScreen extends MenuScreen {
             final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getPrice()));
             addGold(event.price);
 
+            if(count == 0) {
+              if(this.sellType != 0) {
+                menuStack.pushScreen(new MessageBoxScreen("You have no equipment\nto sell", 0, result1 -> {}));
+              } else {
+                menuStack.pushScreen(new MessageBoxScreen("You have no items\nto sell", 0, result1 -> {}));
+              }
+              this.menuSell10Escape();
+              return;
+            }
+
             if(this.invScroll_8011e0e4 > 0 && this.invScroll_8011e0e4 + 6 > count) {
               this.invScroll_8011e0e4--;
             }
