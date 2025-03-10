@@ -20,12 +20,13 @@ import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
-import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TEXT_CONFIRM;
 
 public class Textbox extends Control {
   private final Panel background;
   private final MV transforms = new MV();
   private String text;
+  private String previousText;
   private float textHeight;
   private int maxLength = -1;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
@@ -42,6 +43,7 @@ public class Textbox extends Control {
   @Override
   protected void gotFocus() {
     super.gotFocus();
+    this.previousText = this.getText();
     RENDERER.window().startTextInput();
   }
 
@@ -203,7 +205,10 @@ public class Textbox extends Control {
 
   @Override
   protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
-    if((action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
+    if(action == INPUT_ACTION_TEXT_CONFIRM.get() && !repeat) {
+      this.deferAction(this::unfocus);
+    } else if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+      this.setText(this.previousText);
       this.deferAction(this::unfocus);
     }
 
