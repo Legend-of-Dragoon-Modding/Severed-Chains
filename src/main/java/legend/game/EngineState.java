@@ -102,6 +102,10 @@ public abstract class EngineState {
     return this.analogueMagnitude;
   }
 
+  public void loadGameFromMenu(final boolean loadWorldMap) {
+    throw new RuntimeException("Not implemented");
+  }
+
   public enum RenderMode {
     /** Used by submaps and title screen, pseudo-perspective using orthographic projection with H division */
     LEGACY,

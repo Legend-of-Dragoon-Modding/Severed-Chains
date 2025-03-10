@@ -414,6 +414,11 @@ public class WMap extends EngineState {
   }
 
   @Override
+  public void loadGameFromMenu(final boolean loadWorldMap) {
+    this.wmapState_800bb10c = loadWorldMap ? WmapState.INIT_0 : WmapState.TRANSITION_TO_SUBMAP_7;
+  }
+
+  @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     if(action == LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY.get() && !repeat) {
       if(Loader.getLoadingFileCount() == 0) {
