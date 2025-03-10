@@ -24,7 +24,6 @@ import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
@@ -166,6 +165,9 @@ import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
+import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
+import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -1236,17 +1238,20 @@ public final class Scus94491BpeSegment {
             if(overlay.widthScale_04 != 0) {
               overlay.widthScale_04 -= 0x492;
               overlay.heightScale_06 -= 0x492;
-            } else {
+            } else if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
               //LAB_80019084
               overlay.clutAndTranslucency_0c &= 0x8fff;
             }
 
             //LAB_80019094
             if(overlay._09 == 0) {
-              overlay.clutAndTranslucency_0c &= 0x7fff;
               overlay.negaticks_08 = 0;
-              overlay.clutAndTranslucency_0c &= 0xf0ff;
-              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+
+              if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                overlay.clutAndTranslucency_0c &= 0x7fff;
+                overlay.clutAndTranslucency_0c &= 0xf0ff;
+                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              }
             }
           } else if(v1 == 1) {
             //LAB_800190d4
@@ -1254,8 +1259,11 @@ public final class Scus94491BpeSegment {
 
             if(overlay.negaticks_08 == 10) {
               overlay._09 = (byte)(simpleRand() % 10 + 2);
-              overlay.clutAndTranslucency_0c &= 0xf0ff;
-              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+
+              if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                overlay.clutAndTranslucency_0c &= 0xf0ff;
+                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              }
             }
             //LAB_80019028
           } else if(v1 == 2) {
@@ -1265,8 +1273,11 @@ public final class Scus94491BpeSegment {
             if(overlay._09 == 0) {
               //LAB_80019180
               overlay._09 = 8;
-              overlay.clutAndTranslucency_0c &= 0xf0ff;
-              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+
+              if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                overlay.clutAndTranslucency_0c &= 0xf0ff;
+                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              }
             }
           } else if(v1 == 3) {
             //LAB_800191b8
@@ -1860,7 +1871,7 @@ public final class Scus94491BpeSegment {
       tickBattleDissolveDarkening();
     }
 
-    final BattleTransitionMode mode = CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get());
+    final BattleTransitionMode mode = CONFIG.getConfig(BATTLE_TRANSITION_MODE_CONFIG.get());
     final int speedDivisor = mode == BattleTransitionMode.NORMAL ? 1 : 2;
 
     //LAB_8001b480
@@ -1909,13 +1920,13 @@ public final class Scus94491BpeSegment {
 
     battleDissolveTicks += vsyncMode_8007a3b8;
 
-    if((battleDissolveTicks & 0x1) == 0 || CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get()) == BattleTransitionMode.FAST) {
+    if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get()) && ((battleDissolveTicks & 0x1) == 0 || CONFIG.getConfig(BATTLE_TRANSITION_MODE_CONFIG.get()) == BattleTransitionMode.FAST)) {
       final float squish;
       final float width;
       final float offset;
 
       // Make sure effect fills the whole screen
-      if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(ALLOW_WIDESCREEN_CONFIG.get())) {
         squish = 1.0f;
         width = dissolveDisplayWidth;
         offset = 0.0f;
@@ -1991,7 +2002,7 @@ public final class Scus94491BpeSegment {
     final float offset;
 
     // Make sure effect fills the whole screen
-    if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+    if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(ALLOW_WIDESCREEN_CONFIG.get())) {
       squish = 1.0f;
       width = dissolveDisplayWidth;
       offset = 0.0f;

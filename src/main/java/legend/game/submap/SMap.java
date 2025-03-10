@@ -156,6 +156,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
@@ -5240,7 +5241,7 @@ public class SMap extends EngineState {
       final AnmSpriteGroup[] spriteGroups = anm.spriteGroups;
 
       //LAB_800f365c
-      if((s1._00 & 0x1) == 0) {
+      if((s1._00 & 0x1) == 0 && !CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
         if(((this.smapTicks_800c6ae0 % (3 - vsyncMode_8007a3b8) == 0))) {
           s1.time_08--;
         }

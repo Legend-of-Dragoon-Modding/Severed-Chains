@@ -152,6 +152,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -273,6 +274,7 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
@@ -1460,7 +1462,11 @@ public class Battle extends EngineState {
 
     battleLoaded_800bc94c = true;
 
-    startFadeEffect(4, 30);
+    if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      startFadeEffect(4, 30);
+    } else {
+      startFadeEffect(2, 30);
+    }
 
     battleFlags_800bc960 |= 0x20;
     battleState_8006e398.battlePhase_eec = 0;

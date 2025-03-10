@@ -64,10 +64,10 @@ public class NumberSpinner<T extends Number> extends Control {
     this.label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     this.label.ignoreInput();
 
-    this.upArrow = this.addControl(Glyph.uiElement(61, 68));
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
     this.upArrow.ignoreInput();
 
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.ignoreInput();
 
     this.highlight = this.addControl(new Brackets());

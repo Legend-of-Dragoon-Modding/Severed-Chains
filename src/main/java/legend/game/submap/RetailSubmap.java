@@ -51,6 +51,7 @@ import java.util.function.Consumer;
 
 import static legend.core.Async.allLoaded;
 import static legend.core.GameEngine.AUDIO_THREAD;
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -91,6 +92,7 @@ import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
@@ -1322,7 +1324,11 @@ public class RetailSubmap extends Submap {
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
     applyModelRotationAndScale(this.submapModel_800d4bf8);
-    animateModel(this.submapModel_800d4bf8, 4 / vsyncMode_8007a3b8);
+
+    if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      animateModel(this.submapModel_800d4bf8, 4 / vsyncMode_8007a3b8);
+    }
+
     this.renderSubmapModel(this.submapModel_800d4bf8, matrix);
   }
 

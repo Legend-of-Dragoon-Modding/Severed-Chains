@@ -31,6 +31,7 @@ import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
@@ -148,7 +149,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         borderOverlay.isVisible_00 = true;
         //LAB_8010656c
         //LAB_80106574
-        borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f);
+        if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+          borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f);
+        }
+
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
         borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);

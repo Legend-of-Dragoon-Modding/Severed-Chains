@@ -45,8 +45,8 @@ public class BigList<T> extends Control {
     this.highlight = this.addControl(new Brackets());
     this.highlight.setX(8);
 
-    this.upArrow = this.addControl(Glyph.uiElement(61, 68));
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
   }
 
   public void addEntry(final T entry) {

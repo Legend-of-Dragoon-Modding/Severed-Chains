@@ -66,8 +66,8 @@ public class ListBox<T> extends Control {
 
     this.highlight = this.addControl(Glyph.uiElement(118, 118));
     FUN_80104b60(this.highlight.getRenderable()); //TODO not sure exactly what this does but without it the middle part of the highlight doesn't stretch
-    this.upArrow = this.addControl(Glyph.uiElement(61, 68));
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
 
     this.setSize(171, 119);
 

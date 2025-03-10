@@ -94,6 +94,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class Ttle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Ttle.class);
@@ -1214,6 +1215,10 @@ public class Ttle extends EngineState {
 
   @Method(0x800cb974L)
   private void renderLogoFlash() {
+    if(CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      this.logoFlashStage = 2;
+    }
+
     if(this.logoFlashStage == 2) {
       return;
     }

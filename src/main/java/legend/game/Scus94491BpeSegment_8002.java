@@ -162,6 +162,7 @@ import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
 public final class Scus94491BpeSegment_8002 {
@@ -3900,7 +3901,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if((arrow.flags_00 & TextboxArrow0c.ARROW_VISIBLE) != 0) {
       if((textboxText_800bdf38[textboxIndex].flags_08 & TextboxText84.SHOW_ARROW) != 0) {
-        if(tickCount_800bb0fc % (2 * currentEngineState_8004dd04.tickMultiplier()) == 0) {
+        if(tickCount_800bb0fc % (2 * currentEngineState_8004dd04.tickMultiplier()) == 0 && !CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
           arrow.spriteIndex_08++;
         }
 

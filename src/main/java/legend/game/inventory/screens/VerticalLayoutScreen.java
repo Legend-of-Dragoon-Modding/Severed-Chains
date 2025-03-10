@@ -45,8 +45,8 @@ public class VerticalLayoutScreen extends MenuScreen {
     this.highlight.setSize(320, 14);
     this.highlight.setClut(0xfc29);
 
-    this.upArrow = this.addControl(Glyph.uiElement(61, 68));
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
   }
 
   public <T extends Control> Label addRow(final String name, @Nullable final T control) {

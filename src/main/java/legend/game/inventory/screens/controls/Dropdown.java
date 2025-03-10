@@ -77,7 +77,7 @@ public class Dropdown<T> extends Control {
       return InputPropagation.PROPAGATE;
     });
 
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.ignoreInput();
     this.downArrow.setZ(this.background.getZ() - 1);
 

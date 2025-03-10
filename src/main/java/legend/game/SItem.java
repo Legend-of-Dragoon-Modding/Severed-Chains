@@ -1655,7 +1655,7 @@ public final class SItem {
   }
 
   @Method(0x80109410L)
-  public static void renderMenuItems(final int x, final int y, final MenuEntries<?> menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
+  public static void renderMenuItems(final int x, final int y, final MenuEntries<?> menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 upArrow, @Nullable final Renderable58 downArrow) {
     int s3 = slotScroll;
 
     //LAB_8010947c
@@ -1682,21 +1682,21 @@ public final class SItem {
     //LAB_801095c0
     //LAB_801095d4
     //LAB_801095e0
-    if(a5 != null) { // There was an NPE here when fading out item list
+    if(upArrow != null) { // There was an NPE here when fading out item list
       if(slotScroll != 0) {
-        a5.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
+        upArrow.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
       } else {
-        a5.flags_00 |= Renderable58.FLAG_INVISIBLE;
+        upArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
       }
     }
 
     //LAB_80109614
     //LAB_80109628
-    if(a6 != null) { // There was an NPE here when fading out item list
+    if(downArrow != null) { // There was an NPE here when fading out item list
       if(i + slotScroll < menuItems.size()) {
-        a6.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
+        downArrow.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
       } else {
-        a6.flags_00 |= Renderable58.FLAG_INVISIBLE;
+        downArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
       }
     }
   }

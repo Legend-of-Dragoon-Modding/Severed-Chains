@@ -42,6 +42,7 @@ import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry
 import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
 import legend.game.modding.coremod.config.MusicSampleRateConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
+import legend.game.modding.coremod.config.ReduceMotionFlashingConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
 import legend.game.modding.coremod.config.RumbleIntensityConfigEntry;
 import legend.game.modding.coremod.config.RunByDefaultConfig;
@@ -87,6 +88,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> FULLSCREEN_CONFIG = CONFIG_REGISTRAR.register("fullscreen", FullscreenConfigEntry::new);
   public static final RegistryDelegate<ResolutionConfig> RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("resolution", ResolutionConfig::new);
   public static final RegistryDelegate<MonitorConfigEntry> MONITOR_CONFIG = CONFIG_REGISTRAR.register("monitor", MonitorConfigEntry::new);
+  public static final RegistryDelegate<ReduceMotionFlashingConfigEntry> REDUCE_MOTION_FLASHING_CONFIG = CONFIG_REGISTRAR.register("reduce_motion_flashing", ReduceMotionFlashingConfigEntry::new);
 
   public static final RegistryDelegate<AudioDeviceConfig> AUDIO_DEVICE_CONFIG = CONFIG_REGISTRAR.register("audio_device", AudioDeviceConfig::new);
   public static final RegistryDelegate<MasterVolumeConfigEntry> MASTER_VOLUME_CONFIG = CONFIG_REGISTRAR.register("master_volume", MasterVolumeConfigEntry::new);

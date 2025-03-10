@@ -13,6 +13,7 @@ import legend.game.types.Renderable58;
 
 import java.util.Set;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
@@ -52,6 +53,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class EquipmentScreen extends MenuScreen {
   private int loadingStage;
@@ -63,8 +65,8 @@ public class EquipmentScreen extends MenuScreen {
   private int charSlot;
   private int equipmentCount;
   private Renderable58 itemHighlight;
-  private Renderable58 _800bdb9c;
-  private Renderable58 _800bdba0;
+  private Renderable58 upArrow_800bdb9c;
+  private Renderable58 downArrow_800bdba0;
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapX = true;
@@ -168,11 +170,17 @@ public class EquipmentScreen extends MenuScreen {
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
-      this._800bdb9c = allocateUiElement(61, 0x44, 358, this.menuHighlightPositionY(0));
-      this._800bdba0 = allocateUiElement(53, 0x3c, 358, this.menuHighlightPositionY(3));
+
+      if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+        this.upArrow_800bdb9c = allocateUiElement(61, 68, 358, this.menuHighlightPositionY(0));
+        this.downArrow_800bdba0 = allocateUiElement(53, 60, 358, this.menuHighlightPositionY(3));
+      } else {
+        this.upArrow_800bdb9c = allocateUiElement(67, 67, 358, this.menuHighlightPositionY(0));
+        this.downArrow_800bdba0 = allocateUiElement(59, 59, 358, this.menuHighlightPositionY(3));
+      }
     }
 
-    renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
+    renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this.upArrow_800bdb9c, this.downArrow_800bdba0);
 
     if(slotIndex + slotScroll < this.menuItems.size()) {
       renderString(194, 178, I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
