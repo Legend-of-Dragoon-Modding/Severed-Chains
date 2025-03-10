@@ -84,8 +84,9 @@ public final class SaveManager {
     return this.dir.resolve(path);
   }
 
+  /** Checks if a campaign exists and has at least one valid save */
   public boolean campaignExists(final String campaign) {
-    return Files.exists(this.dir.resolve(IoHelper.slugName(campaign)));
+    return Campaign.load(this, this.dir.resolve(IoHelper.slugName(campaign))).hasSave();
   }
 
   private static final Pattern SAVE_NUMBER_PATTERN = Pattern.compile("^(.+?)\\s(\\d+)$");

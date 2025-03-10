@@ -71,19 +71,21 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     final Button mods = new Button("Mods");
     this.addRow("", mods);
     mods.onPressed(() ->
-      this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
-        bootMods(this.enabledMods);
+      this.deferAction(() ->
+        this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
+          bootMods(this.enabledMods);
 
-        startFadeEffect(2, 10);
-        this.getStack().popScreen();
-      }))
+          startFadeEffect(2, 10);
+          this.getStack().popScreen();
+        }))
+      )
     );
 
     final Button startGame = new Button("Start Game");
     this.addRow("", startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { })));
       } else {
         this.unload = true;
       }
