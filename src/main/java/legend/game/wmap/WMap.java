@@ -28,6 +28,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.types.CContainer;
+import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
@@ -411,6 +412,11 @@ public class WMap extends EngineState {
   @Override
   public void restoreMusicAfterMenu() {
     unloadSoundFile(8);
+  }
+
+  @Override
+  public void loadGameFromMenu(final GameState52c gameState) {
+    this.wmapState_800bb10c = gameState.isOnWorldMap_4e4 ? WmapState.INIT_0 : WmapState.TRANSITION_TO_SUBMAP_7;
   }
 
   @Override

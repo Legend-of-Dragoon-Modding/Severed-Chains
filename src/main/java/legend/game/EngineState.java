@@ -4,6 +4,7 @@ import legend.core.platform.input.InputAction;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.types.CContainer;
+import legend.game.types.GameState52c;
 import legend.game.types.Model124;
 import org.joml.Math;
 
@@ -100,6 +101,10 @@ public abstract class EngineState {
 
   public float getAnalogueMagnitude() {
     return this.analogueMagnitude;
+  }
+
+  public void loadGameFromMenu(final GameState52c gameState) {
+    throw new RuntimeException("Not implemented");
   }
 
   public enum RenderMode {
