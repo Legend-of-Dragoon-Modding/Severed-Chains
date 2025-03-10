@@ -384,6 +384,12 @@ public class SMap extends EngineState {
   }
 
   @Override
+  public void loadGameFromMenu(final boolean loadWorldMap) {
+    this.smapLoadingStage_800cb430 = loadWorldMap ? SubmapState.TRANSITION_TO_WORLD_MAP_18 : SubmapState.CHANGE_SUBMAP_4;
+    this.submap.startMusic();
+  }
+
+  @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     super.inputActionPressed(action, repeat);
 
