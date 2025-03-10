@@ -453,7 +453,7 @@ public class LodMod {
       event.addMapping(ItemIcon.HAT, ItemIcon.HELM);
 
       event.addMapping(ItemIcon.SHOES, ItemIcon.BOOTS);
-      event.addMapping(ItemIcon.KNEEPIECE, ItemIcon.BOOTS);
+      event.addMapping(ItemIcon.KNEEPIECE, ItemIcon.RING);
 
       event.addMapping(ItemIcon.BRACELET, ItemIcon.RING);
       event.addMapping(ItemIcon.AMULET, ItemIcon.RING);
