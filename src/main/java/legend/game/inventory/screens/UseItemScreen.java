@@ -600,7 +600,7 @@ public class UseItemScreen extends MenuScreen {
       }
 
       this.getItemResponseText(this.useItemResponse);
-      menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
+      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {})));
       this.loadingStage = 1;
     }
   }
