@@ -165,6 +165,7 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_INTERACT;
+import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
@@ -440,6 +441,15 @@ public class SMap extends EngineState {
       this.inputRepeat |= 0x20;
       this.inputHeld |= 0x20;
     }
+
+    if(action == INPUT_ACTION_SMAP_SNOWFIELD_WARP.get()) {
+      if(!repeat) {
+        this.inputPressed |= 0x800;
+      }
+
+      this.inputRepeat |= 0x800;
+      this.inputHeld |= 0x800;
+    }
   }
 
   @Override
@@ -468,6 +478,10 @@ public class SMap extends EngineState {
 
     if(action == INPUT_ACTION_SMAP_INTERACT.get()) {
       this.inputHeld &= ~0x20;
+    }
+
+    if(action == INPUT_ACTION_SMAP_SNOWFIELD_WARP.get()) {
+      this.inputHeld &= ~0x800;
     }
   }
 

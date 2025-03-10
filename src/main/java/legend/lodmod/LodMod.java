@@ -98,6 +98,7 @@ public class LodMod {
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_INTERACT = INPUT_ACTION_REGISTRAR.register("smap_interact", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_TOGGLE_INDICATORS = INPUT_ACTION_REGISTRAR.register("smap_toggle_indicators", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_SNOWFIELD_WARP = INPUT_ACTION_REGISTRAR.register("smap_snowfield_warp", InputAction::hidden);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_COUNTER = INPUT_ACTION_REGISTRAR.register("bttl_counter", InputAction::editable);
@@ -241,6 +242,7 @@ public class LodMod {
       .add(INPUT_ACTION_SMAP_INTERACT.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_SMAP_TOGGLE_INDICATORS.get(), new ScancodeInputActivation(InputKey.Q))
       .add(INPUT_ACTION_SMAP_TOGGLE_INDICATORS.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+      .add(INPUT_ACTION_SMAP_SNOWFIELD_WARP.get(), new ButtonInputActivation(InputButton.START))
 
       .add(INPUT_ACTION_BTTL_ATTACK.get(), new ScancodeInputActivation(InputKey.SPACE))
       .add(INPUT_ACTION_BTTL_ATTACK.get(), new ButtonInputActivation(InputButton.A))
