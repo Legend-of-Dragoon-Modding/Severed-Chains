@@ -145,6 +145,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_TEXTBOX_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_textbox_confirm", InputAction::fixed);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::fixed);
 
@@ -233,6 +234,8 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_HELP.get(), new KeyInputActivation(InputKey.H))
       .add(INPUT_ACTION_MENU_MODS.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
+      .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
+      .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
 
       .add(INPUT_ACTION_FMV_SKIP.get(), new KeyInputActivation(InputKey.RETURN))
       .add(INPUT_ACTION_FMV_SKIP.get(), new ButtonInputActivation(InputButton.Y))
