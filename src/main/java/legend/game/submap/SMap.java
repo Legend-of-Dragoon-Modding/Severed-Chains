@@ -45,6 +45,7 @@ import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
@@ -382,6 +383,19 @@ public class SMap extends EngineState {
   @Override
   public void restoreMusicAfterMenu() {
     this.submap.startMusic();
+  }
+
+  @Override
+  public void loadGameFromMenu(final GameState52c gameState) {
+    this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+    this.transitioning_800f7e4c = false;
+
+    if(gameState.isOnWorldMap_4e4) {
+      this.mapTransition(0, submapScene_80052c34);
+    } else {
+      this.mapTransition(submapCut_80052c30, submapScene_80052c34);
+      this.restoreMusicAfterMenu();
+    }
   }
 
   @Override

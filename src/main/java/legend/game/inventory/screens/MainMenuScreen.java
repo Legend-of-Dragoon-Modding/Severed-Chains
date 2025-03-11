@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -43,6 +42,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
@@ -362,7 +362,7 @@ public class MainMenuScreen extends MenuScreen {
       gameState_800babc8.syncIds();
 
       loadingNewGameState_800bdc34 = true;
-      whichMenu_800bdc38 = WhichMenu.UNLOAD;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
       submapScene_80052c34 = gameState_800babc8.submapScene_a4;
       submapCut_80052c30 = gameState_800babc8.submapCut_a8;
@@ -372,6 +372,8 @@ public class MainMenuScreen extends MenuScreen {
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
         submapScene_80052c34 = 53;
       }
+
+      currentEngineState_8004dd04.loadGameFromMenu(gameState_800babc8);
     }, () -> {
       menuStack.popScreen();
       this.fadeOutArrows();
