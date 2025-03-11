@@ -20,7 +20,7 @@ import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
-import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TEXTBOX_CONFIRM;
 
 public class Textbox extends Control {
   private final Panel background;
@@ -203,7 +203,7 @@ public class Textbox extends Control {
 
   @Override
   protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
-    if((action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
+    if((action == INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
       this.deferAction(this::unfocus);
     }
 

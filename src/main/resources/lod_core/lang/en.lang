@@ -189,6 +189,7 @@ lod_core.input_actions.menu_delete.name=Menu: delete
 lod_core.input_actions.menu_sort.name=Menu: sort
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
+lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
 
 lod_core.input_actions.fmv_skip.name=FMV: skip
 
