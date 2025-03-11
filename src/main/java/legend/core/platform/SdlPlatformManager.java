@@ -912,7 +912,9 @@ public class SdlPlatformManager extends PlatformManager {
 
   @Override
   public void openUrl(final String url) {
-    SDL_OpenURL(url);
+    if(!SDL_OpenURL(url)) {
+      this.logLastError();
+    }
   }
 
   private void decodeMods(final SDL_KeyboardEvent key, final Set<InputMod> mods) {
