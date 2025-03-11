@@ -5860,24 +5860,26 @@ public class Battle extends EngineState {
           //LAB_800e5d40
         } else if((a2.typeAndFlags_00 & 0x4000) != 0) {
           final Vector3f sp0x18 = new Vector3f();
-          sp0x18.set(a2.directionOrColour_04);
+          // Direction is 0..1 but used as a rotation so we have to scale it up to 0..2pi
+          sp0x18.set(a2.directionOrColour_04).mul(MathHelper.TWO_PI);
           this.FUN_800e4674(light.light_00.direction_00, sp0x18);
         }
       } else if(type == 2) {
         //LAB_800e5bf0
-        final Vector3f sp0x10 = new Vector3f();
         final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
-        sp0x10.set(bent.model_148.coord2_14.transforms.rotate).add(a2.directionOrColour_04);
+        // Direction is 0..1 but used as a rotation so we have to scale it up to 0..2pi
+        final Vector3f sp0x10 = new Vector3f(a2.directionOrColour_04).mul(MathHelper.TWO_PI).add(bent.model_148.coord2_14.transforms.rotate);
         this.FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(type == 3) {
         //LAB_800e5bdc
         //LAB_800e5d6c
         final Vector3f sp0x18 = new Vector3f();
 
+        // Direction is 0..1 but used as a rotation so we have to scale it up to 0..2pi
         final int ticks = this.lightTicks_800c6928 & 0xfff;
-        sp0x18.x = a2.directionOrColour_04.x + a2.directionOrColourSpeed_10.x * ticks;
-        sp0x18.y = a2.directionOrColour_04.y + a2.directionOrColourSpeed_10.y * ticks;
-        sp0x18.z = a2.directionOrColour_04.z + a2.directionOrColourSpeed_10.z * ticks;
+        sp0x18.x = (a2.directionOrColour_04.x + a2.directionOrColourSpeed_10.x * ticks) * MathHelper.TWO_PI;
+        sp0x18.y = (a2.directionOrColour_04.y + a2.directionOrColourSpeed_10.y * ticks) * MathHelper.TWO_PI;
+        sp0x18.z = (a2.directionOrColour_04.z + a2.directionOrColourSpeed_10.z * ticks) * MathHelper.TWO_PI;
 
         //LAB_800e5dcc
         this.FUN_800e4674(light.light_00.direction_00, sp0x18);
@@ -5920,7 +5922,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e5fe8L)
-  public void deallocateLighting(final ScriptState<Void> state, final Void struct) {
+  public void updateLighting(final ScriptState<Void> state, final Void struct) {
     //LAB_800e6008
     for(int i = 0; i < 3; i++) {
       GsSetFlatLight(i, this.lights_800c692c[i].light_00);
@@ -5936,7 +5938,7 @@ public class Battle extends EngineState {
     final ScriptState<Void> state = SCRIPTS.allocateScriptState(1, "Lighting controller", null);
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(this::tickLighting);
-    state.setRenderer(this::deallocateLighting);
+    state.setRenderer(this::updateLighting);
     this._800c6930.colourIndex_60 = 0;
     this.resetLights();
   }
