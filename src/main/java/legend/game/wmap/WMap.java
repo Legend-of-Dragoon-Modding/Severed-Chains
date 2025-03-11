@@ -3212,7 +3212,7 @@ public class WMap extends EngineState {
       final boolean autoRun = CONFIG.getConfig(RUN_BY_DEFAULT.get());
       final boolean runHeld = PLATFORM.isActionHeld(INPUT_ACTION_GENERAL_RUN.get());
       final float mag = this.getAnalogueMagnitude();
-      if(mag != 0.0f && autoRun != runHeld || mag >= 0.5f) { // World Map Running
+      if(mag == 0.0f && autoRun != runHeld || mag >= 0.75f) { // World Map Running
         //LAB_800e11d0
         modelAndAnimData.currAnimIndex_b0 = 4;
         this.handleEncounters(mode.worldMapRunModifier);
