@@ -165,8 +165,10 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
+    this.temp.identity();
+
     final T entry = this.modelPool.acquire(type);
-    entry.acquire(obj);
+    entry.acquire(obj, this.temp);
     return entry;
   }
 

@@ -3598,20 +3598,20 @@ public class SMap extends EngineState {
 
         this.submap.applyCollisionDebugColour(i, model);
 
-        if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
-          final CollisionPrimitiveInfo0c collidedPrimitive = this.collisionGeometry_800cbe08.primitiveInfo_14[this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c];
-
-          RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines, QueuedModelStandard.class)
-            .colour(1.0f, 0.0f, 0.0f)
-            .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-            .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
-            .depthOffset(-1.0f);
-        }
-
 //        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
 //        this.transformVertex(transformed, middle);
 //        final LodString text = new LodString(Integer.toString(i));
 //        renderText(text, transformed.x + centreScreenX_1f8003dc - textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, TextColour.LIME, 0);
+      }
+
+      if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
+        final CollisionPrimitiveInfo0c collidedPrimitive = this.collisionGeometry_800cbe08.primitiveInfo_14[this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c];
+
+        RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines, QueuedModelStandard.class)
+          .colour(1.0f, 0.0f, 0.0f)
+          .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+          .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
+          .depthOffset(-1.0f);
       }
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
