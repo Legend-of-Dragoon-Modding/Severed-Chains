@@ -116,7 +116,7 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e88a0L)
-  public int checkCollision(final boolean isNpc, final Vector3f position, final Vector3f movement) {
+  public int checkCollision(final boolean isNpc, final Vector3f position, final Vector3f movement, final boolean updatePlayerRotationInterpolation) {
     if(isNpc) {
       return this.handleCollision(position.x, position.y, position.z, movement);
     }
@@ -131,11 +131,9 @@ public class CollisionGeometry {
       this.collidedPrimitiveIndex_800cbd94 = this.handleCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
 
-      if(this.collidedPrimitiveIndex_800cbd94 != -1) {
-        if(this.playerRotationWasUpdated_800d1a8c == 0) {
-          this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-          this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-        }
+      if(this.collidedPrimitiveIndex_800cbd94 != -1 && this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
+        this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
+        this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
       }
     } else {
       //LAB_800e8954
