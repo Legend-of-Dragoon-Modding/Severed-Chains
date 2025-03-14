@@ -41,6 +41,10 @@ public class ScriptManager {
     this.patchDir = patchDir;
   }
 
+  public boolean willTick() {
+    return this.currentTicks == 0;
+  }
+
   public boolean tick() {
     boolean ticked = false;
 

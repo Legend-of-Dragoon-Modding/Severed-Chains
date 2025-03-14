@@ -3873,7 +3873,7 @@ public class SMap extends EngineState {
         this.executeSubmapMediaLoadingStage(this.currentSubmapScene_800caaf8);
 
         // Wait for media to finish loading
-        if(this.mediaLoadingStage_800c68e4 != SubmapMediaState.DONE) {
+        if(this.mediaLoadingStage_800c68e4 != SubmapMediaState.DONE || !SCRIPTS.willTick()) {
           return;
         }
 
