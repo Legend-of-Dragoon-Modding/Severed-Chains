@@ -80,7 +80,7 @@ public class TextboxText84 {
   public int charX_34;
   public int charY_36;
 
-  public float _3a;
+  public int _3a;
 //  public int _3c;
   public int _3e;
   public int _40;
