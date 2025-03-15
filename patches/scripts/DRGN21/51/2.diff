@@ -14,7 +14,7 @@ New: Shana waits for Lavitz to move before continuing
  jmp_cmp !=, 0x0, stor[24], inl[:LABEL_4]
  call 294, 0x0, 0x1
  call 97, 0x0
-@@ -149,15 +150,23 @@
+@@ -149,6 +150,15 @@
  mov 0x17, stor[24]
  gosub inl[:LABEL_2]
  mov 0x2e, stor[24]
@@ -23,12 +23,15 @@ New: Shana waits for Lavitz to move before continuing
 +mov 0x79, inl[:WS_WAIT_FLAG]
 +mov 0, inl[:WS_WAIT_OFFSET]
 +gosub inl[:WS_WAIT_IN_LINE]
++mov 0x16, stor[24]
++gosub inl[:WS_WAIT_IN_LINE]
++mov 0xf, stor[24]
++gosub inl[:WS_WAIT_IN_LINE]
++mov 0x2e, stor[24]
  gosub inl[:LABEL_2]
  mov 0xf, stor[24]
-+gosub inl[:WS_WAIT_IN_LINE]
  gosub inl[:LABEL_2]
- LABEL_11:
- yield
+@@ -157,7 +167,10 @@
  call 3, 0x79, stor[24]
  jmp_cmp ==, 0x0, stor[24], inl[:LABEL_11]
  mov 0x3c, stor[24]
@@ -40,7 +43,21 @@ New: Shana waits for Lavitz to move before continuing
  mov 0x18, stor[24]
  gosub inl[:LABEL_2]
  LABEL_12:
-@@ -264,3 +273,4 @@
+@@ -167,8 +180,11 @@
+ mov 0x2d, stor[24]
+ wait stor[24]
+ call 120, stor[0], 0x0, 0xfffff880, 0x0, 0x8
+# Set flag after rotation to cue warden movement
+-mov 0x28, stor[24]
++mov 0x8, stor[24]
+ wait stor[24]
++call 2, 0x78, 0
++mov 0x20, stor[24]
++wait stor[24]
+ call 97, 0x3
+ call 107, 0xffffff70, 0xfffffff5, 0xfffffef0, 0x1e
+ mov 0x1e, stor[24]
+@@ -264,3 +280,4 @@
  yield
  jmp inl[:LABEL_18]
  data 0x49

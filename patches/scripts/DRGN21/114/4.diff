@@ -1,0 +1,14 @@
+Widescreen patch
+Hellena Prison - cutscene before Fruegel (II): New start position off-screen for Shana
+--- original
++++ modified
+@@ -100,8 +100,7 @@
+ JMP_2f4_0:
+ call 111, 0x1
+ call 106, 0x0
+-mov 0x30, stor[24]
+-gosub inl[:LABEL_1]
++call 101, stor[0], 0x134, 0, 0xfffffee5
+ call 311, stor[0]
+ mov 0xfffff448, stor[8]
+ mov 0xfffff448, stor[9]
