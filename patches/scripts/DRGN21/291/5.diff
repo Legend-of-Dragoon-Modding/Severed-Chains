@@ -1,0 +1,13 @@
+Widescreen patch
+Hoax - Dusk
+Knight in right tower: prevent hiding based on camera offset
+--- original
++++ modified
+@@ -413,6 +413,7 @@
+ call 288, 0xd
+ LABEL_68:
+ yield
++jmp inl[:LABEL_68]
+ call 257, stor[24], stor[25]
+ jmp_cmp >, 0x5, stor[24], inl[:LABEL_69]
+ call 106, 0x1
