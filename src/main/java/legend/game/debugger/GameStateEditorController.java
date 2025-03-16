@@ -7,12 +7,17 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.Flags;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class GameStateEditorController {
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GameStateEditorController.class);
 
   String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
   String[] characterData = {"EXP", "Party Flags", "HP", "MP", "SP", "Dragoon EXP", "Status", "Level", "Dragoon Level", "Equipment Slot 1", "Equipment Slot 2", "Equipment Slot 3", "Equipment Slot 4", "Equipment Slot 5", "Addition", "Addition Level Slot 1", "Addition Level Slot 2", "Addition Level Slot 3", "Addition Level Slot 4", "Addition Level Slot 5", "Addition Level Slot 6", "Addition Level Slot 7", "Addition Level Slot 8", "Addition EXP Slot 1", "Addition EXP Slot 2", "Addition EXP Slot 3", "Addition EXP Slot 4", "Addition EXP Slot 5", "Addition EXP Slot 6", "Addition EXP Slot 7", "Addition EXP Slot 8"};
@@ -197,8 +202,28 @@ public class GameStateEditorController {
     this.textAreaIndex.setText(String.format("%#x", gameState_800babc8.directionalPathIndex_4de));
   }
 
-  private int parseHexOrDec(final String inputText) {
-    return inputText.toLowerCase().trim().startsWith("0x") ? Integer.parseInt(inputText.trim().substring(2), 16) : Integer.parseInt(inputText);
+  private int parseHexOrDec(final String inputText, final int oldValue) {
+    int newValue;
+    try {
+      newValue = inputText.toUpperCase().trim().startsWith("0X") ? (int)Long.parseLong(inputText.toUpperCase().trim().substring(2), 16) : Integer.parseInt(inputText);
+    } catch(final NumberFormatException e) {
+      newValue = oldValue;
+      LOGGER.warn("Bad value entered: %s. Restoring previous value: %d", inputText, newValue);
+    }
+
+    return newValue;
+  }
+
+  private void parseHexOrDec(final String inputText, final int index, final Flags gameStateData) {
+    int newValue;
+    try {
+      newValue = inputText.toUpperCase().trim().startsWith("0X") ? (int)Long.parseLong(inputText.toUpperCase().trim().substring(2), 16) : Integer.parseInt(inputText);
+    } catch(final NumberFormatException e) {
+      newValue = gameStateData.getRaw(index);
+      LOGGER.warn("Bad value entered: %s. Restoring previous value: %d", inputText, newValue);
+    }
+
+    gameStateData.setRaw(index, newValue);
   }
 
   @FXML
@@ -208,7 +233,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData1() {
-    gameState_800babc8._04 = this.parseHexOrDec(this.textData1.getText());
+    gameState_800babc8._04 = this.parseHexOrDec(this.textData1.getText(), gameState_800babc8._04);
   }
 
   @FXML
@@ -218,7 +243,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptData() {
-    gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textScriptData.getText());
+    gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textScriptData.getText(), gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()]);
   }
 
   @FXML
@@ -298,7 +323,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptEngine1() {
-    gameState_800babc8._b0 = this.parseHexOrDec(this.textScriptEngine1.getText());
+    gameState_800babc8._b0 = this.parseHexOrDec(this.textScriptEngine1.getText(), gameState_800babc8._b0);
   }
 
   @FXML
@@ -308,7 +333,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptEngine2() {
-    gameState_800babc8._b4 = this.parseHexOrDec(this.textScriptEngine2.getText());
+    gameState_800babc8._b4 = this.parseHexOrDec(this.textScriptEngine2.getText(), gameState_800babc8._b4);
   }
 
   @FXML
@@ -318,7 +343,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptEngine3() {
-    gameState_800babc8._b8 = this.parseHexOrDec(this.textScriptEngine3.getText());
+    gameState_800babc8._b8 = this.parseHexOrDec(this.textScriptEngine3.getText(), gameState_800babc8._b8);
   }
 
   @FXML
@@ -328,7 +353,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptFlags1() {
-    gameState_800babc8.scriptFlags2_bc.setRaw(this.getScriptFlags1.getSelectionModel().getSelectedIndex(), this.parseHexOrDec(this.textScriptFlags1.getText()));
+    this.parseHexOrDec(this.textScriptFlags1.getText(), this.getScriptFlags1.getSelectionModel().getSelectedIndex(), gameState_800babc8.scriptFlags2_bc);
   }
 
   @FXML
@@ -338,7 +363,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptFlags2() {
-    gameState_800babc8.scriptFlags1_13c.setRaw(this.getScriptFlags2.getSelectionModel().getSelectedIndex(), this.parseHexOrDec(this.textScriptFlags2.getText()));
+    this.parseHexOrDec(this.textScriptFlags2.getText(), this.getScriptFlags2.getSelectionModel().getSelectedIndex(), gameState_800babc8.scriptFlags1_13c);
   }
 
   @FXML
@@ -348,7 +373,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData2() {
-    gameState_800babc8.wmapFlags_15c.setRaw(this.getData2.getSelectionModel().getSelectedIndex(), this.parseHexOrDec(this.textData2.getText()));
+    this.parseHexOrDec(this.textData2.getText(), this.getData2.getSelectionModel().getSelectedIndex(), gameState_800babc8.wmapFlags_15c);
   }
 
   @FXML
@@ -358,7 +383,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData3() {
-    gameState_800babc8.visitedLocations_17c.setRaw(this.getData3.getSelectionModel().getSelectedIndex(), this.parseHexOrDec(this.textData3.getText()));
+    this.parseHexOrDec(this.textData3.getText(), this.getData3.getSelectionModel().getSelectedIndex(), gameState_800babc8.visitedLocations_17c);
   }
 
   @FXML
@@ -368,7 +393,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setGoods() {
-    gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textGoods.getText());
+    gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textGoods.getText(), gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()]);
   }
 
   @FXML
@@ -378,7 +403,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData4() {
-    gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textData4.getText());
+    gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textData4.getText(), gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()]);
   }
 
   @FXML
@@ -388,7 +413,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setChestFlags() {
-    gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textChestFlags.getText());
+    gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textChestFlags.getText(), gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()]);
   }
 
   public void getEquipment() {
@@ -458,7 +483,7 @@ public class GameStateEditorController {
   public void setCharacterData() {
     switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
       case 0 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00 = Integer.parseInt(this.textCharacterData.getText());
-      case 1 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = this.parseHexOrDec(this.textCharacterData.getText());
+      case 1 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = this.parseHexOrDec(this.textCharacterData.getText(), gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
       case 2 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08 = Integer.parseInt(this.textCharacterData.getText());
       case 3 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a = Integer.parseInt(this.textCharacterData.getText());
       case 4 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c = Integer.parseInt(this.textCharacterData.getText());
@@ -480,7 +505,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setPathIndex() {
-    gameState_800babc8.dotIndex_4da = this.parseHexOrDec(this.textPathIndex.getText());
+    gameState_800babc8.dotIndex_4da = this.parseHexOrDec(this.textPathIndex.getText(), gameState_800babc8.dotIndex_4da);
   }
 
   @FXML
@@ -490,7 +515,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setDotIndex() {
-    gameState_800babc8.dotIndex_4da = this.parseHexOrDec(this.textDotIndex.getText());
+    gameState_800babc8.dotIndex_4da = this.parseHexOrDec(this.textDotIndex.getText(), gameState_800babc8.dotIndex_4da);
   }
 
   @FXML
@@ -520,6 +545,6 @@ public class GameStateEditorController {
 
   @FXML
   public void setAreaIndex() {
-    gameState_800babc8.directionalPathIndex_4de = this.parseHexOrDec(this.textAreaIndex.getText());
+    gameState_800babc8.directionalPathIndex_4de = this.parseHexOrDec(this.textAreaIndex.getText(), gameState_800babc8.directionalPathIndex_4de);
   }
 }
