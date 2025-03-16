@@ -868,7 +868,7 @@ public class ShopScreen extends MenuScreen {
     if(!hasSpace) {
       this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Cannot carry anymore", 0, result -> { })));
     } else if(gameState_800babc8.gold_94 < inv.price) {
-      menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
+      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { })));
     } else if(inv.item instanceof final Item item) {
       menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
         if(result == MessageBoxResult.YES) {
