@@ -505,7 +505,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setPathIndex() {
-    gameState_800babc8.dotIndex_4da = this.parseHexOrDec(this.textPathIndex.getText(), gameState_800babc8.dotIndex_4da);
+    gameState_800babc8.pathIndex_4d8 = this.parseHexOrDec(this.textPathIndex.getText(), gameState_800babc8.pathIndex_4d8);
   }
 
   @FXML
