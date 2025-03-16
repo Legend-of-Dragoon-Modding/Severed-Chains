@@ -80,7 +80,8 @@ public class TextboxText84 {
   public int charX_34;
   public int charY_36;
 
-  public float _3a;
+  /** Number of additional lines scrolled (first scroll is not counted) */
+  public int linesScrolled_3a;
 //  public int _3c;
   public int _3e;
   public int _40;

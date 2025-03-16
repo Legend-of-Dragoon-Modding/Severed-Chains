@@ -1928,7 +1928,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.charIndex_30 = 0;
     textboxText.charX_34 = 0;
     textboxText.charY_36 = 0;
-    textboxText._3a = 0.0f;
+    textboxText.linesScrolled_3a = 0;
     textboxText._3e = 1;
     textboxText._40 = 0;
     textboxText.pauseTimer_44 = 0;
@@ -2238,14 +2238,14 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_800267d4
         if((textboxText.flags_08 & 0x1) != 0) {
           //LAB_800267f4
-          if(textboxText._3a < textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
+          if(textboxText.linesScrolled_3a < textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
             //LAB_80026828
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
-            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
+            textboxText.linesScrolled_3a++;
             scrollTextboxDown(textboxIndex);
           } else {
             textboxText.flags_08 ^= 0x1;
-            textboxText._3a = 0.0f;
+            textboxText.linesScrolled_3a = 0;
             setTextboxArrowPosition(textboxIndex, true);
           }
           //LAB_8002684c
@@ -2351,7 +2351,7 @@ public final class Scus94491BpeSegment_8002 {
               processTextboxLine(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState._15) {
-                textboxText._3a = 0.0f;
+                textboxText.linesScrolled_3a = 0;
                 textboxText.flags_08 |= 0x2;
                 break;
               }
@@ -2360,9 +2360,9 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026a8c
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
           } else {
-            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
+            textboxText.linesScrolled_3a++;
 
-            if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
+            if(textboxText.linesScrolled_3a >= textboxText.lines_1e + 1) {
               textboxText.delete();
               textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
@@ -2384,7 +2384,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.flags_08 ^= 0x1;
           textboxText.charX_34 = 0;
           textboxText.charY_36 = 0;
-          textboxText._3a = 0.0f;
+          textboxText.linesScrolled_3a = 0;
 
           if((textboxText.flags_08 & 0x8) != 0) {
             textboxText.state_00 = TextboxTextState._13;
@@ -2452,7 +2452,7 @@ public final class Scus94491BpeSegment_8002 {
               clearTextboxChars(textboxIndex);
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
-              textboxText._3a = 0.0f;
+              textboxText.linesScrolled_3a = 0;
               textboxText.state_00 = TextboxTextState._13;
               textboxText.flags_08 ^= 0x1;
             } else if(textboxText._5c == TextboxTextState._15) {
@@ -2503,7 +2503,7 @@ public final class Scus94491BpeSegment_8002 {
           processTextboxLine(textboxIndex);
 
           if(textboxText.state_00 == TextboxTextState._15) {
-            textboxText._3a = 0.0f;
+            textboxText.linesScrolled_3a = 0;
             textboxText.flags_08 |= 0x102;
             break;
           }
@@ -2542,21 +2542,21 @@ public final class Scus94491BpeSegment_8002 {
                   //LAB_80026f88
                   if((textboxText.flags_08 & 0x2) != 0) {
                     // TODO not sure about this block of code
-                    if(MathHelper.flEq(textboxText._3a, 1.0f)) {
+                    if(textboxText.linesScrolled_3a == 1) {
                       extraLines = 1;
                     } else {
-                      if(MathHelper.flEq(textboxText._3a, 0.0f)) {
+                      if(textboxText.linesScrolled_3a == 0) {
                         //LAB_80026fbc
                         extraLines = 2;
                       }
 
                       //LAB_80026fc0
-                      textboxText._3a = 0.0f;
+                      textboxText.linesScrolled_3a = 0;
                       textboxText.flags_08 ^= 0x2;
                     }
 
                     //LAB_80026fe8
-                    textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
+                    textboxText.linesScrolled_3a--;
                   }
 
                   //LAB_80027014
@@ -2633,21 +2633,21 @@ public final class Scus94491BpeSegment_8002 {
                     //LAB_80026f88
                     if((textboxText.flags_08 & 0x2) != 0) {
                       // TODO not sure about this block of code
-                      if(MathHelper.flEq(textboxText._3a, 1.0f)) {
+                      if(textboxText.linesScrolled_3a == 1) {
                         extraLines = 1;
                       } else {
-                        if(MathHelper.flEq(textboxText._3a, 0.0f)) {
+                        if(textboxText.linesScrolled_3a == 0) {
                           //LAB_80026fbc
                           extraLines = 2;
                         }
 
                         //LAB_80026fc0
-                        textboxText._3a = 0.0f;
+                        textboxText.linesScrolled_3a = 0;
                         textboxText.flags_08 ^= 0x2;
                       }
 
                       //LAB_80026fe8
-                      textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
+                      textboxText.linesScrolled_3a--;
                     }
 
                     //LAB_80027014
@@ -2699,7 +2699,7 @@ public final class Scus94491BpeSegment_8002 {
               textboxText.state_00 = TextboxTextState._20;
               textboxText.scrollAmount_2c = 0.0f;
 
-              if(textboxText._3a == 1.0f) {
+              if(textboxText.linesScrolled_3a == 1) {
                 textboxText.state_00 = TextboxTextState._18;
                 textboxText.selectionLine_68--;
               }
@@ -2747,15 +2747,15 @@ public final class Scus94491BpeSegment_8002 {
               processTextboxLine(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState._15) {
-                textboxText._3a = 0.0f;
+                textboxText.linesScrolled_3a = 0;
                 textboxText.flags_08 |= 0x2;
                 break;
               }
             } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
           } else {
-            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
+            textboxText.linesScrolled_3a++;
 
-            if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
+            if(textboxText.linesScrolled_3a >= textboxText.lines_1e + 1) {
               textboxText.delete();
               textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
