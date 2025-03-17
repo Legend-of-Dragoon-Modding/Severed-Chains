@@ -1,8 +1,7 @@
 Widescreen patch
-Twin Castle, Emille's painting prison
-Dart
-Old: Looked in Emille's current (hidden) position to face mirror.
-New: Replace Emille reference with static position.
+Twin Castle - Emille's painting prison
+Emille is normally hidden behind painting.
+Replace Emille position reference with static coordinates. Attach Meru's textbox to Shana instead of Emille.
 --- original
 +++ modified
 @@ -611,10 +611,11 @@
@@ -20,4 +19,13 @@ New: Replace Emille reference with static position.
 +gosub inl[:LABEL_51]
  mov 0x0, stor[24]
  gosub inl[:LABEL_33]
+ gosub inl[:LABEL_17]
+@@ -648,7 +649,7 @@
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_29]
+ mov 0x5, stor[24]
+-mov 0x1, stor[25]
++mov 0x3, stor[25]
+ mov 0x0, stor[26]
+ gosub inl[:LABEL_37]
  gosub inl[:LABEL_17]
