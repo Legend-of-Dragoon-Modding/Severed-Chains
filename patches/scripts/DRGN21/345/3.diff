@@ -1,0 +1,21 @@
+Widescreen patch
+Hoax - Cutscene: Elite
+Elite only, skip Serdio knight (moved to another script)
+--- original
++++ modified
+@@ -332,6 +332,7 @@
+ rel :JMP_cec_0
+ rel :JMP_cec_1
+ JMP_cec_0:
++jmp inl[:ELITE]
+ call 101, stor[0], 0xe8, 0x16, 0xa8
+ call 103, stor[0], 0x0, 0x400, 0x0
+ call 96, 0x4
+@@ -390,6 +391,7 @@
+ mov 0xa, stor[27]
+ mov 0x2, stor[28]
+ gosub inl[:LABEL_30]
++ELITE:
+ call 101, stor[0], 0xfffffd7d, 0xfffffef7, 0x3d0
+ call 103, stor[0], 0x0, 0xe80, 0x0
+ call 96, 0x2

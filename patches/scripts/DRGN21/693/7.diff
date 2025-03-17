@@ -1,0 +1,11 @@
+Widescreen patch
+Hoax - Cutscene: Aftermath
+Fallen knight: prevent hiding after camera pan
+--- original
++++ modified
+@@ -168,5 +168,4 @@
+ mov 0xffffffdd, stor[24]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_4]
+-call 106, 0x1
+ return
