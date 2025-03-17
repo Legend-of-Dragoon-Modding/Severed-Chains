@@ -73,6 +73,12 @@ public class SmapDebuggerController {
 
   @FXML
   public CheckBox alertIcon;
+  @FXML
+  public CheckBox freezeAnimation;
+  @FXML
+  public CheckBox showModel;
+  @FXML
+  public CheckBox shadow;
 
   private SubmapObject210 sobj;
 
@@ -164,6 +170,9 @@ public class SmapDebuggerController {
     this.collide1000.setSelected((this.sobj.flags_190 & 0x1000_0000) != 0);
 
     this.alertIcon.setSelected(this.sobj.showAlertIndicator_194);
+    this.freezeAnimation.setSelected(this.sobj.disableAnimation_12a);
+    this.showModel.setSelected(!this.sobj.hidden_128);
+    this.shadow.setSelected(this.sobj.model_00.shadowType_cc == 1);
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -260,6 +269,24 @@ public class SmapDebuggerController {
   public void showAlertIconClick(final ActionEvent actionEvent) {
     if(this.sobj != null) {
       this.sobj.showAlertIndicator_194 = this.alertIcon.isSelected();
+    }
+  }
+
+  public void freezeAnimationClick(final ActionEvent actionEvent) {
+    if(this.sobj != null) {
+      this.sobj.disableAnimation_12a = this.freezeAnimation.isSelected();
+    }
+  }
+
+  public void showModelClick(final ActionEvent actionEvent) {
+    if(this.sobj != null) {
+      this.sobj.hidden_128 = !this.showModel.isSelected();
+    }
+  }
+
+  public void showShadowClick(final ActionEvent actionEvent) {
+    if(this.sobj != null) {
+      this.sobj.model_00.shadowType_cc = this.shadow.isSelected() ? 1 : 0;
     }
   }
 
