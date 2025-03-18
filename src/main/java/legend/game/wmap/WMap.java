@@ -3215,11 +3215,21 @@ public class WMap extends EngineState {
       if(mag == 0.0f && autoRun != runHeld || mag >= 0.75f) { // World Map Running
         //LAB_800e11d0
         modelAndAnimData.currAnimIndex_b0 = 4;
-        this.handleEncounters(mode.worldMapRunModifier);
+
+        if(mag != 0.0f) {
+          this.handleEncounters(mode.worldMapRunModifier * mag);
+        } else {
+          this.handleEncounters(mode.worldMapRunModifier);
+        }
       } else {
         //LAB_800e11f4
         modelAndAnimData.currAnimIndex_b0 = 3;
-        this.handleEncounters(mode.worldMapWalkModifier);
+
+        if(mag != 0.0f) {
+          this.handleEncounters(mode.worldMapRunModifier * mag);
+        } else {
+          this.handleEncounters(mode.worldMapWalkModifier);
+        }
       }
 
       //LAB_800e1210
