@@ -128,6 +128,8 @@ diff,SECT/DRGN21.BIN/345/3,scripts/DRGN21/345/3.diff,"Hoax elite cutscene, Elite
 diff,SECT/DRGN21.BIN/345/4,scripts/DRGN21/345/4.diff,"Hoax elite cutscene, Serdio wall knight, widescreen patch, GH#2136"
 diff,SECT/DRGN21.BIN/345/7,scripts/DRGN21/345/7.diff,"Hoax elite cutscene, Sandora soldier, widescreen patch, GH#2136"
 diff,SECT/DRGN21.BIN/345/8,scripts/DRGN21/345/8.diff,"Hoax elite cutscene, Serdio knight, widescreen patch, GH#2136"
+diff,SECT/DRGN21.BIN/426/1,scripts/DRGN21/426/1.diff,"Lohan Entrance, adjusted fork subroutines, widescreen patch, GH#2082"
+diff,SECT/DRGN21.BIN/426/7,scripts/DRGN21/426/7.diff,"Lohan Entrance, wounded knight, widescreen patch, GH#2082"
 diff,SECT/DRGN21.BIN/429/7,scripts/DRGN21/429/7.diff,"Lohan Market, fix child stuck off-screen, GH#2137"
 diff,SECT/DRGN21.BIN/429/8,scripts/DRGN21/429/8.diff,"Lohan Market, fix adult stuck off-screen, GH#2137"
 diff,SECT/DRGN21.BIN/453/1,scripts/DRGN21/453/1.diff,"Lohan Hero Competition shop"
