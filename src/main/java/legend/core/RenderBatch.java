@@ -19,13 +19,13 @@ public class RenderBatch {
   public final RenderEngine engine;
 
   /** The PS1 native width (usually 320, sometimes 368) */
-  public int projectionWidth = 320;
+  public int nativeWidth = 320;
   /** The PS1 native height */
-  public int projectionHeight = 240;
+  public int nativeHeight = 240;
   /** The PS1 projection depth */
   public float projectionDepth;
-  /** The ratio of 320 / {@link #projectionHeight} */
-  public float aspectRatio = (float)this.projectionWidth / this.projectionHeight;
+  /** The ratio of 320 / {@link #nativeHeight} */
+  public float aspectRatio = (float)this.nativeWidth / this.nativeHeight;
   /** Field of view calculated from aspect ratio and projection depth */
   public float fieldOfView;
 
@@ -55,8 +55,8 @@ public class RenderBatch {
 
   public RenderBatch(final RenderEngine engine, final RenderBatch current, final Supplier<Shader.UniformBuffer> vdfUniformSupplier, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
     this(engine, vdfUniformSupplier, vdfBuffer, lightingBuffer);
-    this.projectionWidth = current.projectionWidth;
-    this.projectionHeight = current.projectionHeight;
+    this.nativeWidth = current.nativeWidth;
+    this.nativeHeight = current.nativeHeight;
     this.projectionDepth = current.projectionDepth;
     this.aspectRatio = current.aspectRatio;
     this.fieldOfView = current.fieldOfView;
@@ -90,17 +90,17 @@ public class RenderBatch {
   }
 
   public void setProjectionSize(final int width, final int height) {
-    this.projectionWidth = width;
-    this.projectionHeight = height;
+    this.nativeWidth = width;
+    this.nativeHeight = height;
     this.updateFieldOfView();
   }
 
-  public int getProjectionWidth() {
-    return this.projectionWidth;
+  public int getNativeWidth() {
+    return this.nativeWidth;
   }
 
-  public int getProjectionHeight() {
-    return this.projectionHeight;
+  public int getNativeHeight() {
+    return this.nativeHeight;
   }
 
   public void setProjectionDepth(final float depth) {
@@ -109,8 +109,8 @@ public class RenderBatch {
   }
 
   public void updateFieldOfView() {
-    this.aspectRatio = 320.0f / this.projectionHeight;
-    final float halfWidth = this.projectionWidth / 2.0f;
+    this.aspectRatio = 320.0f / this.nativeHeight;
+    final float halfWidth = this.nativeWidth / 2.0f;
     this.fieldOfView = (float)(Math.atan(halfWidth / this.projectionDepth) * 2.0f / this.aspectRatio);
     this.updateProjections();
   }
@@ -129,13 +129,13 @@ public class RenderBatch {
       final float ratio;
       if(CoreMod.ALLOW_WIDESCREEN_CONFIG.isValid() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
         ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
-        final float w = this.projectionHeight * ratio;
-        final float h = this.projectionHeight;
-        this.orthographicProjection.setOrthoLH(0.0f, w * ((float)this.projectionWidth / this.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
+        final float w = this.nativeHeight * ratio;
+        final float h = this.nativeHeight;
+        this.orthographicProjection.setOrthoLH(0.0f, w * ((float)this.nativeWidth / this.expectedWidth), h, 0.0f, 0.0f, 1000000.0f);
         this.widescreenOrthoOffsetX = (w - this.expectedWidth) / 2.0f;
       } else {
         ratio = this.aspectRatio;
-        this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.0f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, this.nativeWidth, this.nativeHeight, 0.0f, 0.0f, 1000000.0f);
         this.widescreenOrthoOffsetX = 0.0f;
       }
 
@@ -147,14 +147,14 @@ public class RenderBatch {
       if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED) {
         this.expectedWidth = 368;
         final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
-        final int h = this.projectionHeight;
+        final int h = this.nativeHeight;
         final int w = Math.round(h * ratio) + 1 & ~1;
         this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.0f, 1000000.0f);
         this.orthographicProjection.setOrthoLH(0.0f, w, h, 0.0f, 0.0f, 1000000.0f);
-        this.widescreenOrthoOffsetX = (w - this.projectionWidth) / 2.0f;
+        this.widescreenOrthoOffsetX = (w - this.nativeWidth) / 2.0f;
       } else {
-        this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.0f, 1000000.0f);
-        this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.0f, 1000000.0f);
+        this.perspectiveProjection.setOrthoLH(-this.nativeWidth / 2.0f, this.nativeWidth / 2.0f, this.nativeHeight / 2.0f, -this.nativeHeight / 2.0f, 0.0f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, this.nativeWidth, this.nativeHeight, 0.0f, 0.0f, 1000000.0f);
         this.widescreenOrthoOffsetX = 0.0f;
       }
     }

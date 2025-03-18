@@ -339,12 +339,12 @@ public class RenderEngine {
     this.updateResolution();
   }
 
-  public int getProjectionWidth() {
-    return this.mainBatch.getProjectionWidth();
+  public int getNativeWidth() {
+    return this.mainBatch.getNativeWidth();
   }
 
-  public int getProjectionHeight() {
-    return this.mainBatch.getProjectionHeight();
+  public int getNativeHeight() {
+    return this.mainBatch.getNativeHeight();
   }
 
   public int getRenderWidth() {
@@ -365,6 +365,10 @@ public class RenderEngine {
 
   public void updateProjections() {
     this.mainBatch.updateProjections();
+  }
+
+  public Matrix4f getPerspectiveProjection() {
+    return this.mainBatch.perspectiveProjection;
   }
 
   public WindowEvents events() {
@@ -712,7 +716,7 @@ public class RenderEngine {
           avg += this.fps[i];
         }
 
-        RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getProjectionWidth(), this.getProjectionHeight()));
+        RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
       }
 
       if(this.reloadShaders) {
@@ -1067,10 +1071,10 @@ public class RenderEngine {
 
     final Resolution res = CONFIG.getConfig(CoreMod.RESOLUTION_CONFIG.get());
     if(res == Resolution.NATIVE) {
-      this.renderWidth = (int)(width * (this.mainBatch.projectionWidth / 320.0f));
+      this.renderWidth = (int)(width * (this.mainBatch.nativeWidth / 320.0f));
       this.renderHeight = height;
     } else {
-      this.renderWidth = (int)((float)res.verticalResolution / height * width * (this.mainBatch.projectionWidth / 320.0f));
+      this.renderWidth = (int)((float)res.verticalResolution / height * width * (this.mainBatch.nativeWidth / 320.0f));
       this.renderHeight = res.verticalResolution;
     }
 

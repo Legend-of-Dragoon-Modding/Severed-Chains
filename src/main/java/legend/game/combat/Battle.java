@@ -2020,7 +2020,7 @@ public class Battle extends EngineState {
       final int x0 = (this.mcqBaseOffsetX_800c66cc * MathHelper.radToPsxDeg(this.camera_800c67f0.calculateXAngleFromRefpointToViewpoint()) / 0x1000 + this.mcqOffsetX_800c6774) % mcq.screenWidth_14;
       int y = this.mcqOffsetY_800c6778 - MathHelper.radToPsxDeg(MathHelper.floorMod(this.camera_800c67f0.calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
-      final float totalWidth = RENDERER.getProjectionWidth() * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+      final float totalWidth = RENDERER.getNativeWidth() * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
       final int segments = (int)Math.ceil(totalWidth / mcq.screenWidth_14);
 
       for(int i = -1; i < segments + 1; i++) {
@@ -4247,7 +4247,7 @@ public class Battle extends EngineState {
   @Method(0x800cef00L)
   public FlowControl scriptRenderColouredQuad(final RunningScript<?> script) {
     // Make sure effect fills the whole screen
-    final float fullWidth = java.lang.Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+    final float fullWidth = java.lang.Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
     fullScreenEffect_800bb140.transforms
       .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
       .translate(0.0f, 0.0f, 120.0f)

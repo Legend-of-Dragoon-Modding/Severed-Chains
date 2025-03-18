@@ -39,8 +39,8 @@ public class RenderState {
   public void initBatch(final RenderBatch batch) {
     this.batch = batch;
     this.widescreen = batch.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CoreMod.ALLOW_WIDESCREEN_CONFIG.isValid() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || batch.getRenderMode() == EngineState.RenderMode.LEGACY && CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.isValid() && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
-    this.w = (float)this.engine.getRenderWidth() / batch.projectionWidth;
-    this.h = (float)this.engine.getRenderHeight() / batch.projectionHeight;
+    this.w = (float)this.engine.getRenderWidth() / batch.nativeWidth;
+    this.h = (float)this.engine.getRenderHeight() / batch.nativeHeight;
 
     this.backfaceCulling = false;
     glDisable(GL_CULL_FACE);
@@ -88,7 +88,7 @@ public class RenderState {
 
     if(modelScissor.w != 0 || modelScissor.h != 0) {
       if(this.widescreen) {
-        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * ((float)this.batch.expectedWidth / this.batch.projectionWidth)), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * ((float)this.batch.expectedWidth / this.batch.projectionWidth)), Math.round(modelScissor.h * this.h));
+        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), Math.round(modelScissor.h * this.h));
       } else {
         this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.w), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.w), Math.round(modelScissor.h * this.h));
       }

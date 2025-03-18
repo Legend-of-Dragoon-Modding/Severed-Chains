@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -300,7 +301,8 @@ public class BattleHud {
     }
 
     //LAB_800ecdac
-    final Vector2f screenCoords = bent.transformRelative(x, y, z);
+    final Vector2f screenCoords = new Vector2f();
+    Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
 
     //LAB_800ece9c
     this.battleMenu_800c6c34.transforms.identity();
@@ -1144,7 +1146,8 @@ public class BattleHud {
             }
 
             //LAB_800f3a44
-            final Vector2f screenCoords = bent.transformRelative(x, y, z);
+            final Vector2f screenCoords = new Vector2f();
+            Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
             num.x_1c = this.clampX(screenCoords.x + centreScreenX_1f8003dc);
             num.y_20 = this.clampY(screenCoords.y + centreScreenY_1f8003de);
           }
@@ -1341,7 +1344,8 @@ public class BattleHud {
     }
 
     //LAB_800f4320
-    final Vector2f screenCoords = bent.transformRelative(x, y, z);
+    final Vector2f screenCoords = new Vector2f();
+    Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
 
     //LAB_800f4394
     this.FUN_800f89f4(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);

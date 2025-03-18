@@ -153,7 +153,7 @@ public class MenuStack {
 
   private void mouseMove(final Window window, final double x, final double y) {
     if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
-      this.input(screen -> screen.mouseMove((int)(x / window.getWidth() * RENDERER.getProjectionWidth()), (int)(y / window.getHeight() * RENDERER.getProjectionHeight())));
+      this.input(screen -> screen.mouseMove((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight())));
       return;
     }
 
@@ -170,8 +170,8 @@ public class MenuStack {
     final float left = (window.getWidth() - w) / 2;
     final float top = (window.getHeight() - h) / 2;
 
-    final float scaleX = w / RENDERER.getProjectionWidth();
-    final float scaleY = h / RENDERER.getProjectionHeight();
+    final float scaleX = w / RENDERER.getNativeWidth();
+    final float scaleY = h / RENDERER.getNativeHeight();
 
     this.input(screen -> screen.mouseMove((int)((x - left) / scaleX), (int)((y - top) / scaleY)));
   }
@@ -185,7 +185,7 @@ public class MenuStack {
 
     if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
       if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
-        this.input(screen -> screen.mouseClick((int)(x / window.getWidth() * RENDERER.getProjectionWidth()), (int)(y / window.getHeight() * RENDERER.getProjectionHeight()), button, mods));
+        this.input(screen -> screen.mouseClick((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight()), button, mods));
         return;
       }
 

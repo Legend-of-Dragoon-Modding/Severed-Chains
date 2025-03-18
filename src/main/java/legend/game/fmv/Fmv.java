@@ -317,7 +317,7 @@ public final class Fmv {
     skipText = null;
 
     oldFps = RENDERER.window().getFpsLimit();
-    oldProjectionSize.set(RENDERER.getProjectionWidth(), RENDERER.getProjectionHeight());
+    oldProjectionSize.set(RENDERER.getNativeWidth(), RENDERER.getNativeHeight());
     oldRenderMode = RENDERER.getRenderMode();
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);

@@ -22,7 +22,6 @@ import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
 import legend.lodmod.LodMod;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -36,7 +35,6 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
@@ -555,16 +553,6 @@ public abstract class BattleEntity27c extends BattleObject {
   @Override
   public Vector3i getColour() {
     return this.colour; // defaultEffectColour_800fb94c;
-  }
-
-  @Method(0x800ec7e4L)
-  public Vector2f transformRelative(final float x, final float y, final float z) {
-    final MV ls = new MV();
-    GsGetLs(this.model_148.coord2_14, ls);
-    GTE.setTransforms(ls);
-
-    GTE.perspectiveTransform(x, y, z);
-    return new Vector2f(GTE.getScreenX(2), GTE.getScreenY(2));
   }
 
   @Method(0x800cae50L)
