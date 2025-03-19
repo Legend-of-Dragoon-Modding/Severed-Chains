@@ -49,6 +49,39 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
+  /** Unknown */
+  public static final int FLAG_1 = 0x1;
+  /** Transformed into a dragoon */
+  public static final int FLAG_DRAGOON = 0x2;
+  /** Monster */
+  public static final int FLAG_MONSTER = 0x4;
+  /** It is currently this bent's turn */
+  public static final int FLAG_CURRENT_TURN = 0x8;
+  /** Bent will not be rendered or ticked (script still ticks) */
+  public static final int FLAG_HIDE = 0x10;
+  /** Next battle tick, this bent will be selected to take a turn */
+  public static final int FLAG_TAKE_FORCED_TURN = 0x20;
+  /** Bent is dead */
+  public static final int FLAG_DEAD = 0x40;
+  /** After the current animation loop is done, stop animating */
+  public static final int FLAG_ANIMATE_ONCE = 0x80;
+  /** Unknown */
+  public static final int FLAG_100 = 0x100;
+  /** Unknown */
+  public static final int FLAG_200 = 0x200;
+  /** Unknown */
+  public static final int FLAG_400 = 0x400;
+  /** Don't load script (used by cutscene bents controlled by other scripts) */
+  public static final int FLAG_NO_SCRIPT = 0x800;
+  /** Unknown */
+  public static final int FLAG_1000 = 0x1000;
+  /** Don't drop loot (set when monster has died to prevent duplicate drops) */
+  public static final int FLAG_NO_LOOT = 0x2000;
+  /** Bent cannot be targeted */
+  public static final int FLAG_CANT_TARGET = 0x4000;
+  /** Unknown */
+  public static final int FLAG_8000 = 0x8000;
+
   private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
 
   public final BattleEntityType type;
@@ -560,7 +593,7 @@ public abstract class BattleEntity27c extends BattleObject {
     this._278 = 0;
 
     final int v1;
-    if((state.storage_44[7] & 0x4) != 0) {
+    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
       v1 = battleFlags_800bc960 & 0x110;
     } else {
       //LAB_800cae94
@@ -576,7 +609,7 @@ public abstract class BattleEntity27c extends BattleObject {
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
-        if((state.storage_44[7] & 0x800) == 0) {
+        if((state.storage_44[7] & FLAG_NO_SCRIPT) == 0) {
           //LAB_800caf20
           state.loadScriptFile(this.getScript());
         }
@@ -600,10 +633,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cafb4L)
   protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & 0x211) == 0) {
+    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
       applyModelRotationAndScale(this.model_148);
 
-      if((state.storage_44[7] & 0x80) == 0 || this.model_148.remainingFrames_9e != 0) {
+      if((state.storage_44[7] & FLAG_ANIMATE_ONCE) == 0 || this.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
         animateModel(this.model_148);
       }
@@ -614,7 +647,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & 0x211) == 0) {
+    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
       this.renderBttlModel(this.model_148);
     }
 
@@ -627,7 +660,7 @@ public abstract class BattleEntity27c extends BattleObject {
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
     //LAB_800cb11c
-    if((state.storage_44[7] & 0x4) != 0) {
+    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
       battleState_8006e398.removeMonster((MonsterBattleEntity)this);
     } else {
       battleState_8006e398.removePlayer((PlayerBattleEntity)this);

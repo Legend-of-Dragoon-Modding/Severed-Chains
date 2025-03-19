@@ -268,6 +268,18 @@ import static legend.game.combat.SEffe.applyScreenDarkening;
 import static legend.game.combat.SEffe.loadDeffStageEffects;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_1;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_HIDE;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_1000;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_DRAGOON;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_ANIMATE_ONCE;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
@@ -1523,7 +1535,7 @@ public class Battle extends EngineState {
       bent.combatantIndex_26c = combatantIndex;
       bent.model_148.coord2_14.coord.transfer.set(s5.pos_02);
       bent.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
-      state.storage_44[7] |= 0x4;
+      state.storage_44[7] |= FLAG_MONSTER;
       battleState_8006e398.addMonster(state);
       this.loadMonster(state);
     }
@@ -1726,14 +1738,14 @@ public class Battle extends EngineState {
     if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
-      this.currentTurnBent_800c66c8.storage_44[7] &= 0xffff_efff;
+      this.currentTurnBent_800c66c8.storage_44[7] &= ~FLAG_1000;
 
       if(battleState_8006e398.hasAlivePlayers()) {
         //LAB_800c7c98
         this.forcedTurnBent_800c66bc = battleState_8006e398.getForcedTurnBent();
 
         if(this.forcedTurnBent_800c66bc != null) { // A bent has a forced turn
-          this.forcedTurnBent_800c66bc.storage_44[7] = this.forcedTurnBent_800c66bc.storage_44[7] & 0xffff_ffdf | 0x1008;
+          this.forcedTurnBent_800c66bc.storage_44[7] = this.forcedTurnBent_800c66bc.storage_44[7] & ~FLAG_TAKE_FORCED_TURN | FLAG_1000 | FLAG_CURRENT_TURN;
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
           EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
@@ -1741,7 +1753,7 @@ public class Battle extends EngineState {
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
             //LAB_800c7d3c
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
-            this.currentTurnBent_800c66c8.storage_44[7] |= 0x1008;
+            this.currentTurnBent_800c66c8.storage_44[7] |= FLAG_1000 | FLAG_CURRENT_TURN;
             EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
 
             //LAB_800c7d74
@@ -1780,7 +1792,7 @@ public class Battle extends EngineState {
   public boolean FUN_800c7da8() {
     //LAB_800c7dd8
     for(int i = 0; i < battleState_8006e398.getAllBentCount(); i++) {
-      if((battleState_8006e398.allBents_e0c[i].storage_44[7] & 0x408) != 0) {
+      if((battleState_8006e398.allBents_e0c[i].storage_44[7] & (FLAG_400 | FLAG_CURRENT_TURN)) != 0) {
         return false;
       }
 
@@ -1818,7 +1830,7 @@ public class Battle extends EngineState {
       if(postBattleAction == 1) {
         //LAB_800c8180
         for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-          battleState_8006e398.playerBents_e40[i].storage_44[7] |= 0x8;
+          battleState_8006e398.playerBents_e40[i].storage_44[7] |= FLAG_CURRENT_TURN;
         }
       }
     }
@@ -2929,10 +2941,10 @@ public class Battle extends EngineState {
 
     //LAB_800cb668
     if(script.params_20[1].get() != 0) {
-      a1.storage_44[7] &= ~0x10;
+      a1.storage_44[7] &= ~FLAG_HIDE;
     } else {
       //LAB_800cb65c
-      a1.storage_44[7] |= 0x10;
+      a1.storage_44[7] |= FLAG_HIDE;
     }
 
     return FlowControl.CONTINUE;
@@ -2954,7 +2966,7 @@ public class Battle extends EngineState {
   @Method(0x800cb6bcL)
   public FlowControl FUN_800cb6bc(final RunningScript<?> a0) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    if((state.storage_44[7] & 0x1) != 0) {
+    if((state.storage_44[7] & FLAG_1) != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -2989,7 +3001,7 @@ public class Battle extends EngineState {
   public FlowControl FUN_800cb76c(final RunningScript<?> a0) {
     final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
     final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
-    if((s2.storage_44[7] & 0x1) == 0) {
+    if((s2.storage_44[7] & FLAG_1) == 0) {
       int animIndex = s0.currentAnimIndex_270;
 
       if(animIndex < 0) {
@@ -3000,7 +3012,7 @@ public class Battle extends EngineState {
       if(s0.combatant_144.isAssetLoaded(animIndex)) {
         FUN_800ca194(s0.combatant_144.assets_14[s0.loadingAnimIndex_26e]);
         this.loadAnimationAssetIntoModel(s0.model_148, s0.combatant_144, animIndex);
-        s2.storage_44[7] &= 0xffff_ff6f;
+        s2.storage_44[7] &= ~(FLAG_ANIMATE_ONCE | FLAG_HIDE);
         s0.model_148.animationState_9c = 1;
         s0.loadingAnimIndex_26e = animIndex;
         s0.currentAnimIndex_270 = -1;
@@ -3021,7 +3033,7 @@ public class Battle extends EngineState {
     final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c bent = state.innerStruct_00;
 
-    if((state.storage_44[7] & 0x1) == 0) {
+    if((state.storage_44[7] & FLAG_1) == 0) {
       int newAnim = script.params_20[1].get();
       final int currentAnim = bent.currentAnimIndex_270;
 
@@ -3043,7 +3055,7 @@ public class Battle extends EngineState {
       if(bent.combatant_144.isAssetLoaded(newAnim)) {
         FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
         this.loadAnimationAssetIntoModel(bent.model_148, bent.combatant_144, newAnim);
-        state.storage_44[7] &= 0xffff_ff6f;
+        state.storage_44[7] &= ~(FLAG_ANIMATE_ONCE | FLAG_HIDE);
         bent.model_148.animationState_9c = 1;
         bent.loadingAnimIndex_26e = newAnim;
         bent.currentAnimIndex_270 = -1;
@@ -3102,10 +3114,10 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentAnimationLoopState(final RunningScript<?> script) {
     //LAB_800cbab0
     if(script.params_20[1].get() != 0) {
-      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= 0xffff_ff7f;
+      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= ~FLAG_ANIMATE_ONCE;
     } else {
       //LAB_800cbaa4
-      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] |= 0x80;
+      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] |= FLAG_ANIMATE_ONCE;
     }
 
     return FlowControl.CONTINUE;
@@ -3413,7 +3425,7 @@ public class Battle extends EngineState {
   @Method(0x800cc7d8L)
   public FlowControl FUN_800cc7d8(final RunningScript<?> script) {
     final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
-    final int s2 = state.storage_44[7] & 0x4;
+    final int isMonster = state.storage_44[7] & FLAG_MONSTER;
     final CombatantStruct1a8 bentCombatant = state.innerStruct_00.combatant_144;
 
     //LAB_800cc83c
@@ -3424,7 +3436,7 @@ public class Battle extends EngineState {
         if((combatant.flags_19e & 0x1) != 0 && combatant.mrg_04 != null && combatant.charIndex_1a2 >= 0) {
           final int v0 = combatant.flags_19e >>> 2 ^ 1;
 
-          if(s2 == 0) {
+          if(isMonster == 0) {
             //LAB_800cc8ac
             if((v0 & 1) == 0) {
               //LAB_800cc8b4
@@ -3494,7 +3506,7 @@ public class Battle extends EngineState {
 
     final int displayableIconsBitset = script.params_20[0].get();
 
-    if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || (script.scriptState_04.storage_44[7] & 0x1000) != 0) {
+    if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || (script.scriptState_04.storage_44[7] & FLAG_1000) != 0) {
       //LAB_800cca7c
       final int disabledIconsBitset;
 
@@ -3508,7 +3520,7 @@ public class Battle extends EngineState {
       //LAB_800ccab4
       this.hud.initializeMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
 
-      script.scriptState_04.storage_44[7] &= 0xffff_efff;
+      script.scriptState_04.storage_44[7] &= ~FLAG_1000;
       this.currentDisplayableIconsBitset_800c675c = displayableIconsBitset;
     }
 
@@ -3555,7 +3567,7 @@ public class Battle extends EngineState {
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
     final CombatantStruct1a8 combatant = bent.combatant_144;
 
-    if((state.storage_44[7] & 0x1) == 0) {
+    if((state.storage_44[7] & FLAG_1) == 0) {
       if(bent.currentAnimIndex_270 >= 0) {
         FUN_800ca194(bent.combatant_144.assets_14[bent.currentAnimIndex_270]);
       }
@@ -3564,12 +3576,12 @@ public class Battle extends EngineState {
       this.deallocateCombatant(bent.combatant_144);
 
       if(script.params_20[1].get() != 0) {
-        state.storage_44[7] |= 0x3;
+        state.storage_44[7] |= FLAG_DRAGOON | FLAG_1;
         combatant.charIndex_1a2 |= 0x1;
       } else {
         //LAB_800ccc60
-        state.storage_44[7] = state.storage_44[7] & 0xffff_fffd | 0x1;
-        combatant.charIndex_1a2 &= 0xfffe;
+        state.storage_44[7] = state.storage_44[7] & ~FLAG_DRAGOON | FLAG_1;
+        combatant.charIndex_1a2 &= ~0x1;
       }
 
       //LAB_800ccc78
@@ -3580,7 +3592,7 @@ public class Battle extends EngineState {
       loadCombatantModelAndAnimation(bent.model_148, combatant);
       bent.loadingAnimIndex_26e = 0;
       bent.currentAnimIndex_270 = -1;
-      state.storage_44[7] &= 0xffff_fffe;
+      state.storage_44[7] &= ~FLAG_1;
       return FlowControl.CONTINUE;
     }
 
@@ -3710,15 +3722,15 @@ public class Battle extends EngineState {
 
     int flags = state.storage_44[7];
     if(script.params_20[1].get() != 0) {
-      if((flags & 0x40) == 0) { // Not dead
-        flags = flags | 0x40; // Set dead
+      if((flags & FLAG_DEAD) == 0) { // Not dead
+        flags |= FLAG_DEAD; // Set dead
 
-        if((flags & 0x4) != 0) { // Monster
+        if((flags & FLAG_MONSTER) != 0) { // Monster
           final CombatantStruct1a8 enemyCombatant = data.combatant_144;
           goldGainedFromCombat_800bc920 += enemyCombatant.gold_196;
           totalXpFromCombat_800bc95c += enemyCombatant.xp_194;
 
-          if((flags & 0x2000) == 0) { // Hasn't already dropped loot
+          if((flags & FLAG_NO_LOOT) == 0) { // Hasn't already dropped loot
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
                 if(drop.item() instanceof final Equipment equipment) {
@@ -3727,7 +3739,7 @@ public class Battle extends EngineState {
                   itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item), () -> giveItem(item), () -> itemOverflow.add(item)));
                 }
 
-                flags |= 0x2000;
+                flags |= FLAG_NO_LOOT;
               }
             }
           }
@@ -3735,7 +3747,7 @@ public class Battle extends EngineState {
       }
     } else {
       //LAB_800cd04c
-      flags = flags & 0xffff_ffbf;
+      flags &= ~FLAG_DEAD;
     }
 
     //LAB_800cd054
@@ -3753,10 +3765,10 @@ public class Battle extends EngineState {
 
     //LAB_800cd0d0
     if(script.params_20[1].get() != 0) {
-      state.storage_44[7] |= 0x40;
+      state.storage_44[7] |= FLAG_DEAD;
     } else {
       //LAB_800cd0c4
-      state.storage_44[7] &= 0xffff_ffbf;
+      state.storage_44[7] &= ~FLAG_DEAD;
     }
 
     battleState_8006e398.cacheLivingBents();
@@ -3919,7 +3931,7 @@ public class Battle extends EngineState {
     state.setTicker(bent::bentLoadingTicker);
     state.setDestructor(bent::bentDestructor);
     state.loadScriptFile(script.scriptState_04.frame().file, script.params_20[0].get());
-    state.storage_44[7] |= 0x804;
+    state.storage_44[7] |= FLAG_NO_SCRIPT | FLAG_MONSTER;
 
     final CombatantStruct1a8 combatant = this.getCombatant(script.params_20[1].get());
     bent.combatant_144 = combatant;

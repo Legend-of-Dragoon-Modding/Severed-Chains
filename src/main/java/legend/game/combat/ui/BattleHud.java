@@ -53,6 +53,8 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_CANT_TARGET;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.ui.BattleMenuStruct58.battleMenuIconMetrics_800fb674;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -262,7 +264,7 @@ public class BattleHud {
         }
 
         //LAB_800eccac
-        if((targetBent.storage_44[7] & 0x4000) == 0) {
+        if((targetBent.storage_44[7] & FLAG_CANT_TARGET) == 0) {
           this.drawTargetArrow(colour, target);
         }
 
@@ -504,7 +506,7 @@ public class BattleHud {
           final PlayerBattleEntity player = state.innerStruct_00;
           final int brightnessIndex0;
           final int brightnessIndex1;
-          if((this.battle.currentTurnBent_800c66c8.storage_44[7] & 0x4) != 0x1 && this.battle.currentTurnBent_800c66c8 == state) {
+          if((this.battle.currentTurnBent_800c66c8.storage_44[7] & FLAG_MONSTER) != 0x1 && this.battle.currentTurnBent_800c66c8 == state) {
             brightnessIndex0 = 2;
             brightnessIndex1 = 2;
           } else {
@@ -1968,7 +1970,7 @@ public class BattleHud {
     for(targetIndex = 0; targetIndex < count; targetIndex++) {
       target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34.targetedSlot_800c697c];
 
-      if(target != null && (target.storage_44[7] & 0x4000) == 0) {
+      if(target != null && (target.storage_44[7] & FLAG_CANT_TARGET) == 0) {
         break;
       }
 

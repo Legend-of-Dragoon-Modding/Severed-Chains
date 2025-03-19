@@ -4,6 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
@@ -78,21 +79,22 @@ public class ScriptState<T> {
    *
    *     <p>In combat this variable is used for a few different things:</p>
    *     <ul>
-   *       <li>0x1 - ?</li>
-   *       <li>0x2 - dragoon</li>
-   *       <li>0x4 - monster</li>
-   *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x10 - don't animate or render bent?</li>
-   *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
-   *       <li>0x40 - dead</li>
-   *       <li>0x80 - finish the current animation and then stop animating</li>
-   *       <li>0x100 - ?</li>
-   *       <li>0x200 - ?</li>
-   *       <li>0x400 - ?</li>
-   *       <li>0x800 - don't load script (used by cutscene bents controlled by other scripts)</li>
-   *       <li>0x1000 - ?</li>
-   *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
-   *       <li>0x4000 - cannot target</li>
+   *       <li>0x1 - {@link BattleEntity27c#FLAG_1}</li>
+   *       <li>0x2 - {@link BattleEntity27c#FLAG_DRAGOON}</li>
+   *       <li>0x4 - {@link BattleEntity27c#FLAG_MONSTER}</li>
+   *       <li>0x8 - {@link BattleEntity27c#FLAG_CURRENT_TURN}</li>
+   *       <li>0x10 - {@link BattleEntity27c#FLAG_HIDE}</li>
+   *       <li>0x20 - {@link BattleEntity27c#FLAG_TAKE_FORCED_TURN}</li>
+   *       <li>0x40 - {@link BattleEntity27c#FLAG_DEAD}</li>
+   *       <li>0x80 - {@link BattleEntity27c#FLAG_ANIMATE_ONCE}</li>
+   *       <li>0x100 - {@link BattleEntity27c#FLAG_100}</li>
+   *       <li>0x200 - {@link BattleEntity27c#FLAG_200}</li>
+   *       <li>0x400 - {@link BattleEntity27c#FLAG_400}</li>
+   *       <li>0x800 - {@link BattleEntity27c#FLAG_NO_SCRIPT}</li>
+   *       <li>0x1000 - {@link BattleEntity27c#FLAG_1000}</li>
+   *       <li>0x2000 - {@link BattleEntity27c#FLAG_NO_LOOT}</li>
+   *       <li>0x4000 - {@link BattleEntity27c#FLAG_CANT_TARGET}</li>
+   *       <li>0x8000 - {@link BattleEntity27c#FLAG_8000}</li>
    *       <li>0x20_0000 - ? used in scripts</li>
    *     </ul>
    *   </li>
@@ -135,7 +137,7 @@ public class ScriptState<T> {
       this.storage_44[7] |= 0x4_0000;
     } else {
       this.ticker_04 = callback;
-      this.storage_44[7] &= 0xfffb_ffff;
+      this.storage_44[7] &= ~0x4_0000;
     }
   }
 
@@ -145,7 +147,7 @@ public class ScriptState<T> {
       this.storage_44[7] |= 0x8_0000;
     } else {
       this.renderer_08 = callback;
-      this.storage_44[7] &= 0xfff7_ffff;
+      this.storage_44[7] &= ~0x8_0000;
     }
   }
 
@@ -155,14 +157,14 @@ public class ScriptState<T> {
       this.storage_44[7] |= 0x800_0000;
     } else {
       this.destructor_0c = callback;
-      this.storage_44[7] &= 0xf7ff_ffff;
+      this.storage_44[7] &= ~0x800_0000;
     }
   }
 
   public void setTempTicker(@Nullable final TempTicker<T> callback) {
     if(callback == null) {
       this.tempTicker_10 = null;
-      this.storage_44[7] &= 0xfbff_ffff;
+      this.storage_44[7] &= ~0x400_0000;
     } else {
       this.tempTicker_10 = callback;
       this.storage_44[7] |= 0x400_0000;
@@ -216,7 +218,7 @@ public class ScriptState<T> {
 
       this.callStack.clear();
       this.pushFrame(new ScriptStackFrame(script, script.getEntry(entrypointIndex)));
-      this.storage_44[7] &= 0xfffd_ffff;
+      this.storage_44[7] &= ~0x2_0000;
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
 
@@ -258,7 +260,7 @@ public class ScriptState<T> {
 
     //LAB_80015d04
     this.storage_44[6] = -1;
-    this.storage_44[7] &= 0xffdf_ffff;
+    this.storage_44[7] &= ~0x20_0000;
   }
 
   public void deallocateWithChildren() {
@@ -312,7 +314,7 @@ public class ScriptState<T> {
     } else {
       //LAB_80015ef0
       this.storage_44[6] = -1;
-      this.storage_44[7] &= 0xffdf_ffff;
+      this.storage_44[7] &= ~0x20_0000;
     }
 
     //LAB_80015f08
