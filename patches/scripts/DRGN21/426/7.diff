@@ -1,0 +1,14 @@
+Widescreen patch
+Lohan - Entrance
+Haschel stops Lavitz cutscene: Reposition wounded knight start
+--- original
++++ modified
+@@ -55,7 +55,7 @@
+ call 317, 0x0
+ call 311, stor[0]
+ mov 0x0, stor[24]
+-gosub inl[:LABEL_0]
++call 101, stor[0], 0xfffffe2f, 0x9, 0x70
+ jmp inl[:LABEL_4]
+ LABEL_3:
+ call 106, 0x1
