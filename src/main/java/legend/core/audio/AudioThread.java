@@ -27,6 +27,7 @@ import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcGetError;
 import static org.lwjgl.openal.ALC10.alcGetIntegerv;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
@@ -116,8 +117,15 @@ public final class AudioThread implements Runnable {
 
       final int[] attributes = {0};
       this.audioContext = alcCreateContext(this.audioDevice, attributes);
+
+      if(this.audioContext == 0) {
+        LOGGER.error("Failed to create audio context: %#x", alcGetError(this.audioDevice));
+        this.destroyInternal();
+        return;
+      }
+
       alcMakeContextCurrent(this.audioContext);
-      LOGGER.info(AUDIO_THREAD_MARKER, "Created audio context 0x%x", this.audioContext);
+      LOGGER.info(AUDIO_THREAD_MARKER, "Created audio context %#x", this.audioContext);
 
       this.alcCapabilities = ALC.createCapabilities(this.audioDevice);
       this.alCapabilities = AL.createCapabilities(this.alcCapabilities);
@@ -160,14 +168,16 @@ public final class AudioThread implements Runnable {
       }
     }
 
-    if(this.audioDevice != 0) {
+    if(this.audioContext != 0) {
       alcDestroyContext(this.audioContext);
+      this.audioContext = 0;
+    }
+
+    if(this.audioDevice != 0) {
       alcCloseDevice(this.audioDevice);
+      this.audioDevice = 0;
 
       memFree(this.tmp);
-
-      this.audioContext = 0;
-      this.audioDevice = 0;
     }
   }
 
