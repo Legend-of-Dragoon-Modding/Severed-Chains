@@ -96,8 +96,7 @@ void main() {
       }
     }
   } else if(useTextureAlpha == 0) {
-    // The or condition is to disable translucency if a texture's pixel has alpha disabled
-    if(translucent && translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
+    if(translucent && translucencyMode == 1) { // (B+F)/2 translucency
       outColour.a = 0.5;
     } else {
       outColour.a = 1.0;
