@@ -75,7 +75,7 @@ public final class Sequencer extends AudioSource {
   private int samplesToProcess;
 
   public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate, final EffectsOverTimeGranularity effectsGranularity) {
-    super(5);
+    super(3);
 
     this.sampleRate = sampleRate;
 
