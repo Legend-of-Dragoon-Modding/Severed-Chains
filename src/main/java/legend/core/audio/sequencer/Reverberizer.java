@@ -5,11 +5,9 @@ import legend.core.audio.SampleRate;
 import legend.core.spu.Reverb;
 import legend.game.sound.ReverbConfig;
 
-import java.util.Arrays;
-
 final class Reverberizer {
   private final Reverb reverb = new Reverb();
-  private final float[] reverbWorkArea = new float[0x2_0000];
+  private final float[] reverbWorkArea = new float[0x8000];
   private int reverbCurrentAddress;
 
   private float outputLeft;
@@ -126,10 +124,6 @@ final class Reverberizer {
   void setVolume(final float left, final float right) {
     this.volumeLeft = left;
     this.volumeRight = right;
-  }
-
-  void clear() {
-    Arrays.fill(this.reverbWorkArea, 0);
   }
 
   void changeSampleRate(final SampleRate sampleRate) {
