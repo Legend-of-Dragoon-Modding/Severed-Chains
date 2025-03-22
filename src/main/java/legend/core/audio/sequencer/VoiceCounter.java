@@ -63,6 +63,10 @@ final class VoiceCounter {
 
   void reset() {
     this.sampleCounter = START_OFFSET;
+    this.resetBreath();
+  }
+
+  void resetBreath() {
     this.breathCounter = 0;
   }
 
