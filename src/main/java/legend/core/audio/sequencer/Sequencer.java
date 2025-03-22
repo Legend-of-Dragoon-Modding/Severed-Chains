@@ -73,6 +73,7 @@ public final class Sequencer extends AudioSource {
 
   private BackgroundMusic backgroundMusic;
   private int samplesToProcess;
+  private boolean paused;
 
   public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate, final EffectsOverTimeGranularity effectsGranularity) {
     super(3);
@@ -121,7 +122,9 @@ public final class Sequencer extends AudioSource {
       for(int sample = 0; sample < this.effectsOverTimeSamples; sample++, samplePostition += 2) {
         this.clearFinishedVoices();
 
-        this.tickSequence();
+        if(!this.paused) {
+          this.tickSequence();
+        }
 
         this.voiceOutputBuffer[0] = 0;
         this.voiceOutputBuffer[1] = 0;
@@ -521,6 +524,8 @@ public final class Sequencer extends AudioSource {
   }
 
   public void startSequence() {
+    this.paused = false;
+
     if(!this.isPlaying()) {
       this.setPlaying(true);
       this.samplesToProcess = 0;
@@ -528,24 +533,13 @@ public final class Sequencer extends AudioSource {
   }
 
   public void stopSequence() {
-    this.stop();
-
-    this.volumeChanging = false;
-    this.volumeChangingTimeRemaining = 0;
-    this.volumeChangingTimeTotal = 0;
-
-    this.fading = Fading.NONE;
-    this.fadeCounter = 0;
-    this.fadeTime = 0;
-
     for(final Voice voice : this.voices) {
       voice.clear();
 
       this.playingVoices = 0;
     }
 
-    // TODO this isn't the greatest solution, but it does stop reverb from bleeding into the next sequence
-    this.reverb.clear();
+    this.paused = true;
   }
 
   public int getSequenceVolume() {
