@@ -76,7 +76,14 @@ void main() {
   Light l = lights[int(modelIndex)];
 
   if(lit) {
-    vertColour.rgb = clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb;
+    float range = 1.0;
+
+    // Textures use a colour range where 0xff = 200%. We've normalized that so that 0xff will equal 2.0 rather than 1.0 so we need to adjust the range
+    if(textured) {
+      range = 2.0;
+    }
+
+    vertColour.rgb = clamp(clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb, 0.0, range);
   } else if(coloured) {
     vertColour = inColour;
   } else {
@@ -88,12 +95,6 @@ void main() {
   translucency = intTpage >> 5 & 0x3;
 
   if(textured) {
-    if(coloured) {
-      // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
-      vertColour.rgb *= 2.0;
-      vertColour.a = 1.0;
-    }
-
     if(tpageOverride.x == 0) {
       vertTpage = vec2((intTpage & 0xf) * 64, (intTpage & 0x10) != 0 ? 256 : 0);
     } else {

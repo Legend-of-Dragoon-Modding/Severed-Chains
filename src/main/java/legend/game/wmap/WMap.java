@@ -4098,10 +4098,10 @@ public class WMap extends EngineState {
             locations_800f0e34[this.mapState_800c6798.locationIndex_10].thumbnailShouldUseFullBrightness_10
         ) {
           //LAB_800e5e98
-          newBrightness = currentBrightness * 0.5f;
+          newBrightness = currentBrightness;
         } else {
           //LAB_800e5e18
-          newBrightness = currentBrightness * 0.1875f;
+          newBrightness = currentBrightness * 0.375f;
         }
 
         //LAB_800e5f04

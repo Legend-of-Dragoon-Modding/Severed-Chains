@@ -1881,7 +1881,7 @@ public class BattleHud {
   public void buildBattleMenuBackground(final QuadBuilder builder, final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, final int uvShiftType) {
     builder
       .add()
-      .monochrome(0.5f);
+      .monochrome(1.0f);
 
     this.setGpuPacketParams(builder, x, y, 0, 0, w, h, false);
 
@@ -2074,7 +2074,7 @@ public class BattleHud {
   public void buildBattleMenuElement(final QuadBuilder builder, final int x, final int y, final int u, final int v, final int w, final int h, final int clut) {
     builder
       .add()
-      .monochrome(0.5f);
+      .monochrome(1.0f);
 
     this.setGpuPacketParams(builder, x, y, u, v, w, h, true);
     this.setGpuPacketClutAndTpageAndQueue(builder, clut, null);

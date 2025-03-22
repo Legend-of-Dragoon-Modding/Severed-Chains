@@ -233,7 +233,7 @@ public class BattleMenuStruct58 {
           .add()
           .bpp(Bpp.BITS_4)
           .vramPos(704, 256)
-          .monochrome(0.5f)
+          .monochrome(1.0f)
           .posSize(16, 24)
           .uvSize(16, 23)
           .uv(240, 0);

@@ -78,7 +78,7 @@ void main() {
       discard;
     }
 
-    outColour *= texColour;
+    outColour = clamp(outColour * texColour, 0.0, 1.0);
   } else {
     // Untextured translucent primitives don't have a translucency bit so we always discard during the appropriate discard modes
     if(discardTranslucency == 1 && translucent || discardTranslucency == 2 && !translucent) {

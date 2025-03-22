@@ -70,12 +70,6 @@ void main() {
   vertBpp = intTpage >> 7 & 0x3;
 
   if(textured) {
-    if(coloured) {
-      // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
-      vertColour.rgb *= 2.0;
-      vertColour.a = 1.0;
-    }
-
     if(tpageOverride.x == 0) {
       vertTpage = vec2((intTpage & 0xf) * 64, (intTpage & 0x10) != 0 ? 256 : 0);
     } else {

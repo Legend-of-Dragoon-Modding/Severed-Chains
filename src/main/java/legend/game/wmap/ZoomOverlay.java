@@ -37,7 +37,7 @@ public class ZoomOverlay {
         .size(zoomUiMetrics_800ef104[i].w_04, zoomUiMetrics_800ef104[i].h_05)
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03)
         .translucency(Translucency.HALF_B_PLUS_HALF_F)
-        .monochrome(0.5f);
+        .monochrome(1.0f);
     }
 
     for(; i < 7; i++) {
@@ -51,9 +51,9 @@ public class ZoomOverlay {
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03);
 
         if(i >= 5) {
-          builderOpaque.monochrome(0.5f);
+          builderOpaque.monochrome(1.0f);
         } else {
-          builderOpaque.monochrome(0.25f);
+          builderOpaque.monochrome(0.5f);
         }
     }
 
@@ -73,7 +73,7 @@ public class ZoomOverlay {
         .vertices(i * 4, 4);
 
       if(i + 2 == currentZoomLevel) {
-        model.monochrome(4.0f);
+        model.monochrome(8.0f);
       }
     }
 
