@@ -9,8 +9,6 @@ public class TotalVanishingItem extends BattleItem {
     super(ItemIcon.SACK, 10);
   }
 
-  public TotalVanishingItem(final int icon, final int price) { super(icon, price); }
-
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return location == UsageLocation.BATTLE;

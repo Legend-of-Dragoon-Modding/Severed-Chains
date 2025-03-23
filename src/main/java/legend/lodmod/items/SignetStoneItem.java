@@ -11,10 +11,6 @@ public class SignetStoneItem extends BattleItem {
     super(ItemIcon.SACK, 200);
   }
 
-  public SignetStoneItem(final int icon, final int price) {
-    super(icon, price);
-  }
-
   @Override
   public boolean isRepeat() {
     return true;

@@ -9,8 +9,6 @@ public class SunRhapsodyItem extends RecoverMpItem {
     super(ItemIcon.YELLOW_POTION, 25, false, 100);
   }
 
-  public SunRhapsodyItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, targetAll, percentage); }
-
   @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;

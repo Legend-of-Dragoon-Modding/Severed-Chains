@@ -234,7 +234,7 @@ public class CoreMod {
   }
 
   public static void loadCharacterAdditions(final int charIndex, final String charName, final int additions) throws IOException {
-    final FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName +"/additionhit")));
+    final FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionhit")));
     final FileData multiplier = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionmultipler")));
 
     for(int i = 0; i < additions; i++) {
@@ -272,6 +272,7 @@ public class CoreMod {
       }
       CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
     }
+  }
 
   @EventListener
   public static void registerInputActions(final InputActionRegistryEvent event) {

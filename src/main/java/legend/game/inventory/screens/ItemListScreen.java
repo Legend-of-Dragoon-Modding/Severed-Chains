@@ -10,9 +10,7 @@ import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.screen.EquipDescriptionEvent;
-import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
 import legend.game.modding.events.screen.ItemDescriptionEvent;
-import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -121,11 +119,11 @@ public class ItemListScreen extends MenuScreen {
     loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
     for(final MenuEntryStruct04<Item> item : items) {
-      this.itemList.add(MenuEntryStruct04.make(item.item_00, EVENTS.postEvent(new ItemMenuEntryIconEvent(item.item_00)).icon));
+      this.itemList.add(MenuEntryStruct04.make(item.item_00));
     }
 
     for(final MenuEntryStruct04<Equipment> equip : equipment) {
-      this.equipmentList.add(MenuEntryStruct04.make(equip.item_00, EVENTS.postEvent(new EquipMenuEntryIconEvent(equip.item_00)).icon));
+      this.equipmentList.add(MenuEntryStruct04.make(equip.item_00));
     }
 
     this.updateDescription(this.itemList.getSelectedItem());

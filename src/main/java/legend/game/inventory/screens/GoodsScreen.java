@@ -93,7 +93,7 @@ public class GoodsScreen extends MenuScreen {
 
     for(int i = 0, listIndex = 0; i < 64; i++) {
       if(getPackedFlag(gameState_800babc8.goods_19c, i)) {
-        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008[goodsIndex], null, 0, i);
+        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008[goodsIndex], null, null, i);
 
         if(listIndex % 2 == 0) {
           this.leftList.add(item);

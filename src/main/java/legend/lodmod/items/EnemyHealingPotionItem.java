@@ -9,8 +9,6 @@ public class EnemyHealingPotionItem extends RecoverHpItem {
     super(ItemIcon.SACK, 5, false, 30);
   }
 
-  public EnemyHealingPotionItem(final int icon, final int price, final boolean targetAll, final int percentage) { super(icon, price, false, percentage); }
-
   @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;
