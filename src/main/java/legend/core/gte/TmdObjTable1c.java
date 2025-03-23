@@ -39,6 +39,10 @@ public class TmdObjTable1c {
     this.vert_top_00 = new Vector3f[this.n_vert_04];
     Arrays.setAll(this.vert_top_00, i -> verts.readSvec3_0(i * 0x8, new Vector3f()));
 
+    for(int i = 0; i < this.vert_top_00.length; i++) {
+      this.vert_top_00[i] = verts.readSvec3_0(i * 0x8, new Vector3f());
+    }
+
     this.normal_top_08 = new Vector3f[this.n_normal_0c];
     Arrays.setAll(this.normal_top_08, i -> normals.readSvec3_12(i * 0x8, new Vector3f()));
 
@@ -56,7 +60,7 @@ public class TmdObjTable1c {
       for(int i = 0; i < count; i++) {
         primitivesOffset += 4;
         packetData[i] = new byte[packetSize];
-        primitives.copyFrom(primitivesOffset, packetData[i], 0, packetSize);
+        primitives.read(primitivesOffset, packetData[i], 0, packetSize);
         primitivesOffset += packetSize;
       }
 

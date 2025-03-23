@@ -1,0 +1,20 @@
+Moon - Confronting Melbu cutscene
+Albert
+Skip hiding model parts
+--- original
++++ modified
+@@ -65,14 +65,6 @@
+ call 96, 0x3
+ call 101, stor[0], 0xffffffc3, 0x58, 0xffffff8e
+ call 103, stor[0], 0x100, 0x800, 0x0
+-call 288, 0x4
+-call 288, 0x5
+-call 288, 0x6
+-call 288, 0xe
+-call 288, 0xf
+-call 288, 0x12
+-call 288, 0x13
+-call 288, 0x14
+ call 106, 0x0
+ mov 0x1e, stor[24]
+ mov 0x1, stor[25]

@@ -62,6 +62,10 @@ public final class Campaign {
     return Files.exists(this.path);
   }
 
+  public boolean hasSave() {
+    return this.latestSave != null;
+  }
+
   public boolean saveExists(final String saveName) {
     return Files.exists(this.path.resolve(IoHelper.slugName(saveName) + ".dsav"));
   }

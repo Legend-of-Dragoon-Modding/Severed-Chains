@@ -239,6 +239,15 @@ public final class TmdObjLoader {
 
           if(coloured) {
             MathHelper.colourToFloat(vertex.colour, mesh.vertices, mesh.vertexOffset);
+
+            // Textures recolours use a range of 0..2 instead of 0..1, so 0xff is actually 2x bright
+            if(textured) {
+              mesh.vertices[mesh.vertexOffset    ] *= 2.0f;
+              mesh.vertices[mesh.vertexOffset + 1] *= 2.0f;
+              mesh.vertices[mesh.vertexOffset + 2] *= 2.0f;
+              mesh.vertices[mesh.vertexOffset + 3] *= 2.0f;
+            }
+
             mesh.vertexOffset += COLOUR_SIZE;
           } else {
             mesh.vertices[mesh.vertexOffset++] = 1.0f;
@@ -382,7 +391,7 @@ public final class TmdObjLoader {
     }
 
     if(untexturedTranslucentVertexSize != 0) {
-      meshes.untexturedTranslucent = new TmdObjLoaderMesh(untexturedTranslucentVertexSize, untexturedTranslucentIndexSize, anyTextured, true, null);
+      meshes.untexturedTranslucent = new TmdObjLoaderMesh(untexturedTranslucentVertexSize, untexturedTranslucentIndexSize, false, true, null);
     }
 
     final List<TmdObjLoaderMesh> translucent = new ArrayList<>();

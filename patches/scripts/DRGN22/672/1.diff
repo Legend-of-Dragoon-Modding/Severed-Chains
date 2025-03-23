@@ -1,0 +1,13 @@
+Widescreen patch
+Twin Castle, Main Hall (Nighttime)
+Trigger sObj 1 to replace sObj 2 as the mirrored entrance knight when sObj 2 becomes Libria
+--- original
++++ modified
+@@ -1070,6 +1070,7 @@
+ call 117, 0x0
+ mov var[64][2], stor[24]
+ fork_reenter stor[24], 0x2, 0x0
++fork_reenter var[64][1], 2, 2
+ call 99, 0x0
+ call 97, 0x0
+ mov 0xc, stor[24]

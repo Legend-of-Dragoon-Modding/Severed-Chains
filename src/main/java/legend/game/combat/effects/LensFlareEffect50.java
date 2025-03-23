@@ -3,6 +3,7 @@ package legend.game.combat.effects;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.QueuedModelStandard;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
@@ -14,6 +15,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -59,7 +61,8 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
     this.shouldRender_4a = (short)(rand() % 30);
 
     if(this.shouldRender_4a != 0) {
-      final Vector2f screenCoords = SCRIPTS.getObject(this.bentIndex_3c, BattleEntity27c.class).transformRelative(this.x_40, this.y_42, this.z_44);
+      final Vector2f screenCoords = new Vector2f();
+      Transformations.toScreenspace(new Vector3f(this.x_40, this.y_42, this.z_44), SCRIPTS.getObject(this.bentIndex_3c, BattleEntity27c.class).model_148.coord2_14, screenCoords);
       final float x = -(screenCoords.x * 2.5f);
       final float y = -(screenCoords.y * 2.5f);
 

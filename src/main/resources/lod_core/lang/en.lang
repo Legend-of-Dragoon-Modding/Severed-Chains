@@ -10,22 +10,39 @@ lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
 # UI text
+lod_core.ui.hotkey=%s: %s
+
 lod_core.ui.campaign_selection.title=Campaigns
-lod_core.ui.campaign_selection.hotkeys=%s Mods %s Delete
+lod_core.ui.campaign_selection.mods=Mods
+lod_core.ui.campaign_selection.delete=Delete
+lod_core.ui.campaign_selection.back=Back
 lod_core.ui.campaign_selection.change_mods_confirm=Changing mods can cause\nproblems, continue?
 lod_core.ui.campaign_selection.delete_campaign_confirm=Are you sure you want to\ndelete this campaign?
 lod_core.ui.campaign_selection.missing_mods_confirm=Missing mods, continue?
 lod_core.ui.campaign_selection.failed_to_delete_campaign=Failed to delete campaign
 
+lod_core.ui.load_game.delete=Delete
+lod_core.ui.load_game.back=Back
+
+lod_core.ui.save_game.delete=Delete
+lod_core.ui.save_game.back=Back
+
 lod_core.ui.mods.required=Required mod
 lod_core.ui.mods.error=Crashed: %s
 lod_core.ui.mods.wrong_version=Wrong version: %s
-lod_core.ui.mods.hotkeys=%s Help
+lod_core.ui.mods.help=Help
+lod_core.ui.mods.back=Back
 
-lod_core.ui.options.help_hotkey=%s Help
+lod_core.ui.options.help=Help
+lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
 
-lod_core.ui.links.hotkeys=%s Open Link %s View Link %s Back
+lod_core.ui.options_category.back=Back
+
+lod_core.ui.links.click_on_any_link_to_open=Click on any link to open it
+lod_core.ui.links.view_link=View Link
+lod_core.ui.links.open_link=Open Link
+lod_core.ui.links.back=Back
 lod_core.ui.links.discord=Legend of Dragoon & Severed Chains Discord Community
 lod_core.ui.links.youtube=Legend of Dragoon & Severed Chains YouTube
 lod_core.ui.links.fandom=Legend of Dragoon Global Fandom Website
@@ -35,13 +52,16 @@ lod_core.ui.links.github=Severed Chains GitHub Page
 lod_core.ui.links.issue=Report an Issue
 
 # Global config
-lod_core.config.controller.label=Controller
-lod_core.config.controller_keybinds.label=Controller Keybinds
+lod_core.config.controller_keybinds.label=Controls
 lod_core.config.controller_keybinds.configure=Configure...
-lod_core.config.controller_deadzone.label=Controller Deadzone
+lod_core.config.menu_inner_deadzone.label=Menu Deadzone (Inner)
+lod_core.config.menu_outer_deadzone.label=Menu Deadzone (Outer)
+lod_core.config.movement_inner_deadzone.label=Movement Deadzone (Inner)
+lod_core.config.movement_outer_deadzone.label=Movement Deadzone (Outer)
 lod_core.config.disable_mouse_input.label=Disable Mouse Input
 lod_core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
-lod_core.config.rumble.label=Rumble (not supported yet)
+lod_core.config.rumble.label=Rumble
+lod_core.config.rumble_intensity.label=Rumble Intensity
 lod_core.config.allow_widescreen.label=3D Widescreen
 lod_core.config.allow_widescreen.help=Use widescreen mode in 3D areas (world map, battle)
 lod_core.config.submap_widescreen_mode.label=2D Widescreen Mode
@@ -62,7 +82,10 @@ lod_core.config.resolution._4K=4K
 lod_core.config.resolution._8K=8K
 lod_core.config.resolution.NATIVE=Native (window size)
 lod_core.config.monitor.label=Monitor
+lod_core.config.reduce_motion_flashing.label=Reduce Motion/Flashing
+lod_core.config.reduce_motion_flashing.help=Reduces some fast motion and flashing. May help people who\nare sensitive to fast motion or flashing lights/colours.\n\nWARNING: use at your own risk. We cannot guarantee that\nthis feature will make the game safe to play for anyone.
 lod_core.config.audio_device.label=Audio Device
+lod_core.config.master_volume.label=Volume - All
 lod_core.config.music_volume.label=Volume - Music
 lod_core.config.sfx_volume.label=Volume - SFX
 lod_core.config.fmv_volume.label=Volume - FMV
@@ -88,10 +111,15 @@ lod_core.config.music_effects_over_time_granularity.Finer = Finer
 lod_core.config.music_effects_over_time_granularity.Finest = Finest
 lod_core.config.create_crash_save.label=Auto-Save on Crash
 lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
+lod_core.config.ignore_steam_input_mode.label=Steam Input Fix
+lod_core.config.ignore_steam_input_mode.help=Fixes duplicate keyboard input when Steam is running and Steam Input is\nenabled. Only change this if your keyboard isn't working.\n\nIgnore when gamepad used - ignores keyboard when gamepad buttons are pressed\nOff - allow duplicate inputs from Steam Input
+lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (recommended)
+lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
+lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
 
 # FMV config
-lod_core.config.fmv.skip_keyboard = Press ENTER to skip
-lod_core.config.fmv.skip_controller = Press Y/Triangle to skip
+lod_core.config.fmv.skip_keyboard = Press %s to skip
+lod_core.config.fmv.skip_controller = Press %s to skip
 lod_core.config.fmv.skip_mouse = Click again to skip
 
 # Campaign config
@@ -121,6 +149,7 @@ lod_core.config.transformation_mode.NORMAL=Normal
 lod_core.config.transformation_mode.SHORT=Short
 lod_core.config.quick_text.label=Quick Text
 lod_core.config.auto_text.label=Automatic Text Advance
+lod_core.config.auto_text_delay.label=Automatic Text Delay (seconds)
 lod_core.config.save_anywhere.label=Save Anywhere
 lod_core.config.save_anywhere.help=WARNING: do not save during story events, while crossing stepping stones, etc.
 lod_core.config.disable_status_effects.label=Disable Status Effects
@@ -141,37 +170,44 @@ lod_core.config.icon_set.label=Icon Set
 lod_core.config.icon_set.help=Enhanced changes some item and equipment icons to icons that were cut from the game
 lod_core.config.icon_set.ENHANCED=Enhanced
 lod_core.config.icon_set.RETAIL=Retail
+lod_core.config.run_by_default.label=Run by default
+lod_core.config.run_by_default.help=When enabled, the character will run by default and walk when the run input is held
 
-lod_core.keybind.help=Press DEL when done
-lod_core.keybind.mods=Supported combo keys:
-lod_core.keybind.missing_input=Missing required input
-lod_core.keybind.duplicate_input=Duplicate found, remove?
-lod_core.keybind.BUTTON_NORTH=Triangle
-lod_core.keybind.BUTTON_EAST=Circle
-lod_core.keybind.BUTTON_SOUTH=Cross
-lod_core.keybind.BUTTON_WEST=Square
-lod_core.keybind.BUTTON_CENTER_1=Select
-lod_core.keybind.BUTTON_CENTER_2=Start
-lod_core.keybind.BUTTON_THUMB_1=L3
-lod_core.keybind.BUTTON_THUMB_2=R3
-lod_core.keybind.BUTTON_SHOULDER_LEFT_1=L1
-lod_core.keybind.BUTTON_SHOULDER_LEFT_2=L2
-lod_core.keybind.BUTTON_SHOULDER_RIGHT_1=R1
-lod_core.keybind.BUTTON_SHOULDER_RIGHT_2=R2
-lod_core.keybind.DPAD_UP=Up
-lod_core.keybind.DPAD_RIGHT=Right
-lod_core.keybind.DPAD_DOWN=Down
-lod_core.keybind.DPAD_LEFT=Left
-lod_core.keybind.BATTLE_DRAGOON=Dragoon (battle)
-lod_core.keybind.BATTLE_SPECIAL=Special (battle)
-lod_core.keybind.BATTLE_ESCAPE=Escape (battle)
-lod_core.keybind.BATTLE_GUARD=Guard (battle)
-lod_core.keybind.BATTLE_ITEMS=Items (battle)
-lod_core.keybind.SPEED_UP=Increase game speed
-lod_core.keybind.SLOW_DOWN=Decrease game speed
-lod_core.keybind.DEBUGGER=Debugger
-lod_core.keybind.PAUSE=Pause
-lod_core.keybind.FRAME_ADVANCE=Frame advance
-lod_core.keybind.FRAME_ADVANCE_HOLD=Frame advance (hold)
-lod_core.keybind.KILL_STUCK_SOUNDS=Kill Stuck Sounds
-lod_core.keybind.TOGGLE_FULL_SCREEN=Toggle full screen
+lod_core.input_actions.menu_up.name=Menu: up
+lod_core.input_actions.menu_down.name=Menu: down
+lod_core.input_actions.menu_left.name=Menu: left
+lod_core.input_actions.menu_right.name=Menu: right
+lod_core.input_actions.menu_top.name=Menu: top
+lod_core.input_actions.menu_bottom.name=Menu: bottom
+lod_core.input_actions.menu_home.name=Menu: home
+lod_core.input_actions.menu_end.name=Menu: end
+lod_core.input_actions.menu_page_up.name=Menu: page up
+lod_core.input_actions.menu_page_down.name=Menu: page down
+lod_core.input_actions.menu_confirm.name=Menu: confirm
+lod_core.input_actions.menu_back.name=Menu: back
+lod_core.input_actions.menu_delete.name=Menu: delete
+lod_core.input_actions.menu_sort.name=Menu: sort
+lod_core.input_actions.menu_help.name=Menu: help
+lod_core.input_actions.menu_mods.name=Menu: mods
+lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
+
+lod_core.input_actions.fmv_skip.name=FMV: skip
+
+lod_core.input_actions.general_toggle_fullscreen.name=General: toggle fullscreen
+lod_core.input_actions.general_speed_up.name=General: speed up
+lod_core.input_actions.general_slow_down.name=General: slow down
+
+lod_core.input_actions.freecam_toggle.name=Freecam: toggle
+lod_core.input_actions.freecam_forward.name=Freecam: forward
+lod_core.input_actions.freecam_backward.name=Freecam: backward
+lod_core.input_actions.freecam_left.name=Freecam: left
+lod_core.input_actions.freecam_right.name=Freecam: right
+lod_core.input_actions.freecam_up.name=Freecam: up
+lod_core.input_actions.freecam_down.name=Freecam: down
+
+lod_core.input_actions.debug_open_debugger.name=Debug: open debugger
+lod_core.input_actions.debug_pause.name=Debug: pause
+lod_core.input_actions.debug_frame_advance.name=Debug: frame advance
+lod_core.input_actions.debug_frame_advance_hold.name=Debug: frame advance (hold)
+lod_core.input_actions.debug_toggle_wireframe.name=Debug: toggle wireframe
+lod_core.input_actions.debug_reload_shaders.name=Debug: reload shaders

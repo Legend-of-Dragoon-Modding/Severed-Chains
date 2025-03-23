@@ -1,10 +1,12 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static legend.game.SItem.menuStack;
@@ -12,11 +14,17 @@ import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class MessageBoxScreen extends MenuScreen {
   private final MessageBox20 messageBox = new MessageBox20();
   private final Consumer<MessageBoxResult> onResult;
   private MessageBoxResult result;
+  /** Allows list wrapping, but only on new input */
+  private boolean allowWrapY = true;
 
   public MessageBoxScreen(final String text, final int type, final Consumer<MessageBoxResult> onResult) {
     this(text, "Yes", "No", type, onResult);
@@ -73,7 +81,7 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -117,22 +125,32 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    playMenuSound(1);
-    this.messageBox.menuIndex_18 = 0;
+    if(this.messageBox.menuIndex_18 != 0) {
+      playMenuSound(1);
+      this.messageBox.menuIndex_18 = 0;
+    } else if(this.allowWrapY) {
+      playMenuSound(1);
+      this.messageBox.menuIndex_18 = 1;
+    }
 
     final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
     if(this.messageBox.highlightRenderable_04 != null) {
-      this.messageBox.highlightRenderable_04.y_44 = selectionY - 2;
+      this.messageBox.highlightRenderable_04.y_44 = this.messageBox.menuIndex_18 == 0 ? selectionY - 2 : selectionY + 12;
     }
   }
 
   private void menuNavigateDown() {
-    playMenuSound(1);
-    this.messageBox.menuIndex_18 = 1;
+    if(this.messageBox.menuIndex_18 != 1) {
+      playMenuSound(1);
+      this.messageBox.menuIndex_18 = 1;
+    } else if(this.allowWrapY) {
+      playMenuSound(1);
+      this.messageBox.menuIndex_18 = 0;
+    }
 
     final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
     if(this.messageBox.highlightRenderable_04 != null) {
-      this.messageBox.highlightRenderable_04.y_44 = selectionY + 12;
+      this.messageBox.highlightRenderable_04.y_44 = this.messageBox.menuIndex_18 == 0 ? selectionY - 2 : selectionY + 12;
     }
   }
 
@@ -177,8 +195,8 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -186,23 +204,39 @@ public class MessageBoxScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-      this.menuNavigateUp();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.menuNavigateDown();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       this.menuSelect();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuCancel();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_UP.get()) {
+      this.menuNavigateUp();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.menuNavigateDown();
+      this.allowWrapY = false;
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.allowWrapY = true;
       return InputPropagation.HANDLED;
     }
 

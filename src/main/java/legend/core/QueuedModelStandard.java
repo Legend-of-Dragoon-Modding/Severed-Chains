@@ -55,6 +55,11 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
+  public boolean hasTranslucency(final int index) {
+    return super.hasTranslucency(index) || this.hasTranslucencyOverride;
+  }
+
+  @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
     if(this.hasTranslucencyOverride) {
       return this.translucency == translucency;

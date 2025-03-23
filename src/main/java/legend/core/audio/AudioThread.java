@@ -27,6 +27,7 @@ import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcGetError;
 import static org.lwjgl.openal.ALC10.alcGetIntegerv;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
@@ -54,7 +55,6 @@ public final class AudioThread implements Runnable {
 
   private boolean running;
   private boolean paused;
-  private boolean disabled;
 
   private ALCapabilities alCapabilities;
   private ALCCapabilities alcCapabilities;
@@ -96,12 +96,14 @@ public final class AudioThread implements Runnable {
       this.destroyInternal();
       this.initInternal();
 
-      for(int i = 0; i < this.sources.size(); i++) {
-        final AudioSource source = this.sources.get(i);
-        source.init();
+      if(this.audioDevice != 0) {
+        for(int i = 0; i < this.sources.size(); i++) {
+          final AudioSource source = this.sources.get(i);
+          source.init();
 
-        if(playing[i]) {
-          source.setPlaying(true);
+          if(playing[i]) {
+            source.setPlaying(true);
+          }
         }
       }
     }
@@ -109,17 +111,31 @@ public final class AudioThread implements Runnable {
 
   private void initInternal() {
     this.openDevice();
-    this.tmp = MemoryUtil.memAllocInt(1);
 
     if(this.audioDevice != 0) {
+      this.tmp = MemoryUtil.memAllocInt(1);
+
       final int[] attributes = {0};
       this.audioContext = alcCreateContext(this.audioDevice, attributes);
+
+      if(this.audioContext == 0) {
+        LOGGER.error("Failed to create audio context: %#x", alcGetError(this.audioDevice));
+        this.destroyInternal();
+        return;
+      }
+
       alcMakeContextCurrent(this.audioContext);
+      LOGGER.info(AUDIO_THREAD_MARKER, "Created audio context %#x", this.audioContext);
 
       this.alcCapabilities = ALC.createCapabilities(this.audioDevice);
       this.alCapabilities = AL.createCapabilities(this.alcCapabilities);
 
       if(this.alCapabilities.OpenAL10) {
+        synchronized(this) {
+          this.paused = false;
+          this.notify();
+        }
+
         return;
       }
     } else {
@@ -127,9 +143,7 @@ public final class AudioThread implements Runnable {
     }
 
     LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
-    this.disabled = true;
-    this.sequencer = null;
-    this.xaPlayer = null;
+    this.paused = true;
   }
 
   public void destroy() {
@@ -149,16 +163,22 @@ public final class AudioThread implements Runnable {
 
   private void destroyInternal() {
     for(final AudioSource source : this.sources) {
-      source.destroy();
+      if(source.isInitialized()) {
+        source.destroy();
+      }
     }
 
-    alcDestroyContext(this.audioContext);
-    alcCloseDevice(this.audioDevice);
+    if(this.audioContext != 0) {
+      alcDestroyContext(this.audioContext);
+      this.audioContext = 0;
+    }
 
-    memFree(this.tmp);
+    if(this.audioDevice != 0) {
+      alcCloseDevice(this.audioDevice);
+      this.audioDevice = 0;
 
-    this.audioContext = 0;
-    this.audioDevice = 0;
+      memFree(this.tmp);
+    }
   }
 
   private void openDevice() {
@@ -166,10 +186,13 @@ public final class AudioThread implements Runnable {
     final List<String> devices = getDevices();
 
     if(devices.contains(currentDevice)) {
+      LOGGER.info(AUDIO_THREAD_MARKER, "Using selected audio device %s", currentDevice);
       this.audioDevice = alcOpenDevice(currentDevice);
     } else if(!devices.isEmpty()) {
+      LOGGER.info(AUDIO_THREAD_MARKER, "Using first audio device %s", devices.getFirst());
       this.audioDevice = alcOpenDevice(devices.getFirst());
     } else {
+      LOGGER.info(AUDIO_THREAD_MARKER, "No audio devices found");
       this.audioDevice = 0;
     }
   }
@@ -182,44 +205,45 @@ public final class AudioThread implements Runnable {
   public <T extends AudioSource> T addSource(final T source) {
     synchronized(this) {
       this.sources.add(source);
+
+      if(this.audioDevice != 0) {
+        source.init();
+      }
+
       return source;
     }
   }
 
   public void removeSource(final AudioSource source) {
     synchronized(this) {
-      source.destroy();
+      if(source.isInitialized()) {
+        source.destroy();
+      }
+
       this.sources.remove(source);
     }
   }
 
-  public Sequencer getSequencer() {
-    return this.sequencer;
-  }
-
   @Override
   public void run() {
-    if(this.disabled) {
-      return;
-    }
-
     this.running = true;
-    this.paused = false;
 
     while(this.running) {
-      while(this.paused) {
-        try {
-          synchronized(this) {
-            this.wait();
-          }
-        } catch(final InterruptedException ignored) { }
-      }
-
       final long time = System.nanoTime();
 
       boolean canBuffer = false;
 
       synchronized(this) {
+        while(this.paused) {
+          try {
+            this.wait();
+          } catch(final InterruptedException ignored) { }
+        }
+
+        if(!this.running) {
+          break;
+        }
+
         if(this.alcCapabilities.ALC_EXT_disconnect) {
           alcGetIntegerv(this.audioDevice, ALC_CONNECTED, this.tmp);
           final int connected = this.tmp.get(0);
@@ -268,84 +292,78 @@ public final class AudioThread implements Runnable {
   }
 
   public void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
-    if(this.sequencer != null) {
-      synchronized(this) {
+    synchronized(this) {
+      if(this.sequencer.isInitialized()) {
         this.sequencer.loadBackgroundMusic(backgroundMusic);
       }
     }
   }
 
   public int getSongId() {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        return this.sequencer.getSongId();
-      }
+    synchronized(this) {
+      return this.sequencer.getSongId();
     }
-    return 0;
   }
 
   public void unloadMusic() {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        this.sequencer.unloadMusic();
-      }
+    synchronized(this) {
+      this.sequencer.unloadMusic();
+    }
+  }
+
+  public void setMusicPlayerVolume(final float volume) {
+    synchronized(this) {
+      this.sequencer.setPlayerVolume(volume);
+    }
+  }
+
+  public void setXaPlayerVolume(final float volume) {
+    synchronized(this) {
+      this.xaPlayer.setPlayerVolume(volume);
     }
   }
 
   public void setMainVolume(final int left, final int right) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting main volume to %.2f, %.2f", left / 256.0f, right / 256.0f);
 
-    if(this.sequencer != null) {
-      synchronized(this) {
-        this.sequencer.setMainVolume(left, right);
-      }
+    synchronized(this) {
+      this.sequencer.setMainVolume(left, right);
     }
   }
 
   public int getSequenceVolume() {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        return this.sequencer.getSequenceVolume();
-      }
+    synchronized(this) {
+      return this.sequencer.getSequenceVolume();
     }
-    return 0;
   }
 
   public int setSequenceVolume(final int volume) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting sequence volume to %.2f", volume / 128.0f);
 
-    if(this.sequencer != null) {
-      synchronized(this) {
-        return this.sequencer.setSequenceVolume(volume);
-      }
+    synchronized(this) {
+      return this.sequencer.setSequenceVolume(volume);
     }
-    return 0;
   }
 
   public int changeSequenceVolumeOverTime(final int volume, final int time) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting sequence volume to %.2f over %.2fs", volume / 128.0f, time / 60.0f);
 
-    if(this.sequencer != null) {
-      synchronized(this) {
-        return this.sequencer.changeSequenceVolumeOverTime(volume, time);
-      }
+    synchronized(this) {
+      return this.sequencer.changeSequenceVolumeOverTime(volume, time);
     }
-    return 0;
   }
 
   public void setReverbVolume(final int left, final int right) {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        this.sequencer.setReverbVolume(left, right);
-      }
+    synchronized(this) {
+      this.sequencer.setReverbVolume(left, right);
     }
   }
 
   public void fadeIn(final int time, final int volume) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Fading in to %.2f for %.2fs", volume / 256.0f, time / 60.0f);
 
-    if(this.sequencer != null) {
-      synchronized(this) {
+    synchronized(this) {
+      if(this.sequencer.isInitialized()) {
         this.sequencer.fadeIn(time, volume);
       }
     }
@@ -354,8 +372,8 @@ public final class AudioThread implements Runnable {
   public void fadeOut(final int time) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Fading out for %.2fs", time / 60.0f);
 
-    if(this.sequencer != null) {
-      synchronized(this) {
+    synchronized(this) {
+      if(this.sequencer.isInitialized()) {
         this.sequencer.fadeOut(time);
       }
     }
@@ -364,8 +382,8 @@ public final class AudioThread implements Runnable {
   public void startSequence() {
     LOGGER.info(AUDIO_THREAD_MARKER, "Starting sequence");
 
-    if(this.sequencer != null) {
-      synchronized(this) {
+    synchronized(this) {
+      if(this.sequencer.isInitialized()) {
         this.sequencer.startSequence();
       }
     }
@@ -374,52 +392,43 @@ public final class AudioThread implements Runnable {
   public void stopSequence() {
     LOGGER.info(AUDIO_THREAD_MARKER, "Stopping sequence");
 
-    if(this.sequencer != null) {
-      synchronized(this) {
+    synchronized(this) {
+      if(this.sequencer.isInitialized()) {
         this.sequencer.stopSequence();
       }
     }
   }
 
   public void loadXa(final FileData fileData) {
-    if(this.xaPlayer != null) {
-      synchronized(this) {
+    synchronized(this) {
+      if(this.xaPlayer.isInitialized()) {
         this.xaPlayer.loadXa(fileData);
       }
     }
   }
 
   public boolean isMusicPlaying() {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        return this.sequencer.isPlaying();
-      }
+    synchronized(this) {
+      return this.sequencer.isPlaying();
     }
-    return false;
   }
 
   public void setReverb(final ReverbConfig config) {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        this.sequencer.setReverbConfig(config);
-      }
+    synchronized(this) {
+      this.sequencer.setReverbConfig(config);
     }
   }
 
   public int getSequenceVolumeOverTimeFlags() {
-    if(this.sequencer != null) {
-      synchronized(this) {
-        return this.sequencer.getVolumeOverTimeFlags();
-      }
+    synchronized(this) {
+      return this.sequencer.getVolumeOverTimeFlags();
     }
-    return 0;
   }
 
   public void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     synchronized(this) {
       if(this.interpolationPrecision != bitDepth) {
         this.interpolationPrecision = bitDepth;
-
         this.sequencer.changeInterpolationBitDepth(this.interpolationPrecision);
       }
     }
@@ -429,7 +438,6 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       if(this.pitchResolution != pitchResolution) {
         this.pitchResolution = pitchResolution;
-
         this.sequencer.changePitchResolution(this.pitchResolution);
       }
     }
@@ -439,9 +447,14 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       if(this.sampleRate != sampleRate) {
         this.sampleRate = sampleRate;
-
         this.sequencer.changeSampleRate(sampleRate, this.effectsGranularity);
       }
+    }
+  }
+
+  public SampleRate getSampleRate() {
+    synchronized(this) {
+      return this.sampleRate;
     }
   }
 
@@ -449,7 +462,6 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       if(this.effectsGranularity != effectsGranularity) {
         this.effectsGranularity = effectsGranularity;
-
         this.sequencer.changeEffectsOverTimeGranularity(effectsGranularity);
       }
     }

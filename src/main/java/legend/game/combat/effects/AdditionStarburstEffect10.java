@@ -15,11 +15,13 @@ import org.joml.Vector3i;
 
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.VoidType> {
@@ -78,7 +80,9 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
 
   @Override
   public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-    this.additionStarburstRenderers_800c6dc4[this.type].accept(state);
+    if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      this.additionStarburstRenderers_800c6dc4[this.type].accept(state);
+    }
   }
 
   @Override

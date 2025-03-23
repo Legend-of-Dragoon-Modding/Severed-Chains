@@ -217,7 +217,8 @@ public class Sequencer {
 
     //LAB_8004632c
     final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
-    if((instrumentLayer_800c6678.flags_0f & 0x1) != 0) {
+    final int flags = instrumentLayer_800c6678.flags_0f;
+    if((flags & 0x1) != 0) {
       playingNote.finished_08 = false;
       playingNote._0c = 1;
     } else {
@@ -259,12 +260,12 @@ public class Sequencer {
     playingNote.pan_4c = instrumentLayer_800c6678.pan_0c;
     playingNote.portamentoNote_4e = 120;
     playingNote.portamentoTimeRemaining_62 = 0;
+    playingNote.sequenceData_06.portamentoNote_11c = playingNote.portamentoNote_4e;
 
     if(soundEnv_800c6630._00 < SPU.voices.length) {
       soundEnv_800c6630._00++;
     }
 
-    final int flags = instrumentLayer_800c6678.flags_0f;
     if((flags & 0x20) != 0) { // Modulation on
       if((flags & 0x40) != 0) {
         playingNote.breathControlListIndex_10 = instrument_800c6674._05;
@@ -286,7 +287,7 @@ public class Sequencer {
     int r = this.calculateVolume(sequenceData, this.calculatePan(4, 0), 1);
 
     final int pitchBendMultiplier;
-    if((instrumentLayer_800c6678.flags_0f & 0x10) != 0) {
+    if((flags & 0x10) != 0) {
       pitchBendMultiplier = instrument_800c6674.pitchBendMultiplier_04;
     } else {
       //LAB_80046668
@@ -320,16 +321,16 @@ public class Sequencer {
     voice.adsr.hi = instrumentLayer_800c6678.adsrHi_08;
     setKeyOn(sequenceData, voiceIndex);
 
-    if(sequenceData.reverbEnabled_0ea || (instrumentLayer_800c6678.flags_0f & 0x80) != 0) {
+    if(sequenceData.reverbEnabled_0ea || (flags & 0x80) != 0) {
       soundEnv_800c6630.reverbMode_12 |= 0x1L << voiceIndex;
       //LAB_80046884
       //LAB_800468d8
-    } else if((instrumentLayer_800c6678.flags_0f & 0x80) == 0) {
+    } else if((flags & 0x80) == 0) {
       soundEnv_800c6630.reverbMode_12 &= ~(0x1L << voiceIndex);
     }
 
     //LAB_80046914
-    if((instrumentLayer_800c6678.flags_0f & 0x2) == 0) {
+    if((flags & 0x2) == 0) {
       //LAB_80046964
       soundEnv_800c6630.noiseMode_16 &= ~(0x1L << voiceIndex);
     } else {
@@ -568,7 +569,7 @@ public class Sequencer {
     final SequenceData124 sequenceData = sequenceData_800c4ac8[channelIndex];
 
     if(sequenceData.soundPlaying_02a && sshdPtr_800c4ac0.hasSubfile(4)) {
-      final Sssqish sssq = soundEnv_800c6630.sshdPtr_08.getSubfile(4, (data, offset) -> new Sssqish(data, offset, soundEnv_800c6630.sshdPtr_08.getSubfileSize(4)));
+      final Sssqish sssq = soundEnv_800c6630.sshdPtr_08.getSubfile(4, (name, data, offset) -> new Sssqish(name, data, offset, soundEnv_800c6630.sshdPtr_08.getSubfileSize(4)));
       final int data = sequenceData_800c4ac8[channelIndex].sssqReader_010.readByte(3);
 
       if(data < sssqish_800c4aa8.entries2_190.entries_02.length) {

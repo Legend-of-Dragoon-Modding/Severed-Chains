@@ -1,6 +1,5 @@
 package legend.game;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
@@ -16,17 +15,15 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.spu.Voice;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
 import legend.game.combat.Battle;
 import legend.game.combat.BattleTransitionMode;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
-import legend.game.debugger.Debugger;
-import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
@@ -72,10 +69,12 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
+import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
@@ -167,10 +166,9 @@ import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
+import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
+import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -356,40 +354,29 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    RENDERER.events().onPressedThisFrame((window, inputAction) -> {
-      if(inputAction == InputAction.DEBUGGER) {
-        if(!Debugger.isRunning()) {
-          try {
-            Platform.setImplicitExit(false);
-            new Thread(() -> Application.launch(Debugger.class)).start();
-          } catch(final Exception e) {
-            LOGGER.info("Failed to start debugger", e);
-          }
-        } else {
-          Platform.runLater(Debugger::show);
-        }
-      }
-    });
-
-    RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
-      // Add killswitch in case sounds get stuck on
-      if(key == GLFW_KEY_DELETE) {
-        for(final Voice voice : SPU.voices) {
-          voice.volumeLeft.set(0);
-          voice.volumeRight.set(0);
-        }
-      }
-
-      if((mods & GLFW_MOD_CONTROL) != 0 && key == GLFW_KEY_W && currentEngineState_8004dd04 instanceof final Battle battle) {
+    RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
+      if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.W && currentEngineState_8004dd04 instanceof final Battle battle) {
         battle.endBattle();
       }
 
-      if((mods & GLFW_MOD_CONTROL) != 0 && key == GLFW_KEY_Q) {
+      if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.Q) {
         if(Config.getGameSpeedMultiplier() == 1) {
           Config.setGameSpeedMultiplier(Config.getLoadedGameSpeedMultiplier());
         } else {
           Config.setGameSpeedMultiplier(1);
         }
+      }
+    });
+
+    RENDERER.events().onInputActionPressed((window, action, repeat) -> {
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.inputActionPressed(action, repeat);
+      }
+    });
+
+    RENDERER.events().onInputActionReleased((window, action) -> {
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.inputActionReleased(action);
       }
     });
 
@@ -401,7 +388,9 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      RENDERER.window().setFpsLimit(60 / frames * Config.getGameSpeedMultiplier());
+      final int hz = 60 / frames * Config.getGameSpeedMultiplier();
+      RENDERER.window().setFpsLimit(hz);
+      PLATFORM.setInputTickRate(hz);
 
       loadQueuedOverlay();
 
@@ -442,7 +431,7 @@ public final class Scus94491BpeSegment {
       GPU.endFrame();
     });
 
-    RENDERER.events().onShutdown(() -> {
+    RENDERER.events().onClose(() -> {
       stopSound();
       AUDIO_THREAD.stop();
       Platform.exit();
@@ -503,6 +492,7 @@ public final class Scus94491BpeSegment {
       prepareOverlay();
       vsyncMode_8007a3b8 = 2;
       loadGameStateOverlay(engineState_8004dd20);
+      menuStack.reset();
 
       if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) { // Starting combat
         clearCombatVars();
@@ -745,10 +735,10 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+      final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
       fullScreenEffect_800bb140.transforms
         .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
-        .translate(0.0f, 0.0f, 120.0f)
+        .translate(0.0f, 0.0f, 156.0f)
       ;
 
       //LAB_800139c4
@@ -761,10 +751,10 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+      final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
       fullScreenEffect_800bb140.transforms
         .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
-        .translate(0.0f, 0.0f, 120.0f)
+        .translate(0.0f, 0.0f, 156.0f)
       ;
 
       //LAB_80013b10
@@ -778,7 +768,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80013c3cL)
   public static void drawFullScreenRect(final int colour, final Translucency transMode) {
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+    final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
     fullScreenEffect_800bb140.transforms
       .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
       .translate(0.0f, 0.0f, 120.0f)
@@ -1251,17 +1241,20 @@ public final class Scus94491BpeSegment {
             if(overlay.widthScale_04 != 0) {
               overlay.widthScale_04 -= 0x492;
               overlay.heightScale_06 -= 0x492;
-            } else {
+            } else if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
               //LAB_80019084
               overlay.clutAndTranslucency_0c &= 0x8fff;
             }
 
             //LAB_80019094
             if(overlay._09 == 0) {
-              overlay.clutAndTranslucency_0c &= 0x7fff;
               overlay.negaticks_08 = 0;
-              overlay.clutAndTranslucency_0c &= 0xf0ff;
-              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+
+              if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                overlay.clutAndTranslucency_0c &= 0x7fff;
+                overlay.clutAndTranslucency_0c &= 0xf0ff;
+                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              }
             }
           } else if(v1 == 1) {
             //LAB_800190d4
@@ -1269,8 +1262,11 @@ public final class Scus94491BpeSegment {
 
             if(overlay.negaticks_08 == 10) {
               overlay._09 = (byte)(simpleRand() % 10 + 2);
-              overlay.clutAndTranslucency_0c &= 0xf0ff;
-              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+
+              if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                overlay.clutAndTranslucency_0c &= 0xf0ff;
+                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              }
             }
             //LAB_80019028
           } else if(v1 == 2) {
@@ -1280,8 +1276,11 @@ public final class Scus94491BpeSegment {
             if(overlay._09 == 0) {
               //LAB_80019180
               overlay._09 = 8;
-              overlay.clutAndTranslucency_0c &= 0xf0ff;
-              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+
+              if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                overlay.clutAndTranslucency_0c &= 0xf0ff;
+                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              }
             }
           } else if(v1 == 3) {
             //LAB_800191b8
@@ -1875,7 +1874,7 @@ public final class Scus94491BpeSegment {
       tickBattleDissolveDarkening();
     }
 
-    final BattleTransitionMode mode = CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get());
+    final BattleTransitionMode mode = CONFIG.getConfig(BATTLE_TRANSITION_MODE_CONFIG.get());
     final int speedDivisor = mode == BattleTransitionMode.NORMAL ? 1 : 2;
 
     //LAB_8001b480
@@ -1924,19 +1923,19 @@ public final class Scus94491BpeSegment {
 
     battleDissolveTicks += vsyncMode_8007a3b8;
 
-    if((battleDissolveTicks & 0x1) == 0 || CONFIG.getConfig(CoreMod.BATTLE_TRANSITION_MODE_CONFIG.get()) == BattleTransitionMode.FAST) {
+    if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get()) && ((battleDissolveTicks & 0x1) == 0 || CONFIG.getConfig(BATTLE_TRANSITION_MODE_CONFIG.get()) == BattleTransitionMode.FAST)) {
       final float squish;
       final float width;
       final float offset;
 
       // Make sure effect fills the whole screen
-      if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(ALLOW_WIDESCREEN_CONFIG.get())) {
         squish = 1.0f;
         width = dissolveDisplayWidth;
         offset = 0.0f;
       } else {
         squish = dissolveDisplayWidth / 320.0f;
-        width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
+        width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getNativeHeight());
         offset = width - 320.0f;
       }
 
@@ -2006,13 +2005,13 @@ public final class Scus94491BpeSegment {
     final float offset;
 
     // Make sure effect fills the whole screen
-    if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+    if(RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && !CONFIG.getConfig(ALLOW_WIDESCREEN_CONFIG.get())) {
       squish = 1.0f;
       width = dissolveDisplayWidth;
       offset = 0.0f;
     } else {
       squish = dissolveDisplayWidth / 320.0f;
-      width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getProjectionHeight());
+      width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getNativeHeight());
       offset = width - 320.0f;
     }
 
@@ -2026,7 +2025,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
     battleStartDelayTicks_8004f6ec = 0;
-    playSound(0, 16, (short)0, (short)0);
+    playSound(0, 16, (short)0, (short)0); // play battle transition sound
     vsyncMode_8007a3b8 = 1;
     _800bd740 = 2;
     dissolveDarkening_800bd700.active_00 = false;
@@ -2039,7 +2038,7 @@ public final class Scus94491BpeSegment {
     clearGreen_800bb104 = 0;
     clearBlue_800babc0 = 0;
     _8004f6e4 = 1;
-    dissolveDisplayWidth = RENDERER.getProjectionWidth();
+    dissolveDisplayWidth = RENDERER.getNativeWidth();
 
     if(dissolveSquare != null) {
       dissolveSquare.delete();
@@ -2093,17 +2092,8 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001cc48
     //LAB_8001cc50
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     sound.used_00 = true;
-
-    if(charSlot == 0 || charSlot == 1) {
-      //LAB_8001cc30
-      FUN_8001e8cc();
-    } else {
-      //LAB_8001cc38
-      //LAB_8001cc40
-      FUN_8001e8d4();
-    }
   }
 
   @Method(0x8001cce8L)
@@ -2156,7 +2146,7 @@ public final class Scus94491BpeSegment {
     sound.name = soundName;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
     cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     sound.used_00 = true;
@@ -2309,7 +2299,7 @@ public final class Scus94491BpeSegment {
       soundFile.id_02 = files.get(0).readShort(0);
 
       //LAB_8001d80c
-      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0 + soundBufferOffset);
+      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(soundFile.name, files.get(2)), 0x5_a1e0 + soundBufferOffset);
 
       setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
       soundFile.used_00 = true;
@@ -2328,7 +2318,7 @@ public final class Scus94491BpeSegment {
     soundFile.spuRamOffset_14 = files.get(4).size();
     soundFile.numberOfExtraSoundbanks_18 = files.get(1).readUShort(0) - 1;
 
-    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(files.get(3)), 0x4_de90);
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(soundFile.name, files.get(3)), 0x4_de90);
     loadExtraBattleCutsceneSoundbanks();
     setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
   }
@@ -2358,7 +2348,7 @@ public final class Scus94491BpeSegment {
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
-    playMusicPackage(new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate()), startSequence);
+    playMusicPackage(new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSampleRate()), startSequence);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
   }
 
@@ -2412,6 +2402,8 @@ public final class Scus94491BpeSegment {
     //LAB_8001df9c
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x8);
 
+    final AtomicInteger remaining = new AtomicInteger(3);
+
     // Player combat sounds for current party composition (example file: 764)
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
@@ -2419,7 +2411,18 @@ public final class Scus94491BpeSegment {
       if(charIndex != -1) {
         final String name = getCharacterName(charIndex).toLowerCase();
         final int finalCharSlot = charSlot;
-        loadDir("characters/%s/sounds/combat".formatted(name), files -> charSoundEffectsLoaded(files, finalCharSlot));
+        loadDir("characters/%s/sounds/combat".formatted(name), files -> {
+          charSoundEffectsLoaded(files, finalCharSlot);
+          if(remaining.decrementAndGet() == 0) {
+            //LAB_8001cc38
+            //LAB_8001cc40
+            FUN_8001e8d4();
+          }
+        });
+      } else {
+        if(remaining.decrementAndGet() == 0) {
+          FUN_8001e8d4();
+        }
       }
     }
 
@@ -2576,7 +2579,7 @@ public final class Scus94491BpeSegment {
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x1010);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x1010);
     unloadSoundbank_800bd778();
   }
 
@@ -2591,10 +2594,6 @@ public final class Scus94491BpeSegment {
     throw new RuntimeException("Not implemented");
   }
 
-  @Method(0x8001e8ccL)
-  public static void FUN_8001e8cc() {
-    // empty
-  }
 
   @Method(0x8001e8d4L)
   public static void FUN_8001e8d4() {
@@ -2630,7 +2629,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x5_a1e0);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x5_a1e0);
     FUN_8001ea5c();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
   }
@@ -2660,7 +2659,7 @@ public final class Scus94491BpeSegment {
     soundFiles_800bcf80[8].ptr_0c = files.get(1);
     soundFiles_800bcf80[8].id_02 = files.get(0).readShort(0);
 
-    final Sshd sshd = new Sshd(files.get(3));
+    final Sshd sshd = new Sshd(soundName, files.get(3));
     if(files.get(4).size() != sshd.soundBankSize_04) {
       throw new RuntimeException("Size didn't match, need to resize array or something");
     }
@@ -2726,7 +2725,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(2));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(files.get(3)), 0x4_de90);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)), 0x4_de90);
     FUN_8001efcc();
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -2758,7 +2757,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x6_6930);
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x20);
@@ -2785,7 +2784,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x6_6930);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x6_6930);
     FUN_8001f390();
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -2870,7 +2869,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001fb44L)
   public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
-    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSequencer().getSampleRate());
+    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex, AUDIO_THREAD.getSampleRate());
     bgm.setVolume(40 / 128.0f);
 
     loadDrgnDir(0, victoryType, victoryFiles -> loadVictoryMusic(victoryFiles, bgm));

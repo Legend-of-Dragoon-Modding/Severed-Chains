@@ -58,8 +58,18 @@ public class MeshObj extends Obj {
   }
 
   @Override
+  public boolean hasTexture(final int index) {
+    return this.meshes[index].textured;
+  }
+
+  @Override
   public boolean hasTranslucency() {
     return this.translucent;
+  }
+
+  @Override
+  public boolean hasTranslucency(final int index) {
+    return this.meshes[index].translucent;
   }
 
   @Override

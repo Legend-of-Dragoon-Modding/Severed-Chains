@@ -1,9 +1,12 @@
 package legend.game.modding.events.input;
 
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
 
 public class InputPressedEvent extends InputEvent {
-  public InputPressedEvent(final InputAction inputAction) {
-    super(inputAction);
+  public final boolean repeat;
+
+  public InputPressedEvent(final InputAction action, final boolean repeat) {
+    super(action);
+    this.repeat = repeat;
   }
 }

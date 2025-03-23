@@ -76,8 +76,6 @@ import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.PerfectDragoonAdditionEffect30;
 import legend.game.combat.types.PerfectDragoonAdditionEffectGlyph06;
 import legend.game.combat.types.VertexDifferenceAnimation18;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -106,6 +104,7 @@ import java.util.function.BiFunction;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -143,6 +142,7 @@ import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public final class SEffe {
@@ -191,7 +191,7 @@ public final class SEffe {
 
   private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
-  
+
   private static final MV seffeTransforms = new MV();
 
   @Method(0x800cea1cL)
@@ -810,7 +810,7 @@ public final class SEffe {
 
     //LAB_800ec370
     shadow.zOffset_a0 = model.zOffset_a0 + 16;
-    shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
+    shadow.coord2_14.transforms.scale.set(model.shadowSize_10c).div(4.0f);
     shadow.coord2_14.coord.scaling(shadow.coord2_14.transforms.scale);
     shadow.coord2_14.coord.rotateXYZ(shadow.coord2_14.transforms.rotate);
     shadow.coord2_14.flg = 0;
@@ -952,17 +952,17 @@ public final class SEffe {
   @Method(0x80102f7cL)
   public static void renderSegmentGradient(final PolyBuilder builder, final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
     builder
-      .addVertex(xy[0].x, xy[0].y, a3 + a4)
+      .addVertex(xy[0].x, xy[0].y, (a3 + a4) * 4.0f)
       .monochrome(0.0f)
-      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .addVertex(xy[1].x, xy[1].y, (a3 + a4) * 4.0f)
       .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
-      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .addVertex(xy[2].x, xy[2].y, (a3 + a4) * 4.0f)
       .monochrome(0.0f)
-      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .addVertex(xy[1].x, xy[1].y, (a3 + a4) * 4.0f)
       .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
-      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .addVertex(xy[2].x, xy[2].y, (a3 + a4) * 4.0f)
       .monochrome(0.0f)
-      .addVertex(xy[3].x, xy[3].y, a3 + a4)
+      .addVertex(xy[3].x, xy[3].y, (a3 + a4) * 4.0f)
       .rgb((colour1.x >>> 8) / 255.0f, (colour1.y >>> 8) / 255.0f, (colour1.z >>> 8) / 255.0f);
   }
 
@@ -1084,7 +1084,7 @@ public final class SEffe {
     final Obj obj = builder.build();
     obj.delete();
 
-    data.transforms.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+    data.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
     RENDERER.queueOrthoModel(obj, data.transforms, QueuedModelStandard.class);
 
     //LAB_801059c8
@@ -1398,7 +1398,7 @@ public final class SEffe {
         daddy.ticksRemainingToBeginAddition_12--;
         if(daddy.ticksRemainingToBeginAddition_12 == 0) {
           state.deallocateWithChildren();
-        } else if((Input.pressedThisFrame(InputAction.BUTTON_SOUTH) || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
+        } else if((PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ATTACK.get()) || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
           daddy.meterSpinning_10 = 1;
           daddyMeterSpinning_80119f42 = 1;
         }
@@ -1434,7 +1434,7 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || Input.pressedThisFrame(InputAction.BUTTON_SOUTH) && daddy.inputMode_13 == 0) {
+          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ATTACK.get()) && daddy.inputMode_13 == 0) {
             //LAB_8010870c
             daddy.buttonPressGlowBrightnessFactor_11 = 4;
             daddy.countEyeFlashTicks_0d = 0;

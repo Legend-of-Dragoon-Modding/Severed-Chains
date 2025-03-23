@@ -1,0 +1,13 @@
+Widescreen patch
+Hoax - Daytime
+Knight on left wall: prevent hiding based on camera offset
+--- original
++++ modified
+@@ -90,6 +90,7 @@
+ call 294, 0x16, 0x1
+ LABEL_12:
+ yield
++jmp inl[:LABEL_12]
+ call 257, stor[24], stor[25]
+ jmp_cmp >, 0x5, stor[24], inl[:LABEL_13]
+ call 106, 0x0

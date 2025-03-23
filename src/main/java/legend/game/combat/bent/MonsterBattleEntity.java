@@ -104,7 +104,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     super.bentRenderer(state, bent);
 
-    if((state.storage_44[7] & 0xa11) == 0 && CONFIG.getConfig(CoreMod.ENEMY_HP_BARS_CONFIG.get())) {
+    if((state.storage_44[7] & (FLAG_NO_SCRIPT | FLAG_200 | FLAG_HIDE | FLAG_1)) == 0 && CONFIG.getConfig(CoreMod.ENEMY_HP_BARS_CONFIG.get())) {
       final VitalsStat stat = bent.stats.getStat(LodMod.HP_STAT.get());
       final float hp = (float)stat.getCurrent() / stat.getMax();
 
@@ -129,14 +129,14 @@ public class MonsterBattleEntity extends BattleEntity27c {
         final Vector2f screenspace = new Vector2f();
         if(transformToScreenSpace(screenspace, this.model_148.coord2_14.coord.transfer) != 0) {
           final MV transforms = new MV();
-          transforms.transfer.set(screenspace.x - 13.0f, screenspace.y + 7.0f, 124.0f);
+          transforms.transfer.set(screenspace.x - 13.0f, screenspace.y + 7.0f, 134.0f);
           transforms.scaling(26.0f, 4.0f, 1.0f);
           RENDERER
             .queueOrthoModel(RENDERER.opaqueQuad, transforms, QueuedModelStandard.class)
             .screenspaceOffset(160.0f, 120.0f)
             .monochrome(0.0f);
 
-          transforms.transfer.set(screenspace.x - 12.0f, screenspace.y + 8.0f, 120.0f);
+          transforms.transfer.set(screenspace.x - 12.0f, screenspace.y + 8.0f, 130.0f);
           transforms.scaling(24.0f * hp, 2.0f, 1.0f);
           RENDERER
             .queueOrthoModel(RENDERER.opaqueQuad, transforms, QueuedModelStandard.class)

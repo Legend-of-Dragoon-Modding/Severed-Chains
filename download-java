@@ -7,4 +7,4 @@ fi
 
 echo Downloading java...
 mkdir "jdk21"
-curl -s -L "https://corretto.aws/downloads/resources/21.0.2.13.1/amazon-corretto-21.0.2.13.1-@os@-@arch@.tar.gz" | tar -vxz -C jdk21 --strip-components=1
+curl -s -L "https://corretto.aws/downloads/resources/21.0.6.7.1/amazon-corretto-21.0.6.7.1-@os@-@arch@.tar.gz" | tar -vxz -C jdk21 --strip-components=1

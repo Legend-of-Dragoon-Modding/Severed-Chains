@@ -111,7 +111,7 @@ public class UiBox {
         .bpp(Bpp.BITS_4)
         .clut(720, 497)
         .vramPos(704, 256)
-        .monochrome(0.5f)
+        .monochrome(1.0f)
         .uv(leftU, topV)
         .pos(leftX, topY, 0.0f)
         .posSize(rightX - leftX, bottomY - topY)

@@ -1,0 +1,52 @@
+Widescreen patch
+Twin Castle, Main Hall (Daytime)
+Right balcony knight/bandit knight
+Knight: No longer hide based on camera offset.
+Bandit knight: Added exit animation when on opposite side instead of vanishing.
+--- original
++++ modified
+@@ -427,7 +427,6 @@
+ jmp_cmp >, 0xffffffc4, stor[25], inl[:LABEL_70]
+ jmp inl[:LABEL_69]
+ LABEL_70:
+-call 106, 0x1
+ yield
+ call 257, stor[24], stor[25]
+ jmp_cmp <, 0xfffffff3, stor[24], inl[:LABEL_70]
+@@ -794,6 +793,36 @@
+ rewind
+ data 0x49
+ JMP_fe8_5:
++mov 0x4, stor[24]
++mov 0x1, stor[25]
++gosub inl[:LABEL_16]
++mov 0x1e, stor[24]
++wait stor[24]
++call 97, 0x2
++mov 0x128, stor[24]
++mov 0xffffff10, stor[25]
++mov 0x25a, stor[26]
++mov 0x9, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
++mov 0x68, stor[24]
++mov 0xffffff88, stor[25]
++mov 0x25a, stor[26]
++mov 0x9, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
++mov 0xd, stor[24]
++mov 0xffffff88, stor[25]
++mov 0x212, stor[26]
++mov 0x9, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
++mov 0xd, stor[24]
++mov 0x0, stor[25]
++mov 0x118, stor[26]
++mov 0x9, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
+ call 294, 0x14, 0x0
+ call 294, 0x16, 0x0
+ call 106, 0x1

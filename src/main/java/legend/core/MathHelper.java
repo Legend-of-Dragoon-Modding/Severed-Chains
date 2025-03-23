@@ -209,6 +209,10 @@ public final class MathHelper {
     return (float)org.joml.Math.atan2((double)y, x);
   }
 
+  public static float closestAngle(final float a, final float b) {
+    return floorMod(a - b + PI, TWO_PI) - PI;
+  }
+
   public static float sin(final float angle) {
     return org.joml.Math.sin(angle);
   }
@@ -309,29 +313,5 @@ public final class MathHelper {
     MathHelper.clamp(out, 0.0f, 1.0f);
     out.set(org.joml.Math.lerp(1.0f, out.x, s), org.joml.Math.lerp(1.0f, out.y, s), org.joml.Math.lerp(1.0f, out.z, s));
     out.mul(v);
-  }
-
-  public static float hueToRgb(final float p, final float q, float t) {
-    if(t < 0.0f) {
-      t += 1.0f;
-    }
-
-    if(t > 1.0f) {
-      t -= 1.0f;
-    }
-
-    if(t < 1.0f / 6.0f) {
-      return p + (q - p) * 6.0f * t;
-    }
-
-    if(t < 1.0f / 2.0f) {
-      return q;
-    }
-
-    if(t < 2.0f / 3.0f) {
-      return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
-    }
-
-    return p;
   }
 }

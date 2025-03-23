@@ -20,6 +20,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
@@ -28,6 +29,7 @@ import static legend.game.combat.Battle.ZERO;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.FUN_800cfc20;
 import static legend.game.combat.particles.ParticleManager.particleSubCounts_800fb794;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class QuadParticle extends ParticleEffectData98 {
   /** ushort */
@@ -157,7 +159,7 @@ public class QuadParticle extends ParticleEffectData98 {
           }
 
           //LAB_800fe548
-          this.transforms.transfer.z = instZ + effectZ;
+          this.transforms.transfer.z = (instZ + effectZ) * 4.0f;
           RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
             .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
             .colour(colour);
@@ -185,9 +187,13 @@ public class QuadParticle extends ParticleEffectData98 {
               //LAB_800fe644
               //LAB_800fe78c
               particleSub.transforms.transfer.z = instZ + effectZ;
-              RENDERER.queueOrthoModel(this.obj, particleSub.transforms, QueuedModelStandard.class)
+              final QueuedModelStandard model = RENDERER.queueOrthoModel(this.obj, particleSub.transforms, QueuedModelStandard.class)
                 .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY())
                 .colour(colour);
+
+              if(CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+                model.colour(colour.x / 2.0f, colour.y / 2.0f, colour.z / 2.0f);
+              }
             }
 
             colour.sub(colourStep);

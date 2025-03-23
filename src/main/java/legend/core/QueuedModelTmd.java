@@ -96,7 +96,7 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
 
   @Override
   public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
-    if(this.hasTranslucency() && !this.obj.hasTexture()) {
+    if(this.hasTranslucency(layer) && !this.obj.hasTexture(layer)) {
       return translucency != null && this.tmdTranslucency == translucency.ordinal();
     }
 
@@ -116,7 +116,7 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
 
   @Override
   void render(@Nullable final Translucency translucency, final int layer) {
-    if(this.obj.hasTranslucency() && !this.obj.hasTexture()) {
+    if(this.obj.hasTranslucency(layer) && !this.obj.hasTexture(layer)) {
       // Translucency override
       this.updateColours(translucency);
       this.obj.render(layer, this.startVertex, this.vertexCount);

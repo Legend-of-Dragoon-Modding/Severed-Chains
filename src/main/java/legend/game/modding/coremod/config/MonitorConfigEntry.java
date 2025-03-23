@@ -5,12 +5,10 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
-import org.lwjgl.PointerBuffer;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorName;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
 
 public class MonitorConfigEntry extends ConfigEntry<Integer> {
   public MonitorConfigEntry() {
@@ -26,15 +24,14 @@ public class MonitorConfigEntry extends ConfigEntry<Integer> {
       final Dropdown<String> dropdown = new Dropdown<>();
       dropdown.onSelection(index -> gameState.setConfig(this, index));
 
-      final PointerBuffer monitorPtrs = glfwGetMonitors();
+      final String[] displays = PLATFORM.listDisplays();
 
-      for(int i = 0; i < monitorPtrs.limit(); i++) {
-        final long ptr = monitorPtrs.get(i);
-        dropdown.addOption(glfwGetMonitorName(ptr));
+      for(int i = 0; i < displays.length; i++) {
+        dropdown.addOption(displays[i]);
       }
 
       final int selected = CONFIG.getConfig(this);
-      if(selected >= 0 && selected < monitorPtrs.limit()) {
+      if(selected >= 0 && selected < displays.length) {
         dropdown.setSelectedIndex(selected);
       } else {
         dropdown.setSelectedIndex(0);

@@ -3,7 +3,6 @@ package legend.game.inventory.screens;
 import legend.core.GameEngine;
 import legend.game.SItem;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.modding.coremod.CoreMod;
@@ -19,6 +18,7 @@ import java.util.Set;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 
 public class OptionsCategoryScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -51,20 +51,12 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
         this.addRow(I18n.translate(CoreMod.MOD_ID + ".config.category." + category.name().toLowerCase(Locale.US) + ".label"), button);
       }
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.options_category.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_EAST) {
-      playMenuSound(3);
-      this.unload.run();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
+  private void back() {
+    playMenuSound(3);
+    this.unload.run();
   }
 }

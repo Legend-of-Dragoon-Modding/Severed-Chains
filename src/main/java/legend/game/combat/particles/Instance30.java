@@ -21,14 +21,13 @@ public class Instance30 extends ParticleEffectInstance94 {
   @Method(0x80100ea0L)
   @Override
   protected void tickType(final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
-    final int s1 = this.particle.effectInner_08._10 & 0xffff;
+    final int randBound = this.particle.effectInner_08._10 & 0xffff;
 
     final Vector3f diffTranslation = new Vector3f().set(this.particle.parentBobj_04.getPosition()).sub(manager.getPosition());
 
-    final int mod = s1 * 2 + 1;
-    this.particleVelocity_58.x = diffTranslation.x / 8.0f + (seed_800fa754.nextInt(mod) - s1 >>> 4);
-    this.particleVelocity_58.y = diffTranslation.y / 8.0f + (seed_800fa754.nextInt(mod) - s1 >>> 4);
-    this.particleVelocity_58.z = diffTranslation.z / 8.0f + (seed_800fa754.nextInt(mod) - s1 >>> 4);
+    this.particleVelocity_58.x = diffTranslation.x / 8.0f + (seed_800fa754.nextInt(randBound * 2) - randBound >> 4);
+    this.particleVelocity_58.y = diffTranslation.y / 8.0f + (seed_800fa754.nextInt(randBound * 2) - randBound >> 4);
+    this.particleVelocity_58.z = diffTranslation.z / 8.0f + (seed_800fa754.nextInt(randBound * 2) - randBound >> 4);
     this.particleVelocity_58.x *= this.particle.effectInner_08._18;
     this.particleVelocity_58.y *= this.particle.effectInner_08._18;
     this.particleVelocity_58.z *= this.particle.effectInner_08._18;

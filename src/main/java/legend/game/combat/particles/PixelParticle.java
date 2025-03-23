@@ -58,7 +58,7 @@ public class PixelParticle extends ParticleEffectData98 {
           }
 
           //LAB_800fdf44
-          this.mv.transfer.set(ref.x + GPU.getOffsetX(), ref.y + GPU.getOffsetY(), z + manager.params_10.z_22);
+          this.mv.transfer.set(ref.x + GPU.getOffsetX(), ref.y + GPU.getOffsetY(), (z + manager.params_10.z_22) * 4.0f);
           RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.mv, QueuedModelStandard.class)
             .translucency(Translucency.B_PLUS_F)
             .colour(colour);

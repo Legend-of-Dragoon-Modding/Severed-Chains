@@ -149,7 +149,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     if(manager.params_10.flags_00 >= 0) {
       if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
+        FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       } else {
         //LAB_800ea564
         FUN_800e60e0(1.0f, 1.0f, 1.0f);

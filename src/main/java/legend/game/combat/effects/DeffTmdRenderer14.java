@@ -68,7 +68,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
       //LAB_801182c8
       zOffset_1f8003e8 = manager.params_10.z_22;
       if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
+        FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       } else {
         //LAB_80118304
         FUN_800e60e0(1.0f, 1.0f, 1.0f);
@@ -99,7 +99,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zShift_1f8003c4 = 2;
         zMax_1f8003cc = 0xffe;
         zMin = 0xb;
-        Renderer.renderDobj2(dobj2, false, 0);
+        Renderer.renderDobj2(dobj2, false, 0x20);
         zShift_1f8003c4 = oldZShift;
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
@@ -109,7 +109,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
-          .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 

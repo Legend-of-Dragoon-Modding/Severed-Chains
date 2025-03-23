@@ -1,10 +1,8 @@
 package legend.core.gpu;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.ProjectionMode;
 import legend.core.RenderEngine;
-import legend.core.Version;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -23,11 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -132,24 +130,8 @@ public class Gpu {
     }
   }
 
-  private final float[] fps = new float[60];
-  private int fpsIndex;
-
   public void endFrame() {
     this.tick();
-
-    final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
-    this.fps[this.fpsIndex] = RENDERER.getFps();
-    this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
-
-    if(this.fpsIndex == 0) {
-      float avg = 0.0f;
-      for(int i = 0; i < fpsLimit; i++) {
-        avg += this.fps[i];
-      }
-
-      RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
-    }
   }
 
   public void useVramTexture() {
@@ -425,7 +407,7 @@ public class Gpu {
     this.status.verticalResolution = height;
 
     // Always run on the GPU thread
-    if(glfwGetCurrentContext() == 0) {
+    if(!PLATFORM.isContextCurrent()) {
       this.displayChanged = true;
       return;
     }

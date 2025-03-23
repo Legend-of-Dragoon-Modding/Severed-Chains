@@ -1,0 +1,31 @@
+Zenebatos
+Albert
+Do not hide body parts during cutscene
+--- original
++++ modified
+@@ -414,12 +414,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_16]
+-call 288, 0x6
+-call 288, 0x8
+-call 288, 0xd
+-call 288, 0xe
+-call 288, 0x14
+-call 288, 0x15
+ mov 0x20, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_55]
+@@ -461,12 +455,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_27]
+-call 288, 0x6
+-call 288, 0x8
+-call 288, 0xd
+-call 288, 0xe
+-call 288, 0x14
+-call 288, 0x15
+ mov 0x19, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_55]

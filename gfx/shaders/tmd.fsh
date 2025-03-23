@@ -45,9 +45,9 @@ void main() {
   bool textured = (vertFlags & 0x2) != 0;
   outColour = vertColour;
 
-  int translucencyMode = translucency;
+  int translucencyMode = translucency + 1;
   if(translucent && !textured) {
-    translucencyMode = tmdTranslucency;
+    translucencyMode = tmdTranslucency + 1;
   }
 
   // Textured
@@ -78,7 +78,7 @@ void main() {
       discard;
     }
 
-    outColour *= texColour;
+    outColour = clamp(outColour * texColour, 0.0, 1.0);
   } else {
     // Untextured translucent primitives don't have a translucency bit so we always discard during the appropriate discard modes
     if(discardTranslucency == 1 && translucent || discardTranslucency == 2 && !translucent) {
@@ -88,8 +88,7 @@ void main() {
 
   outColour.rgb *= recolour;
 
-  // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if(translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
+  if(translucent && translucencyMode == 1) { // (B+F)/2 translucency
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;

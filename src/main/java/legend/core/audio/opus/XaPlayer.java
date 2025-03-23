@@ -1,6 +1,7 @@
 package legend.core.audio.opus;
 
 import legend.core.audio.AudioSource;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
+import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -30,6 +32,8 @@ public final class XaPlayer extends AudioSource {
   private long sampleCount;
   private long samplesRead;
 
+  private float playerVolume;
+
   public XaPlayer() {
     super(8);
 
@@ -39,6 +43,11 @@ public final class XaPlayer extends AudioSource {
     this.format = AL_FORMAT_MONO16;
     this.pcm = new short[this.samplesPerTick];
     this.pcmBuffer = BufferUtils.createShortBuffer(this.samplesPerTick);
+    this.playerVolume = CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+  }
+
+  public void setPlayerVolume(final float volume) {
+    this.playerVolume = volume;
   }
 
   public void loadXa(final FileData fileData) {
@@ -99,6 +108,10 @@ public final class XaPlayer extends AudioSource {
     this.pcmBuffer.rewind();
     this.pcmBuffer.get(this.pcm);
 
+    for(int i = 0; i < this.pcm.length; i++) {
+      this.pcm[i] *= this.playerVolume;
+    }
+
     this.samplesRead += this.pcm.length;
 
     this.setPlaying(this.samplesRead <= this.sampleCount);
@@ -114,7 +127,7 @@ public final class XaPlayer extends AudioSource {
   }
 
   @Override
-  public void destroy() {
+  protected void destroy() {
     if(this.opusFileData != null) {
       this.unloadOpusFile();
     }

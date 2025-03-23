@@ -1,0 +1,14 @@
+Widescreen patch
+Hellena Prison - cutscene before Fruegel (II): New start position off-screen for Lavitz
+--- original
++++ modified
+@@ -82,8 +82,7 @@
+ JMP_208_0:
+ call 111, 0x1
+ call 106, 0x0
+-mov 0x32, stor[24]
+-gosub inl[:LABEL_1]
++call 101, stor[0], 0x146, 0, 0xffffff66
+ call 103, stor[0], 0x0, 0x400, 0x0
+ call 311, stor[0]
+ mov 0xfffff448, stor[8]

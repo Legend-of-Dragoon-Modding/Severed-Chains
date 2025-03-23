@@ -1,17 +1,27 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.PLATFORM;
+import static legend.core.MathHelper.flEq;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class NumberSpinner<T extends Number> extends Control {
   private final Glyph upArrow;
@@ -54,10 +64,10 @@ public class NumberSpinner<T extends Number> extends Control {
     this.label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     this.label.ignoreInput();
 
-    this.upArrow = this.addControl(Glyph.uiElement(61, 68));
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
     this.upArrow.ignoreInput();
 
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.ignoreInput();
 
     this.highlight = this.addControl(new Brackets());
@@ -76,7 +86,11 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   public void setNumber(final T number) {
+    final T oldValue = this.number;
     this.number = this.clamp.apply(number);
+    if(oldValue != null && !flEq(this.number.floatValue(), oldValue.floatValue())) {
+      playMenuSound(1);
+    }
     this.label.setText(this.toString.apply(this.number));
     this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
@@ -137,17 +151,22 @@ public class NumberSpinner<T extends Number> extends Control {
       return InputPropagation.HANDLED;
     }
 
-    this.setNumber(this.scroll.apply(this.number, deltaY));
-    return InputPropagation.HANDLED;
+    if(this.highlight.isVisible()) {
+      this.setNumber(this.scroll.apply(this.number, deltaY));
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(button == GLFW_MOUSE_BUTTON_LEFT && mods == 0 && !this.highlight.isVisible()) {
+    if(button == PLATFORM.getMouseButton(0) && mods.isEmpty() && !this.highlight.isVisible()) {
+      playMenuSound(2);
       this.highlight.show();
     }
 
@@ -155,51 +174,40 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.highlight.isVisible()) {
-      if(inputAction == InputAction.BUTTON_SOUTH || inputAction == InputAction.BUTTON_EAST) {
-        this.highlight.hide();
-        return InputPropagation.HANDLED;
-      }
-    } else {
-      if(inputAction == InputAction.BUTTON_SOUTH) {
-        this.highlight.show();
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.highlight.isVisible()) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      if(action == INPUT_ACTION_MENU_UP.get()) {
         this.setNumber(this.add.apply(this.number, this.step));
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
         this.setNumber(this.subtract.apply(this.number, this.step));
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      if(action == INPUT_ACTION_MENU_RIGHT.get()) {
         this.setNumber(this.add.apply(this.number, this.bigStep));
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      if(action == INPUT_ACTION_MENU_LEFT.get()) {
         this.setNumber(this.subtract.apply(this.number, this.bigStep));
         return InputPropagation.HANDLED;
       }
+
+      if((action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
+        playMenuSound(2);
+        this.highlight.hide();
+        return InputPropagation.HANDLED;
+      }
+    } else if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      playMenuSound(2);
+      this.highlight.show();
     }
 
     return InputPropagation.PROPAGATE;

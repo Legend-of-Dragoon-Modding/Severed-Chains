@@ -126,8 +126,8 @@ public class GpuCommandPoly extends GpuCommand {
 
   public GpuCommandPoly pos(final int vertex, final int x, final int y) {
     if(vertex == 2 && Math.abs(x - this.x[0]) >= 3000 || vertex == 3 && Math.abs(y - this.y[1]) >= 1500) {
-      System.err.println("BAD COORD %d, %d".formatted(x, y));
-      new Throwable().printStackTrace();
+//      System.err.println("BAD COORD %d, %d".formatted(x, y));
+//      new Throwable().printStackTrace();
     }
 
     this.x[vertex] = x;

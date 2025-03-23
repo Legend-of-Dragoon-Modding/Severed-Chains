@@ -84,7 +84,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public boolean isDragoon() {
-    return (this.scriptState.get().storage_44[7] & 0x2) != 0;
+    return (this.scriptState.get().storage_44[7] & FLAG_DRAGOON) != 0;
   }
 
   @Override

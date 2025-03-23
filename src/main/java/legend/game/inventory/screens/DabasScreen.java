@@ -1,16 +1,14 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.DabasManager;
 import legend.game.i18n.I18n;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.screen.EquipMenuEntryIconEvent;
-import legend.game.modding.events.screen.ItemMenuEntryIconEvent;
 import legend.game.types.DabasData100;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -20,10 +18,11 @@ import legend.game.types.Renderable58;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
@@ -52,7 +51,8 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class DabasScreen extends MenuScreen {
   private static final String DigDabas_8011d04c = "Diiig Dabas!";
@@ -126,11 +126,9 @@ public class DabasScreen extends MenuScreen {
 
           if(itemId != 0) {
             if(itemId > 192) {
-              final Item item = REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get();
-              this.menuItems.add(MenuEntryStruct04.make(item, EVENTS.postEvent(new ItemMenuEntryIconEvent(item)).icon));
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()));
             } else {
-              final Equipment equip = REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get();
-              this.menuItems.add(MenuEntryStruct04.make(equip, EVENTS.postEvent(new EquipMenuEntryIconEvent(equip)).icon));
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()));
             }
 
             this.hasItems = true;
@@ -139,8 +137,7 @@ public class DabasScreen extends MenuScreen {
 
         final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
-          final Equipment equip = REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get();
-          this.specialItem = MenuEntryStruct04.make(equip, equip.getIcon());
+          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get());
           this.hasItems = true;
         }
 
@@ -171,7 +168,7 @@ public class DabasScreen extends MenuScreen {
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
 
-        if(!Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(!PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           this.renderDabasMenu(this.menuIndex);
           break;
         }
@@ -186,7 +183,7 @@ public class DabasScreen extends MenuScreen {
       case 4 -> {
         messageBox(this.messageBox_8011dc90);
 
-        if(this.gold <= 10 || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(this.gold <= 10 || PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           gameState_800babc8.gold_94 += this.gold;
           this.gold = 0;
           unloadRenderable(this.renderable2);
@@ -213,7 +210,7 @@ public class DabasScreen extends MenuScreen {
 
       case 5 -> {
         messageBox(this.messageBox_8011dc90);
-        if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           unloadRenderable(this.renderable2);
           this.messageBox_8011dc90.state_0c++;
           this.loadingStage++;
@@ -349,16 +346,16 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.loadingStage != 2 || mods != 0) {
+    if(this.loadingStage != 2 || !mods.isEmpty()) {
       return InputPropagation.PROPAGATE;
     }
 
-    if(button == GLFW_MOUSE_BUTTON_LEFT) {
+    if(button == PLATFORM.getMouseButton(0)) {
       if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(0), 85, 14)) {
         if(this.hasItems || this.gold != 0) {
           playMenuSound(2);
@@ -413,8 +410,8 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -422,7 +419,7 @@ public class DabasScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }

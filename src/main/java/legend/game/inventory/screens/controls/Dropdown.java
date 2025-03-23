@@ -1,7 +1,8 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
@@ -10,11 +11,17 @@ import legend.game.inventory.screens.TextColour;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class Dropdown<T> extends Control {
   private final Panel background;
@@ -22,9 +29,12 @@ public class Dropdown<T> extends Control {
   private final Glyph downArrow;
   private final Brackets highlight;
 
+  /** Allows list wrapping, but only on new input */
+  private boolean allowWrapY = true;
+
   private final List<T> options = new ArrayList<>();
   private final Function<T, String> toString;
-  private int hoverIndex;
+  private int hoverIndex = -1;
   private int selectedIndex = -1;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
@@ -67,7 +77,7 @@ public class Dropdown<T> extends Control {
       return InputPropagation.PROPAGATE;
     });
 
-    this.downArrow = this.addControl(Glyph.uiElement(53, 60));
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.ignoreInput();
     this.downArrow.setZ(this.background.getZ() - 1);
 
@@ -132,11 +142,12 @@ public class Dropdown<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
+    playMenuSound(2);
     this.showDropdown();
     return InputPropagation.HANDLED;
   }
@@ -150,6 +161,10 @@ public class Dropdown<T> extends Control {
     if(index == -1) {
       this.highlight.hide();
     } else {
+      if(this.hoverIndex != -1 && this.hoverIndex != index) {
+        playMenuSound(1);
+      }
+
       this.highlight.show();
     }
 
@@ -158,6 +173,7 @@ public class Dropdown<T> extends Control {
   }
 
   private void select(final int index) {
+    playMenuSound(2);
     this.setSelectedIndex(index);
 
     if(this.selectionHandler != null) {
@@ -166,12 +182,13 @@ public class Dropdown<T> extends Control {
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      playMenuSound(2);
       this.showDropdown();
       return InputPropagation.HANDLED;
     }
@@ -231,26 +248,53 @@ public class Dropdown<T> extends Control {
     }
 
     @Override
-    protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
       if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
         return InputPropagation.HANDLED;
       }
 
+      playMenuSound(3);
       this.getStack().popScreen();
       return InputPropagation.HANDLED;
     }
 
     @Override
-    protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-      if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+    protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+      if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        Dropdown.this.hover((Dropdown.this.hoverIndex + 1) % Dropdown.this.options.size());
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        final int optionCount = Dropdown.this.options.size();
+        if(Dropdown.this.hoverIndex != 0) {
+          Dropdown.this.hover(Dropdown.this.hoverIndex - 1);
+        } else if(optionCount > 1 && Dropdown.this.allowWrapY) {
+          Dropdown.this.hover(optionCount - 1);
+        }
+        Dropdown.this.allowWrapY = false;
         return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        Dropdown.this.hover(Math.floorMod(Dropdown.this.hoverIndex - 1, Dropdown.this.options.size()));
+      }
+
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        final int optionCount = Dropdown.this.options.size();
+        if(Dropdown.this.hoverIndex != optionCount - 1) {
+          Dropdown.this.hover(Dropdown.this.hoverIndex + 1);
+        } else if(optionCount > 1 && Dropdown.this.allowWrapY) {
+          Dropdown.this.hover(0);
+        }
+        Dropdown.this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+        Dropdown.this.select(Dropdown.this.hoverIndex);
+        this.getStack().popScreen();
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+        playMenuSound(3);
+        this.getStack().popScreen();
         return InputPropagation.HANDLED;
       }
 
@@ -258,17 +302,13 @@ public class Dropdown<T> extends Control {
     }
 
     @Override
-    protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-      if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+    protected InputPropagation inputActionReleased(final InputAction action) {
+      if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.BUTTON_SOUTH) {
-        Dropdown.this.select(Dropdown.this.hoverIndex);
-        this.getStack().popScreen();
-        return InputPropagation.HANDLED;
-      } else if(inputAction == InputAction.BUTTON_EAST) {
-        this.getStack().popScreen();
+      if(action == INPUT_ACTION_MENU_UP.get() || action == INPUT_ACTION_MENU_DOWN.get()) {
+        Dropdown.this.allowWrapY = true;
         return InputPropagation.HANDLED;
       }
 

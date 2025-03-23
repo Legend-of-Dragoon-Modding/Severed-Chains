@@ -49,7 +49,7 @@ public class FullScreenOverlayEffect0e implements Effect<EffectManagerParams.Voi
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(RENDERER.getProjectionWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+    final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
     fullScreenEffect_800bb140.transforms
       .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
       .translate(0.0f, 0.0f, 120.0f)

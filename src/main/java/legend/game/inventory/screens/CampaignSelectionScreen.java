@@ -2,7 +2,6 @@ package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
@@ -27,18 +26,21 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_MODS;
 
 public class CampaignSelectionScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(MenuScreen.class);
@@ -55,11 +57,6 @@ public class CampaignSelectionScreen extends MenuScreen {
     title.getFontOptions().set(UI_TEXT_CENTERED);
     title.setPos(0, 10);
     title.setWidth(this.getWidth());
-
-    final Label hotkeys = this.addControl(new Label(I18n.translate("lod_core.ui.campaign_selection.hotkeys", "\u0120", "\u011f")));
-    hotkeys.getFontOptions().set(UI_TEXT).horizontalAlign(HorizontalAlign.RIGHT);
-    hotkeys.setPos(10, 226);
-    hotkeys.setWidth(this.getWidth() - 20);
 
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
@@ -81,6 +78,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     for(final Campaign campaign : SAVES.loadAllCampaigns()) {
       this.campaignList.addEntry(campaign);
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.mods"), INPUT_ACTION_MENU_MODS, this::menuMods);
+    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
   private void onSelection(final Campaign campaign) {
@@ -115,6 +116,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
       submapScene_80052c34 = gameState_800babc8.submapScene_a4;
       submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+      submapCutForSave_800cb450 = submapCut_80052c30;
       collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
 
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
@@ -154,6 +156,8 @@ public class CampaignSelectionScreen extends MenuScreen {
       playMenuSound(40);
       return;
     }
+
+    playMenuSound(2);
 
     final Set<String> originalMods = Set.of(campaign.config.getConfig(CoreMod.ENABLED_MODS_CONFIG.get()));
     final Set<String> modIds = new HashSet<>(originalMods);
@@ -199,29 +203,5 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     // Restore all mods when going back to the title screen
     bootMods(MODS.getAllModIds());
-  }
-
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_NORTH) {
-      this.menuMods();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_WEST) {
-      this.menuDelete();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
   }
 }

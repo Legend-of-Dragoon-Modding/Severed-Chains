@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
-import legend.game.input.InputAction;
-import legend.game.modding.coremod.CoreMod;
+import legend.core.platform.input.InputAction;
+
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateUiElement;
@@ -14,6 +14,7 @@ import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
+import static legend.game.SItem.spellMp_80114290;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
@@ -23,12 +24,16 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 
 public class StatusScreen extends MenuScreen {
   protected int loadingStage;
 
   private int charSlot;
 
+  private boolean allowWrapX = true;
   private double scrollAccumulator;
 
   private final Runnable unload;
@@ -83,9 +88,11 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void scroll(final int slot) {
-    playMenuSound(1);
-    this.charSlot = slot;
-    this.loadingStage = 1;
+    if(characterCount_8011d7c4 > 1) {
+      playMenuSound(1);
+      this.charSlot = slot;
+      this.loadingStage = 1;
+    }
   }
 
   private void renderStatusMenu(final int charSlot, final long a1) {
@@ -109,18 +116,18 @@ public class StatusScreen extends MenuScreen {
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
-      for(int i = 0; i < unlockedSpellCount; i++) {
-        renderCharacter(200, 127 + i * 14, i + 1);
-      }
+      for(int i = 0; i < 4; i++) {
+        if(allocate && i < unlockedSpellCount) {
+          renderCharacter(200, 127 + i * 14, i + 1);
+        }
 
-      for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
         //LAB_80109370
         final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
           renderText(spellStats_800fa0b8[spellIndex].name, 210, 125 + i * 14, UI_TEXT);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellStats_800fa0b8[spellIndex].mp_06);
+            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
           }
         }
       }
@@ -135,12 +142,16 @@ public class StatusScreen extends MenuScreen {
   private void menuNavigateLeft() {
     if(this.charSlot > 0) {
       this.scroll(this.charSlot - 1);
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+      this.scroll(characterCount_8011d7c4 - 1);
     }
   }
 
   private void menuNavigateRight() {
     if(this.charSlot < characterCount_8011d7c4 - 1) {
       this.scroll(this.charSlot + 1);
+    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+      this.scroll(0);
     }
   }
 
@@ -163,8 +174,8 @@ public class StatusScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -172,7 +183,19 @@ public class StatusScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_LEFT.get()) {
+      this.menuNavigateLeft();
+      this.allowWrapX = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_RIGHT.get()) {
+      this.menuNavigateRight();
+      this.allowWrapX = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }
@@ -181,22 +204,13 @@ public class StatusScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.loadingStage != 2) {
-      return InputPropagation.PROPAGATE;
-    }
-
-    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
-      this.menuNavigateLeft();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
-      this.menuNavigateRight();
+    if(action == INPUT_ACTION_MENU_LEFT.get() || action == INPUT_ACTION_MENU_RIGHT.get()) {
+      this.allowWrapX = true;
       return InputPropagation.HANDLED;
     }
 

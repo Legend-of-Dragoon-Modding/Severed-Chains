@@ -11,8 +11,6 @@ import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -23,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.sin;
@@ -33,6 +32,8 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Credits extends EngineState {
@@ -197,9 +198,9 @@ public class Credits extends EngineState {
   @Override
   @Method(0x800eaa88L)
   public void tick() {
-    if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
-      || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
-      || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+    super.tick();
+
+    if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
       this.loadingStage = 4;
     }
     this.creditsStates_800f9378[this.loadingStage].run();

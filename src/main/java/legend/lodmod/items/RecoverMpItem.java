@@ -7,6 +7,8 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
+import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class RecoverMpItem extends BattleItem {
@@ -22,6 +24,19 @@ public class RecoverMpItem extends BattleItem {
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return true;
+  }
+
+  @Override
+  public boolean canBeUsedNow(final UsageLocation location) {
+    boolean canRecover = false;
+    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
+      if((gameState_800babc8.charData_32c[i].partyFlags_04 & 0x3) != 0 && stats_800be5f8[i].maxMp_6e > stats_800be5f8[i].mp_06) {
+        canRecover = true;
+        break;
+      }
+    }
+
+    return canRecover;
   }
 
   @Override

@@ -37,6 +37,7 @@ public final class Main {
 
   public static void main(final String[] args) {
     try {
+      LOGGER.info("Initialising LWJGL version %s", org.lwjgl.Version.getVersion());
       GameEngine.start();
     } catch(final Throwable e) {
       boolean generatedCrashSave = false;
@@ -82,6 +83,7 @@ public final class Main {
       LOGGER.error("Please copy this crash log and send it to us in the Player Help channel in the Legend of Dragoon Discord server.");
       LOGGER.error("https://discord.gg/legendofdragoon");
 
+      LogManager.shutdown();
       System.exit(1);
     }
   }

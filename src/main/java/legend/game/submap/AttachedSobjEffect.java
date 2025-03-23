@@ -58,8 +58,6 @@ public class AttachedSobjEffect {
   private Obj quadDust;
   private final MV transforms = new MV();
 
-  // TODO Still need to implement law pod trail in opengl, but requires custom shader
-
   @Method(0x800f0370L)
   public void initAttachedSobjEffects() {
     this.tmdTrail_800d4ec0.clear();
