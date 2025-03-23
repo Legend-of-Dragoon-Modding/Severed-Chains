@@ -19,6 +19,10 @@ public class RecoveryBallItem extends Item {
     super(ItemIcon.SACK, 50);
   }
 
+  public RecoveryBallItem(final ItemIcon icon, final int price) {
+    super(icon, price);
+  }
+
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return location == UsageLocation.BATTLE;

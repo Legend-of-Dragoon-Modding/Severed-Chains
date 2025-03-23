@@ -19,6 +19,11 @@ public class RecoverStatusItem extends BattleItem {
     this.status = status;
   }
 
+  public RecoverStatusItem(final ItemIcon icon, final int price, final int status) {
+    super(icon, price);
+    this.status = status;
+  }
+
   @Override
   public boolean canBeUsed(final UsageLocation location) {
     return true;
