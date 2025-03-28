@@ -16,6 +16,7 @@ import java.util.Arrays;
 
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.simpleRandFloat;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
@@ -692,9 +693,7 @@ public class BattleStateEf4 {
       //LAB_800c7fb0
       for(int combatantIndex = 0; combatantIndex < this.aliveBentCount_800c669c; combatantIndex++) {
         final BattleEntity27c bent = this.aliveBents_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
-        final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
-        bent.turnValue_4c += v1;
+        bent.turnValue_4c += calculateSpeedIncrease(bent.stats.getStat(LodMod.SPEED_STAT.get()).get());
       }
 
       //LAB_800c8028
@@ -702,6 +701,13 @@ public class BattleStateEf4 {
 
     //LAB_800c8040
     return this.alivePlayerBents_eac[0];
+  }
+
+  private static final float speed20percent = (float)((0x35C2_9183L * 0xFFFF)/ (double)0x1_0000_0000_0000L);
+  private static final float speed90percent = (float)((0x4_4925L * 0x35C2_9183L) / (double)0x1_0000_0000_0000L);
+
+  private static int calculateSpeedIncrease(final int speed) {
+    return (int)(speed * (simpleRandFloat() * speed20percent + speed90percent));
   }
 
   @Method(0x800ca31cL)

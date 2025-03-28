@@ -618,6 +618,10 @@ public final class Scus94491BpeSegment {
     return simpleRandSeed_8004dd44 / 2 & 0xffff;
   }
 
+  public static float simpleRandFloat() {
+    return simpleRand() / 65_535.0f;
+  }
+
   @Method(0x80013404L)
   public static float FUN_80013404(final float a0, final float a1, final int a2) {
     if(a2 == 0) {
