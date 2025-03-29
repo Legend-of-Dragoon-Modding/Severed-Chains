@@ -595,29 +595,38 @@ public class SdlPlatformManager extends PlatformManager {
         case SDL_EVENT_MOUSE_MOTION -> {
           final SDL_MouseMotionEvent mouse = this.event.motion();
           final SdlWindow window = this.getWindow(this.event);
-          this.setWindowInputClass(window, InputClass.KEYBOARD);
 
-          final boolean relative = mouse.which() != 0;
-          window.events().onMouseMove(relative ? mouse.xrel() : mouse.x(), relative ? mouse.yrel() : mouse.y());
+          if(window != null) {
+            this.setWindowInputClass(window, InputClass.KEYBOARD);
+
+            final boolean relative = mouse.which() != 0;
+            window.events().onMouseMove(relative ? mouse.xrel() : mouse.x(), relative ? mouse.yrel() : mouse.y());
+          }
         }
 
         case SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP -> {
           final SDL_MouseButtonEvent mouse = this.event.button();
           final SdlWindow window = this.getWindow(this.event);
-          this.setWindowInputClass(window, InputClass.KEYBOARD);
 
-          if(mouse.down()) {
-            this.getWindow(this.event).events().onMousePress(mouse.button(), window.mods);
-          } else {
-            this.getWindow(this.event).events().onMouseRelease(mouse.button(), window.mods);
+          if(window != null) {
+            this.setWindowInputClass(window, InputClass.KEYBOARD);
+
+            if(mouse.down()) {
+              this.getWindow(this.event).events().onMousePress(mouse.button(), window.mods);
+            } else {
+              this.getWindow(this.event).events().onMouseRelease(mouse.button(), window.mods);
+            }
           }
         }
 
         case SDL_EVENT_MOUSE_WHEEL -> {
           final SDL_MouseWheelEvent wheel = this.event.wheel();
           final SdlWindow window = this.getWindow(this.event);
-          this.setWindowInputClass(window, InputClass.KEYBOARD);
-          window.events().onMouseScroll(wheel.x(), wheel.y());
+
+          if(window != null) {
+            this.setWindowInputClass(window, InputClass.KEYBOARD);
+            window.events().onMouseScroll(wheel.x(), wheel.y());
+          }
         }
 
         case SDL_EVENT_GAMEPAD_ADDED -> {
