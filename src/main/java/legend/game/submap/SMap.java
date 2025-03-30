@@ -1041,7 +1041,8 @@ public class SMap extends EngineState {
   private void renderSmapShadow(final Model124 model) {
     GsInitCoordinate2(model.coord2_14, shadowModel_800bda10.coord2_14);
 
-    shadowModel_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
+    // This is +16 in retail, but this value isn't used - the z offset is inherited from the model render method that calls this
+    shadowModel_800bda10.zOffset_a0 = model.zOffset_a0;
     shadowModel_800bda10.coord2_14.transforms.scale.set(model.shadowSize_10c).div(64.0f);
 
     shadowModel_800bda10.coord2_14.coord.scaling(shadowModel_800bda10.coord2_14.transforms.scale);
