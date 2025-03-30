@@ -11,15 +11,15 @@ if [ "$COMPILED" != "true" ] ; then
   exit 1;
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$SCRIPT_DIR"
+
 if [[ $(pwd) == *":"* ]]; then
   echo "Java cannot launch with a colon (:) in the path. Please rename the directory or move Severed Chains to a different directory."
   echo "Current directory: $(pwd)"
   read -p "Press enter to exit"
   exit 1;
 fi
-
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "$SCRIPT_DIR"
 
 JAVA=./jdk21/bin/java
 
