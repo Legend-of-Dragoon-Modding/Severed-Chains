@@ -70,7 +70,7 @@ public final class AudioThread implements Runnable {
   }
 
   public AudioThread(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate, final EffectsOverTimeGranularity granularity) {
-    this.nanosPerTick = 1_000_000_000 / 60;
+    this.nanosPerTick = 1_000_000_000 / 120;
     this.stereo = stereo;
     this.voiceCount = voiceCount;
     this.interpolationPrecision = bitDepth;
