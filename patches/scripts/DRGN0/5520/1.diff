@@ -5,7 +5,7 @@ READ THIS FIRST: https://docs.google.com/document/d/10mZFyVBLpgNp58QH7MDpHnQAtZ1
  gosub inl[:LABEL_169]
  yield
  gosub inl[:LABEL_25]
- # Original code loaded no assets, adding wait to here was required
+# Original code loaded no assets, adding wait to here was required
 +gosub inl[:LABEL_202]
  yield
  call 714

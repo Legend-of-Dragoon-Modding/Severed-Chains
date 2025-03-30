@@ -5,7 +5,7 @@ READ THIS FIRST: https://docs.google.com/document/d/10mZFyVBLpgNp58QH7MDpHnQAtZ1
  gosub inl[:LABEL_15]
  gosub inl[:LABEL_2]
  gosub inl[:LABEL_16]
- # Original code loaded assets but did not wait, resulting in race conditions
+# Original code loaded assets but did not wait, resulting in race conditions
 +gosub inl[:LABEL_2]
  gosub inl[:LABEL_34]
  gosub inl[:LABEL_2]
