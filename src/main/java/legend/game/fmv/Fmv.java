@@ -575,7 +575,7 @@ public final class Fmv {
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
 
       final MV transforms = new MV();
-      transforms.scaling(frameHeader.getWidth(), frameHeader.getHeight(), 1.0f);
+      transforms.scaling(320.0f, frameHeader.getHeight(), 1.0f);
       transforms.transfer.set(0.0f, (240.0f - frameHeader.getHeight()) / 2.0f, 100.0f);
 
       RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
