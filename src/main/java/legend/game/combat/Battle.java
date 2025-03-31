@@ -101,8 +101,10 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SetBentStatEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -3645,10 +3647,11 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
+    final SetBentStatEvent event = EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].get()));
 
     switch(stat) {
       case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
-      default -> bent.setStat(stat, script.params_20[1].get());
+      default -> bent.setStat(stat, event.value);
     }
 
     return FlowControl.CONTINUE;
@@ -6032,7 +6035,7 @@ public class Battle extends EngineState {
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
-    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
+    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index >= 84 ? 0 : index] << 16;
     this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
     if((deffManager_800c693c.flags_20 & 0x4_0000) != 0) {
@@ -6051,6 +6054,8 @@ public class Battle extends EngineState {
       Loader.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
       Loader.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
+
+    EVENTS.postEvent(new DragoonDeffEvent((4139 + index * 2)));
   }
 
   @Method(0x800e6844L)
