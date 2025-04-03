@@ -270,7 +270,7 @@ public final class AudioThread implements Runnable {
         }
       }
 
-      if(!canBuffer) {
+      if(!this.sequencer.canBuffer()) {
         final long interval = System.nanoTime() - time;
         final int toSleep = (int)(Math.max(0, this.nanosPerTick - interval) / 1_000_000);
         DebugHelper.sleep(toSleep);
