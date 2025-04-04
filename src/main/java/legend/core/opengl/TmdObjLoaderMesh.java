@@ -17,7 +17,7 @@ public class TmdObjLoaderMesh {
 
   public TmdObjLoaderMesh(final int vertexCount, final int indexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucency) {
     this.vertices = new float[vertexCount];
-    this.indices = new int[indexCount];
+    this.indices = new int[indexCount * 2]; // Double size for TRIANGLES_ADJACENCY
     this.textured = textured;
     this.translucent = translucent;
     this.translucency = translucency;

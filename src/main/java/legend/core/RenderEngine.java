@@ -174,7 +174,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsTmd> TMD_SHADER = new ShaderType<>(
-    options -> loadShader("tmd", "tmd", options),
+    options -> loadShader("tmd", "tmd", "tmd", options),
     shader -> {
       shader.use();
       shader.new UniformInt("tex24").set(0);
@@ -195,7 +195,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsBattleTmd> BATTLE_TMD_SHADER = new ShaderType<>(
-    options -> loadShader("battle_tmd", "battle_tmd", options),
+    options -> loadShader("battle_tmd", "tmd", "battle_tmd", options),
     shader -> {
       shader.use();
       shader.new UniformInt("tex24").set(0);
@@ -422,6 +422,14 @@ public class RenderEngine {
   public static <Options extends ShaderOptions<Options>> Shader<Options> loadShader(final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
       return new Shader<>(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static <Options extends ShaderOptions<Options>> Shader<Options> loadShader(final String vsh, final String gsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
+    try {
+      return new Shader<>(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
@@ -952,11 +960,12 @@ public class RenderEngine {
     this.projectionBuffer.put(0, 0.0f);
 
     // zfar
+    this.projectionBuffer.put(1, GTE.getProjectionPlaneDistance());
+
+    // zdiff
     if(highQualityProjection) {
-      this.projectionBuffer.put(1, 1000000.0f);
       this.projectionBuffer.put(2, 1.0f / 1000000.0f);
     } else {
-      this.projectionBuffer.put(1, GTE.getProjectionPlaneDistance());
       this.projectionBuffer.put(2, 1.0f / GTE.getProjectionPlaneDistance());
     }
 

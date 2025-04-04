@@ -59,14 +59,14 @@ public class Gte {
   }
 
   private void RTPT() { //Perspective Transformation Triple
-    this.RTPS(0);
-    this.RTPS(1);
-    this.RTPS(2);
+    this.RTPS(0, false);
+    this.RTPS(1, false);
+    this.RTPS(2, true);
   }
 
   private final Vector3f positionTemp = new Vector3f();
 
-  private void RTPS(final int r) {
+  private void RTPS(final int r, final boolean setMac0) {
     //IR1 = MAC1 = (TRX*1000h + RT11*VX0 + RT12*VY0 + RT13*VZ0) SAR (sf*12)
     //IR2 = MAC2 = (TRY*1000h + RT21*VX0 + RT22*VY0 + RT23*VZ0) SAR (sf*12)
     //IR3 = MAC3 = (TRZ*1000h + RT31*VX0 + RT32*VY0 + RT33*VZ0) SAR (sf*12)
@@ -83,7 +83,7 @@ public class Gte {
     this.SZ[3] = this.positionTemp.z;
 
     final float n;
-    if(this.SZ[3] == 0.0f) {
+    if(!(this.positionTemp.z * 2.0f > this.H)) {
       n = 1.0f;
       this.FLAG |= 0x1 << 17;
     } else {
@@ -97,6 +97,20 @@ public class Gte {
     this.SXY[1].set(this.SXY[2]);
     this.SXY[2].x = this.setSXY(n * this.positionTemp.x + this.screenOffset.x);
     this.SXY[2].y = this.setSXY(n * this.positionTemp.y + this.screenOffset.y);
+
+    if(setMac0) {
+      final long mac0 = this.setMAC0((long)(n * 0xffffef9e + 0x1400000));
+      this.MAC0 = (int)mac0;
+      final long IR0 = mac0 >> 12;
+
+      if(IR0 < 0) {
+        this.FLAG |= 0x1000L;
+      }
+
+      if(IR0 > 0x1000) {
+        this.FLAG |= 0x1000L;
+      }
+    }
   }
 
   private float setSXY(final float value) {
@@ -283,7 +297,7 @@ public class Gte {
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform() {
     this.startCommand();
-    this.RTPS(0);
+    this.RTPS(0, true);
     this.endCommand();
   }
 
