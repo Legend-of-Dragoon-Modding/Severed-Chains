@@ -7,9 +7,8 @@
         <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="INPUT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_DB" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
@@ -25,9 +24,8 @@
         <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="INPUT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_DB" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
