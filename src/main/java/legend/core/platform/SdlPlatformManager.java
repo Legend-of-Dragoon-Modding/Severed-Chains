@@ -366,6 +366,7 @@ public class SdlPlatformManager extends PlatformManager {
 //    SDL_SetHint("SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD", "1");
 
     if(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
+      this.logLastError();
       throw new IllegalStateException("Unable to initialize SDL3");
     }
 
