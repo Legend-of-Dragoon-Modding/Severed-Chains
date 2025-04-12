@@ -1,12 +1,13 @@
 package legend.game.submap;
 
 import legend.core.opengl.Texture;
+import legend.game.scripting.ScriptedObject;
 import legend.game.types.Model124;
 import org.joml.Vector3f;
 
 import static legend.game.submap.AttachedSobjEffect.AttachedSobjEffectData40;
 
-public class SubmapObject210 {
+public class SubmapObject210 implements ScriptedObject {
   public final Model124 model_00;
 
   public boolean hidden_128;
@@ -163,5 +164,10 @@ public class SubmapObject210 {
   @Override
   public String toString() {
     return this.model_00.toString();
+  }
+
+  @Override
+  public Vector3f getPosition() {
+    return this.model_00.coord2_14.coord.transfer;
   }
 }

@@ -17,6 +17,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.Scus94491BpeSegment;
+import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
@@ -27,6 +28,7 @@ import org.legendofdragoon.modloader.events.EventListener;
 import java.util.HashSet;
 import java.util.Set;
 
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 @EventListener
@@ -266,6 +268,19 @@ public class ScriptDebuggerController {
           }
         }
       });
+    }
+  }
+
+  @EventListener
+  public static void onRender(final RenderEvent event) {
+    if(INITIALIZED) {
+      for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
+        final ScriptState<?> state = SCRIPTS.getState(i);
+
+        if(state != null) {
+          state.renderDebugInfo();
+        }
+      }
     }
   }
 

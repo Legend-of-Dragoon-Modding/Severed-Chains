@@ -111,6 +111,7 @@ import legend.game.scripting.ScriptEnum;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptedObject;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
@@ -269,17 +270,17 @@ import static legend.game.combat.SEffe.loadDeffStageEffects;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_1;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_HIDE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_1000;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_DRAGOON;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_ANIMATE_ONCE;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_DRAGOON;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_HIDE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
@@ -403,7 +404,7 @@ public class Battle extends EngineState {
 
   public StageData2c currentStageData_800c6718;
   public int cameraScriptMainTableJumpIndex_800c6748;
-  private ScriptState<Void> scriptState_800c674c;
+  private ScriptState<ScriptedObject> scriptState_800c674c;
 
   public boolean shouldRenderStage_800c6754;
 
@@ -5831,7 +5832,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e5a78L)
-  public void tickLighting(final ScriptState<Void> state, final Void struct) {
+  public void tickLighting(final ScriptState<ScriptedObject> state, final ScriptedObject struct) {
     final BattleLightStruct64 light1 = this._800c6930;
 
     this.lightTicks_800c6928++;
@@ -5934,7 +5935,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e5fe8L)
-  public void updateLighting(final ScriptState<Void> state, final Void struct) {
+  public void updateLighting(final ScriptState<ScriptedObject> state, final ScriptedObject struct) {
     //LAB_800e6008
     for(int i = 0; i < 3; i++) {
       GsSetFlatLight(i, this.lights_800c692c[i].light_00);
@@ -5947,7 +5948,7 @@ public class Battle extends EngineState {
 
   @Method(0x800e6070L)
   public void allocateLighting() {
-    final ScriptState<Void> state = SCRIPTS.allocateScriptState(1, "Lighting controller", null);
+    final ScriptState<ScriptedObject> state = SCRIPTS.allocateScriptState(1, "Lighting controller", null);
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(this::tickLighting);
     state.setRenderer(this::updateLighting);

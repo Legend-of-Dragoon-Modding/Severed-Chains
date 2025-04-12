@@ -238,7 +238,7 @@ public class GameVarParam extends Param {
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c = val;
 
       case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
-      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
+      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = (ScriptState<ScriptedObject>)scriptStatePtrArr_800bc1c0[val];
       case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730 = val;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0 = val;
       case 68 -> Scus94491BpeSegment_800b.previousSubmapCut_800bda08 = val;

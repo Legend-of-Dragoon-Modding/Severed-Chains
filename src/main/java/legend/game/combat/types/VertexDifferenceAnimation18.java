@@ -3,9 +3,10 @@ package legend.game.combat.types;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptedObject;
 import org.joml.Vector3f;
 
-public class VertexDifferenceAnimation18 {
+public class VertexDifferenceAnimation18 implements ScriptedObject {
   public int ticksRemaining_00;
   public float embiggener_04;
   public int vertexCount_08;
@@ -40,5 +41,15 @@ public class VertexDifferenceAnimation18 {
     }
 
     //LAB_80109ce0
+  }
+
+  @Override
+  public Vector3f getPosition() {
+    return null;
+  }
+
+  @Override
+  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+
   }
 }

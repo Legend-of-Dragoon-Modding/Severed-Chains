@@ -36,6 +36,7 @@ import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
+import legend.game.scripting.ScriptedObject;
 import legend.game.tim.Tim;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
@@ -185,7 +186,7 @@ public class SMap extends EngineState {
 
   public int sobjCount_800c6730;
 
-  public ScriptState<Void> submapControllerState_800c6740;
+  public ScriptState<ScriptedObject> submapControllerState_800c6740;
 
   private final Model124 playerModel_800c6748 = new Model124("Player");
 
@@ -2988,7 +2989,7 @@ public class SMap extends EngineState {
         this.firstMovement = true;
 
         //LAB_800e1914
-        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
+        final ScriptState<ScriptedObject> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submap.script);
 

@@ -34,7 +34,7 @@ import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 /** Holds persistent data for scripts */
-public class ScriptState<T> {
+public class ScriptState<T extends ScriptedObject> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
@@ -120,7 +120,7 @@ public class ScriptState<T> {
   private boolean paused;
   private int ticks;
 
-  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
+  public static <T extends ScriptedObject> Class<ScriptState<T>> classFor(final Class<T> cls) {
     return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
   }
 
@@ -1292,6 +1292,12 @@ public class ScriptState<T> {
 
         break;
       }
+    }
+  }
+
+  public void renderDebugInfo() {
+    if(this.innerStruct_00 != null) {
+      this.innerStruct_00.renderScriptDebug((ScriptState<ScriptedObject>)this);
     }
   }
 

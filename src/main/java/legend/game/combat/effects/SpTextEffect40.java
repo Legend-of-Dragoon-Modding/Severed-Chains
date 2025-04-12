@@ -3,14 +3,18 @@ package legend.game.combat.effects;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptedObject;
 import legend.game.types.Translucency;
 import org.joml.Math;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
+import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 
-public class SpTextEffect40 {
+public class SpTextEffect40 implements ScriptedObject {
   public boolean movingY_00 = true;
   public int _01;
   public int brightness_02 = 0x80;
@@ -36,6 +40,18 @@ public class SpTextEffect40 {
 
   public SpTextEffect40() {
     Arrays.setAll(this.charArray_3c, i -> new SpTextEffectTrail10());
+  }
+
+  @Override
+  public Vector3f getPosition() {
+    return new Vector3f(this.x_0c, this.y_10, 0.0f);
+  }
+
+  @Override
+  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+    final Vector2f viewspace = new Vector2f(this.x_0c, this.y_10);
+    ScriptedObject.renderScriptDebug(viewspace, this.getColour());
+    ScriptedObject.renderScriptDebugText(state, viewspace.x + GPU.getOffsetX() - 9.0f, viewspace.y + GPU.getOffsetY() - 9.0f);
   }
 
   @Method(0x800d4018L)
