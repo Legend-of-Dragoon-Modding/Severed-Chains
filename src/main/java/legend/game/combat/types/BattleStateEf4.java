@@ -692,9 +692,8 @@ public class BattleStateEf4 {
       //LAB_800c7fb0
       for(int combatantIndex = 0; combatantIndex < this.aliveBentCount_800c669c; combatantIndex++) {
         final BattleEntity27c bent = this.aliveBents_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
-        final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
-        bent.turnValue_4c += v1;
+        // Generate a random number between 0.0..0.2 and add 0.9 to bring it to 0.9..1.1
+        bent.turnValue_4c += Math.round(bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
       }
 
       //LAB_800c8028

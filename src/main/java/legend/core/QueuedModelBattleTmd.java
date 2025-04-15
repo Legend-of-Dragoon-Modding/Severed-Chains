@@ -14,22 +14,22 @@ import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 
 public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, QueuedModelBattleTmd> implements LitModel {
-  final Shader.UniformBuffer vdfUniform;
-  final FloatBuffer vdfBuffer;
-  final Matrix4f lightTransforms = new Matrix4f();
-  final FloatBuffer lightingBuffer;
+  private final Shader.UniformBuffer vdfUniform;
+  private final FloatBuffer vdfBuffer;
+  private final Matrix4f lightTransforms = new Matrix4f();
+  private final FloatBuffer lightingBuffer;
 
-  final Matrix4f lightDirection = new Matrix4f();
-  final Matrix3f lightColour = new Matrix3f();
-  final Vector4f backgroundColour = new Vector4f();
-  boolean lightUsed;
+  private final Matrix4f lightDirection = new Matrix4f();
+  private final Matrix3f lightColour = new Matrix3f();
+  private final Vector4f backgroundColour = new Vector4f();
+  private boolean lightUsed;
 
   /** The untextured translucency override from the TMD header */
-  int tmdTranslucency;
+  private int tmdTranslucency;
 
-  int ctmdFlags;
-  final Vector3f battleColour = new Vector3f();
-  Vector3f[] vdf;
+  private int ctmdFlags;
+  private final Vector3f battleColour = new Vector3f();
+  private Vector3f[] vdf;
 
   public QueuedModelBattleTmd(final RenderBatch batch, final Shader<ShaderOptionsBattleTmd> shader, final ShaderOptionsBattleTmd shaderOptions, final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
     super(batch, shader, shaderOptions);

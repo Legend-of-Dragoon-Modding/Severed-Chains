@@ -131,7 +131,7 @@ public class ScriptManager {
     return scriptStatePtrArr_800bc1c0[index];
   }
 
-  public <T> ScriptState<T> getState(final int index, final Class<T> type) {
+  public <T extends ScriptedObject> ScriptState<T> getState(final int index, final Class<T> type) {
     if(index == -1) {
       return null;
     }
@@ -147,11 +147,11 @@ public class ScriptManager {
     return type.cast(scriptStatePtrArr_800bc1c0[index].innerStruct_00);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
+  public <T extends ScriptedObject> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
     return this.allocateScriptState(this.findFreeScriptState(), name, type);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final int index, final String name, @Nullable final T type) {
+  public <T extends ScriptedObject> ScriptState<T> allocateScriptState(final int index, final String name, @Nullable final T type) {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, name);
 
     final ScriptState<T> scriptState = new ScriptState<>(this, index, name, type);

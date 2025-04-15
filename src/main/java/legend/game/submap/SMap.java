@@ -36,6 +36,7 @@ import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
+import legend.game.scripting.ScriptedObject;
 import legend.game.tim.Tim;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
@@ -185,7 +186,7 @@ public class SMap extends EngineState {
 
   public int sobjCount_800c6730;
 
-  public ScriptState<Void> submapControllerState_800c6740;
+  public ScriptState<ScriptedObject> submapControllerState_800c6740;
 
   private final Model124 playerModel_800c6748 = new Model124("Player");
 
@@ -1042,7 +1043,8 @@ public class SMap extends EngineState {
   private void renderSmapShadow(final Model124 model) {
     GsInitCoordinate2(model.coord2_14, shadowModel_800bda10.coord2_14);
 
-    shadowModel_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
+    // This is +16 in retail, but this value isn't used - the z offset is inherited from the model render method that calls this
+    shadowModel_800bda10.zOffset_a0 = model.zOffset_a0;
     shadowModel_800bda10.coord2_14.transforms.scale.set(model.shadowSize_10c).div(64.0f);
 
     shadowModel_800bda10.coord2_14.coord.scaling(shadowModel_800bda10.coord2_14.transforms.scale);
@@ -2988,7 +2990,7 @@ public class SMap extends EngineState {
         this.firstMovement = true;
 
         //LAB_800e1914
-        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
+        final ScriptState<ScriptedObject> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submap.script);
 

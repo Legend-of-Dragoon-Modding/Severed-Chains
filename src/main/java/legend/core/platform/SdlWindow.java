@@ -52,6 +52,7 @@ import static org.lwjgl.sdl.SDLVideo.SDL_GetDisplayBounds;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetDisplays;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetPrimaryDisplay;
 import static org.lwjgl.sdl.SDLVideo.SDL_GetWindowSize;
+import static org.lwjgl.sdl.SDLVideo.SDL_RestoreWindow;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowBordered;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowIcon;
 import static org.lwjgl.sdl.SDLVideo.SDL_SetWindowMinimumSize;
@@ -202,8 +203,9 @@ public class SdlWindow extends Window {
   public void makeFullscreen() {
     this.monitor = this.getMonitorFromConfig();
     this.vidMode = SDL_GetDesktopDisplayMode(this.monitor);
-    this.moveToMonitor();
+    this.err(SDL_RestoreWindow(this.window), "RestoreWindow");
     this.err(SDL_SetWindowBordered(this.window, false), "SetWindowBordered");
+    this.moveToMonitor();
 
     // Overscan by 1 pixel to stop Windows from putting it into exclusive fullscreen
     this.err(SDL_SetWindowSize(this.window, this.vidMode.w(), this.vidMode.h() + 1), "SetWindowSize");

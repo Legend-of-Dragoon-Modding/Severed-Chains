@@ -1,5 +1,7 @@
 package legend.core.opengl;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Vector2fc;
@@ -13,6 +15,8 @@ import java.nio.file.Path;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11C.glGetError;
 import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glBufferData;
@@ -50,26 +54,61 @@ import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
 import static org.lwjgl.opengl.GL31C.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL31C.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
+import static org.lwjgl.opengl.GL32C.GL_GEOMETRY_SHADER;
 
 public class Shader<Options extends ShaderOptions<Options>> {
-  private static final Logger LOGGER = LogManager.getLogger(Shader.class.getName());
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Shader.class);
 
-  private final Path vert;
-  private final Path frag;
+  private final Object2IntMap<Path> stages = new Object2IntOpenHashMap<>();
   private final Function<Shader<Options>, Supplier<Options>> optionsSupplier;
   private Supplier<Options> options;
   private int shader = -1;
 
   public Shader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    this.vert = vert;
-    this.frag = frag;
+    LOGGER.info("Compiling shader vs[%s] fs[%s]", vert, frag);
+
+    this.stages.put(vert, GL_VERTEX_SHADER);
+    this.stages.put(frag, GL_FRAGMENT_SHADER);
+    this.optionsSupplier = options;
+    this.reload();
+  }
+
+  public Shader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    LOGGER.info("Compiling shader vs[%s] gs[%s] fs[%s]", vert, geom, frag);
+
+    this.stages.put(vert, GL_VERTEX_SHADER);
+    this.stages.put(geom, GL_GEOMETRY_SHADER);
+    this.stages.put(frag, GL_FRAGMENT_SHADER);
     this.optionsSupplier = options;
     this.reload();
   }
 
   public void reload() throws IOException {
-    final int vsh = this.compileShader(this.vert, GL_VERTEX_SHADER);
-    final int fsh = this.compileShader(this.frag, GL_FRAGMENT_SHADER);
+    final int[] stages = new int[this.stages.size()];
+    boolean error = false;
+    int i = 0;
+
+    for(final var entry : this.stages.object2IntEntrySet()) {
+      stages[i] = this.compileShader(entry.getKey(), entry.getIntValue());
+
+      if(stages[i] == 0) {
+        error = true;
+        break;
+      }
+
+      i++;
+    }
+
+    // Clear out errors
+    while(glGetError() != GL_NO_ERROR) {
+      // do nothing
+    }
+
+    // Delete stages that were compiled and bail
+    if(error) {
+      this.deleteShaders(stages);
+      return;
+    }
 
     // Delete the old shader after loading the parts of the new one so
     // that we can keep using the old one if the new one fails to load
@@ -77,10 +116,17 @@ public class Shader<Options extends ShaderOptions<Options>> {
       this.delete();
     }
 
-    this.shader = this.linkProgram(vsh, fsh);
-    glDeleteShader(vsh);
-    glDeleteShader(fsh);
+    this.shader = this.linkProgram(stages);
+    this.deleteShaders(stages);
     this.options = this.optionsSupplier.apply(this);
+  }
+
+  private void deleteShaders(final int[] shaders) {
+    for(int i = 0; i < shaders.length; i++) {
+      if(shaders[i] != 0) {
+        glDeleteShader(shaders[i]);
+      }
+    }
   }
 
   private int compileShader(final Path file, final int type) throws IOException {
@@ -89,20 +135,23 @@ public class Shader<Options extends ShaderOptions<Options>> {
     glCompileShader(shader);
 
     if(glGetShaderi(shader, GL_COMPILE_STATUS) == 0) {
-      LOGGER.error("Shader compile error {}: {}", file, glGetShaderInfoLog(shader));
+      LOGGER.error("Shader compile error %s: %s", file, glGetShaderInfoLog(shader));
     }
 
     return shader;
   }
 
-  private int linkProgram(final int vsh, final int fsh) {
+  private int linkProgram(final int[] stages) {
     final int shader = glCreateProgram();
-    glAttachShader(shader, vsh);
-    glAttachShader(shader,fsh);
+
+    for(int i = 0; i < stages.length; i++) {
+      glAttachShader(shader, stages[i]);
+    }
+
     glLinkProgram(shader);
 
     if(glGetProgrami(shader, GL_LINK_STATUS) == 0) {
-      LOGGER.error("Program link error: {}", glGetProgramInfoLog(shader));
+      LOGGER.error("Program link error: %s", glGetProgramInfoLog(shader));
     }
 
     return shader;
@@ -116,7 +165,7 @@ public class Shader<Options extends ShaderOptions<Options>> {
     final int index = glGetUniformBlockIndex(this.shader, name);
 
     if(index == GL_INVALID_INDEX) {
-      LOGGER.error("Uniform block {} not found in shader {}", name, this.shader);
+      LOGGER.error("Uniform block %s not found in shader %d", name, this.shader);
     } else {
       glUniformBlockBinding(this.shader, index, binding);
     }
@@ -138,7 +187,7 @@ public class Shader<Options extends ShaderOptions<Options>> {
       this.loc = glGetUniformLocation(Shader.this.shader, name);
 
       if(this.loc == GL_INVALID_INDEX) {
-        LOGGER.error("Uniform {} not found in shader {}", name, Shader.this.shader);
+        LOGGER.error("Uniform %s not found in shader %d", name, Shader.this.shader);
       }
     }
   }

@@ -175,18 +175,7 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   private boolean skipInput() {
-    if(this.messageBox.state_0c == 5 || this.messageBox.state_0c == 4) {
-      return true;
-    }
-
-    if(this.messageBox.type_15 == 0) {
-      playMenuSound(2);
-      this.result = MessageBoxResult.YES;
-      this.messageBox.state_0c = 4;
-      return true;
-    }
-
-    return this.messageBox.state_0c != 3 || this.messageBox.type_15 != 2;
+    return this.messageBox.state_0c != 3;
   }
 
   @Override
@@ -204,26 +193,35 @@ public class MessageBoxScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
-      this.menuSelect();
+    if(this.messageBox.type_15 == 0) {
+      playMenuSound(2);
+      this.result = MessageBoxResult.YES;
+      this.messageBox.state_0c = 4;
       return InputPropagation.HANDLED;
     }
 
-    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
-      this.menuCancel();
-      return InputPropagation.HANDLED;
-    }
+    if(this.messageBox.type_15 == 2) {
+      if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+        this.menuSelect();
+        return InputPropagation.HANDLED;
+      }
 
-    if(action == INPUT_ACTION_MENU_UP.get()) {
-      this.menuNavigateUp();
-      this.allowWrapY = false;
-      return InputPropagation.HANDLED;
-    }
+      if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+        this.menuCancel();
+        return InputPropagation.HANDLED;
+      }
 
-    if(action == INPUT_ACTION_MENU_DOWN.get()) {
-      this.menuNavigateDown();
-      this.allowWrapY = false;
-      return InputPropagation.HANDLED;
+      if(action == INPUT_ACTION_MENU_UP.get()) {
+        this.menuNavigateUp();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
+
+      if(action == INPUT_ACTION_MENU_DOWN.get()) {
+        this.menuNavigateDown();
+        this.allowWrapY = false;
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;

@@ -5,16 +5,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Param;
 import org.legendofdragoon.scripting.tokens.Script;
+
+import java.nio.file.Path;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
@@ -25,6 +32,7 @@ public class ScriptLiveDebuggerController {
   private Script tokens;
   private int index;
   private boolean stepping;
+  private boolean runningDebugCode;
 
   @FXML
   private AnchorPane pnlUi;
@@ -38,6 +46,11 @@ public class ScriptLiveDebuggerController {
 
   @FXML
   private TextArea txtCode;
+
+  @FXML
+  private TextField txtRun;
+  @FXML
+  private Button btnRun;
 
   public ScriptLiveDebuggerController() {
     this.disassembler = new Disassembler(SCRIPTS.meta());
@@ -147,6 +160,11 @@ public class ScriptLiveDebuggerController {
         this.stepping = false;
       }
 
+      if(this.runningDebugCode) {
+        this.runningDebugCode = false;
+        return;
+      }
+
       final int offset = state.context.opOffset_08;
       Platform.runLater(() -> this.displayCode(offset));
     }
@@ -169,5 +187,28 @@ public class ScriptLiveDebuggerController {
   public void stepScript(final ActionEvent event) throws Exception {
     this.stepping = true;
     SCRIPTS.getState(this.index).resume();
+  }
+
+  public void txtCodeKeyPressed(final KeyEvent event) {
+    if(event.getCode() == KeyCode.ENTER && !this.txtRun.getText().isBlank()) {
+      this.runCode();
+    }
+  }
+
+  public void runCode(final ActionEvent event) {
+    this.runCode();
+  }
+
+  private void runCode() {
+    this.runningDebugCode = true;
+
+    final byte[] compiled = SCRIPTS.compile(Path.of("./patches/dummy"), this.txtRun.getText() + "\nreturn");
+    final ScriptFile script = new ScriptFile("Injected code", compiled);
+
+    final ScriptState<?> state = SCRIPTS.getState(this.index);
+    state.pushFrame(new ScriptStackFrame(script, 0));
+
+    this.stepping = true;
+    state.resume();
   }
 }

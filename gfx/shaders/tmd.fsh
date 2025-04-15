@@ -1,21 +1,23 @@
 #version 330 core
 
-smooth in vec2 vertUv;
-flat in vec2 vertTpage;
-flat in vec2 vertClut;
-flat in int vertBpp;
-smooth in vec4 vertColour;
-flat in int vertFlags;
+in GS_OUT {
+  smooth vec2 vertUv;
+  flat vec2 vertTpage;
+  flat vec2 vertClut;
+  flat int vertBpp;
+  smooth vec4 vertColour;
+  flat int vertFlags;
 
-flat in int translucency;
+  flat int translucency;
 
-flat in float widthMultiplier;
-flat in int widthMask;
-flat in int indexShift;
-flat in int indexMask;
+  flat float widthMultiplier;
+  flat int widthMask;
+  flat int indexShift;
+  flat int indexMask;
 
-smooth in float depth;
-smooth in float depthOffset;
+  smooth float depth;
+  smooth float depthOffset;
+};
 
 layout(std140) uniform projectionInfo {
   float znear;

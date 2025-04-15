@@ -1,6 +1,6 @@
 package legend.game.scripting;
 
-public class RunningScript<T> {
+public class RunningScript<T extends ScriptedObject> {
   public final ScriptState<T> scriptState_04;
   /** Pointer to the start of the current command (i.e. the op) */
   public int opOffset_08;

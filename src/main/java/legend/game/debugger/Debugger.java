@@ -19,6 +19,7 @@ public class Debugger extends Application {
 
   public static void show() {
     stage.show();
+    stage.toFront();
   }
 
   @Override
