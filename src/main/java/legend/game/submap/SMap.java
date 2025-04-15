@@ -28,6 +28,7 @@ import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
+import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -2989,6 +2990,9 @@ public class SMap extends EngineState {
 
         this.firstMovement = true;
 
+        final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this.submap.script, this.submap.objects));
+        this.submap.script = loadedEvent.submapScript;
+
         //LAB_800e1914
         final ScriptState<ScriptedObject> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
         this.submapControllerState_800c6740 = submapController;
@@ -3002,7 +3006,7 @@ public class SMap extends EngineState {
           final SubmapObject obj = this.submap.objects.get(i);
 
           final String name = "Submap object " + i + " (file " + i * 33 + ')';
-          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, new SubmapObject210(name));
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, obj.constructor.apply(name));
           this.sobjs_800c6880[i] = state;
           state.setTicker(this::submapObjectTicker);
           state.setRenderer(this::submapObjectRenderer);
