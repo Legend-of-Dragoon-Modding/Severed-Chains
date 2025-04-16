@@ -129,16 +129,16 @@ public class ItemListMenu extends ListMenu {
     if(this.menuState_00 != 0 && (this.flags_02 & 0x1) != 0) {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
+        final Item item = this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item;
         //Selected item description
         if(this.description == null) {
           this.description = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
         }
 
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).item.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
+        renderText(I18n.translate(item.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
       }
     }
   }
