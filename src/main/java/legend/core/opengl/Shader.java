@@ -7,10 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
-import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,13 +18,11 @@ import java.util.function.Supplier;
 import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11C.glGetError;
 import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15C.GL_WRITE_ONLY;
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glBufferData;
+import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengl.GL15C.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
-import static org.lwjgl.opengl.GL15C.glMapBuffer;
-import static org.lwjgl.opengl.GL15C.glUnmapBuffer;
 import static org.lwjgl.opengl.GL20C.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20C.GL_LINK_STATUS;
@@ -225,11 +221,7 @@ public class Shader<Options extends ShaderOptions<Options>> {
 
     public void set(final long offset, final FloatBuffer buffer) {
       glBindBuffer(GL_UNIFORM_BUFFER, this.id);
-//      glBufferSubData(GL_UNIFORM_BUFFER, offset, buffer);
-      final ByteBuffer data = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-      MemoryUtil.memCopy(buffer, data.asFloatBuffer());
-      glUnmapBuffer(GL_UNIFORM_BUFFER);
-
+      glBufferSubData(GL_UNIFORM_BUFFER, offset, buffer);
       glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
   }
