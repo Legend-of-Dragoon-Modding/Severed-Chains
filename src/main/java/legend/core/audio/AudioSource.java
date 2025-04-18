@@ -95,9 +95,11 @@ public abstract class AudioSource {
 
   protected void bufferOutput(final int format, final short[] buffer, final int sampleRate) {
     synchronized(this) {
-      final int bufferId = this.buffers[this.bufferIndex--];
-      alBufferData(bufferId, format, buffer, sampleRate);
-      alSourceQueueBuffers(this.sourceId, bufferId);
+      if(this.bufferIndex >= 0) {
+        final int bufferId = this.buffers[this.bufferIndex--];
+        alBufferData(bufferId, format, buffer, sampleRate);
+        alSourceQueueBuffers(this.sourceId, bufferId);
+      }
     }
   }
 
