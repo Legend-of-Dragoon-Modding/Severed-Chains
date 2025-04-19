@@ -1444,6 +1444,16 @@ public class SMap extends EngineState {
 
         //LAB_800df104
         if(size * size >= x * x + z * z && (collideeMinY >= colliderMinY && collideeMinY <= colliderMaxY || collideeMaxY >= colliderMinY && collideeMaxY <= colliderMaxY)) {
+          if(sobj.sobjIndex_12e == 0) {
+            // Stuck protection: if Dart is inside a sobj, he is not collided so he can still move
+            final float dx2 = struct.model_00.coord2_14.coord.transfer.x - model.coord2_14.coord.transfer.x;
+            final float dz2 = struct.model_00.coord2_14.coord.transfer.z - model.coord2_14.coord.transfer.z;
+
+            if(size * size >= dx2 * dx2 + dz2 * dz2) {
+              break;
+            }
+          }
+
           //LAB_800df118
           script.params_20[3].set(i);
           return FlowControl.CONTINUE;
@@ -2771,19 +2781,19 @@ public class SMap extends EngineState {
     }
 
     if((sobj.flags_190 & 0x800_0000) != 0) {
-      this.FUN_800e4378(sobj, 0x1000_0000L);
+      this.checkSobjSobjCollisionNoReach(sobj, 0x1000_0000);
     }
 
     if((sobj.flags_190 & 0x200_0000) != 0) {
-      this.FUN_800e4378(sobj, 0x400_0000L);
+      this.checkSobjSobjCollisionNoReach(sobj, 0x400_0000);
     }
 
     if((sobj.flags_190 & 0x80_0000) != 0) {
-      this.FUN_800e450c(sobj, 0x100_0000L);
+      this.checkSobjSobjCollisionWithReach(sobj, 0x100_0000);
     }
 
     if((sobj.flags_190 & 0x20_0000) != 0) {
-      this.FUN_800e450c(sobj, 0x40_0000L);
+      this.checkSobjSobjCollisionWithReach(sobj, 0x40_0000);
     }
 
     if(enableCollisionDebug) {
@@ -3273,7 +3283,7 @@ public class SMap extends EngineState {
 
   /** sobj/sobj collision */
   @Method(0x800e4378L)
-  private void FUN_800e4378(final SubmapObject210 sobj, final long a1) {
+  private void checkSobjSobjCollisionNoReach(final SubmapObject210 sobj, final int type) {
     final Model124 model = sobj.model_00;
 
     sobj.collidedWithSobjIndex_19c = -1;
@@ -3289,7 +3299,7 @@ public class SMap extends EngineState {
       final SubmapObject210 sobj2 = this.sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
-      if(sobj2 != sobj && (sobj2.flags_190 & a1) != 0) {
+      if(sobj2 != sobj && (sobj2.flags_190 & type) != 0) {
         final float dx = model2.coord2_14.coord.transfer.x - model.coord2_14.coord.transfer.x;
         final float dz = model2.coord2_14.coord.transfer.z - model.coord2_14.coord.transfer.z;
         final int size = sobj.collisionSizeHorizontal_1a0 + sobj2.collisionSizeHorizontal_1a0;
@@ -3308,7 +3318,7 @@ public class SMap extends EngineState {
 
   /** sobj/sobj collision */
   @Method(0x800e450cL)
-  private void FUN_800e450c(final SubmapObject210 sobj, final long a1) {
+  private void checkSobjSobjCollisionWithReach(final SubmapObject210 sobj, final int type) {
     final Model124 model = sobj.model_00;
 
     sobj.collidedWithSobjIndex_1a8 = -1;
@@ -3325,7 +3335,7 @@ public class SMap extends EngineState {
       final SubmapObject210 sobj2 = this.sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
-      if(sobj2 != sobj && (sobj2.flags_190 & a1) != 0) {
+      if(sobj2 != sobj && (sobj2.flags_190 & type) != 0) {
         final float dx = model2.coord2_14.coord.transfer.x - (model.coord2_14.coord.transfer.x + reachX);
         final float dz = model2.coord2_14.coord.transfer.z - (model.coord2_14.coord.transfer.z + reachZ);
         final int size = sobj.collisionSizeHorizontal_1ac + sobj2.collisionSizeHorizontal_1ac;
