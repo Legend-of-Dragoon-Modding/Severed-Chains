@@ -10,7 +10,7 @@ import legend.core.audio.SampleRate;
 import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
 
 final public class LookupTables {
-  public static final int VOICE_COUNTER_BIT_PRECISION = 24;
+  public static final int VOICE_COUNTER_BIT_PRECISION = 26;
   private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION);
   public static final int BREATH_BASE_SHIFT = 22;
   /** Represents all 60 positions in a breath control table */
