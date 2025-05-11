@@ -98,6 +98,8 @@ import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.BattleBarBlockedEvent;
+import legend.game.modding.events.battle.BattleBarEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
@@ -1058,6 +1060,9 @@ public class Battle extends EngineState {
 
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
+
+    functions[950] = this::battleBar;
+    functions[951] = this::battleBarBlocked;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -7287,6 +7292,24 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Used to call an event override for menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
+  public FlowControl battleBar(final RunningScript<?> script) {
+    final BattleBarEvent bar = EVENTS.postEvent(new BattleBarEvent(script.params_20[0].get()));
+    script.params_20[1].set(bar.batttleBar);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to call an event override for blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
+  public FlowControl battleBarBlocked(final RunningScript<?> script) {
+    final BattleBarBlockedEvent bar = EVENTS.postEvent(new BattleBarBlockedEvent(script.params_20[0].get()));
+    script.params_20[1].set(bar.batttleBarBlocked);
+    return FlowControl.CONTINUE;
+  }
+
   @Method(0x800eb9acL)
   public void loadStageTmd(final BattleStage stage, final CContainer extTmd, final TmdAnimationFile tmdAnim) {
     final float x = stage.coord2_558.coord.transfer.x;
@@ -8809,4 +8832,6 @@ public class Battle extends EngineState {
       deffManager._08[i]._02 = thing._02;
     }
   }
+
+
 }

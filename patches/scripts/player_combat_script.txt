@@ -5460,10 +5460,12 @@ or 0x80, stor[17] ; right, left
 
 LABEL_499:
 mov stor[17], stor[8] ; source, dest
+call Battle::battleBar, stor[8], stor[8] ; 
 return
 
 LABEL_500:
 mov 0x60, stor[8] ; source, dest
+call Battle::battleBar, stor[8], stor[8] ; 
 gosub inl[:IS_DRAGOON] ; addr
 return
 
@@ -5511,6 +5513,7 @@ mov var[46][2], stor[10] ; s10 = encounter escape chance
 jmp_cmp !=, 0x0, stor[10], inl[:LABEL_507] ; escape chance is not 0
 or 0x8, stor[9] ; can't run
 LABEL_507:
+call Battle::battleBarBlocked, stor[9], stor[9] ; 
 return
 
 LABEL_508:
