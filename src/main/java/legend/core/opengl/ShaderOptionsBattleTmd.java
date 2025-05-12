@@ -7,13 +7,15 @@ public class ShaderOptionsBattleTmd extends ShaderOptionsBase<ShaderOptionsBattl
   private final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags;
   private final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour;
   private final Shader<ShaderOptionsBattleTmd>.UniformInt useVdf;
+  private final Shader<ShaderOptionsBattleTmd>.UniformInt time;
 
-  public ShaderOptionsBattleTmd(final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex, final Shader<ShaderOptionsBattleTmd>.UniformVec3 colourUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffsetUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 clutUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 tpageUniform, final Shader<ShaderOptionsBattleTmd>.UniformFloat discardTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags, final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour, final Shader<ShaderOptionsBattleTmd>.UniformInt useVdf) {
+  public ShaderOptionsBattleTmd(final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex, final Shader<ShaderOptionsBattleTmd>.UniformVec3 colourUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffsetUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 clutUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 tpageUniform, final Shader<ShaderOptionsBattleTmd>.UniformFloat discardTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags, final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour, final Shader<ShaderOptionsBattleTmd>.UniformInt useVdf, final Shader<ShaderOptionsBattleTmd>.UniformInt time) {
     super(modelIndex, colourUniform, uvOffsetUniform, clutUniform, tpageUniform, discardTranslucency);
     this.tmdTranslucency = tmdTranslucency;
     this.ctmdFlags = ctmdFlags;
     this.battleColour = battleColour;
     this.useVdf = useVdf;
+    this.time = time;
   }
 
   public ShaderOptionsBattleTmd tmdTranslucency(final int translucency) {
@@ -33,6 +35,11 @@ public class ShaderOptionsBattleTmd extends ShaderOptionsBase<ShaderOptionsBattl
 
   public ShaderOptionsBattleTmd useVdf(final boolean useVdf) {
     this.useVdf.set(useVdf ? 1 : 0);
+    return this;
+  }
+
+  public ShaderOptionsBattleTmd time(final int time) {
+    this.time.set(time);
     return this;
   }
 }

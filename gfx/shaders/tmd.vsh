@@ -33,6 +33,8 @@ uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
 
+uniform int time;
+
 struct ModelTransforms {
   mat4 model;
   vec4 screenOffset;
@@ -68,6 +70,12 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
+vec3 hsv2rgb(vec3 c) {
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
 void main() {
   vec4 pos = vec4(inPos.xyz, 1.0f);
 
@@ -93,6 +101,15 @@ void main() {
   } else {
     vs_out.vertColour = vec4(1.0, 1.0, 1.0, 1.0);
   }
+
+  // calculate intensity of original colour
+  float v = 0.2126 * vs_out.vertColour.rgb.r + 0.7152 * vs_out.vertColour.rgb.g + 0.0722 * vs_out.vertColour.rgb.b;
+
+  // pick a random HSV hue based on the timer and vertex ID using original intensity as the value
+  vec3 hsv = vec3(time / 10000.0 + gl_VertexID / 4.0, 1.0, v);
+
+  // convert back to RGB
+  vs_out.vertColour.rgb = hsv2rgb(hsv) * 2.0;
 
   int intTpage = int(inTpage);
   vs_out.vertBpp = intTpage >> 7 & 0x3;

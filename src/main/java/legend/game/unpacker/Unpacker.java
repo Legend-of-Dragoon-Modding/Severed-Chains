@@ -847,6 +847,15 @@ public final class Unpacker {
 
   /** Replaces the disk 2 Claire model (broken face UVs) with the good model from disk 3 */
   private static void replaceBrokenClaireModel(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    LOGGER.error(root.children.get("SECT"));
+    LOGGER.error(root.children.get("SECT").children.get("DRGN22.BIN"));
+    LOGGER.error(root.children.get("SECT").children.get("DRGN22.BIN").children.get("863"));
+    LOGGER.error(root.children.get("SECT").children.get("DRGN22.BIN").children.get("863").children.get("33"));
+    LOGGER.error(root.children.get("SECT"));
+    LOGGER.error(root.children.get("SECT").children.get("DRGN23.BIN"));
+    LOGGER.error(root.children.get("SECT").children.get("DRGN23.BIN").children.get("506"));
+    LOGGER.error(root.children.get("SECT").children.get("DRGN23.BIN").children.get("506").children.get("33"));
+
     final PathNode bad = root.children.get("SECT").children.get("DRGN22.BIN").children.get("863").children.get("33");
     final PathNode good = root.children.get("SECT").children.get("DRGN23.BIN").children.get("506").children.get("33");
     transformations.replaceNode(bad, good.data);
