@@ -5412,12 +5412,12 @@ rel :ACTION_NOOP ; no-op
 
 ; SUBROUTINE TABLE
 DRAGOON_ACTIONS:
-rel :ACTION_NOOP ; guard (no-op)
-rel :ACTION_DRAGOON_TRANSFORM ; transform (no-op)
+rel :ACTION_GUARD ; guard
+rel :DETRANSFORM_FROM_DRAGOON ; transform
 rel :ACTION_DRAGOON_MAGIC ; d-magic
 rel :ACTION_DRAGOON_ATTACK ; attack
-rel :ACTION_NOOP ; item (no-op)
-rel :ACTION_NOOP ; run (no-op)
+rel :ACTION_USE_ITEM ; item
+rel :ACTION_RUN_AWAY ; run
 rel :ACTION_NOOP ; special (no-op)
 rel :ACTION_NOOP ; ? (no-op)
 rel :ACTION_DRAGOON_ATTACK ; d-attack
@@ -5460,12 +5460,12 @@ or 0x80, stor[17] ; right, left
 
 LABEL_499:
 mov stor[17], stor[8] ; source, dest
-call Battle::battleBar, stor[8], stor[8] ; 
+call Battle::combatBar, stor[8], stor[8] ; 
 return
 
 LABEL_500:
 mov 0x60, stor[8] ; source, dest
-call Battle::battleBar, stor[8], stor[8] ; 
+call Battle::combatBar, stor[8], stor[8] ; 
 gosub inl[:IS_DRAGOON] ; addr
 return
 
@@ -5513,7 +5513,7 @@ mov var[46][2], stor[10] ; s10 = encounter escape chance
 jmp_cmp !=, 0x0, stor[10], inl[:LABEL_507] ; escape chance is not 0
 or 0x8, stor[9] ; can't run
 LABEL_507:
-call Battle::battleBarBlocked, stor[9], stor[9] ; 
+call Battle::combatBarBlocked, stor[9], stor[9] ; 
 return
 
 LABEL_508:
@@ -6174,6 +6174,24 @@ mov 0xffffffff, var[45][76] ; source, dest
 TRANSFORM_OUT_OF_DRAGOON_EXIT:
 return
 
+DETRANSFORM_FROM_DRAGOON:
+call Battle::detransformOptions, stor[8] ; 
+jmp_cmp ==, 0x0, stor[8], inl[:DETRANSFORM_FROM_DRAGOON_EXIT] ; 
+jmp_cmp ==, 0x2, stor[8], inl[:DETRANSFORM_FROM_DRAGOON_AFTER_TURN] ; 
+call Battle::scriptConsumeSp, stor[0], 0x1, 100 ; consume 100 sp
+gosub inl[:SET_MY_ATTACK_TARGETING_BIT] ; addr
+mov stor[0], stor[30] ; source, dest
+gosub inl[:TRANSFORM_OUT_OF_DRAGOON] ; addr
+and 0xfffffffe, var[45][245] ; right, left
+gosub inl[:CLEAR_MY_ATTACK_TARGETING_BIT] ; addr
+return
+DETRANSFORM_FROM_DRAGOON_AFTER_TURN:
+gosub inl[:HANDLE_BATTLE_HUD] ;
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
+add 0x45, stor[8] ; amount, operand
+mov 0x1, var[45][stor[8]] ; source, dest
+DETRANSFORM_FROM_DRAGOON_EXIT:
+return
 
 
 ; SUBROUTINE
@@ -7347,9 +7365,13 @@ consume
 
 ; SUBROUTINE
 HANDLE_REGEN:
+call Battle::getEquipEffectsInDragoon, stor[8]
+jmp_cmp ==, 0x1, stor[8], inl[:HANDLE_REGEN_START] ;
+
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_EXIT] ; is dragoon
 
+HANDLE_REGEN_START:
 mov stor[0], stor[28] ; source, dest
 call Battle::scriptGetBentStat, stor[0], HP_REGEN, stor[9] ; bentIndex, statIndex, value
 gosub inl[:SIGN_HP_REGEN_VALUE] ; addr
@@ -7428,9 +7450,12 @@ return
 ; SUBROUTINE
 GIVE_ON_HIT_VITALS:
 jmp_cmp &, 0x40, stor[7], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dead
+call Battle::getEquipEffectsInDragoon, stor[8]
+jmp_cmp ==, 0x1, stor[8], inl[:GIVE_ON_HIT_VITALS_START] ;
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dragoon
 
+GIVE_ON_HIT_VITALS_START:
 mov stor[0], stor[28] ; source, dest
 gosub inl[:LABEL_605] ; addr
 jmp_cmp !=, 0x0, stor[8], inl[:GIVE_ON_HIT_VITALS_MAGICAL_HIT] ; was magical damage

@@ -90,6 +90,7 @@ import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
+import legend.game.combat.ui.DragoonDetransformationMode;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
@@ -98,8 +99,9 @@ import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.battle.BattleBarBlockedEvent;
-import legend.game.modding.events.battle.BattleBarEvent;
+import legend.game.modding.coremod.config.DragoonDetransformationConfigEntry;
+import legend.game.modding.events.battle.CombatBarBlockedEvent;
+import legend.game.modding.events.battle.CombatBarEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
@@ -1061,8 +1063,10 @@ public class Battle extends EngineState {
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
 
-    functions[950] = this::battleBar;
-    functions[951] = this::battleBarBlocked;
+    functions[950] = this::combatBar;
+    functions[951] = this::combatBarBlocked;
+    functions[952] = this::detransformOptions;
+    functions[953] = this::getEquipEffectsInDragoon;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -7295,18 +7299,51 @@ public class Battle extends EngineState {
   @ScriptDescription("Used to call an event override for menu icons")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
-  public FlowControl battleBar(final RunningScript<?> script) {
-    final BattleBarEvent bar = EVENTS.postEvent(new BattleBarEvent(script.params_20[0].get()));
-    script.params_20[1].set(bar.batttleBar);
+  public FlowControl combatBar(final RunningScript<?> script) {
+    int combatIcons = script.params_20[0].get();
+
+    if((combatIcons & (1 << 5)) != 0) {
+      if(CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) {
+        combatIcons = combatIcons | 2;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_ITEMS_CONFIG.get())) {
+        combatIcons = combatIcons | 4;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_ESCAPE_CONFIG.get())) {
+        combatIcons = combatIcons | 8;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get()) != DragoonDetransformationMode.OFF) {
+        combatIcons = combatIcons | 16;
+      }
+    }
+
+    final CombatBarEvent bar = EVENTS.postEvent(new CombatBarEvent(combatIcons));
+
+    script.params_20[1].set(bar.combatBar);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Used to call an event override for blocked menu icons")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
-  public FlowControl battleBarBlocked(final RunningScript<?> script) {
-    final BattleBarBlockedEvent bar = EVENTS.postEvent(new BattleBarBlockedEvent(script.params_20[0].get()));
-    script.params_20[1].set(bar.batttleBarBlocked);
+  public FlowControl combatBarBlocked(final RunningScript<?> script) {
+    final CombatBarBlockedEvent bar = EVENTS.postEvent(new CombatBarBlockedEvent(script.params_20[0].get()));
+    script.params_20[1].set(bar.combatBarBlocked);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used for coremod detransform options.")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Transform right away or on turn finish")
+  public FlowControl detransformOptions(final RunningScript<?> script) {
+    final DragoonDetransformationMode detransformOption = CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get());
+    script.params_20[0].set(detransformOption == DragoonDetransformationMode.OFF ? 0 : detransformOption == DragoonDetransformationMode.SKIP_TURN ? 1 : 2);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used for coremod equips effects in dragoon.")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Enable equip effects in dragoon?")
+  public FlowControl getEquipEffectsInDragoon(final RunningScript<?> script) {
+    script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 

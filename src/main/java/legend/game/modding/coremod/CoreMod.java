@@ -29,6 +29,7 @@ import legend.game.modding.coremod.config.DeadzoneConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
+import legend.game.modding.coremod.config.DragoonDetransformationConfigEntry;
 import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.FmvVolumeConfigEntry;
@@ -142,6 +143,11 @@ public class CoreMod {
   public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_EQUIP_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("dragoon_equip_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_ITEMS_CONFIG = CONFIG_REGISTRAR.register("dragoon_items", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_ESCAPE_CONFIG = CONFIG_REGISTRAR.register("dragoon_escape", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_GUARD_CONFIG = CONFIG_REGISTRAR.register("dragoon_guard", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<DragoonDetransformationConfigEntry> DRAGOON_DETRANSFORMATION_CONFIG = CONFIG_REGISTRAR.register("detransformation_mode", DragoonDetransformationConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
