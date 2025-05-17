@@ -952,7 +952,7 @@
 "Battle::combatBarBlocked","Used to call an event override for blocked menu icons"
 "Battle::detransformOptions","Used for coremod detransform options."
 "Battle::getEquipEffectsInDragoon","Used for coremod equips effects in dragoon."
-"Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
+"Battle::isDeffArrow","Used to determine if an arrow should load a DEFF."
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"

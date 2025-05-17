@@ -1490,6 +1490,8 @@
 "Battle::combatBarBlocked","out","int","override","Event override blocked icons","none"
 "Battle::detransformOptions","out","int","option","Transform right away or on turn finish","none"
 "Battle::getEquipEffectsInDragoon","out","int","option","Enable equip effects in dragoon?","none"
+"Battle::isDeffArrow","in","int","bentIndex","The BattleEntity27c script index","none"
+"Battle::isDeffArrow","out","int","value","The stat value","none"
 "Battle::scriptHasStatMod","in","reg","id","A unique identifier to assign to this stat mod","none"
 "Battle::scriptHasStatMod","in","int","bentId","The battle entity to apply the stat mod to","none"
 "Battle::scriptHasStatMod","in","reg","statType","The stat type to mod","none"

@@ -105,9 +105,12 @@ import legend.game.modding.events.battle.CombatBarEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DeffArrowEvent;
+import legend.game.modding.events.battle.DragonBlockStaffOnEvent;
 import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.ScriptLoadDeffEvent;
 import legend.game.modding.events.battle.SetBentStatEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -138,6 +141,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEquipment;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1067,6 +1071,7 @@ public class Battle extends EngineState {
     functions[951] = this::combatBarBlocked;
     functions[952] = this::detransformOptions;
     functions[953] = this::getEquipEffectsInDragoon;
+    functions[954] = this::isDeffArrow;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -3634,7 +3639,7 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
+      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].getRegistryId())).registryValue).get();
       default -> {
         int value = script.params_20[1].get();
         if(script.params_20[2].get() == 2 && value < 0) {
@@ -6440,6 +6445,13 @@ public class Battle extends EngineState {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
+    /*final ScriptLoadDeffEvent event = EVENTS.postEvent(new ScriptLoadDeffEvent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get()));
+    script.params_20[0].set(event.flagsAndIndex);
+    script.params_20[1].set(event.bentIndex);
+    script.params_20[2].set(event.p2);
+    script.params_20[3].set(event.scriptEntrypoint);
+    script.params_20[4].set(event.type);*/
+
     final int type = script.params_20[4].get();
     if(type == 0x100_0000) {
       this.loadDragoonDeff(script, new ScriptDeffManualLoadingEffect());
@@ -7344,6 +7356,19 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Enable equip effects in dragoon?")
   public FlowControl getEquipEffectsInDragoon(final RunningScript<?> script) {
     script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to determine if an arrow should load a DEFF.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptEnum(BattleEntityStat.class)
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
+  @Method(0x800cce04L)
+  public FlowControl isDeffArrow(final RunningScript<?> script) {
+    final PlayerBattleEntity bent = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final boolean isDeff = bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() == LodEquipment.DETONATE_ARROW.get().getRegistryId();
+    final DeffArrowEvent event = EVENTS.postEvent(new DeffArrowEvent(bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId(), isDeff));
+    script.params_20[1].set(event.isDeff ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
