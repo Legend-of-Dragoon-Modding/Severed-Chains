@@ -1,7 +1,9 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.game.SItem;
 import legend.game.characters.Addition04;
+import legend.game.combat.SBtld;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.combat.types.AdditionHitProperties10;
@@ -219,64 +221,36 @@ public class CoreMod {
   }
 
   public static void loadCharacterStats(final int charIndex, final String charName) throws IOException {
-    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/stats")));
-    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].statsTable.length; i++) {
-      CoreMod.CHARACTER_DATA[charIndex].statsTable[i] = new LevelStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
-    }
+    System.arraycopy(SItem.levelStuff_80111cfc[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].statsTable, 0, CoreMod.CHARACTER_DATA[charIndex].statsTable.length);
   }
 
   public static void loadCharacterDragoonXp(final int charIndex, final String charName) throws IOException {
-    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dxp")));
-    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dxpTable.length; i++) {
-      CoreMod.CHARACTER_DATA[charIndex].dxpTable[i] = file.readUShort(i * 2);
-    }
+    System.arraycopy(SItem.dragoonXpRequirements_800fbbf0[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].dxpTable, 0, CoreMod.CHARACTER_DATA[charIndex].dxpTable.length);
   }
 
   public static void loadCharacterDragoonStats(final int charIndex, final String charName) throws IOException {
-    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dstats")));
-    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
-      CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i] = new MagicStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
-    }
+    System.arraycopy(SItem.magicStuff_80111d20[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable, 0, CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length);
   }
 
-  public static void loadCharacterAdditions(final int charIndex, final String charName, final int additions) throws IOException {
-    final FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionhit")));
-    final FileData multiplier = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionmultipler")));
-
-    for(int i = 0; i < additions; i++) {
-      final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
-      final Addition04[] multipliers = new Addition04[6];
-      for(int x = 0; x < 8; x++) {
-        hits[x] = AdditionHitProperties10.fromFile(i, x, hit);
+  public static void loadCharacterAdditions(final int charIndex, final String charName, final int additions, final int additionOffset) throws IOException {
+    if(charIndex != 2 && charIndex != 8) {
+      for(int i = 0; i < additions; i++) {
+        CoreMod.CHARACTER_DATA[charIndex].additions.add(SBtld.additionHits_8010e658[additionOffset + i]);
+        CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(SItem.additions_80114070[additionOffset + i]);
       }
-
-      for(int y = 0; y < 6; y++) {
-        multipliers[y] = new Addition04();
-        multipliers[y]._00 = multiplier.readUByte((i * 24) + (y * 4));
-        multipliers[y].spMultiplier_02 = multiplier.readUByte((i * 24) + (y * 4) + 2);
-        multipliers[y].damageMultiplier_03 = multiplier.readUByte((i * 24) + (y * 4) + 3);
-      }
-      CoreMod.CHARACTER_DATA[charIndex].additions.add(new AdditionHits80(hits));
-      CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(multipliers);
+    } else {
+      CoreMod.CHARACTER_DATA[charIndex].additions.add(new AdditionHits80(new AdditionHitProperties10[8]));
+      CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(new Addition04[6]);
     }
 
     if(charIndex != 2 && charIndex != 8) {
-      final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
-      for(int x = 0; x < 8; x++) {
-        hits[x] = AdditionHitProperties10.fromFile(additions, x, hit);
-      }
-      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(SBtld.additionHits_8010e658[additions]);
     } else {
       CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(new AdditionHitProperties10[8]));
     }
 
     if(charIndex == 0) { //Divine Dragoon Dart has 2x on his hit multipliers
-      final AdditionHitProperties10[] hits = new AdditionHitProperties10[8];
-      for(int x = 0; x < 8; x++) {
-        hits[x] = AdditionHitProperties10.fromFile(additions, x, hit);
-        hits[x].damageMultiplier_04 = hits[x].damageMultiplier_04 * 2;
-      }
-      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(hits));
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(SBtld.additionHits_8010e658[42]);
     }
   }
 

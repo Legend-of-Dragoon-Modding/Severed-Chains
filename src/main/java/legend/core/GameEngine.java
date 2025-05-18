@@ -303,13 +303,14 @@ public final class GameEngine {
 
   private static void loadCharacterData() throws IOException {
     final int[] additions = {7, 5, 1, 4, 6, 5, 5, 3, 1};
+    final int[] additionOffsets = {0, 8, 0, 14, 29, 36, 23, 19, 0};
     for(int i = 0; i < 9; i++) {
       CoreMod.CHARACTER_DATA[i] = new CharacterData();
       CoreMod.loadCharacterXp(i, getCharacterName(i).toLowerCase());
       CoreMod.loadCharacterStats(i, getCharacterName(i).toLowerCase());
       CoreMod.loadCharacterDragoonXp(i, getCharacterName(i).toLowerCase());
       CoreMod.loadCharacterDragoonStats(i, getCharacterName(i).toLowerCase());
-      CoreMod.loadCharacterAdditions(i, getCharacterName(i).toLowerCase(), additions[i]);
+      CoreMod.loadCharacterAdditions(i, getCharacterName(i).toLowerCase(), additions[i], additionOffsets[i]);
     }
     LOGGER.info("CoreMod Character Data Loaded");
   }
