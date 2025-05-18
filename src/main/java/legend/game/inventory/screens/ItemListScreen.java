@@ -136,7 +136,7 @@ public class ItemListScreen extends MenuScreen {
     }
 
     final String description = I18n.translate(item.getDescriptionTranslationKey());
-    this.description.setText("Equipment".equals(item.item_00.getClass().getSimpleName()) ? EVENTS.postEvent(new EquipDescriptionEvent((Equipment)item.item_00, description)).description : EVENTS.postEvent(new ItemDescriptionEvent((Item)item.item_00, description)).description);
+    this.description.setText(item.item_00.getClass().getSimpleName().toLowerCase().contains("equipment") ? EVENTS.postEvent(new EquipDescriptionEvent((Equipment)item.item_00, description)).description : EVENTS.postEvent(new ItemDescriptionEvent((Item)item.item_00, description)).description);
   }
 
   @Override
