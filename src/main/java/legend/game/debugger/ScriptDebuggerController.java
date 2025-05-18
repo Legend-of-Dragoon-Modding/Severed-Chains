@@ -25,16 +25,16 @@ import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
-@EventListener
 public class ScriptDebuggerController {
-  private static final Set<ScriptDebuggerController> INSTANCES = new HashSet<>();
-  private static boolean INITIALIZED = false;
+  private static final List<ScriptDebuggerController> INSTANCES = new ArrayList<>();
+  private static boolean INITIALIZED;
 
   @FXML
   private ComboBox<ListItem> scriptSelector;
@@ -104,6 +104,7 @@ public class ScriptDebuggerController {
       this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
 
       INSTANCES.add(this);
+      EVENTS.register(this);
     }
 
     INITIALIZED = true;
@@ -231,54 +232,34 @@ public class ScriptDebuggerController {
   }
 
   @EventListener
-  public static void onScriptAllocated(final ScriptAllocatedEvent event) {
-    if(INITIALIZED) {
-      Platform.runLater(() -> {
-        synchronized(INSTANCES) {
-          for(final ScriptDebuggerController instance : INSTANCES) {
-            instance.updateScriptName(event.scriptIndex);
-          }
-        }
-      });
-    }
+  public void onScriptAllocated(final ScriptAllocatedEvent event) {
+    Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
   }
 
   @EventListener
-  public static void onScriptDeallocated(final ScriptDeallocatedEvent event) {
-    if(INITIALIZED) {
-      Platform.runLater(() -> {
-        synchronized(INSTANCES) {
-          for(final ScriptDebuggerController instance : INSTANCES) {
-            instance.updateScriptName(event.scriptIndex);
-          }
-        }
-      });
-    }
+  public void onScriptDeallocated(final ScriptDeallocatedEvent event) {
+    Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
   }
 
   @EventListener
-  public static void onScriptTick(final ScriptTickEvent event) {
-    if(INITIALIZED) {
-      Platform.runLater(() -> {
-        synchronized(INSTANCES) {
-          for(final ScriptDebuggerController instance : INSTANCES) {
-            if(event.scriptIndex == instance.scriptSelector.getValue().index) {
-              instance.updateScriptVars();
-            }
-          }
-        }
-      });
-    }
+  public void onScriptTick(final ScriptTickEvent event) {
+    Platform.runLater(() -> {
+      if(event.scriptIndex == this.scriptSelector.getValue().index) {
+        this.updateScriptVars();
+      }
+    });
   }
 
   @EventListener
-  public static void onRender(final RenderEvent event) {
-    if(INITIALIZED) {
-      for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
-        final ScriptState<?> state = SCRIPTS.getState(i);
+  public void onRender(final RenderEvent event) {
+    synchronized(INSTANCES) {
+      if(!INSTANCES.isEmpty() && this == INSTANCES.getFirst()) { // we only want it to happen once per frame
+        for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
+          final ScriptState<?> state = SCRIPTS.getState(i);
 
-        if(state != null) {
-          state.renderDebugInfo();
+          if(state != null) {
+            state.renderDebugInfo();
+          }
         }
       }
     }

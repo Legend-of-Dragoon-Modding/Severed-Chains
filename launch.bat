@@ -11,8 +11,8 @@ if %compiled% NEQ "true" (
 echo.%CD% | findstr /C:";" 1>nul
 
 if not errorlevel 1 (
-  echo "Java cannot launch with a semicolon (;) in the path. Please rename the directory or move Severed Chains to a different directory."
-  echo Current directory: %CD%
+  echo Java cannot launch with a semicolon ^(^;^) in the path. Please rename the directory or move Severed Chains to a different directory.
+  echo Current directory: "%CD%"
   pause
   exit 1
 )
