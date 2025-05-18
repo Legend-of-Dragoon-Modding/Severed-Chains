@@ -7309,10 +7309,11 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Used to call an event override for menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
   public FlowControl combatBar(final RunningScript<?> script) {
-    int combatIcons = script.params_20[0].get();
+    int combatIcons = script.params_20[1].get();
 
     if((combatIcons & (1 << 5)) != 0) {
       if(CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) {
@@ -7329,18 +7330,19 @@ public class Battle extends EngineState {
       }
     }
 
-    final CombatBarEvent bar = EVENTS.postEvent(new CombatBarEvent(combatIcons));
+    final CombatBarEvent bar = EVENTS.postEvent(new CombatBarEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, combatIcons));
 
-    script.params_20[1].set(bar.combatBar);
+    script.params_20[2].set(bar.combatBar);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Used to call an event override for blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
   public FlowControl combatBarBlocked(final RunningScript<?> script) {
-    final CombatBarBlockedEvent bar = EVENTS.postEvent(new CombatBarBlockedEvent(script.params_20[0].get()));
-    script.params_20[1].set(bar.combatBarBlocked);
+    final CombatBarBlockedEvent bar = EVENTS.postEvent(new CombatBarBlockedEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, script.params_20[1].get()));
+    script.params_20[2].set(bar.combatBarBlocked);
     return FlowControl.CONTINUE;
   }
 
