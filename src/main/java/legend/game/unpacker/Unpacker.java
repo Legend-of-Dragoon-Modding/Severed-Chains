@@ -60,7 +60,7 @@ public final class Unpacker {
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 5;
+  private static final int VERSION = 4;
 
   public static Path ROOT = Path.of(".", "files");
   public static Path MOD_ROOT = Path.of(".", "mods");

@@ -1,7 +1,5 @@
 package legend.game.combat.types;
 
-import legend.game.unpacker.FileData;
-
 /** Same as AdditionHitProperties20 in BattlePreloadedEntities_18cb0, except fields are bytes */
 public class AdditionHitProperties10 {
   public int flags_00;
@@ -39,29 +37,6 @@ public class AdditionHitProperties10 {
     this._0d = _0d;
     this._0e = _0e;
     this.overlayStartingFrameOffset_0f = overlayStartingFrameOffset;
-  }
-
-  public static AdditionHitProperties10 fromFile(final int additionIndex, final int additionHitIndex, final FileData data) {
-    final int temporaryDistance = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 8);
-
-    final int flags = data.readUByte((additionIndex * 128) + (additionHitIndex * 16));
-    final int totalFrames = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 1);
-    final int overlayHitFrameOffset = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 2);
-    final int totalSuccessFrames = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 3);
-    final int damageMultiplier = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 4);
-    final int spValue = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 5);
-    final int audioFile = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 6);
-    final int isFinalHit = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 7);
-    final int panDistance = temporaryDistance > 127 ? temporaryDistance - 255 : temporaryDistance;
-    final int unknown_09 = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 9);
-    final int unknown_0a = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 10);
-    final int hitDistance = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 11);
-    final int frameToHit = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 12);
-    final int unknown_0d = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 13);
-    final int _0e = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 14);
-    final int overlayFrameOffset = data.readUByte((additionIndex * 128) + (additionHitIndex * 16) + 15);
-
-    return new AdditionHitProperties10(flags, totalFrames, overlayHitFrameOffset, totalSuccessFrames, damageMultiplier, spValue, audioFile, isFinalHit, panDistance, unknown_09, unknown_0a, hitDistance, frameToHit, unknown_0d, _0e, overlayFrameOffset);
   }
 
   public int get(final int index) {
