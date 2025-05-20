@@ -5464,12 +5464,12 @@ or 0x80, stor[17] ; right, left
 
 LABEL_499:
 mov stor[17], stor[8] ; source, dest
-call Battle::combatBar, stor[0], stor[8], stor[8] ; bentIndex, menu, override
+call Battle::combatMenu, stor[0], stor[8], stor[8] ; bentIndex, menu, override
 return
 
 LABEL_500:
 mov 0x60, stor[8] ; source, dest
-call Battle::combatBar, stor[0], stor[8], stor[8] ; bentIndex, menu, override
+call Battle::combatMenu, stor[0], stor[8], stor[8] ; bentIndex, menu, override
 gosub inl[:IS_DRAGOON] ; addr
 return
 
@@ -5517,7 +5517,7 @@ mov var[46][2], stor[10] ; s10 = encounter escape chance
 jmp_cmp !=, 0x0, stor[10], inl[:LABEL_507] ; escape chance is not 0
 or 0x8, stor[9] ; can't run
 LABEL_507:
-call Battle::combatBarBlocked, stor[0], stor[9], stor[9] ; bentIndex, menu, override
+call Battle::combatMenuBlocked, stor[0], stor[9], stor[9] ; bentIndex, menu, override
 return
 
 LABEL_508:
@@ -5581,6 +5581,7 @@ call Battle::scriptGetBentStat2, stor[0], CURRENT_HP, stor[8] ; bentIndex, statI
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[9] ; bentIndex, statIndex, value
 mov stor[8], stor[11] ; source, dest
 div 0xa, stor[9] ; amount, operand
+call Battle::guardAmount, stor[0], stor[9], stor[9] ; bentIndex, amount, value
 add stor[9], stor[11] ; amount, operand
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[10] ; bentIndex, statIndex, value
 jmp_cmp >=, stor[10], stor[11], inl[:LABEL_519] ; operand, left, right, addr

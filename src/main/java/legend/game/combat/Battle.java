@@ -99,18 +99,16 @@ import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.coremod.config.DragoonDetransformationConfigEntry;
-import legend.game.modding.events.battle.CombatBarBlockedEvent;
-import legend.game.modding.events.battle.CombatBarEvent;
+import legend.game.modding.events.battle.CombatMenuBlockedEvent;
+import legend.game.modding.events.battle.CombatMenuEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.DeffArrowEvent;
-import legend.game.modding.events.battle.DragonBlockStaffOnEvent;
 import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
+import legend.game.modding.events.battle.GuardHealEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
-import legend.game.modding.events.battle.ScriptLoadDeffEvent;
 import legend.game.modding.events.battle.SetBentStatEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -1067,11 +1065,12 @@ public class Battle extends EngineState {
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
 
-    functions[950] = this::combatBar;
-    functions[951] = this::combatBarBlocked;
+    functions[950] = this::combatMenu;
+    functions[951] = this::combatMenuBlocked;
     functions[952] = this::detransformOptions;
     functions[953] = this::getEquipEffectsInDragoon;
     functions[954] = this::isDeffArrow;
+    functions[955] = this::guardAmount;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -7312,7 +7311,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
-  public FlowControl combatBar(final RunningScript<?> script) {
+  public FlowControl combatMenu(final RunningScript<?> script) {
     int combatIcons = script.params_20[1].get();
 
     if((combatIcons & (1 << 5)) != 0) {
@@ -7330,7 +7329,7 @@ public class Battle extends EngineState {
       }
     }
 
-    final CombatBarEvent bar = EVENTS.postEvent(new CombatBarEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, combatIcons));
+    final CombatMenuEvent bar = EVENTS.postEvent(new CombatMenuEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, combatIcons));
 
     script.params_20[2].set(bar.combatBar);
     return FlowControl.CONTINUE;
@@ -7340,8 +7339,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
-  public FlowControl combatBarBlocked(final RunningScript<?> script) {
-    final CombatBarBlockedEvent bar = EVENTS.postEvent(new CombatBarBlockedEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, script.params_20[1].get()));
+  public FlowControl combatMenuBlocked(final RunningScript<?> script) {
+    final CombatMenuBlockedEvent bar = EVENTS.postEvent(new CombatMenuBlockedEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, script.params_20[1].get()));
     script.params_20[2].set(bar.combatBarBlocked);
     return FlowControl.CONTINUE;
   }
@@ -7363,7 +7362,6 @@ public class Battle extends EngineState {
 
   @ScriptDescription("Used to determine if an arrow should load a DEFF.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptEnum(BattleEntityStat.class)
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce04L)
   public FlowControl isDeffArrow(final RunningScript<?> script) {
@@ -7371,6 +7369,17 @@ public class Battle extends EngineState {
     final boolean isDeff = bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() == LodEquipment.DETONATE_ARROW.get().getRegistryId();
     final DeffArrowEvent event = EVENTS.postEvent(new DeffArrowEvent(bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId(), isDeff));
     script.params_20[1].set(event.isDeff ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to change the amount guard heals.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The original guard heal amount")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
+  @Method(0x800cce04L)
+  public FlowControl guardAmount(final RunningScript<?> script) {
+    final GuardHealEvent event = EVENTS.postEvent(new GuardHealEvent(script.params_20[0].get(), script.params_20[1].get()));
+    script.params_20[2].set(event.heal);
     return FlowControl.CONTINUE;
   }
 
