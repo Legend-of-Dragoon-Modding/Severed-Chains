@@ -90,6 +90,7 @@ import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
+import legend.game.combat.ui.DragoonDetransformationMode;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
@@ -101,7 +102,11 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.CombatMenuBlockedEvent;
+import legend.game.modding.events.battle.CombatMenuEvent;
+import legend.game.modding.events.battle.DeffArrowEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
+import legend.game.modding.events.battle.GuardHealEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -132,6 +137,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEquipment;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1056,6 +1062,13 @@ public class Battle extends EngineState {
 
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
+
+    functions[950] = this::combatMenu;
+    functions[951] = this::combatMenuBlocked;
+    functions[952] = this::detransformOptions;
+    functions[953] = this::getEquipEffectsInDragoon;
+    functions[954] = this::isDeffArrow;
+    functions[955] = this::guardAmount;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -7279,6 +7292,84 @@ public class Battle extends EngineState {
     attachment.step_18 = script.params_20[3].get();
     attachment._1c.x = textureInfo2.vramPos_00.x;
     attachment._1c.y = textureInfo2.vramPos_00.y;
+    return FlowControl.CONTINUE;
+  }
+
+
+
+  @ScriptDescription("Used to call an event override for menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
+  public FlowControl combatMenu(final RunningScript<?> script) {
+    int combatIcons = script.params_20[1].get();
+
+    if((combatIcons & (1 << 5)) != 0) {
+      if(CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) {
+        combatIcons = combatIcons | 2;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_ITEMS_CONFIG.get())) {
+        combatIcons = combatIcons | 4;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_ESCAPE_CONFIG.get())) {
+        combatIcons = combatIcons | 8;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get()) != DragoonDetransformationMode.OFF) {
+        combatIcons = combatIcons | 16;
+      }
+    }
+
+    final CombatMenuEvent bar = EVENTS.postEvent(new CombatMenuEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, combatIcons));
+
+    script.params_20[2].set(bar.combatBar);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to call an event override for blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
+  public FlowControl combatMenuBlocked(final RunningScript<?> script) {
+    final CombatMenuBlockedEvent bar = EVENTS.postEvent(new CombatMenuBlockedEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, script.params_20[1].get()));
+    script.params_20[2].set(bar.combatBarBlocked);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used for coremod detransform options.")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Transform right away or on turn finish")
+  public FlowControl detransformOptions(final RunningScript<?> script) {
+    final DragoonDetransformationMode detransformOption = CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get());
+    script.params_20[0].set(detransformOption == DragoonDetransformationMode.OFF ? 0 : detransformOption == DragoonDetransformationMode.SKIP_TURN ? 1 : 2);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used for coremod equips effects in dragoon.")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Enable equip effects in dragoon?")
+  public FlowControl getEquipEffectsInDragoon(final RunningScript<?> script) {
+    script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to determine if an arrow should load a DEFF.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
+  @Method(0x800cce04L)
+  public FlowControl isDeffArrow(final RunningScript<?> script) {
+    final PlayerBattleEntity bent = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final boolean isDeff = bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() == LodEquipment.DETONATE_ARROW.get().getRegistryId();
+    final DeffArrowEvent event = EVENTS.postEvent(new DeffArrowEvent(bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId(), isDeff));
+    script.params_20[1].set(event.isDeff ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to change the amount guard heals.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The original guard heal amount")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
+  @Method(0x800cce04L)
+  public FlowControl guardAmount(final RunningScript<?> script) {
+    final GuardHealEvent event = EVENTS.postEvent(new GuardHealEvent(script.params_20[0].get(), script.params_20[1].get()));
+    script.params_20[2].set(event.heal);
     return FlowControl.CONTINUE;
   }
 
