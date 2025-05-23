@@ -116,7 +116,7 @@ public class StatusScreen extends MenuScreen {
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
-      for(int i = 0; i < 4; i++) {
+      for(int i = 0; i < 8; i++) {
         if(allocate && i < unlockedSpellCount) {
           renderCharacter(200, 127 + i * 14, i + 1);
         }
@@ -127,7 +127,7 @@ public class StatusScreen extends MenuScreen {
           renderText(spellStats_800fa0b8[spellIndex].name, 210, 125 + i * 14, UI_TEXT);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
+            renderThreeDigitNumber(342, 128 + i * 14, spellIndex >= 68 ? 0 : spellMp_80114290[spellIndex]);
           }
         }
       }
