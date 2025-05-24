@@ -72,8 +72,8 @@ public class AdditionListMenu extends ListMenu {
     renderText(String.valueOf(charData.additionXp_22[index]), x + 145, y, this.fontOptions);
 
     final String max;
-    if(charData.additionLevels_1a[index] < 5) {
-      max = String.valueOf(charData.additionLevels_1a[index] * 20);
+    if(charData.additionLevels_1a[index] < CoreMod.MAX_ADDITION_LEVEL) {
+      max = String.valueOf(charData.additionLevels_1a[index] * CoreMod.ADDITIONS_PER_LEVEL);
     } else {
       max = "-";
     }
