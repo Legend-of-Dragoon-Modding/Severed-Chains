@@ -53,6 +53,10 @@ public class Button extends Control {
     this.fontOptions.colour(colour);
   }
 
+  public void setShadowColour(final TextColour colour) {
+    this.fontOptions.shadowColour(colour);
+  }
+
   @Override
   public void setScale(final float scale) {
     super.setScale(scale);
