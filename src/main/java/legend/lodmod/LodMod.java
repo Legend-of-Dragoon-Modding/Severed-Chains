@@ -29,6 +29,7 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.combat.deff.RegisterDeffsEvent;
+import legend.game.combat.ui.RegisterModMenuEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.IconMapEvent;
@@ -469,5 +470,10 @@ public class LodMod {
       event.addMapping(ItemIcon.GLOVE, ItemIcon.RING);
       event.addMapping(ItemIcon.HORN, ItemIcon.RING);
     }
+  }
+
+  @EventListener
+  public static void registerModMenu(final RegisterModMenuEvent event) {
+    LodModMenu.register(event);
   }
 }

@@ -3,6 +3,7 @@ package legend.game.combat.ui;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.Config;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.Transformations;
@@ -23,7 +24,11 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.ModMenuEvent;
 import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.scripting.ScriptState;
@@ -32,8 +37,11 @@ import legend.lodmod.LodMod;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.EVENTS;
@@ -202,6 +210,11 @@ public class BattleHud {
   private Obj spBars;
   private final MV spBarTransforms = new MV();
   private final MV lineTransforms = new MV();
+
+  private boolean modMenuActive;
+  private int modIndex = 0;
+  private final ArrayList<ModMenu> modOptions = new ArrayList<>();
+  public static final FontOptions MOD_TEXT = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
 
   public BattleHud(final Battle battle) {
     this.battle = battle;
@@ -1526,157 +1539,195 @@ public class BattleHud {
           break;
         }
 
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_UP.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_DOWN.get())) {
+          if(!this.modOptions.isEmpty()) {
+            this.modMenuActive = !this.modMenuActive;
+          }
+        }
         // Input for cycling right on menu bar
         //LAB_800f65b8
-        if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_RIGHT.get())) {
-          playSound(0, 1, (short)0, (short)0);
+        if(!this.modMenuActive) {
+          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_RIGHT.get())) {
+            playSound(0, 1, (short)0, (short)0);
 
-          if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.iconCount_0e - 1) {
-            //LAB_800f6640
-            this.battleMenu_800c6c34.selectedIcon_22++;
-            this.battleMenu_800c6c34.state_00 = 3;
+            if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.iconCount_0e - 1) {
+              //LAB_800f6640
+              this.battleMenu_800c6c34.selectedIcon_22++;
+              this.battleMenu_800c6c34.state_00 = 3;
 
-            //LAB_800f664c
+              //LAB_800f664c
+              this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
+              this.battleMenu_800c6c34.highlightMovementDistance_34 = 19;
+              this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+              this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+              break;
+            }
+
+            this.battleMenu_800c6c34.state_00 = 4;
+            this.battleMenu_800c6c34.highlightState_02 |= 1;
+            this.battleMenu_800c6c34.selectedIcon_22 = 0;
+            this.battleMenu_800c6c34.iconStateIndex_26 = 0;
             this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
             this.battleMenu_800c6c34.highlightMovementDistance_34 = 19;
             this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
-            this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+            this.battleMenu_800c6c34.highlightX1_3c = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a - 23;
             break;
           }
 
-          this.battleMenu_800c6c34.state_00 = 4;
-          this.battleMenu_800c6c34.highlightState_02 |= 1;
-          this.battleMenu_800c6c34.selectedIcon_22 = 0;
-          this.battleMenu_800c6c34.iconStateIndex_26 = 0;
-          this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
-          this.battleMenu_800c6c34.highlightMovementDistance_34 = 19;
-          this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
-          this.battleMenu_800c6c34.highlightX1_3c = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a - 23;
-          break;
-        }
+          // Input for cycling left on menu bar
+          //LAB_800f6664
+          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_LEFT.get())) {
+            playSound(0, 1, (short)0, (short)0);
 
-        // Input for cycling left on menu bar
-        //LAB_800f6664
-        if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_LEFT.get())) {
-          playSound(0, 1, (short)0, (short)0);
+            if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
+              //LAB_800f66f0
+              this.battleMenu_800c6c34.selectedIcon_22--;
+              this.battleMenu_800c6c34.state_00 = 3;
 
-          if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
-            //LAB_800f66f0
-            this.battleMenu_800c6c34.selectedIcon_22--;
-            this.battleMenu_800c6c34.state_00 = 3;
+              //LAB_800f66fc
+              this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
+              this.battleMenu_800c6c34.highlightMovementDistance_34 = -19;
 
-            //LAB_800f66fc
+              //LAB_800f6710
+              this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+              this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+              break;
+            }
+
+            this.battleMenu_800c6c34.state_00 = 4;
+            this.battleMenu_800c6c34.highlightState_02 |= 1;
+            this.battleMenu_800c6c34.selectedIcon_22 = (short)(this.battleMenu_800c6c34.iconCount_0e - 1);
+            this.battleMenu_800c6c34.highlightX1_3c = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + this.battleMenu_800c6c34.iconCount_0e * 19 - 4;
             this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
             this.battleMenu_800c6c34.highlightMovementDistance_34 = -19;
-
-            //LAB_800f6710
             this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
             this.battleMenu_800c6c34.iconStateIndex_26 = 0;
             break;
           }
 
-          this.battleMenu_800c6c34.state_00 = 4;
-          this.battleMenu_800c6c34.highlightState_02 |= 1;
-          this.battleMenu_800c6c34.selectedIcon_22 = (short)(this.battleMenu_800c6c34.iconCount_0e - 1);
-          this.battleMenu_800c6c34.highlightX1_3c = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + this.battleMenu_800c6c34.iconCount_0e * 19 - 4;
-          this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
-          this.battleMenu_800c6c34.highlightMovementDistance_34 = -19;
-          this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
-          this.battleMenu_800c6c34.iconStateIndex_26 = 0;
-          break;
-        }
-
-        if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ADDITIONS.get())) {
-          if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
-            playSound(0, 2, (short)0, (short)0);
-            this.initListMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
-          } else {
-            playSound(0, 40, (short)0, (short)0);
-          }
-        }
-
-        // Dragoon
-        if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_TRANSFORM.get())) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[4]) ? iconFlags_800c7194[4] : 0;
-          this.checkInvalidSelectedAction(selectedAction);
-        }
-
-        // Special
-        if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_SPECIAL.get())) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[7]) ? iconFlags_800c7194[7] : 0;
-          this.checkInvalidSelectedAction(selectedAction);
-        }
-
-        // Escape
-        if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ESCAPE.get())) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[3]) ? iconFlags_800c7194[3] : 0;
-          this.checkInvalidSelectedAction(selectedAction);
-        }
-
-        // Guard
-        if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_GUARD.get())) {
-          selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[1]) ? iconFlags_800c7194[1] : 0;
-          this.checkInvalidSelectedAction(selectedAction);
-        }
-
-        // Item Menu | Dragoon Spells
-        if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ITEMS.get())) {
-          selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(iconFlags_800c7194[2], iconFlags_800c7194[6]);
-          this.checkInvalidSelectedAction(selectedAction);
-        }
-
-        // Input for pressing X on menu bar
-        //LAB_800f671c
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
-          if((selectedIconFlag & 0x80) != 0) {
-            playSound(0, 3, (short)0, (short)0);
-          } else {
-            selectedIconFlag = selectedIconFlag & 0xf;
-            if(selectedIconFlag == 5) {
-              if(gameState_800babc8.items_2e9.isEmpty()) {
-                playSound(0, 3, (short)0, (short)0);
-              } else {
-                playSound(0, 2, (short)0, (short)0);
-                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
-              }
-              //LAB_800f6790
-            } else if(selectedIconFlag == 3) {
-              //LAB_800f67b8
-              //LAB_800f67d8
-              //LAB_800f67f4
-              int spellIndex;
-              for(spellIndex = 0; spellIndex < 8; spellIndex++) {
-                if(this.battle.dragoonSpells_800c6960[this.battleMenu_800c6c34.player_04.charSlot_276].spellIndex_01[spellIndex] != -1) {
-                  break;
-                }
-              }
-
-              //LAB_800f681c
-              if(spellIndex == 8) {
-                playSound(0, 3, (short)0, (short)0);
-              } else {
-                playSound(0, 2, (short)0, (short)0);
-                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
-              }
-            } else {
-              //LAB_800f6858
-              //LAB_800f6860
+          if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ADDITIONS.get())) {
+            if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
               playSound(0, 2, (short)0, (short)0);
-              selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              this.initListMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
+            } else {
+              playSound(0, 40, (short)0, (short)0);
             }
           }
-          //LAB_800f6898
-          // Input for pressing circle on menu bar
-        } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-          //LAB_800f68a4
-          //LAB_800f68bc
-          playSound(0, 3, (short)0, (short)0);
-        }
 
-        //LAB_800f68c4
-        //LAB_800f68c8
-        this.battleMenu_800c6c34.renderSelectedIconText_40 = true;
+          // Dragoon
+          if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_TRANSFORM.get())) {
+            selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[4]) ? iconFlags_800c7194[4] : 0;
+            this.checkInvalidSelectedAction(selectedAction);
+          }
+
+          // Special
+          if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_SPECIAL.get())) {
+            selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[7]) ? iconFlags_800c7194[7] : 0;
+            this.checkInvalidSelectedAction(selectedAction);
+          }
+
+          // Escape
+          if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ESCAPE.get())) {
+            selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[3]) ? iconFlags_800c7194[3] : 0;
+            this.checkInvalidSelectedAction(selectedAction);
+          }
+
+          // Guard
+          if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_GUARD.get())) {
+            selectedAction = this.battleMenu_800c6c34.isIconEnabled(iconFlags_800c7194[1]) ? iconFlags_800c7194[1] : 0;
+            this.checkInvalidSelectedAction(selectedAction);
+          }
+
+          // Item Menu | Dragoon Spells
+          if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ITEMS.get())) {
+            selectedAction = this.battleMenu_800c6c34.retrieveIconEnabled(iconFlags_800c7194[2], iconFlags_800c7194[6]);
+            this.checkInvalidSelectedAction(selectedAction);
+          }
+
+          // Input for pressing X on menu bar
+          //LAB_800f671c
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+            int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
+            if((selectedIconFlag & 0x80) != 0) {
+              playSound(0, 3, (short)0, (short)0);
+            } else {
+              selectedIconFlag = selectedIconFlag & 0xf;
+              if(selectedIconFlag == 5) {
+                if(gameState_800babc8.items_2e9.isEmpty()) {
+                  playSound(0, 3, (short)0, (short)0);
+                } else {
+                  playSound(0, 2, (short)0, (short)0);
+                  selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+                }
+                //LAB_800f6790
+              } else if(selectedIconFlag == 3) {
+                //LAB_800f67b8
+                //LAB_800f67d8
+                //LAB_800f67f4
+                int spellIndex;
+                for(spellIndex = 0; spellIndex < 8; spellIndex++) {
+                  if(this.battle.dragoonSpells_800c6960[this.battleMenu_800c6c34.player_04.charSlot_276].spellIndex_01[spellIndex] != -1) {
+                    break;
+                  }
+                }
+
+                //LAB_800f681c
+                if(spellIndex == 8) {
+                  playSound(0, 3, (short)0, (short)0);
+                } else {
+                  playSound(0, 2, (short)0, (short)0);
+                  selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+                }
+              } else {
+                //LAB_800f6858
+                //LAB_800f6860
+                playSound(0, 2, (short)0, (short)0);
+                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              }
+            }
+            //LAB_800f6898
+            // Input for pressing circle on menu bar
+          } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
+            //LAB_800f68a4
+            //LAB_800f68bc
+            playSound(0, 3, (short)0, (short)0);
+          }
+
+          //LAB_800f68c4
+          //LAB_800f68c8
+          this.battleMenu_800c6c34.renderSelectedIconText_40 = true;
+        } else {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_LEFT.get())) {
+            this.modIndex--;
+            if(this.modIndex < 0) {
+              this.modIndex = this.modOptions.size() - 1;
+            }
+          }
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_RIGHT.get())) {
+            this.modIndex++;
+            if(this.modIndex >= this.modOptions.size()) {
+              this.modIndex = 0;
+            }
+          }
+          renderText(this.modOptions.get(this.modIndex).display, 160, 140, MOD_TEXT);
+
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+            final ModMenuEvent event = EVENTS.postEvent(new ModMenuEvent(this.modOptions.get(this.modIndex).getRegistryId()));
+
+            if("lod:addition_swap".equals(this.modOptions.get(this.modIndex).getRegistryId().toString())) {
+              if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
+                playSound(0, 2, (short)0, (short)0);
+                this.initListMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
+              } else {
+                playSound(0, 40, (short)0, (short)0);
+              }
+            }
+
+            if(event.disableModMenu) {
+              this.modMenuActive = false;
+            }
+          }
+        }
       }
 
       case 2 -> {  // Cycle to adjacent menu bar icon
@@ -2270,6 +2321,17 @@ public class BattleHud {
       if(this.miss != null) {
         this.miss.delete();
         this.miss = null;
+      }
+    }
+  }
+
+  public void rebuildModMenu() {
+    this.modOptions.clear();
+    for(final RegistryId entry : GameEngine.REGISTRIES.modMenu) {
+      final RegistryDelegate<ModMenu> menuEntry = GameEngine.REGISTRIES.modMenu.getEntry(entry);
+
+      if(menuEntry.get().enabled) {
+        this.modOptions.add(menuEntry.get());
       }
     }
   }

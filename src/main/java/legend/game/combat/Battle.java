@@ -1764,6 +1764,7 @@ public class Battle extends EngineState {
           this.forcedTurnBent_800c66bc.storage_44[7] = this.forcedTurnBent_800c66bc.storage_44[7] & ~FLAG_TAKE_FORCED_TURN | FLAG_1000 | FLAG_CURRENT_TURN;
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
           EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
+          this.hud.rebuildModMenu();
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
@@ -1771,7 +1772,7 @@ public class Battle extends EngineState {
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
             this.currentTurnBent_800c66c8.storage_44[7] |= FLAG_1000 | FLAG_CURRENT_TURN;
             EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
-
+            this.hud.rebuildModMenu();
             //LAB_800c7d74
           } else { // Monsters dead
             this.endBattle();
