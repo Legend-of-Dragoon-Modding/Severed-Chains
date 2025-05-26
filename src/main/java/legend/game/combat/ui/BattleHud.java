@@ -1542,6 +1542,7 @@ public class BattleHud {
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_UP.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_DOWN.get())) {
           if(!this.modOptions.isEmpty()) {
             this.modMenuActive = !this.modMenuActive;
+            this.modIndex = 0;
           }
         }
         // Input for cycling right on menu bar
