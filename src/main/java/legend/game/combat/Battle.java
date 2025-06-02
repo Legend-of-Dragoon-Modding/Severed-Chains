@@ -7357,7 +7357,7 @@ public class Battle extends EngineState {
   @ScriptDescription("Used for coremod equips effects in dragoon.")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Enable equip effects in dragoon?")
   public FlowControl getEquipEffectsInDragoon(final RunningScript<?> script) {
-    script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) ? 1 : 0);
+    script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_EQUIP_EFFECTS_CONFIG.get())) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
