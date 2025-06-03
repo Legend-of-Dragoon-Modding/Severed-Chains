@@ -4044,7 +4044,7 @@ public final class SEffe {
       rot.negate();
       transforms.rotationZYX(rot);
 
-      transforms.scaleLocal(new Vector3f(0x100, 0x100, 0x100).div(scale));
+      transforms.scaleLocal(new Vector3f(0x1, 0x1, 0x1).div(scale));
       transforms.mul(sp0x10, sp0x30);
 
       final Vector3f sp0x100 = new Vector3f().set(sp0x10.transfer).sub(transforms.transfer);
