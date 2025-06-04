@@ -109,6 +109,7 @@ import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.GuardHealEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.ScriptLoadDeffEvent;
 import legend.game.modding.events.battle.SetBentStatEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -6445,12 +6446,12 @@ public class Battle extends EngineState {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    /*final ScriptLoadDeffEvent event = EVENTS.postEvent(new ScriptLoadDeffEvent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get()));
+    final ScriptLoadDeffEvent event = EVENTS.postEvent(new ScriptLoadDeffEvent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get()));
     script.params_20[0].set(event.flagsAndIndex);
     script.params_20[1].set(event.bentIndex);
     script.params_20[2].set(event.p2);
     script.params_20[3].set(event.scriptEntrypoint);
-    script.params_20[4].set(event.type);*/
+    script.params_20[4].set(event.type);
 
     final int type = script.params_20[4].get();
     if(type == 0x100_0000) {
