@@ -66,8 +66,8 @@
                  <ComboBox fx:id="getGoods" onAction="#getGoods" prefHeight="25.0" prefWidth="200.0" />
                  <ComboBox fx:id="getData4" onAction="#getData4" prefHeight="25.0" prefWidth="200.0" />
                  <ComboBox fx:id="getChestFlags" onAction="#getChestFlags" prefHeight="25.0" prefWidth="200.0" />
-                 <Spinner fx:id="getEquipment" prefHeight="25.0" prefWidth="200.0" />
-                 <Spinner fx:id="getItems" prefHeight="25.0" prefWidth="200.0" />
+                 <Spinner fx:id="getEquipment" editable="true" prefHeight="25.0" prefWidth="200.0" />
+                 <Spinner fx:id="getItems" editable="true" prefHeight="25.0" prefWidth="200.0" />
                  <HBox>
                      <ComboBox fx:id="getCharacter" onAction="#getCharacter" prefHeight="25.0" prefWidth="200.0" />
                      <ComboBox fx:id="getCharacterData" onAction="#getCharacterData" prefHeight="25.0" prefWidth="200.0" />
