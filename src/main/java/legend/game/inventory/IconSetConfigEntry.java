@@ -18,6 +18,5 @@ public class IconSetConfigEntry extends EnumConfigEntry<IconSet> {
   @Override
   public void onChange(final ConfigCollection configCollection, final IconSet oldValue, final IconSet newValue) {
     super.onChange(configCollection, oldValue, newValue);
-    ItemIcon.loadIconMap();
   }
 }

@@ -26,6 +26,7 @@ import legend.game.modding.events.inventory.EquipmentCanEquipEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.modding.events.inventory.IconDisplayEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -48,6 +49,7 @@ import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -727,7 +729,7 @@ public final class SItem {
   public static Renderable58 renderItemIcon(final ItemIcon icon, final int x, final int y, final int flags) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = icon.resolve().icon;
+    renderable.glyph_04 = icon.icon;
     renderable.startGlyph_10 = renderable.glyph_04;
     renderable.endGlyph_14 = renderable.glyph_04;
     renderable.tpage_2c = 0x19;
@@ -1612,7 +1614,7 @@ public final class SItem {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipment_14.get(slot) != null) {
-          renderItemIcon(charData.equipment_14.get(slot).icon_0e, 202, 17 + 14 * slot.ordinal(), 0);
+          renderItemIcon(EVENTS.postEvent(new IconDisplayEvent(charData.equipment_14.get(slot), charData.equipment_14.get(slot).getIcon())).icon, 202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
@@ -1656,7 +1658,7 @@ public final class SItem {
 
       //LAB_801094ac
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
-      renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
+      renderItemIcon(EVENTS.postEvent(new IconDisplayEvent((RegistryEntry)menuItem.item_00, menuItem.getIcon())).icon, x + 4, y + FUN_800fc814(i), 0x8);
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {

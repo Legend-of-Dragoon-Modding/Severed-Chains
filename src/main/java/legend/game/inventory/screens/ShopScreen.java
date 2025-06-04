@@ -424,7 +424,7 @@ public class ShopScreen extends MenuScreen {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
-        renderItemIcon(equipment.icon_0e, 151, this.menuEntryY(i), 0x8);
+        renderItemIcon(equipment.getIcon(), 151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(equipment), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? UI_TEXT : UI_TEXT_DISABLED);
 
         if(equipment.canBeDiscarded()) {

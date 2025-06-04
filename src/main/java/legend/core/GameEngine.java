@@ -298,7 +298,6 @@ public final class GameEngine {
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
     InputBindings.loadBindings();
-    ItemIcon.loadIconMap();
   }
 
   private static void loadCharacterData() throws IOException {
