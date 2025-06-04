@@ -1367,7 +1367,7 @@ public class BattleHud {
     this.FUN_800f89f4(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
-  private void onListClose() {
+  public void onListClose() {
     this.listMenu_800c6b60 = null;
   }
 
