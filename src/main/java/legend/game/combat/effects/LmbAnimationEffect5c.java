@@ -631,7 +631,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     final LmbType2 lmb = (LmbType2)this.lmb_0c;
     final LmbTransforms14[] originalTransforms = lmb.initialTransforms_10;
     final int keyframeIndex = tickFip12 / 0x2000;
-    final float lerpScale = (tickFip12 & 0x1fff) / (float)0x2000; // mod(tick, 2) / 2
+    float lerpScale = (tickFip12 & 0x1fff) / (float)0x2000; // mod(tick, 2) / 2
     final LmbTransforms14[] transformsLo = this.lmbTransforms_10;
     final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.objectCount_04, transformsLo.length);
     final int nextKeyframeIndex = (keyframeIndex + 1) % lmb.keyframeCount_0a;
@@ -735,6 +735,11 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
       //LAB_80117438
       if(nextKeyframeIndex == 0) {
+        // Lerp to end if LMB attachment was removed - no replaying
+        if(!manager.hasAttachment(5)) {
+          lerpScale = 1;
+        }
+
         //LAB_801176c0
         //LAB_801176e0
         for(int i = 0; i < lmb.objectCount_04; i++) {
