@@ -348,7 +348,7 @@ public class SdlWindow extends Window {
   }
 
   private void tick() {
-    this.events().onDraw();
     SDL_GL_SwapWindow(this.window);
+    this.events().onDraw();
   }
 }
