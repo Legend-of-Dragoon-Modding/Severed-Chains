@@ -492,8 +492,8 @@ public class PostBattleScreen extends MenuScreen {
     if(charIndex != -1) {
       gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += spGained_800bc950[charSlot];
 
-      if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > 999999) {
-        gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = 999999;
+      if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > CoreMod.MAX_DRAGOON_XP) {
+        gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = CoreMod.MAX_DRAGOON_XP;
       }
 
       //LAB_8010ceb0
