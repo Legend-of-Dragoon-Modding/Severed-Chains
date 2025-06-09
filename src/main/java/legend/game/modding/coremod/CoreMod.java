@@ -65,8 +65,6 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.types.LevelStuff08;
-import legend.game.types.MagicStuff08;
 import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
@@ -121,7 +119,8 @@ public class CoreMod {
   public static int MAX_DRAGOON_LEVEL = 5;
   public static int MAX_ADDITION_LEVEL = 5;
   public static int ADDITIONS_PER_LEVEL = 20;
-  public static int MAX_DRAGOON_EXP = 32000;
+  public static int MAX_DRAGOON_XP = 32000;
+  public static int MAX_ADDITION_XP = 99;
   public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
 
   // Per-campaign config
