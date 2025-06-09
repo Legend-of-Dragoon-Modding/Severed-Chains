@@ -121,6 +121,7 @@ public class CoreMod {
   public static int MAX_DRAGOON_LEVEL = 5;
   public static int MAX_ADDITION_LEVEL = 5;
   public static int ADDITIONS_PER_LEVEL = 20;
+  public static int MAX_DRAGOON_EXP = 32000;
   public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
 
   // Per-campaign config
