@@ -3911,10 +3911,11 @@ public class WMap extends EngineState {
       return;
     }
 
+    this.handleStartButtonLocationLabels();
+
     //LAB_800e5178
     //LAB_800e5194
     if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
-      this.handleStartButtonLocationLabels();
       return;
     }
 
@@ -4264,7 +4265,6 @@ public class WMap extends EngineState {
         this.mapState_800c6798.disableInput_d0 = false;
         this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
         this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT_0;
-        this.startLocationLabelsActive_800c68a8 = true;
 
         //LAB_800e67a8
         for(int i = 0; i < 7; i++) {
@@ -4340,7 +4340,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e6b74
-      if(PLATFORM.isActionHeld(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get())) {
+      if(PLATFORM.isActionHeld(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) || this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc == PathSegmentEndpointType.TERMINAL_1) {
         //LAB_800e6b90
         for(int i = 0; i < 7; i++) {
           //LAB_800e6bac
@@ -4352,7 +4352,7 @@ public class WMap extends EngineState {
       }
       //LAB_800e6afc
     } else {
-      if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_DESTINATIONS.get())) {
+      if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_DESTINATIONS.get()) && this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
         playSound(0, 2, (short)0, (short)0);
         this.startLocationLabelsActive_800c68a8 = true;
 
