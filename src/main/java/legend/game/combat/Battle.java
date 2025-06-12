@@ -3811,11 +3811,11 @@ public class Battle extends EngineState {
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final int additionXp = Math.min(CoreMod.MAX_ADDITION_XP, charData.additionXp_22[additionIndex] + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
+      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= charData.additionLevels_1a[additionIndex] * CoreMod.ADDITIONS_PER_LEVEL) {
         charData.additionLevels_1a[additionIndex]++;
       }
 
@@ -3826,7 +3826,7 @@ public class Battle extends EngineState {
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
       for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
+        if(charData.additionLevels_1a[additionIndex2] == CoreMod.MAX_ADDITION_LEVEL) {
           nonMaxedAdditions--;
         } else {
           //LAB_800cd308

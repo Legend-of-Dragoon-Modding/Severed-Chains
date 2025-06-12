@@ -97,7 +97,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.startMenuMusic;
 import static legend.game.SItem.stopMenuMusic;
@@ -858,7 +857,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final MagicStuff08 spellStuff = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[dlevel];
       final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
@@ -889,8 +888,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022a50
     //LAB_80022a64
     int unlockedSpells = 0;
-    for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
+    for(int i = 0; i < CoreMod.MAX_DRAGOON_LEVEL + 1; i++) {
+      if(CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i].spellIndex_02 != -1) {
         unlockedSpells++;
       }
 

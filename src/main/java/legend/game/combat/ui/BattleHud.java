@@ -23,6 +23,7 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -178,7 +179,7 @@ public class BattleHud {
   private int currentCameraPositionIndicesIndicesIndex_800c6ba1;
   private final BattleDisplayStats144[] displayStats_800c6c2c = new BattleDisplayStats144[3];
   private final int[] cameraPositionIndicesIndices_800c6c30 = new int[4];
-  private final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
+  public final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
 
   public final Battle battle;
 
@@ -702,7 +703,7 @@ public class BattleHud {
               final int right = left + spBarW;
               final int bottom = top + 3;
 
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
+              final int[] spBarColours = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[spBarIndex];
 
               if(this.spBars == null) {
                 this.spBars = new QuadBuilder("SPBar")

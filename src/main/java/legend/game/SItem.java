@@ -134,15 +134,15 @@ public final class SItem {
 
   /** Note: arrays run into the next array's first element */
   public static final int[][] dragoonXpRequirements_800fbbf0 = {
-    {0, 0, 1200, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1200, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 2000, 12000, 20000, 0},
-    {0, 0, 1000, 2000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
+    {0, 1200, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1200, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1000, 2000, 12000, 20000, 0},
+    {0, 1000, 2000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
   };
 
   public static final int[] dragoonGoodsBits_800fbd08 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
@@ -169,17 +169,6 @@ public final class SItem {
     {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 29, 255, 150, 200, 200, 200), new MagicStuff08(40, -1, 255, 155, 205, 210, 210), new MagicStuff08(60, 30, 255, 160, 210, 220, 220), new MagicStuff08(80, -1, 255, 165, 215, 230, 230), new MagicStuff08(100, 31, 255, 170, 220, 250, 250), },
     {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 66, 255, 200, 150, 200, 200), new MagicStuff08(40, 65, 255, 205, 155, 210, 210), new MagicStuff08(60, 67, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 13, 255, 220, 170, 250, 250), },
   };
-
-  public static final int[] kongolXpTable_801134f0 = new int[61];
-  public static final int[] dartXpTable_801135e4 = new int[61];
-  public static final int[] haschelXpTable_801136d8 = new int[61];
-  public static final int[] meruXpTable_801137cc = new int[61];
-  public static final int[] lavitzXpTable_801138c0 = new int[61];
-  public static final int[] albertXpTable_801138c0 = new int[61];
-  public static final int[] roseXpTable_801139b4 = new int[61];
-  public static final int[] shanaXpTable_80113aa8 = new int[61];
-  public static final int[] mirandaXpTable_80113aa8 = new int[61];
-  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
 
   public static final Addition04[][] additions_80114070 = {
     {new Addition04(0, 0, 0), new Addition04(0, 0, 0), new Addition04(25, 0, 5), new Addition04(50, 0, 10), new Addition04(75, 0, 20), new Addition04(100, 0, 35)},
@@ -526,11 +515,11 @@ public final class SItem {
     //LAB_800fc6ac
     final int level = gameState_800babc8.charData_32c[charIndex].level_12;
 
-    if(level >= 60) {
+    if(level >= CoreMod.MAX_CHARACTER_LEVEL) {
       return 0; // Max level
     }
 
-    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
+    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, CoreMod.CHARACTER_DATA[charIndex].xpTable[level + 1]));
 
     //LAB_800fc70c
     return event.xp;
@@ -1897,7 +1886,7 @@ public final class SItem {
       stats.bodyDefence_6c = statsEvent.bodyDefence;
       stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_80111d20[charId][stats.dlevel_0f];
+      final MagicStuff08 magicStuff = CoreMod.CHARACTER_DATA[charId].dragoonStatsTable[stats.dlevel_0f];
       stats.maxMp_6e = statsEvent.maxMp;
       stats.spellId_70 = statsEvent.spellId;
       stats._71 = magicStuff._03;
@@ -1908,7 +1897,9 @@ public final class SItem {
 
       final int additionIndex = stats.selectedAddition_35;
       if(additionIndex != -1) {
-        final Addition04 addition = additions_80114070[additionIndex][stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac[charId]]];
+        final int trueAdditionIndex = additionIndex - additionOffsets_8004f5ac[charId];
+        final int additionLevel = gameState_800babc8.charData_32c[charId].additionLevels_1a[additionIndex - additionOffsets_8004f5ac[charId]];
+        final Addition04 addition = CoreMod.CHARACTER_DATA[charId].additionsMultiplier.get(trueAdditionIndex)[additionLevel];
 
         stats.addition_00_9c = addition._00;
         stats.additionSpMultiplier_9e = addition.spMultiplier_02;
