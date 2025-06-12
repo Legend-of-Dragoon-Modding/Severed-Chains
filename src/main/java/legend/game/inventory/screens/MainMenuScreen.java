@@ -49,6 +49,7 @@ import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
+import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -357,20 +358,26 @@ public class MainMenuScreen extends MenuScreen {
       menuStack.reset();
 
       final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state));
+      _800bd7ac = true;
 
       gameState_800babc8 = event.gameState;
       gameState_800babc8.syncIds();
 
       loadingNewGameState_800bdc34 = true;
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
 
       submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
       submapCutForSave_800cb450 = submapCut_80052c30;
       collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
 
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
         submapScene_80052c34 = 53;
+      }
+
+      if(gameState_800babc8.isOnWorldMap_4e4) {
+        submapCut_80052c30 = 0;
+      } else {
+        submapCut_80052c30 = gameState_800babc8.submapCut_a8;
       }
 
       currentEngineState_8004dd04.loadGameFromMenu(gameState_800babc8);

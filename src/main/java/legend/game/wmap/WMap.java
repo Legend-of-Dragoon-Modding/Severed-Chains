@@ -417,6 +417,7 @@ public class WMap extends EngineState {
   @Override
   public void loadGameFromMenu(final GameState52c gameState) {
     this.wmapState_800bb10c = gameState.isOnWorldMap_4e4 ? WmapState.INIT_0 : WmapState.TRANSITION_TO_SUBMAP_7;
+    this.encounterAccumulator_800c6ae8 = 0;
   }
 
   @Override
