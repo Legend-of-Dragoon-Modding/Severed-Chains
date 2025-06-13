@@ -60,20 +60,9 @@ public enum ItemIcon {
   NONE(64),
   ;
 
-  private static final Map<ItemIcon, ItemIcon> ICON_MAP = new EnumMap<>(ItemIcon.class);
-
-  public static void loadIconMap() {
-    ICON_MAP.clear();
-    EVENTS.postEvent(new IconMapEvent(ICON_MAP));
-  }
-
   public final int icon;
 
   ItemIcon(final int icon) {
     this.icon = icon;
-  }
-
-  public ItemIcon resolve() {
-    return ICON_MAP.getOrDefault(this, this);
   }
 }
