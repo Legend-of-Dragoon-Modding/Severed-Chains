@@ -803,6 +803,10 @@ public class RenderEngine {
 
       this.state.scissor(entry);
 
+      if(entry.viewportUsed) {
+        this.state.viewport(entry.viewport);
+      }
+
       for(int layer = 0; layer < entry.getLayers(); layer++) {
         if(entry.shouldRender(null, layer)) {
           if(backFaceCulling) {
@@ -825,6 +829,10 @@ public class RenderEngine {
             }
           }
         }
+      }
+
+      if(entry.viewportUsed) {
+        this.state.resetViewport();
       }
     }
   }
@@ -862,6 +870,10 @@ public class RenderEngine {
 
         this.state.scissor(entry);
 
+        if(entry.viewportUsed) {
+          this.state.viewport(entry.viewport);
+        }
+
         entry.useTexture();
 
         for(int layer = 0; layer < entry.getLayers(); layer++) {
@@ -884,6 +896,10 @@ public class RenderEngine {
             Translucency.B_PLUS_F.setGlState();
             entry.render(Translucency.B_PLUS_QUARTER_F, layer);
           }
+        }
+
+        if(entry.viewportUsed) {
+          this.state.resetViewport();
         }
       }
     }
@@ -1037,7 +1053,7 @@ public class RenderEngine {
   }
 
   private void pre() {
-    glViewport(0, 0, this.renderWidth, this.renderHeight);
+    this.state.resetViewport();
 
     // Update global transforms (default to 3D)
     this.setProjectionMode(ProjectionMode._3D);

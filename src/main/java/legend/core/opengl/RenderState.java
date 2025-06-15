@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glScissor;
+import static org.lwjgl.opengl.GL11C.glViewport;
 
 public class RenderState {
   private boolean backfaceCulling;
@@ -121,5 +122,13 @@ public class RenderState {
       glDisable(GL_SCISSOR_TEST);
       this.scissor = false;
     }
+  }
+
+  public void viewport(final Rect4i viewport) {
+    glViewport(viewport.x, viewport.y, viewport.w, viewport.h);
+  }
+
+  public void resetViewport() {
+    glViewport(0, 0, this.engine.getRenderWidth(), this.engine.getRenderHeight());
   }
 }

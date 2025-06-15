@@ -214,6 +214,7 @@ import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
@@ -1765,6 +1766,46 @@ public class Battle extends EngineState {
       } else { // Game over
         loadMusicPackage(19);
         postBattleAction_800bc974 = 2;
+      }
+    }
+
+    if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasAlivePlayers()) {
+      final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40[0].innerStruct_00;
+      final Model124 model = bent.model_148;
+
+      tmdGp0Tpage_1f8003ec = model.tpage_108;
+      zOffset_1f8003e8 = model.zOffset_a0;
+
+      final MV lw = new MV();
+      final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+      coord2.coord.scaling(3.0f);
+
+      //LAB_800ec9d0
+      for(int i = 0; i < model.modelParts_00.length; i++) {
+        if((model.partInvisible_f4 & 1L << i) == 0) {
+          final ModelPart10 part = model.modelParts_00[i];
+
+          final GsCOORDINATE2 parent = part.coord2_04.super_;
+          part.coord2_04.super_ = coord2;
+          part.coord2_04.flg = 0;
+          GsGetLw(part.coord2_04, lw);
+          GsSetLightMatrix(lw);
+          part.coord2_04.super_ = parent;
+          part.coord2_04.flg = 0;
+
+          if(model.modelParts_00[i].obj != null) {
+            RENDERER.queueModel(model.modelParts_00[i].obj, lw, QueuedModelBattleTmd.class)
+              .depthOffset(model.zOffset_a0 * 4)
+              .lightDirection(lightDirectionMatrix_800c34e8)
+              .lightColour(lightColourMatrix_800c3508)
+              .backgroundColour(GTE.backgroundColour)
+              .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+              .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+              .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00)
+              .viewport(0, 0, 1000, 1000)
+            ;
+          }
+        }
       }
     }
 

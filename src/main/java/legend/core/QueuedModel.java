@@ -46,6 +46,9 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
   int opaqueDepthComparator;
   int translucentDepthComparator;
 
+  final Rect4i viewport = new Rect4i();
+  boolean viewportUsed;
+
   public QueuedModel(final RenderBatch batch, final Shader<Options> shader, final Options shaderOptions) {
     this.batch = batch;
     this.shader = shader;
@@ -156,6 +159,13 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return (T)this;
   }
 
+  public T viewport(final int x, final int y, final int w, final int h) {
+    this.viewport.set(x, y, w, h);
+    this.viewportUsed = true;
+    //noinspection unchecked
+    return (T)this;
+  }
+
   void acquire(final Obj obj, final MV transforms) {
     this.transforms.set(transforms).setTranslation(transforms.transfer);
     this.acquire(obj);
@@ -180,6 +190,7 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     this.worldScissor.set(this.batch.engine.scissorStack.top());
     this.opaqueDepthComparator = GL_LESS;
     this.translucentDepthComparator = GL_LEQUAL;
+    this.viewportUsed = false;
   }
 
   void setTransforms(final MV transforms) {
