@@ -4,7 +4,6 @@ import de.jcm.discordgamesdk.Core;
 import de.jcm.discordgamesdk.CreateParams;
 import de.jcm.discordgamesdk.LogLevel;
 import de.jcm.discordgamesdk.activity.Activity;
-import legend.core.GameEngine;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +21,7 @@ import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 
 public final class DiscordRichPresence {
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(GameEngine.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(DiscordRichPresence.class);
   private static Thread thread;
   private static CreateParams params;
   private static Core core;
@@ -62,7 +61,7 @@ public final class DiscordRichPresence {
   }
 
   public static void stop() {
-    if (thread != null) {
+    if(thread != null) {
       try{
         thread.interrupt();
       } catch(final Exception ex) {
