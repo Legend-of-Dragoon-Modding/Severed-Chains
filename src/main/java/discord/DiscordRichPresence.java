@@ -31,7 +31,6 @@ public final class DiscordRichPresence {
   }
 
   public static void start() {
-
     thread = new Thread(() -> {
       params = new CreateParams();
       params.setClientID(1383897032212611112L);
