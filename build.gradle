@@ -55,6 +55,7 @@ repositories {
   mavenCentral()
   mavenLocal()
   maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -95,6 +96,8 @@ dependencies {
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
   implementation group: 'net.java.dev.jna', name: 'jna', version: '5.16.0'
+  
+  implementation group: 'com.github.JnCrMx', name: 'discord-game-sdk4j', version: 'v1.0.0'
 }
 
 javafx {
