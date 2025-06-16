@@ -37,19 +37,23 @@ public final class DiscordRichPresence {
       params.setClientID(1383897032212611112L);
       params.setFlags(CreateParams.getDefaultFlags());
 
-      core = new Core(params);
-      core.setLogHook(LogLevel.VERBOSE, DiscordRichPresence::LogCallback);
-
-      startActivity();
-
       try {
-        while(true) {
-          updateActivity();
-          core.runCallbacks();
-          Thread.sleep(1000 * 60); //Refreshes every minute
+        core = new Core(params);
+        core.setLogHook(LogLevel.VERBOSE, DiscordRichPresence::LogCallback);
+
+        startActivity();
+
+        try {
+          while(true) {
+            updateActivity();
+            core.runCallbacks();
+            Thread.sleep(1000 * 60); //Refreshes every minute
+          }
+        } catch (final InterruptedException ex) {
+          LOGGER.info("Terminating Discord thread...");
         }
-      } catch (final InterruptedException ex) {
-        LOGGER.info("Terminating Discord thread...");
+      } catch(final Exception ex) {
+        LOGGER.error(ex);
       }
     });
 
