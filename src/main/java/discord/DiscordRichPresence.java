@@ -6,6 +6,7 @@ import de.jcm.discordgamesdk.LogLevel;
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.GameEngine;
 import legend.game.EngineStateEnum;
+import legend.game.fmv.Fmv;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +48,7 @@ public final class DiscordRichPresence {
           while(true) {
             updateActivity();
             core.runCallbacks();
-            Thread.sleep(1000 * 60); //Refreshes every minute
+            Thread.sleep(1000 * 30); //Refreshes every 30 seconds
           }
         } catch (final InterruptedException ex) {
           LOGGER.info("Terminating Discord thread...");
@@ -87,22 +88,73 @@ public final class DiscordRichPresence {
   }
 
   public static void updateActivity() {
-    if(gameState_800babc8 != null && engineState_8004dd20 != EngineStateEnum.TITLE_02) {
-      int partyCount = 0;
-      partyCount += gameState_800babc8.charIds_88[0] != -1 ? 1 : 0;
-      partyCount += gameState_800babc8.charIds_88[1] != -1 ? 1 : 0;
-      partyCount += gameState_800babc8.charIds_88[2] != -1 ? 1 : 0;
-
-      activity.party().size().setCurrentSize(partyCount);
+    if(gameState_800babc8 != null) {
+      activity.setDetails(getChapter() + " - " + getSubmap());
+      activity.setState(getStatus());
+      activity.party().size().setCurrentSize(getParty());
       activity.party().size().setMaxSize(3);
-      activity.setDetails(chapterNames_80114248[gameState_800babc8.chapterIndex_98]);
-      activity.setState(engineState_8004dd20 == EngineStateEnum.SUBMAP_05 ? submapNames_8011c108[submapId_800bd808] : worldMapNames_8011c1ec[continentIndex_800bf0b0]);
-    } else {
+    } else if(engineState_8004dd20 == EngineStateEnum.CREDITS_04) {
+      activity.setDetails("Credits");
+      activity.setState(getStatus());
+      activity.party().size().setCurrentSize(getParty());
+      activity.party().size().setMaxSize(activity.party().size().getCurrentSize() > 0 ? 3 : 0);
+    }
+    else if(engineState_8004dd20 == EngineStateEnum.GAME_OVER_07) {
+      activity.setDetails("Game Over");
+      activity.setState(getStatus());
+      activity.party().size().setCurrentSize(getParty());
+      activity.party().size().setMaxSize(activity.party().size().getCurrentSize() > 0 ? 3 : 0);
+    }
+    else {
       activity.setDetails("Main Menu");
+      activity.setState(getStatus());
       activity.party().size().setCurrentSize(0);
       activity.party().size().setMaxSize(0);
     }
 
     core.activityManager().updateActivity(activity);
+  }
+
+  private static String getStatus() {
+    if(Fmv.isPlaying || engineState_8004dd20 == EngineStateEnum.FMV_09 || engineState_8004dd20 == EngineStateEnum.FINAL_FMV_11) {
+      return "Cutscene";
+    }
+    if(engineState_8004dd20 == EngineStateEnum.PRELOAD_00 || engineState_8004dd20 == EngineStateEnum.TITLE_02 || engineState_8004dd20 == EngineStateEnum.CREDITS_04 || engineState_8004dd20 == EngineStateEnum.GAME_OVER_07) {
+      return null;
+    }
+    if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+      return "Combat";
+    }
+    return "Exploring";
+  }
+
+  private static String getChapter() {
+    if(gameState_800babc8 != null && gameState_800babc8.chapterIndex_98 > -1 && gameState_800babc8.chapterIndex_98 < chapterNames_80114248.length) {
+      return chapterNames_80114248[gameState_800babc8.chapterIndex_98];
+    }
+    return "Unknown Chapter";
+  }
+
+  private static String getSubmap() {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05 && submapId_800bd808 > -1 && submapId_800bd808 < submapNames_8011c108.length) {
+      return submapNames_8011c108[submapId_800bd808];
+    }
+    if(continentIndex_800bf0b0 > -1 && continentIndex_800bf0b0 < worldMapNames_8011c1ec.length) {
+      return worldMapNames_8011c1ec[continentIndex_800bf0b0];
+    }
+    return "Unknown Location";
+  }
+
+  private static int getParty() {
+    int partyCount = 0;
+    if(gameState_800babc8 != null) {
+      partyCount += gameState_800babc8.charIds_88[0] != -1 ? 1 : 0;
+      partyCount += gameState_800babc8.charIds_88[1] != -1 ? 1 : 0;
+      partyCount += gameState_800babc8.charIds_88[2] != -1 ? 1 : 0;
+      if(partyCount > 0 && gameState_800babc8.charIds_88[0] == gameState_800babc8.charIds_88[1] && gameState_800babc8.charIds_88[1] == gameState_800babc8.charIds_88[2]) {
+        partyCount = 1;
+      }
+    }
+    return partyCount;
   }
 }
