@@ -23,7 +23,6 @@ public final class DiscordRichPresence {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(DiscordRichPresence.class);
   private static Thread thread;
-  private static CreateParams params;
   private static Core core;
   private static Activity activity;
 
@@ -32,7 +31,7 @@ public final class DiscordRichPresence {
 
   public static void start() {
     try {
-      params = new CreateParams();
+      final CreateParams params = new CreateParams();
       params.setClientID(1383897032212611112L);
       params.setFlags(CreateParams.getDefaultFlags());
 
