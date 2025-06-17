@@ -31,28 +31,32 @@ public final class DiscordRichPresence {
   }
 
   public static void start() {
-    thread = new Thread(() -> {
+    try {
       params = new CreateParams();
       params.setClientID(1383897032212611112L);
       params.setFlags(CreateParams.getDefaultFlags());
 
+      core = new Core(params);
+      core.setLogHook(LogLevel.INFO, DiscordRichPresence::LogCallback);
+      core.setLogHook(LogLevel.WARN, DiscordRichPresence::LogCallback);
+      core.setLogHook(LogLevel.ERROR, DiscordRichPresence::LogCallback);
+      core.setLogHook(LogLevel.VERBOSE, DiscordRichPresence::LogCallback);
+
+      startActivity();
+    } catch(final Exception ex) {
+      LOGGER.error(ex);
+      return;
+    }
+
+    thread = new Thread(() -> {
       try {
-        core = new Core(params);
-        core.setLogHook(LogLevel.VERBOSE, DiscordRichPresence::LogCallback);
-
-        startActivity();
-
-        try {
-          while(true) {
-            updateActivity();
-            core.runCallbacks();
-            Thread.sleep(1000 * 30); //Refreshes every 30 seconds
-          }
-        } catch (final InterruptedException ex) {
-          LOGGER.info("Terminating Discord thread...");
+        while(true) {
+          updateActivity();
+          core.runCallbacks();
+          Thread.sleep(1000 * 30); //Refreshes every 30 seconds
         }
-      } catch(final Exception ex) {
-        LOGGER.error(ex);
+      } catch (final InterruptedException ex) {
+        LOGGER.info("Terminating Discord thread...");
       }
     });
 
@@ -150,7 +154,7 @@ public final class DiscordRichPresence {
       partyCount += gameState_800babc8.charIds_88[1] != -1 ? 1 : 0;
       partyCount += gameState_800babc8.charIds_88[2] != -1 ? 1 : 0;
       if(partyCount > 0 && gameState_800babc8.charIds_88[0] == gameState_800babc8.charIds_88[1] && gameState_800babc8.charIds_88[1] == gameState_800babc8.charIds_88[2]) {
-        partyCount = 1;
+        partyCount = 1; //When starting a new game all slots are assigned 0 (Dart) for some reason
       }
     }
     return partyCount;
