@@ -55,9 +55,9 @@ public final class DiscordRichPresence {
           core.runCallbacks();
           Thread.sleep(1000 * 30); //Refreshes every 30 seconds
         }
-      } catch (final InterruptedException ex) {
+      } catch(final InterruptedException ex) {
         LOGGER.info("Terminating Discord thread...");
-      } catch (final Exception ex) {
+      } catch(final Exception ex) {
         LOGGER.error(ex);
       }
     });
