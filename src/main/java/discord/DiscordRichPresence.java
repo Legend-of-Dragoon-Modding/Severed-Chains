@@ -57,6 +57,8 @@ public final class DiscordRichPresence {
         }
       } catch (final InterruptedException ex) {
         LOGGER.info("Terminating Discord thread...");
+      } catch (final Exception ex) {
+        LOGGER.error(ex);
       }
     });
 
