@@ -30,24 +30,24 @@ public final class DiscordRichPresence {
   }
 
   public static void start() {
-    try {
-      final CreateParams params = new CreateParams();
-      params.setClientID(1383897032212611112L);
-      params.setFlags(CreateParams.getDefaultFlags());
-
-      core = new Core(params);
-      core.setLogHook(LogLevel.INFO, DiscordRichPresence::LogCallback);
-      core.setLogHook(LogLevel.WARN, DiscordRichPresence::LogCallback);
-      core.setLogHook(LogLevel.ERROR, DiscordRichPresence::LogCallback);
-      core.setLogHook(LogLevel.VERBOSE, DiscordRichPresence::LogCallback);
-
-      startActivity();
-    } catch(final Exception ex) {
-      LOGGER.error(ex);
-      return;
-    }
-
     thread = new Thread(() -> {
+      try {
+        final CreateParams params = new CreateParams();
+        params.setClientID(1383897032212611112L);
+        params.setFlags(CreateParams.getDefaultFlags());
+
+        core = new Core(params);
+        core.setLogHook(LogLevel.INFO, DiscordRichPresence::LogCallback);
+        core.setLogHook(LogLevel.WARN, DiscordRichPresence::LogCallback);
+        core.setLogHook(LogLevel.ERROR, DiscordRichPresence::LogCallback);
+        core.setLogHook(LogLevel.VERBOSE, DiscordRichPresence::LogCallback);
+
+        startActivity();
+      } catch(final Exception ex) {
+        LOGGER.error(ex);
+        return;
+      }
+
       try {
         while(true) {
           updateActivity();
