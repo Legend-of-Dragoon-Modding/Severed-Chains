@@ -25,4 +25,9 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Void> {
       return button;
     });
   }
+
+  @Override
+  public boolean availableInBattle() {
+    return false;
+  }
 }
