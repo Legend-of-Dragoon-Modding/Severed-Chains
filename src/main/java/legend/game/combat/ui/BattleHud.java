@@ -23,8 +23,10 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
+import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
@@ -35,8 +37,10 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -44,23 +48,30 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.UI_WHITE;
+import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
+import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_CANT_TARGET;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.ui.BattleMenuStruct58.battleMenuIconMetrics_800fb674;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -391,9 +402,84 @@ public class BattleHud {
     displayStats.y_02 = charDisplay.y_0a;
   }
 
+  private final List<BattleEntity27c> sortedBents = new ArrayList<>();
+  private final List<TurnOrder> turns = new ArrayList<>();
+
+  private void drawTurnOrder() {
+    if(CONFIG.getConfig(CoreMod.SHOW_TURN_ORDER.get())) {
+      final int oldSeed = simpleRandSeed_8004dd44;
+      this.sortedBents.clear();
+      this.turns.clear();
+      int processedBents = 0;
+
+      for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
+        this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78[bentIndex]));
+      }
+
+      while(processedBents < 6) {
+        int highestTurnValue = 0;
+        int highestIndex = 0;
+        for(int i = 0; i < this.turns.size(); i++) {
+          final TurnOrder turnOrder = this.turns.get(i);
+          final int turnValue = turnOrder.turnValue;
+
+          if(highestTurnValue <= turnValue) {
+            highestTurnValue = turnValue;
+            highestIndex = i;
+          }
+        }
+
+        if(highestTurnValue > 0xd9) {
+          final TurnOrder turnOrder = this.turns.get(highestIndex);
+          turnOrder.turnValue -= 0xd9;
+          this.sortedBents.add(turnOrder.state.innerStruct_00);
+          processedBents++;
+        }
+
+        for(int i = 0; i < this.turns.size(); i++) {
+          final TurnOrder turnOrder = this.turns.get(i);
+          turnOrder.turnValue += Math.round(turnOrder.state.innerStruct_00.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
+        }
+      }
+
+      simpleRandSeed_8004dd44 = oldSeed;
+
+      for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
+        final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[bentIndex];
+
+        if((state.storage_44[7] & (FLAG_400 | FLAG_CURRENT_TURN)) != 0) {
+          this.sortedBents.addFirst(state.innerStruct_00);
+        }
+      }
+
+      if(battleState_8006e398.getForcedTurnBent() != null) {
+        this.sortedBents.addFirst(battleState_8006e398.getForcedTurnBent().innerStruct_00);
+      }
+
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = 40;
+      for(int bentIndex = 0; bentIndex < this.sortedBents.size(); bentIndex++) {
+        final BattleEntity27c bent = this.sortedBents.get(bentIndex);
+        final CombatantStruct1a8 combatant = bent.combatant_144;
+
+        final String name;
+        if((combatant.flags_19e & 0x4) == 0) {
+          name = this.battle.currentEnemyNames_800c69d0[bent.charSlot_276];
+        } else {
+          name = bent.charId_272 == 8 ? "Who?" : playerNames_800fb378[bent.charId_272];
+        }
+
+        renderText(name, 4, 4 + bentIndex * textHeight(name) * UI_WHITE_SMALL.getSize(), UI_WHITE_SMALL);
+      }
+      textZ_800bdf00 = oldZ;
+    }
+  }
+
   @Method(0x800ef9e4L)
   public void draw() {
     if(this.battle.countCombatUiFilesLoaded_800c6cf4 == 6) {
+      this.drawTurnOrder();
+
       final int charCount = battleState_8006e398.getPlayerCount();
 
       //LAB_800efa34

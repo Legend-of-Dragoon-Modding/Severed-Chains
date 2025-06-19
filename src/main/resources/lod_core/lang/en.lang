@@ -172,6 +172,7 @@ lod_core.config.icon_set.ENHANCED=Enhanced
 lod_core.config.icon_set.RETAIL=Retail
 lod_core.config.run_by_default.label=Run by default
 lod_core.config.run_by_default.help=When enabled, the character will run by default and walk when the run input is held
+lod_core.config.show_turn_order.label=Show turn order
 
 lod_core.input_actions.menu_up.name=Menu: up
 lod_core.input_actions.menu_down.name=Menu: down
