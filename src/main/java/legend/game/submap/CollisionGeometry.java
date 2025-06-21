@@ -135,6 +135,7 @@ public class CollisionGeometry {
 
       if(this.collidedPrimitiveIndex_800cbd94 != -1 && this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
         this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
+        // Makes rotation calculation use player's local rotation (otherwise rotates when X is non-zero, GH#2316)
         this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, Math.cos(coords.transforms.rotate.x) * movement.z) + MathHelper.PI, MathHelper.TWO_PI);
       }
     } else {
