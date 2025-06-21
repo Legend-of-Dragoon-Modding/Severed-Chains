@@ -33,7 +33,7 @@ public final class DiscordRichPresence {
     thread = new Thread(() -> {
       try {
         final CreateParams params = new CreateParams();
-        params.setClientID(1383897032212611112L);
+        params.setClientID(1385814687458918400L); //App ID
         params.setFlags(CreateParams.getDefaultFlags());
 
         core = new Core(params);
@@ -87,7 +87,7 @@ public final class DiscordRichPresence {
   private static void startActivity() {
     activity = new Activity();
     activity.timestamps().setStart(Instant.now());
-    activity.assets().setLargeImage("https://assets-prd.ignimgs.com/2022/03/02/the-legend-of-dragoon-1646184664725.jpg");
+    activity.assets().setLargeImage("https://legendofdragoon.org/discord-int/disco.png");
   }
 
   public static void updateActivity() {
