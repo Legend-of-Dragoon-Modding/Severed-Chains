@@ -248,6 +248,8 @@ public final class Fmv {
   private static boolean isKeyboardInput;
   private static boolean isControllerInput;
 
+  public static boolean isPlaying;
+
   public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
     sssqResetStuff();
 
@@ -256,6 +258,7 @@ public final class Fmv {
     rumbleData = RumbleData.load(Loader.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
     rumbleFrames = 0;
 
+    isPlaying = true;
     Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
@@ -607,6 +610,7 @@ public final class Fmv {
   }
 
   public static void stop() {
+    isPlaying = false;
     RENDERER.setRenderCallback(() -> {
       if(texturedObj != null) {
         texturedObj.delete();
