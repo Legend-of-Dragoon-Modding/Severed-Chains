@@ -491,3 +491,4 @@ lod.input_actions.bttl_special.name=Battle: special
 lod.input_actions.bttl_escape.name=Battle: escape
 lod.input_actions.bttl_guard.name=Battle: guard
 lod.input_actions.bttl_items.name=Battle: items/spells
+lod.input_actions.bttl_options.name=Battle: options

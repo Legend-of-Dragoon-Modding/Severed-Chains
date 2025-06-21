@@ -181,6 +181,7 @@ lod_core.config.detransformation_mode.help=Allows detransforming in Dragoon. Ski
 lod_core.config.detransformation_mode.AFTER_TURN=After Turn
 lod_core.config.detransformation_mode.SKIP_TURN=Skip Turn
 lod_core.config.detransformation_mode.OFF=Off
+lod_core.config.show_turn_order.label=Show turn order
 
 lod_core.input_actions.menu_up.name=Menu: up
 lod_core.input_actions.menu_down.name=Menu: down

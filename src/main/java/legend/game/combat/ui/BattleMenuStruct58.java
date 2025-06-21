@@ -104,6 +104,7 @@ public class BattleMenuStruct58 {
   public int cameraPositionSwitchTicksRemaining_44;
   public int target_48;
   public boolean displayTargetArrowAndName_4c;
+  public boolean targetArrowHiding;
   public int targetType_50;
   public int combatantIndex_54;
 

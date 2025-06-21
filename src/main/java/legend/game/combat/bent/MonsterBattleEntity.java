@@ -6,6 +6,7 @@ import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptFile;
@@ -16,6 +17,7 @@ import org.joml.Vector3f;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.applyBuffOrDebuff;
 import static legend.game.combat.Battle.applyMagicDamageMultiplier;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -39,6 +41,12 @@ public class MonsterBattleEntity extends BattleEntity27c {
 
   public MonsterBattleEntity(final String name) {
     super(LodMod.MONSTER_TYPE.get(), name);
+  }
+
+  @Override
+  public String getName() {
+    final Battle battle = ((Battle)currentEngineState_8004dd04);
+    return battle.currentEnemyNames_800c69d0[this.charSlot_276];
   }
 
   @Override

@@ -116,7 +116,9 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e88a0L)
-  public int checkCollision(final boolean isNpc, final Vector3f position, final Vector3f movement, final boolean updatePlayerRotationInterpolation) {
+  public int checkCollision(final boolean isNpc, final GsCOORDINATE2 coords, final Vector3f movement, final boolean updatePlayerRotationInterpolation) {
+    final Vector3f position = coords.coord.transfer;
+
     if(isNpc) {
       return this.handleCollision(position.x, position.y, position.z, movement);
     }
@@ -133,7 +135,8 @@ public class CollisionGeometry {
 
       if(this.collidedPrimitiveIndex_800cbd94 != -1 && this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
         this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-        this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+        // Cos on X makes rotation calculation use player's local rotation (otherwise rotates when X is non-zero, GH#2316)
+        this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, Math.cos(coords.transforms.rotate.x) * movement.z) + MathHelper.PI, MathHelper.TWO_PI);
       }
     } else {
       //LAB_800e8954

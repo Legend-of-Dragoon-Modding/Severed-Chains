@@ -73,13 +73,17 @@ public class Transformations {
     while((slash = path.indexOf('/', previousSlash + 1)) != -1) {
       final String pathSegment = path.substring(previousSlash == 0 ? 0 : previousSlash + 1, slash);
       final boolean finalSegment = slash == path.length() - 1; // Is this the final segment in the path?
+      final String fullPath = current.fullPath.isEmpty() ? "" : current.fullPath + '/';
 
-      if(!current.children.containsKey(pathSegment) || finalSegment) {
-        final String fullPath = current.fullPath.isEmpty() ? "" : current.fullPath + '/';
-        current = current.addChild(new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, current));
-      } else {
-        current = current.children.get(pathSegment);
-      }
+      // Java complains about non-final current in lambda
+      final PathNode currentRef = current;
+      current = current.children.compute(pathSegment, (k, existing) -> {
+        if(existing == null || finalSegment) {
+          return new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, currentRef);
+        } else {
+          return existing;
+        }
+      });
 
       previousSlash = slash;
     }

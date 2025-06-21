@@ -6,8 +6,8 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
-import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
+import legend.game.inventory.screens.controls.Panel;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
@@ -21,25 +21,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
-public class OptionsScreen extends VerticalLayoutScreen {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(OptionsScreen.class);
+public class BattleOptionsScreen extends VerticalLayoutScreen {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(BattleOptionsScreen.class);
   private final Runnable unload;
+
+  private final Panel panel;
 
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
 
-  public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
+  public BattleOptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
     deallocateRenderables(0xff);
 
     this.unload = unload;
-    this.init();
+
+    this.panel = this.addControl(Panel.panel());
+    this.panel.setPos(12, 20);
+    this.panel.setSize(296, 140);
 
     final Map<ConfigEntry<?>, String> translations = new HashMap<>();
 
@@ -58,7 +62,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
         final ConfigEntry configEntry = entry.getKey();
         final String text = entry.getValue();
 
-        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl() && (!this.hideNonBattleEntries() || configEntry.availableInBattle())) {
+        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
           Control editControl;
           boolean error = false;
 
@@ -91,15 +95,6 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
     this.addHotkey(I18n.translate("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
     this.addHotkey(I18n.translate("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
-  }
-
-  protected void init() {
-    startFadeEffect(2, 10);
-    this.addControl(new Background());
-  }
-
-  protected boolean hideNonBattleEntries() {
-    return false;
   }
 
   private Label createErrorLabel(final String log, final Throwable ex, final boolean setSize) {
@@ -258,5 +253,21 @@ public class OptionsScreen extends VerticalLayoutScreen {
       this.replaceControlWithErrorLabel("Error on mouseScrollHighRes", ex);
     }
     return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  public int getWidth() {
+    return 320;
+  }
+
+  @Override
+  protected int maxVisibleEntries() {
+    return (this.panel.getHeight() - 14) / 14;
+  }
+
+  @Override
+  protected void updateArrowPositions() {
+    this.upArrow.setPos((int)(this.getWidth() - 20 * this.getSizeScale()), this.panel.getY() + 6);
+    this.downArrow.setPos((int)(this.getWidth() - 20 * this.getSizeScale()), this.panel.getY() + this.panel.getHeight() - 24);
   }
 }

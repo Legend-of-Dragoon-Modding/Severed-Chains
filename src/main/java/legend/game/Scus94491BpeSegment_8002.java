@@ -831,6 +831,13 @@ public final class Scus94491BpeSegment_8002 {
 
         textZ_800bdf00 = 13;
       }
+
+      case UNLOAD_QUIETLY -> {
+        menuStack.reset();
+        whichMenu_800bdc38 = WhichMenu.NONE_0;
+        deallocateRenderables(0xff);
+        textZ_800bdf00 = 13;
+      }
     }
   }
 
