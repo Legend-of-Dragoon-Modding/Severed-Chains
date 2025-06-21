@@ -27,6 +27,7 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.StatDisplayEvent;
+import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -36,6 +37,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -1595,7 +1597,11 @@ public class BattleHud {
       case 1 -> {  // Checking for input
         if(whichMenu_800bdc38 == WhichMenu.NONE_0 && !this.battleMenu_800c6c34.displayTargetArrowAndName_4c && !this.battleMenu_800c6c34.targetArrowHiding && PLATFORM.isActionPressed(LodMod.INPUT_ACTION_BTTL_OPTIONS.get())) {
           whichMenu_800bdc38 = WhichMenu.RENDER_NEW_MENU;
-          menuStack.pushScreen(new BattleOptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> this.closeMenu = true));
+          menuStack.pushScreen(new BattleOptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+            ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+            ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
+            this.closeMenu = true;
+          }));
         }
 
         this.battleMenu_800c6c34.targetArrowHiding = false;
