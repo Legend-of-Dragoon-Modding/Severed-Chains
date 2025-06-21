@@ -653,6 +653,10 @@ public class Battle extends EngineState {
     return this.inputHeld;
   }
 
+  public boolean isBattleDisabled() {
+    return this.combatDisabled_800c66b9;
+  }
+
   @Override
   public void postScriptTick(final boolean scriptsTicked) {
     super.postScriptTick(scriptsTicked);

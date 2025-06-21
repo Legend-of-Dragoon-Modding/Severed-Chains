@@ -406,7 +406,7 @@ public class BattleHud {
   private final List<TurnOrder> turns = new ArrayList<>();
 
   private void drawTurnOrder() {
-    if(CONFIG.getConfig(CoreMod.SHOW_TURN_ORDER.get())) {
+    if(!this.battle.isBattleDisabled() && CONFIG.getConfig(CoreMod.SHOW_TURN_ORDER.get())) {
       final int oldSeed = simpleRandSeed_8004dd44;
       this.sortedBents.clear();
       this.turns.clear();
