@@ -23,7 +23,6 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
-import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
 import legend.game.modding.coremod.CoreMod;
@@ -402,7 +401,7 @@ public class BattleHud {
     displayStats.y_02 = charDisplay.y_0a;
   }
 
-  private final List<BattleEntity27c> sortedBents = new ArrayList<>();
+  private final List<String> sortedBents = new ArrayList<>();
   private final List<TurnOrder> turns = new ArrayList<>();
 
   private void drawTurnOrder() {
@@ -432,7 +431,7 @@ public class BattleHud {
         if(highestTurnValue > 0xd9) {
           final TurnOrder turnOrder = this.turns.get(highestIndex);
           turnOrder.turnValue -= 0xd9;
-          this.sortedBents.add(turnOrder.state.innerStruct_00);
+          this.sortedBents.add(turnOrder.state.innerStruct_00.getName());
           processedBents++;
         }
 
@@ -448,27 +447,18 @@ public class BattleHud {
         final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[bentIndex];
 
         if((state.storage_44[7] & (FLAG_400 | FLAG_CURRENT_TURN)) != 0) {
-          this.sortedBents.addFirst(state.innerStruct_00);
+          this.sortedBents.addFirst(state.innerStruct_00.getName());
         }
       }
 
       if(battleState_8006e398.getForcedTurnBent() != null) {
-        this.sortedBents.addFirst(battleState_8006e398.getForcedTurnBent().innerStruct_00);
+        this.sortedBents.addFirst(battleState_8006e398.getForcedTurnBent().innerStruct_00.getName() + " !");
       }
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = 40;
       for(int bentIndex = 0; bentIndex < this.sortedBents.size(); bentIndex++) {
-        final BattleEntity27c bent = this.sortedBents.get(bentIndex);
-        final CombatantStruct1a8 combatant = bent.combatant_144;
-
-        final String name;
-        if((combatant.flags_19e & 0x4) == 0) {
-          name = this.battle.currentEnemyNames_800c69d0[bent.charSlot_276];
-        } else {
-          name = bent.charId_272 == 8 ? "Who?" : playerNames_800fb378[bent.charId_272];
-        }
-
+        final String name = this.sortedBents.get(bentIndex);
         renderText(name, 4, 4 + bentIndex * textHeight(name) * UI_WHITE_SMALL.getSize(), UI_WHITE_SMALL);
       }
       textZ_800bdf00 = oldZ;

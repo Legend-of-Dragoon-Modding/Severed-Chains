@@ -24,6 +24,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
@@ -76,6 +77,11 @@ public class PlayerBattleEntity extends BattleEntity27c {
     //noinspection unchecked
     this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[scriptIndex]);
     this.script = script;
+  }
+
+  @Override
+  public String getName() {
+    return this.charId_272 == 8 ? "Who?" : playerNames_800fb378[this.charId_272];
   }
 
   @Override

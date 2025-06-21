@@ -264,6 +264,8 @@ public abstract class BattleEntity27c extends BattleObject {
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
   }
 
+  public abstract String getName();
+
   public void scissor(final int x, final int y, final int w, final int h) {
     this.scissor.set(x, y, w, h);
     this.useScissor = true;
