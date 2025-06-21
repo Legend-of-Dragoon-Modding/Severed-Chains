@@ -865,7 +865,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final MagicStuff08 spellStuff = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[dlevel];
       final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
@@ -896,8 +896,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022a50
     //LAB_80022a64
     int unlockedSpells = 0;
-    for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
+    for(int i = 0; i < CoreMod.MAX_DRAGOON_LEVEL + 1; i++) {
+      if(CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i].spellIndex_02 != -1) {
         unlockedSpells++;
       }
 
@@ -1207,7 +1207,7 @@ public final class Scus94491BpeSegment_8002 {
 
   public static <T> Comparator<MenuEntryStruct04<T>> menuItemIconComparator() {
     return Comparator
-      .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon().resolve().icon)
+      .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon().icon)
       .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
   }
 
