@@ -84,6 +84,7 @@ public class Transformations {
           return existing;
         }
       });
+
       previousSlash = slash;
     }
 
