@@ -164,6 +164,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
+import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
@@ -1383,6 +1384,9 @@ public final class Scus94491BpeSegment {
     //LAB_80019828
     switch(engineState_8004dd20) {
       case TITLE_02 -> {
+        soundEnv_800c6630.fadingIn_2a = false;
+        soundEnv_800c6630.fadingOut_2b = false;
+
         setMainVolume(0x7f, 0x7f);
         AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
@@ -1762,6 +1766,9 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "right", description = "The right volume")
   @Method(0x8001b14cL)
   public static FlowControl scriptSetMainVolume(final RunningScript<?> script) {
+    soundEnv_800c6630.fadingIn_2a = false;
+    soundEnv_800c6630.fadingOut_2b = false;
+
     setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     AUDIO_THREAD.setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
