@@ -429,6 +429,9 @@ public final class Sequencer extends AudioSource {
   }
 
   public void setMainVolume(final int left, final int right) {
+    // Stop any volume changes over time (can happen when running at high speed)
+    this.fading = Fading.NONE;
+
     this.engineVolumeLeft = left >= 0x80 ? 1 : left / 256.0f;
     this.engineVolumeRight = right >= 0x80 ? 1 : right / 256.0f;
   }
@@ -560,6 +563,9 @@ public final class Sequencer extends AudioSource {
     if(this.backgroundMusic == null) {
       return -1;
     }
+
+    // Stop any volume changes over time (can happen when running at high speed)
+    this.volumeChanging = false;
 
     final float oldVolume = this.backgroundMusic.getVolume();
 
