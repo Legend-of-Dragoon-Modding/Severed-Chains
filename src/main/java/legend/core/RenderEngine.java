@@ -24,6 +24,7 @@ import legend.core.opengl.ShaderOptionsStandard;
 import legend.core.opengl.ShaderOptionsTmd;
 import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
+import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.VoidShaderOptions;
 import legend.core.platform.Window;
@@ -1037,7 +1038,16 @@ public class RenderEngine {
   }
 
   private void pre() {
-    glViewport(0, 0, this.renderWidth, this.renderHeight);
+    if(this.mainBatch.renderMode == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+      final float expectedAspect = (float)this.mainBatch.nativeWidth / this.mainBatch.nativeHeight;
+      final int expectedHeight = this.renderHeight;
+      final int expectedWidth = Math.round(expectedHeight * expectedAspect);
+      final int offset = (this.renderWidth - expectedWidth) / 2;
+
+      glViewport(offset, 0, expectedWidth, expectedHeight);
+    } else {
+      glViewport(0, 0, this.renderWidth, this.renderHeight);
+    }
 
     // Update global transforms (default to 3D)
     this.setProjectionMode(ProjectionMode._3D);
