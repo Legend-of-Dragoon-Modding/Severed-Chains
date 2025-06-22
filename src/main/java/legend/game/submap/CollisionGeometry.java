@@ -133,7 +133,7 @@ public class CollisionGeometry {
       this.collidedPrimitiveIndex_800cbd94 = this.handleCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
 
-      if(this.collidedPrimitiveIndex_800cbd94 != -1 && this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
+      if(this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
         this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
         // Cos on X makes rotation calculation use player's local rotation (otherwise rotates when X is non-zero, GH#2316)
         this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, Math.cos(coords.transforms.rotate.x) * movement.z) + MathHelper.PI, MathHelper.TWO_PI);
@@ -535,39 +535,39 @@ public class CollisionGeometry {
       //LAB_800e9ff4
       // Adjust approach angle until new destination is in-bounds
       // Stop movement if +/- 39.375 degrees would still place the sObj out-of-bounds
-      int s2 = -1;
+      int slidingPrimitiveIndex = -1;
       float offsetX = 0.0f;
       float offsetZ = 0.0f;
-      for(int i = 0; i < 8 && s2 == -1; i++) {
+      for(int i = 0; i < 8 && slidingPrimitiveIndex == -1; i++) {
         final float sin = MathHelper.sin(angle2);
         final float cos = MathHelper.cosFromSin(sin, angle2);
         offsetX = x + cos * distanceMultiplier;
         offsetZ = z + sin * distanceMultiplier;
 
-        s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
+        slidingPrimitiveIndex = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
         angle2 += angleStep;
 
         //LAB_800ea22c
       }
 
       //LAB_800ea254
-      if(s2 < 0) {
+      if(slidingPrimitiveIndex < 0) {
         return -1;
       }
 
       //LAB_800ea234
-      final Vector3f normal = this.normals_08[s2];
+      final Vector3f normal = this.normals_08[slidingPrimitiveIndex];
 
       // Stop movement up/down a steep slope
-      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
+      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[slidingPrimitiveIndex]._08) / normal.y) >= 50) {
         return -1;
       }
 
       movement.x = offsetX - x;
       movement.z = offsetZ - z;
-      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
+      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[slidingPrimitiveIndex]._08) / normal.y;
 
-      return s2;
+      return slidingPrimitiveIndex;
     }
 
     if(destinationPrimitiveIndex < 0) {
