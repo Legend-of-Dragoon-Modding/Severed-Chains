@@ -954,7 +954,7 @@ public class RenderEngine {
   }
 
   public void setProjectionMode(final RenderBatch batch, final ProjectionMode projectionMode) {
-    final boolean highQualityProjection = batch.renderMode == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
+    final boolean highQualityProjection = batch.renderMode == EngineState.RenderMode.PERSPECTIVE;
 
     // znear
     this.projectionBuffer.put(0, 0.0f);

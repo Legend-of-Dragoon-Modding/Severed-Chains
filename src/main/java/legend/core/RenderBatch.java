@@ -125,7 +125,7 @@ public class RenderBatch {
     }
 
     // LOD uses a left-handed projection with a negated Y axis because reasons.
-    if(this.renderMode == EngineState.RenderMode.PERSPECTIVE && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
+    if(this.renderMode == EngineState.RenderMode.PERSPECTIVE) {
       final float ratio;
       if(CoreMod.ALLOW_WIDESCREEN_CONFIG.isValid() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
         ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();

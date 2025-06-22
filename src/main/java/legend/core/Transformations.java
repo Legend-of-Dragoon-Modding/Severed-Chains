@@ -3,13 +3,11 @@ package legend.core;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.game.EngineState;
-import legend.game.modding.coremod.CoreMod;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -24,7 +22,7 @@ public final class Transformations {
   private static final MV toScreenTempMv = new MV();
 
   public static void toScreenspace(final Vector3f worldspaceCoord, final MV transforms, final Vector2f out) {
-    if(RENDERER.getRenderMode() == EngineState.RenderMode.LEGACY || !CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get())) {
+    if(RENDERER.getRenderMode() == EngineState.RenderMode.LEGACY) {
       toScreenTempMv.set(transforms);
       GsMulCoord2(worldToScreenMatrix_800c3548, toScreenTempMv);
       GTE.setTransforms(toScreenTempMv);
