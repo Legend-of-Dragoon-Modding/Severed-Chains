@@ -33,7 +33,7 @@ public interface ScriptedObject {
   static void renderScriptDebug(final Vector2f viewspace, final Vector3i colour) {
     final MV transforms = new MV();
 
-    transforms.scaling(10.0f, 10.0f, 1.0f);
+    transforms.scaling(20.0f, 20.0f, 1.0f);
     transforms.transfer.set(viewspace, 10.0f);
     RENDERER.queueOrthoModel(RENDERER.lineBox, transforms, QueuedModelStandard.class)
       .colour(colour.x / 255.0f, colour.y / 255.0f, colour.z / 255.0f)

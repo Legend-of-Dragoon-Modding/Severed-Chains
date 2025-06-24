@@ -527,7 +527,7 @@ public class RenderEngine {
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
       .monochrome(1.0f)
-      .pos(-1.0f, -1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
       .size(1.0f, 1.0f)
       .build();
     this.centredQuadBPlusF.persistent = true;
@@ -535,26 +535,26 @@ public class RenderEngine {
     this.centredQuadBMinusF = new QuadBuilder("Centred Quad B-F")
       .translucency(Translucency.B_MINUS_F)
       .monochrome(1.0f)
-      .pos(-1.0f, -1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
       .size(1.0f, 1.0f)
       .build();
     this.centredQuadBMinusF.persistent = true;
 
     this.lineBox = new LineBuilder("Line Box")
-      .pos(-1.0f, -1.0f, 0.0f)
-      .pos( 1.0f, -1.0f, 0.0f)
-      .pos( 1.0f,  1.0f, 0.0f)
-      .pos(-1.0f,  1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
       .closed()
       .build();
     this.lineBox.persistent = true;
 
     this.lineBoxBPlusF = new LineBuilder("Line Box (B+F)")
       .translucency(Translucency.B_PLUS_F)
-      .pos(-1.0f, -1.0f, 0.0f)
-      .pos( 1.0f, -1.0f, 0.0f)
-      .pos( 1.0f,  1.0f, 0.0f)
-      .pos(-1.0f,  1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
       .closed()
       .build();
     this.lineBoxBPlusF.persistent = true;
