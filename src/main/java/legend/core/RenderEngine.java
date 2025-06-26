@@ -708,23 +708,23 @@ public class RenderEngine {
         }
 
         this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
-      }
 
-      final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
-      this.lastFrame = System.nanoTime();
-      this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
+        final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
+        this.lastFrame = System.nanoTime();
+        this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
-      final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
-      this.fps[this.fpsIndex] = fps;
-      this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
+        final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
+        this.fps[this.fpsIndex] = fps;
+        this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
 
-      if(this.fpsIndex == 0) {
-        float avg = 0.0f;
-        for(int i = 0; i < fpsLimit; i++) {
-          avg += this.fps[i];
+        if(this.fpsIndex == 0) {
+          float avg = 0.0f;
+          for(int i = 0; i < fpsLimit; i++) {
+            avg += this.fps[i];
+          }
+
+          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
         }
-
-        RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
       }
 
       if(this.reloadShaders) {
