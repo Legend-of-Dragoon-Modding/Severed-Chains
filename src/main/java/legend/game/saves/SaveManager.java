@@ -313,11 +313,7 @@ public final class SaveManager {
     final List<Campaign> campaigns = new ArrayList<>();
 
     for(final Path campaignPath : this.getCampaignPaths()) {
-      final Campaign campaign = Campaign.load(this, campaignPath);
-
-      if(campaign.latestSave != null) {
-        campaigns.add(campaign);
-      }
+      campaigns.add(Campaign.load(this, campaignPath));
     }
 
     return campaigns;

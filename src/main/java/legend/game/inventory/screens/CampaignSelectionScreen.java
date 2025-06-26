@@ -64,14 +64,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     this.campaignList = this.addControl(new BigList<>(c -> c.name));
     this.campaignList.setPos(16, 16);
     this.campaignList.setSize(360, 144);
-    this.campaignList.onHighlight(campaign -> {
-      if(campaign == null) {
-        this.menuEscape();
-        return;
-      }
-
-      saveCard.setSaveData(campaign.latestSave);
-    });
+    this.campaignList.onHighlight(campaign -> saveCard.setSaveData(campaign.latestSave));
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);
 
