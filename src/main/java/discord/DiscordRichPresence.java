@@ -32,7 +32,9 @@ public final class DiscordRichPresence {
   public void init() {
     final CreateParams params = new CreateParams();
     params.setClientID(1385814687458918400L); //App ID
-    params.setFlags(CreateParams.getDefaultFlags());
+
+    final long paramFlags = CreateParams.Flags.toLong(CreateParams.Flags.DEFAULT, CreateParams.Flags.SUPPRESS_EXCEPTIONS);
+    params.setFlags(paramFlags);
 
     this.core = new Core(params);
     this.core.setLogHook(LogLevel.ERROR, (level, string) -> LOGGER.error(string));
