@@ -255,6 +255,7 @@ public final class GameEngine {
     RENDERER.init();
     RENDERER.events().onClose(Loader::shutdownLoader);
     GPU.init();
+    DISCORD.init();
 
     try {
       time = System.nanoTime();
