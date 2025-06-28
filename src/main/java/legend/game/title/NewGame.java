@@ -1,5 +1,6 @@
 package legend.game.title;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -69,5 +70,11 @@ public class NewGame extends EngineState {
 
     this.setUpNewGameData();
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    activity.setDetails("Starting a New Game");
+    activity.setState(null);
   }
 }

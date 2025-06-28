@@ -1,5 +1,6 @@
 package legend.game.credits;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -17,5 +18,11 @@ public class FinalFmv extends EngineState {
     if(this.ticks++ > 94) {
       Fmv.playCurrentFmv(17, EngineStateEnum.CREDITS_04);
     }
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    super.updateDiscordRichPresence(activity);
+    activity.setState("Final Cutscene");
   }
 }

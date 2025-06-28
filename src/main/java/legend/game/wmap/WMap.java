@@ -1,5 +1,6 @@
 package legend.game.wmap;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
@@ -53,6 +54,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
@@ -644,6 +646,9 @@ public class WMap extends EngineState {
     this.initWmapAudioVisuals();
     this.tickMainMenuOpenTransition_800c6690 = 0;
     this.wmapState_800bb10c = WmapState.LOAD_BACKGROUND_OBJ_14;
+
+    this.updateDiscordRichPresence(DISCORD.activity);
+    DISCORD.updateActivity();
   }
 
   private void loadBackgroundObj() {
@@ -6092,5 +6097,11 @@ public class WMap extends EngineState {
     }
 
     this.smokeInstances_800c86f8 = null;
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    super.updateDiscordRichPresence(activity);
+    activity.setState("Exploring");
   }
 }

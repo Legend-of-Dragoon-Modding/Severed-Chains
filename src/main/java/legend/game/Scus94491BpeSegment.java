@@ -27,6 +27,7 @@ import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
+import legend.game.modding.events.engine.EngineStateChangeEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -66,6 +67,7 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
@@ -429,6 +431,8 @@ public final class Scus94491BpeSegment {
       endFrame();
 
       GPU.endFrame();
+
+      DISCORD.tick();
     });
 
     RENDERER.events().onClose(() -> {
@@ -497,6 +501,10 @@ public final class Scus94491BpeSegment {
       if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) { // Starting combat
         clearCombatVars();
       }
+
+      EVENTS.postEvent(new EngineStateChangeEvent(previousEngineState_8004dd28, engineState_8004dd20, currentEngineState_8004dd04));
+      currentEngineState_8004dd04.updateDiscordRichPresence(DISCORD.activity);
+      DISCORD.updateActivity();
     }
   }
 

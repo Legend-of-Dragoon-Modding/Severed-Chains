@@ -35,6 +35,7 @@ import java.util.List;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.UI_WHITE;
@@ -606,6 +607,8 @@ public final class Fmv {
       handleSkipText();
       displaySkipText();
       frame++;
+
+      DISCORD.tick();
     });
   }
 
