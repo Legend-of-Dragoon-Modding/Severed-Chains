@@ -22,11 +22,15 @@ public final class DiscordRichPresence {
   }
 
   public void tick() {
-    this.core.runCallbacks();
+    if(this.core != null) {
+      this.core.runCallbacks();
+    }
   }
 
   public void updateActivity() {
-    this.core.activityManager().updateActivity(this.activity);
+    if(this.core != null) {
+      this.core.activityManager().updateActivity(this.activity);
+    }
   }
 
   public void init() {
@@ -36,7 +40,13 @@ public final class DiscordRichPresence {
     final long paramFlags = CreateParams.Flags.toLong(CreateParams.Flags.DEFAULT, CreateParams.Flags.SUPPRESS_EXCEPTIONS);
     params.setFlags(paramFlags);
 
-    this.core = new Core(params);
+    try {
+      this.core = new Core(params);
+    } catch(final Exception e) {
+      LOGGER.warn("Failed to initialize Discord rich presence", e);
+      return;
+    }
+
     this.core.setLogHook(LogLevel.ERROR, (level, string) -> LOGGER.error(string));
     this.core.setLogHook(LogLevel.WARN, (level, string) -> LOGGER.warn(string));
     this.core.setLogHook(LogLevel.INFO, (level, string) -> LOGGER.info(string));
@@ -45,6 +55,8 @@ public final class DiscordRichPresence {
   }
 
   public void destroy() {
-    this.core.close();
+    if(this.core != null) {
+      this.core.close();
+    }
   }
 }
