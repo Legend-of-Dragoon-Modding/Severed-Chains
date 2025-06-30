@@ -177,22 +177,52 @@ public class MainMenuScreen extends MenuScreen {
       }
 
       if(action == INPUT_ACTION_MENU_RIGHT.get()) {
-        final Button otherButton = this.menuButtons.get(Math.floorMod(index + this.menuButtons.size() / 2, this.menuButtons.size()));
+        int newIndex = index;
 
-        if(!otherButton.isDisabled() && otherButton.isVisible()) {
-          playMenuSound(1);
-          this.setFocus(otherButton);
+        for(int i = 0; i < 3; i++) {
+          if(newIndex >= this.menuButtons.size() / 2) {
+            newIndex += 1;
+          }
+
+          if(newIndex < this.menuButtons.size()) {
+            newIndex += this.menuButtons.size() / 2;
+          }
+
+          newIndex = Math.floorMod(newIndex, this.menuButtons.size());
+
+          final Button otherButton = this.menuButtons.get(newIndex);
+
+          if(!otherButton.isDisabled() && otherButton.isVisible()) {
+            playMenuSound(1);
+            this.setFocus(otherButton);
+            return InputPropagation.HANDLED;
+          }
         }
 
         return InputPropagation.HANDLED;
       }
 
       if(action == INPUT_ACTION_MENU_LEFT.get()) {
-        final Button otherButton = this.menuButtons.get(Math.floorMod(index - this.menuButtons.size() / 2, this.menuButtons.size()));
+        int newIndex = index;
 
-        if(!otherButton.isDisabled() && otherButton.isVisible()) {
-          playMenuSound(1);
-          this.setFocus(otherButton);
+        for(int i = 0; i < 3; i++) {
+          if(newIndex < this.menuButtons.size() / 2) {
+            newIndex -= 1;
+          }
+
+          if(newIndex >= 0) {
+            newIndex -= this.menuButtons.size() / 2;
+          }
+
+          newIndex = Math.floorMod(newIndex, this.menuButtons.size());
+
+          final Button otherButton = this.menuButtons.get(newIndex);
+
+          if(!otherButton.isDisabled() && otherButton.isVisible()) {
+            playMenuSound(1);
+            this.setFocus(otherButton);
+            return InputPropagation.HANDLED;
+          }
         }
 
         return InputPropagation.HANDLED;

@@ -452,13 +452,14 @@ public class LodMod {
       event.addMapping(ItemIcon.LOINCLOTH, ItemIcon.ARMOR);
       event.addMapping(ItemIcon.WARRIOR_DRESS, ItemIcon.ARMOR);
 
+      event.addMapping(ItemIcon.CAPE, ItemIcon.HELM);
       event.addMapping(ItemIcon.CROWN, ItemIcon.HELM);
       event.addMapping(ItemIcon.HAIRBAND, ItemIcon.HELM);
       event.addMapping(ItemIcon.BANDANA, ItemIcon.HELM);
       event.addMapping(ItemIcon.HAT, ItemIcon.HELM);
 
       event.addMapping(ItemIcon.SHOES, ItemIcon.BOOTS);
-      event.addMapping(ItemIcon.KNEEPIECE, ItemIcon.RING);
+      event.addMapping(ItemIcon.KNEEPIECE, ItemIcon.BOOTS);
 
       event.addMapping(ItemIcon.BRACELET, ItemIcon.RING);
       event.addMapping(ItemIcon.AMULET, ItemIcon.RING);
@@ -471,6 +472,7 @@ public class LodMod {
       event.addMapping(ItemIcon.SCARF, ItemIcon.RING);
       event.addMapping(ItemIcon.GLOVE, ItemIcon.RING);
       event.addMapping(ItemIcon.HORN, ItemIcon.RING);
+      event.addMapping(ItemIcon.SHIELD, ItemIcon.RING);
     }
   }
 }

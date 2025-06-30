@@ -14,7 +14,7 @@ public class AdditionOverlaysBorder0e {
   public int b_06;
 
   /** short */
-  public int size_08;
+  public float size_08;
   /** short; Counts from start of addition, not hit */
   public int framesUntilRender_0a;
   /** byte */

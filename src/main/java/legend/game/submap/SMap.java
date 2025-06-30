@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -74,6 +75,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -86,6 +88,7 @@ import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -3893,6 +3896,9 @@ public class SMap extends EngineState {
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_FADE_IN;
+
+        this.updateDiscordRichPresence(DISCORD.activity);
+        DISCORD.updateActivity();
       }
 
       case WAIT_FOR_FADE_IN -> {
@@ -5511,5 +5517,20 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f48a8
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    super.updateDiscordRichPresence(activity);
+    activity.setState("Exploring");
+  }
+
+  @Override
+  public String getLocation() {
+    if(submapId_800bd808 > -1 && submapId_800bd808 < submapNames_8011c108.length) {
+      return submapNames_8011c108[submapId_800bd808];
+    }
+
+    return super.getLocation();
   }
 }

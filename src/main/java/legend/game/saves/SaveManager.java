@@ -69,12 +69,12 @@ public final class SaveManager {
   }
 
   public String generateCampaignName() {
-    if(!Files.exists(this.dir.resolve("New Campaign"))) {
+    if(!Files.exists(this.dir.resolve(IoHelper.slugName("New Campaign")))) {
       return "New Campaign";
     }
 
     for(int i = 2; ; i++) {
-      if(!Files.exists(this.dir.resolve("New Campaign " + i))) {
+      if(!Files.exists(this.dir.resolve(IoHelper.slugName("New Campaign " + i)))) {
         return "New Campaign " + i;
       }
     }
@@ -313,11 +313,7 @@ public final class SaveManager {
     final List<Campaign> campaigns = new ArrayList<>();
 
     for(final Path campaignPath : this.getCampaignPaths()) {
-      final Campaign campaign = Campaign.load(this, campaignPath);
-
-      if(campaign.latestSave != null) {
-        campaigns.add(campaign);
-      }
+      campaigns.add(Campaign.load(this, campaignPath));
     }
 
     return campaigns;

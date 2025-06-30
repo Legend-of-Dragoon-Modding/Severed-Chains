@@ -147,21 +147,15 @@ jobs:
     - name: Clean up MacOS ARM64 x64
       run: 'rm build/libs/launch build/libs/download-java'
 
-    - name: Delete Tag and Release
-      uses: dev-drprasad/delete-tag-and-release@v0.2.1
-      with:
-        delete_release: 'true'
-        tag_name: 'devbuild'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/*.zip,build/*.tar.gz'
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit: ${{ github.sha }}
-        name: 'Latest Development Build'
         allowUpdates: 'true'
+        artifacts: 'build/*.zip,build/*.tar.gz'
+        commit: ${{ github.sha }}
+        draft: 'false'
+        generateReleaseNotes: 'true'
+        name: 'Latest Development Build'
         prerelease: 'true'
         tag: 'devbuild'
+        token: ${{ secrets.GITHUB_TOKEN }}

@@ -7,6 +7,9 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.saves.Campaign;
 import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
@@ -14,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GameState52c {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GameState52c.class);
+
   public Campaign campaign;
 
   /** Maybe flags? Maybe individual bytes? */
@@ -96,11 +101,32 @@ public class GameState52c {
     this.items_2e9.clear();
 
     for(final int id : this.equipmentIds_1e8) {
-      this.equipment_1e8.add(GameEngine.REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[id])).get());
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown equipment ID %#x", id);
+        continue;
+      }
+
+      final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id(idStr));
+
+      if(!delegate.isValid()) {
+        LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
+        continue;
+      }
+
+      this.equipment_1e8.add(delegate.get());
     }
 
     for(final RegistryId id : this.equipmentRegistryIds_1e8) {
-      this.equipment_1e8.add(GameEngine.REGISTRIES.equipment.getEntry(id).get());
+      final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(id);
+
+      if(!delegate.isValid()) {
+        LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
+        continue;
+      }
+
+      this.equipment_1e8.add(delegate.get());
     }
 
     for(final CharacterData2c charData : this.charData_32c) {
@@ -108,21 +134,60 @@ public class GameState52c {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipmentIds_14.containsKey(slot)) {
-          charData.equipment_14.put(slot, GameEngine.REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[charData.equipmentIds_14.getInt(slot)])).get());
+          final String idStr = LodMod.EQUIPMENT_IDS[charData.equipmentIds_14.getInt(slot)];
+
+          if(!idStr.isBlank()) {
+            final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id(idStr));
+
+            if(delegate.isValid()) {
+              charData.equipment_14.put(slot, delegate.get());
+            } else {
+              LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
+            }
+          } else {
+            LOGGER.warn("Skipping unknown equipment ID %#x", charData.equipmentIds_14.getInt(slot));
+          }
         }
 
         if(charData.equipmentRegistryIds_14.containsKey(slot)) {
-          charData.equipment_14.put(slot, GameEngine.REGISTRIES.equipment.getEntry(charData.equipmentRegistryIds_14.get(slot)).get());
+          final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(charData.equipmentRegistryIds_14.get(slot));
+
+          if(delegate.isValid()) {
+            charData.equipment_14.put(slot, delegate.get());
+          } else {
+            LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
+          }
         }
       }
     }
 
     for(final int id : this.itemIds_2e9) {
-      this.items_2e9.add(GameEngine.REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[id - 192])).get());
+      final String idStr = LodMod.ITEM_IDS[id - 192];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown item ID %#x", id);
+        continue;
+      }
+
+      final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(LodMod.id(idStr));
+
+      if(!delegate.isValid()) {
+        LOGGER.warn("Skipping unknown item ID %s", delegate.getId());
+        continue;
+      }
+
+      this.items_2e9.add(delegate.get());
     }
 
     for(final RegistryId id : this.itemRegistryIds_2e9) {
-      this.items_2e9.add(GameEngine.REGISTRIES.items.getEntry(id).get());
+      final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(id);
+
+      if(!delegate.isValid()) {
+        LOGGER.warn("Skipping unknown item ID %s", delegate.getId());
+        continue;
+      }
+
+      this.items_2e9.add(delegate.get());
     }
   }
 }

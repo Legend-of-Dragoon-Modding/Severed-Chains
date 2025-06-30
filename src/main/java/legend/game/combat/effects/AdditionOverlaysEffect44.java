@@ -142,10 +142,12 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         additionBorderColours_800fb7f0[11] = additionRgb >> 16 & 0xff;
       }
 
+      final float scale = CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_SIZE_CONFIG.get());
+
       int val = 16;
       for(int borderNum = 0; borderNum < 17; borderNum++) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (18 - val) * 10;
+        borderOverlay.size_08 = (18 - val) * 10 * 1.5f * scale;
         borderOverlay.isVisible_00 = true;
         //LAB_8010656c
         //LAB_80106574
@@ -167,7 +169,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       val = 0;
       for(int borderNum = 16; borderNum >= 14; borderNum--) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = 20 - val * 2;
+        borderOverlay.size_08 = (20 - val * 2) * 1.5f * scale;
         borderOverlay.angleModifier_02 = 0.0f;
         borderOverlay.countFramesVisible_0c = 0x11;
         borderOverlay.framesUntilRender_0a = hitOverlay.frameSuccessLowerBound_10 - 17;
@@ -314,12 +316,14 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     if(manager.params_10.flags_00 >= 0) {
       final AdditionOverlaysBorder0e[] targetBorderArray = hitOverlay.borderArray_18;
 
+      final float scale = CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_SIZE_CONFIG.get());
+
       //LAB_8010685c
       for(int targetBorderNum = 0; targetBorderNum < 2; targetBorderNum++) {
-        final int squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8;
+        final float squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8 * scale;
 
-        effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
-        effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
+        effect.transforms.scaling(squareSize, squareSize, 1.0f);
+        effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
         final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms, QueuedModelStandard.class);
 
         if(completionState == 1) {  // Success
@@ -343,9 +347,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
   /** Renders the shadow on the inside of the innermost rotating border. */
   @Method(0x80106ac4L)
-  private void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final float angle, final int borderSize) {
+  private void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final float angle, final float borderSize) {
     // Would you believe me if I said I knew what I was doing when I wrote any of this?
-    final int offset = borderSize - 1;
+    final float offset = borderSize - 1;
     final float sin0 = MathHelper.sin(angle);
     final float cos0 = MathHelper.cosFromSin(sin0, angle);
     final float x0 = cos0 * offset / 2.0f;
@@ -405,10 +409,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
         // Renders rotating shadow on innermost rotating border
         if(borderOverlay.sideEffects_0d == 0) {
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08 * 2);
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08 * 2);
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08);
         }
       }
       //LAB_80106fac

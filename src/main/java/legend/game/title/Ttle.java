@@ -1,5 +1,6 @@
 package legend.game.title;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
@@ -1364,5 +1365,11 @@ public class Ttle extends EngineState {
     GPU.downloadData15(sp18, fireAnimation.pixels_08);
     GPU.uploadData15(sp20, fireAnimation.pixels_0c);
     GPU.uploadData15(sp28, fireAnimation.pixels_08);
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    activity.setDetails("Title Screen");
+    activity.setState(null);
   }
 }
