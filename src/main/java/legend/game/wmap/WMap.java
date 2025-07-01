@@ -1883,26 +1883,20 @@ public class WMap extends EngineState {
     RENDERER.queueOrthoModel(this.modelAndAnimData_800c66a8.mapContinentNameObj, this.modelAndAnimData_800c66a8.mapOverlayTransforms, QueuedModelStandard.class)
       .monochrome(this.modelAndAnimData_800c66a8.mapTextureBrightness_20);
 
+    //LAB_800d6b5c
+    this.renderPath();
+
+    if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7) {//LAB_800d6b80
+      if(this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {// Render map zoom level pyramid thing
+        this.modelAndAnimData_800c66a8.zoomOverlay.render(this.modelAndAnimData_800c66a8.zoomState_1f8, this.modelAndAnimData_800c66a8.mapTextureBrightness_20);
+      }
+    }
+
     this.modelAndAnimData_800c66a8.mapTextureBrightness_20 += 0.25f / (3.0f / vsyncMode_8007a3b8);
 
     if(this.modelAndAnimData_800c66a8.mapTextureBrightness_20 > 1.0f) {
       this.modelAndAnimData_800c66a8.mapTextureBrightness_20 = 1.0f;
     }
-
-    //LAB_800d6b5c
-    this.renderPath();
-
-    if(this.mapState_800c6798.continent_00 == Continent.ENDINESS_7) {
-      return;
-    }
-
-    //LAB_800d6b80
-    if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
-      return;
-    }
-
-    // Render map zoom level pyramid thing
-    this.modelAndAnimData_800c66a8.zoomOverlay.render(this.modelAndAnimData_800c66a8.zoomState_1f8);
   }
 
   @Method(0x800d7a34L)
