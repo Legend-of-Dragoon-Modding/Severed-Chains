@@ -9,8 +9,6 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.screen.EquipDescriptionEvent;
-import legend.game.modding.events.screen.ItemDescriptionEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -19,7 +17,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -119,11 +116,11 @@ public class ItemListScreen extends MenuScreen {
     loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
     for(final MenuEntryStruct04<Item> item : items) {
-      this.itemList.add(MenuEntryStruct04.make(item.item_00));
+      this.itemList.add(item);
     }
 
-    for(final MenuEntryStruct04<Equipment> equip : equipment) {
-      this.equipmentList.add(MenuEntryStruct04.make(equip.item_00));
+    for(final MenuEntryStruct04<Equipment> item : equipment) {
+      this.equipmentList.add(item);
     }
 
     this.updateDescription(this.itemList.getSelectedItem());
@@ -135,8 +132,7 @@ public class ItemListScreen extends MenuScreen {
       return;
     }
 
-    final String description = I18n.translate(item.getDescriptionTranslationKey());
-    this.description.setText(item.item_00.getClass().getSimpleName().toLowerCase().contains("equipment") ? EVENTS.postEvent(new EquipDescriptionEvent((Equipment)item.item_00, description)).description : EVENTS.postEvent(new ItemDescriptionEvent((Item)item.item_00, description)).description);
+    this.description.setText(I18n.translate(item.getDescriptionTranslationKey()));
   }
 
   @Override
