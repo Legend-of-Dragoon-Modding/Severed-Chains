@@ -8,10 +8,14 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.Transformations;
 import legend.core.gpu.Bpp;
+import legend.core.gpu.VramTextureLoader;
+import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Resolution;
+import legend.core.opengl.Texture;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.Battle;
@@ -45,6 +49,7 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +59,7 @@ import java.util.List;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.UI_WHITE;
@@ -96,6 +102,8 @@ import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ITEMS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ROTATE_CAMERA;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_SPECIAL;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_TRANSFORM;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class BattleHud {
   private static final CombatPortraitBorderMetrics0c[] combatPortraitBorderVertexCoords_800c6e9c = {
@@ -414,74 +422,193 @@ public class BattleHud {
     displayStats.y_02 = charDisplay.y_0a;
   }
 
-  private final List<String> sortedBents = new ArrayList<>();
+  private final List<BattleEntity27c> sortedBents = new ArrayList<>();
   private final List<TurnOrder> turns = new ArrayList<>();
+  private Obj turnOrderOverlay;
+  private Texture turnOrderTexture;
+  private final MV turnOrderTransforms = new MV();
+  private final MV selectedTurnOrderTransforms = new MV();
 
   private void drawTurnOrder() {
-    if(!this.battle.isBattleDisabled() && CONFIG.getConfig(CoreMod.SHOW_TURN_ORDER.get())) {
-      final int oldSeed = simpleRandSeed_8004dd44;
-      this.sortedBents.clear();
-      this.turns.clear();
-      int processedBents = 0;
+    final int textureCount = battleState_8006e398.allBents_e0c.length + 2;
+    if(this.turnOrderOverlay == null) {
+      this.turnOrderTexture = Texture.create(builder -> {
+        builder.data(new int[240 * (textureCount * 120)], 240, (textureCount * 120));
+        builder.internalFormat(GL_RGBA);
+        builder.dataFormat(GL_RGBA);
+        builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      });
 
-      for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
-        this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78[bentIndex]));
-      }
-
-      while(processedBents < 6) {
-        int highestTurnValue = 0;
-        int highestIndex = 0;
-        for(int i = 0; i < this.turns.size(); i++) {
-          final TurnOrder turnOrder = this.turns.get(i);
-          final int turnValue = turnOrder.turnValue;
-
-          if(highestTurnValue <= turnValue) {
-            highestTurnValue = turnValue;
-            highestIndex = i;
+      for(int bentIndex = 0; bentIndex < battleState_8006e398.allBents_e0c.length; bentIndex++) {
+        if(battleState_8006e398.allBents_e0c[bentIndex] != null) {
+          if(battleState_8006e398.allBents_e0c[bentIndex].innerStruct_00 instanceof PlayerBattleEntity) {
+            this.buildTurnOrderTexture(bentIndex, Path.of("gfx", "ui", "turnorder", "player", String.valueOf(((PlayerBattleEntity)battleState_8006e398.aliveBents_e78[bentIndex].innerStruct_00).charId_272) + ".png"), true);
+          } else {
+            this.buildTurnOrderTexture(bentIndex, Path.of("gfx", "ui", "turnorder", "monster", String.valueOf(((BattleEntity27c)battleState_8006e398.aliveBents_e78[bentIndex].innerStruct_00).charId_272) + ".png"), false);
           }
         }
-
-        if(highestTurnValue > 0xd9) {
-          final TurnOrder turnOrder = this.turns.get(highestIndex);
-          turnOrder.turnValue -= 0xd9;
-          this.sortedBents.add(turnOrder.state.innerStruct_00.getName());
-          processedBents++;
-        }
-
-        for(int i = 0; i < this.turns.size(); i++) {
-          final TurnOrder turnOrder = this.turns.get(i);
-          turnOrder.turnValue += Math.round(turnOrder.state.innerStruct_00.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
-        }
       }
 
-      simpleRandSeed_8004dd44 = oldSeed;
+      this.buildTurnOrderTexture(battleState_8006e398.allBents_e0c.length, Path.of("gfx", "ui", "turnorder", "monster", "SelectedOutline.png"), false);
+      this.buildTurnOrderTexture(battleState_8006e398.allBents_e0c.length + 1, Path.of("gfx", "ui", "turnorder", "player", "SelectedOutline.png"), false);
 
-      for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
-        final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[bentIndex];
-
-        if((state.storage_44[7] & (FLAG_400 | FLAG_CURRENT_TURN)) != 0) {
-          this.sortedBents.addFirst(state.innerStruct_00.getName());
-        }
-      }
-
-      if(battleState_8006e398.getForcedTurnBent() != null) {
-        this.sortedBents.addFirst(battleState_8006e398.getForcedTurnBent().innerStruct_00.getName() + " !");
-      }
-
-      final int oldZ = textZ_800bdf00;
-      textZ_800bdf00 = 40;
-      for(int bentIndex = 0; bentIndex < this.sortedBents.size(); bentIndex++) {
-        final String name = this.sortedBents.get(bentIndex);
-        renderText(name, 4, 4 + bentIndex * textHeight(name) * UI_WHITE_SMALL.getSize(), UI_WHITE_SMALL);
-      }
-      textZ_800bdf00 = oldZ;
+      this.turnOrderOverlay = new QuadBuilder("Turn Order Overlay")
+        .bpp(Bpp.BITS_24)
+        .posSize(32.0f, 16.0f)
+        .uvSize(1.0f, 120.0f / (textureCount * 120.0f))
+        .build();
     }
+
+    final int oldSeed = simpleRandSeed_8004dd44;
+    this.sortedBents.clear();
+    this.turns.clear();
+    int processedBents = 0;
+
+    for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
+      this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78[bentIndex]));
+    }
+
+    while(processedBents < 7) {
+      int highestTurnValue = 0;
+      int highestIndex = 0;
+      for(int i = 0; i < this.turns.size(); i++) {
+        final TurnOrder turnOrder = this.turns.get(i);
+        final int turnValue = turnOrder.turnValue;
+
+        if(highestTurnValue <= turnValue) {
+          highestTurnValue = turnValue;
+          highestIndex = i;
+        }
+      }
+
+      if(highestTurnValue > 0xd9) {
+        final TurnOrder turnOrder = this.turns.get(highestIndex);
+        turnOrder.turnValue -= 0xd9;
+        this.sortedBents.add(turnOrder.state.innerStruct_00);
+        processedBents++;
+      }
+
+      for(int i = 0; i < this.turns.size(); i++) {
+        final TurnOrder turnOrder = this.turns.get(i);
+        turnOrder.turnValue += Math.round(turnOrder.state.innerStruct_00.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
+      }
+    }
+
+    simpleRandSeed_8004dd44 = oldSeed;
+
+    for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
+      final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[bentIndex];
+
+      if((state.storage_44[7] & (FLAG_400 | FLAG_CURRENT_TURN)) != 0) {
+        this.sortedBents.addFirst(state.innerStruct_00);
+      }
+    }
+
+    final int oldZ = textZ_800bdf00;
+
+    for(int bentIndex = 0; bentIndex < this.sortedBents.size(); bentIndex++) {
+      for(int searchIndex = 0; searchIndex < battleState_8006e398.allBents_e0c.length; searchIndex++) {
+        if(battleState_8006e398.allBents_e0c[searchIndex] != null) {
+          if(this.sortedBents.get(bentIndex) == battleState_8006e398.allBents_e0c[searchIndex].innerStruct_00) {
+            this.turnOrderTransforms.transfer.set((float)((RENDERER.getRenderWidth() / (RENDERER.getRenderHeight() / RENDERER.getNativeHeight())) - RENDERER.getNativeWidth()) / -2.0f + 4, 4 + bentIndex * 20, 1);
+
+            if(battleState_8006e398.getForcedTurnBent() != null && this.sortedBents.get(bentIndex) == battleState_8006e398.getForcedTurnBent().innerStruct_00) {
+              textZ_800bdf00 = 0;
+              renderText("!", (float)((RENDERER.getRenderWidth() / (RENDERER.getRenderHeight() / RENDERER.getNativeHeight())) - RENDERER.getNativeWidth()) / -2.0f + 34, 8 + bentIndex * 20, UI_WHITE_SMALL);
+            }
+
+            RENDERER
+              .queueOrthoModel(this.turnOrderOverlay, this.turnOrderTransforms, QueuedModelStandard.class)
+              .translucency(Translucency.HALF_B_PLUS_HALF_F)
+              .alpha(1.0f)
+              .useTextureAlpha()
+              .uvOffset(0, (float)searchIndex / (float)textureCount)
+              .texture(this.turnOrderTexture);
+
+            final BattleMenuStruct58 menu = this.battleMenu_800c6c34;
+            if(menu.displayTargetArrowAndName_4c) {
+              final int targetCombatant = this.battleMenu_800c6c34.combatantIndex_54;
+              this.selectedTurnOrderTransforms.scaling(1.0f, 16.0f, 1.0f);
+              this.selectedTurnOrderTransforms.transfer.set((float)((RENDERER.getRenderWidth() / (RENDERER.getRenderHeight() / RENDERER.getNativeHeight())) - RENDERER.getNativeWidth()) / -2.0f + 2, 4 + bentIndex * 20, 1);
+
+              if(targetCombatant == -1) {
+                if(menu.targetType_50 == 1) {
+                  if(this.sortedBents.get(bentIndex) instanceof MonsterBattleEntity) {
+                    RENDERER
+                      .queueOrthoModel(RENDERER.opaqueQuad, this.selectedTurnOrderTransforms, QueuedModelStandard.class);
+                    RENDERER
+                      .queueOrthoModel(this.turnOrderOverlay, this.turnOrderTransforms, QueuedModelStandard.class)
+                      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                      .alpha(1.0f)
+                      .useTextureAlpha()
+                      .uvOffset(0, (textureCount - 1) / (float)textureCount)
+                      .texture(this.turnOrderTexture);
+                  }
+                } else {
+                  if(this.sortedBents.get(bentIndex) instanceof PlayerBattleEntity) {
+                    RENDERER
+                      .queueOrthoModel(RENDERER.opaqueQuad, this.selectedTurnOrderTransforms, QueuedModelStandard.class);
+
+                    RENDERER
+                      .queueOrthoModel(this.turnOrderOverlay, this.turnOrderTransforms, QueuedModelStandard.class)
+                      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                      .alpha(1.0f)
+                      .useTextureAlpha()
+                      .uvOffset(0, (textureCount - 1) / (float)textureCount)
+                      .texture(this.turnOrderTexture);
+                  }
+                }
+              } else {
+                if(menu.targetType_50 == 1) {
+                  if(battleState_8006e398.aliveMonsterBents_ebc[targetCombatant].innerStruct_00 == this.sortedBents.get(bentIndex)) {
+                    RENDERER
+                      .queueOrthoModel(RENDERER.opaqueQuad, this.selectedTurnOrderTransforms, QueuedModelStandard.class);
+                    RENDERER
+                      .queueOrthoModel(this.turnOrderOverlay, this.turnOrderTransforms, QueuedModelStandard.class)
+                      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                      .alpha(1.0f)
+                      .useTextureAlpha()
+                      .uvOffset(0, (textureCount - 1) / (float)textureCount)
+                      .texture(this.turnOrderTexture);
+                  }
+                } else if(menu.targetType_50 == 0) {
+                  if(battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00 == this.sortedBents.get(bentIndex)) {
+                    RENDERER
+                      .queueOrthoModel(RENDERER.opaqueQuad, this.selectedTurnOrderTransforms, QueuedModelStandard.class);
+                    RENDERER
+                      .queueOrthoModel(this.turnOrderOverlay, this.turnOrderTransforms, QueuedModelStandard.class)
+                      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                      .alpha(1.0f)
+                      .useTextureAlpha()
+                      .uvOffset(0, (textureCount - 1) / (float)textureCount)
+                      .texture(this.turnOrderTexture);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    textZ_800bdf00 = oldZ;
+  }
+
+  private void buildTurnOrderTexture(final int index, Path path, final boolean player) {
+    if(!Files.exists(path)) {
+      path = Path.of("gfx", "ui", "turnorder", player ? "player" : "monster", "unknown.png");
+    }
+
+    final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromPng(path);
+    this.turnOrderTexture.data(0, 120 * index, 240, 120, texture.getData());
   }
 
   @Method(0x800ef9e4L)
   public void draw() {
     if(this.battle.countCombatUiFilesLoaded_800c6cf4 == 6) {
-      this.drawTurnOrder();
+      if(!this.battle.isBattleDisabled() && CONFIG.getConfig(CoreMod.SHOW_TURN_ORDER.get())) {
+        this.drawTurnOrder();
+      }
 
       final int charCount = battleState_8006e398.getPlayerCount();
 
@@ -2375,6 +2502,16 @@ public class BattleHud {
     if(this.spBars != null) {
       this.spBars.delete();
       this.spBars = null;
+    }
+
+    if(this.turnOrderOverlay != null) {
+      this.turnOrderOverlay.delete();
+      this.turnOrderOverlay = null;
+    }
+
+    if(this.turnOrderTexture != null) {
+      this.turnOrderTexture.delete();
+      this.turnOrderTexture = null;
     }
   }
 
