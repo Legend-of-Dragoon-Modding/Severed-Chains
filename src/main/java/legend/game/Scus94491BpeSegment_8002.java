@@ -26,6 +26,7 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.AddGoldEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
 import legend.game.modding.events.inventory.GiveItemEvent;
 import legend.game.modding.events.inventory.TakeEquipmentEvent;
@@ -1145,7 +1146,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002363cL)
   public static int addGold(final int amount) {
-    gameState_800babc8.gold_94 += amount;
+    final AddGoldEvent event = EVENTS.postEvent(new AddGoldEvent(amount));
+    gameState_800babc8.gold_94 += event.gold;
 
     if(gameState_800babc8.gold_94 > 99999999) {
       gameState_800babc8.gold_94 = 99999999;
