@@ -8,6 +8,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -15,6 +16,7 @@ import legend.game.types.Renderable58;
 
 import java.util.Set;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
@@ -202,7 +204,7 @@ public class TooManyItemsScreen extends MenuScreen {
     renderMenuItems(16, 33, this.droppedItems, 0, Math.min(5, this.droppedItems.size()), saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if((a4 & 0x1) != 0 && !allocate) {
-      renderString(16, 164, I18n.translate(inv.getDescriptionTranslationKey()), false);
+      renderString(16, 164, EVENTS.postEvent(new DescriptionEvent(inv.getNameTranslationKey(), I18n.translate(inv.getDescriptionTranslationKey()))).description, false);
     }
 
     renderText(Acquired_item_8011c2f8, 32, 22, UI_TEXT);
@@ -216,7 +218,8 @@ public class TooManyItemsScreen extends MenuScreen {
 
       if((a4 & 0x2) != 0) {
         if(slotScroll + slotIndex < this.items.size()) {
-          renderString(194, 164, I18n.translate(this.items.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
+          final Item selected = this.items.get(slotScroll + slotIndex).item_00;
+          renderString(194, 164, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, allocate);
         }
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
