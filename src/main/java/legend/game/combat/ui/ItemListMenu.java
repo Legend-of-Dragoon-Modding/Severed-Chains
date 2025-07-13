@@ -8,6 +8,7 @@ import legend.game.inventory.Item;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
 
@@ -138,7 +139,7 @@ public class ItemListMenu extends ListMenu {
         this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText(I18n.translate(item.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
+        renderText(EVENTS.postEvent(new DescriptionEvent(item.getBattleDescriptionTranslationKey(), I18n.translate(item.getBattleDescriptionTranslationKey()))).description, 160, 157, this.fontOptions);
       }
     }
   }
