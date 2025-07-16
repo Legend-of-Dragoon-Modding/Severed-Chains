@@ -1,0 +1,41 @@
+--- original
++++ modified
+@@ -3532,6 +3532,7 @@
+ call 618, stor[23], inl[:LABEL_124]
+ return
+ LABEL_124:
+# Grabs main target using deff target param
++call 592, var[45][40], var[45][41]
+ mov stor[stor[stor[0], 0], 8], stor[24]
+ mov stor[stor[stor[0], 0], 10], stor[26]
+ mov var[51], stor[14]
+@@ -3541,12 +3542,12 @@
+ decr stor[14]
+ LABEL_126:
+ mov var[50][stor[14]], stor[28]
+# Game has an unholy check of actual positions which now fails due to floats
+-call 600, stor[18]
+-call 129, stor[28], stor[stor[stor[0], 18], 8], stor[stor[stor[0], 18], 9], stor[stor[stor[0], 18], 10]
+-sub stor[11], stor[stor[stor[0], 18], 10]
+-abs stor[stor[stor[0], 18], 10]
+-jmp_cmp <, 0x1000, stor[stor[stor[0], 18], 10], inl[:LABEL_127]
+-jmp_cmp <, 0x800, stor[stor[stor[0], 18], 10], inl[:LABEL_128]
++mov stor[28], var[45][40]
++sub var[45][41], var[45][40]
++abs var[45][40]
++jmp_cmp ==, var[45][40], 0x2, inl[:LABEL_128]
++jmp_cmp ==, var[45][40], 0x1, inl[:ON_1_INDEX_DIFF]
++jmp_cmp >, var[45][40], 0x2, inl[:LABEL_127]
+ mov 0x0, stor[19]
+ jmp inl[:LABEL_129]
+ LABEL_127:
+@@ -3588,3 +3589,9 @@
+ LABEL_134:
+ call 239, 0x2, stor[11], 0x5, 0x1
+ return
++ON_1_INDEX_DIFF:
++call 371, stor[28], var[45][45], 0x1
++call 371, var[45][41], var[45][46], 0x1
++add var[45][45], var[45][46]
++jmp_cmp ==, var[45][46], 0x1, inl[:LABEL_128]
++jmp inl[:LABEL_127]
