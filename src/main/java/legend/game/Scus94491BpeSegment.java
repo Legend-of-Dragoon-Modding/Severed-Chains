@@ -862,9 +862,11 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final DrgnFileEvent event = EVENTS.postEvent(new DrgnFileEvent("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
+    final DrgnFileEvent event = EVENTS.postEvent(new DrgnFileEvent("SECT/DRGN" + drgnBinIndex + ".BIN/" + file, onCompletion));
 
-    Loader.loadFile(event.location, onCompletion);
+    if(!event.overrideLoad) {
+      Loader.loadFile(event.location, onCompletion);
+    }
   }
 
   public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
