@@ -6,6 +6,8 @@ import legend.core.IoHelper;
 import legend.core.memory.types.IntRef;
 import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.events.gamestate.LoadGameEvent;
+import legend.game.modding.events.gamestate.SaveGameEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.bootRegistries;
 import static legend.game.SItem.chapterNames_80114248;
@@ -336,6 +339,7 @@ public final class SaveManager {
 
       Files.createDirectories(state.campaign.path);
       Files.write(file, data.slice(0, offset.get()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      EVENTS.postEvent(new SaveGameEvent(fileName, saveName, state));
       return file;
     } catch(final IOException e) {
       throw new SaveFailedException("Failed to save game", e);
