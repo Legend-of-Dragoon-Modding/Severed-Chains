@@ -254,6 +254,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public final Rect4i scissor = new Rect4i();
   public boolean useScissor;
 
+  public int spellDamageOverride = 0;
+
   public BattleEntity27c(final BattleEntityType type, final String name) {
     super(BattleObject.BOBJ);
     this.type = type;
@@ -741,7 +743,6 @@ public abstract class BattleEntity27c extends BattleObject {
     } else {
       this.spell_94 = new SpellStats0c();
     }
-
     //LAB_800f7c54
   }
 

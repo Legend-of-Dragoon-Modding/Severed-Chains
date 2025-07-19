@@ -111,6 +111,7 @@ import legend.game.modding.events.battle.GuardHealEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.battle.ScriptLoadDeffEvent;
 import legend.game.modding.events.battle.SetBentStatEvent;
+import legend.game.modding.events.scripting.DrgnFileEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -1076,6 +1077,7 @@ public class Battle extends EngineState {
     functions[953] = this::getEquipEffectsInDragoon;
     functions[954] = this::isDeffArrow;
     functions[955] = this::guardAmount;
+    functions[956] = this::setSpellDamageOverride;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -6162,7 +6164,8 @@ public class Battle extends EngineState {
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
       Loader.loadFile(deff.resolve("1"), file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
+        final DrgnFileEvent event = EVENTS.postEvent(new DrgnFileEvent(deff.resolve("1"), file.getBytes()));
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), event.fileData);
       });
     });
   }
@@ -8495,7 +8498,13 @@ public class Battle extends EngineState {
   public static int applyMagicDamageMultiplier(final BattleEntity27c attacker, final BattleEntity27c defender, final int damage, final int magicType) {
     final int damageMultiplier;
     if(magicType == 0) {
-      damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
+      if(attacker.spellDamageOverride == 0) {
+        damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
+      } else {
+        final int damageOverride = (int) Math.floor(damage * Math.floor(attacker.spellDamageOverride / 100d));
+        attacker.spellDamageOverride = 0;
+        return damageOverride;
+      }
     } else {
       //LAB_800f949c
       damageMultiplier = attacker.item_d4.getAttackDamageMultiplier(attacker, defender);
@@ -8584,6 +8593,14 @@ public class Battle extends EngineState {
   @Method(0x800f96a8L)
   public FlowControl scriptSetTempSpellStats(final RunningScript<?> script) {
     SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempSpellStats();
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("An override for DEFF attacks that use spell stats")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "damage", description = "Spell damage override")
+  public FlowControl setSpellDamageOverride(final RunningScript<?> script) {
+    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).spellDamageOverride = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
