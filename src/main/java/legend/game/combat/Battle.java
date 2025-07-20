@@ -1078,6 +1078,7 @@ public class Battle extends EngineState {
     functions[954] = this::isDeffArrow;
     functions[955] = this::guardAmount;
     functions[956] = this::setSpellDamageOverride;
+    functions[957] = this::getSpellDamageOverride;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -8596,11 +8597,19 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("An override for DEFF attacks that use spell stats")
+  @ScriptDescription("Sets an override for DEFF attacks that use spell stats")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "damage", description = "Spell damage override")
   public FlowControl setSpellDamageOverride(final RunningScript<?> script) {
     SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).spellDamageOverride = script.params_20[1].get();
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gets the override for DEFF attacks that use spell stats")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "Spell damage override")
+  public FlowControl getSpellDamageOverride(final RunningScript<?> script) {
+    script.params_20[1].set(SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).spellDamageOverride);
     return FlowControl.CONTINUE;
   }
 
