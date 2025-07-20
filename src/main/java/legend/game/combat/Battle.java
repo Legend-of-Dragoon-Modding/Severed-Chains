@@ -8502,7 +8502,7 @@ public class Battle extends EngineState {
       if(attacker.spellDamageOverride == 0) {
         damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
       } else {
-        final int damageOverride = (int) Math.floor(damage * Math.floor(attacker.spellDamageOverride / 100d));
+        final int damageOverride = (int) Math.floor(damage * (attacker.spellDamageOverride / 100d));
         attacker.spellDamageOverride = 0;
         return damageOverride;
       }
