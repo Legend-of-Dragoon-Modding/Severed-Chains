@@ -58,7 +58,7 @@ public final class LodItems {
   public static final RegistryDelegate<Item> DETONATE_ROCK = ITEM_REGISTRAR.register("detonate_rock", () -> new AttackItem(ItemIcon.MAGIC, 5, true, LodMod.NO_ELEMENT.get(), 0));
   public static final RegistryDelegate<Item> DOWN_BURST = ITEM_REGISTRAR.register("down_burst", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.WIND_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> FATAL_BLIZZARD = ITEM_REGISTRAR.register("fatal_blizzard", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.WATER_ELEMENT.get(), 0));
-  public static final RegistryDelegate<Item> FLASH_HALL = ITEM_REGISTRAR.register("flash_hall", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.LIGHT_ELEMENT.get(), 0x10));
+  public static final RegistryDelegate<Item> FLASH_HALL = ITEM_REGISTRAR.register("flash_hall", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.THUNDER_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> FROZEN_JET = ITEM_REGISTRAR.register("frozen_jet", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.WATER_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> GRAVITY_GRABBER = ITEM_REGISTRAR.register("gravity_grabber", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.EARTH_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> GUSHING_MAGMA = ITEM_REGISTRAR.register("gushing_magma", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.FIRE_ELEMENT.get(), 0));
