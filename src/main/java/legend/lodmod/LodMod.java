@@ -62,7 +62,8 @@ import java.util.Map;
 
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
@@ -271,11 +272,18 @@ public class LodMod {
 
   @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
-    for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
-      if(spellStats_800fa0b8[spellId] == null) {
+    for(int spellId = 0; spellId < spellStats_800fa0b8_Player.length; spellId++) {
+      if(spellStats_800fa0b8_Player[spellId] == null) {
         final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
         final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
+        spellStats_800fa0b8_Player[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
+      }
+    }
+    for(int spellId = 0; spellId < spellStats_800fa0b8_Monster.length; spellId++) {
+      if(spellStats_800fa0b8_Monster[spellId] == null) {
+        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
+        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
+        spellStats_800fa0b8_Monster[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }

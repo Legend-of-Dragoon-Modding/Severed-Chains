@@ -52,7 +52,7 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
@@ -904,7 +904,7 @@ public class PostBattleScreen extends MenuScreen {
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      renderText(spellStats_800fa0b8[spellIndex].name, x - 4, y + 6, this.fontOptions);
+      renderText(spellStats_800fa0b8_Player[spellIndex].name, x - 4, y + 6, this.fontOptions);
       renderText(SPELL_UNLOCKED, x - 4, y + 20, this.fontOptions);
     }
 

@@ -490,7 +490,8 @@ public class Battle extends EngineState {
   /** Different sets of bents for different target types (chars, monsters, all) */
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
 
-  public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
+  public static final SpellStats0c[] spellStats_800fa0b8_Player = new SpellStats0c[128];
+  public static final SpellStats0c[] spellStats_800fa0b8_Monster = new SpellStats0c[128];
   public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
 
   public static final int[] postBattleCamera_800fa6c4 = {-1, 195, 211, -1, 211, -1};
@@ -8500,7 +8501,11 @@ public class Battle extends EngineState {
     final int damageMultiplier;
     if(magicType == 0) {
       if(attacker.spellDamageOverride == 0) {
-        damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
+        if(attacker instanceof PlayerBattleEntity) {
+          damageMultiplier = spellStats_800fa0b8_Player[attacker.spellId_4e].damageMultiplier_03;
+        } else {
+          damageMultiplier = spellStats_800fa0b8_Monster[attacker.spellId_4e].damageMultiplier_03;
+        }
       } else {
         final int damageOverride = (int) Math.floor(damage * (attacker.spellDamageOverride / 100d));
         attacker.spellDamageOverride = 0;
