@@ -904,7 +904,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         this.transforms.identity();
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
         RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
-          .depthOffset(this.depthOffset)
+          .depthOffset(this.depthOffset * 4)
           .vertices(i * 6, 6);
       }
 
