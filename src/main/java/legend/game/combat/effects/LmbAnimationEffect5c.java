@@ -33,7 +33,6 @@ import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -56,7 +55,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
 
-  private int depthOffset;
   /** Needed to track queue depths for poly renderer */
   private final FloatList zDepths = new FloatArrayList();
   private final Vector3f worldCoords = new Vector3f();
@@ -150,6 +148,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     renderTmdSpriteEffect(tmdObjTable, effect.obj, manager.params_10, effect.transforms);
   }
 
+  /**
+   * This method does not use manager.params_10.z_22 & zOffset_1f8003e8 by retail, using it caused GH#1715
+   * -- Used by Polter Armor Can't Combat
+   */
   private static void renderLmbPoly(final LmbAnimationEffect5c effect, final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final int objectIndex) {
     if(effect.deffSpriteFlags_50 != deffFlags) {
       //LAB_801162e8
@@ -309,7 +311,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     if(flags >= 0) { // No errors
       int tickFip12 = Math.max(0, manager.params_10.ticks_24) % (this.keyframeCount_08 * 2) << 12;
       tmdGp0Tpage_1f8003ec = flags >>> 23 & 0x60; // tpage
-      this.depthOffset = zOffset_1f8003e8 = manager.params_10.z_22;
       if((manager.params_10.flags_00 & 0x40) == 0) {
         FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       }
@@ -896,6 +897,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     this.renderPolyObj();
   }
 
+  /**
+   * This method does not use manager.params_10.z_22 & zOffset_1f8003e8 by retail, using it caused GH#1715
+   * -- Used by Polter Armor Can't Combat
+   */
   private void renderPolyObj() {
     if(this.builder != null) {
       this.obj = this.builder.build();
@@ -904,7 +909,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         this.transforms.identity();
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
         RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
-          .depthOffset(this.depthOffset * 4)
           .vertices(i * 6, 6);
       }
 
