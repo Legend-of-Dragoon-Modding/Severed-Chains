@@ -1,0 +1,25 @@
+--- original
++++ modified
+@@ -1813,6 +1813,7 @@
+ call 322, stor[0], 0x2
+ call 238, 0x2, stor[0], 0x0, 0x0, 0x0, 0x4, 0x4
+ call 600, stor[18]
+# This scriptstate gets leaked as script allocates more states on same stor without deallocating this state, GH#900
++mov stor[18], inl[:LEAKED_SCRIPT_INDEX]
+ gosub inl[:LABEL_145]
+ gosub inl[:LABEL_145]
+ gosub inl[:LABEL_145]
+@@ -1856,6 +1857,7 @@
+ call 139, stor[0], 0x1
+ call 322, stor[0], 0x0
+ gosub inl[:LABEL_144]
++deallocate_other inl[:LEAKED_SCRIPT_INDEX]
+ return
+ JMP_77c0_1:
+ gosub inl[:LABEL_143]
+@@ -3750,3 +3752,5 @@
+ ENTRYPOINT_14:
+ ENTRYPOINT_15:
+ consume
++LEAKED_SCRIPT_INDEX:
++data 0xffffffff
