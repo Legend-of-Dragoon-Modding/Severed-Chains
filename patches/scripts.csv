@@ -1,5 +1,6 @@
 replacement,player_combat_script,scripts/player_combat_script.txt,"Major rewrites to support modding"
 replacement,throw_item,scripts/throw_item.txt,"Handles throwing retail items"
+diff,SECT/DRGN1.BIN/20,scripts/DRGN1/20.diff,"Lizardman deallocate leaked script state"
 diff,SECT/DRGN1.BIN/40,scripts/DRGN1/40.diff,"Spring Hitter steal item registry"
 diff,SECT/DRGN1.BIN/84,scripts/DRGN1/84.diff,"Crafty Thief steal item registry and return stolen gold instead of Bastard Sword"
 diff,SECT/DRGN1.BIN/254,scripts/DRGN1/254.diff,"Item tutorial item registry"
