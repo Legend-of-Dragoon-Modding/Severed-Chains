@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.QueuedModelBattleTmd;
@@ -8943,5 +8944,9 @@ public class Battle extends EngineState {
     }
   }
 
-
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    super.updateDiscordRichPresence(activity);
+    activity.setState("In Combat");
+  }
 }

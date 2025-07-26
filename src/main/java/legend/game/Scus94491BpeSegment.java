@@ -28,6 +28,7 @@ import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.scripting.DrgnFileEvent;
+import legend.game.modding.events.engine.EngineStateChangeEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.OpType;
 import legend.game.scripting.Param;
@@ -67,6 +68,7 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
@@ -165,6 +167,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
+import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
 import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
@@ -381,6 +384,11 @@ public final class Scus94491BpeSegment {
     });
 
     RENDERER.setRenderCallback(() -> {
+      // Moving this here instead of at the end because the frame isn't actually ending when this callback completes. The render engine
+      // still has a bunch of work to do (rendering the actual game) and this could resize the display buffers leading to jank. Instead
+      // we can just do that stuff before we actually start rendering anything.
+      endFrame();
+
       GPU.startFrame();
 
       if(engineState_8004dd20.isInGame()) {
@@ -426,9 +434,10 @@ public final class Scus94491BpeSegment {
 
       FUN_80020ed8();
       tickCount_800bb0fc++;
-      endFrame();
 
       GPU.endFrame();
+
+      DISCORD.tick();
     });
 
     RENDERER.events().onClose(() -> {
@@ -497,6 +506,10 @@ public final class Scus94491BpeSegment {
       if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) { // Starting combat
         clearCombatVars();
       }
+
+      EVENTS.postEvent(new EngineStateChangeEvent(previousEngineState_8004dd28, engineState_8004dd20, currentEngineState_8004dd04));
+      currentEngineState_8004dd04.updateDiscordRichPresence(DISCORD.activity);
+      DISCORD.updateActivity();
     }
   }
 
@@ -1388,6 +1401,9 @@ public final class Scus94491BpeSegment {
     //LAB_80019828
     switch(engineState_8004dd20) {
       case TITLE_02 -> {
+        soundEnv_800c6630.fadingIn_2a = false;
+        soundEnv_800c6630.fadingOut_2b = false;
+
         setMainVolume(0x7f, 0x7f);
         AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
@@ -1767,6 +1783,9 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "right", description = "The right volume")
   @Method(0x8001b14cL)
   public static FlowControl scriptSetMainVolume(final RunningScript<?> script) {
+    soundEnv_800c6630.fadingIn_2a = false;
+    soundEnv_800c6630.fadingOut_2b = false;
+
     setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     AUDIO_THREAD.setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;

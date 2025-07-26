@@ -26,10 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -72,62 +70,62 @@ public final class Unpacker {
    * until no more transformers apply to it. Discriminators must be able to recognize their own changes and return false, or the file will
    * be transformed infinitely.
    */
-  private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
+  private static final List<LeafTransformation> transformers = new ArrayList<>();
   static {
     // This has to happen before MRG
-    transformers.put(Unpacker::monsterSfxDiscriminator, Unpacker::monsterSfxTransformer);
-    transformers.put(Unpacker::battlePhaseSfxDiscriminator, Unpacker::battlePhaseSfxTransformer);
-    transformers.put(Unpacker::monsterTextureDiscriminator, Unpacker::monsterTextureTransformer);
+    transformers.add(new LeafTransformation("Monster SFX", Unpacker::monsterSfxDiscriminator, Unpacker::monsterSfxTransformer));
+    transformers.add(new LeafTransformation("Battle phase SFX", Unpacker::battlePhaseSfxDiscriminator, Unpacker::battlePhaseSfxTransformer));
+    transformers.add(new LeafTransformation("Monster texture", Unpacker::monsterTextureDiscriminator, Unpacker::monsterTextureTransformer));
 
-    transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
-    transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
-    transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
+    transformers.add(new LeafTransformation("Decompressor", Unpacker::decompressDiscriminator, Unpacker::decompress));
+    transformers.add(new LeafTransformation("Unmrg", Unpacker::mrgDiscriminator, Unpacker::unmrg));
+    transformers.add(new LeafTransformation("Undeff", Unpacker::deffDiscriminator, Unpacker::undeff));
 
-    transformers.put(Unpacker::engineOverlayDiscriminator, Unpacker::engineOverlayExtractor);
+    transformers.add(new LeafTransformation("Engine overlay", Unpacker::engineOverlayDiscriminator, Unpacker::engineOverlayExtractor));
 
-    transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
-    transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
-    transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
+    transformers.add(new LeafTransformation("drgn21_402_3", Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher));
+    transformers.add(new LeafTransformation("drgn21_693_0", Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher));
+    transformers.add(new LeafTransformation("drgn0_142_anim", Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher));
 
     // Spells, XP, and TIMs from lod_engine
-    transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
-    transformers.put(Unpacker::xpDiscriminator, Unpacker::xpExtractor);
-    transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
+    transformers.add(new LeafTransformation("LOD engine", Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor));
+    transformers.add(new LeafTransformation("XP", Unpacker::xpDiscriminator, Unpacker::xpExtractor));
+    transformers.add(new LeafTransformation("Spells", Unpacker::spellsDiscriminator, Unpacker::spellsExtractor));
 
     // Savepoint etc. from SMAP
-    transformers.put(Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor);
+    transformers.add(new LeafTransformation("SMAP assets", Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor));
 
     // Give Dart his hand back during oof
-    transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
+    transformers.add(new LeafTransformation("Lavitz oof Dart missing hand", Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher));
 
     // Yes there are 3 different magma fish files to patch
-    transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
-    transformers.put(Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher);
-    transformers.put(Unpacker::drgn0_3750_16_animPatcherDiscriminator, Unpacker::drgn0_3750_16_animPatcher);
+    transformers.add(new LeafTransformation("Magma fish drgn0_3667_16", Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher));
+    transformers.add(new LeafTransformation("Magma fish drgn0_3667_17", Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher));
+    transformers.add(new LeafTransformation("Magma fish drgn0_3750_16", Unpacker::drgn0_3750_16_animPatcherDiscriminator, Unpacker::drgn0_3750_16_animPatcher));
 
-    transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
-    transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
-    transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
-    transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
-    transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
-    transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
-    transformers.put(Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer);
-    transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
+    transformers.add(new LeafTransformation("drgn1_343", Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher));
+    transformers.add(new LeafTransformation("Player combat sounds", Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer));
+    transformers.add(new LeafTransformation("Player combat models and textures", Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer));
+    transformers.add(new LeafTransformation("Dragoon combat models and textures", Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer));
+    transformers.add(new LeafTransformation("Skip party permutations", Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer));
+    transformers.add(new LeafTransformation("BTLD data extractor", Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer));
+    transformers.add(new LeafTransformation("UI patcher", Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer));
+    transformers.add(new LeafTransformation("CTMD converter", CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer));
 
     // Remove damage caps from scripts
-    transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
-    transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
-    transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+    transformers.add(new LeafTransformation("Player script damage caps", Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer));
+    transformers.add(new LeafTransformation("Enemy script damage caps", Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher));
+    transformers.add(new LeafTransformation("Item script damage caps", Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher));
 
-    transformers.put(Unpacker::xaDiscriminator, Unpacker::xaTransformer);
+    transformers.add(new LeafTransformation("XA audio converter", Unpacker::xaDiscriminator, Unpacker::xaTransformer));
   }
 
-  private static final List<Transformer> postTransformers = new ArrayList<>();
+  private static final List<BranchTransformation> postTransformers = new ArrayList<>();
   static {
     // Convert submap PXLs into individual TIMs
-    postTransformers.add(SubmapPxlTransformer::transform);
+    postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
 
-    postTransformers.add(Unpacker::replaceBrokenClaireModel);
+    postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -206,7 +204,7 @@ public final class Unpacker {
       final Queue<PathNode> transformationQueue = new LinkedList<>();
       populateInitialFileTree(root, "", files, transformationQueue);
 
-      LOGGER.info("Initial file tree populated in %fs", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f);
+      LOGGER.info("Initial file tree populated in %fs with %d files", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f, transformationQueue.size());
 
       if(!transformationQueue.isEmpty()) {
         statusListener.accept(I18n.translate("unpacker.transforming_files", 0));
@@ -263,7 +261,10 @@ public final class Unpacker {
         final long branchTransformTime = System.nanoTime();
         LOGGER.info("Performing branch transformations...");
 
-        postTransformers.parallelStream().forEach(transformer -> transformer.transform(files, transformations, flags));
+        postTransformers.parallelStream().forEach(transformer -> {
+          LOGGER.info("Running branch transformer %s", transformer.name);
+          transformer.transformer.transform(files, transformations, flags);
+        });
 
         LOGGER.info("Branch transformations completed in %fs", (System.nanoTime() - branchTransformTime) / 1_000_000_000.0f);
 
@@ -477,6 +478,7 @@ public final class Unpacker {
     if(!root.isDirectory()) {
       if(!Files.exists(ROOT.resolve(filename))) {
         final PathNode file = new PathNode(filename, root.name(), readFile(filename, root), parent);
+//        LOGGER.info("Adding file %s", file.fullPath);
         parent.addChild(file);
         transformationQueue.add(file);
       }
@@ -489,6 +491,7 @@ public final class Unpacker {
         newPath = "";
       } else {
         dir = new PathNode(filename, root.name(), null, null);
+//        LOGGER.info("Adding file %s", dir.fullPath);
         newPath = filename + '/';
         parent.addChild(dir);
       }
@@ -523,11 +526,12 @@ public final class Unpacker {
       throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
     }
 
-    for(final var entry : transformers.entrySet()) {
-      final var discriminator = entry.getKey();
-      final var transformer = entry.getValue();
+    for(final var entry : transformers) {
+      final var discriminator = entry.discriminator;
+      final var transformer = entry.transformer;
 
       if(discriminator.matches(node, flags)) {
+//        LOGGER.info("Running %s on %s", entry.name, node.fullPath);
         node.parent.children.remove(node.pathSegment);
         transformer.transform(node, transformations, flags);
         break;
@@ -852,9 +856,26 @@ public final class Unpacker {
 
   /** Replaces the disk 2 Claire model (broken face UVs) with the good model from disk 3 */
   private static void replaceBrokenClaireModel(final PathNode root, final Transformations transformations, final Set<String> flags) {
-    final PathNode bad = root.children.get("SECT").children.get("DRGN22.BIN").children.get("863").children.get("33");
-    final PathNode good = root.children.get("SECT").children.get("DRGN23.BIN").children.get("506").children.get("33");
-    transformations.replaceNode(bad, good.data);
+    if(!root.children.containsKey("SECT")) {
+      // Only doing a partial unpack, no SECT
+      return;
+    }
+
+    final PathNode sect = root.children.get("SECT");
+
+    // Not ideal because if DRGN23 isn't being unpacked, DRGN22's files won't be fixed, but not much we can do about that
+
+    if(sect.children.containsKey("DRGN22.BIN") && sect.children.containsKey("DRGN23.BIN")) {
+      final PathNode bad = sect.children.get("DRGN22.BIN").children.get("863").children.get("33");
+      final PathNode good = sect.children.get("DRGN23.BIN").children.get("506").children.get("33");
+      transformations.replaceNode(bad, good.data);
+    }
+
+    if(sect.children.containsKey("DRGN24.BIN") && sect.children.containsKey("DRGN23.BIN")) {
+      final PathNode bad = sect.children.get("DRGN24.BIN").children.get("260").children.get("33");
+      final PathNode good = sect.children.get("DRGN23.BIN").children.get("506").children.get("33");
+      transformations.replaceNode(bad, good.data);
+    }
   }
 
   /**

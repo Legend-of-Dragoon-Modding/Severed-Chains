@@ -90,7 +90,20 @@ public class RenderState {
       if(this.widescreen) {
         this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), Math.round(modelScissor.h * this.h));
       } else {
-        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.w), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.w), Math.round(modelScissor.h * this.h));
+        final float offset;
+        final float w;
+
+        if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+          final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
+          final float adjustedW = this.batch.nativeHeight * ratio;
+          offset = (adjustedW - this.batch.nativeWidth) / 2.0f;
+          w = this.h;
+        } else {
+          offset = this.batch.widescreenOrthoOffsetX;
+          w = this.w;
+        }
+
+        this.tempScissorRect.subregion(Math.round((modelScissor.x + offset) * w), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * w), Math.round(modelScissor.h * this.h));
       }
     }
 

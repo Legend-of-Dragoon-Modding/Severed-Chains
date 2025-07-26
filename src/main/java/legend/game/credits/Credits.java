@@ -1,5 +1,6 @@
 package legend.game.credits;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
@@ -692,6 +693,12 @@ public class Credits extends EngineState {
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
 
     //LAB_800eaf14
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    activity.setDetails("Watching the Credits");
+    activity.setState(null);
   }
 
   public static class CreditHeader08 {

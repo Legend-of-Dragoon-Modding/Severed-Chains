@@ -1,5 +1,6 @@
 package legend.game.title;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -121,5 +122,11 @@ public class GameOver extends EngineState {
     }
 
     //LAB_800c7788
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    activity.setDetails("Game Over");
+    activity.setState(null);
   }
 }

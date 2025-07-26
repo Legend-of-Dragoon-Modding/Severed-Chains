@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package discord;
+
+import javax.annotation.ParametersAreNonnullByDefault;

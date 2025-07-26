@@ -24,6 +24,7 @@ import legend.core.opengl.ShaderOptionsStandard;
 import legend.core.opengl.ShaderOptionsTmd;
 import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
+import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
 import legend.core.opengl.VoidShaderOptions;
 import legend.core.platform.Window;
@@ -526,7 +527,7 @@ public class RenderEngine {
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
       .monochrome(1.0f)
-      .pos(-1.0f, -1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
       .size(1.0f, 1.0f)
       .build();
     this.centredQuadBPlusF.persistent = true;
@@ -534,26 +535,26 @@ public class RenderEngine {
     this.centredQuadBMinusF = new QuadBuilder("Centred Quad B-F")
       .translucency(Translucency.B_MINUS_F)
       .monochrome(1.0f)
-      .pos(-1.0f, -1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
       .size(1.0f, 1.0f)
       .build();
     this.centredQuadBMinusF.persistent = true;
 
     this.lineBox = new LineBuilder("Line Box")
-      .pos(-1.0f, -1.0f, 0.0f)
-      .pos( 1.0f, -1.0f, 0.0f)
-      .pos( 1.0f,  1.0f, 0.0f)
-      .pos(-1.0f,  1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
       .closed()
       .build();
     this.lineBox.persistent = true;
 
     this.lineBoxBPlusF = new LineBuilder("Line Box (B+F)")
       .translucency(Translucency.B_PLUS_F)
-      .pos(-1.0f, -1.0f, 0.0f)
-      .pos( 1.0f, -1.0f, 0.0f)
-      .pos( 1.0f,  1.0f, 0.0f)
-      .pos(-1.0f,  1.0f, 0.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
       .closed()
       .build();
     this.lineBoxBPlusF.persistent = true;
@@ -708,23 +709,23 @@ public class RenderEngine {
         }
 
         this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
-      }
 
-      final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
-      this.lastFrame = System.nanoTime();
-      this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
+        final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
+        this.lastFrame = System.nanoTime();
+        this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
-      final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
-      this.fps[this.fpsIndex] = fps;
-      this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
+        final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
+        this.fps[this.fpsIndex] = fps;
+        this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
 
-      if(this.fpsIndex == 0) {
-        float avg = 0.0f;
-        for(int i = 0; i < fpsLimit; i++) {
-          avg += this.fps[i];
+        if(this.fpsIndex == 0) {
+          float avg = 0.0f;
+          for(int i = 0; i < fpsLimit; i++) {
+            avg += this.fps[i];
+          }
+
+          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
         }
-
-        RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
       }
 
       if(this.reloadShaders) {
@@ -954,7 +955,7 @@ public class RenderEngine {
   }
 
   public void setProjectionMode(final RenderBatch batch, final ProjectionMode projectionMode) {
-    final boolean highQualityProjection = batch.renderMode == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
+    final boolean highQualityProjection = batch.renderMode == EngineState.RenderMode.PERSPECTIVE;
 
     // znear
     this.projectionBuffer.put(0, 0.0f);
@@ -1037,7 +1038,16 @@ public class RenderEngine {
   }
 
   private void pre() {
-    glViewport(0, 0, this.renderWidth, this.renderHeight);
+    if(this.mainBatch.renderMode == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+      final float expectedAspect = (float)this.mainBatch.nativeWidth / this.mainBatch.nativeHeight;
+      final int expectedHeight = this.renderHeight;
+      final int expectedWidth = Math.round(expectedHeight * expectedAspect);
+      final int offset = (this.renderWidth - expectedWidth) / 2;
+
+      glViewport(offset, 0, expectedWidth, expectedHeight);
+    } else {
+      glViewport(0, 0, this.renderWidth, this.renderHeight);
+    }
 
     // Update global transforms (default to 3D)
     this.setProjectionMode(ProjectionMode._3D);

@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -75,6 +76,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -87,6 +89,7 @@ import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -94,6 +97,7 @@ import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
@@ -124,6 +128,7 @@ import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
@@ -388,6 +393,12 @@ public class SMap extends EngineState {
   @Override
   public void loadGameFromMenu(final GameState52c gameState) {
     this.encounterAccumulator_800c6ae8 = 0;
+
+    // Copied over from LAB_8001e160
+    stopMusicSequence();
+    unloadSoundFile(8);
+
+    this.restoreMusicAfterMenu();
   }
 
   @Override
@@ -3893,6 +3904,9 @@ public class SMap extends EngineState {
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_FADE_IN;
+
+        this.updateDiscordRichPresence(DISCORD.activity);
+        DISCORD.updateActivity();
       }
 
       case WAIT_FOR_FADE_IN -> {
@@ -5511,5 +5525,20 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f48a8
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final Activity activity) {
+    super.updateDiscordRichPresence(activity);
+    activity.setState("Exploring");
+  }
+
+  @Override
+  public String getLocation() {
+    if(submapId_800bd808 > -1 && submapId_800bd808 < submapNames_8011c108.length) {
+      return submapNames_8011c108[submapId_800bd808];
+    }
+
+    return super.getLocation();
   }
 }

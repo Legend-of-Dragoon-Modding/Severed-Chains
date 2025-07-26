@@ -2,7 +2,7 @@ Like what you see? Send me a tip! You can also subscribe to our [YouTube channel
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W4HFVW9)
 
-# Legend of Dragoon Java
+# Severed Chains
 
 A project to reverse engineer Legend of Dragoon into a high-level language with a modding API. This is not an emulator, but assembly code disassembled and rewritten in Java.
 

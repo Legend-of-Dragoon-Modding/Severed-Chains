@@ -1,8 +1,13 @@
 package legend.game.unpacker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Queue;
 
 public class Transformations {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Transformations.class);
+
   private final PathNode root;
   private final Queue<PathNode> transformationQueue;
   private int remaining;
@@ -78,11 +83,12 @@ public class Transformations {
       // Java complains about non-final current in lambda
       final PathNode currentRef = current;
       current = current.children.compute(pathSegment, (k, existing) -> {
-        if(existing == null || finalSegment) {
-          return new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, currentRef);
-        } else {
+        if(existing != null && !finalSegment) {
           return existing;
         }
+
+//        LOGGER.info("Inserting %s", fullPath + pathSegment);
+        return new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, currentRef);
       });
 
       previousSlash = slash;

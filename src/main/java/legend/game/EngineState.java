@@ -1,5 +1,6 @@
 package legend.game;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.platform.input.InputAction;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -11,6 +12,10 @@ import org.joml.Math;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.SItem.chapterNames_80114248;
+import static legend.game.SItem.worldMapNames_8011c1ec;
+import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
@@ -105,6 +110,27 @@ public abstract class EngineState {
 
   public void loadGameFromMenu(final GameState52c gameState) {
     throw new RuntimeException("Not implemented");
+  }
+
+  public void updateDiscordRichPresence(final Activity activity) {
+    activity.setDetails(this.getChapter() + " - " + this.getLocation());
+    activity.setState(null);
+  }
+
+  public String getChapter() {
+    if(gameState_800babc8 != null && gameState_800babc8.chapterIndex_98 > -1 && gameState_800babc8.chapterIndex_98 < chapterNames_80114248.length) {
+      return chapterNames_80114248[gameState_800babc8.chapterIndex_98];
+    }
+
+    return "Unknown Chapter";
+  }
+
+  public String getLocation() {
+    if(continentIndex_800bf0b0 > -1 && continentIndex_800bf0b0 < worldMapNames_8011c1ec.length) {
+      return worldMapNames_8011c1ec[continentIndex_800bf0b0];
+    }
+
+    return "Unknown Location";
   }
 
   public enum RenderMode {

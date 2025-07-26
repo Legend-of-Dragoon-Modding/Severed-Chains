@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,8 +89,16 @@ public final class Campaign {
         .map(Path::getFileName)
         .map(Path::toString)
         .map(s -> s.substring(0, s.lastIndexOf(".dsav")))
-        .map(this::loadGame)
-        .findFirst().orElse(null);
+        .map(filename -> {
+          try {
+            return this.loadGame(filename);
+          } catch(final InvalidSaveException e) {
+            LOGGER.info("Failed to load save", e);
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .findFirst().orElseGet(() -> SavedGame.invalid(""));
     } catch(final Throwable e) {
       LOGGER.info("Failed to load save", e);
       return null;
@@ -123,11 +132,10 @@ public final class Campaign {
     final FileData data;
     try {
       data = new FileData(Files.readAllBytes(file));
-    } catch(final IOException e) {
+      return this.manager.loadData(this, filename, data);
+    } catch(final Throwable e) {
       throw new InvalidSaveException("Failed to load saved game " + filename, e);
     }
-
-    return this.manager.loadData(this, filename, data);
   }
 
   private List<Path> getSaves() {

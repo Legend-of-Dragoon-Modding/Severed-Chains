@@ -61,7 +61,7 @@ public class ZoomOverlay {
     this.overlayOpaque = builderOpaque.build();
   }
 
-  public void render(final WMapModelAndAnimData258.ZoomState zoomState) {
+  public void render(final WMapModelAndAnimData258.ZoomState zoomState, final float brightness) {
     final int currentZoomLevel = switch(zoomState) {
       case LOCAL_0 -> 2;
       case CONTINENT_1, TRANSITION_MODEL_OUT_2 -> 3;
@@ -70,16 +70,18 @@ public class ZoomOverlay {
 
     for(int i = 0; i < 5; i++) {
       final QueuedModelStandard model = RENDERER.queueOrthoModel(this.overlayOpaque, QueuedModelStandard.class)
-        .vertices(i * 4, 4);
+        .vertices(i * 4, 4)
+        .monochrome(brightness);
 
       if(i + 2 == currentZoomLevel) {
-        model.monochrome(8.0f);
+        model.monochrome(8.0f * brightness);
       }
     }
 
     for(int i = 0; i < 2; i++) {
       RENDERER.queueOrthoModel(this.overlayTranslucent, QueuedModelStandard.class)
-        .vertices(i * 4, 4);
+        .vertices(i * 4, 4)
+        .monochrome(brightness);
     }
   }
 
