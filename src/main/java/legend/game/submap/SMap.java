@@ -1396,6 +1396,10 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collidee", description = "The SubmapObject210 script index collided with, or -1 if not collided")
   @Method(0x800dee28L)
   private FlowControl scriptCheckPlayerCollision(final RunningScript<SubmapObject210> script) {
+    if(this.transitioning_800f7e4c) {
+      return FlowControl.CONTINUE;
+    }
+
     final Vector3f deltaMovement = new Vector3f();
     final Vector3f movement = new Vector3f();
 
