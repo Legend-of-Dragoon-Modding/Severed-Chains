@@ -296,6 +296,7 @@ public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
+  private static final Marker BATTLE = MarkerManager.getMarker("BATTLE");
 
   public static final Vector3f ZERO = new Vector3f();
 
@@ -1406,6 +1407,8 @@ public class Battle extends EngineState {
 
   @Method(0x800c7524L)
   public void initBattle() {
+    LOGGER.info(BATTLE, "Battle starting");
+
     new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
 
     this.FUN_800c8624();
@@ -1595,6 +1598,13 @@ public class Battle extends EngineState {
 
   @Method(0x800c791cL)
   public void loadEncounterAssets() {
+    LOGGER.info(BATTLE, "Combatants:");
+
+    for(int i = 0; i < battleState_8006e398.getAllBentCount(); i++) {
+      final ScriptState<? extends BattleEntity27c> bent = battleState_8006e398.allBents_e0c[i];
+      LOGGER.info(BATTLE, " - %s (%s)", bent.innerStruct_00.getName(), bent.name);
+    }
+
     this.loadEnemyTextures();
 
     // Count total monsters
@@ -1753,6 +1763,8 @@ public class Battle extends EngineState {
         if(this.forcedTurnBent_800c66bc != null) { // A bent has a forced turn
           this.forcedTurnBent_800c66bc.storage_44[7] = this.forcedTurnBent_800c66bc.storage_44[7] & ~FLAG_TAKE_FORCED_TURN | FLAG_1000 | FLAG_CURRENT_TURN;
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
+
+          LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
           EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
@@ -1760,6 +1772,8 @@ public class Battle extends EngineState {
             //LAB_800c7d3c
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
             this.currentTurnBent_800c66c8.storage_44[7] |= FLAG_1000 | FLAG_CURRENT_TURN;
+
+            LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
             EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
 
             //LAB_800c7d74
@@ -1783,6 +1797,8 @@ public class Battle extends EngineState {
   }
 
   public void endBattle() {
+    LOGGER.info(BATTLE, "Battle ending");
+
     FUN_80020308();
 
     if(encounterId_800bb0f8 != 443) { // Standard victory

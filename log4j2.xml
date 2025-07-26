@@ -16,6 +16,7 @@
         <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="DISASSEMBLY" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="BATTLE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
       </Filters>
     </Console>
     <File name="file" fileName="debug.log" immediateFlush="false" append="false">
@@ -33,6 +34,7 @@
         <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="DISASSEMBLY" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="BATTLE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
       </Filters>
     </File>
   </Appenders>

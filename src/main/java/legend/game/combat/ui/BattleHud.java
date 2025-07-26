@@ -32,6 +32,10 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -90,6 +94,9 @@ import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_SPECIAL;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_TRANSFORM;
 
 public class BattleHud {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(BattleHud.class);
+  private static final Marker BATTLE = MarkerManager.getMarker("BATTLE");
+
   private static final CombatPortraitBorderMetrics0c[] combatPortraitBorderVertexCoords_800c6e9c = {
     new CombatPortraitBorderMetrics0c(0, 0, 1, 1, 0, 0, 0, 0, -1, -1, 1, -1),
     new CombatPortraitBorderMetrics0c(2, 2, 3, 3, 0, 0, 0, 0, -1, 1, 1, 1),
@@ -1441,6 +1448,7 @@ public class BattleHud {
   }
 
   private void onListClose() {
+    LOGGER.info(BATTLE, "Player closed %s", this.listMenu_800c6b60.getClass().getSimpleName());
     this.listMenu_800c6b60 = null;
   }
 
@@ -1453,6 +1461,8 @@ public class BattleHud {
       case 2 -> new AdditionListMenu(this, player, lastPosition, this::onListClose);
       default -> throw new RuntimeException("Not implemented");
     };
+
+    LOGGER.info(BATTLE, "Player opened %s", this.listMenu_800c6b60.getClass().getSimpleName());
   }
 
   @Method(0x800f6134L)
@@ -2126,6 +2136,7 @@ public class BattleHud {
     //LAB_800f7a0c
     //LAB_800f7a10
     if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+      LOGGER.info(BATTLE, "Player selected selected target %d type %d", this.battleMenu_800c6c34.target_48, this.battleMenu_800c6c34.targetType_50);
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
       this.battleMenu_800c6c34.targetArrowHiding = true;
@@ -2134,6 +2145,7 @@ public class BattleHud {
 
     //LAB_800f7a38
     if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
+      LOGGER.info(BATTLE, "Player cancelled targeting");
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.target_48 = -1;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
