@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static legend.core.GameEngine.RENDERER;
 import static legend.core.IoHelper.pathToByteBuffer;
 import static org.lwjgl.opengl.GL11.glGetTexImage;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
@@ -192,7 +191,7 @@ public final class Texture {
       throw new RuntimeException("Buffer capacity does not match texture dimensions, Buffer size: " + data.capacity() + ", Texture size: " + this.width * this.height * 4);
     }
 
-    RENDERER.getLastFrame().use();
+    this.use();
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     final int error = glGetError();

@@ -69,7 +69,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     });
 
     final ByteBuffer data = BufferUtils.createByteBuffer(w * h * 4);
-    this.texture.getData(data);
+    RENDERER.getLastFrame().getData(data);
     this.texture.data(0, 0, w, h, data.flip());
 
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
