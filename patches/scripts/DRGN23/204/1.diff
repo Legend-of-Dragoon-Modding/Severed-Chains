@@ -1,0 +1,11 @@
+Caches collision primitive from pre-calculations
+--- original
++++ modified
+@@ -584,6 +584,7 @@
+ data 0xffffffff
+ LABEL_56:
+ call 109, stor[31]
++mov stor[31], stor[19]
+ jmp_cmp ==, 0x1a, stor[31], inl[:LABEL_57]
+ jmp_cmp ==, 0x1d, stor[31], inl[:LABEL_57]
+ jmp_cmp ==, 0x10, stor[31], inl[:LABEL_57]

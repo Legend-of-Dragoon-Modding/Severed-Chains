@@ -209,6 +209,8 @@ diff,SECT/DRGN22.BIN/1173/7,scripts/DRGN22/1173/7.diff,"Fletz, Return from HoG, 
 diff,SECT/DRGN23.BIN/12/1,scripts/DRGN23/12/1.diff,"Furni retail dialogue fix, GH#1484"
 diff,SECT/DRGN23.BIN/141/1,scripts/DRGN23/141/1.diff,"Crystal Palace Queen Theresa Kidnap, widescreen patch"
 diff,SECT/DRGN23.BIN/144/1,scripts/DRGN23/144/1.diff,"Crystal Palace Queen Theresa Kidnap, widescreen patch"
+diff,SECT/DRGN23.BIN/204/1,scripts/DRGN23/204/1.diff,"Kadessa teleporter floating point error, GH#2322"
+diff,SECT/DRGN23.BIN/204/2,scripts/DRGN23/204/2.diff,"Kadessa teleporter floating point error, GH#2322"
 diff,SECT/DRGN23.BIN/348/1,scripts/DRGN23/348/1.diff,"Flanvel Teleporter Fixes"
 diff,SECT/DRGN23.BIN/348/2,scripts/DRGN23/348/2.diff,"Flanvel Teleporter Fixes"
 diff,SECT/DRGN23.BIN/348/3,scripts/DRGN23/348/3.diff,"Flanvel Teleporter Fixes"
