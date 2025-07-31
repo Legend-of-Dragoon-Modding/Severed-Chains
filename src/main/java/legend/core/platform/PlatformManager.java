@@ -110,10 +110,12 @@ public abstract class PlatformManager {
 
   }
 
-  protected void tickInput() {
+  /** Called at the end of each game tick to clear one-frame input */
+  public void clearPressed() {
 
   }
 
+  protected abstract void tickInput();
   public abstract void rumble(final float intensity, final int ms);
   public abstract void rumble(final float bigIntensity, final float smallIntensity, final int ms);
   public abstract void adjustRumble(final float intensity, final int ms);
