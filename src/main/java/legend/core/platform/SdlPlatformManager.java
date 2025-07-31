@@ -861,12 +861,18 @@ public class SdlPlatformManager extends PlatformManager {
           }
         }
       } else {
+        this.pressed.clear();
+        this.ignoredKeys.clear();
+        this.axesHeld.clear();
+        this.buttonsHeld = 0;
+
         for(final var entry : this.actionStates.entrySet()) {
           final InputAction action = entry.getKey();
           final InputActionState state = entry.getValue();
 
           if(state.isHeld()) {
             LOGGER.info(ACTIONS_MARKER, "Triggering release input action %s", action);
+            this.lastActiveWindow.events().onInputActionReleased(action);
             state.release();
             EVENTS.postEvent(new InputReleasedEvent(action));
           }
