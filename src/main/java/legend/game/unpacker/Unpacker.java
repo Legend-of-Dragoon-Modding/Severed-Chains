@@ -61,6 +61,7 @@ public final class Unpacker {
   private static final int VERSION = 4;
 
   public static Path ROOT = Path.of(".", "files");
+  public static Path REPLACEMENTS = Path.of(".", "patches", "replacements");
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
 
@@ -125,6 +126,12 @@ public final class Unpacker {
     postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
 
     postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
+  }
+
+  private static final List<Replacement> replacements = new ArrayList<>();
+  static {
+    // Guy in Bale library with face/chest swapped
+    replacements.add(new Replacement("Replace Chester texture", Unpacker::drgn21_260_textures_4_chesterTextureReplacementPatcher));
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -266,6 +273,16 @@ public final class Unpacker {
         });
 
         LOGGER.info("Branch transformations completed in %fs", (System.nanoTime() - branchTransformTime) / 1_000_000_000.0f);
+
+        final long replacementTime = System.nanoTime();
+        LOGGER.info("Performing replacements...");
+
+        replacements.parallelStream().forEach(replacement -> {
+          LOGGER.info("Running replacement %s", replacement.name);
+          replacement.transformer.transform(files, transformations, flags);
+        });
+
+        LOGGER.info("Replacements completed in %fs", (System.nanoTime() - replacementTime) / 1_000_000_000.0f);
 
         final Deque<PathNode> all = new ConcurrentLinkedDeque<>();
         files.flatten(all);
@@ -827,6 +844,21 @@ public final class Unpacker {
 
   private static void drgn0_3750_16_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
+  }
+
+  /**
+   * Man in the Bale library with face/chest swapped
+   */
+  private static void drgn21_260_textures_4_chesterTextureReplacementPatcher(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    final PathNode sect = root.children.get("SECT");
+
+    if(sect != null) {
+      final PathNode drgn21 = sect.children.get("DRGN21.BIN");
+
+      if(drgn21 != null) {
+        transformations.replaceWithFile(drgn21.children.get("260").children.get("textures").children.get("4"), REPLACEMENTS.resolve("chester.tim"));
+      }
+    }
   }
 
   /**

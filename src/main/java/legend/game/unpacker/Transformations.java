@@ -3,6 +3,9 @@ package legend.game.unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Queue;
 
 public class Transformations {
@@ -57,6 +60,14 @@ public class Transformations {
 
   public void replaceNode(final PathNode node, final FileData newData) {
     this.addNode(node.fullPath, newData);
+  }
+
+  public void replaceWithFile(final PathNode node, final Path filename) {
+    try {
+      this.replaceNode(node, new FileData(Files.readAllBytes(filename)));
+    } catch(final IOException e) {
+      throw new UnpackerException("Failed to find file " + filename, e);
+    }
   }
 
   public PathNode addChild(final PathNode parent, final String pathSegment, final FileData data) {
