@@ -52,6 +52,16 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 public final class SaveManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SaveManager.class);
 
+  private static final String[] REGIONS = {
+    "BASCUS-94491drgn", // US
+    "BESCESP03044drgn", // FR
+    "BISCPSP10119drgn", // JP
+    "BESCESP03045drgn", // DE
+    "BESCESP03046drgn", // IT
+    "BESCESP03043drgn", // EU
+    "BESCESP03047drgn", // SP
+  };
+
   private final Path dir = Paths.get("saves");
   public static final PathMatcher SAVE_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.dsav");
 
@@ -166,8 +176,15 @@ public final class SaveManager {
 
     for(int i = 0; i < 16; i++) {
       final int offset = (i + 1) * 0x80;
-      if(data.readByte(offset) == 0x51 && "BASCUS-94491drgn".equals(data.readFixedLengthAscii(offset + 0xa, 0x10))) {
-        return true;
+
+      if(data.readByte(offset) == 0x51) {
+        final String readRegion = data.readFixedLengthAscii(offset + 0xa, 0x10);
+
+        for(final String region : REGIONS) {
+          if(region.equalsIgnoreCase(readRegion)) {
+            return true;
+          }
+        }
       }
     }
 
