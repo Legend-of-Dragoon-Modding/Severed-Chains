@@ -4376,8 +4376,8 @@ public class Battle extends EngineState {
     final int componentIndex = script.params_20[1].get();
 
     //LAB_800cfe54
-    float largest = -Float.MAX_VALUE;
-    float smallest = Float.MAX_VALUE;
+    float largest = -Integer.MAX_VALUE;
+    float smallest = Integer.MAX_VALUE;
     for(int animIndex = bent.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
       final float component = bent.model_148.modelParts_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
 
@@ -4392,7 +4392,8 @@ public class Battle extends EngineState {
     }
 
     //LAB_800cfe9c
-    script.params_20[2].set(Math.round(largest - smallest));
+    // Retail integer underflow/overflow, GH#1681
+    script.params_20[2].set((int)largest - (int)smallest);
     return FlowControl.CONTINUE;
   }
 
