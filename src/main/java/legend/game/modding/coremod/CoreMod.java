@@ -15,6 +15,7 @@ import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.inventory.IconSetConfigEntry;
+import legend.game.inventory.ItemGroupSortModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlaySizeConfigEntry;
@@ -128,6 +129,7 @@ public class CoreMod {
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
   public static final RegistryDelegate<ShowTurnOrderConfig> SHOW_TURN_ORDER = CONFIG_REGISTRAR.register("show_turn_order", ShowTurnOrderConfig::new);
+  public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 

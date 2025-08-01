@@ -12,7 +12,9 @@ import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
+import legend.lodmod.LodMod;
 
+import java.util.List;
 import java.util.Set;
 
 import static legend.game.SItem.FUN_80104b60;
@@ -572,9 +574,9 @@ public class TooManyItemsScreen extends MenuScreen {
     playMenuSound(2);
 
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
-      sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
+      sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size(), List.of(LodMod.ITEM_IDS));
     } else {
-      sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
+      sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size(), List.of(LodMod.EQUIPMENT_IDS));
     }
   }
 

@@ -19,6 +19,7 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemGroupSortMode;
 import legend.game.inventory.OverflowMode;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.FontOptions;
@@ -162,6 +163,7 @@ import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.ITEM_GROUP_SORT_MODE;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
@@ -1200,15 +1202,37 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023a2cL)
-  public static <T> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count) {
-    display.sort(menuItemIconComparator());
+  public static <T extends RegistryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
+    display.sort(menuItemIconComparator(retailSorting));
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static <T> Comparator<MenuEntryStruct04<T>> menuItemIconComparator() {
-    return Comparator
-      .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon().resolve().icon)
-      .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+  public static <T extends RegistryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting) {
+    final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
+
+    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().resolve().icon);
+
+    if(retail) {
+      comparator = comparator.thenComparingInt(item -> {
+        if(!LodMod.MOD_ID.equals(item.item_00.getRegistryId().modId()) || !retailSorting.contains(item.item_00.getRegistryId().entryId())) {
+          return Integer.MAX_VALUE;
+        }
+
+        return retailSorting.indexOf(item.item_00.getRegistryId().entryId());
+      });
+
+      comparator = comparator.thenComparing(item -> {
+        if(LodMod.MOD_ID.equals(item.item_00.getRegistryId().modId()) && retailSorting.contains(item.item_00.getRegistryId().entryId())) {
+          return "";
+        }
+
+        return I18n.translate(item.getNameTranslationKey());
+      });
+    } else {
+      comparator = comparator.thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+    }
+
+    return comparator;
   }
 
   public static Comparator<MenuEntryStruct04<Equipment>> menuEquipmentSlotComparator() {
@@ -1225,7 +1249,7 @@ public final class Scus94491BpeSegment_8002 {
       items.add(MenuEntryStruct04.make(item));
     }
 
-    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
+    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size(), List.of(LodMod.ITEM_IDS));
   }
 
   @Method(0x80023b54L)
