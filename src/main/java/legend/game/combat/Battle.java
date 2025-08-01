@@ -4392,7 +4392,8 @@ public class Battle extends EngineState {
     }
 
     //LAB_800cfe9c
-    // Retail integer underflow/overflow, GH#1681
+    // There is retail integer underflow when trans light is used against enemies like Polter Sword because smallest is not set GH#1681
+    // Value underflows to positive and code in DRGN0/4326 works correctly
     script.params_20[2].set((int)largest - (int)smallest);
     return FlowControl.CONTINUE;
   }
