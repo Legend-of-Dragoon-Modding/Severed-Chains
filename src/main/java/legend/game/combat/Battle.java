@@ -4392,7 +4392,8 @@ public class Battle extends EngineState {
     }
 
     //LAB_800cfe9c
-    script.params_20[2].set(Math.round(largest - smallest));
+    // Retail integer underflow/overflow, GH#1681
+    script.params_20[2].set((int)largest - (int)smallest);
     return FlowControl.CONTINUE;
   }
 
