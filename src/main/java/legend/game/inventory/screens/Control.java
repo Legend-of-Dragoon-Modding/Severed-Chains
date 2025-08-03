@@ -2,6 +2,8 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
@@ -420,6 +422,23 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
+  protected InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(super.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.axisHandler != null) {
+      return this.axisHandler.axis(axis, direction, menuValue, movementValue);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
   protected InputPropagation charPress(final int codepoint) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
@@ -518,6 +537,10 @@ public abstract class Control extends ControlHost {
     this.buttonReleaseHandler = handler;
   }
 
+  public void onAxis(final Axis handler) {
+    this.axisHandler = handler;
+  }
+
   public void onCharPress(final CharPress handler) {
     this.charPressHandler = handler;
   }
@@ -542,6 +565,7 @@ public abstract class Control extends ControlHost {
   private KeyRelease keyReleaseHandler;
   private ButtonPress buttonPressHandler;
   private ButtonRelease buttonReleaseHandler;
+  private Axis axisHandler;
   private CharPress charPressHandler;
   private InputActionPressed inputActionPressedHandler;
   private InputActionReleased inputActionReleasedHandler;
@@ -558,6 +582,7 @@ public abstract class Control extends ControlHost {
   @FunctionalInterface public interface KeyRelease { InputPropagation keyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods); }
   @FunctionalInterface public interface ButtonPress { InputPropagation buttonPress(final InputButton button, final boolean repeat); }
   @FunctionalInterface public interface ButtonRelease { InputPropagation buttonRelease(final InputButton button); }
+  @FunctionalInterface public interface Axis { InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue); }
   @FunctionalInterface public interface CharPress { InputPropagation charPress(final int codepoint); }
   @FunctionalInterface public interface InputActionPressed { InputPropagation pressed(final InputAction action, final boolean repeat); }
   @FunctionalInterface public interface InputActionReleased { InputPropagation release(final InputAction action); }

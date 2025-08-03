@@ -13,6 +13,7 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.saves.ConfigCollection;
+import legend.game.types.MessageBoxResult;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
@@ -23,11 +24,10 @@ import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.UI_TEXT_CENTERED;
+import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 
 public class KeybindsScreen extends VerticalLayoutScreen {
@@ -56,7 +56,15 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         final Control control;
 
         if(action.canBeEdited) {
-          control = new Button(this.actionToString(action));
+          final Button button = new Button(this.actionToString(action));
+          button.onPressed(() -> menuStack.pushScreen(new KeybindScreen(action, this::actionToString, (result, activations) -> {
+            if(result == MessageBoxResult.YES) {
+              InputBindings.overwriteBindings(action, activations);
+              button.setText(this.actionToString(action));
+            }
+          })));
+
+          control = button;
         } else {
           final Label label = new Label(this.actionToString(action));
           label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
@@ -68,15 +76,11 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     }
   }
 
-  private final FontOptions font = new FontOptions().set(UI_TEXT_CENTERED).size(0.6f);
-
-  @Override
-  protected void render() {
-    renderText("I didn't have time to add rebinding for the beta. Sorry bout it.", this.getWidth() / 2.0f, 14, this.font);
+  private String actionToString(final InputAction action) {
+    return this.actionToString(InputBindings.getActivationsForAction(action));
   }
 
-  private String actionToString(final InputAction action) {
-    final List<InputActivation> activations = InputBindings.getActivationsForAction(action);
+  private String actionToString(final List<InputActivation> activations) {
     final List<String> text = new ArrayList<>();
 
     activations.sort(Comparator.comparing(activation -> activation.getClass().getSimpleName()));
@@ -114,6 +118,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
     if(action == INPUT_ACTION_MENU_BACK.get()) {
       playMenuSound(3);
+      InputBindings.saveBindings(this.config);
       this.unload.run();
       return InputPropagation.HANDLED;
     }

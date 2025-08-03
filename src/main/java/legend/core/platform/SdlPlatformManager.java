@@ -53,6 +53,10 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.platform.input.InputAxis.LEFT_X;
+import static legend.core.platform.input.InputAxis.LEFT_Y;
+import static legend.core.platform.input.InputAxis.RIGHT_X;
+import static legend.core.platform.input.InputAxis.RIGHT_Y;
 import static legend.game.modding.coremod.CoreMod.IGNORE_STEAM_INPUT_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MENU_INNER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MENU_OUTER_DEADZONE_CONFIG;
@@ -732,11 +736,16 @@ public class SdlPlatformManager extends PlatformManager {
               final float menuOuterDeadzone = CONFIG.getConfig(MENU_OUTER_DEADZONE_CONFIG.get());
               final float movementInnerDeadzone = CONFIG.getConfig(MOVEMENT_INNER_DEADZONE_CONFIG.get());
               final float movementOuterDeadzone = CONFIG.getConfig(MOVEMENT_OUTER_DEADZONE_CONFIG.get());
+              final float minInner = Math.min(menuInnerDeadzone, movementInnerDeadzone);
+              final float maxOuter = Math.min(menuOuterDeadzone, movementOuterDeadzone);
 
-              if(Math.abs(axis.value()) >= Math.min(menuInnerDeadzone, movementInnerDeadzone) * 0x7fff) {
+              if(Math.abs(axis.value()) >= minInner * 0x7fff) {
                 this.setWindowInputClass(this.lastActiveWindow, InputClass.GAMEPAD);
                 this.lastGamepad = this.gamepads.get(axis.which());
                 this.axesHeld.add(axis.axis());
+                final float menuValue = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - menuInnerDeadzone) / (Math.abs(menuOuterDeadzone - menuInnerDeadzone)));
+                final float movementValue = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - movementInnerDeadzone) / (Math.abs(movementOuterDeadzone - movementInnerDeadzone)));
+                this.lastActiveWindow.events().onAxis(this.getInputFromAxisCode(axis.axis()), InputAxisDirection.getDirection(axis.value()), menuValue, movementValue);
               } else {
                 this.axesHeld.remove(axis.axis());
               }
@@ -1036,6 +1045,18 @@ public class SdlPlatformManager extends PlatformManager {
       case RIGHT_Y -> SDL_GAMEPAD_AXIS_RIGHTY;
       case LEFT_TRIGGER -> SDL_GAMEPAD_AXIS_LEFT_TRIGGER;
       case RIGHT_TRIGGER -> SDL_GAMEPAD_AXIS_RIGHT_TRIGGER;
+    };
+  }
+
+  private InputAxis getInputFromAxisCode(final int axisCode) {
+    return switch(axisCode) {
+      case SDL_GAMEPAD_AXIS_LEFTX -> LEFT_X;
+      case SDL_GAMEPAD_AXIS_LEFTY -> LEFT_Y;
+      case SDL_GAMEPAD_AXIS_RIGHTX -> RIGHT_X;
+      case SDL_GAMEPAD_AXIS_RIGHTY -> RIGHT_Y;
+      case SDL_GAMEPAD_AXIS_LEFT_TRIGGER -> InputAxis.LEFT_TRIGGER;
+      case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER -> InputAxis.RIGHT_TRIGGER;
+      default -> throw new IllegalStateException("Invalid axis: " + axisCode);
     };
   }
 

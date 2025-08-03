@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputCodepoints;
 import legend.core.platform.input.InputKey;
@@ -172,6 +174,19 @@ public abstract class MenuScreen extends ControlHost {
 
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.buttonRelease(button);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    if(super.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.focus != null && !this.focus.isDisabled()) {
+      return this.focus.axis(axis, direction, menuValue, movementValue);
     }
 
     return InputPropagation.PROPAGATE;

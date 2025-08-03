@@ -1,6 +1,8 @@
 package legend.core.platform;
 
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
@@ -18,6 +20,7 @@ public final class WindowEvents {
   private final List<Focus> lostFocus = new ArrayList<>();
   private final List<KeyPressed> keyPress = new ArrayList<>();
   private final List<KeyReleased> keyRelease = new ArrayList<>();
+  private final List<Axis> axis = new ArrayList<>();
   private final List<ButtonPressed> buttonPress = new ArrayList<>();
   private final List<ButtonReleased> buttonRelease = new ArrayList<>();
   private final List<Char> charPress = new ArrayList<>();
@@ -110,6 +113,10 @@ public final class WindowEvents {
 
   void onButtonRelease(final InputButton button) {
     this.buttonRelease.forEach(cb -> cb.action(this.window, button));
+  }
+
+  void onAxis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    this.axis.forEach(cb -> cb.action(this.window, axis, direction, menuValue, movementValue));
   }
 
   void onChar(final int codepoint) {
@@ -219,6 +226,19 @@ public final class WindowEvents {
   public void removeButtonRelease(final ButtonReleased callback) {
     synchronized(LOCK) {
       this.buttonRelease.remove(callback);
+    }
+  }
+
+  public Axis onAxis(final Axis callback) {
+    synchronized(LOCK) {
+      this.axis.add(callback);
+      return callback;
+    }
+  }
+
+  public void removeAxis(final Axis callback) {
+    synchronized(LOCK) {
+      this.axis.remove(callback);
     }
   }
 
@@ -422,6 +442,11 @@ public final class WindowEvents {
   @FunctionalInterface
   public interface ButtonReleased {
     void action(final Window window, final InputButton button);
+  }
+
+  @FunctionalInterface
+  public interface Axis {
+    void action(final Window window, final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue);
   }
 
   @FunctionalInterface
