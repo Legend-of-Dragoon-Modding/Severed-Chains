@@ -1212,7 +1212,7 @@ public final class Scus94491BpeSegment_8002 {
   public static <T extends RegistryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
-    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().resolve().icon);
+    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().icon);
 
     if(retail) {
       comparator = comparator.thenComparingInt(item -> {
