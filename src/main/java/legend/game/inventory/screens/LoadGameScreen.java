@@ -5,6 +5,8 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.SaveCard;
+import legend.game.modding.events.gamestate.DeleteSaveEvent;
+import legend.game.modding.events.gamestate.LoadGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
@@ -15,6 +17,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -77,6 +80,7 @@ public class LoadGameScreen extends MenuScreen {
   private void onMessageboxResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
       this.saveSelected.accept(save);
+      EVENTS.postEvent(new LoadGameEvent(save));
     }
   }
 
@@ -102,6 +106,7 @@ public class LoadGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
+            EVENTS.postEvent(new DeleteSaveEvent(this.campaign, this.saveList.getSelected().fileName));
             this.campaign.deleteSave(this.saveList.getSelected().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
