@@ -13,6 +13,8 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
+import java.util.Arrays;
+
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
@@ -67,14 +69,14 @@ public class PostBattleScreen extends MenuScreen {
 
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
 
-  private int levelUpCharId_8011e170;
+  private int levelUpCharSlot_8011e170;
   private int unlockHeight_8011e178;
   private int soundTick_8011e17c;
   private final int[] pendingXp_8011e180 = new int[10];
-  private final int[] spellsUnlocked_8011e1a8 = new int[10];
-  private final int[] additionsUnlocked_8011e1b8 = new int[10];
-  private final int[] levelsGained_8011e1c8 = new int[10];
-  private final int[] dragoonLevelsGained_8011e1d8 = new int[10];
+  private final int[] spellsUnlocked_8011e1a8 = new int[12];
+  private final int[] additionsUnlocked_8011e1b8 = new int[12];
+  private final int[] levelsGained_8011e1c8 = new int[12];
+  private final int[] dragoonLevelsGained_8011e1d8 = new int[12];
 
   private MenuState inventoryMenuState_800bdc28 = MenuState.INIT_0;
   private MenuState confirmDest_800bdc30;
@@ -115,13 +117,11 @@ public class PostBattleScreen extends MenuScreen {
           cacheCharacterSlots();
 
           //LAB_8010d87c
-          for(int i = 0; i < 10; i++) {
-            this.spellsUnlocked_8011e1a8[i] = 0;
-            this.additionsUnlocked_8011e1b8[i] = 0;
-            this.levelsGained_8011e1c8[i] = 0;
-            this.dragoonLevelsGained_8011e1d8[i] = 0;
-            this.pendingXp_8011e180[i] = 0;
-          }
+          Arrays.fill(this.spellsUnlocked_8011e1a8, 0);
+          Arrays.fill(this.additionsUnlocked_8011e1b8, 0);
+          Arrays.fill(this.levelsGained_8011e1c8, 0);
+          Arrays.fill(this.dragoonLevelsGained_8011e1d8, 0);
+          Arrays.fill(this.pendingXp_8011e180, 0);
 
           this.additionsUnlocked_8011e1b8[0] = this.getUltimateAdditionIdIfUnlocked(0);
           this.additionsUnlocked_8011e1b8[1] = this.getUltimateAdditionIdIfUnlocked(1);
@@ -224,7 +224,7 @@ public class PostBattleScreen extends MenuScreen {
             playMenuSound(1);
           }
         } else {
-          this.levelUpCharId_8011e170 = 3;
+          this.levelUpCharSlot_8011e170 = 3;
           totalXpFromCombat_800bc95c = 0;
 
           if(this.additionsUnlocked_8011e1b8[0] + this.additionsUnlocked_8011e1b8[1] + this.additionsUnlocked_8011e1b8[2] == 0) {
@@ -272,29 +272,29 @@ public class PostBattleScreen extends MenuScreen {
         break;
 
       case MAIN_LEVEL_UPS_8:
-        if(this.levelUpCharId_8011e170 >= 9) {
+        if(this.levelUpCharSlot_8011e170 >= this.levelsGained_8011e1c8.length) {
           //LAB_8010dd90
           this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
-        } else if(this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] != 0) {
+        } else if(this.levelsGained_8011e1c8[this.levelUpCharSlot_8011e170] != 0) {
           addLevelUpOverlay(-80, 44);
           playMenuSound(9);
           this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_9;
         } else {
           //LAB_8010dd88
-          this.levelUpCharId_8011e170++;
+          this.levelUpCharSlot_8011e170++;
         }
 
         this.drawReport();
         break;
 
       case SECONDARY_LEVEL_UPS_9:
-        this.drawChar(24, 152, secondaryCharIds_800bdbf8[this.levelUpCharId_8011e170 - 3]);
+        this.drawChar(24, 152, secondaryCharIds_800bdbf8[this.levelUpCharSlot_8011e170 - 3]);
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(2);
-          this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] = 0;
+          this.levelsGained_8011e1c8[this.levelUpCharSlot_8011e170] = 0;
           this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
-          this.levelUpCharId_8011e170++;
+          this.levelUpCharSlot_8011e170++;
         }
 
         this.drawReport();
