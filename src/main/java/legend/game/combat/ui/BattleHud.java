@@ -1586,7 +1586,7 @@ public class BattleHud {
   }
 
 
-  private void onListClose() {
+  public void onListClose() {
     LOGGER.info(BATTLE, "Player closed %s", this.listMenu_800c6b60.getClass().getSimpleName());
     this.listMenu_800c6b60 = null;
   }
