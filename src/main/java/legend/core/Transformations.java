@@ -3,11 +3,13 @@ package legend.core;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.game.EngineState;
+import legend.game.modding.coremod.CoreMod;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -38,7 +40,14 @@ public final class Transformations {
     toScreenTempVec.mul(RENDERER.camera().getView());
     toScreenTempVec.mul(RENDERER.getPerspectiveProjection());
 
-    out.set(toScreenTempVec.x / toScreenTempVec.w / 2 * (RENDERER.getNativeWidth() * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio()), (-toScreenTempVec.y / toScreenTempVec.w / 2) * RENDERER.getNativeHeight());
+    final float renderAspect;
+    if(CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      renderAspect = RENDERER.getRenderAspectRatio();
+    } else {
+      renderAspect = 4.0f / 3.0f;
+    }
+
+    out.set(toScreenTempVec.x / toScreenTempVec.w / 2 * (RENDERER.getNativeWidth() * renderAspect / RENDERER.getNativeAspectRatio()), (-toScreenTempVec.y / toScreenTempVec.w / 2) * RENDERER.getNativeHeight());
   }
 
   private static final MV toScreenTempLw = new MV();

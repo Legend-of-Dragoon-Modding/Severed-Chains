@@ -21,6 +21,7 @@ import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.inventory.IconSetConfigEntry;
+import legend.game.inventory.ItemGroupSortModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlaySizeConfigEntry;
@@ -124,6 +125,7 @@ public class CoreMod {
   public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
 
   // Per-campaign config
+  public static final RegistryDelegate<ControllerKeybindsConfigEntry> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
   public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
@@ -152,6 +154,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> DRAGOON_GUARD_CONFIG = CONFIG_REGISTRAR.register("dragoon_guard", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<DragoonDetransformationConfigEntry> DRAGOON_DETRANSFORMATION_CONFIG = CONFIG_REGISTRAR.register("detransformation_mode", DragoonDetransformationConfigEntry::new);
   public static final RegistryDelegate<ShowTurnOrderConfig> SHOW_TURN_ORDER = CONFIG_REGISTRAR.register("show_turn_order", ShowTurnOrderConfig::new);
+  public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 

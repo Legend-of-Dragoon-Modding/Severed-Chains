@@ -21,16 +21,20 @@ public class InputBoxScreen extends MenuScreen {
   private final BiConsumer<MessageBoxResult, String> onResult;
 
   private final Brackets highlight;
-  private final Textbox text;
-  private final Button accept;
-  private final Button cancel;
+  protected final Textbox text;
+  protected final Button accept;
+  protected final Button cancel;
   private int selectedIndex;
 
   public InputBoxScreen(final String message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
+    this(message, defaultText, onResult, 32);
+  }
+
+  public InputBoxScreen(final String message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult, final int z) {
     final Panel panel = this.addControl(Panel.panel());
     panel.setPos(75, 75);
     panel.setSize(215, 90);
-    panel.setZ(32);
+    panel.setZ(z);
 
     this.onResult = onResult;
 
@@ -38,7 +42,7 @@ public class InputBoxScreen extends MenuScreen {
     label.setAutoSize(true);
     label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     label.setPos((panel.getWidth() - label.getWidth()) / 2, 12);
-    label.setZ(31);
+    label.setZ(z - 1);
 
     this.text = panel.addControl(new Textbox());
     this.text.setSize(165, 16);
@@ -50,7 +54,7 @@ public class InputBoxScreen extends MenuScreen {
     this.accept = panel.addControl(new Button("Accept"));
     this.accept.setSize(112, 14);
     this.accept.setPos((panel.getWidth() - this.accept.getWidth()) / 2, this.text.getY() + this.text.getHeight() + 4);
-    this.accept.setZ(31);
+    this.accept.setZ(z - 1);
     this.accept.onPressed(() -> {
       menuStack.popScreen();
       this.onResult.accept(MessageBoxResult.YES, this.text.getText().strip());
@@ -59,14 +63,14 @@ public class InputBoxScreen extends MenuScreen {
     this.cancel = panel.addControl(new Button("Cancel"));
     this.cancel.setSize(112, 14);
     this.cancel.setPos((panel.getWidth() - this.cancel.getWidth()) / 2, this.accept.getY() + this.accept.getHeight() + 2);
-    this.cancel.setZ(31);
+    this.cancel.setZ(z - 1);
     this.cancel.onPressed(this::menuCancel);
 
     this.highlight = panel.addControl(new Brackets());
     this.highlight.setPos(this.text.getX() - 4, this.text.getY() - 4);
     this.highlight.setSize(this.text.getWidth() + 8, this.text.getHeight() + 8);
     this.highlight.setClut(0xfc29);
-    this.highlight.setZ(31);
+    this.highlight.setZ(z - 1);
     this.highlight.setVisibility(false);
 
     this.text.onHoverIn(this.highlight::show);
@@ -90,7 +94,7 @@ public class InputBoxScreen extends MenuScreen {
 
   }
 
-  private void menuNavigateUp() {
+  protected void menuNavigateUp() {
     playMenuSound(1);
 
     this.getSelectedControl().hoverOut();
@@ -105,7 +109,7 @@ public class InputBoxScreen extends MenuScreen {
     }
   }
 
-  private void menuNavigateDown() {
+  protected void menuNavigateDown() {
     playMenuSound(1);
 
     this.getSelectedControl().hoverOut();

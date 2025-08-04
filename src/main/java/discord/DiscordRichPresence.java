@@ -2,6 +2,7 @@ package discord;
 
 import de.jcm.discordgamesdk.Core;
 import de.jcm.discordgamesdk.CreateParams;
+import de.jcm.discordgamesdk.GameSDKException;
 import de.jcm.discordgamesdk.LogLevel;
 import de.jcm.discordgamesdk.activity.Activity;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +24,9 @@ public final class DiscordRichPresence {
 
   public void tick() {
     if(this.core != null) {
-      this.core.runCallbacks();
+      try {
+        this.core.runCallbacks();
+      } catch(final GameSDKException ignored) { }
     }
   }
 
@@ -37,7 +40,7 @@ public final class DiscordRichPresence {
     final CreateParams params = new CreateParams();
     params.setClientID(1385814687458918400L); //App ID
 
-    final long paramFlags = CreateParams.Flags.toLong(CreateParams.Flags.DEFAULT, CreateParams.Flags.SUPPRESS_EXCEPTIONS);
+    final long paramFlags = CreateParams.Flags.toLong(CreateParams.Flags.NO_REQUIRE_DISCORD, CreateParams.Flags.SUPPRESS_EXCEPTIONS);
     params.setFlags(paramFlags);
 
     try {

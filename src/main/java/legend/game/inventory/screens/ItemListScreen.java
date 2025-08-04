@@ -13,6 +13,7 @@ import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
+import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -177,7 +178,7 @@ public class ItemListScreen extends MenuScreen {
 
   private void menuSort() {
     playMenuSound(2);
-    this.itemList.sort(menuItemIconComparator());
+    this.itemList.sort(menuItemIconComparator(List.of(LodMod.ITEM_IDS)));
     this.equipmentList.sort(menuEquipmentSlotComparator());
     setInventoryFromDisplay(this.itemList.getItems(), gameState_800babc8.items_2e9, this.itemList.getItems().size());
     setInventoryFromDisplay(this.equipmentList.getItems(), gameState_800babc8.equipment_1e8, this.equipmentList.getItems().size());

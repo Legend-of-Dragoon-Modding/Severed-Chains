@@ -269,7 +269,7 @@ public class QuadParticle extends ParticleEffectData98 {
 
       transforms.transfer.x = ref.x;
       transforms.transfer.y = ref.y;
-      transforms.scaling(horizontalScale * particle.w_5e, verticalScale * particle.h_5f, 1.0f).rotateZ(angle);
+      transforms.scaling(horizontalScale * particle.w_5e, verticalScale * particle.h_5f, 1.0f).rotateLocalZ(angle);
     }
 
     //LAB_800fcde0

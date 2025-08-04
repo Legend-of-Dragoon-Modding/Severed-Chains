@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.core.platform.input.InputBindings;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -98,6 +99,9 @@ public class CampaignSelectionScreen extends MenuScreen {
       CONFIG.copyConfigFrom(save.config);
 
       GameEngine.bootRegistries();
+
+      InputBindings.initBindings();
+      InputBindings.loadBindings(CONFIG);
 
       final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state));
 

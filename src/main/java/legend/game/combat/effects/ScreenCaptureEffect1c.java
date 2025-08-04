@@ -69,7 +69,13 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     });
 
     final ByteBuffer data = BufferUtils.createByteBuffer(w * h * 4);
-    this.texture.getData(data);
+    RENDERER.getLastFrame().getData(data);
+
+    // Set the m bit of each pixel so that the full black parts don't get culled
+    for(int i = 0; i < data.capacity(); i += 0x4) {
+      data.put(i + 0x3, (byte)0xff);
+    }
+
     this.texture.data(0, 0, w, h, data.flip());
 
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);

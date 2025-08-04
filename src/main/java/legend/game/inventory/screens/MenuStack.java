@@ -6,6 +6,9 @@ import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
+import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
@@ -31,6 +34,9 @@ public class MenuStack {
   private WindowEvents.Scroll onMouseScroll;
   private WindowEvents.KeyPressed onKeyPress;
   private WindowEvents.Char onCharPress;
+  private WindowEvents.ButtonPressed onButtonPress;
+  private WindowEvents.ButtonReleased onButtonRelease;
+  private WindowEvents.Axis onAxis;
   private WindowEvents.InputActionPressed onInputActionPressed;
   private WindowEvents.InputActionReleased onInputActionReleased;
 
@@ -136,6 +142,9 @@ public class MenuStack {
     this.onMouseScroll = RENDERER.events().onMouseScroll(this::mouseScroll);
     this.onKeyPress = RENDERER.events().onKeyPress(this::keyPress);
     this.onCharPress = RENDERER.events().onCharPress(this::charPress);
+    this.onButtonPress = RENDERER.events().onButtonPress(this::buttonPress);
+    this.onButtonRelease = RENDERER.events().onButtonRelease(this::buttonRelease);
+    this.onAxis = RENDERER.events().onAxis(this::axis);
     this.onInputActionPressed = RENDERER.events().onInputActionPressed(this::inputActionPressed);
     this.onInputActionReleased = RENDERER.events().onInputActionReleased(this::inputActionReleased);
   }
@@ -147,6 +156,9 @@ public class MenuStack {
     RENDERER.events().removeMouseScroll(this.onMouseScroll);
     RENDERER.events().removeKeyPress(this.onKeyPress);
     RENDERER.events().removeCharPress(this.onCharPress);
+    RENDERER.events().removeButtonPress(this.onButtonPress);
+    RENDERER.events().removeButtonRelease(this.onButtonRelease);
+    RENDERER.events().removeAxis(this.onAxis);
     RENDERER.events().removeInputActionPressed(this.onInputActionPressed);
     RENDERER.events().removeInputActionReleased(this.onInputActionReleased);
   }
@@ -230,6 +242,18 @@ public class MenuStack {
 
   private void charPress(final Window window, final int codepoint) {
     this.input(screen -> screen.charPress(codepoint));
+  }
+
+  private void buttonPress(final Window window, final InputButton button, final boolean repeat) {
+    this.input(screen -> screen.buttonPress(button, repeat));
+  }
+
+  private void buttonRelease(final Window window, final InputButton button) {
+    this.input(screen -> screen.buttonRelease(button));
+  }
+
+  private void axis(final Window window, final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    this.input(screen -> screen.axis(axis, direction, menuValue, movementValue));
   }
 
   private void inputActionPressed(final Window window, final InputAction action, final boolean repeat) {

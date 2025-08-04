@@ -198,7 +198,7 @@ public final class MathHelper {
   }
 
   public static float atan2(float y, final float x) {
-    if(y == 0.0f && x == 0.0f) {
+    if(flEq(y, 0.0f) && flEq(x, 0.0f)) {
       return 0.0f;
     }
 
