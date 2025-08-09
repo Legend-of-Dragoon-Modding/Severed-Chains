@@ -244,6 +244,7 @@ diff,SECT/DRGN24.BIN/621/9,scripts/DRGN24/621/9.diff,"Aglis, Teleporter to Zeneb
 diff,SECT/DRGN24.BIN/645/3,scripts/DRGN24/645/3.diff,"Aglis, Teleporter to Zenebatos, Meru, don't hide body parts, GH#2174"
 diff,SECT/DRGN24.BIN/645/4,scripts/DRGN24/645/4.diff,"Aglis, Teleporter to Zenebatos, Albert, don't hide body parts, GH#2174"
 diff,SECT/DRGN24.BIN/645/5,scripts/DRGN24/645/5.diff,"Aglis, Teleporter to Zenebatos, Haschel, don't hide body parts, GH#2174"
+diff,SECT/DRGN24.BIN/834/1,scripts/DRGN24/834/1.diff,"The end, use confirm or cancel to return to title screen"
 diff,SECT/DRGN24.BIN/918/3,scripts/DRGN24/918/3.diff,"Aglis, Kraken cutscene, Meru, don't hide body parts, GH#1720"
 diff,SECT/DRGN24.BIN/918/4,scripts/DRGN24/918/4.diff,"Aglis, Kraken cutscene, Albert, stay on screen, GH#1720"
 diff,SECT/DRGN24.BIN/918/5,scripts/DRGN24/918/5.diff,"Aglis, Kraken cutscene, Haschel, stay on screen, GH#1720"

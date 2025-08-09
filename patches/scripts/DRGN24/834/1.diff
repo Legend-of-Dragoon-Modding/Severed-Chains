@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -126,7 +126,7 @@
+ wait stor[24]
+ LABEL_14:
+ yield
+-jmp_cmp &, 0x800, var[3], inl[:LABEL_15]
++jmp_cmp &, 0x60, var[3], inl[:LABEL_15]
+ jmp inl[:LABEL_14]
+ LABEL_15:
+ call 256, 0xffffffff, 0x3fb
