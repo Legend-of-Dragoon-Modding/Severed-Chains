@@ -403,6 +403,21 @@ public class SMap extends EngineState {
   }
 
   @Override
+  public boolean canSave() {
+    final SubmapSavable saveMode = this.submap.canSave();
+
+    if(saveMode == SubmapSavable.ALWAYS) {
+      return true;
+    }
+
+    if(saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get())) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     super.inputActionPressed(action, repeat);
 

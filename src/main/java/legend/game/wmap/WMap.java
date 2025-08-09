@@ -423,6 +423,11 @@ public class WMap extends EngineState {
   }
 
   @Override
+  public boolean canSave() {
+    return true;
+  }
+
+  @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     if(action == LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY.get() && !repeat) {
       if(Loader.getLoadingFileCount() == 0) {

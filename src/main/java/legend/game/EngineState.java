@@ -112,6 +112,13 @@ public abstract class EngineState {
     throw new RuntimeException("Not implemented");
   }
 
+  /**
+   * Return true if the "save" option in the in-game menu should be enabled
+   */
+  public boolean canSave() {
+    return false;
+  }
+
   public void updateDiscordRichPresence(final Activity activity) {
     activity.setDetails(this.getChapter() + " - " + this.getLocation());
     activity.setState(null);
