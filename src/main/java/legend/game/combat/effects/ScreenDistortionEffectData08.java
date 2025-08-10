@@ -107,7 +107,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
         //LAB_80109678
         angle1 += height * 0.05f;
         v += whichHalf;
-        rowOffset += height * whichHalf;
+        rowOffset += (int)height * whichHalf;
       }
     }
 
