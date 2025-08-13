@@ -68,7 +68,7 @@ void main() {
   }
 
   // Quad, check adjacent vertex
-  if((vs_out[1].vertFlags & 0x10) != 0) {
+  if((vs_out[0].vertFlags & 0x10) != 0) {
     if(zfar >= vs_out[1].viewspaceZ * 2.0) {
       return;
     }
