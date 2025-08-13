@@ -122,7 +122,9 @@ public final class TmdObjLoader {
 
       final Polygon poly = new Polygon(vertexCount);
 
-      for(final byte[] data : primitive.data()) {
+      for(int dataIndex = 0; dataIndex < primitive.data().length; dataIndex++) {
+        final byte[] data = primitive.data()[dataIndex];
+
         TmdObjLoaderMesh mesh = tmdMeshes.opaque;
 
         // Read data from TMD ---
@@ -189,7 +191,7 @@ public final class TmdObjLoader {
         // fourth vertex as the adjacent vertex. We pass it for every adjacency even though it's only actually
         // adjacent to one side of the triangle to simplify the geometry shader that does the culling (it doesn't
         // have to care about which adjacency to check).
-        final int adjacent1 = mesh.vertexIndex + 3;
+        final int adjacent1 = dataIndex < primitive.data().length - 1 ? mesh.vertexIndex + 3 : mesh.vertexIndex;
         final int adjacent2 = mesh.vertexIndex;
 
         mesh.indices[mesh.indexOffset++] = mesh.vertexIndex + 2;
