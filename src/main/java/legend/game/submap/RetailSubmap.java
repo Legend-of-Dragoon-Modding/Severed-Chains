@@ -356,6 +356,7 @@ public class RetailSubmap extends Submap {
     38, // Prairie path near ocean - softlock
     47, // Cave stepping stones - softlock
     110, // Marshlands boat screen - boat is invisible
+    327, // First map after starting chapter 3 - screen is black on load (GH#2204)
     381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
     580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
   );
