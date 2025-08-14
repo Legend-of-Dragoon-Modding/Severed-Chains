@@ -97,7 +97,7 @@ void main() {
   Light l = lights[int(modelIndex)];
 
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
-    vs_out.vertColour.rgb = inColour.rgb * battleColour.rgb;
+    vs_out.vertColour.rgb = mod(inColour.rgb * battleColour.rgb, 2.0);
   } else if(lit) {
     float range = 1.0;
 
