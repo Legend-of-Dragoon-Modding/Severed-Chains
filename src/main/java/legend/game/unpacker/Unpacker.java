@@ -379,22 +379,25 @@ public final class Unpacker {
   private static void getIsoReaders(final IsoReader[] readers, final String[] errors) throws IOException {
     Arrays.fill(errors, I18n.translate("unpacker.disk_not_found"));
 
-    try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
-      for(final Path child : children) {
-        final Tuple<IsoReader, Integer> tuple = getIsoReader(child, errors);
+    final Path isos = Path.of("isos");
+    if(Files.isDirectory(isos)) {
+      try(final DirectoryStream<Path> children = Files.newDirectoryStream(isos)) {
+        for(final Path child : children) {
+          final Tuple<IsoReader, Integer> tuple = getIsoReader(child, errors);
 
-        if(tuple != null) {
-          final int diskNum = tuple.b();
+          if(tuple != null) {
+            final int diskNum = tuple.b();
 
-          errors[diskNum] = I18n.translate("unpacker.disk_found");
+            errors[diskNum] = I18n.translate("unpacker.disk_found");
 
-          if(readers[diskNum] != null) {
-            tuple.a().close();
-            continue;
+            if(readers[diskNum] != null) {
+              tuple.a().close();
+              continue;
+            }
+
+            LOGGER.info("Found disk %d: %s", diskNum + 1, child);
+            readers[diskNum] = tuple.a();
           }
-
-          LOGGER.info("Found disk %d: %s", diskNum + 1, child);
-          readers[diskNum] = tuple.a();
         }
       }
     }
