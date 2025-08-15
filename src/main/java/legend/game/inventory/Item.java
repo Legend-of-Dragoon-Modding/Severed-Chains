@@ -3,12 +3,15 @@ package legend.game.inventory;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.modding.events.inventory.IconDisplayEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
+import static legend.core.GameEngine.EVENTS;
+
 public abstract class Item extends RegistryEntry implements InventoryEntry {
-  private final ItemIcon icon;
+  public final ItemIcon icon;
   private final int price;
 
   public Item(final ItemIcon icon, final int price) {
@@ -18,7 +21,7 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
 
   @Override
   public ItemIcon getIcon() {
-    return this.icon;
+    return EVENTS.postEvent(new IconDisplayEvent(this, this.icon)).icon;
   }
 
   @Override
