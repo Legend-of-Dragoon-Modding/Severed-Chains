@@ -316,10 +316,10 @@ public final class GameEngine {
     for(int i = 0; i < 9; i++) {
       CoreMod.CHARACTER_DATA[i] = new CharacterData();
       CoreMod.loadCharacterXp(i, getCharacterName(i).toLowerCase());
-      CoreMod.loadCharacterStats(i, getCharacterName(i).toLowerCase());
-      CoreMod.loadCharacterDragoonXp(i, getCharacterName(i).toLowerCase());
-      CoreMod.loadCharacterDragoonStats(i, getCharacterName(i).toLowerCase());
-      CoreMod.loadCharacterAdditions(i, getCharacterName(i).toLowerCase(), additions[i], additionOffsets[i]);
+      CoreMod.loadCharacterStats(i);
+      CoreMod.loadCharacterDragoonXp(i);
+      CoreMod.loadCharacterDragoonStats(i);
+      CoreMod.loadCharacterAdditions(i, additions[i], additionOffsets[i]);
     }
     LOGGER.info("CoreMod Character Data Loaded");
   }

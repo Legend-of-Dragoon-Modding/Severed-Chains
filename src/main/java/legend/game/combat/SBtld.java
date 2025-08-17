@@ -30,6 +30,9 @@ public class SBtld {
           activeDragoonAdditionIndex = 0;
         } else {
           activeDragoonAdditionIndex = 1;
+          if(CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.size() == 1) {
+            CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(SBtld.additionHits_8010e658[42]);
+          }
         }
 
         //LAB_80109310

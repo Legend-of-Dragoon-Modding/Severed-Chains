@@ -223,19 +223,23 @@ public class CoreMod {
     }
   }
 
-  public static void loadCharacterStats(final int charIndex, final String charName) throws IOException {
+  public static void loadCharacterStats(final int charIndex)  {
     System.arraycopy(SItem.levelStuff_80111cfc[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].statsTable, 0, CoreMod.CHARACTER_DATA[charIndex].statsTable.length);
   }
 
-  public static void loadCharacterDragoonXp(final int charIndex, final String charName) throws IOException {
+  public static void loadCharacterDragoonXp(final int charIndex)  {
     System.arraycopy(SItem.dragoonXpRequirements_800fbbf0[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].dxpTable, 0, CoreMod.CHARACTER_DATA[charIndex].dxpTable.length);
   }
 
-  public static void loadCharacterDragoonStats(final int charIndex, final String charName) throws IOException {
+  public static void loadCharacterDragoonStats(final int charIndex)  {
     System.arraycopy(SItem.magicStuff_80111d20[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable, 0, CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length);
   }
 
-  public static void loadCharacterAdditions(final int charIndex, final String charName, final int additions, final int additionOffset) throws IOException {
+  public static void loadCharacterAdditions(final int charIndex, final int additions, final int additionOffset) {
+    CoreMod.CHARACTER_DATA[charIndex].additions.clear();
+    CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.clear();
+    CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.clear();
+
     if(charIndex != 2 && charIndex != 8) {
       for(int i = 0; i < additions; i++) {
         CoreMod.CHARACTER_DATA[charIndex].additions.add(SBtld.additionHits_8010e658[additionOffset + i]);
