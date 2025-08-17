@@ -93,7 +93,7 @@ public class RenderState {
         final float offset;
         final float w;
 
-        if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+        if(this.batch.getRenderMode() == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
           final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
           final float adjustedW = this.batch.nativeHeight * ratio;
           offset = (adjustedW - this.batch.nativeWidth) / 2.0f;
