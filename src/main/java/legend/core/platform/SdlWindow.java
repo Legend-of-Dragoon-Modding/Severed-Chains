@@ -201,6 +201,7 @@ public class SdlWindow extends Window {
 
   @Override
   public void makeFullscreen() {
+    LOGGER.info("Switching to fullscreen");
     this.monitor = this.getMonitorFromConfig();
     this.vidMode = SDL_GetDesktopDisplayMode(this.monitor);
     this.err(SDL_RestoreWindow(this.window), "RestoreWindow");
@@ -208,11 +209,13 @@ public class SdlWindow extends Window {
     this.moveToMonitor();
 
     // Overscan by 1 pixel to stop Windows from putting it into exclusive fullscreen
+    LOGGER.info("Setting window size to [%d, %d]", this.vidMode.w(), this.vidMode.h() + 1);
     this.err(SDL_SetWindowSize(this.window, this.vidMode.w(), this.vidMode.h() + 1), "SetWindowSize");
   }
 
   @Override
   public void makeWindowed() {
+    LOGGER.info("Switching to windowed [%d, %d]", Config.windowWidth(), Config.windowHeight());
     this.err(SDL_SetWindowBordered(this.window, true), "SetWindowBordered");
     this.err(SDL_SetWindowSize(this.window, Config.windowWidth(), Config.windowHeight()), "SetWindowSize");
     this.centerWindow();
@@ -228,6 +231,8 @@ public class SdlWindow extends Window {
       this.err(SDL_GetWindowSize(this.window, pWidth, pHeight), "GetWindowSize");
       this.err(SDL_GetDisplayBounds(this.monitor, displayRect), "GetDisplayBounds");
 
+      LOGGER.info("Centering window (window [%d, %d], display [%d, %d, %d, %d])", pWidth.get(0), pHeight.get(0), displayRect.x(), displayRect.y(), displayRect.w(), displayRect.h());
+
       this.err(SDL_SetWindowPosition(
         this.window,
         displayRect.x() + (displayRect.w() - pWidth.get(0)) / 2,
@@ -240,6 +245,7 @@ public class SdlWindow extends Window {
     try(final MemoryStack stack = stackPush()) {
       final SDL_Rect displayRect = SDL_Rect.malloc(stack);
       this.err(SDL_GetDisplayBounds(this.monitor, displayRect), "GetDisplayBounds");
+      LOGGER.info("Moving to display [%d, %d, %d, %d]", displayRect.x(), displayRect.y(), displayRect.w(), displayRect.h());
       this.err(SDL_SetWindowPosition(this.window, displayRect.x(), displayRect.y()), "SetWindowPosition");
     }
   }

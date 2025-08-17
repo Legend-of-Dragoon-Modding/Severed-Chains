@@ -46,4 +46,6 @@ public abstract class Submap {
   public abstract boolean isReturningToSameMapAfterBattle();
 
   void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) { }
+
+  public abstract SubmapSavable canSave();
 }

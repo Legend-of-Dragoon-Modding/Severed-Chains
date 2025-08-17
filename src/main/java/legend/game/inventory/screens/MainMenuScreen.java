@@ -8,7 +8,6 @@ import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -45,7 +44,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -83,13 +81,8 @@ public class MainMenuScreen extends MenuScreen {
     loadingNewGameState_800bdc34 = false;
     loadCharacterStats();
 
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      gameState_800babc8.isOnWorldMap_4e4 = true;
-      canSave_8011dc88 = true;
-    } else {
-      gameState_800babc8.isOnWorldMap_4e4 = false;
-      canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
-    }
+    gameState_800babc8.isOnWorldMap_4e4 = engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08;
+    canSave_8011dc88 = currentEngineState_8004dd04.canSave();
 
     this.addControl(new Background());
     this.addControl(Glyph.glyph(71)).setPos( 16,  16); // Chapter box
@@ -378,7 +371,7 @@ public class MainMenuScreen extends MenuScreen {
       menuStack.popScreen();
       this.loadingStage = 0;
 
-      canSave_8011dc88 = engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 || CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
+      canSave_8011dc88 = currentEngineState_8004dd04.canSave();
       this.saveButton.setDisabled(!canSave_8011dc88);
     }));
   }

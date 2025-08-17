@@ -98,6 +98,16 @@ void main() {
 
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
     vs_out.vertColour.rgb = inColour.rgb * battleColour.rgb;
+    // Individiually checks for retail color overflows
+    if(vs_out.vertColour.r > 2.0) {
+      vs_out.vertColour.r = mod(vs_out.vertColour.r, 2.0);
+    }
+    if(vs_out.vertColour.g > 2.0) {
+      vs_out.vertColour.g = mod(vs_out.vertColour.g, 2.0);
+    }
+    if(vs_out.vertColour.b > 2.0) {
+      vs_out.vertColour.b = mod(vs_out.vertColour.b, 2.0);
+    }
   } else if(lit) {
     float range = 1.0;
 

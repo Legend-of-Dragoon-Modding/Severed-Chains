@@ -2,6 +2,7 @@ package legend.game.submap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.QueuedModel;
 import legend.core.QueuedModelStandard;
@@ -75,6 +76,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
@@ -348,6 +350,28 @@ public class RetailSubmap extends Submap {
         break;
       }
     }
+  }
+
+  private static final IntList saveBlacklist = IntList.of(
+    38, // Prairie path near ocean - softlock
+    47, // Cave stepping stones - softlock
+    110, // Marshlands boat screen - boat is invisible
+    327, // First map after starting chapter 3 - screen is black on load (GH#2204)
+    381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
+    580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
+  );
+
+  @Override
+  public SubmapSavable canSave() {
+    if(standingInSavePoint_8005a368) {
+      return SubmapSavable.ALWAYS;
+    }
+
+    if(saveBlacklist.contains(this.cut)) {
+      return SubmapSavable.NEVER;
+    }
+
+    return SubmapSavable.SAVE_ANYWHERE;
   }
 
   @Override
