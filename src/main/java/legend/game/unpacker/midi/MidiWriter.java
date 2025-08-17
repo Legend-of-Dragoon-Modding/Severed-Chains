@@ -39,7 +39,14 @@ public class MidiWriter {
         IoHelper.write(track, 0); // Will get replaced with chunk size
         IoHelper.write(track, (byte)0); // Delta time - first event, so 0 (varint)
 
-        byte previousCommand = 0;
+        // Write initial tempo
+        track.put((byte)0xff); // Meta
+        track.put((byte)0x51); // Tempo change
+        track.put((byte)3); // Data length
+        IoHelper.write3(track, 60_000_000 / (short)MathHelper.get(sssqRaw, 4, 2));
+        track.put((byte)0); // No elapsed time
+
+        byte previousCommand = (byte)0xff;
 
         outer:
         while(sssq.hasRemaining()) {
