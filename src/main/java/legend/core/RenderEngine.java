@@ -33,6 +33,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
 import legend.game.modding.coremod.CoreMod;
@@ -69,6 +70,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD;
@@ -1068,6 +1070,7 @@ public class RenderEngine {
       throw t;
     } finally {
       LOGGER.info("Shutting down...");
+      engineState_8004dd20 = EngineStateEnum.GAME_CLOSED_12;
 
       try {
         Config.save();

@@ -61,6 +61,7 @@ public final class Unpacker {
   private static final int VERSION = 4;
 
   public static Path ROOT = Path.of(".", "files");
+  public static Path MOD_ROOT = Path.of(".", "mods");
   public static Path REPLACEMENTS = Path.of(".", "patches", "replacements");
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
@@ -713,6 +714,10 @@ public final class Unpacker {
     transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
     transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
     transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
+
+    for(int i = 0; i < 192; i++) {
+      transformations.addNode("equipment/" + i + ".deqp", node.data.slice(0x16878 + i * 0x1c, 0x1c));
+    }
   }
 
   private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {
@@ -1073,6 +1078,12 @@ public final class Unpacker {
 
   private static void playerScriptDamageCapsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add(node.fullPath);
+
+    //Remove Shana/??? SP gain table from script and move it to subfunc 912
+    final byte[] patch = {0x38, 0x06, (byte)0x90, 0x03, 0x08, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    for(int i = 0; i < patch.length; i++) {
+      node.data.writeByte(0x8358 + i, patch[i]);
+    }
 
     node.data.writeInt(0x9f0, 999999999);
     node.data.writeInt(0xa00, 999999999);
