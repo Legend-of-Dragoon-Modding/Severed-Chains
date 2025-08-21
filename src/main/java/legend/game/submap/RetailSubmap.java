@@ -948,6 +948,11 @@ public class RetailSubmap extends Submap {
         renderPacket.offsetY_1e++;
       }
 
+      // Fix misaligned cutout on ghost ship (GH#2210)
+      if(this.cut == 288 && i == 17) {
+        renderPacket.offsetY_1e++;
+      }
+
       //LAB_800e7210
       renderPacket.zFlags_22 &= 0x3fff;
     }
