@@ -953,6 +953,11 @@ public class RetailSubmap extends Submap {
         renderPacket.offsetY_1e++;
       }
 
+      // Fix misaligned cutout in Hellena (GH#2203)
+      if(this.cut == 642 && i == 2) {
+        renderPacket.w_18--;
+      }
+
       //LAB_800e7210
       renderPacket.zFlags_22 &= 0x3fff;
     }
