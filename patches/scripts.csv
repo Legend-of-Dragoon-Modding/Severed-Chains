@@ -142,6 +142,7 @@ diff,SECT/DRGN21.BIN/687/6,scripts/DRGN21/687/6.diff,"Black Castle, Kongol pre-f
 diff,SECT/DRGN21.BIN/693/5,scripts/DRGN21/693/5.diff,"Hoax aftermath cutscene, fallen knight, widescreen patch, GH#2136"
 diff,SECT/DRGN21.BIN/693/6,scripts/DRGN21/693/6.diff,"Hoax aftermath cutscene, reporting knight, widescreen patch, GH#2136"
 diff,SECT/DRGN21.BIN/693/7,scripts/DRGN21/693/7.diff,"Hoax aftermath cutscene, Kaiser, widescreen patch, GH#2136"
+diff,SECT/DRGN21.BIN/696/2,scripts/DRGN21/696/2.diff,"Very first map, Rose cliffside with Feyrbrand, fix foreground being over fog, GH#2344"
 diff,SECT/DRGN21.BIN/702/4,scripts/DRGN21/702/4.diff,"Intro, smooth knight riding rotation"
 diff,SECT/DRGN21.BIN/702/6,scripts/DRGN21/702/6.diff,"Intro, smooth knight riding rotation"
 diff,SECT/DRGN21.BIN/702/7,scripts/DRGN21/702/7.diff,"Intro, smooth knight riding rotation"
