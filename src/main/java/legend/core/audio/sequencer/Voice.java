@@ -252,8 +252,12 @@ final class Voice {
   }
 
   void setModulation(final int modulation) {
-    this.isModulation = true;
     this.modulation = modulation;
+    this.isModulation = modulation != 0;
+
+    if(!this.isModulation) {
+      this.counter.resetBreath();
+    }
   }
 
   void setBreath(final int breath) {
