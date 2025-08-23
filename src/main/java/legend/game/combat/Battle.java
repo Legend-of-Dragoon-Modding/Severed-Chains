@@ -6505,9 +6505,6 @@ public class Battle extends EngineState {
 
   @Method(0x800e8ffcL)
   public void allocateDeffManager() {
-    if(deffManager_800c693c != null) {
-      deffManager_800c693c.delete();
-    }
 
     final DeffManager7cc deffManager = new DeffManager7cc();
     this.loadedDeff_800c6938 = deffManager._5b8;
@@ -6527,7 +6524,6 @@ public class Battle extends EngineState {
     scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
     deffManager_800c693c.deallocateScriptsArray();
     deffManager_800c693c.scriptState_1c.deallocateWithChildren();
-    deffManager_800c693c.delete();
     deffManager_800c693c = null;
   }
 
@@ -6981,7 +6977,6 @@ public class Battle extends EngineState {
       if(index >= 5) {
         final DeffPart.TmdType tmdType = new DeffPart.TmdType("HUD DEFF file " + i, files.get(i));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
-        struct7cc.objs[index] = TmdObjLoader.fromObjTable(tmdType.name, struct7cc.tmds_2f8[index]);
       }
 
       //LAB_800ea928
