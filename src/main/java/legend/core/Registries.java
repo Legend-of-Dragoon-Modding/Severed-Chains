@@ -18,6 +18,9 @@ import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.deff.DeffRegistry;
 import legend.game.combat.deff.RegisterDeffsEvent;
+import legend.game.combat.encounters.Encounter;
+import legend.game.combat.encounters.EncounterRegistry;
+import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistry;
 import legend.game.inventory.EquipmentRegistryEvent;
@@ -50,6 +53,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);
+  public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

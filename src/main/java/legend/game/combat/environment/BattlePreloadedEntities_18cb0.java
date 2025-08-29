@@ -14,7 +14,7 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_DRAGOON;
 
 /** 0x18cb0 bytes */
 public class BattlePreloadedEntities_18cb0 {
-  public EncounterData38 encounterData_00;
+//  public EncounterData38 encounterData_00;
   /** 3 slots for chars, 3 slots for dragoons */
   public final AdditionHits80[] additionHits_38 = new AdditionHits80[6];
   /** This reference is only valid while it's loading */

@@ -1,17 +1,34 @@
 package legend.game.combat;
 
 import legend.core.memory.Method;
-import legend.game.combat.environment.EncounterData38;
+import legend.game.Scus94491BpeSegment_800b;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
 import legend.game.combat.types.StageDeffThing08;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodMod;
 
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.loadFile;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
-public class SBtld {
+public final class SBtld {
+  private SBtld() { }
+
+  public static void startLegacyEncounter(final int encounterId, final int stageId) {
+    startEncounter(REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get(), stageId);
+    encounterId_800bb0f8 = encounterId;
+  }
+
+  public static void startEncounter(final Encounter encounter, final int stageId) {
+    encounterId_800bb0f8 = -1;
+    battleStage_800bb0f4 = stageId;
+    Scus94491BpeSegment_800b.encounter = encounter;
+  }
+
   @Method(0x80109250L)
   public static void loadAdditions() {
     //LAB_801092a0
@@ -43,8 +60,6 @@ public class SBtld {
 
       //LAB_80109340
     }
-
-    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8 * 0x38));
   }
 
   public static final AdditionHits80[] additionHits_8010e658 = {

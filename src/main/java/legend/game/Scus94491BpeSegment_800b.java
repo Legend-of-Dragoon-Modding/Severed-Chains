@@ -2,6 +2,7 @@ package legend.game;
 
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gte.MV;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
@@ -41,6 +42,7 @@ public final class Scus94491BpeSegment_800b {
   public static GameState52c gameState_800babc8;
   public static int battleStage_800bb0f4;
   public static int encounterId_800bb0f8;
+  public static Encounter encounter;
   public static int tickCount_800bb0fc;
 
   public static int clearGreen_800bb104;
