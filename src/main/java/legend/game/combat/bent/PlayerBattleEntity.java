@@ -296,7 +296,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getWeaponModelPart() {
+  public int getWeaponModelPart() {
     return switch(this.charId_272) {
       case 0 -> (this.status_0e & 0x4000) == 0 ? 14 : 0;
       case 1, 5 -> 3;
@@ -309,7 +309,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getWeaponTrailVertexComponent() {
+  public int getWeaponTrailVertexComponent() {
     return switch(this.charId_272) {
       case 0, 2, 6, 8 -> 0;
       case 1, 3, 4, 5, 7 -> 2;
