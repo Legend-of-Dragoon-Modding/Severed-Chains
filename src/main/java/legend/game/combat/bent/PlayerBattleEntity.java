@@ -262,13 +262,24 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  public int getHandModelPart() {
+  public int getLeftHandModelPart() {
     return switch(this.charId_272) {
       case 0, 7 -> 5;
       case 1, 4, 5, 6 -> 6;
       case 2 -> 11;
       case 3 -> 8;
       case 8 -> 10;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  public int getRightHandModelPart() {
+    return switch(this.charId_272) {
+      case 0, 7 -> 6;
+      case 1, 4, 5, 6 -> 7;
+      case 2 -> 12;
+      case 3 -> 9;
+      case 8 -> 11;
       default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
     };
   }
@@ -444,7 +455,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case HAS_WEAPON_TRAIL -> this.hasWeaponTrail() ? 1 : 0;
       case WEAPON_TRAIL_COLOUR -> this.getWeaponTrailColour();
       case SPELL_RING_COLOUR -> this.getSpellRingColour();
-      case HAND_MODEL_PART -> this.getHandModelPart();
+      case HAND_MODEL_PART -> this.getLeftHandModelPart();
       case FOOT_MODEL_PART -> this.getFootModelPart();
       case WEAPON_MODEL_PART -> this.getWeaponModelPart();
       case WEAPON_TRAIL_VERTEX_COMPONENT -> this.getWeaponTrailVertexComponent();
