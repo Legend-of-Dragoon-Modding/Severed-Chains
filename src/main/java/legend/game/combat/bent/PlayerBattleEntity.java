@@ -262,7 +262,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getHandModelPart() {
+  public int getHandModelPart() {
     return switch(this.charId_272) {
       case 0, 7 -> 5;
       case 1, 4, 5, 6 -> 6;
@@ -273,7 +273,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getFootModelPart() {
+  public int getFootModelPart() {
     if(this.isDragoon()) {
       return switch(this.charId_272) {
         case 0 -> (this.status_0e & 0x4000) == 0 ? 8 : 7;
