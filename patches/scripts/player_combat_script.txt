@@ -1512,7 +1512,13 @@ data 0x24a
 data 0x200001e
 data 0xb1f1fd3
 
+HIT_INDEX:
+data 0
+SOUND_INDEX:
+data 0;
+
 ; SUBROUTINE
+; Plays addition sounds
 LABEL_221:
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
 mov 0x1, stor[9] ; source, dest
@@ -1525,23 +1531,24 @@ mul 0x4, stor[18] ; amount, operand
 add stor[8], stor[18] ; amount, operand
 mov 0x0, var[45][74] ; source, dest
 mov 0x4, stor[21] ; source, dest
+
+mov var[45][83], inl[:HIT_INDEX]
+mov 16, inl[:SOUND_INDEX]
+
 LABEL_222:
-mov inl[:LABEL_245[stor[18]]], stor[9] ; source, dest
-mov stor[9], stor[10] ; source, dest
-mov stor[9], stor[11] ; source, dest
-and 0xc0000000, stor[9] ; right, left
-and 0xffff00, stor[10] ; right, left
-shr 0x8, stor[10] ; right, left
-and 0xff, stor[11] ; right, left
-jmp_cmp >, 0x0, stor[9], inl[:LABEL_225] ; operand, left, right, addr
-jmp_cmp ==, 0x0, stor[9], inl[:LABEL_223] ; operand, left, right, addr
-call Scus94491BpeSegment::scriptPlaySound, 0x0, stor[10], 0x1, 0x0, stor[11], 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
-jmp inl[:LABEL_224] ; addr
-LABEL_223:
+call Battle::scriptGetHitProperty, stor[0], inl[:HIT_INDEX], inl[:SOUND_INDEX], stor[10] ; bentIndex, hitNum, hitPropertyIndex, value
+incr inl[:SOUND_INDEX]
+
+call Battle::scriptGetHitProperty, stor[0], inl[:HIT_INDEX], inl[:SOUND_INDEX], stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
+incr inl[:SOUND_INDEX]
+
+jmp_cmp >, 0x0, stor[10], inl[:LABEL_225] ; operand, left, right, addr
+
 call Battle::scriptPlayBentSound, 0x1, stor[0], stor[10], 0x1, 0x0, stor[11], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-LABEL_224:
+
 incr stor[18] ; operand
 while stor[21], inl[:LABEL_222] ; counter, addr
+
 LABEL_225:
 return
 
@@ -2793,51 +2800,85 @@ call Battle::scriptGetBentSlot, stor[28], stor[8], 0x1 ; bentIndex, charOrBentSl
 mov 0x1, stor[9] ; source, dest
 shl stor[8], stor[9] ; right, left
 jmp_cmp &, stor[9], var[45][250], inl[:LABEL_251] ; operand, left, right, addr
+
+; s8 = hit sound file
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
+; s8 = look up hit sound file in table
 mov inl[:LABEL_246[stor[8]]], stor[8] ; source, dest
+
+; s18 = addition hit index
 mov var[45][83], stor[18] ; source, dest
 mul 0x2, stor[18] ; amount, operand
 add stor[8], stor[18] ; amount, operand
+
+; s22 = look up hit from table - first value
 mov inl[:LABEL_246[stor[18]]], stor[22] ; source, dest
+
+; next table index
 incr stor[18] ; operand
+
+; s23 = look up hit from table - second value
 mov inl[:LABEL_246[stor[18]]], stor[23] ; source, dest
+
 mov stor[22], stor[10] ; source, dest
 and 0x3e0000, stor[10] ; right, left
 shr 0x11, stor[10] ; right, left
 shl 0x7, stor[10] ; right, left
+; double slash hit 0: s10 = 0x200
+
 mov stor[22], stor[11] ; source, dest
 and 0x1f000, stor[11] ; right, left
 shr 0xc, stor[11] ; right, left
 shl 0x7, stor[11] ; right, left
+; double slash hit 0: s11 = 0
+
 mov stor[23], stor[12] ; source, dest
 and 0xf8000000, stor[12] ; right, left
 shr 0x1b, stor[12] ; right, left
 shl 0x7, stor[12] ; right, left
+; double slash hit 0: s12 = 0
+
 mov stor[22], stor[19] ; source, dest
 and 0xfff, stor[19] ; right, left
 shl 0x4, stor[19] ; right, left
+; double slash hit 0: s19 = 0x120
+
+; sign extend
 jmp_cmp !&, 0x8000, stor[19], inl[:LABEL_248] ; operand, left, right, addr
 or 0xffff0000, stor[19] ; right, left
+
 LABEL_248:
 mov stor[23], stor[20] ; source, dest
 and 0xfff000, stor[20] ; right, left
 shr 0xc, stor[20] ; right, left
 shl 0x4, stor[20] ; right, left
+; double slash hit 0: s20 = 0xfc60
+
+; sign extend
 jmp_cmp !&, 0x8000, stor[20], inl[:LABEL_249] ; operand, left, right, addr
 or 0xffff0000, stor[20] ; right, left
+; double slash hit 0: s20 = 0xfffffc60
+
 LABEL_249:
 mov stor[23], stor[21] ; source, dest
 and 0xfff, stor[21] ; right, left
 shl 0x4, stor[21] ; right, left
+; double slash hit 0: s21 = 0xf9c0
+
+; sign extend
 jmp_cmp !&, 0x8000, stor[21], inl[:LABEL_250] ; operand, left, right, addr
 or 0xffff0000, stor[21] ; right, left
+; double slash hit 0: s21 = 0xfffff9c0
+
 LABEL_250:
 mov stor[22], stor[9] ; source, dest
 and 0x1fc00000, stor[9] ; right, left
 shr 0x16, stor[9] ; right, left
+
 mov stor[22], stor[8] ; source, dest
 and 0xe0000000, stor[8] ; right, left
 shr 0x1d, stor[8] ; right, left
+
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 mov stor[0], stor[30] ; source, dest
 mov stor[9], stor[stor[stor[0], 18], 9] ; source, dest

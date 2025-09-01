@@ -195,7 +195,7 @@ public class GameVarArrayParam extends Param {
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0;
       case 81 -> Scus94491BpeSegment_8006.battleState_8006e398._2c4;
       case 82 -> Scus94491BpeSegment_8006.battleState_8006e398._2c8;
-      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398._2cc;
+      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc;
       case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0;
       case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4;
       case 86 -> Scus94491BpeSegment_8006.battleState_8006e398._2d8;
@@ -458,7 +458,7 @@ public class GameVarArrayParam extends Param {
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0 = val;
       case 81 -> Scus94491BpeSegment_8006.battleState_8006e398._2c4 = val;
       case 82 -> Scus94491BpeSegment_8006.battleState_8006e398._2c8 = val;
-      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398._2cc = val;
+      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc = val;
       case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0 = val;
       case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4 = val;
       case 86 -> Scus94491BpeSegment_8006.battleState_8006e398._2d8 = val;
