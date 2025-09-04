@@ -7,6 +7,7 @@ import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -14,6 +15,7 @@ import legend.game.types.Renderable58;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
@@ -183,7 +185,8 @@ public class EquipmentScreen extends MenuScreen {
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this.upArrow_800bdb9c, this.downArrow_800bdba0);
 
     if(slotIndex + slotScroll < this.menuItems.size()) {
-      renderString(194, 178, I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final Equipment selected = this.menuItems.get(slotIndex + slotScroll).item_00;
+      renderString(194, 178, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()))).description, allocate);
     }
   }
 

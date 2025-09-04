@@ -42,6 +42,8 @@ public final class Main {
     } catch(final Throwable e) {
       boolean generatedCrashSave = false;
 
+      engineState_8004dd20 = EngineStateEnum.GAME_CLOSED_12;
+
       if(gameState_800babc8 != null && CONFIG.getConfig(CoreMod.CREATE_CRASH_SAVE_CONFIG.get())) {
         final List<SavedGame> saves = gameState_800babc8.campaign.loadAllSaves();
         final String name = SAVES.generateSaveName(saves, "Crash Recovery");
@@ -84,6 +86,7 @@ public final class Main {
       LOGGER.error("https://discord.gg/legendofdragoon");
 
       LogManager.shutdown();
+
       System.exit(1);
     }
   }
