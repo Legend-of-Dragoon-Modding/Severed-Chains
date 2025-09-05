@@ -123,7 +123,7 @@ public final class V3Serializer {
 
     for(int i = 0; i < equipmentCount; i++) {
       final int id = data.readUByte(offset);
-      final String idStr = LodMod.EQUIPMENT_IDS[id - 192];
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
 
       if(idStr.isBlank()) {
         LOGGER.warn("Skipping unknown equipment ID %#x", id);

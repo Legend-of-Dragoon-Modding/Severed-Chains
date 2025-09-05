@@ -96,7 +96,7 @@ public final class RetailSerializer {
         break;
       }
 
-      final String idStr = LodMod.EQUIPMENT_IDS[id - 192];
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
 
       if(idStr.isBlank()) {
         LOGGER.warn("Skipping unknown equipment ID %#x", id);
