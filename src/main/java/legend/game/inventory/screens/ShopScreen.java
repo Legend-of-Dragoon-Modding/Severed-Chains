@@ -67,7 +67,6 @@ import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
-import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -177,7 +176,7 @@ public class ShopScreen extends MenuScreen {
         this.renderShopMenu(this.menuIndex_8011e0dc);
 
         if(!this.inv.isEmpty()) {
-          this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+          this.renderShopTypeInfo(this.inv.getFirst().item instanceof ItemStack);
         }
 
         this.menuState = MenuState.RENDER_3;
@@ -187,7 +186,7 @@ public class ShopScreen extends MenuScreen {
         this.renderShopMenu(this.menuIndex_8011e0dc);
 
         if(!this.inv.isEmpty()) {
-          this.renderShopTypeInfo(this.inv.getFirst().item instanceof Item);
+          this.renderShopTypeInfo(this.inv.getFirst().item instanceof ItemStack);
         }
       }
 
@@ -197,7 +196,7 @@ public class ShopScreen extends MenuScreen {
         if(entry.item instanceof Equipment) {
           this.renderEquipmentStatChange((Equipment)entry.item, characterIndices_800bdbb8[this.equipCharIndex]);
         } else {
-          this.renderNumberOfItems((Item)entry.item);
+          this.renderNumberOfItems(((ItemStack)entry.item).getItem());
         }
 
         renderString(16, 122, I18n.translate(entry.item.getDescriptionTranslationKey()), false);
@@ -301,7 +300,7 @@ public class ShopScreen extends MenuScreen {
         }
 
         this.renderShopMenu(this.menuIndex_8011e0dc);
-        this.renderShopTypeInfo(this.inv.isEmpty() || this.inv.getFirst().item instanceof Item);
+        this.renderShopTypeInfo(this.inv.isEmpty() || this.inv.getFirst().item instanceof ItemStack);
       }
 
       case UNLOAD_19 -> whichMenu_800bdc38 = WhichMenu.UNLOAD;
@@ -457,7 +456,7 @@ public class ShopScreen extends MenuScreen {
     upArrow.setVisible(startItemIndex != 0);
     downArrow.setVisible(i + startItemIndex < list.size());
 
-    this.renderShopTypeInfo(list.get(startItemIndex + this.invIndex_8011e0e0).item instanceof Item);
+    this.renderShopTypeInfo(list.get(startItemIndex + this.invIndex_8011e0e0).item instanceof ItemStack);
   }
 
   private Renderable58 allocateCharRenderable(final int x, final int y, final int glyph) {
@@ -606,7 +605,7 @@ public class ShopScreen extends MenuScreen {
           } else if(gameState_800babc8.gold_94 < inv.price) {
             menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
           } else {
-            if(inv.item instanceof final Item item) {
+            if(inv.item instanceof final ItemStack item) {
               menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
                 if(result == MessageBoxResult.YES) {
                   if(giveItem(item)) {
@@ -873,7 +872,7 @@ public class ShopScreen extends MenuScreen {
       this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Cannot carry anymore", 0, result -> { })));
     } else if(gameState_800babc8.gold_94 < inv.price) {
       this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { })));
-    } else if(inv.item instanceof final Item item) {
+    } else if(inv.item instanceof final ItemStack item) {
       menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           if(giveItem(item)) {

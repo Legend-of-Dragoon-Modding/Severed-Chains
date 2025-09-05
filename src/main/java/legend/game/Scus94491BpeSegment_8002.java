@@ -1067,9 +1067,12 @@ public final class Scus94491BpeSegment_8002 {
     return gameState_800babc8.items_2e9.give(item).isEmpty();
   }
 
+  /**
+   * Note: does NOT consume the passed in item stack
+   */
   @Method(0x80023484L)
   public static boolean giveItem(final ItemStack item) {
-    return gameState_800babc8.items_2e9.give(item).isEmpty();
+    return gameState_800babc8.items_2e9.give(new ItemStack(item)).isEmpty();
   }
 
   @Method(0x80023484L)
