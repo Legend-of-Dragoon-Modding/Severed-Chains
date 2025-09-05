@@ -3,6 +3,7 @@ package legend.lodmod.items;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
 
@@ -12,17 +13,17 @@ public class SachetItem extends BattleItem {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ENEMIES;
   }
 
   @Override
-  public Element getAttackElement() {
+  public Element getAttackElement(final ItemStack stack) {
     return LodMod.NO_ELEMENT.get();
   }
 

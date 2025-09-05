@@ -6,6 +6,7 @@ import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.effects.ScriptDeffManualLoadingEffect;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
@@ -33,7 +34,7 @@ public abstract class BattleItem extends Item {
   }
 
   @Override
-  public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+  public FlowControl useInBattle(final ItemStack stack, final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
     return switch(this.deffLoadingStage) {
       // Initial load
       case 0 -> {

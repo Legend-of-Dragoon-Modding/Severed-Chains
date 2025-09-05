@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
 import legend.game.submap.SMap;
@@ -15,12 +16,12 @@ public class CharmPotionItem extends BattleItem {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return true;
   }
 
   @Override
-  public boolean canBeUsedNow(final UsageLocation location) {
+  public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     float currentEncounterAccumulation = 0.0f;
     if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       currentEncounterAccumulation = wmap.encounterAccumulator_800c6ae8;
@@ -32,12 +33,12 @@ public class CharmPotionItem extends BattleItem {
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ALLIES;
   }
 
   @Override
-  public void useInMenu(final UseItemResponse response, final int charId) {
+  public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
     if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       //LAB_80022e40
       response._00 = 8;

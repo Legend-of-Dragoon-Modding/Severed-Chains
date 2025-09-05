@@ -51,6 +51,9 @@ lod_core.ui.links.project=Severed Chains Project Page
 lod_core.ui.links.github=Severed Chains GitHub Page
 lod_core.ui.links.issue=Report an Issue
 
+# Core items
+lod_core.items.nothing.name=Nothing
+
 # Global config
 lod_core.config.controller_keybinds.label=Controls
 lod_core.config.controller_keybinds.configure=Configure...

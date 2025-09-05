@@ -4,12 +4,14 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopContentsEvent;
@@ -240,7 +242,7 @@ public class ShopScreen extends MenuScreen {
         final int count;
         if(this.sellType != 0) {
           renderText(Which_item_do_you_want_to_sell_8011c4e4, 16, 128, UI_TEXT);
-          count = gameState_800babc8.items_2e9.size();
+          count = gameState_800babc8.items_2e9.getSize();
 
           if(this.invScroll_8011e0e4 + this.invIndex_8011e0e0 < count) {
             renderString(193, 122, I18n.translate(gameState_800babc8.items_2e9.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).getDescriptionTranslationKey()), false);
@@ -347,7 +349,7 @@ public class ShopScreen extends MenuScreen {
     final int current;
     if(useItemShop) {
       size = CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
-      current = gameState_800babc8.items_2e9.size();
+      current = gameState_800babc8.items_2e9.getSize();
       final Renderable58 renderable = allocateOneFrameGlyph(94, 16, 16);
       renderable.metricsCount = 18; // truncate slash from renderable
     } else {
@@ -399,9 +401,9 @@ public class ShopScreen extends MenuScreen {
 
   private void renderNumberOfItems(final Item item) {
     int count = 0;
-    for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-      if(gameState_800babc8.items_2e9.get(i) == item) {
-        count++;
+    for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+      if(gameState_800babc8.items_2e9.get(i).isSameItem(item)) {
+        count += gameState_800babc8.items_2e9.get(i).getSize();
       }
     }
     renderText(Number_kept_8011c7f4 + count, 195, 125, UI_TEXT);
@@ -410,16 +412,16 @@ public class ShopScreen extends MenuScreen {
   private void renderSellList(final int firstItem, final boolean isItemShop, final Renderable58 upArrow, final Renderable58 downArrow) {
     if(isItemShop) {
       int i;
-      for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
-        final Item item = gameState_800babc8.items_2e9.get(firstItem + i);
-        renderItemIcon(item.getIcon(), 151, this.menuEntryY(i), 0x8);
-        renderText(I18n.translate(item), 168, this.menuEntryY(i) + 2, UI_TEXT);
+      for(i = 0; firstItem + i < gameState_800babc8.items_2e9.getSize() && i < 6; i++) {
+        final ItemStack stack = gameState_800babc8.items_2e9.get(firstItem + i);
+        renderItemIcon(stack.getIcon(), 151, this.menuEntryY(i), 0x8);
+        renderText(I18n.translate(stack.getItem()), 168, this.menuEntryY(i) + 2, UI_TEXT);
 
-        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, item, item.getPrice()));
+        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, stack, stack.getPrice()));
         this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
       }
 
-      downArrow.setVisible(firstItem + 6 <= gameState_800babc8.items_2e9.size() - 1);
+      downArrow.setVisible(firstItem + 6 <= gameState_800babc8.items_2e9.getSize() - 1);
     } else {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
@@ -542,7 +544,7 @@ public class ShopScreen extends MenuScreen {
         }
       }
     } else if(this.menuState == MenuState.SELL_10) {
-      final int count = this.sellType != 0 ? gameState_800babc8.items_2e9.size() : gameState_800babc8.equipment_1e8.size();
+      final int count = this.sellType != 0 ? gameState_800babc8.items_2e9.getSize() : gameState_800babc8.equipment_1e8.size();
 
       for(int i = 0; i < Math.min(count, 6); i++) {
         if(this.invIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
@@ -595,7 +597,8 @@ public class ShopScreen extends MenuScreen {
             this.equipCharIndex = this.FUN_8010a864(equipment);
             hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
           } else {
-            hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+            //TODO check if there's room in any stacks
+            hasSpace = gameState_800babc8.items_2e9.getSize() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
           }
 
           if(!hasSpace) {
@@ -671,7 +674,7 @@ public class ShopScreen extends MenuScreen {
         }
       }
     } else if(this.menuState == MenuState.SELL_10) {
-      final int count = this.sellType != 0 ? gameState_800babc8.items_2e9.size() : gameState_800babc8.equipment_1e8.size();
+      final int count = this.sellType != 0 ? gameState_800babc8.items_2e9.getSize() : gameState_800babc8.equipment_1e8.size();
 
       for(int i = 0; i < Math.min(count, 6); i++) {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
@@ -679,7 +682,7 @@ public class ShopScreen extends MenuScreen {
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
 
           final int slot = this.invScroll_8011e0e4 + this.invIndex_8011e0e0;
-          if(this.sellType != 0 && slot >= gameState_800babc8.items_2e9.size() || this.sellType == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
+          if(this.sellType != 0 && slot >= gameState_800babc8.items_2e9.getSize() || this.sellType == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
             playMenuSound(40);
           } else {
             playMenuSound(2);
@@ -690,7 +693,7 @@ public class ShopScreen extends MenuScreen {
                 final boolean success;
                 if(this.sellType != 0) {
                   inv = gameState_800babc8.items_2e9.get(slot);
-                  success = takeItem(slot);
+                  success = Scus94491BpeSegment_8002.takeItemFromSlot(slot);
                 } else {
                   inv = gameState_800babc8.equipment_1e8.get(slot);
                   success = takeEquipment(slot);
@@ -862,7 +865,8 @@ public class ShopScreen extends MenuScreen {
     if(inv.item instanceof Equipment) {
       hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
     } else {
-      hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+      //TODO check if there's room in any stacks
+      hasSpace = gameState_800babc8.items_2e9.getSize() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
     }
 
     if(!hasSpace) {
@@ -1101,7 +1105,7 @@ public class ShopScreen extends MenuScreen {
 
   private void menuSell10Select() {
     final int slot = this.invScroll_8011e0e4 + this.invIndex_8011e0e0;
-    if(this.sellType != 0 && slot >= gameState_800babc8.items_2e9.size() || this.sellType == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
+    if(this.sellType != 0 && slot >= gameState_800babc8.items_2e9.getSize() || this.sellType == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
       playMenuSound(40);
     } else {
       playMenuSound(2);
@@ -1113,8 +1117,8 @@ public class ShopScreen extends MenuScreen {
           final int count;
           if(this.sellType != 0) {
             inv = gameState_800babc8.items_2e9.get(slot);
-            taken = takeItem(slot);
-            count = gameState_800babc8.items_2e9.size();
+            taken = Scus94491BpeSegment_8002.takeItemFromSlot(slot);
+            count = gameState_800babc8.items_2e9.getSize();
           } else {
             inv = gameState_800babc8.equipment_1e8.get(slot);
             taken = takeEquipment(slot);
@@ -1160,7 +1164,7 @@ public class ShopScreen extends MenuScreen {
     if(this.sellType == 0) { // equipment
       itemCount = gameState_800babc8.equipment_1e8.size();
     } else { // items
-      itemCount = gameState_800babc8.items_2e9.size();
+      itemCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invIndex_8011e0e0 > 0) {
@@ -1187,7 +1191,7 @@ public class ShopScreen extends MenuScreen {
     if(this.sellType == 0) { // equipment
       itemCount = gameState_800babc8.equipment_1e8.size();
     } else { // items
-      itemCount = gameState_800babc8.items_2e9.size();
+      itemCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invScroll_8011e0e4 + this.invIndex_8011e0e0 < itemCount - 1) {
@@ -1227,7 +1231,7 @@ public class ShopScreen extends MenuScreen {
     if(this.sellType == 0) { // equipment
       itemCount = gameState_800babc8.equipment_1e8.size();
     } else { // items
-      itemCount = gameState_800babc8.items_2e9.size();
+      itemCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invIndex_8011e0e0 != Math.min(5, itemCount - 1)) {
@@ -1262,7 +1266,7 @@ public class ShopScreen extends MenuScreen {
     if(this.sellType == 0) { // equipment
       itemCount = gameState_800babc8.equipment_1e8.size();
     } else { // items
-      itemCount = gameState_800babc8.items_2e9.size();
+      itemCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if((this.invScroll_8011e0e4 + this.invIndex_8011e0e0) + 6 < itemCount - 7) {
@@ -1298,7 +1302,7 @@ public class ShopScreen extends MenuScreen {
     if(this.sellType == 0) { // equipment
       itemCount = gameState_800babc8.equipment_1e8.size();
     } else { // items
-      itemCount = gameState_800babc8.items_2e9.size();
+      itemCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invScroll_8011e0e4 + this.invIndex_8011e0e0 != itemCount - 1) {

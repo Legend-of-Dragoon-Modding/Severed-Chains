@@ -11,8 +11,8 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
@@ -79,7 +79,7 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
+import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -408,7 +408,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
   public static FlowControl scriptIsItemSlotUsed(final RunningScript<?> script) {
     final int slot = script.params_20[0].get();
-    script.params_20[1].set(slot < gameState_800babc8.items_2e9.size() ? 1 : 0);
+    script.params_20[1].set(slot < gameState_800babc8.items_2e9.getSize() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -426,7 +426,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGetItemSlot(final RunningScript<?> script) {
     final int slot = script.params_20[0].get();
-    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getRegistryId());
+    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
@@ -484,7 +484,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean taken = takeItemId(REGISTRIES.items.getEntry(id).get());
+    final boolean taken = takeItem(REGISTRIES.items.getEntry(id).get());
     script.params_20[1].set(taken ? 1 : 0);
     return FlowControl.CONTINUE;
   }
@@ -502,18 +502,18 @@ public final class SItem {
   @ScriptDescription("Picks a random attack item")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGenerateAttackItem(final RunningScript<?> script) {
-    final Item[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    script.params_20[0].set(item.getRegistryId());
+    final ItemStack[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getStacks();
+    final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Picks a random recovery item")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGenerateRecoveryItem(final RunningScript<?> script) {
-    final Item[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    script.params_20[0].set(item.getRegistryId());
+    final ItemStack[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getStacks();
+    final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
@@ -873,13 +873,13 @@ public final class SItem {
   }
 
   @Method(0x80104738L)
-  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<Item> items, final long a0) {
+  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<ItemStack> items, final long a0) {
     if(items != null) {
       items.clear();
 
-      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-        final Item item = gameState_800babc8.items_2e9.get(i);
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+      for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+        final ItemStack item = gameState_800babc8.items_2e9.get(i);
+        final MenuEntryStruct04<ItemStack> menuEntry = MenuEntryStruct04.make(item);
         items.add(menuEntry);
       }
     }
@@ -1667,6 +1667,12 @@ public final class SItem {
       //LAB_801094ac
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
       renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
+
+      final int size = menuItem.getSize();
+
+      if(size > 0) {
+        renderNumber(x + 96, y + FUN_800fc814(i) + 3, size, 0x2, 10);
+      }
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {

@@ -5,6 +5,7 @@ import legend.game.characters.UnaryStatModConfig;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
 
@@ -51,27 +52,27 @@ public class BuffItem extends BattleItem {
   }
 
   @Override
-  public boolean isRepeat() {
+  public boolean isRepeat(final ItemStack stack) {
     return true;
   }
 
   @Override
-  public boolean isProtected() {
+  public boolean isProtected(final ItemStack stack) {
     return true;
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == this.target;
   }
 
   @Override
-  public void applyBuffs(final BattleEntity27c user, final BattleEntity27c target) {
+  public void applyBuffs(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     final int turnCount = user != target ? 3 : 4;
 
     if(this.powerDefence != 0) {
@@ -156,7 +157,7 @@ public class BuffItem extends BattleItem {
   }
 
   @Override
-  public Element getAttackElement() {
+  public Element getAttackElement(final ItemStack stack) {
     return LodMod.NO_ELEMENT.get();
   }
 

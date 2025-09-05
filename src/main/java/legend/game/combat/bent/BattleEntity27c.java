@@ -14,6 +14,7 @@ import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
@@ -212,7 +213,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
 
-  public Item item_d4;
+  public ItemStack item_d4;
 //  public int _ec;
 //  public int _ee;
 //  public int _f0;
@@ -723,7 +724,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setActiveItem(final Item item) {
+  public void setActiveItem(final ItemStack item) {
     //LAB_800f7a98
     this.item_d4 = item;
 //    this._ec = 0;

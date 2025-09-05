@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
 public class SpiritPotionItem extends RecoverHpItem {
@@ -10,7 +11,7 @@ public class SpiritPotionItem extends RecoverHpItem {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 

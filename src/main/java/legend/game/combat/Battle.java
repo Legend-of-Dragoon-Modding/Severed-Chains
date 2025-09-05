@@ -94,7 +94,7 @@ import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
@@ -202,7 +202,6 @@ import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -454,7 +453,7 @@ public class Battle extends EngineState {
 
   public final String[] melbuMonsterNames_800c6ba8 = new String[3];
 
-  public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
+  public final List<ItemStack> usedRepeatItems_800c6c3c = new ArrayList<>();
 
   public int countCombatUiFilesLoaded_800c6cf4;
 
@@ -1183,10 +1182,10 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "itemId", description = "The ID of the item being used")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The ID of the bent being targeted")
   private FlowControl scriptUseItem(final RunningScript<BattleEntity27c> script) {
-    final Item item = REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get();
+    final ItemStack stack = new ItemStack(REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get());
     final int targetIndex = script.params_20[1].get();
 
-    return item.useInBattle(script.scriptState_04, targetIndex);
+    return stack.useInBattle(script.scriptState_04, targetIndex);
   }
 
   @ScriptDescription("Calls the applyEffect method for the given equipment")
@@ -3634,7 +3633,7 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
       default -> {
         int value = script.params_20[1].get();
         if(script.params_20[2].get() == 2 && value < 0) {
@@ -3659,7 +3658,7 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
       default -> bent.setStat(stat, script.params_20[1].get());
     }
 
@@ -3682,7 +3681,7 @@ public class Battle extends EngineState {
       case EQUIPMENT_ARMOUR_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
       case EQUIPMENT_BOOTS_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
       case EQUIPMENT_ACCESSORY_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
-      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getRegistryId());
+      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getItem().getRegistryId());
       case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
       case ELEMENT -> script.params_20[2].set(bent.getElement().getRegistryId());
       default -> script.params_20[2].set(bent.getStat(stat));
@@ -3747,8 +3746,8 @@ public class Battle extends EngineState {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
                 if(drop.item() instanceof final Equipment equipment) {
                   itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), I18n.translate(equipment), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
-                } else if(drop.item() instanceof final Item item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item), () -> giveItem(item), () -> itemOverflow.add(item)));
+                } else if(drop.item() instanceof final ItemStack item) {
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item.getNameTranslationKey()), () -> giveItem(item), () -> itemOverflow.add(item)));
                 }
 
                 flags |= FLAG_NO_LOOT;
@@ -7803,8 +7802,8 @@ public class Battle extends EngineState {
     }
 
     //LAB_800eed78
-    for(final Item item : this.usedRepeatItems_800c6c3c) {
-      giveItem(item);
+    for(final ItemStack stack : this.usedRepeatItems_800c6c3c) {
+      giveItem(stack);
     }
 
     this.usedRepeatItems_800c6c3c.clear();
@@ -8553,23 +8552,25 @@ public class Battle extends EngineState {
       return FlowControl.CONTINUE;
     }
 
-    Item item;
+    ItemStack stack;
     if(itemId == null) {
-      item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      stack = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.getSize()) >> 16);
 
-      if(item.isProtected()) {
-        item = null;
+      if(stack.isProtected()) {
+        stack = ItemStack.EMPTY;
+      } else {
+        stack = gameState_800babc8.items_2e9.take(stack);
       }
     } else {
-      item = REGISTRIES.items.getEntry(itemId).get();
+      stack = gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(itemId).get());
     }
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(item == null || !takeItemId(item)) {
-      script.params_20[1].set(0);
+    if(!stack.isEmpty()) {
+      script.params_20[1].set(stack.getItem().getRegistryId());
     } else {
-      script.params_20[1].set(item.getRegistryId());
+      script.params_20[1].set(0);
     }
 
     return FlowControl.CONTINUE;
