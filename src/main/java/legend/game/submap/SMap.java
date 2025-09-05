@@ -20,6 +20,7 @@ import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -105,7 +106,6 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
-import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
 import static legend.game.Scus94491BpeSegment_8002.initMenu;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -3805,24 +3805,23 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3ff) {
       submapCutForSave_800cb450 = submapCut_80052c30;
-      this.menuTransition = () -> initInventoryMenu();
+      this.menuTransition = Scus94491BpeSegment_8002::initInventoryMenu;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
-    if(newScene != 0 && newScene >= 0x200) {
-      return;
+    if(newScene < 0x200) {
+      if(this.isScriptLoaded(0)) {
+        final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
+        screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
+        this.submap.storeStateBeforeBattle();
+        playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
+        shouldRestoreCameraPosition_80052c40 = true;
+      }
+
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
     }
 
-    if(this.isScriptLoaded(0)) {
-      final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
-      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
-      this.submap.storeStateBeforeBattle();
-      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
-      shouldRestoreCameraPosition_80052c40 = true;
-    }
-
-    this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
   }
 
   @Override
@@ -4179,7 +4178,7 @@ public class SMap extends EngineState {
   private FlowControl scriptMapTransition(final RunningScript<?> script) {
     final int scene = script.params_20[1].get();
 
-    if(script.params_20[0].get() == -1) {
+    if(script.params_20[0].get() == -1 && scene < 0x200) {
       this.submap.prepareEncounter(scene, true);
     }
 
