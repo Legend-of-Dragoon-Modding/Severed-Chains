@@ -305,6 +305,9 @@ public final class GameEngine {
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);
 
+    // Load mod registries
+    EVENTS.postEvent(new AddRegistryEvent(REGISTRIES));
+
     // Initialize config and input registries
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
