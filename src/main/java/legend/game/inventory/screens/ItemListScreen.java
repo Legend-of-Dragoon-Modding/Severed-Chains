@@ -37,7 +37,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
 
-  private final ItemList<ItemStack> itemList = new ItemList<>(stack -> stack.item_00.getMaxSize() > 1 ? stack.item_00.getSize() : 0, null);
+  private final ItemList<ItemStack> itemList = new ItemList<>(stack -> stack.item_00.canStack() ? stack.item_00.getSize() : 0, null);
   private final ItemList<Equipment> equipmentList = new ItemList<>(null, i -> gameState_800babc8.equipment_1e8.size());
   private final Label description = new Label("");
 

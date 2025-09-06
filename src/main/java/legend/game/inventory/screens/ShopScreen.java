@@ -416,7 +416,7 @@ public class ShopScreen extends MenuScreen {
         renderItemIcon(stack.getIcon(), 151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(stack.getItem()), 168, this.menuEntryY(i) + 2, UI_TEXT);
 
-        if(stack.getMaxSize() > 1) {
+        if(stack.canStack()) {
           this.renderNumber(247, this.menuEntryY(i) + 4, stack.getSize(), 10);
         }
 
@@ -599,9 +599,10 @@ public class ShopScreen extends MenuScreen {
           if(inv.item instanceof final Equipment equipment) {
             this.equipCharIndex = this.FUN_8010a864(equipment);
             hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
+          } else if(inv.item instanceof final ItemStack stack) {
+            hasSpace = gameState_800babc8.items_2e9.hasRoom(stack);
           } else {
-            //TODO check if there's room in any stacks
-            hasSpace = gameState_800babc8.items_2e9.getSize() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+            throw new RuntimeException("Unknown item type " + inv.item.getClass().getSimpleName());
           }
 
           if(!hasSpace) {
@@ -867,9 +868,10 @@ public class ShopScreen extends MenuScreen {
     final boolean hasSpace;
     if(inv.item instanceof Equipment) {
       hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
+    } else if(inv.item instanceof final ItemStack stack) {
+      hasSpace = gameState_800babc8.items_2e9.hasRoom(stack);
     } else {
-      //TODO check if there's room in any stacks
-      hasSpace = gameState_800babc8.items_2e9.getSize() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+      throw new RuntimeException("Unknown item type " + inv.item.getClass().getSimpleName());
     }
 
     if(!hasSpace) {

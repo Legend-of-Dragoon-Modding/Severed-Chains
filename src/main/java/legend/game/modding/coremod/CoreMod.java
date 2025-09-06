@@ -55,6 +55,7 @@ import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
 import legend.game.modding.coremod.config.ShowTurnOrderConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
+import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.CampaignNameConfigEntry;
@@ -274,5 +275,10 @@ public class CoreMod {
       .add(INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME.get(), new KeyInputActivation(InputKey.F2))
       .add(INPUT_ACTION_DEBUG_RELOAD_SHADERS.get(), new KeyInputActivation(InputKey.F5))
     ;
+  }
+
+  @EventListener
+  public static void onLoadGameSetInventorySize(final GameLoadedEvent event) {
+    event.gameState.items_2e9.setMaxSize(GameEngine.CONFIG.getConfig(INVENTORY_SIZE_CONFIG.get()));
   }
 }

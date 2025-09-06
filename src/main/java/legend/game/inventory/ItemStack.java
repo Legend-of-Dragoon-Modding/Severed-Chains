@@ -72,6 +72,10 @@ public class ItemStack implements InventoryEntry {
     return this.getRemainingCapacity() > 0;
   }
 
+  public boolean canStack() {
+    return this.getMaxSize() > 1;
+  }
+
   public ItemStack setSize(final int size) {
     if(this.isEmpty()) {
       return EMPTY;

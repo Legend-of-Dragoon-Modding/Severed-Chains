@@ -264,6 +264,32 @@ public class Inventory implements Iterable<ItemStack> {
     return ItemStack.EMPTY;
   }
 
+  /**
+   * Check if there's room to fit the entire stack in this inventory
+   */
+  public boolean hasRoom(final ItemStack stack) {
+    if(stack.canStack()) {
+      // Check if we can merge into other stacks
+      int remaining = stack.getSize();
+
+      for(int i = 0; i < this.stacks.size(); i++) {
+        final ItemStack s = this.stacks.get(i);
+
+        if(s.isSameItem(stack)) {
+          remaining -= s.getRemainingCapacity();
+
+          if(remaining <= 0) {
+            // Other stacks of this item had enough room
+            return true;
+          }
+        }
+      }
+    }
+
+    // Return true if there's room for a new stack
+    return this.maxSize == 0 || this.stacks.size() < this.maxSize;
+  }
+
   @Override
   public @NotNull Iterator<ItemStack> iterator() {
     return this.stacks.iterator();
