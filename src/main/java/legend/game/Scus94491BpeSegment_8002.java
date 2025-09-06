@@ -1520,6 +1520,8 @@ public final class Scus94491BpeSegment_8002 {
               ;
             }
 
+            metrics.useTexture(model);
+
             if(renderable.widthCut != 0 || renderable.heightCut != 0) {
               final int y;
               final int h;

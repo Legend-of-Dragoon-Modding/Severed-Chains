@@ -736,16 +736,7 @@ public final class SItem {
 
   @Method(0x80103910L)
   public static Renderable58 renderItemIcon(final ItemIcon icon, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
-    renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = icon.resolve().icon;
-    renderable.startGlyph_10 = renderable.glyph_04;
-    renderable.endGlyph_14 = renderable.glyph_04;
-    renderable.tpage_2c = 0x19;
-    renderable.clut_30 = 0;
-    renderable.x_40 = x;
-    renderable.y_44 = y;
-    return renderable;
+    return icon.render(x, y, flags);
   }
 
   @Method(0x80103910L)
