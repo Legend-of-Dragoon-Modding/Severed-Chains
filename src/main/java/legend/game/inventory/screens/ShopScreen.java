@@ -416,6 +416,10 @@ public class ShopScreen extends MenuScreen {
         renderItemIcon(stack.getIcon(), 151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(stack.getItem()), 168, this.menuEntryY(i) + 2, UI_TEXT);
 
+        if(stack.getMaxSize() > 1) {
+          this.renderNumber(247, this.menuEntryY(i) + 4, stack.getSize(), 10);
+        }
+
         final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, stack, stack.getPrice()));
         this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
       }
@@ -692,7 +696,7 @@ public class ShopScreen extends MenuScreen {
                 final boolean success;
                 if(this.sellType != 0) {
                   inv = gameState_800babc8.items_2e9.get(slot);
-                  success = Scus94491BpeSegment_8002.takeItemFromSlot(slot);
+                  success = Scus94491BpeSegment_8002.takeItemFromSlot(slot, 1);
                 } else {
                   inv = gameState_800babc8.equipment_1e8.get(slot);
                   success = takeEquipment(slot);
@@ -1115,8 +1119,8 @@ public class ShopScreen extends MenuScreen {
           final boolean taken;
           final int count;
           if(this.sellType != 0) {
-            inv = gameState_800babc8.items_2e9.get(slot);
-            taken = Scus94491BpeSegment_8002.takeItemFromSlot(slot);
+            inv = new ItemStack(gameState_800babc8.items_2e9.get(slot));
+            taken = Scus94491BpeSegment_8002.takeItemFromSlot(slot, 1);
             count = gameState_800babc8.items_2e9.getSize();
           } else {
             inv = gameState_800babc8.equipment_1e8.get(slot);

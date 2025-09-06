@@ -255,6 +255,11 @@ public class Inventory implements Iterable<ItemStack> {
       return this.take(new ItemStack(toTake.getItem(), remaining));
     }
 
+    // Remove the stack from the inventory if it's empty
+    if(stack.isEmpty()) {
+      this.stacks.remove(slot);
+    }
+
     // We took all items, nothing to see here
     return ItemStack.EMPTY;
   }
