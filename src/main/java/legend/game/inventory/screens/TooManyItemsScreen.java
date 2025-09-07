@@ -95,11 +95,11 @@ public class TooManyItemsScreen extends MenuScreen {
         }
 
         for(final ItemStack item : temp) {
-          this.droppedItems.add(MenuEntryStruct04.make(item));
+          this.droppedItems.add(new MenuEntryStruct04<>(item));
         }
 
         for(final Equipment equipment : equipmentOverflow) {
-          this.droppedItems.add(MenuEntryStruct04.make(equipment));
+          this.droppedItems.add(new MenuEntryStruct04<>(equipment));
         }
 
         this.menuState = MenuState.INIT_2;

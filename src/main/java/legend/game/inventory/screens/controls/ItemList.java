@@ -1,9 +1,10 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
+import legend.core.memory.types.QuadConsumer;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
-import legend.game.inventory.ItemIcon;
+import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.types.MenuEntryStruct04;
@@ -22,7 +23,7 @@ import static legend.game.SItem.renderFraction;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 
-public class ItemList<T> extends Control {
+public class ItemList<T extends InventoryEntry> extends Control {
   private final Int2IntFunction itemCount;
   private final ListBox<MenuEntryStruct04<T>> items;
   private final Renderable58 background;
@@ -33,17 +34,17 @@ public class ItemList<T> extends Control {
     this(
       entry -> I18n.translate(entry.getNameTranslationKey()),
       getItemCount,
-      MenuEntryStruct04::getIcon,
+      (entry, x, y, flags) -> entry.item_00.renderIcon(x, y, flags),
       menuItem -> (menuItem.flags_02 & 0x1000) != 0 ? menuItem.flags_02 & 0xf : -1,
       menuItem -> (menuItem.flags_02 & 0x1000) != 0,
       itemSlotCount
     );
   }
 
-  public ItemList(final Function<MenuEntryStruct04<T>, String> getItemName, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getItemCount, @Nullable final Function<MenuEntryStruct04<T>, ItemIcon> getItemIcon, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getFaceIcon, @Nullable final Predicate<MenuEntryStruct04<T>> isDisabled, @Nullable final Int2IntFunction itemSlotsCount) {
+  public ItemList(final Function<MenuEntryStruct04<T>, String> getItemName, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getItemCount, @Nullable final QuadConsumer<MenuEntryStruct04<T>, Integer, Integer, Integer> renderItemIcon, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getFaceIcon, @Nullable final Predicate<MenuEntryStruct04<T>> isDisabled, @Nullable final Int2IntFunction itemSlotsCount) {
     this.setSize(173, 147);
 
-    this.items = new ListBox<>(getItemName, getItemCount, getItemIcon, getFaceIcon, isDisabled);
+    this.items = new ListBox<>(getItemName, getItemCount, renderItemIcon, getFaceIcon, isDisabled);
     this.items.setPos(0, 26);
     this.items.setSize(173, 119);
     this.addControl(this.items);

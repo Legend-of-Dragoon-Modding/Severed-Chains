@@ -735,11 +735,6 @@ public final class SItem {
   }
 
   @Method(0x80103910L)
-  public static Renderable58 renderItemIcon(final ItemIcon icon, final int x, final int y, final int flags) {
-    return icon.render(x, y, flags);
-  }
-
-  @Method(0x80103910L)
   public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
@@ -870,7 +865,7 @@ public final class SItem {
 
       for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
         final ItemStack item = gameState_800babc8.items_2e9.get(i);
-        final MenuEntryStruct04<ItemStack> menuEntry = MenuEntryStruct04.make(item);
+        final MenuEntryStruct04<ItemStack> menuEntry = new MenuEntryStruct04<>(item);
         items.add(menuEntry);
       }
     }
@@ -881,7 +876,7 @@ public final class SItem {
       int equipmentIndex;
       for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment_1e8.size(); equipmentIndex++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
-        final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+        final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
 
         if(a0 != 0 && !gameState_800babc8.equipment_1e8.get(equipmentIndex).canBeDiscarded()) {
           menuEntry.flags_02 = 0x2000;
@@ -895,7 +890,7 @@ public final class SItem {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             if(gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot) != null) {
               final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot);
-              final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+              final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
               menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8[i];
               equipments.add(menuEntry);
 
@@ -1613,7 +1608,7 @@ public final class SItem {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipment_14.get(slot) != null) {
-          renderItemIcon(charData.equipment_14.get(slot).icon_0e, 202, 17 + 14 * slot.ordinal(), 0);
+          charData.equipment_14.get(slot).renderIcon(202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
@@ -1657,7 +1652,7 @@ public final class SItem {
 
       //LAB_801094ac
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
-      renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
+      menuItem.item_00.renderIcon(x + 4, y + FUN_800fc814(i), 0x8);
 
       final int size = menuItem.getSize();
 
@@ -1670,7 +1665,7 @@ public final class SItem {
         renderCharacterPortrait(s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
       } else if((s0 & 0x2000) != 0) {
-        renderItemIcon(ItemIcon.WARNING, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
+        ItemIcon.WARNING.render(x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
       }
 
       //LAB_801095a4

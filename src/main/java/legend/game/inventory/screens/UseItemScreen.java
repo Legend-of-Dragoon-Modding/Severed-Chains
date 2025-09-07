@@ -220,7 +220,7 @@ public class UseItemScreen extends MenuScreen {
       final ItemStack stack = gameState_800babc8.items_2e9.get(i);
 
       if(stack.canBeUsed(Item.UsageLocation.MENU)) {
-        final MenuEntryStruct04<ItemStack> menuEntry = MenuEntryStruct04.make(stack);
+        final MenuEntryStruct04<ItemStack> menuEntry = new MenuEntryStruct04<>(stack);
         menuEntry.itemSlot_01 = i;
         menuEntry.flags_02 = 0;
 

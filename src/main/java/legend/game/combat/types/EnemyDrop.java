@@ -1,18 +1,16 @@
 package legend.game.combat.types;
 
-import legend.game.inventory.ItemIcon;
+import legend.game.inventory.InventoryEntry;
 
 import java.util.function.BooleanSupplier;
 
 public class EnemyDrop {
-  public final ItemIcon icon;
-  public final String name;
+  public final InventoryEntry item;
   private final BooleanSupplier performDrop;
   private final Runnable overflow;
 
-  public EnemyDrop(final ItemIcon icon, final String name, final BooleanSupplier performDrop, final Runnable overflow) {
-    this.icon = icon;
-    this.name = name;
+  public EnemyDrop(final InventoryEntry item, final BooleanSupplier performDrop, final Runnable overflow) {
+    this.item = item;
     this.performDrop = performDrop;
     this.overflow = overflow;
   }

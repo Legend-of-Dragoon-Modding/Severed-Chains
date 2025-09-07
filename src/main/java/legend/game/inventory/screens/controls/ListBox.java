@@ -1,9 +1,9 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
+import legend.core.memory.types.QuadConsumer;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
-import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
@@ -20,7 +20,6 @@ import java.util.function.ToIntFunction;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderCharacterPortrait;
-import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -39,7 +38,7 @@ public class ListBox<T> extends Control {
   @Nullable
   private final ToIntFunction<T> entryToCount;
   @Nullable
-  private final Function<T, ItemIcon> entryToIcon;
+  private final QuadConsumer<T, Integer, Integer, Integer> entryToIcon;
   @Nullable
   private final ToIntFunction<T> entryToRightIcon;
   @Nullable
@@ -60,10 +59,10 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, String> entryToString, @Nullable final ToIntFunction<T> entryToCount, @Nullable final Function<T, ItemIcon> entryToIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
+  public ListBox(final Function<T, String> entryToString, @Nullable final ToIntFunction<T> entryToCount, @Nullable final QuadConsumer<T, Integer, Integer, Integer> renderIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
     this.entryToString = entryToString;
     this.entryToCount = entryToCount;
-    this.entryToIcon = entryToIcon;
+    this.entryToIcon = renderIcon;
     this.entryToRightIcon = entryToRightIcon;
     this.isDisabled = isDisabled;
 
@@ -534,7 +533,7 @@ public class ListBox<T> extends Control {
       }
 
       if(ListBox.this.entryToIcon != null) {
-        renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8);
+        ListBox.this.entryToIcon.accept(this.data, x + 13, y + 1, 0x8);
       }
 
       if(ListBox.this.entryToRightIcon != null) {

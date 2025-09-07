@@ -18,6 +18,7 @@ import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
 import legend.game.inventory.ItemStack;
@@ -1174,7 +1175,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static <T> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
+  public static <T extends InventoryEntry> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
     out.clear();
 
     //LAB_800239ec
@@ -1198,21 +1199,21 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023a2cL)
-  public static <T extends RegistryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
-    display.sort(menuItemIconComparator(retailSorting, RegistryEntry::getRegistryId));
+  public static <T extends InventoryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
+    display.sort(menuItemIconComparator(retailSorting, InventoryEntry::getRegistryId));
     setInventoryFromDisplay(display, items, count);
   }
 
   @Method(0x80023a2cL)
-  public static  void sortItems(final List<MenuEntryStruct04<ItemStack>> display, final Inventory items, final int count, final List<String> retailSorting) {
+  public static void sortItems(final List<MenuEntryStruct04<ItemStack>> display, final Inventory items, final int count, final List<String> retailSorting) {
     display.sort(menuItemIconComparator(retailSorting, stack -> stack.getItem().getRegistryId()));
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static <T> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
+  public static <T extends InventoryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
-    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().resolve().icon);
+    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.item_00.getIcon().resolve().icon);
 
     if(retail) {
       comparator = comparator.thenComparingInt(item -> {
@@ -1252,7 +1253,7 @@ public final class Scus94491BpeSegment_8002 {
     final List<MenuEntryStruct04<ItemStack>> items = new ArrayList<>();
 
     for(final ItemStack stack : gameState_800babc8.items_2e9) {
-      items.add(MenuEntryStruct04.make(stack));
+      items.add(new MenuEntryStruct04<>(stack));
     }
 
     sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize(), List.of(LodMod.ITEM_IDS));

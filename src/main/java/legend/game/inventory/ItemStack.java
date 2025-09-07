@@ -5,6 +5,12 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
+import legend.game.types.Renderable58;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.legendofdragoon.modloader.registries.RegistryId;
+
+import static legend.core.GameEngine.RENDERER;
 
 public class ItemStack implements InventoryEntry {
   public static final ItemStack EMPTY = new Empty();
@@ -31,6 +37,11 @@ public class ItemStack implements InventoryEntry {
     this(other.item, other.size, other.durability);
   }
 
+  @Override
+  public RegistryId getRegistryId() {
+    return this.getItem().getRegistryId();
+  }
+
   public Item getItem() {
     if(this.isEmpty()) {
       return CoreMod.NOTHING.get();
@@ -48,6 +59,7 @@ public class ItemStack implements InventoryEntry {
     return this.size;
   }
 
+  @Override
   public int getMaxSize() {
     if(this.isEmpty()) {
       return 0;
@@ -205,6 +217,24 @@ public class ItemStack implements InventoryEntry {
   @Override
   public ItemIcon getIcon() {
     return this.getItem().getIcon(this);
+  }
+
+  @Override
+  public Renderable58 renderIcon(final int x, final int y, final int flags) {
+    final Renderable58 icon = InventoryEntry.super.renderIcon(x, y, flags);
+
+    if(this.hasDurability()) {
+      final Vector2f a = new Vector2f(x + 9.0f, y + 15.0f);
+      final Vector2f b = new Vector2f(a);
+      b.y -= this.getDurabilityFraction() * 14.0f;
+
+      RENDERER
+        .queueLine(new Matrix4f(), 140.0f, a, b)
+        .colour(0.0f, 1.0f, 0.0f)
+      ;
+    }
+
+    return icon;
   }
 
   @Override

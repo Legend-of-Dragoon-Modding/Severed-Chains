@@ -140,6 +140,11 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
     return 0;
   }
 
+  @Override
+  public int getMaxSize() {
+    return 0;
+  }
+
   public void applyEffect(final BattleEntity27c wearer) {
 
   }

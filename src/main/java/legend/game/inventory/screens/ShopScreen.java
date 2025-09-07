@@ -54,7 +54,6 @@ import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderFiveDigitNumber;
 import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
@@ -413,7 +412,7 @@ public class ShopScreen extends MenuScreen {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.getSize() && i < 6; i++) {
         final ItemStack stack = gameState_800babc8.items_2e9.get(firstItem + i);
-        renderItemIcon(stack.getIcon(), 151, this.menuEntryY(i), 0x8);
+        stack.renderIcon(151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(stack.getItem()), 168, this.menuEntryY(i) + 2, UI_TEXT);
 
         if(stack.canStack()) {
@@ -429,14 +428,14 @@ public class ShopScreen extends MenuScreen {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
-        renderItemIcon(equipment.icon_0e, 151, this.menuEntryY(i), 0x8);
+        equipment.renderIcon(151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(equipment), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? UI_TEXT : UI_TEXT_DISABLED);
 
         if(equipment.canBeDiscarded()) {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getPrice()));
           renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
-          renderItemIcon(ItemIcon.WARNING, 330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
+          ItemIcon.WARNING.render(330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
         }
       }
 
@@ -454,7 +453,7 @@ public class ShopScreen extends MenuScreen {
       final ShopEntry<? extends InventoryEntry> item = list.get(startItemIndex + i);
       renderText(I18n.translate(item.item.getNameTranslationKey()), 168, this.menuEntryY(i) + 2, UI_TEXT);
       renderFiveDigitNumber(324, this.menuEntryY(i) + 4, item.price);
-      renderItemIcon(item.item.getIcon(), 151, this.menuEntryY(i), 0x8);
+      item.item.renderIcon(151, this.menuEntryY(i), 0x8);
     }
 
     upArrow.setVisible(startItemIndex != 0);
