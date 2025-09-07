@@ -274,6 +274,15 @@ public class Inventory implements Iterable<ItemStack> {
   }
 
   /**
+   * Removes the stack from the slot if it's empty
+   */
+  public void removeIfEmpty(final ItemStack stack) {
+    if(stack.isEmpty()) {
+      this.stacks.remove(stack);
+    }
+  }
+
+  /**
    * Check if there's room to fit the entire stack in this inventory
    */
   public boolean hasRoom(final ItemStack stack) {
