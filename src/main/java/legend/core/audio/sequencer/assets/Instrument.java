@@ -1,6 +1,5 @@
 package legend.core.audio.sequencer.assets;
 
-import legend.core.audio.SampleRate;
 import legend.game.unpacker.FileData;
 
 import java.util.ArrayList;
@@ -18,14 +17,14 @@ public final class Instrument {
   /** For SFX only */
   private final int startingNote;
 
-  Instrument(final FileData data, final SoundBank soundBank, final SampleRate sampleRate) {
+  Instrument(final FileData data, final SoundBank soundBank) {
     final int upperBoundByte = data.readUByte(0x00);
     this.type = Type.getType(upperBoundByte);
 
     final int layerCount = this.type == Type.SFX ? (data.size() - 8) / 16 : (upperBoundByte & 0x7f) + 1;
     this.layers = new InstrumentLayer[layerCount];
     for(int layer = 0; layer < this.layers.length; layer++) {
-      this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank, sampleRate);
+      this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
     }
 
     this.volume = data.readUByte(0x01) / 128.0f;
@@ -88,12 +87,6 @@ public final class Instrument {
       }
 
       return Type.STANDARD;
-    }
-  }
-
-  void changeSampleRate(final SampleRate sampleRate) {
-    for(final InstrumentLayer layer : this.layers) {
-      layer.changeSampleRate(sampleRate);
     }
   }
 }

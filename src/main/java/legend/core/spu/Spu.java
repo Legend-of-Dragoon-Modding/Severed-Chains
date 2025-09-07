@@ -2,7 +2,6 @@ package legend.core.spu;
 
 import legend.core.MathHelper;
 import legend.core.audio.GenericSource;
-import legend.core.audio.SampleRate;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.sound.ReverbConfig;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +11,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
+import static legend.core.audio.Constants.BASE_SAMPLE_RATE;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
 public class Spu {
@@ -463,7 +462,7 @@ public class Spu {
 
   public void setReverb(final ReverbConfig reverb) {
     synchronized(Spu.class) {
-      this.reverb.set(reverb, SampleRate._44100);
+      this.reverb.set(reverb);
     }
   }
 
