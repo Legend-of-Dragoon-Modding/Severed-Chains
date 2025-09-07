@@ -2,15 +2,15 @@ package legend.core.audio.sequencer;
 
 import legend.core.audio.InterpolationPrecision;
 
+import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
 import static legend.core.audio.sequencer.LookupTables.BREATH_BASE_SHIFT;
 import static legend.core.audio.sequencer.LookupTables.BREATH_BASE_VALUE;
-import static legend.core.audio.sequencer.LookupTables.VOICE_COUNTER_BIT_PRECISION;
 
 final class VoiceCounter {
   //TODO verify this is actually correct for other values in case we want to change
   //     the window size. This should be a generic solution but it wasn't verified.
-  private final static int START_OFFSET = ((Voice.EMPTY.length) / 2 + 1) << VOICE_COUNTER_BIT_PRECISION;
-  private final static int CLEAR_AND = (1 << VOICE_COUNTER_BIT_PRECISION) - 1;
+  private final static int START_OFFSET = ((Voice.EMPTY.length) / 2 + 1) << PITCH_BIT_SHIFT;
+  private final static int CLEAR_AND = (1 << PITCH_BIT_SHIFT) - 1;
   private int sampleCounter = START_OFFSET;
   private int breathCounter = 0;
 
@@ -19,13 +19,13 @@ final class VoiceCounter {
   private int interpolationAnd;
 
   VoiceCounter(final InterpolationPrecision bitDepth) {
-    this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
+    this.sampleInterpolationShift = PITCH_BIT_SHIFT - bitDepth.value;
     this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value - 2;
     this.interpolationAnd = (1 << bitDepth.value) - 1;
   }
 
   int getCurrentSampleIndex() {
-    return (this.sampleCounter >>> VOICE_COUNTER_BIT_PRECISION) & 0x1f;
+    return (this.sampleCounter >>> PITCH_BIT_SHIFT) & 0x1f;
   }
 
   int getSampleInterpolationIndex() {
@@ -38,7 +38,7 @@ final class VoiceCounter {
 
     final int sampleIndex = this.getCurrentSampleIndex();
     if(sampleIndex >= 28) {
-      this.sampleCounter = ((sampleIndex - 28) << VOICE_COUNTER_BIT_PRECISION) + (this.sampleCounter & CLEAR_AND);
+      this.sampleCounter = ((sampleIndex - 28) << PITCH_BIT_SHIFT) + (this.sampleCounter & CLEAR_AND);
       return true;
     }
 
@@ -71,7 +71,7 @@ final class VoiceCounter {
   }
 
   void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
-    this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
+    this.sampleInterpolationShift = PITCH_BIT_SHIFT - bitDepth.value;
     this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value - 2;
     this.interpolationAnd = (1 << bitDepth.value) - 1;
   }

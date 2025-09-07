@@ -6,11 +6,11 @@ import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
 
+import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
 import static legend.core.audio.Constants.SAMPLE_RATE_RATIO;
 
 final public class LookupTables {
-  public static final int VOICE_COUNTER_BIT_PRECISION = 26;
-  private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION);
+  private static final double BASE_SAMPLE_RATE_VALUE = (1 << PITCH_BIT_SHIFT);
   public static final int BREATH_BASE_SHIFT = 22;
   /** Represents all 60 positions in a breath control table */
   public static final int BREATH_BASE_VALUE = 0xf0 << (BREATH_BASE_SHIFT - 2);
