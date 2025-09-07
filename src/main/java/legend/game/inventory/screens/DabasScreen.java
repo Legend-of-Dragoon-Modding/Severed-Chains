@@ -7,7 +7,6 @@ import legend.game.DabasManager;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.DabasData100;
@@ -268,7 +267,7 @@ public class DabasScreen extends MenuScreen {
     this.hasItems = false;
 
     for(final MenuEntryStruct04<? extends InventoryEntry> entry : this.menuItems) {
-      if(entry.item_00 instanceof final Item item) {
+      if(entry.item_00 instanceof final ItemStack item) {
         giveItem(item);
       } else if(entry.item_00 instanceof final Equipment equipment) {
         giveEquipment(equipment);

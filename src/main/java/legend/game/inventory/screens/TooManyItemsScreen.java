@@ -6,9 +6,9 @@ import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.events.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -86,7 +86,15 @@ public class TooManyItemsScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
 
+        // Use a temp inventory to merge stacks where appropriate
+        final Inventory temp = new Inventory();
+        temp.disableEvents();
+
         for(final ItemStack item : itemOverflow) {
+          temp.give(item);
+        }
+
+        for(final ItemStack item : temp) {
           this.droppedItems.add(MenuEntryStruct04.make(item));
         }
 
@@ -210,7 +218,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
     renderText(Acquired_item_8011c2f8, 32, 22, UI_TEXT);
 
-    if(inv instanceof Item) {
+    if(inv instanceof ItemStack) {
       renderText(Used_item_8011c32c, 210, 22, UI_TEXT);
 
       if((a4 & 0x1) != 0) {
@@ -543,7 +551,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
   private void selectMenuState9() {
     final MenuEntryStruct04<InventoryEntry> newItem = this.droppedItems.get(this.dropIndex);
-    final boolean isItem = this.droppedItems.get(this.dropIndex).item_00 instanceof Item;
+    final boolean isItem = this.droppedItems.get(this.dropIndex).item_00 instanceof ItemStack;
 
     if(this.invIndex + this.invScroll > this.items.size() - 1) {
       return;

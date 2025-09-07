@@ -3747,7 +3747,7 @@ public class Battle extends EngineState {
                 if(drop.item() instanceof final Equipment equipment) {
                   itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), I18n.translate(equipment), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
                 } else if(drop.item() instanceof final ItemStack item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item.getNameTranslationKey()), () -> giveItem(item), () -> itemOverflow.add(item)));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item.getNameTranslationKey()), () -> giveItem(new ItemStack(item)), () -> itemOverflow.add(new ItemStack(item))));
                 }
 
                 flags |= FLAG_NO_LOOT;
