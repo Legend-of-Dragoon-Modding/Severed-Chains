@@ -103,6 +103,16 @@ public abstract class AudioSource {
     }
   }
 
+  protected void bufferOutput(final int format, final float[] buffer, final int sampleRate) {
+    synchronized(this) {
+      if(this.bufferIndex >= 0) {
+        final int bufferId = this.buffers[this.bufferIndex--];
+        alBufferData(bufferId, format, buffer, sampleRate);
+        alSourceQueueBuffers(this.sourceId, bufferId);
+      }
+    }
+  }
+
   protected void play() {
     alGetSourcei(this.sourceId, AL_SOURCE_STATE, this.tmp);
     if(this.tmp.get(0) != AL_PLAYING) {

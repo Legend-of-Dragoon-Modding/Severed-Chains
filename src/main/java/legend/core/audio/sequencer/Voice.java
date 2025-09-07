@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 final class Voice {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Voice.class);
   private static final Marker VOICE_MARKER = MarkerManager.getMarker("VOICE");
-  static final short[] EMPTY = {0, 0, 0};
+  static final float[] EMPTY = {0, 0, 0};
 
   private final int index;
   private final LookupTables lookupTables;
@@ -54,7 +54,7 @@ final class Voice {
   private float volumeRight;
 
   private boolean hasSamples;
-  private final short[] samples = new short[28 + EMPTY.length];
+  private final float[] samples = new float[28 + EMPTY.length];
 
   Voice(final int index, final LookupTables lookupTables, final InterpolationPrecision bitDepth) {
     this.index = index;
