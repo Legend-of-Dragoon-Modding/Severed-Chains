@@ -18,6 +18,12 @@ public final class ProgramChange implements Command {
     return this.channel;
   }
 
+  public void apply() {
+    this.channel.setInstrument(this.instrumentIndex);
+    this.channel.setPitchBend(0);
+    this.channel.setPriority(0x40);
+  }
+
   public int getInstrumentIndex() {
     return this.instrumentIndex;
   }

@@ -38,5 +38,34 @@ public final class Constants {
    * </ul>
    */
   public static final int PITCH_BIT_SHIFT = 27;
+
+  /** There are 60 values in the original breath wave */
+  private static final int BASE_BREATH_COUNT = 60;
+  /**
+   * 240 seems to be the sweet spot. The interpolation is pretty good at approximating these,
+   * but 240 gives a significant accuracy boost over 120, most likely due to the fact that
+   * the curvature of the sine wave that's being interpolated over gets significantly reduced
+   * by the increase of samples.
+   */
+  private static final int BREATH_COUNT_SHIFT = 2;
+  public static final int BREATH_COUNT = BASE_BREATH_COUNT << BREATH_COUNT_SHIFT;
+
+  /** The maximum speed for traversing the breath wave is x30.
+   * <pre>
+   *   (60 << 25) - 1 + (30 << 25) = 0xB3FF_FFFF
+   * </pre>
+   * Any more than 25 and you could overflow the counter.
+   * <p>
+   * However, something interesting happens when you try to process at least 480 times a second (x8 the retail rate).
+   * On every tick, you'd have to add 1/8th of the value.
+   * <pre>
+   *   (60 << 26) - 1 + (30 << 23) = 0xFEFF_FFFF
+   * </pre>
+   * So when going from a x4 to x8, instead of halving the amount, we could double the max value.
+   */
+  private static final int BASE_BREATH_BIT_SHIFT = 25;
+  public static final int BREATH_BIT_SHIFT = BASE_BREATH_BIT_SHIFT - BREATH_COUNT_SHIFT;
+  public static final int BREATH_MAX_VALUE = BASE_BREATH_COUNT << BASE_BREATH_BIT_SHIFT;
+
   private Constants() {}
 }
