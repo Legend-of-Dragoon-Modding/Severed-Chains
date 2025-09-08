@@ -8,29 +8,19 @@ import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 
 import static legend.core.GameEngine.CONFIG;
-import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
-import static org.lwjgl.opengl.GL11C.glDepthFunc;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glScissor;
 
-public class RenderState {
-  private boolean backfaceCulling;
-
-  private final RenderEngine engine;
-  private RenderBatch batch;
-  private boolean widescreen;
-  private float w;
-  private float h;
-
-  private final Rect4i tempScissorRect = new Rect4i();
-  private final Rect4i activeScissorRect = new Rect4i();
-  private boolean scissor;
-
-  private boolean depthTest;
-  private int depthComparator;
+public abstract class RenderState {
+  protected final RenderEngine engine;
+  protected final Rect4i tempScissorRect = new Rect4i();
+  protected final Rect4i activeScissorRect = new Rect4i();
+  protected boolean backfaceCulling;
+  protected RenderBatch batch;
+  protected boolean widescreen;
+  protected float w;
+  protected float h;
+  protected boolean scissor;
+  protected boolean depthTest;
+  protected int depthComparator;
 
   public RenderState(final RenderEngine engine) {
     this.engine = engine;
@@ -42,41 +32,29 @@ public class RenderState {
     this.w = (float)this.engine.getRenderWidth() / batch.nativeWidth;
     this.h = (float)this.engine.getRenderHeight() / batch.nativeHeight;
 
-    this.backfaceCulling = false;
-    glDisable(GL_CULL_FACE);
-
-    this.scissor = false;
-    glDisable(GL_SCISSOR_TEST);
+    this.setCulling(false);
+    this.setScissor(false);
   }
 
   public void backfaceCulling(final boolean enable) {
     if(this.backfaceCulling != enable) {
-      this.backfaceCulling = enable;
-
-      if(enable) {
-        glEnable(GL_CULL_FACE);
-      } else {
-        glDisable(GL_CULL_FACE);
-      }
+      this.setCulling(enable);
     }
   }
 
   public void enableDepthTest(final int comparator) {
     if(!this.depthTest) {
-      glEnable(GL_DEPTH_TEST);
-      this.depthTest = true;
+      this.setDepthTest(true);
     }
 
     if(this.depthComparator != comparator) {
-      glDepthFunc(comparator);
-      this.depthComparator = comparator;
+      this.setDepthComparator(comparator);
     }
   }
 
   public void disableDepthTest() {
     if(this.depthTest) {
-      glDisable(GL_DEPTH_TEST);
-      this.depthTest = false;
+      this.setDepthTest(false);
     }
   }
 
@@ -115,24 +93,31 @@ public class RenderState {
     this.applyScissor();
   }
 
-  private void applyScissor() {
+  protected void applyScissor() {
     if(!this.activeScissorRect.equals(this.tempScissorRect)) {
-      glScissor(this.tempScissorRect.x, this.tempScissorRect.y, this.tempScissorRect.w, this.tempScissorRect.h);
-      this.activeScissorRect.set(this.tempScissorRect);
+      this.setScissorRect(this.tempScissorRect);
     }
   }
 
   public void enableScissor() {
     if(!this.scissor) {
-      glEnable(GL_SCISSOR_TEST);
-      this.scissor = true;
+      this.setScissor(true);
     }
   }
 
   public void disableScissor() {
     if(this.scissor) {
-      glDisable(GL_SCISSOR_TEST);
-      this.scissor = false;
+      this.setScissor(false);
     }
   }
+
+  protected abstract void setCulling(boolean enable);
+
+  protected abstract void setDepthTest(boolean enable);
+
+  protected abstract void setDepthComparator(int comparator);
+
+  protected abstract void setScissor(boolean enable);
+
+  protected abstract void setScissorRect(Rect4i rect);
 }

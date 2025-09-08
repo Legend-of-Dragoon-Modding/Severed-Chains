@@ -17,33 +17,31 @@ import java.util.function.Consumer;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.IoHelper.pathToByteBuffer;
-import static org.lwjgl.opengl.GL11.glGetTexImage;
-import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
-import static org.lwjgl.opengl.GL11C.GL_REPEAT;
-import static org.lwjgl.opengl.GL11C.GL_RGB;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glBindTexture;
-import static org.lwjgl.opengl.GL11C.glDeleteTextures;
-import static org.lwjgl.opengl.GL11C.glGenTextures;
-import static org.lwjgl.opengl.GL11C.glGetError;
-import static org.lwjgl.opengl.GL11C.glTexImage2D;
-import static org.lwjgl.opengl.GL11C.glTexParameteri;
-import static org.lwjgl.opengl.GL11C.glTexSubImage2D;
-import static org.lwjgl.opengl.GL12C.GL_TEXTURE_MAX_LEVEL;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
-import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13C.glActiveTexture;
-import static org.lwjgl.opengl.GL21C.GL_SRGB_ALPHA;
-import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
+import static org.lwjgl.opengles.GLES20.GL_LINEAR;
+import static org.lwjgl.opengles.GLES20.GL_NEAREST;
+import static org.lwjgl.opengles.GLES20.GL_NO_ERROR;
+import static org.lwjgl.opengles.GLES20.GL_REPEAT;
+import static org.lwjgl.opengles.GLES20.GL_RGB;
+import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE0;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_2D;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_INT;
+import static org.lwjgl.opengles.GLES20.glActiveTexture;
+import static org.lwjgl.opengles.GLES20.glBindTexture;
+import static org.lwjgl.opengles.GLES20.glDeleteTextures;
+import static org.lwjgl.opengles.GLES20.glGenTextures;
+import static org.lwjgl.opengles.GLES20.glGenerateMipmap;
+import static org.lwjgl.opengles.GLES20.glGetError;
+import static org.lwjgl.opengles.GLES20.glTexImage2D;
+import static org.lwjgl.opengles.GLES20.glTexParameteri;
+import static org.lwjgl.opengles.GLES20.glTexSubImage2D;
+import static org.lwjgl.opengles.GLES30.GL_TEXTURE_MAX_LEVEL;
+import static org.lwjgl.opengles.GLES30.GL_UNSIGNED_INT_24_8;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -84,7 +82,7 @@ public final class Texture {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.dataType(GL_UNSIGNED_INT_24_8);
       builder.minFilter(GL_NEAREST);
       builder.magFilter(GL_NEAREST);
       builder.png(path);
@@ -95,7 +93,7 @@ public final class Texture {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.dataType(GL_UNSIGNED_INT_24_8);
       builder.minFilter(GL_LINEAR);
       builder.magFilter(GL_LINEAR);
       builder.png(path);
@@ -169,7 +167,7 @@ public final class Texture {
 
   public void data(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8_REV, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_24_8, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -193,7 +191,7 @@ public final class Texture {
     }
 
     RENDERER.getLastFrame().use();
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    //TODO glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -237,7 +235,7 @@ public final class Texture {
     private int w;
     private int h;
 
-    private int internalFormat = GL_SRGB_ALPHA;
+    private int internalFormat = GL_RGBA;
     private int dataFormat = GL_RGB;
     private int dataType = GL_UNSIGNED_BYTE;
 
@@ -357,7 +355,7 @@ public final class Texture {
     private int w;
     private int h;
 
-    private int dataFormat = GL_SRGB_ALPHA;
+    private int dataFormat = GL_RGBA;
     private int pixelFormat = GL_RGBA;
     private int dataType = GL_UNSIGNED_BYTE;
 

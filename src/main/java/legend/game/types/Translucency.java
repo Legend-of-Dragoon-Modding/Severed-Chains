@@ -2,13 +2,13 @@ package legend.game.types;
 
 import javax.annotation.Nonnull;
 
-import static org.lwjgl.opengl.GL11C.GL_ONE;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
-import static org.lwjgl.opengl.GL14C.glBlendEquation;
+import static org.lwjgl.opengles.GLES20.GL_FUNC_ADD;
+import static org.lwjgl.opengles.GLES20.GL_FUNC_REVERSE_SUBTRACT;
+import static org.lwjgl.opengles.GLES20.GL_ONE;
+import static org.lwjgl.opengles.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengles.GLES20.GL_SRC_ALPHA;
+import static org.lwjgl.opengles.GLES20.glBlendEquation;
+import static org.lwjgl.opengles.GLES20.glBlendFunc;
 
 public enum Translucency {
   /** 0.5 x background + 0.5 x foreground */

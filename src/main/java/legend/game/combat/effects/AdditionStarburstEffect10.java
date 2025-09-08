@@ -22,7 +22,7 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.VoidType> {
   private static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {

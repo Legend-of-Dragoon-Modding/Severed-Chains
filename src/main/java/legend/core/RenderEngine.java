@@ -14,6 +14,8 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.RenderState;
+import legend.core.opengl.RenderStateEs;
+import legend.core.opengl.RenderStateGl;
 import legend.core.opengl.Resolution;
 import legend.core.opengl.ScissorStack;
 import legend.core.opengl.Shader;
@@ -42,8 +44,6 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLUtil;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -86,36 +86,26 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SLOW_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SPEED_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
-import static org.lwjgl.opengl.GL11C.GL_FILL;
-import static org.lwjgl.opengl.GL11C.GL_FLOAT;
-import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11C.GL_LINE;
-import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_RGBA16;
-import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11C.GL_VENDOR;
-import static org.lwjgl.opengl.GL11C.GL_VERSION;
-import static org.lwjgl.opengl.GL11C.glClear;
-import static org.lwjgl.opengl.GL11C.glClearColor;
-import static org.lwjgl.opengl.GL11C.glDepthMask;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glGetString;
-import static org.lwjgl.opengl.GL11C.glLineWidth;
-import static org.lwjgl.opengl.GL11C.glPolygonMode;
-import static org.lwjgl.opengl.GL11C.glViewport;
-import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
-import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
-import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengles.GLES20.GL_BLEND;
+import static org.lwjgl.opengles.GLES20.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengles.GLES20.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengles.GLES20.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengles.GLES20.GL_FLOAT;
+import static org.lwjgl.opengles.GLES20.GL_LINEAR;
+import static org.lwjgl.opengles.GLES20.GL_NEAREST;
+import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES20.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengles.GLES20.glClear;
+import static org.lwjgl.opengles.GLES20.glClearColor;
+import static org.lwjgl.opengles.GLES20.glDepthMask;
+import static org.lwjgl.opengles.GLES20.glDisable;
+import static org.lwjgl.opengles.GLES20.glEnable;
+import static org.lwjgl.opengles.GLES20.glLineWidth;
+import static org.lwjgl.opengles.GLES20.glViewport;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
@@ -125,7 +115,7 @@ public class RenderEngine {
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
   public final ScissorStack scissorStack;
-  private final RenderState state;
+  private RenderState state;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -294,7 +284,6 @@ public class RenderEngine {
   public RenderEngine() {
     this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
-    this.state = new RenderState(this);
   }
 
   /**
@@ -455,17 +444,11 @@ public class RenderEngine {
     this.window.setFpsLimit(60);
     PLATFORM.setInputTickRate(60);
 
-    GL.createCapabilities();
-
-    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
-    LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
-
-    if("true".equals(System.getenv("opengl_debug"))) {
-      GLUtil.setupDebugMessageCallback(System.err);
+    try {
+      this.state = new RenderStateEs(this);
+    } catch(final UnsatisfiedLinkError e) {
+      this.state = new RenderStateGl(this);
     }
-
-    glEnable(GL_LINE_SMOOTH);
 
     this.window.events().onResize(this::onResize);
 
@@ -669,7 +652,7 @@ public class RenderEngine {
         // applied to the render buffer rendering. Resetting the scissor rect to the full screen fixes it.
         this.state.fullScreenScissor();
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //TODO glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // set render states
         this.state.disableDepthTest();
@@ -754,19 +737,19 @@ public class RenderEngine {
 
     this.clearDepth();
 
-    glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
+    //TODO glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPool(batch.modelPool, true);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //TODO glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPool(batch.orthoPool, false);
 
-    glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
+    //TODO glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPoolTranslucent(batch, batch.modelPool);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //TODO glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPoolTranslucent(batch, batch.orthoPool);
 
@@ -1127,7 +1110,7 @@ public class RenderEngine {
 
       this.renderTextures[i] = Texture.create(builder -> {
         builder.size(this.renderWidth, this.renderHeight);
-        builder.internalFormat(GL_RGBA16);
+        builder.internalFormat(GL_RGBA);
         builder.dataFormat(GL_RGBA);
         builder.dataType(GL_UNSIGNED_BYTE);
         builder.magFilter(GL_NEAREST);
@@ -1266,6 +1249,7 @@ public class RenderEngine {
         this.frameAdvance = true;
       }
     } else if(action == INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME.get()) {
+      LOGGER.warn("Wireframe not currently supported"); //TODO
       this.wireframeMode = !this.wireframeMode;
     } else if(action == INPUT_ACTION_DEBUG_RELOAD_SHADERS.get()) {
       this.reloadShaders = true;

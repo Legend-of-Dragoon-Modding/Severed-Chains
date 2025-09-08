@@ -35,7 +35,7 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class Credits extends EngineState {
   public enum CreditsType {

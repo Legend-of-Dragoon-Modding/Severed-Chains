@@ -26,14 +26,14 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
-import static org.lwjgl.opengl.GL30C.GL_R32UI;
-import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
+import static org.lwjgl.opengles.GLES20.GL_BLEND;
+import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_INT;
+import static org.lwjgl.opengles.GLES20.glDisable;
+import static org.lwjgl.opengles.GLES30.GL_R32UI;
+import static org.lwjgl.opengles.GLES30.GL_RED_INTEGER;
+import static org.lwjgl.opengles.GLES30.GL_UNSIGNED_INT_24_8;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
@@ -110,7 +110,7 @@ public class Gpu {
       builder.size(1024, 512);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.dataType(GL_UNSIGNED_INT_24_8);
     });
 
     this.displaySize(320, 240);

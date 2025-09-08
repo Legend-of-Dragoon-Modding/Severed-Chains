@@ -71,12 +71,14 @@ dependencies {
   api "org.lwjgl:lwjgl"
   api "org.lwjgl:lwjgl-sdl"
   api "org.lwjgl:lwjgl-opengl"
+  api "org.lwjgl:lwjgl-opengles"
   api "org.lwjgl:lwjgl-openal"
   api "org.lwjgl:lwjgl-opus"
   api "org.lwjgl:lwjgl-stb"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-sdl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opengles::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
@@ -96,7 +98,7 @@ dependencies {
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
   implementation group: 'net.java.dev.jna', name: 'jna', version: '5.16.0'
-  
+
   implementation group: 'com.github.JnCrMx', name: 'discord-game-sdk4j', version: 'v1.0.0'
 }
 

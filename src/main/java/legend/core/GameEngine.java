@@ -78,12 +78,12 @@ import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengles.GLES20.GL_BLEND;
+import static org.lwjgl.opengles.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengles.GLES20.GL_SRC_ALPHA;
+import static org.lwjgl.opengles.GLES20.glBlendFunc;
+import static org.lwjgl.opengles.GLES20.glDisable;
+import static org.lwjgl.opengles.GLES20.glEnable;
 
 public final class GameEngine {
   private GameEngine() { }

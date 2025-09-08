@@ -93,8 +93,8 @@ import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
+import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES30.GL_UNSIGNED_INT_24_8;
 
 public class RetailSubmap extends Submap {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSubmap.class);
@@ -734,7 +734,7 @@ public class RetailSubmap extends Submap {
         builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
         builder.internalFormat(GL_RGBA);
         builder.dataFormat(GL_RGBA);
-        builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+        builder.dataType(GL_UNSIGNED_INT_24_8);
       });
 
       // Arrange the segments of the background textures into one texture
@@ -793,7 +793,7 @@ public class RetailSubmap extends Submap {
           builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
           builder.internalFormat(GL_RGBA);
           builder.dataFormat(GL_RGBA);
-          builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+          builder.dataType(GL_UNSIGNED_INT_24_8);
         });
 
         this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, appliedRect.w, appliedRect.h, data);

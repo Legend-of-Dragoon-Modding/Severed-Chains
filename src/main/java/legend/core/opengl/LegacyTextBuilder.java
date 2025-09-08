@@ -13,7 +13,7 @@ import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TEXTURED_FLAG;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class LegacyTextBuilder {
   private static final int CHAR_COUNT = 0x100;

@@ -39,8 +39,8 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class AttachedSobjEffect {
   public CContainer dustTmd;

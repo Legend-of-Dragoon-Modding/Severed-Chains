@@ -14,7 +14,7 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.getRelativeOffset;
 import static legend.game.combat.SEffe.rotateAndTranslateEffect;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidType> {
   /** ubyte */

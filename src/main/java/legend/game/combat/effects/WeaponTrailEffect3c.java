@@ -22,7 +22,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTrailType> {
   private int currentSegmentIndex_00 = -1;

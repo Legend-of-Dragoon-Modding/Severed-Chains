@@ -18,7 +18,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
   private static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {

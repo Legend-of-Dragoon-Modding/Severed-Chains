@@ -174,7 +174,7 @@ import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ROTATE_RIGHT;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_SERVICES;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_IN;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_OUT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class WMap extends EngineState {
   private enum WorldMapState {

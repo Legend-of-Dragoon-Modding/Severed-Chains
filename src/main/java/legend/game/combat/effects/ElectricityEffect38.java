@@ -24,7 +24,7 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.FUN_800cfb94;
 import static legend.game.combat.SEffe.renderSegmentGradient;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class ElectricityEffect38 implements Effect<EffectManagerParams.ElectricityType> {
   private final int renderIndex;

@@ -18,7 +18,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType> {
   public final GradientRaysEffectInstance04[] rays_00;

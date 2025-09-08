@@ -14,8 +14,8 @@ import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
 import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
-import static org.lwjgl.opengl.GL11C.GL_LINE_LOOP;
-import static org.lwjgl.opengl.GL11C.GL_LINE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_LINE_LOOP;
+import static org.lwjgl.opengles.GLES20.GL_LINE_STRIP;
 
 public class LineBuilder {
   private final String name;

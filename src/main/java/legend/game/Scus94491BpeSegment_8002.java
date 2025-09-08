@@ -163,7 +163,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
-import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
+import static org.lwjgl.opengles.GLES20.GL_LEQUAL;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }

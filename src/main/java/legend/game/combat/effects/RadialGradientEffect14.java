@@ -16,8 +16,8 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.combat.SEffe.FUN_800cfb14;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class RadialGradientEffect14 implements Effect<EffectManagerParams.RadialGradientType> {
   private final int circleSubdivisionModifier_00;

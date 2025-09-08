@@ -172,9 +172,9 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_INTERACT;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
-import static org.lwjgl.opengl.GL11C.GL_LESS;
-import static org.lwjgl.opengl.GL11C.GL_LINES;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_LESS;
+import static org.lwjgl.opengles.GLES20.GL_LINES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);

@@ -143,7 +143,7 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public final class SEffe {
   private SEffe() { }

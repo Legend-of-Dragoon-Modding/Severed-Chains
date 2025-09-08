@@ -5,23 +5,23 @@ import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.function.Consumer;
 
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11C.glReadBuffer;
-import static org.lwjgl.opengl.GL20C.glDrawBuffers;
-import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
-import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER_COMPLETE;
-import static org.lwjgl.opengl.GL30C.GL_RENDERBUFFER;
-import static org.lwjgl.opengl.GL30C.glBindFramebuffer;
-import static org.lwjgl.opengl.GL30C.glBindRenderbuffer;
-import static org.lwjgl.opengl.GL30C.glCheckFramebufferStatus;
-import static org.lwjgl.opengl.GL30C.glDeleteFramebuffers;
-import static org.lwjgl.opengl.GL30C.glDeleteRenderbuffers;
-import static org.lwjgl.opengl.GL30C.glFramebufferRenderbuffer;
-import static org.lwjgl.opengl.GL30C.glFramebufferTexture2D;
-import static org.lwjgl.opengl.GL30C.glGenFramebuffers;
-import static org.lwjgl.opengl.GL30C.glGenRenderbuffers;
-import static org.lwjgl.opengl.GL30C.glRenderbufferStorage;
+import static org.lwjgl.opengles.GLES20.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengles.GLES20.GL_FRAMEBUFFER;
+import static org.lwjgl.opengles.GLES20.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengles.GLES20.GL_RENDERBUFFER;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_2D;
+import static org.lwjgl.opengles.GLES20.glBindFramebuffer;
+import static org.lwjgl.opengles.GLES20.glBindRenderbuffer;
+import static org.lwjgl.opengles.GLES20.glCheckFramebufferStatus;
+import static org.lwjgl.opengles.GLES20.glDeleteFramebuffers;
+import static org.lwjgl.opengles.GLES20.glDeleteRenderbuffers;
+import static org.lwjgl.opengles.GLES20.glFramebufferRenderbuffer;
+import static org.lwjgl.opengles.GLES20.glFramebufferTexture2D;
+import static org.lwjgl.opengles.GLES20.glGenFramebuffers;
+import static org.lwjgl.opengles.GLES20.glGenRenderbuffers;
+import static org.lwjgl.opengles.GLES20.glRenderbufferStorage;
+import static org.lwjgl.opengles.GLES30.glDrawBuffers;
+import static org.lwjgl.opengles.GLES30.glReadBuffer;
 
 public class FrameBuffer {
   public static void unbind() {

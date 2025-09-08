@@ -20,7 +20,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.VoidType> {
   private final int type;

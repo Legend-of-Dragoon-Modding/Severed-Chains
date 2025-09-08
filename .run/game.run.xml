@@ -2,7 +2,7 @@
   <configuration default="false" name="game" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="legend.game.Main" />
     <module name="lod-game.main" />
-    <option name="VM_PARAMETERS" value="-Xms1g -Xmx2g -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma" />
+    <option name="VM_PARAMETERS" value="-Xms1g -Xmx2g -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -Dorg.lwjgl.util.DebugLoader=true -Dorg.lwjgl.util.Debug=true" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

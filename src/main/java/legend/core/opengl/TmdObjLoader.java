@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
-import static org.lwjgl.opengl.GL32C.GL_TRIANGLES_ADJACENCY;
+import static org.lwjgl.opengles.GLES32.GL_TRIANGLES_ADJACENCY;
 
 public final class TmdObjLoader {
   private TmdObjLoader() { }

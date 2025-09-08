@@ -23,11 +23,10 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
-import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL31C.GL_RGBA16_SNORM;
+import static org.lwjgl.opengles.GLES20.GL_LINEAR;
+import static org.lwjgl.opengles.GLES20.GL_NEAREST;
+import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_BYTE;
 
 public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidType> {
   public final ScreenCaptureEffectMetrics8 metrics_00 = new ScreenCaptureEffectMetrics8();
@@ -61,7 +60,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
 
     this.texture = Texture.create(builder -> {
       builder.size(w, h);
-      builder.internalFormat(GL_RGBA16_SNORM);
+      builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.dataType(GL_UNSIGNED_BYTE);
       builder.magFilter(GL_NEAREST);

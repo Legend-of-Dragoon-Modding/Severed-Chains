@@ -18,7 +18,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.SEffe.FUN_800cfc20;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class LineParticle extends ParticleEffectData98 {
   private final Matrix4f identity = new Matrix4f();

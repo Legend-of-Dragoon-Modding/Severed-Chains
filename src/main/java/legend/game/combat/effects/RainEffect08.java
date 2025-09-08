@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
   public int count_00;

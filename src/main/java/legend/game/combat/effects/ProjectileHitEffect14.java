@@ -13,7 +13,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.FUN_800cfb14;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
 
 public class ProjectileHitEffect14 implements Effect<EffectManagerParams.VoidType> {
   private final int count_00;

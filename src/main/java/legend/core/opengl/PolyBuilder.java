@@ -20,7 +20,7 @@ import static legend.core.opengl.TmdObjLoader.TEXTURED_FLAG;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
 import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengles.GLES20.GL_TRIANGLES;
 
 public class PolyBuilder {
   private static final int VERTEX_SIZE = POS_SIZE + NORM_SIZE + UV_SIZE + TPAGE_SIZE + CLUT_SIZE + COLOUR_SIZE + FLAGS_SIZE;

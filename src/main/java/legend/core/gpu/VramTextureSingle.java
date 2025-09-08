@@ -8,8 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
+import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES30.GL_UNSIGNED_INT_24_8;
 
 public class VramTextureSingle extends VramTexture {
   private final int[] data;
@@ -112,7 +112,7 @@ public class VramTextureSingle extends VramTexture {
       builder.data(this.applyPalette(palette, region), this.rect.w(), this.rect.h());
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.dataType(GL_UNSIGNED_INT_24_8);
     });
   }
 

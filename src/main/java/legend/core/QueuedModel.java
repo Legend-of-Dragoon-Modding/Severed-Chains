@@ -16,8 +16,8 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11C.GL_LESS;
+import static org.lwjgl.opengles.GLES20.GL_LEQUAL;
+import static org.lwjgl.opengles.GLES20.GL_LESS;
 
 public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T extends QueuedModel<Options, T>> {
   protected final RenderBatch batch;

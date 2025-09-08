@@ -6,23 +6,23 @@ import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
-import static org.lwjgl.opengl.GL11C.GL_FLOAT;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDrawArrays;
-import static org.lwjgl.opengl.GL11C.glDrawElements;
-import static org.lwjgl.opengl.GL12C.glDrawRangeElements;
-import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15C.glBindBuffer;
-import static org.lwjgl.opengl.GL15C.glBufferData;
-import static org.lwjgl.opengl.GL15C.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15C.glGenBuffers;
-import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30C.glBindVertexArray;
-import static org.lwjgl.opengl.GL30C.glDeleteVertexArrays;
-import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
+import static org.lwjgl.opengles.GLES20.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengles.GLES20.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengles.GLES20.GL_FLOAT;
+import static org.lwjgl.opengles.GLES20.GL_STATIC_DRAW;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_INT;
+import static org.lwjgl.opengles.GLES20.glBindBuffer;
+import static org.lwjgl.opengles.GLES20.glBufferData;
+import static org.lwjgl.opengles.GLES20.glDeleteBuffers;
+import static org.lwjgl.opengles.GLES20.glDrawArrays;
+import static org.lwjgl.opengles.GLES20.glDrawElements;
+import static org.lwjgl.opengles.GLES20.glEnableVertexAttribArray;
+import static org.lwjgl.opengles.GLES20.glGenBuffers;
+import static org.lwjgl.opengles.GLES20.glVertexAttribPointer;
+import static org.lwjgl.opengles.GLES30.glBindVertexArray;
+import static org.lwjgl.opengles.GLES30.glDeleteVertexArrays;
+import static org.lwjgl.opengles.GLES30.glDrawRangeElements;
+import static org.lwjgl.opengles.GLES30.glGenVertexArrays;
 
 public class Mesh {
   private static final Int2ObjectMap<Mesh> usedVaos = new Int2ObjectOpenHashMap<>();
