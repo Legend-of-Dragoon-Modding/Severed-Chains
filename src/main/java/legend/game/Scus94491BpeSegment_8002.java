@@ -1512,6 +1512,7 @@ public final class Scus94491BpeSegment_8002 {
               .vertices(metrics.vertexStart, 4)
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride(clutX, clut >>> 6)
+              .colour(renderable.colour)
             ;
 
             if((metrics.clut_04 & 0x8000) != 0) {
