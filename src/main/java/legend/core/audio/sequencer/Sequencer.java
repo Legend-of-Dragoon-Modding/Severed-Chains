@@ -7,7 +7,6 @@ import legend.core.audio.PitchResolution;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
 import legend.core.audio.sequencer.assets.sequence.Command;
-import legend.core.audio.sequencer.assets.sequence.CommandCallback;
 import legend.core.audio.sequencer.assets.sequence.bgm.BreathChange;
 import legend.core.audio.sequencer.assets.sequence.bgm.DataEntry;
 import legend.core.audio.sequencer.assets.sequence.bgm.DataEntryLsb;
@@ -29,6 +28,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static legend.core.audio.Constants.ENGINE_SAMPLE_RATE;
 
@@ -66,7 +66,7 @@ public final class Sequencer extends AudioSource {
   private int volumeChangingTimeTotal;
   private int volumeChangingTimeRemaining;
 
-  private final Map<Class, CommandCallback> commandCallbackMap = new HashMap<>();
+  private final Map<Class<? extends Command>, Consumer<? super Command>> commandCallbacks = createCommandCallbacks(this);
 
   private BackgroundMusic backgroundMusic;
   private int samplesToProcess;
@@ -88,20 +88,6 @@ public final class Sequencer extends AudioSource {
     for(int voice = 0; voice < this.voices.length; voice++) {
       this.voices[voice] = new Voice(voice, this.lookupTables, bitDepth);
     }
-
-    this.addCommandCallback(KeyOn.class, this::keyOn);
-    this.addCommandCallback(KeyOff.class, this::keyOff);
-    this.addCommandCallback(ModulationChange.class, this::modulation);
-    this.addCommandCallback(BreathChange.class, this::breath);
-    this.addCommandCallback(VolumeChange.class, this::volume);
-    this.addCommandCallback(PanChange.class, this::pan);
-    this.addCommandCallback(DataEntry.class, this::dataEntry);
-    this.addCommandCallback(DataEntryLsb.class, this::dataEntryLsb);
-    this.addCommandCallback(DataEntryMsb.class, this::dataEntryMsb);
-    this.addCommandCallback(ProgramChange.class, this::programChange);
-    this.addCommandCallback(PitchBendChange.class, this::pitchBend);
-    this.addCommandCallback(TempoChange.class, this::changeTempo);
-    this.addCommandCallback(EndOfTrack.class, this::endOfTrack);
 
     this.reverb.setConfig(3);
   }
@@ -184,7 +170,7 @@ public final class Sequencer extends AudioSource {
     while(this.samplesToProcess == 0) {
       final Command command = this.backgroundMusic.getNextCommand();
 
-      this.commandCallbackMap.get(command.getClass()).execute(command);
+      this.commandCallbacks.get(command.getClass()).accept(command);
 
       if(this.backgroundMusic == null) {
         return;
@@ -235,10 +221,6 @@ public final class Sequencer extends AudioSource {
 
       voice.keyOn(keyOn.getChannel(), keyOn.getChannel().getInstrument(), layer, keyOn.getNote(), this.backgroundMusic.getVelocityVolume(keyOn.getVelocity()), this.backgroundMusic.getBreathControls(), this.playingVoices);
     }
-  }
-
-  private <T extends Command> void addCommandCallback(final Class<T> cls, final CommandCallback<T> callback) {
-    this.commandCallbackMap.put(cls, callback);
   }
 
   private Voice selectVoice() {
@@ -630,5 +612,29 @@ public final class Sequencer extends AudioSource {
     for(final Voice voice : this.voices) {
       voice.changeInterpolationBitDepth(interpolationPrecision);
     }
+  }
+
+  private static Map<Class<? extends Command>, Consumer<? super Command>> createCommandCallbacks (final Sequencer instance) {
+    final Map<Class<? extends Command>, Consumer<? super Command>> map = new HashMap<>();
+
+    map.put(KeyOff.class, wrapCommand(KeyOff.class, instance::keyOff));
+    map.put(KeyOn.class, wrapCommand(KeyOn.class, instance::keyOn));
+    map.put(ModulationChange.class, wrapCommand(ModulationChange.class, instance::modulation));
+    map.put(BreathChange.class, wrapCommand(BreathChange.class, instance::breath));
+    map.put(DataEntry.class, wrapCommand(DataEntry.class, instance::dataEntry));
+    map.put(VolumeChange.class, wrapCommand(VolumeChange.class, instance::volume));
+    map.put(PanChange.class, wrapCommand(PanChange.class, instance::pan));
+    map.put(DataEntryLsb.class, wrapCommand(DataEntryLsb.class, instance::dataEntryLsb));
+    map.put(DataEntryMsb.class, wrapCommand(DataEntryMsb.class, instance::dataEntryMsb));
+    map.put(ProgramChange.class, wrapCommand(ProgramChange.class, instance::programChange));
+    map.put(PitchBendChange.class, wrapCommand(PitchBendChange.class, instance::pitchBend));
+    map.put(TempoChange.class, wrapCommand(TempoChange.class, instance::changeTempo));
+    map.put(EndOfTrack.class, wrapCommand(EndOfTrack.class, instance::endOfTrack));
+
+    return map;
+  }
+
+  private static <T extends Command> Consumer<Command> wrapCommand(final Class<T> type, final Consumer<T> handler) {
+    return command -> handler.accept(type.cast(command));
   }
 }
