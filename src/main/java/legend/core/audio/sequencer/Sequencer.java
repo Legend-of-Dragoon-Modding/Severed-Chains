@@ -12,7 +12,6 @@ import legend.core.audio.sequencer.assets.sequence.bgm.DataEntry;
 import legend.core.audio.sequencer.assets.sequence.bgm.DataEntryLsb;
 import legend.core.audio.sequencer.assets.sequence.bgm.DataEntryMsb;
 import legend.core.audio.sequencer.assets.sequence.bgm.EndOfTrack;
-import legend.core.audio.sequencer.assets.sequence.bgm.Key;
 import legend.core.audio.sequencer.assets.sequence.bgm.KeyOff;
 import legend.core.audio.sequencer.assets.sequence.bgm.KeyOn;
 import legend.core.audio.sequencer.assets.sequence.bgm.ModulationChange;
@@ -192,7 +191,7 @@ public final class Sequencer extends AudioSource {
     LOGGER.info(SEQUENCER_MARKER, "Delta Time %d samples", this.samplesToProcess);
   }
 
-  private void keyOff(final Key keyOff) {
+  private void keyOff(final KeyOff keyOff) {
     LOGGER.info(SEQUENCER_MARKER, "Key Off Channel: %d Note: %d", keyOff.getChannel().getIndex(), keyOff.getNote());
 
     for(final Voice voice : this.voices) {
@@ -204,11 +203,6 @@ public final class Sequencer extends AudioSource {
 
   private void keyOn(final KeyOn keyOn) {
     LOGGER.info(SEQUENCER_MARKER, "Ken On Channel: %d, Note %d, Velocity: %d", keyOn.getChannel().getIndex(), keyOn.getNote(), keyOn.getVelocity());
-
-    if(keyOn.getVelocity() == 0) {
-      this.keyOff(keyOn);
-      return;
-    }
 
     if(keyOn.getChannel().getVolume() == 0) {
       return;
