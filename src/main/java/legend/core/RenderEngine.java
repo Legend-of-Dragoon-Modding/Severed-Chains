@@ -233,9 +233,7 @@ public class RenderEngine {
   private final Texture[] renderTextures = new Texture[RENDER_BUFFER_COUNT];
   private Texture depthTexture;
   private int renderBufferIndex;
-  /**
-   * Set when resizing the window so that the render buffers will be resized on the next frame
-   */
+  /** Set when resizing the window so that the render buffers will be resized on the next frame */
   private boolean resizeRenderBuffers;
 
   // Text
@@ -253,13 +251,9 @@ public class RenderEngine {
   // Render buffer
   public Obj renderBufferQuad;
 
-  /**
-   * The actual width for rendering (taking into account resolution config)
-   */
+  /** The actual width for rendering (taking into account resolution config) */
   private int renderWidth;
-  /**
-   * The actual height for rendering (taking into account resolution config)
-   */
+  /** The actual height for rendering (taking into account resolution config) */
   private int renderHeight;
   private float renderAspectRatio;
 
@@ -268,7 +262,7 @@ public class RenderEngine {
   private final float[] fps = new float[60];
   private int fpsIndex;
 
-  private Runnable renderCallback = () -> {};
+  private Runnable renderCallback = () -> { };
 
   private static final float MOVE_SPEED = 0.96f;
   private static final float MOUSE_SPEED = 0.00175f;
@@ -446,9 +440,7 @@ public class RenderEngine {
     return this.renderTextures[Math.floorMod(this.renderBufferIndex - 1, RENDER_BUFFER_COUNT)];
   }
 
-  /**
-   * Submit a task to be run at the start of the next frame
-   */
+  /** Submit a task to be run at the start of the next frame */
   public void addTask(final Runnable task) {
     synchronized(this.tasks) {
       this.tasks.push(task);
@@ -498,10 +490,10 @@ public class RenderEngine {
     this.vdfUniform = ShaderManager.addUniformBuffer("vdf", new Shader.UniformBuffer((long)this.vdfBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.VDF));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
-      -1.0f, -1.0f, 0.0f, 0.0f,
-      1.0f, -1.0f, 1.0f, 0.0f,
-      -1.0f, 1.0f, 0.0f, 1.0f,
-      1.0f, 1.0f, 1.0f, 1.0f,
+      -1.0f, -1.0f,  0.0f, 0.0f,
+       1.0f, -1.0f,  1.0f, 0.0f,
+      -1.0f,  1.0f,  0.0f, 1.0f,
+       1.0f,  1.0f,  1.0f, 1.0f,
     }, new int[] {
       0, 3, 2,
       0, 1, 3,
@@ -550,9 +542,9 @@ public class RenderEngine {
 
     this.lineBox = new LineBuilder("Line Box")
       .pos(-0.5f, -0.5f, 0.0f)
-      .pos(0.5f, -0.5f, 0.0f)
-      .pos(0.5f, 0.5f, 0.0f)
-      .pos(-0.5f, 0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
       .closed()
       .build();
     this.lineBox.persistent = true;
@@ -560,9 +552,9 @@ public class RenderEngine {
     this.lineBoxBPlusF = new LineBuilder("Line Box (B+F)")
       .translucency(Translucency.B_PLUS_F)
       .pos(-0.5f, -0.5f, 0.0f)
-      .pos(0.5f, -0.5f, 0.0f)
-      .pos(0.5f, 0.5f, 0.0f)
-      .pos(-0.5f, 0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
       .closed()
       .build();
     this.lineBoxBPlusF.persistent = true;
@@ -1040,9 +1032,7 @@ public class RenderEngine {
     return this.mainBatch.queueOrthoModel(obj, mv, type);
   }
 
-  /**
-   * NOTE: you have to add widescreenOrthoOffsetX yourself
-   */
+  /** NOTE: you have to add widescreenOrthoOffsetX yourself */
   public <T extends QueuedModel<?, ?>> T queueOrthoModel(final Obj obj, final Matrix4f transforms, final Class<T> type) {
     return this.mainBatch.queueOrthoModel(obj, transforms, type);
   }
