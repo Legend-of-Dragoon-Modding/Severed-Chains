@@ -1,17 +1,19 @@
 --- original
 +++ modified
-@@ -409,10 +409,14 @@
+@@ -397,12 +397,16 @@
+ LABEL_20:
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ jmp_cmp ==, stor[8], 0x72, inl[:LABEL_26]
++jmp_cmp ==, stor[8], 0x73, inl[:LABEL_26]
+ jmp_cmp ==, stor[8], 0xffffff0d, inl[:LABEL_27]
+ jmp_cmp ==, stor[8], 0xffffff52, inl[:LABEL_28]
++jmp_cmp ==, stor[8], 0xffffff51, inl[:LABEL_28]
+ jmp_cmp ==, stor[8], 0xffffffaf, inl[:LABEL_29]
+ jmp_cmp ==, stor[8], 0x15, inl[:LABEL_30]
++jmp_cmp ==, stor[8], 0x16, inl[:LABEL_30]
+ jmp_cmp ==, stor[8], 0x92, inl[:LABEL_31]
+ jmp_cmp ==, stor[8], 0x103, inl[:LABEL_31]
++jmp_cmp ==, stor[8], 0x104, inl[:LABEL_31]
  LABEL_21:
- call SMap::scriptReadModelPosition, stor[0], stor[8], stor[9], stor[10] ; scriptIndex, x, y, z
- jmp_cmp ==, stor[8], 0x72, inl[:LABEL_23] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x73, inl[:LABEL_23] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff0d, inl[:LABEL_24] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff52, inl[:LABEL_25] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0xffffff51, inl[:LABEL_25] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffffaf, inl[:LABEL_26] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x15, inl[:LABEL_27] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x16, inl[:LABEL_27] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x104, inl[:LABEL_28] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x92, inl[:LABEL_28] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x103, inl[:LABEL_28] ; operand, left, right, addr
- LABEL_22:
+ call 106, 0x0
+ gosub inl[:LABEL_24]

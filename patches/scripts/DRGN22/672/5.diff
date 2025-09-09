@@ -1,0 +1,27 @@
+Twin Castle, Main Hall (Nighttime)
+Entrance knight
+Old: Hides knight based on camera offset.
+New: Always show, never hide.
+--- original
++++ modified
+@@ -16,20 +16,17 @@
+ LABEL_1:
+ yield
+ call 257, stor[24], stor[25]
+-jmp_cmp <, 0x5, stor[25], inl[:LABEL_4]
+ jmp_cmp >, 0xfffffff3, stor[24], inl[:LABEL_3]
+ jmp inl[:LABEL_2]
+ LABEL_2:
+ call 101, stor[0], 0xfffffee8, 0xffffffa6, 0xffffffea
+ call 103, stor[0], 0x0, 0xfffffc00, 0x0
+ call 106, 0x0
+-call 678, var[64][8], 0x1
+ jmp inl[:LABEL_1]
+ LABEL_3:
+ call 101, stor[0], 0x122, 0xffffffa6, 0xffffffe0
+ call 103, stor[0], 0x0, 0x400, 0x0
+ call 106, 0x0
+-call 678, var[64][8], 0x1
+ jmp inl[:LABEL_1]
+ LABEL_4:
+ call 106, 0x1

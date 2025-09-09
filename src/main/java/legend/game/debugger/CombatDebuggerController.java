@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
@@ -16,18 +17,18 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import legend.game.Scus94491BpeSegment_8006;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.ui.BattleHud;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptTempParam;
 import legend.lodmod.LodMod;
 
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class CombatDebuggerController {
@@ -81,6 +82,16 @@ public class CombatDebuggerController {
   @FXML
   public Button updateStats;
 
+  @FXML
+  public ComboBox<String> statusCondition;
+
+  @FXML
+  public Button setStatus;
+
+  @FXML
+  public Button getStatus;
+
+
   public void initialize() {
     for(int i = 0; i < 10; i++) {
       this.bents.add(new ListItem(this::getCombatantName, i));
@@ -107,6 +118,12 @@ public class CombatDebuggerController {
       final int index = newValue.intValue();
       this.displayStats(index);
     });
+
+    this.statusCondition.getItems().add("None");
+    for(int i = BattleHud.ailments_800fb3a0.length - 1; i >= 0; i--) {
+      this.statusCondition.getItems().add(BattleHud.ailments_800fb3a0[i]);
+    }
+    this.statusCondition.getSelectionModel().select(0);
 
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
     this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
@@ -181,6 +198,8 @@ public class CombatDebuggerController {
     this.mhit.getValueFactory().setValue(bent.magicHit_3e);
     this.aavd.getValueFactory().setValue(bent.attackAvoid_40);
     this.mavd.getValueFactory().setValue(bent.magicAvoid_42);
+
+    this.statusCondition.getSelectionModel().select(this.getStatusIndexFromFlags(bent.status_0e) + 1);
   }
 
   private String getCombatantName(final int combatantIndex) {
@@ -197,11 +216,7 @@ public class CombatDebuggerController {
       return "unused";
     }
 
-    if((combatant.flags_19e & 0x4) == 0) {
-      return ((Battle)engineState_8004dd04).currentEnemyNames_800c69d0[bent.charSlot_276];
-    }
-
-    return bent.charId_272 == 8 ? "Who?" : BattleHud.playerNames_800fb378[bent.charId_272];
+    return bent.getName();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -254,6 +269,51 @@ public class CombatDebuggerController {
     bent.magicHit_3e = this.mhit.getValue().shortValue();
     bent.attackAvoid_40 = this.aavd.getValue().shortValue();
     bent.magicAvoid_42 = this.mavd.getValue().shortValue();
+  }
+
+  public void getStatusCondition(final ActionEvent event) {
+    final int index = this.bentList.getSelectionModel().getSelectedIndex();
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+
+    final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e) + 1;
+
+    this.statusCondition.getSelectionModel().select(statusIndex);
+  }
+
+  public void setStatusCondition(final ActionEvent event) {
+    final int index = this.bentList.getSelectionModel().getSelectedIndex();
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+
+    final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e);
+    final int selectedStatusIndex = this.statusCondition.getSelectionModel().getSelectedIndex();
+
+    //PCS does not check if combatant is affected by the same status
+    if(statusIndex == selectedStatusIndex - 1) {
+      return;
+    }
+    if(selectedStatusIndex == 0) {
+      this.cureStatusCondition(event);
+      return;
+    }
+
+    state.context.params_20[0] = new ScriptTempParam(state.index);
+    state.context.params_20[1] = new ScriptTempParam(10);
+    state.context.params_20[2] = new ScriptTempParam(selectedStatusIndex - 1);
+
+    state.scriptForkAndReenter();
+  }
+
+  public void cureStatusCondition(final ActionEvent event) {
+    final int index = this.bentList.getSelectionModel().getSelectedIndex();
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+
+    final int arrIndex = state.innerStruct_00.combatantIndex_26c;
+    Scus94491BpeSegment_8006.battleState_8006e398.status_384[arrIndex].unpack(0);
+  }
+
+  private int getStatusIndexFromFlags(int flags) {
+    final int statusFlags = flags & 0xff;
+    return statusFlags == 0 ? -1 : Integer.numberOfTrailingZeros(statusFlags);
   }
 
   private static class ListItem {

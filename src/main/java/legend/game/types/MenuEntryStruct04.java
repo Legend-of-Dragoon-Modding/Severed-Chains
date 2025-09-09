@@ -1,14 +1,14 @@
 package legend.game.types;
 
 import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.ItemIcon;
 
 import java.util.function.Function;
-import java.util.function.ToIntFunction;
 
 public class MenuEntryStruct04<T> {
-  private final Function<T, String> name;
-  private final Function<T, String> description;
-  private final ToIntFunction<T> icon;
+  private final Function<T, String> nameTranslationKey;
+  private final Function<T, String> descriptionTranslationKey;
+  private final Function<T, ItemIcon> icon;
 
   public final T item_00;
   public int itemSlot_01;
@@ -22,26 +22,26 @@ public class MenuEntryStruct04<T> {
    */
   public int flags_02;
 
-  public MenuEntryStruct04(final Function<T, String> name, final Function<T, String> description, final ToIntFunction<T> icon, final T entry) {
-    this.name = name;
-    this.description = description;
+  public MenuEntryStruct04(final Function<T, String> nameTranslationKey, final Function<T, String> descriptionTranslationKey, final Function<T, ItemIcon> icon, final T entry) {
+    this.nameTranslationKey = nameTranslationKey;
+    this.descriptionTranslationKey = descriptionTranslationKey;
     this.icon = icon;
     this.item_00 = entry;
   }
 
   public static <T extends InventoryEntry> MenuEntryStruct04<T> make(final T entry) {
-    return new MenuEntryStruct04<>(InventoryEntry::getName, InventoryEntry::getDescription, InventoryEntry::getIcon, entry);
+    return new MenuEntryStruct04<>(InventoryEntry::getNameTranslationKey, InventoryEntry::getDescriptionTranslationKey, InventoryEntry::getIcon, entry);
   }
 
-  public String getName() {
-    return this.name.apply(this.item_00);
+  public String getNameTranslationKey() {
+    return this.nameTranslationKey.apply(this.item_00);
   }
 
-  public String getDescription() {
-    return this.description.apply(this.item_00);
+  public String getDescriptionTranslationKey() {
+    return this.descriptionTranslationKey.apply(this.item_00);
   }
 
-  public int getIcon() {
-    return this.icon.applyAsInt(this.item_00);
+  public ItemIcon getIcon() {
+    return this.icon.apply(this.item_00);
   }
 }

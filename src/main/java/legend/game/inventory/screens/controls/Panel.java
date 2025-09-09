@@ -31,6 +31,20 @@ public class Panel extends Control {
     return panel;
   }
 
+  public static Panel dark() {
+    final Panel panel = new Panel(true);
+
+    panel.setMetrics(
+      240, 245, 250, 16, 21, 27, 196, 70,
+      5, 5,
+      1, 1,
+      3
+    );
+
+    panel.setClut(0x7c29);
+    return panel;
+  }
+
   public static Panel invisible() {
     return new Panel(false);
   }

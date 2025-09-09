@@ -2,15 +2,25 @@ package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import legend.core.opengl.Window;
-import legend.game.input.InputAction;
+import legend.core.opengl.SubmapWidescreenMode;
+import legend.core.platform.Window;
+import legend.core.platform.WindowEvents;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.InputMod;
+import legend.game.modding.coremod.CoreMod;
 
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -18,18 +28,17 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();
 
-  private Window.Events.Cursor onMouseMove;
-  private Window.Events.Click onMousePress;
-  private Window.Events.Click onMouseRelease;
-  private Window.Events.Scroll onMouseScroll;
-  private Window.Events.Key onKeyPress;
-  private Window.Events.Key onKeyRepeat;
-  private Window.Events.Char onCharPress;
-
-  private Window.Events.OnPressedThisFrame onPressedThisFrame;
-  private Window.Events.OnReleasedThisFrame onReleasedThisFrame;
-
-  private Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
+  private WindowEvents.Cursor onMouseMove;
+  private WindowEvents.Click onMousePress;
+  private WindowEvents.Click onMouseRelease;
+  private WindowEvents.Scroll onMouseScroll;
+  private WindowEvents.KeyPressed onKeyPress;
+  private WindowEvents.Char onCharPress;
+  private WindowEvents.ButtonPressed onButtonPress;
+  private WindowEvents.ButtonReleased onButtonRelease;
+  private WindowEvents.Axis onAxis;
+  private WindowEvents.InputActionPressed onInputActionPressed;
+  private WindowEvents.InputActionReleased onInputActionReleased;
 
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
@@ -132,11 +141,12 @@ public class MenuStack {
     this.onMouseRelease = RENDERER.events().onMouseRelease(this::mouseRelease);
     this.onMouseScroll = RENDERER.events().onMouseScroll(this::mouseScroll);
     this.onKeyPress = RENDERER.events().onKeyPress(this::keyPress);
-    this.onKeyRepeat = RENDERER.events().onKeyRepeat(this::keyPress);
     this.onCharPress = RENDERER.events().onCharPress(this::charPress);
-    this.onPressedThisFrame = RENDERER.events().onPressedThisFrame(this::pressedThisFrame);
-    this.onReleasedThisFrame = RENDERER.events().onReleasedThisFrame(this::releasedThisFrame);
-    this.onPressedWithRepeatPulse = RENDERER.events().onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
+    this.onButtonPress = RENDERER.events().onButtonPress(this::buttonPress);
+    this.onButtonRelease = RENDERER.events().onButtonRelease(this::buttonRelease);
+    this.onAxis = RENDERER.events().onAxis(this::axis);
+    this.onInputActionPressed = RENDERER.events().onInputActionPressed(this::inputActionPressed);
+    this.onInputActionReleased = RENDERER.events().onInputActionReleased(this::inputActionReleased);
   }
 
   public void removeInputHandlers() {
@@ -145,14 +155,20 @@ public class MenuStack {
     RENDERER.events().removeMouseRelease(this.onMouseRelease);
     RENDERER.events().removeMouseScroll(this.onMouseScroll);
     RENDERER.events().removeKeyPress(this.onKeyPress);
-    RENDERER.events().removeKeyRepeat(this.onKeyRepeat);
     RENDERER.events().removeCharPress(this.onCharPress);
-    RENDERER.events().removePressedThisFrame(this.onPressedThisFrame);
-    RENDERER.events().removeReleasedThisFrame(this.onReleasedThisFrame);
-    RENDERER.events().removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
+    RENDERER.events().removeButtonPress(this.onButtonPress);
+    RENDERER.events().removeButtonRelease(this.onButtonRelease);
+    RENDERER.events().removeAxis(this.onAxis);
+    RENDERER.events().removeInputActionPressed(this.onInputActionPressed);
+    RENDERER.events().removeInputActionReleased(this.onInputActionReleased);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
+    if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+      this.input(screen -> screen.mouseMove((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight())));
+      return;
+    }
+
     final float aspect = 4.0f / 3.0f;
 
     float w = window.getWidth();
@@ -166,20 +182,25 @@ public class MenuStack {
     final float left = (window.getWidth() - w) / 2;
     final float top = (window.getHeight() - h) / 2;
 
-    final float scaleX = w / GPU.getDisplayTextureWidth();
-    final float scaleY = h / GPU.getDisplayTextureHeight();
+    final float scaleX = w / RENDERER.getNativeWidth();
+    final float scaleY = h / RENDERER.getNativeHeight();
 
     this.input(screen -> screen.mouseMove((int)((x - left) / scaleX), (int)((y - top) / scaleY)));
   }
 
-  private void mousePress(final Window window, final double x, final double y, final int button, final int mods) {
+  private void mousePress(final Window window, final double x, final double y, final int button, final Set<InputMod> mods) {
     this.mousePressCoords.put(button, new Point2D(x, y));
   }
 
-  private void mouseRelease(final Window window, final double x, final double y, final int button, final int mods) {
+  private void mouseRelease(final Window window, final double x, final double y, final int button, final Set<InputMod> mods) {
     final Point2D point = this.mousePressCoords.remove(button);
 
     if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
+      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+        this.input(screen -> screen.mouseClick((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight()), button, mods));
+        return;
+      }
+
       final float aspect = 4.0f / 3.0f;
 
       float w = window.getWidth();
@@ -215,24 +236,32 @@ public class MenuStack {
     this.input(screen -> screen.mouseScrollHighRes(deltaX, deltaY));
   }
 
-  private void keyPress(final Window window, final int key, final int scancode, final int mods) {
-    this.input(screen -> screen.keyPress(key, scancode, mods));
-  }
-
-  private void pressedThisFrame(final Window window, final InputAction inputAction) {
-    this.input(screen -> screen.pressedThisFrame(inputAction));
+  private void keyPress(final Window window, final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
+    this.input(screen -> screen.keyPress(key, scancode, mods, repeat));
   }
 
   private void charPress(final Window window, final int codepoint) {
     this.input(screen -> screen.charPress(codepoint));
   }
 
-  private void pressedWithRepeatPulse(final Window window, final InputAction inputAction) {
-    this.input(screen -> screen.pressedWithRepeatPulse(inputAction));
+  private void buttonPress(final Window window, final InputButton button, final boolean repeat) {
+    this.input(screen -> screen.buttonPress(button, repeat));
   }
 
-  private void releasedThisFrame(final Window window, final InputAction inputAction) {
-    this.input(screen -> screen.releasedThisFrame(inputAction));
+  private void buttonRelease(final Window window, final InputButton button) {
+    this.input(screen -> screen.buttonRelease(button));
+  }
+
+  private void axis(final Window window, final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    this.input(screen -> screen.axis(axis, direction, menuValue, movementValue));
+  }
+
+  private void inputActionPressed(final Window window, final InputAction action, final boolean repeat) {
+    this.input(screen -> screen.inputActionPressed(action, repeat));
+  }
+
+  private void inputActionReleased(final Window window, final InputAction action) {
+    this.input(screen -> screen.inputActionReleased(action));
   }
 
   private record Point2D(double x, double y) { }

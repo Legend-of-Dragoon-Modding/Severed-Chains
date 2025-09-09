@@ -1,0 +1,22 @@
+Widescreen patch
+Hellena Prison, cutscene before fighting Fruegel (I)
+Lavitz
+Old: Lavitz would stack on Dart and Shana
+New: Lavitz waits for Dart to move before continuing
+--- original
++++ modified
+@@ -150,6 +150,8 @@
+ mov 0x2e, stor[24]
+ gosub inl[:LABEL_2]
+ mov 0xf, stor[24]
+# Wait for Dart to move
++mov var[64][0], inl[:WS_WAIT_LINE_SOBJ]
++gosub inl[:WS_WAIT_IN_LINE]
+ gosub inl[:LABEL_2]
+ LABEL_11:
+ yield
+@@ -231,3 +233,4 @@
+ LABEL_18:
+ yield
+ jmp inl[:LABEL_18]
++#include ../../../../patches/libs/widescreen.txt

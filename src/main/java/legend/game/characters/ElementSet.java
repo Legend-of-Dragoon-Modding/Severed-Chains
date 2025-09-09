@@ -10,6 +10,12 @@ import java.util.Set;
 public class ElementSet implements Iterable<Element> {
   private final Set<Element> elements = new HashSet<>();
 
+  public ElementSet(final Element... elements) {
+    for(final Element element : elements) {
+      this.elements.add(element);
+    }
+  }
+
   public ElementSet set(final ElementSet other) {
     return this.clear().addAll(other);
   }

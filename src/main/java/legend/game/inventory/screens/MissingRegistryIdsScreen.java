@@ -1,10 +1,10 @@
 package legend.game.inventory.screens;
 
 import legend.game.SItem;
-import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.ListBox;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.MessageBoxResult;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -40,7 +40,7 @@ public class MissingRegistryIdsScreen extends MenuScreen {
       });
     });
 
-    final Button yes = this.setDefaultButton(InputAction.BUTTON_SOUTH, this.addControl(new Button("Yes")));
+    final Button yes = this.setDefaultButton(CoreMod.INPUT_ACTION_MENU_CONFIRM.get(), this.addControl(new Button("Yes")));
     yes.setPos(199, 210);
     yes.onPressed(() -> {
       startFadeEffect(2, 10);
@@ -51,7 +51,7 @@ public class MissingRegistryIdsScreen extends MenuScreen {
       });
     });
 
-    final Button no = this.setDefaultButton(InputAction.BUTTON_EAST, this.addControl(new Button("No")));
+    final Button no = this.setDefaultButton(CoreMod.INPUT_ACTION_MENU_BACK.get(), this.addControl(new Button("No")));
     no.setPos(109, 210);
     no.onPressed(() -> {
       startFadeEffect(2, 10);
@@ -65,6 +65,6 @@ public class MissingRegistryIdsScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText(this.prompt, 188, 25, TextColour.BROWN, 300);
+    SItem.renderMenuCentredText(this.prompt, 188, 25, 300, SItem.UI_TEXT_CENTERED);
   }
 }

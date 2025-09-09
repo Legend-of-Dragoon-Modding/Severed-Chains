@@ -1,8 +1,10 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.DabasManager;
-import legend.game.input.InputAction;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
@@ -16,22 +18,26 @@ import legend.game.types.Renderable58;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.UI_TEXT_CENTERED;
+import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
+import static legend.game.SItem.UI_TEXT_SELECTED_CENTERED;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
-import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -40,12 +46,13 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class DabasScreen extends MenuScreen {
   private static final String DigDabas_8011d04c = "Diiig Dabas!";
@@ -119,9 +126,9 @@ public class DabasScreen extends MenuScreen {
 
           if(itemId != 0) {
             if(itemId > 192) {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()));
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()));
             } else {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()));
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()));
             }
 
             this.hasItems = true;
@@ -130,7 +137,7 @@ public class DabasScreen extends MenuScreen {
 
         final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
-          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(specialItemId)).get());
+          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get());
           this.hasItems = true;
         }
 
@@ -161,7 +168,7 @@ public class DabasScreen extends MenuScreen {
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
 
-        if((inventoryJoypadInput_800bdc44 & 0x20) == 0) {
+        if(!PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           this.renderDabasMenu(this.menuIndex);
           break;
         }
@@ -176,7 +183,7 @@ public class DabasScreen extends MenuScreen {
       case 4 -> {
         messageBox(this.messageBox_8011dc90);
 
-        if(this.gold <= 10 || (inventoryJoypadInput_800bdc44 & 0x20) != 0) {
+        if(this.gold <= 10 || PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           gameState_800babc8.gold_94 += this.gold;
           this.gold = 0;
           unloadRenderable(this.renderable2);
@@ -203,7 +210,7 @@ public class DabasScreen extends MenuScreen {
 
       case 5 -> {
         messageBox(this.messageBox_8011dc90);
-        if((inventoryJoypadInput_800bdc44 & 0x20) != 0) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           unloadRenderable(this.renderable2);
           this.messageBox_8011dc90.state_0c++;
           this.loadingStage++;
@@ -339,16 +346,16 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(this.loadingStage != 2 || mods != 0) {
+    if(this.loadingStage != 2 || !mods.isEmpty()) {
       return InputPropagation.PROPAGATE;
     }
 
-    if(button == GLFW_MOUSE_BUTTON_LEFT) {
+    if(button == PLATFORM.getMouseButton(0)) {
       if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(0), 85, 14)) {
         if(this.hasItems || this.gold != 0) {
           playMenuSound(2);
@@ -403,8 +410,8 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -412,7 +419,7 @@ public class DabasScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }
@@ -597,19 +604,19 @@ public class DabasScreen extends MenuScreen {
 
   private void renderDabasMenu(final int selectedSlot) {
     //LAB_801031cc
-    renderText(DigDabas_8011d04c, 48, 28, TextColour.BROWN);
-    renderText(AcquiredItems_8011d050, 210, 28, TextColour.BROWN);
-    renderText(SpecialItem_8011d054, 210, 170, TextColour.BROWN);
-    renderText(AcquiredGold_8011cdd4, 30, 124, TextColour.BROWN);
-    renderCentredText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? TextColour.RED : !this.hasItems && this.gold == 0 ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
-    renderCentredText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? TextColour.RED : !this.hasItems ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
-    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? TextColour.RED : !this.newDigEnabled ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
+    renderText(DigDabas_8011d04c, 48, 28, UI_TEXT);
+    renderText(AcquiredItems_8011d050, 210, 28, UI_TEXT);
+    renderText(SpecialItem_8011d054, 210, 170, UI_TEXT);
+    renderText(AcquiredGold_8011cdd4, 30, 124, UI_TEXT);
+    renderText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? UI_TEXT_SELECTED_CENTERED : !this.hasItems && this.gold == 0 ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
+    renderText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? UI_TEXT_SELECTED_CENTERED : !this.hasItems ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
+    renderText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? UI_TEXT_SELECTED_CENTERED : !this.newDigEnabled ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
     renderMenuItems(194, 37, this.menuItems, 0, 6, null, null);
     renderEightDigitNumber(100, 147, this.gold, 0x2);
 
     if(this.specialItem != null) {
       renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8);
-      renderText(this.specialItem.getName(), 214, 194, TextColour.BROWN);
+      renderText(I18n.translate(this.specialItem.getNameTranslationKey()), 214, 194, UI_TEXT);
     }
 
     //LAB_80103390

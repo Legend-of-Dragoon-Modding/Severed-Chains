@@ -75,11 +75,9 @@ public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidTy
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(1.0f)
         .addVertex(1.0f, 0.0f, 0.0f)
-        .monochrome(1.0f)
         .addVertex(0.0f, 1.0f, 0.0f)
         .monochrome(0.5f)
         .addVertex(1.0f, 1.0f, 0.0f)
-        .monochrome(0.5f)
         .build();
     }
 
@@ -129,7 +127,7 @@ public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidTy
           start.y += GPU.getOffsetY();
           end.x += GPU.getOffsetX();
           end.y += GPU.getOffsetY();
-          RENDERER.queueLine(this.spark, this.transforms, s7 + a3, start, end)
+          RENDERER.queueLine(this.spark, this.transforms, (s7 + a3) * 4.0f, start, end)
             .translucency(Translucency.B_PLUS_F)
             .colour((inst.r_40 >>> 8) / 255.0f, (inst.g_42 >>> 8) / 255.0f, (inst.b_44 >>> 8) / 255.0f);
         }

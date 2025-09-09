@@ -1,19 +1,23 @@
 #version 330 core
 
-smooth in vec2 vertUv;
-flat in vec2 vertTpage;
-flat in vec2 vertClut;
-flat in int vertBpp;
-smooth in vec4 vertColour;
-flat in int vertFlags;
+in GS_OUT {
+  smooth vec2 vertUv;
+  flat vec2 vertTpage;
+  flat vec2 vertClut;
+  flat int vertBpp;
+  smooth vec4 vertColour;
+  flat int vertFlags;
 
-flat in float widthMultiplier;
-flat in int widthMask;
-flat in int indexShift;
-flat in int indexMask;
+  flat int translucency;
 
-smooth in float depth;
-smooth in float depthOffset;
+  flat float widthMultiplier;
+  flat int widthMask;
+  flat int indexShift;
+  flat int indexMask;
+
+  smooth float depth;
+  smooth float depthOffset;
+};
 
 layout(std140) uniform projectionInfo {
   float znear;
@@ -24,10 +28,8 @@ layout(std140) uniform projectionInfo {
 
 uniform vec3 recolour;
 uniform vec2 uvOffset;
-uniform float translucency;
 uniform float discardTranslucency;
 uniform int tmdTranslucency;
-uniform int ctmdFlags;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -41,14 +43,12 @@ void main() {
     gl_FragDepth = gl_FragCoord.z;
   }
 
-  bool ctmd = (ctmdFlags & 0x20) != 0;
-  bool uniformLit = (ctmdFlags & 0x10) != 0;
-  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0 || translucency != 0;
+  bool translucent = (vertFlags & 0x8) != 0;
   bool textured = (vertFlags & 0x2) != 0;
   outColour = vertColour;
 
-  int translucencyMode = int(translucency);
-  if(translucent && (!textured || uniformLit)) {
+  int translucencyMode = translucency + 1;
+  if(translucent && !textured) {
     translucencyMode = tmdTranslucency + 1;
   }
 
@@ -63,6 +63,9 @@ void main() {
 
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
+    } else if(vertBpp == 2) {
+      ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
+      texColour = texelFetch(tex24, ivec2(uv.x, uv.y), 0);
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }
@@ -73,24 +76,23 @@ void main() {
     }
 
     // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
-    if(discardTranslucency == 1 && translucencyMode != 0 && texColour.a != 0 || discardTranslucency == 2 && (translucencyMode == 0 || texColour.a == 0)) {
+    if(discardTranslucency == 1 && translucent && texColour.a != 0 || discardTranslucency == 2 && (!translucent || texColour.a == 0)) {
       discard;
     }
 
-    outColour *= texColour;
+    outColour = clamp(outColour * texColour, 0.0, 1.0);
   } else {
     // Untextured translucent primitives don't have a translucency bit so we always discard during the appropriate discard modes
-    if(discardTranslucency == 1 && translucencyMode != 0 || discardTranslucency == 2 && translucencyMode == 0) {
+    if(discardTranslucency == 1 && translucent || discardTranslucency == 2 && !translucent) {
       discard;
     }
   }
 
   outColour.rgb *= recolour;
 
-  // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if(translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
+  if(translucent && translucencyMode == 1) { // (B+F)/2 translucency
     outColour.a = 0.5;
-  } else if(translucencyMode != 0xff) { // Real translucency
+  } else {
     outColour.a = 1.0;
   }
 }

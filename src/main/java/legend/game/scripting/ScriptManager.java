@@ -1,22 +1,34 @@
 package legend.game.scripting;
 
+import com.opencsv.exceptions.CsvException;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.legendofdragoon.scripting.Compiler;
+import org.legendofdragoon.scripting.Lexer;
+import org.legendofdragoon.scripting.meta.Meta;
+import org.legendofdragoon.scripting.meta.MetaManager;
+import org.legendofdragoon.scripting.meta.NoSuchVersionException;
+import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
-import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
+import static legend.core.IoHelper.intsToBytes;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
+
+  private Meta meta;
+  private final Compiler compiler = new Compiler();
+  private Lexer lexer;
+  private final Path patchDir;
 
   private boolean stopped;
   private boolean paused;
@@ -25,32 +37,25 @@ public class ScriptManager {
   private int framesPerTick;
   private int currentTicks;
 
-  /** Accumulates joypad input on script engine off frames */
-  public int joypadInput;
-  /** Accumulates joypad press on script engine off frames */
-  public int joypadPress;
-  /** Accumulates joypad repeat on script engine off frames */
-  public int joypadRepeat;
+  public ScriptManager(final Path patchDir) {
+    this.patchDir = patchDir;
+  }
+
+  public boolean willTick() {
+    return this.currentTicks == 0;
+  }
 
   public boolean tick() {
     boolean ticked = false;
-    this.joypadInput |= input_800bee90;
-    this.joypadPress |= press_800bee94;
-    this.joypadRepeat |= repeat_800bee98;
 
     if(this.currentTicks == 0) {
       this.executeScriptFrame();
-
-      this.joypadInput = 0;
-      this.joypadPress = 0;
-      this.joypadRepeat = 0;
-
       ticked = true;
     }
 
-    this.executeScriptTickers();
+    this.executeScriptTickers(ticked);
     this.upperBound = 9;
-    this.executeScriptRenderers();
+    this.executeScriptRenderers(ticked);
 
     this.currentTicks = (this.currentTicks + 1) % this.framesPerTick;
     return ticked;
@@ -82,7 +87,7 @@ public class ScriptManager {
   }
 
   public void clear() {
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       scriptStatePtrArr_800bc1c0[i] = null;
     }
   }
@@ -90,13 +95,13 @@ public class ScriptManager {
   private int findFreeScriptState() {
     this.upperBound++;
 
-    if(this.upperBound >= 72) {
+    if(this.upperBound >= scriptStatePtrArr_800bc1c0.length) {
       this.upperBound = 9;
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = this.upperBound; i < 72; i++) {
+    for(int i = this.upperBound; i < scriptStatePtrArr_800bc1c0.length; i++) {
       if(scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
         this.upperBound = i;
@@ -126,7 +131,7 @@ public class ScriptManager {
     return scriptStatePtrArr_800bc1c0[index];
   }
 
-  public <T> ScriptState<T> getState(final int index, final Class<T> type) {
+  public <T extends ScriptedObject> ScriptState<T> getState(final int index, final Class<T> type) {
     if(index == -1) {
       return null;
     }
@@ -142,11 +147,11 @@ public class ScriptManager {
     return type.cast(scriptStatePtrArr_800bc1c0[index].innerStruct_00);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
+  public <T extends ScriptedObject> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
     return this.allocateScriptState(this.findFreeScriptState(), name, type);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final int index, final String name, @Nullable final T type) {
+  public <T extends ScriptedObject> ScriptState<T> allocateScriptState(final int index, final String name, @Nullable final T type) {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, name);
 
     final ScriptState<T> scriptState = new ScriptState<>(this, index, name, type);
@@ -172,36 +177,14 @@ public class ScriptManager {
     }
 
     //LAB_80015fd8
-    for(int index = 0; index < 72; index++) {
+    for(int index = 0; index < scriptStatePtrArr_800bc1c0.length; index++) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
 
       if(state != null) {
         try {
           state.executeFrame();
         } catch(final Throwable t) {
-          final RunningScript<?> context = state.context;
-
-          LOGGER.error("Script %d crashed!", index);
-          LOGGER.error("File %s[addr 0x%x]", state.scriptPtr_14.name, state.offset_18 * 4);
-          LOGGER.error("Parameters:");
-          LOGGER.error("  Op param: 0x%x", context.opParam_18);
-          for(int i = 0; i < context.paramCount_14; i++) {
-            LOGGER.error("  %d: %s", i + 1, context.params_20[i]);
-          }
-
-          LOGGER.error("Storage:");
-          for(int i = 0; i < state.storage_44.length; i++) {
-            LOGGER.error("  %d: 0x%x", i + 1, state.storage_44[i]);
-          }
-
-          LOGGER.error("Call stack:");
-          for(int i = 0; i < state.callStack_1c.length; i++) {
-            if(state.callStack_1c[i] == -1) {
-              break;
-            }
-
-            LOGGER.error("  %d: %d", i + 1, state.callStack_1c[i]);
-          }
+          state.dump();
 
           throw new RuntimeException("An error occurred while ticking script " + index, t);
         }
@@ -213,39 +196,63 @@ public class ScriptManager {
     //LAB_80016624
   }
 
-  private void executeScriptTickers() {
+  private void executeScriptTickers(final boolean isScriptFrame) {
     if(this.paused || this.stopped) {
       return;
     }
 
     //LAB_80017750
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null && scriptState.hasExecuted()) {
+      // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
+      // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tick();
       }
     }
 
     //LAB_800177ac
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null && scriptState.hasExecuted()) {
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.tempTick();
       }
     }
   }
 
-  private void executeScriptRenderers() {
+  private void executeScriptRenderers(final boolean isScriptFrame) {
     if(this.stopped) {
       return;
     }
 
     //LAB_80017854
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
-      if(scriptState != null && scriptState.hasExecuted()) {
+      // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
+      // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
+      if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         scriptState.render();
       }
     }
+  }
+
+  public Meta meta() {
+    if(this.meta == null) {
+      try {
+        this.meta = new MetaManager(null, this.patchDir).loadMeta("meta");
+      } catch(final IOException | CsvException | NoSuchVersionException e) {
+        throw new RuntimeException("Failed to load script patches", e);
+      }
+
+      this.lexer = new Lexer(this.meta);
+    }
+
+    return this.meta;
+  }
+
+  public byte[] compile(final Path path, final String source) {
+    this.meta();
+    final Script lexed = this.lexer.lex(path, source);
+    return intsToBytes(this.compiler.compile(lexed));
   }
 }

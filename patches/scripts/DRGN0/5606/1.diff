@@ -1,0 +1,183 @@
+--- original
++++ modified
+@@ -110,7 +110,11 @@
+ data 0x1b3
+ data 0x1b1
+ data 0x1
++data 0xb
++data 0x1a5
++data 0x195
+ data 0x1
++data 0x1
+ data 0x0
+ data 0x197
+ data 0x4
+@@ -324,78 +328,78 @@
+ LABEL_1:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+-mov 0x3, stor[stor[stor[0], 23], 24]
++mov 0x4, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_2:
+ call 600, stor[23]
+-mov 0x3, stor[stor[stor[0], 23], 14]
++mov 0x4, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_3:
+ call 600, stor[23]
+-mov 0x5, stor[stor[stor[0], 23], 14]
++mov 0x6, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_4:
+ call 600, stor[23]
+-mov 0x6, stor[stor[stor[0], 23], 14]
++mov 0x7, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_5:
+ call 600, stor[23]
+-mov 0x8, stor[stor[stor[0], 23], 14]
++mov 0x9, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_6:
+ call 600, stor[23]
+-mov 0xa, stor[stor[stor[0], 23], 14]
++mov 0xb, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_7:
+ call 600, stor[23]
+-mov 0xc, stor[stor[stor[0], 23], 14]
++mov 0xd, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_8:
+ call 600, stor[23]
+-mov 0xd, stor[stor[stor[0], 23], 14]
++mov 0xe, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_9:
+ call 600, stor[23]
+-mov 0xe, stor[stor[stor[0], 23], 14]
++mov 0xf, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_10:
+ call 600, stor[23]
+-mov 0xf, stor[stor[stor[0], 23], 14]
++mov 0x10, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_11:
+ call 600, stor[23]
+-mov 0x10, stor[stor[stor[0], 23], 14]
++mov 0x11, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_12:
+ call 600, stor[23]
+-mov 0x11, stor[stor[stor[0], 23], 14]
++mov 0x12, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_13:
+ call 600, stor[23]
+-mov 0x14, stor[stor[stor[0], 23], 14]
++mov 0x15, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+@@ -403,43 +407,43 @@
+ return
+ LABEL_15:
+ call 600, stor[23]
+-mov 0x36, stor[stor[stor[0], 23], 14]
++mov 0x37, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_16:
+ call 600, stor[23]
+-mov 0x18, stor[stor[stor[0], 23], 14]
++mov 0x19, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_17:
+ call 600, stor[23]
+-mov 0x1a, stor[stor[stor[0], 23], 14]
++mov 0x1b, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_18:
+ call 600, stor[23]
+-mov 0x1c, stor[stor[stor[0], 23], 14]
++mov 0x1d, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_19:
+ call 600, stor[23]
+-mov 0x1d, stor[stor[stor[0], 23], 14]
++mov 0x1e, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_20:
+ call 600, stor[23]
+-mov 0x20, stor[stor[stor[0], 23], 14]
++mov 0x21, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+ LABEL_21:
+ call 600, stor[23]
+-mov 0x22, stor[stor[stor[0], 23], 14]
++mov 0x23, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_216]
+ return
+@@ -4238,7 +4242,7 @@
+ incr stor[18]
+ call 354, 0x0, stor[18], stor[9]
+ call 355, stor[9]
+-call 364, stor[8], stor[9]
++gosub inl[:LOAD_SLOTTED_TEXTURES]
+ call 356, stor[9]
+ call 354, 0x0, stor[16], stor[9]
+ call 355, stor[9]
+@@ -4394,3 +4398,16 @@
+ data str[<sauto=255>Thank you.]
+ data 0xa
+ data 0x1
++LOAD_SLOTTED_TEXTURES:
++jmp_cmp >=, inl[:CHAR_INDEX], 0x3, inl[:LOAD_ENEMY_TEXTURE]
++jmp_cmp ==, stor[13], 0xb, inl[:LOAD_PLAYER_TEXTURE]
++LOAD_ENEMY_TEXTURE:
++call 364, stor[8], stor[9]
++return
++LOAD_PLAYER_TEXTURE:
++incr inl[:CHAR_INDEX]
++call 1020, stor[8], inl[:CHAR_INDEX]
++call 364, stor[8], stor[9]
++return
++CHAR_INDEX:
++data 0x0

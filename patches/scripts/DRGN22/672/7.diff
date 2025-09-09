@@ -1,0 +1,20 @@
+Evening guards in Twin Castle hide themselves when off-screen in retail, producing a flicker in widescreen.
+Patch keeps them always on.
+--- original
++++ modified
+@@ -157,7 +157,7 @@
+ call 307, stor[0], 0x14, 0x28, 0xa
+ call 294, 0x14, 0x1
+ call 294, 0x16, 0x1
+-call 106, 0x1
++call 106, 0x0
+ LABEL_22:
+ yield
+ call 257, stor[24], stor[25]
+@@ -173,5 +173,5 @@
+ jmp_cmp >, 0xffffffc4, stor[25], inl[:LABEL_25]
+ jmp inl[:LABEL_24]
+ LABEL_25:
+-call 106, 0x1
++call 106, 0x0
+ jmp inl[:LABEL_22]

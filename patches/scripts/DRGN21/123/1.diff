@@ -1,0 +1,32 @@
+Widescreen patch
+Prairie, escape from Hellena Prison cutscene #2
+Dart
+--- original
++++ modified
+@@ -858,6 +858,20 @@
+ mov 0x26, stor[24]
+ gosub inl[:LABEL_14]
+ mov 0x11, stor[24]
+# Move from behind tree instead of suddenly appearing on the path.
++call 106, 0x0
++call 267, stor[24], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++call 677, stor[0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++sub 5, inl[:WS_TARGET_Z]
++mov 8, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++call 111, 1
++gosub inl[:WS_MOVE]
++call 111, 0
++call 267, 0x14, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 20, inl[:WS_FRAMES]
++mov 1, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++call 97, 0
+ gosub inl[:LABEL_18]
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ sub 0x5, stor[10]
+@@ -1754,3 +1768,4 @@
+ data 0xa0ff
+ data 0x14
+ data 0x2
++#include ../../../../patches/libs/widescreen.txt

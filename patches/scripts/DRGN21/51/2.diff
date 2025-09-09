@@ -1,0 +1,64 @@
+Widescreen patch
+Hellena Prison, cutscene before fighting Fruegel (I)
+Shana
+Old: Shana would stack on Dart and Lavitz
+New: Shana waits for Lavitz to move before continuing
+--- original
++++ modified
+@@ -48,6 +48,7 @@
+ yield
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ call 116, stor[24]
+# Inside walking loop for LABEL_2 subroutine, increment wait offset if specified flag is active
++gosub inl[:WS_WAIT_TIME]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_4]
+ call 294, 0x0, 0x1
+ call 97, 0x0
+@@ -149,6 +150,15 @@
+ mov 0x17, stor[24]
+ gosub inl[:LABEL_2]
+ mov 0x2e, stor[24]
+# Wait for Lavitz to move
++mov var[64][2], inl[:WS_WAIT_LINE_SOBJ]
++mov 0x79, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_OFFSET]
++gosub inl[:WS_WAIT_IN_LINE]
++mov 0x16, stor[24]
++gosub inl[:WS_WAIT_IN_LINE]
++mov 0xf, stor[24]
++gosub inl[:WS_WAIT_IN_LINE]
++mov 0x2e, stor[24]
+ gosub inl[:LABEL_2]
+ mov 0xf, stor[24]
+ gosub inl[:LABEL_2]
+@@ -157,7 +167,10 @@
+ call 3, 0x79, stor[24]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_11]
+ mov 0x3c, stor[24]
+# Reduce wait time to match retail
++jmp_cmp >, inl[:WS_WAIT_OFFSET], stor[24], inl[:NO_WAIT]
++sub inl[:WS_WAIT_OFFSET], stor[24]
+ wait stor[24]
++NO_WAIT:
+ mov 0x18, stor[24]
+ gosub inl[:LABEL_2]
+ LABEL_12:
+@@ -167,8 +180,11 @@
+ mov 0x2d, stor[24]
+ wait stor[24]
+ call 120, stor[0], 0x0, 0xfffff880, 0x0, 0x8
+# Set flag after rotation to cue warden movement
+-mov 0x28, stor[24]
++mov 0x8, stor[24]
+ wait stor[24]
++call 2, 0x78, 0
++mov 0x20, stor[24]
++wait stor[24]
+ call 97, 0x3
+ call 107, 0xffffff70, 0xfffffff5, 0xfffffef0, 0x1e
+ mov 0x1e, stor[24]
+@@ -264,3 +280,4 @@
+ yield
+ jmp inl[:LABEL_18]
+ data 0x49
++#include ../../../../patches/libs/widescreen.txt

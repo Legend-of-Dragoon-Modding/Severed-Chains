@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModel;
 import legend.core.gte.MV;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
@@ -16,8 +16,6 @@ public abstract class Submap {
 
   public abstract void loadEnv(final Runnable onLoaded);
   public abstract void loadAssets(final Runnable onLoaded);
-  /** Called when legacy textures (NOT OpenGL textures) need to be reloaded (e.g. after menus are closed) */
-  public abstract void restoreAssets();
 
   public abstract void loadMusicAndSounds();
   public abstract void startMusic();
@@ -29,6 +27,7 @@ public abstract class Submap {
   public abstract void prepareSobjModel(final SubmapObject210 sobj);
   public abstract void finishLoading();
 
+  public abstract void preDraw();
   public abstract void draw();
   public abstract void drawEnv(final MV[] sobjMatrices);
   public abstract void unload();
@@ -36,7 +35,8 @@ public abstract class Submap {
   public abstract void calcGoodScreenOffset(final float x, final float y, final Vector2f out);
 
   public abstract int getEncounterRate();
-  public abstract void generateEncounter();
+  public abstract void prepareEncounter(final boolean useBattleStage);
+  public abstract void prepareEncounter(final int encounterId, final boolean useBattleStage);
 
   public boolean hasEncounters() {
     return this.getEncounterRate() != 0;
@@ -45,5 +45,7 @@ public abstract class Submap {
   public abstract void storeStateBeforeBattle();
   public abstract boolean isReturningToSameMapAfterBattle();
 
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final RenderEngine.QueuedModel model) { }
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) { }
+
+  public abstract SubmapSavable canSave();
 }

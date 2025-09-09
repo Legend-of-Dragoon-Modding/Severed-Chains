@@ -1,0 +1,30 @@
+Widescreen patch
+Hellena Prison, cutscene before fighting Fruegel (I): Set flags for other widescreen file patches
+Hellena Prison, cutscene after escaping Fruegel (I): Fix broken rotation animation for Man in Hood
+--- original
++++ modified
+@@ -1208,6 +1208,7 @@
+ gosub inl[:LABEL_28]
+ call 236, 0x8, 0x5, 0x0, 0x0, 0x0, 0x0
+ call 97, 0xa
++call 2, 0x78, 0
+ gosub inl[:LABEL_13]
+ call 99, 0x1
+ mov 0x1, stor[24]
+@@ -1240,6 +1241,7 @@
+ call 97, 0x5
+ gosub inl[:LABEL_13]
+ call 97, 0x0
++call 2, 0x78, 0
+ mov stor[18], stor[24]
+ gosub inl[:LABEL_28]
+ mov 0x4, stor[24]
+@@ -1618,7 +1620,7 @@
+ wait stor[24]
+ mov 0x8, stor[24]
+ mov 0x8, stor[25]
+-mov 0x0, stor[26]
++mov 0xffffffff, stor[26]
+ gosub inl[:LABEL_50]
+ call 2, 0x8a, 0x1
+ mov 0x18, stor[24]

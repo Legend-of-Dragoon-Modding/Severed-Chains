@@ -1,0 +1,28 @@
+Retail bug: chest code uses 4 overlapping textboxes. The 4 arrow animations aren't synchronized.
+Passing a non-retail flag with the packedData to 3 of 4 active textboxes to disable arrows.
+--- original
++++ modified
+@@ -1439,9 +1439,9 @@
+ gosub inl[:LABEL_103]
+ mov 0x0, stor[22]
+ gosub inl[:LABEL_103]
+-call 198, 0x0, stor[0], 0x100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x0]]
+-call 198, 0x1, stor[0], 0x100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x1]]
+-call 198, 0x2, stor[0], 0x100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x2]]
+# Four textboxes are initialized
++call 198, 0x0, stor[0], 0x2100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x0]]
++call 198, 0x1, stor[0], 0x2100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x1]]
++call 198, 0x2, stor[0], 0x2100, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x2]]
+ call 198, 0x3, stor[0], 0x1111, 0x3, 0x1, inl[:LABEL_149 + inl[:LABEL_149 + 0x3]]
+ LABEL_89:
+ yield
+@@ -1604,10 +1604,10 @@
+ jmp inl[:LABEL_101]
+ LABEL_101:
+ while stor[20], inl[:LABEL_102]
+# Textbox for currently selected digit is reloaded when changing value
+-call 198, stor[22], stor[0], 0x100, 0x3, 0x1, inl[:LABEL_149[:LABEL_149[stor[22]]]]
++call 198, stor[22], stor[0], 0x2100, 0x3, 0x1, inl[:LABEL_149[:LABEL_149[stor[22]]]]
+ mov 0x8, stor[20]
+ LABEL_102:
+ return

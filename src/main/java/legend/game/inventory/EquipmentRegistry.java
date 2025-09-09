@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class EquipmentRegistry extends MutableRegistry<Equipment> {
   public EquipmentRegistry() {
-    super(new RegistryId("lod-core", "equipment"));
+    super(new RegistryId("lod_core", "equipment"));
   }
 }

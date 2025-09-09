@@ -1,7 +1,7 @@
 package legend.game.saves;
 
 import legend.game.inventory.screens.controls.Checkbox;
-import legend.game.inventory.screens.controls.Label;
+import legend.game.inventory.screens.HorizontalAlign;
 
 /** Convenience class for simple enum-backed configs */
 public class BoolConfigEntry extends ConfigEntry<Boolean> {
@@ -16,7 +16,7 @@ public class BoolConfigEntry extends ConfigEntry<Boolean> {
 
     this.setEditControl((current, gameState) -> {
       final Checkbox checkbox = new Checkbox();
-      checkbox.setHorizontalAlign(Label.HorizontalAlign.RIGHT);
+      checkbox.setHorizontalAlign(HorizontalAlign.RIGHT);
       checkbox.setChecked(current);
       checkbox.onToggled(val -> gameState.setConfig(this, val));
       return checkbox;

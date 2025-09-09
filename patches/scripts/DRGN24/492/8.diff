@@ -1,0 +1,14 @@
+Zenebatos
+Miranda
+Do not hide body parts during cutscene
+--- original
++++ modified
+@@ -360,8 +360,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_27]
+-call 288, 0x6
+-call 288, 0xc
+ mov 0x19, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_37]

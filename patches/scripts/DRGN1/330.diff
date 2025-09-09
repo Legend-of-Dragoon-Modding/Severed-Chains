@@ -1,0 +1,25 @@
+--- original
++++ modified
+@@ -2315,11 +2315,9 @@
+ return
+ LABEL_145:
+ mov 0x0, stor[8]
+-gosub inl[:LABEL_3]
+ jmp_cmp ==, stor[8], 0xffffffff, inl[:LABEL_141]
+ or 0x8, var[45][31]
+-mov stor[8], stor[9]
+-mov var[34][0], stor[9]
++mov 0x6, stor[9]
+ jmp_cmp &, 0x40, stor[stor[stor[0], 9], 7], inl[:LABEL_146]
+ call 33, 0x0, 0xed800, 0xfffed400, 0xfffc7c00, 0x0
+ call 34, 0x0, 0x3e800, 0xfffc1800, 0x0, 0x0
+@@ -2346,7 +2344,8 @@
+ call 322, stor[0], 0x8
+ LABEL_147:
+ call 371, stor[0], stor[8], 0x0
+-jmp_cmp !=, 0xf0, var[128 + stor[8]][2], inl[:LABEL_148]
++jmp_cmp !=, 0xf0, var[45][230], inl[:LABEL_148]
++mov 0x0, var[45][230]
+ mov 0x0, var[45][11]
+ or 0x1, var[45][31]
+ or 0x2, var[45][31]

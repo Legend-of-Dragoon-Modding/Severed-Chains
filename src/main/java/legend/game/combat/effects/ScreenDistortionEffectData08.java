@@ -1,11 +1,13 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
+import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -59,7 +61,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     final float multiplierHeight = (int)(manager.params_10.scale_16.y * 0x1000) >> 11;
     final float rowLimit = (int)(manager.params_10.scale_16.z * 0x1000) * 15 >> 9;
 
-    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final boolean widescreen = RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
     final float fullWidth;
     if(widescreen) {
       fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
@@ -97,7 +99,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
           final int x = (int)(MathHelper.sin(angle2) * multiplierX);
           final int y = (int)(row * whichHalf + rowOffset);
 
-          addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f);
+          this.addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
 
           angle2 += whichHalf * 0.05f;
         }
@@ -105,7 +107,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
         //LAB_80109678
         angle1 += height * 0.05f;
         v += whichHalf;
-        rowOffset += height * whichHalf;
+        rowOffset += (int)height * whichHalf;
       }
     }
 
@@ -114,7 +116,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
 
     final Obj obj = builder.build();
     obj.delete();
-    RENDERER.queueOrthoModel(obj, this.transforms)
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame());
   }
 
@@ -125,19 +127,14 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
       .rgb(r, g, b)
       .addVertex(1.0f, y, 0.0f)
       .uv(x / 320.0f + 1.0f, v)
-      .rgb(r, g, b)
       .addVertex(0.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b)
       .addVertex(1.0f, y, 0.0f)
       .uv(x / 320.0f + 1.0f, v)
-      .rgb(r, g, b)
       .addVertex(0.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b)
       .addVertex(1.0f, y + 1.0f, 0.0f)
-      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f)
-      .rgb(r, g, b);
+      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f);
   }
 
   @Method(0x801097e0L)
@@ -145,7 +142,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     // Make sure effect fills the whole screen
-    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final boolean widescreen = RENDERER.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
     final float fullWidth;
     if(widescreen) {
       fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
@@ -157,7 +154,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     this.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
     this.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
-    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.transforms)
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.transforms, QueuedModelStandard.class)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3))
       .colour(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f)
       .texture(RENDERER.getLastFrame());

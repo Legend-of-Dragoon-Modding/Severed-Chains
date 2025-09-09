@@ -1,0 +1,58 @@
+Widescreen patch
+Twin Castle, Lisa Balcony cutscenes
+Rose
+Old: Model hidden based on camera panning and global flags
+New: No more hiding, added animation
+--- original
++++ modified
+## FIRST SCENE ##
+@@ -153,6 +153,17 @@
+ call 99, 0x0
+ call 97, 0x0
+ LABEL_23:
+# Disable animation, wait for Haschel/Meru embarrassment flag
++call 99, 1
++mov 0x38, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++mov 20, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
+# Animation: shake head
++mov 7, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
++rewind
++#include ../../../../patches/libs/widescreen.txt
+ yield
+ call 257, stor[24], stor[25]
+ jmp_cmp <, 0xfffffff1, stor[24], inl[:LABEL_23]
+## SECOND SCENE ##
+@@ -165,20 +176,21 @@
+ call 99, 0x0
+ call 97, 0xb
+ call 99, 0x1
+# Instead of hiding model when flag 0x8 is set, start animation when flag 0x62 is set
+-mov 0x8, stor[24]
++mov 0x62, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+-call 106, 0x1
+# Animation: stand up from leaning against wall
++mov 11, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
+ mov 0xd, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+# Delay enabled shadow
+-call 311, stor[0]
+-call 106, 0x0
+ mov 0x74, stor[24]
+ mov 0xa0, stor[25]
+ mov 0x5, stor[26]
+ mov 0x0, stor[27]
+ gosub inl[:LABEL_10]
++call 311, stor[0]
+ mov 0x74, stor[24]
+ mov 0xfffffff6, stor[25]
+ mov 0xa0, stor[26]

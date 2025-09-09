@@ -37,7 +37,7 @@ public class MonsterStatsEvent extends Event {
     this.hp = monsterStats.hp_00;
     this.maxHp = monsterStats.hp_00;
     this.specialEffectFlag = monsterStats.specialEffectFlag_0d;
-    this.elementFlag = Element.fromFlag(monsterStats.elementFlag_0f);
+    this.elementFlag = Element.fromFlag(monsterStats.elementFlag_0f).get();
     this.elementalImmunityFlag.unpack(monsterStats.elementalImmunityFlag_10);
     this.statusResistFlag = monsterStats.statusResistFlag_11;
     this.speed = monsterStats.speed_08;

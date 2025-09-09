@@ -16,18 +16,23 @@ public final class MainWindows {
   private MainWindows() { }
 
   public static void main(final String[] args) {
-    if(System.getProperty("os.name").startsWith("Windows")) {
-      // Set output mode to handle virtual terminal sequences
-      final Kernel32.DWORD STD_OUTPUT_HANDLE = new Kernel32.DWORD(-11);
-      final Kernel32.HANDLE hOut = Kernel32.INSTANCE.GetStdHandle(STD_OUTPUT_HANDLE);
+    try {
+      if(System.getProperty("os.name").startsWith("Windows")) {
+        // Set output mode to handle virtual terminal sequences
+        final Kernel32.DWORD STD_OUTPUT_HANDLE = new Kernel32.DWORD(-11);
+        final Kernel32.HANDLE hOut = Kernel32.INSTANCE.GetStdHandle(STD_OUTPUT_HANDLE);
 
-      final Kernel32.DWORDByReference p_dwMode = new Kernel32.DWORDByReference(new Kernel32.DWORD(0));
-      Kernel32.INSTANCE.GetConsoleMode(hOut, p_dwMode);
+        final Kernel32.DWORDByReference p_dwMode = new Kernel32.DWORDByReference(new Kernel32.DWORD(0));
+        Kernel32.INSTANCE.GetConsoleMode(hOut, p_dwMode);
 
-      final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
-      final Kernel32.DWORD dwMode = p_dwMode.getValue();
-      dwMode.setValue(dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-      Kernel32.INSTANCE.SetConsoleMode(hOut, dwMode);
+        final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+        final Kernel32.DWORD dwMode = p_dwMode.getValue();
+        dwMode.setValue(dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        Kernel32.INSTANCE.SetConsoleMode(hOut, dwMode);
+      }
+    } catch(final Throwable t) {
+      System.err.println("Failed to enable colours in Windows terminal");
+      t.printStackTrace();
     }
 
     Main.main(args);

@@ -19,6 +19,8 @@ public final class SoundBankEntry {
     this.index = 0;
     this.repeatIndex = 0;
     this.end = false;
+    this.old = 0;
+    this.older = 0;
   }
   public void loadSamples(final short[] samples) {
     switch(this.data[this.index + 1]) {

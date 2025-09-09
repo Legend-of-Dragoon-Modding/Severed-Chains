@@ -3,6 +3,9 @@ package legend.core;
 import legend.game.EngineStateType;
 import legend.game.EngineStateTypeRegistry;
 import legend.game.EngineStateTypeRegistryEvent;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputActionRegistry;
+import legend.core.platform.input.InputActionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
@@ -15,12 +18,17 @@ import legend.game.characters.StatTypeRegistryEvent;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistry;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.deff.DeffPackage;
+import legend.game.combat.deff.DeffRegistry;
+import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistry;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistry;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.ShopRegistry;
+import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.Spell;
 import legend.game.inventory.SpellRegistry;
 import legend.game.inventory.SpellRegistryEvent;
@@ -33,23 +41,27 @@ import legend.game.saves.campaigns.CampaignTypeRegistryEvent;
 import legend.game.saves.types.SaveType;
 import legend.game.saves.types.SaveTypeRegistry;
 import legend.game.saves.types.SaveTypeRegistryEvent;
+import legend.game.types.Shop;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.registries.Registry;
 
 import java.util.function.Consumer;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
+  public final Registry<InputAction> inputActions = this.addRegistry(new InputActionRegistry(), InputActionRegistryEvent::new);
   public final Registry<StatType<?>> statTypes = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
   public final Registry<StatModType<?, ?, ?>> statModTypes = this.addRegistry(new StatModTypeRegistry(), StatModTypeRegistryEvent::new);
   public final Registry<Element> elements = this.addRegistry(new ElementRegistry(), ElementRegistryEvent::new);
   public final Registry<BattleEntityType> battleEntityTypes = this.addRegistry(new BattleEntityTypeRegistry(), BattleEntityTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
+  public final Registry<Shop> shop = this.addRegistry(new ShopRegistry(), ShopRegistryEvent::new);
   public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<SaveType<?>> saveTypes = this.addRegistry(new SaveTypeRegistry(), SaveTypeRegistryEvent::new);
   public final Registry<EngineStateType<?>> engineStateTypes = this.addRegistry(new EngineStateTypeRegistry(), EngineStateTypeRegistryEvent::new);
   public final Registry<CampaignType> campaignTypes = this.addRegistry(new CampaignTypeRegistry(), CampaignTypeRegistryEvent::new);
+  public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

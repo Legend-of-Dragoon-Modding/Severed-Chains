@@ -1,0 +1,78 @@
+READ THIS FIRST: https://docs.google.com/document/d/10mZFyVBLpgNp58QH7MDpHnQAtZ1wvETXWLtMih-yS7g/
+--- original
++++ modified
+@@ -18,6 +18,7 @@
+ gosub inl[:LABEL_15]
+ gosub inl[:LABEL_2]
+ gosub inl[:LABEL_16]
+# Original code loaded assets but did not wait, resulting in race conditions
++gosub inl[:LABEL_2]
+ gosub inl[:LABEL_34]
+ gosub inl[:LABEL_2]
+ gosub inl[:LABEL_36]
+@@ -515,7 +516,7 @@
+ incr stor[18]
+ call 354, 0x0, stor[18], stor[9]
+ call 355, stor[9]
+-call 364, stor[8], stor[9]
++gosub inl[:LOAD_SLOTTED_TEXTURES]
+ call 356, stor[9]
+ call 354, 0x0, stor[16], stor[9]
+ call 355, stor[9]
+@@ -854,6 +855,10 @@
+ data 0x8e
+ data 0x8a
+ data 0x2
++data 0xc
++data 0x79
++data 0x70
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x72
+@@ -932,24 +937,24 @@
+ LABEL_15:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+-mov 0x7, stor[stor[stor[0], 23], 24]
++mov 0x8, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_16:
+ call 600, stor[23]
+-mov 0x7, stor[stor[stor[0], 23], 14]
++mov 0x8, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_17:
+ call 600, stor[23]
+-mov 0xa, stor[stor[stor[0], 23], 14]
++mov 0xb, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_18:
+ call 600, stor[23]
+-mov 0xc, stor[stor[stor[0], 23], 14]
++mov 0xd, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+@@ -1750,3 +1755,16 @@
+ return
+ ENTRYPOINT_1:
+ rewind
++LOAD_SLOTTED_TEXTURES:
++jmp_cmp >=, inl[:CHAR_INDEX], 0x3, inl[:LOAD_ENEMY_TEXTURE]
++jmp_cmp ==, stor[13], 0xc, inl[:LOAD_PLAYER_TEXTURE]
++LOAD_ENEMY_TEXTURE:
++call 364, stor[8], stor[9]
++return
++LOAD_PLAYER_TEXTURE:
++incr inl[:CHAR_INDEX]
++call 1020, stor[8], inl[:CHAR_INDEX]
++call 364, stor[8], stor[9]
++return
++CHAR_INDEX:
++data 0x0

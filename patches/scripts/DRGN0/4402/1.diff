@@ -1,0 +1,29 @@
+--- original
++++ modified
+@@ -207,9 +207,8 @@
+ call 371, stor[28], stor[10], 0x0
+ mov stor[8], var[128 + stor[10]][5]
+ mov 0x3, var[128 + stor[10]][0]
+-call 168, stor[30], stor[8], ITEM_ID
++call 168, stor[30], reg[0], ITEM_ID
+ mov stor[8], var[45][119]
+-call 496, stor[30]
+ call 495, stor[30], stor[28], stor[8], stor[8], stor[10]
+ mov stor[10], var[45][119]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_1]
+@@ -1249,6 +1248,7 @@
+ gosub inl[:LABEL_9]
+ mov 0x14, stor[23]
+ wait stor[23]
++mov id[lod:enemy_healing_potion], reg[0]
+ mov 0x2f, stor[8]
+ gosub inl[:LABEL_0]
+ gosub inl[:LABEL_2]
+@@ -1267,6 +1267,7 @@
+ gosub inl[:LABEL_31]
+ mov 0x14, stor[23]
+ wait stor[23]
++mov id[lod:healing_fog], reg[0]
+ mov 0x27, stor[8]
+ gosub inl[:LABEL_0]
+ gosub inl[:LABEL_2]

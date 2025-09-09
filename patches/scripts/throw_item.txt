@@ -1,0 +1,339 @@
+entrypoint :DO_NOTHING
+entrypoint :USE_ATTACK_ITEM
+entrypoint :USE_HEALING_POTION
+entrypoint :USE_DEPETRIFIER
+entrypoint :USE_BODY_PURIFIER
+entrypoint :USE_MIND_PURIFIER
+entrypoint :USE_POWER_SPEED_UP
+entrypoint :USE_MAGIC_SHIELD
+entrypoint :USE_MATERIAL_SHIELD
+entrypoint :USE_SMOKE_BALL
+entrypoint :USE_TOTAL_VANISHING
+;TODO temporary; pcs forks into entrypoint 11 if char using attack item has status affliction
+entrypoint :ENTRYPOINT_11_RENDER_TICK_STATUS
+entrypoint :USE_CAUSE_STATUS
+
+
+
+DO_NOTHING:
+rewind
+
+
+
+USE_ATTACK_ITEM:
+gosub inl[:LABEL_124] ; addr
+
+; pull element colour out of element registry
+call Battle::scriptGetBentStat, stor[0], ITEM_ELEMENT, reg[1] ; r1 = item element
+call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:elements], reg[1], 0, stor[8] ; s8 = packed element rgb
+
+gosub inl[:THROW_ATTACK_ITEM] ; addr
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+gosub inl[:LABEL_436] ; addr
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+USE_HEALING_POTION:
+gosub inl[:ALLOCATE_THROW_POTION_EFFECT] ; addr
+mov 0x8, stor[23] ; source, dest
+wait stor[23] ; frames
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+
+
+USE_PURIFIER_STATUS:
+data 0
+
+; @param int s8 status effect cure bitset
+; @param int s28 bent index
+; @return int s9 bitset of status effects that were cleared
+USE_PURIFIER:
+mov stor[8], inl[:USE_PURIFIER_STATUS] ; back up statuses that are cured
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
+add 0x81, stor[9] ; amount, operand
+mov var[45][stor[9]], stor[9] ; s9 = status
+and 0xf, stor[9] ; mask status effect index
+mov inl[:STATUS_AFFLICTION_FLAGS[stor[9]]], stor[9] ; s9 = status flag for status effect index
+and inl[:USE_PURIFIER_STATUS], stor[9] ; mask status effect that this item cures
+jmp_cmp ==, stor[9], 0x0, inl[:USE_PURIFIER_STATUS_RETURN]
+gosub inl[:CLEAR_BENT_STATUS] ; addr
+USE_PURIFIER_STATUS_RETURN:
+return;
+
+
+; @param int s28 bent index
+CLEAR_COMMAND_BLOCK:
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; bentIndex, charOrBentSlot, mode
+mov 0x0, var[128 + stor[9]][6] ; source, dest
+return
+
+
+
+USE_DEPETRIFIER:
+gosub inl[:USE_PURIFIER]
+
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+
+
+USE_BODY_PURIFIER:
+gosub inl[:USE_PURIFIER]
+jmp_cmp ==, 0x0, stor[9], inl[:CHECK_COMMAND_BLOCKING] ; nothing was cured
+
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SET_BENT_ANIMATION] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+CHECK_COMMAND_BLOCKING: ; - this handles polter and melbu's command block, arm-blocking is handled via USE_PURIFIER
+call Battle::scriptGetBentSlot, stor[28], stor[9], 0x0 ; s9 = my char id
+jmp_cmp ==, 0x0, var[128 + stor[9]][6], inl[:LABEL_118] ; if I'm not command blocked
+gosub inl[:LABEL_121] ; addr
+
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SET_BENT_ANIMATION] ; addr
+gosub inl[:CLEAR_COMMAND_BLOCK]
+
+LABEL_118:
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+USE_MIND_PURIFIER:
+gosub inl[:USE_PURIFIER]
+
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:SET_BENT_ANIMATION] ; addr
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+; SUBROUTINE
+LABEL_121:
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
+mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
+call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:LABEL_592] ; scriptIndex, address
+return
+
+
+
+USE_POWER_SPEED_UP:
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+gosub inl[:SET_BENT_ANIMATION] ; addr
+return
+
+
+
+USE_MAGIC_SHIELD:
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+or 0xc, var[128 + stor[8]][7] ; right, left
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+gosub inl[:ALLOCATE_MAGICAL_SHIELD_EFFECT] ; addr
+mov 0x18, stor[23] ; source, dest
+wait stor[23] ; frames
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+
+
+USE_MATERIAL_SHIELD:
+gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
+call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+or 0x3, var[128 + stor[8]][7] ; right, left
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+gosub inl[:ALLOCATE_MATERIAL_SHIELD_EFFECT] ; addr
+mov 0x18, stor[23] ; source, dest
+wait stor[23] ; frames
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+
+
+USE_SMOKE_BALL:
+mov 0xcd, stor[8] ; source, dest
+gosub inl[:LOAD_SOUNDS] ; addr
+call Scus94491BpeSegment::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+gosub inl[:ALLOCATE_SMOKE_BALL_PARTICLES] ; addr
+call Scus94491BpeSegment::scriptUnloadSoundFile, 0x6 ; soundType
+mov 0x20, stor[23] ; source, dest
+wait stor[23] ; frames
+jmp_cmp ==, 0x0, var[46][2], inl[:SMOKE_BALL_NO_ESCAPE_CHANCE] ; operand, left, right, addr
+or 0x1, var[45][77] ; right, left
+return
+SMOKE_BALL_NO_ESCAPE_CHANCE:
+or 0x1, var[45][77] ; right, left
+or 0x8, var[45][77] ; right, left
+return
+
+; SUBROUTINE
+ALLOCATE_SMOKE_BALL_PARTICLES:
+call SEffe::scriptAllocateParticleEffect, stor[18], 0xffffffff, 0xfff03, 0x8, 0x7d0, 0x3, 0x100, 0x4204000, 0x0 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+gosub inl[:SET_SMOKE_CLOUD_PARAMS] ; addr
+yield
+call SEffe::scriptAllocateParticleEffect, stor[18], 0xffffffff, 0xfff03, 0x8, 0x320, 0x3, 0x100, 0x4204000, 0x0 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+gosub inl[:SET_SMOKE_CLOUD_PARAMS] ; addr
+return
+
+; SUBROUTINE
+SET_SMOKE_CLOUD_PARAMS:
+gosub inl[:GET_AVERAGE_PLAYER_POSITION] ; returns s10, s11, s12
+call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0xa00, 0xa00, 0xa00 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, 0x4f, 0x45, 0x38 ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetGenericEffectValue, stor[18], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x20 ; effectIndex, ticks
+return
+
+; SUBROUTINE
+; @return int s10 average X
+; @return int s11 average Y
+; @return int s12 average Z
+GET_AVERAGE_PLAYER_POSITION:
+mov var[35], stor[19] ; s19 = player count
+mov 0x0, stor[8] ; source, dest
+mov 0x0, stor[10] ; source, dest
+mov 0x0, stor[11] ; source, dest
+mov 0x0, stor[12] ; source, dest
+GET_AVERAGE_PLAYER_POSITION_LOOP:
+mov var[34][stor[8]], stor[9] ; source, dest
+call Battle::scriptGetBentPos, stor[9], stor[20], stor[21], stor[22] ; bentIndex, x, y, z
+add stor[20], stor[10] ; amount, operand
+add stor[21], stor[11] ; amount, operand
+add stor[22], stor[12] ; amount, operand
+incr stor[8] ; operand
+jmp_cmp >, stor[19], stor[8], inl[:GET_AVERAGE_PLAYER_POSITION_LOOP] ; operand, left, right, addr
+div stor[19], stor[10] ; amount, operand
+div stor[19], stor[11] ; amount, operand
+div stor[19], stor[12] ; amount, operand
+return
+
+
+
+USE_TOTAL_VANISHING:
+gosub inl[:THROW_ATTACK_ITEM] ; addr
+mov stor[0], stor[30] ; source, dest
+gosub inl[:GET_BENT_SPECIAL_EFFECT_FLAGS] ; addr
+jmp_cmp !=, 0x0, stor[8], inl[:TOTAL_VANISHING_HAS_RESISTANCE] ; has resistance
+call Battle::scriptSetBentRawStat, stor[28], 0x0, CURRENT_HP ; bentIndex, value, statIndex
+fork_reenter stor[28], 0x4, 0x0 ; index, entrypoint, p2
+gosub inl[:LABEL_144] ; addr
+gosub inl[:LABEL_26] ; addr
+jmp inl[:TOTAL_VANISHING_FINISH] ; addr
+
+TOTAL_VANISHING_HAS_RESISTANCE:
+call Battle::scriptRenderDamage, stor[28], 0xffffffff ; bentIndex, damage
+
+TOTAL_VANISHING_FINISH:
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+return
+
+
+
+USE_CAUSE_STATUS_S8_BACKUP:
+data 0
+
+; @param int s8 colour index (weird negative numbers)
+USE_CAUSE_STATUS:
+mov stor[8], inl[:USE_CAUSE_STATUS_S8_BACKUP]
+gosub inl[:LABEL_124] ; addr
+mov inl[:USE_CAUSE_STATUS_S8_BACKUP], stor[8]
+gosub inl[:THROW_ATTACK_ITEM] ; addr
+call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
+call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
+gosub inl[:SWITCH_TO_USE_ITEM_CAMERA] ; addr
+gosub inl[:LABEL_436] ; addr
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+; SUBROUTINE
+LABEL_124:
+gosub inl[:LABEL_471] ; addr
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+; SUBROUTINE
+SWITCH_TO_USE_ITEM_CAMERA:
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+mov 0x21, var[44] ; source, dest
+return
+
+
+
+; SUBROUTINE
+; @param int s8 rgb
+THROW_ATTACK_ITEM:
+gosub inl[:SET_ATTACK_ITEM_TARGETING_INFO] ; addr
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x7 ; bentIndex, animIndex
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+
+mov 0x10, stor[23] ; source, dest
+wait stor[23] ; frames
+
+gosub inl[:ALLOCATE_USE_ATTACK_ITEM_EFFECT] ; addr
+mov 0x3, stor[8] ; source, dest
+gosub_table stor[8], inl[:LABEL_90] ; index, table
+gosub inl[:SET_IDLE_AND_RESET_ROTATION] ; addr
+return
+
+; SUBROUTINE
+SET_ATTACK_ITEM_TARGETING_INFO:
+mov stor[0], var[80] ; source, dest
+mov stor[28], var[81] ; source, dest
+return
+
+SET_IDLE_AND_RESET_ROTATION:
+gosub inl[:WAIT_FOR_ANIMATION_TO_FINISH] ; addr
+gosub inl[:SET_IDLE_ANIMATION] ; addr
+call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
+mov 0xa, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+; SUBROUTINE
+THROW_SHIELD_BUFF_PURIFIER:
+mov 0xffffff, stor[8] ; effect colour
+gosub inl[:ALLOCATE_THROW_POTION_EFFECT] ; addr
+mov 0x8, stor[23] ; source, dest
+wait stor[23] ; frames
+mov 0xd7fff5, stor[8] ; source, dest
+gosub inl[:ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT] ; addr
+mov 0x10, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+
+
+#include throw_item_effects.txt
+#include player_combat_script.txt

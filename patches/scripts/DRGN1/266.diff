@@ -1,0 +1,12 @@
+--- original
++++ modified
+@@ -923,7 +923,9 @@
+ mov var[34][0], stor[28]
+ call 138, stor[28], 0x1
+ mov var[34][1], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_P2]
+ call 138, stor[28], 0x1
++SKIP_P2:
+ mov 0xe3, var[44]
+ mov var[45][247], stor[8]
+ jmp_cmp !=, 0x0, stor[8], inl[:LABEL_75]

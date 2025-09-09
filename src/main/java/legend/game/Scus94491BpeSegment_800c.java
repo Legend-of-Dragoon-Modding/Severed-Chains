@@ -16,6 +16,7 @@ import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.sound.WaveformList;
 import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -34,6 +35,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Matrix3f lightColourMatrix_800c3508 = new Matrix3f();
 
   public static final MV worldToScreenMatrix_800c3548 = new MV();
+  public static final Matrix4f inverseWorldToScreenMatrix = new Matrix4f();
   /** Includes aspect scale */
   public static final MV identityAspectMatrix_800c3588 = new MV();
 

@@ -8,25 +8,28 @@ plugins {
   id 'maven-publish'
 }
 
-project.ext.hash = System.getenv("GITHUB_SHA");
+project.ext.hash = System.getenv("GITHUB_SHA")
 
 if(project.ext.hash == null) {
   project.ext.hash = 'snapshot'
 }
 
-group 'legend'
-version project.ext.hash
+group = 'legend'
+version = project.ext.hash
 
-sourceCompatibility = targetCompatibility = 1.21
+java {
+  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+}
+
 compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.3.3"
-project.ext.jomlVersion = "1.10.6"
+project.ext.lwjglVersion = "3.4.0-SNAPSHOT"
+project.ext.jomlVersion = "1.10.8"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
 final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
 final def isArm = architecture.startsWith("arm") || architecture.startsWith("aarch64")
-final def isSteamDeck = hasProperty("steamdeck") && "true" == steamdeck;
+final def isSteamDeck = hasProperty("steamdeck") && "true" == steamdeck
 
 switch(operatingSystem) {
   case OperatingSystem.LINUX:
@@ -51,54 +54,50 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 repositories {
   mavenCentral()
   mavenLocal()
+  maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
+  maven { url "https://jitpack.io" }
 }
 
 dependencies {
-  api group: 'org.legendofdragoon', name: 'mod-loader', version: '3.0.0'
-  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.3.0'
+  api group: 'org.legendofdragoon', name: 'mod-loader', version: '4.2.0'
+  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.5.6'
 
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
-  implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.3.2'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.3'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.3'
+  implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.4.1'
 
   api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
   api "org.lwjgl:lwjgl"
-  api "org.lwjgl:lwjgl-glfw"
-  api "org.lwjgl:lwjgl-nuklear"
+  api "org.lwjgl:lwjgl-sdl"
   api "org.lwjgl:lwjgl-opengl"
   api "org.lwjgl:lwjgl-openal"
   api "org.lwjgl:lwjgl-opus"
   api "org.lwjgl:lwjgl-stb"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-  runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-  runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-sdl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
-  api group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.30.0.0'
+  implementation group: 'org.asynchttpclient', name: 'async-http-client', version: '3.0.1' // update check
+  implementation group: 'org.json', name: 'json', version: '20250107'
 
   implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
-  implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.12'
-  implementation group: 'commons-io', name: 'commons-io', version: '2.15.1'
+  implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.15'
+  implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'
 
-  api group: 'com.github.slugify', name: 'slugify', version: '3.0.4'
+  api group: 'com.github.slugify', name: 'slugify', version: '3.0.7'
 
-  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.12'
-
-  implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
-  // To quiet no logger found for reflections
-  implementation group: 'org.slf4j', name: 'slf4j-nop', version: '2.0.7'
+  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.15'
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.13.0'
+  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.16.0'
 
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+  implementation group: 'com.github.JnCrMx', name: 'discord-game-sdk4j', version: 'v1.0.0'
 }
 
 javafx {
@@ -107,7 +106,7 @@ javafx {
 }
 
 if(hasProperty("os")) {
-  javafx.platform = os + (!operatingSystem.windows && isArm ? "-aarch64" : "");
+  javafx.platform = os + (!operatingSystem.windows && isArm ? "-aarch64" : "")
 }
 
 jar {
@@ -118,22 +117,22 @@ jar {
   }
 }
 
-task sourceJar(type: Jar) {
+tasks.register('sourceJar', Jar) {
   from sourceSets.main.allJava
   archiveClassifier = "sources"
 }
 
-task clearOutput(type: Delete) {
+tasks.register('clearOutput', Delete) {
   delete layout.buildDirectory.dir("libs/libs")
   delete layout.buildDirectory.file("libs/**")
 }
 
-task copyLibs(type: Copy) {
+tasks.register('copyLibs', Copy) {
   from configurations.compileClasspath + configurations.runtimeClasspath
   into layout.buildDirectory.dir("libs/libs")
 }
 
-task copySupportFiles(type: Copy) {
+tasks.register('copySupportFiles', Copy) {
   into layout.buildDirectory.dir("libs")
 
   into("gfx") {
@@ -144,11 +143,20 @@ task copySupportFiles(type: Copy) {
     from 'patches'
   }
 
+  into("lang") {
+    from 'lang'
+  }
+
   into(".") {
     switch(operatingSystem) {
       case OperatingSystem.LINUX:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath
+        final var libs = "libs/" + archives*.name.join(":libs/")
+
         from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
           rename("-\\w+", "")
         }
         from('download-java') {
@@ -157,8 +165,13 @@ task copySupportFiles(type: Copy) {
         break
 
       case OperatingSystem.MAC_OS:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath
+        final var libs = "libs/" + archives*.name.join(":libs/")
+
         from('launch-macos') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
           rename("-macos", "")
         }
         from('download-java') {
@@ -167,8 +180,13 @@ task copySupportFiles(type: Copy) {
         break
 
       case OperatingSystem.WINDOWS:
+        final var archives = configurations.compileClasspath + configurations.runtimeClasspath
+        final var libs = "libs/" + archives*.name.join(";libs/")
+
         from('launch.bat') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          filter(ReplaceTokens, tokens: [false: "true"])
+          filter(ReplaceTokens, tokens: [libs: libs])
         }
         break
     }

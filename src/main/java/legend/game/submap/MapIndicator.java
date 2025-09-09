@@ -1,13 +1,16 @@
 package legend.game.submap;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+
 import static legend.core.GameEngine.RENDERER;
 
 public class MapIndicator {
-  private final MeshObj[] indicators = new MeshObj[3];
+  private final Obj[] indicators = new MeshObj[3];
   private final MV transforms = new MV();
 
   private enum IndicatorType {
@@ -41,7 +44,7 @@ public class MapIndicator {
       .clut(cX, cY)
       .uv(0, 0)
       .size(8, 16)
-      .uvSize(8, 16)
+      .uvSize(8, 15)
       .build());
   }
 
@@ -63,7 +66,7 @@ public class MapIndicator {
       this.createPlayerIndicator(cX, cY);
     }
 
-    RENDERER.queueOrthoModel(this.indicators[IndicatorType.PLAYER.indicator], this.transforms)
+    RENDERER.queueOrthoModel(this.indicators[IndicatorType.PLAYER.indicator], this.transforms, QueuedModelStandard.class)
       .colour(r, g, b)
       .clutOverride(cX, cY)
       .uvOffset(uX, uY);
@@ -76,7 +79,7 @@ public class MapIndicator {
       this.createDoorIndicator(cX, cY);
     }
 
-    RENDERER.queueOrthoModel(this.indicators[IndicatorType.DOOR.indicator], this.transforms)
+    RENDERER.queueOrthoModel(this.indicators[IndicatorType.DOOR.indicator], this.transforms, QueuedModelStandard.class)
       .colour(r, g, b)
       .clutOverride(cX, cY)
       .uvOffset(uX, uY);
@@ -89,7 +92,7 @@ public class MapIndicator {
       this.createAlertIndicator();
     }
 
-    RENDERER.queueOrthoModel(this.indicators[IndicatorType.ALERT.indicator], this.transforms)
+    RENDERER.queueOrthoModel(this.indicators[IndicatorType.ALERT.indicator], this.transforms, QueuedModelStandard.class)
       .uvOffset(uX, uY);
   }
 

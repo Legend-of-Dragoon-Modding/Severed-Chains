@@ -1,0 +1,131 @@
+--- original
++++ modified
+@@ -95,6 +95,10 @@
+ data 0x136
+ data 0x127
+ data 0x2
++data 0xc
++data 0x10a
++data 0x108
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x10f
+@@ -297,12 +301,12 @@
+ LABEL_1:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+-mov 0x6, stor[stor[stor[0], 23], 24]
++mov 0x7, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_2:
+ call 600, stor[23]
+-mov 0x6, stor[stor[stor[0], 23], 14]
++mov 0x7, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+@@ -312,37 +316,37 @@
+ return
+ LABEL_4:
+ call 600, stor[23]
+-mov 0x9, stor[stor[stor[0], 23], 14]
++mov 0xa, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_5:
+ call 600, stor[23]
+-mov 0xb, stor[stor[stor[0], 23], 14]
++mov 0xc, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_6:
+ call 600, stor[23]
+-mov 0xc, stor[stor[stor[0], 23], 14]
++mov 0xd, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_7:
+ call 600, stor[23]
+-mov 0xd, stor[stor[stor[0], 23], 14]
++mov 0xe, stor[stor[stor[0], 23], 14]
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_8:
+ call 600, stor[23]
+-mov 0xe, stor[stor[stor[0], 23], 14]
++mov 0xf, stor[stor[stor[0], 23], 14]
+ mov 0x6, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_9:
+ call 600, stor[23]
+-mov 0x14, stor[stor[stor[0], 23], 14]
++mov 0x15, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+@@ -352,37 +356,37 @@
+ return
+ LABEL_12:
+ call 600, stor[23]
+-mov 0x16, stor[stor[stor[0], 23], 14]
++mov 0x17, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_13:
+ call 600, stor[23]
+-mov 0x1b, stor[stor[stor[0], 23], 14]
++mov 0x1c, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_14:
+ call 600, stor[23]
+-mov 0x1e, stor[stor[stor[0], 23], 14]
++mov 0x1f, stor[stor[stor[0], 23], 14]
+ mov 0xa, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_15:
+ call 600, stor[23]
+-mov 0x28, stor[stor[stor[0], 23], 14]
++mov 0x29, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_16:
+ call 600, stor[23]
+-mov 0x2a, stor[stor[stor[0], 23], 14]
++mov 0x2b, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+ LABEL_17:
+ call 600, stor[23]
+-mov 0x2e, stor[stor[stor[0], 23], 14]
++mov 0x2f, stor[stor[stor[0], 23], 14]
+ mov 0x4, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_183]
+ return
+@@ -393,12 +397,14 @@
+ yield
+ mov stor[23], var[45][11]
+ call 138, stor[23], 0x0
++jmp inl[:SKIP]
+ mov var[34][0], stor[27]
+ call 370, stor[27], stor[8]
+ mov stor[8], var[45][2]
+ yield
+ mov stor[27], var[45][12]
+ call 138, stor[27], 0x0
++SKIP:
+ mov var[36][1], stor[23]
+ call 138, stor[23], 0x0
+ call 370, stor[23], stor[8]

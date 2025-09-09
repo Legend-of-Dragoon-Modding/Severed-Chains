@@ -47,8 +47,10 @@ public class CollisionGeometry {
 
   private final int[] collisionPrimitiveIndices_800cbe48 = new int[8];
 
-  public float dartRotationAfterCollision_800d1a84;
-  public boolean dartRotationWasUpdated_800d1a8c;
+  public float playerRotationAfterCollision_800d1a84;
+  /** Converted to an int so we can count how many frames it should be active for 60 FPS */
+  public int playerRotationWasUpdated_800d1a8c;
+  public boolean playerRunning;
 
   private boolean collisionLoaded_800f7f14;
 
@@ -114,18 +116,28 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e88a0L)
-  public int handleCollisionAndMovement(final boolean isNpc, final Vector3f position, final Vector3f movement) {
+  public int checkCollision(final boolean isNpc, final GsCOORDINATE2 coords, final Vector3f movement, final boolean updatePlayerRotationInterpolation) {
+    final Vector3f position = coords.coord.transfer;
+
     if(isNpc) {
-      return this.handleMovementAndCollision(position.x, position.y, position.z, movement);
+      return this.handleCollision(position.x, position.y, position.z, movement);
     }
 
     //LAB_800e88d8
     if(!this.playerCollisionLatch_800cbe34) {
       this.playerCollisionLatch_800cbe34 = true;
 
+      this.playerRunning = movement.x * movement.x + movement.z * movement.z > 64.0f;
+
       //LAB_800e8908
-      this.collidedPrimitiveIndex_800cbd94 = this.handleMovementAndCollision(position.x, position.y, position.z, movement);
+      this.collidedPrimitiveIndex_800cbd94 = this.handleCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
+
+      if(this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
+        this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
+        // Cos on X makes rotation calculation use player's local rotation (otherwise rotates when X is non-zero, GH#2316)
+        this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, Math.cos(coords.transforms.rotate.x) * movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+      }
     } else {
       //LAB_800e8954
       movement.set(this.cachedPlayerMovement_800cbd98);
@@ -165,7 +177,7 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e8b40L)
-  private void FUN_800e8b40(FileData a1) {
+  private void loadCollisionInfo(FileData a1) {
     if(a1.size() < this.primitiveCount_0c * 5 * 0xc) {
       LOGGER.warn("Submap file too short, padding with 0's");
       final byte[] newData = new byte[this.primitiveCount_0c * 5 * 0xc];
@@ -205,7 +217,7 @@ public class CollisionGeometry {
     this.dobj2Ptr_20.attribute_00 = 0x4000_0000;
 
     this.loadCollisionModel(tmd);
-    this.FUN_800e8b40(a2);
+    this.loadCollisionInfo(a2);
 
     this.collisionLoaded_800f7f14 = true;
 
@@ -228,11 +240,14 @@ public class CollisionGeometry {
 
   public void tick() {
     this.playerCollisionLatch_800cbe34 = false;
-    this.dartRotationWasUpdated_800d1a8c = false;
+
+    if(this.playerRotationWasUpdated_800d1a8c > 0) {
+      this.playerRotationWasUpdated_800d1a8c--;
+    }
   }
 
   @Method(0x800e9018L)
-  public int getCollisionPrimitiveAtPoint(final float x, final float y, final float z, final boolean checkSteepness) {
+  public int getCollisionPrimitiveAtPoint(final float x, final float y, final float z, final boolean checkSteepness, final boolean checkY) {
     int collisionPrimitiveIndexCount = 0;
 
     //LAB_800e9040
@@ -250,8 +265,14 @@ public class CollisionGeometry {
         // the XZ plane is infinitely small. We have to instead assume that the primitive extends up and
         // down to infinity, and ignore the Y check altogether, falling back to only the XZ check.
         // This was a fix for #1077
+
+        // NOTE #2:
+        // checkY was added as a fix for #1176 - we only need to check Y for the player. Magma Fish
+        // encounters were broken because they jump too high over the collision geometry and their
+        // collision primitives weren't getting set as expected.
+
         final float primitiveY;
-        if(this.normals_08[collisionPrimitiveIndex].y != 0.0f) {
+        if(checkY && this.normals_08[collisionPrimitiveIndex].y != 0.0f) {
           primitiveY = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
         } else {
           primitiveY = y;
@@ -360,8 +381,8 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e9430L)
-  private int handleMovementAndCollision(final float x, final float y, final float z, final Vector3f movement) {
-    if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
+  private int handleCollision(final float x, final float y, final float z, final Vector3f movement) {
+    if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smap.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) {
       return -1;
     }
 
@@ -380,7 +401,7 @@ public class CollisionGeometry {
 
     //LAB_800e94ec
     //LAB_800e960cdd
-    final int currentPrimitiveIndex = this.getCollisionPrimitiveAtPoint(x, y, z, true);
+    final int currentPrimitiveIndex = this.getCollisionPrimitiveAtPoint(x, y, z, true, true);
 
     //LAB_800e9710
     if(currentPrimitiveIndex == -1) {
@@ -399,11 +420,6 @@ public class CollisionGeometry {
 
       //LAB_800ea390
       //LAB_800ea3b4
-      if(!this.dartRotationWasUpdated_800d1a8c) {
-        this.dartRotationWasUpdated_800d1a8c = true;
-        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-      }
-
       //LAB_800ea3e0
       return closestPrimitiveIndex;
     }
@@ -412,37 +428,33 @@ public class CollisionGeometry {
     final float endZ = z + movement.z;
 
     //LAB_800e990c
-    final int destinationPrimitiveIndex = this.getCollisionPrimitiveAtPoint(endX, y, endZ, true);
+    final int destinationPrimitiveIndex = this.getCollisionPrimitiveAtPoint(endX, y, endZ, true, true);
 
     //LAB_800e9afc
     if(destinationPrimitiveIndex >= 0) {
       final CollisionPrimitiveInfo0c destinationPrimitive = this.primitiveInfo_14[destinationPrimitiveIndex];
 
       //LAB_800e9b50
-      int v0 = -1;
+      // Check if movement would place the sObj within 10 units of a boundary
+      int nearBoundary = -1;
       for(int vertexIndex = 0; vertexIndex < destinationPrimitive.vertexCount_00; vertexIndex++) {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[destinationPrimitive.vertexInfoOffset_02 + vertexIndex];
-        if(vertexInfo._08 && Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
-          v0 = vertexIndex;
+        if(vertexInfo.boundary_08 && Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
+          nearBoundary = vertexIndex;
           break;
         }
       }
 
-      if(v0 == -1) {
+      if(nearBoundary == -1) {
         final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
-        // This causes Dart to move up/down a slope
+        // This allows the sObj to move up/down a moderate slope
         if(Math.abs(y + (normal.x * endX + normal.z * endZ + destinationPrimitive._08) / normal.y) < 50) {
           //LAB_800e9e64
           movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + destinationPrimitive._08) / normal.y;
 
           //LAB_800ea390
           //LAB_800ea3b4
-          if(!this.dartRotationWasUpdated_800d1a8c) {
-            this.dartRotationWasUpdated_800d1a8c = true;
-            this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-          }
-
           //LAB_800ea3e0
           return destinationPrimitiveIndex;
         }
@@ -450,14 +462,15 @@ public class CollisionGeometry {
     }
 
     //LAB_800e9c58
-    // This disables "sliding" along collision boundaries if you're standing in a shop/inn primitive
+    // This disables "sliding" along a boundary for shop/inn primitives
     if((this.getCollisionAndTransitionInfo(currentPrimitiveIndex) & 0x20) != 0) {
       return -1;
     }
 
     //LAB_800e9ca0
-    int a1 = -1;
-    for(int i = 1; i < 4 && a1 == -1; i++) {
+    // Check if movement would place the sObj out-of-bounds
+    int onBoundary = -1;
+    for(int i = 1; i < 4 && onBoundary == -1; i++) {
       final float endX2 = x + movement.x * i;
       final float endZ2 = z + movement.z * i;
 
@@ -465,19 +478,19 @@ public class CollisionGeometry {
       for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[currentPrimitiveIndex].vertexCount_00; vertexIndex++) {
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + vertexIndex];
 
-        if(vertexInfo._08 && (vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
-          a1 = vertexIndex;
+        if(vertexInfo.boundary_08 && (vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
+          onBoundary = vertexIndex;
           break;
         }
       }
     }
 
-    // Handle sliding along collision
-    if(a1 != -1) {
+    // Handle "sliding" movement along a boundary
+    if(onBoundary != -1) {
       //LAB_800e9e78
 
       //LAB_800e9e7c
-      final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + a1];
+      final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + onBoundary];
       final float angle1 = MathHelper.atan2(endZ - z, endX - x);
       float angle2 = MathHelper.atan2(-vertexInfo.x_00, vertexInfo.z_02);
       float angleDeltaAbs = Math.abs(angle1 - angle2);
@@ -486,9 +499,9 @@ public class CollisionGeometry {
       }
 
       //LAB_800e9f38
-      // About 73 to 107 degrees (90 +- 17)
+      // Stop movement if approaching the boundary at a nearly perpendicular angle (73 to 107 degrees)
       final float baseAngle = MathHelper.PI / 2.0f; // 90 degrees
-      final float deviation = 0.29670597283903602807702743064306f; // 17 degrees
+      final float deviation = 0.29670597283903602807702743064306f; // (+/-) 17 degrees
       if(angleDeltaAbs >= baseAngle - deviation && angleDeltaAbs <= baseAngle + deviation) {
         return -1;
       }
@@ -518,47 +531,43 @@ public class CollisionGeometry {
       final float angleStep = 0.09817477f * direction; // 5.625 degrees
 
       //LAB_800e9fd0
-      angle2 -= angleStep;
 
       //LAB_800e9ff4
-      int s2 = -1;
+      // Adjust approach angle until new destination is in-bounds
+      // Stop movement if +/- 39.375 degrees would still place the sObj out-of-bounds
+      int slidingPrimitiveIndex = -1;
       float offsetX = 0.0f;
       float offsetZ = 0.0f;
-      for(int i = 0; i < 8 && s2 == -1; i++) {
-        angle2 += angleStep;
-
+      for(int i = 0; i < 8 && slidingPrimitiveIndex == -1; i++) {
         final float sin = MathHelper.sin(angle2);
         final float cos = MathHelper.cosFromSin(sin, angle2);
         offsetX = x + cos * distanceMultiplier;
         offsetZ = z + sin * distanceMultiplier;
 
-        s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true);
+        slidingPrimitiveIndex = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
+        angle2 += angleStep;
 
         //LAB_800ea22c
       }
 
       //LAB_800ea254
-      if(s2 < 0) {
+      if(slidingPrimitiveIndex < 0) {
         return -1;
       }
 
       //LAB_800ea234
-      final Vector3f normal = this.normals_08[s2];
+      final Vector3f normal = this.normals_08[slidingPrimitiveIndex];
 
-      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
+      // Stop movement up/down a steep slope
+      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[slidingPrimitiveIndex]._08) / normal.y) >= 50) {
         return -1;
       }
 
       movement.x = offsetX - x;
       movement.z = offsetZ - z;
-      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
+      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[slidingPrimitiveIndex]._08) / normal.y;
 
-      if(!this.dartRotationWasUpdated_800d1a8c) {
-        this.dartRotationWasUpdated_800d1a8c = true;
-        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-      }
-
-      return s2;
+      return slidingPrimitiveIndex;
     }
 
     if(destinationPrimitiveIndex < 0) {
@@ -567,6 +576,7 @@ public class CollisionGeometry {
 
     final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
+    // Stop movement up/down a steep slope
     if(Math.abs(y + (normal.x * endX + normal.z * endZ + this.primitiveInfo_14[destinationPrimitiveIndex]._08) / normal.y) >= 50) {
       return -1;
     }
@@ -579,11 +589,6 @@ public class CollisionGeometry {
 
     //LAB_800ea390
     //LAB_800ea3b4
-    if(!this.dartRotationWasUpdated_800d1a8c) {
-      this.dartRotationWasUpdated_800d1a8c = true;
-      this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
-    }
-
     //LAB_800ea3e0
     return destinationPrimitiveIndex;
   }

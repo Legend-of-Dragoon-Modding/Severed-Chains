@@ -1,0 +1,29 @@
+Bale, Lavitz's Home
+Lavitz's Mother
+Retail bug: Lavitz's hug script is hardcoded to expect his mother to be in her default position. Immediately after the
+house tour, she stands in a different position. This patch adds movement animation to reposition her after the cutscene.
+--- original
++++ modified
+@@ -169,7 +169,20 @@
+ mov 0x8, stor[25]
+ gosub inl[:LABEL_2]
+ gosub inl[:LABEL_16]
+# Rotate towards and move to default position
++mov 0x41, inl[:WS_TARGET_X]
++mov 0xffffffcd, inl[:WS_TARGET_Y]
++mov 0x5c, inl[:WS_TARGET_Z]
++mov 10, inl[:WS_FRAMES]
++mov 1, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_NPC_MOVE]
+# Rotate to face player
++call 102, var[64][0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 10, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++call 97, 0
+ return
++#include ../../../../patches/libs/widescreen.txt
+ LABEL_23:
+ call 106, 0x0
+ call 101, stor[0], 0xfffffffe, 0xffffffcd, 0x12a

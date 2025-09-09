@@ -1,0 +1,13 @@
+Aglis - Psyche Bomb Trial Hub
+Haschel
+Skip hiding model parts
+--- original
++++ modified
+@@ -310,7 +310,6 @@
+ mov 0x5, stor[25]
+ gosub inl[:LABEL_3]
+ mov 0x0, stor[24]
+-gosub inl[:LABEL_27]
+ call 289, 0x7
+ mov 0x3, stor[24]
+ gosub inl[:LABEL_2]

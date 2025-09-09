@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class ConfigRegistry extends MutableRegistry<ConfigEntry<?>> {
   public ConfigRegistry() {
-    super(new RegistryId("lod-core", "config"));
+    super(new RegistryId("lod_core", "config"));
   }
 }

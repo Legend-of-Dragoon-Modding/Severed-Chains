@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Configuration status="info" name="ReLoDed" packages="" monitorInterval="5">
+<Configuration status="info" name="Severed Chains" monitorInterval="5">
   <Appenders>
     <Console name="console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t %c:%L] %highlight{%-5level}: %msg%n%throwable" />
@@ -7,9 +7,8 @@
         <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="INPUT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_DB" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
@@ -17,6 +16,7 @@
         <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="DISASSEMBLY" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="BATTLE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
       </Filters>
     </Console>
     <File name="file" fileName="debug.log" immediateFlush="false" append="false">
@@ -25,9 +25,8 @@
         <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="INPUT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_DB" onMatch="ACCEPT" onMismatch="NEUTRAL" />
-        <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
@@ -35,6 +34,7 @@
         <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="DISASSEMBLY" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="BATTLE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
       </Filters>
     </File>
   </Appenders>

@@ -111,6 +111,10 @@ public final class MathHelper {
     return (int)(Math.log10(number) + 1);
   }
 
+  public static int nextMultiple(final int number, final int multiple) {
+    return (number + multiple - 1) / multiple * multiple;
+  }
+
   public static int assertPositive(final int val) {
     assert val >= 0 : "Value must be positive";
     return val;
@@ -194,7 +198,7 @@ public final class MathHelper {
   }
 
   public static float atan2(float y, final float x) {
-    if(y == 0.0f && x == 0.0f) {
+    if(flEq(y, 0.0f) && flEq(x, 0.0f)) {
       return 0.0f;
     }
 
@@ -203,6 +207,10 @@ public final class MathHelper {
     }
 
     return (float)org.joml.Math.atan2((double)y, x);
+  }
+
+  public static float closestAngle(final float a, final float b) {
+    return floorMod(a - b + PI, TWO_PI) - PI;
   }
 
   public static float sin(final float angle) {
@@ -287,5 +295,23 @@ public final class MathHelper {
 
   public static boolean flEq(final float a, final float b) {
     return flEq(a, b, 0.00001f);
+  }
+
+  public static void hsvToRgb(final float h, final float s, final float v, final Vector3f out) {
+    final float k0 = 1.0f;
+    final float k1 = 2.0f / 3.0f;
+    final float k2 = 1.0f / 3.0f;
+    final float k3 = 3.0f;
+
+    out.set(h).add(k0, k1, k2);
+    out.sub(org.joml.Math.floor(out.x), org.joml.Math.floor(out.y), org.joml.Math.floor(out.z));
+    out.mul(6.0f);
+    out.sub(k3, k3, k3);
+    out.absolute();
+
+    out.sub(k0, k0, k0);
+    MathHelper.clamp(out, 0.0f, 1.0f);
+    out.set(org.joml.Math.lerp(1.0f, out.x, s), org.joml.Math.lerp(1.0f, out.y, s), org.joml.Math.lerp(1.0f, out.z, s));
+    out.mul(v);
   }
 }

@@ -1,0 +1,40 @@
+Widescreen patch
+Twin Castle - Training/Dressing Room
+Dart
+Modified starting rotation and animation. Adjust textbox size and position for scissoring boundary.
+--- original
++++ modified
+@@ -143,10 +143,21 @@
+ call 200, 0x4, 0x400, 0xb6, 0x38, 0x24, 0x4, inl[:LABEL_138[:LABEL_138[stor[24]]]]
+ mov 0x4, stor[24]
+ jmp inl[:LABEL_24]
++CAMERA_X:
++data 0
++CAMERA_Y:
++data 0
++SHORT_BOX:
++call 200, 0x6, 0x1011, 0xde, 0xb8, 0x20, 0x4, inl[:LABEL_138[:LABEL_138[stor[24]]]]
++call 200, 0x4, 0x400, 0xde, 0xb8, 0x20, 0x4, inl[:LABEL_138[:LABEL_138[stor[24]]]]
++mov 0x4, stor[24]
++return
+ JMP_b0c_3:
+ call 195, 0x6, stor[25]
+ jmp_cmp !=, 0x0, stor[25], inl[:LABEL_23]
+ call 201, 0x5
+# Adjust textbox only beyond a certain camera x-offset
++call 257, inl[:CAMERA_X], inl[:CAMERA_Y]
++jmp_cmp <, 0x40, inl[:CAMERA_X], inl[:SHORT_BOX]
+ call 200, 0x6, 0x1011, 0xb6, 0xb8, 0x24, 0x4, inl[:LABEL_138[:LABEL_138[stor[24]]]]
+ LABEL_23:
+ call 200, 0x4, 0x400, 0xb6, 0xb8, 0x24, 0x4, inl[:LABEL_138[:LABEL_138[stor[24]]]]
+@@ -850,7 +861,8 @@
+ call 264, 0x2, 0x0, 0x0
+ call 258, 0x68, 0xffffffe2
+ call 101, stor[0], 0xb0, 0x0, 0x3a
+# Adjust starting rotation and animation
+-call 103, stor[0], 0x0, 0x0, 0x0
++call 103, stor[0], 0x0, 0x400, 0x0
++call 97, 0x1f
+ call 263, 0x400, 0x400, 0x7
+ call 263, 0x0, 0x0, 0x9
+ mov var[64][1], stor[24]

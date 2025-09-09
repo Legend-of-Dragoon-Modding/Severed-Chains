@@ -2,12 +2,13 @@ package legend.game.combat.effects;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.platform.input.InputAction;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.ui.AdditionOverlayMode;
@@ -21,15 +22,18 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
 public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.VoidType> {
   public int attackerScriptIndex_00;
@@ -138,14 +142,19 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         additionBorderColours_800fb7f0[11] = additionRgb >> 16 & 0xff;
       }
 
+      final float scale = CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_SIZE_CONFIG.get());
+
       int val = 16;
       for(int borderNum = 0; borderNum < 17; borderNum++) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (18 - val) * 10;
+        borderOverlay.size_08 = (18 - val) * 10 * 1.5f * scale;
         borderOverlay.isVisible_00 = true;
         //LAB_8010656c
         //LAB_80106574
-        borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f);
+        if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+          borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f);
+        }
+
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
         borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);
@@ -160,7 +169,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       val = 0;
       for(int borderNum = 16; borderNum >= 14; borderNum--) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = 20 - val * 2;
+        borderOverlay.size_08 = (20 - val * 2) * 1.5f * scale;
         borderOverlay.angleModifier_02 = 0.0f;
         borderOverlay.countFramesVisible_0c = 0x11;
         borderOverlay.framesUntilRender_0a = hitOverlay.frameSuccessLowerBound_10 - 17;
@@ -307,13 +316,15 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     if(manager.params_10.flags_00 >= 0) {
       final AdditionOverlaysBorder0e[] targetBorderArray = hitOverlay.borderArray_18;
 
+      final float scale = CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_SIZE_CONFIG.get());
+
       //LAB_8010685c
       for(int targetBorderNum = 0; targetBorderNum < 2; targetBorderNum++) {
-        final int squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8;
+        final float squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8 * scale;
 
-        effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
-        effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms);
+        effect.transforms.scaling(squareSize, squareSize, 1.0f);
+        effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
+        final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms, QueuedModelStandard.class);
 
         if(completionState == 1) {  // Success
           model.monochrome(1.0f);
@@ -336,9 +347,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
   /** Renders the shadow on the inside of the innermost rotating border. */
   @Method(0x80106ac4L)
-  private void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final float angle, final int borderSize) {
+  private void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final float angle, final float borderSize) {
     // Would you believe me if I said I knew what I was doing when I wrote any of this?
-    final int offset = borderSize - 1;
+    final float offset = borderSize - 1;
     final float sin0 = MathHelper.sin(angle);
     final float cos0 = MathHelper.cosFromSin(sin0, angle);
     final float x0 = cos0 * offset / 2.0f;
@@ -350,7 +361,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       .scaling(10.0f, borderSize, 1.0f)
       .rotateLocalZ(angle);
 
-    RENDERER.queueOrthoModel(this.reticleBorderShadow, this.transforms)
+    RENDERER.queueOrthoModel(this.reticleBorderShadow, this.transforms, QueuedModelStandard.class)
       .monochrome(colour / 255.0f);
   }
 
@@ -369,13 +380,13 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           .rotateZ(borderOverlay.angleModifier_02);
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
 
-        final RenderEngine.QueuedModel<?> model;
+        final QueuedModelStandard model;
 
         // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
         if((borderOverlay.sideEffects_0d == 0 || borderOverlay.sideEffects_0d == -1) && currentHitCompletionState >= 0) {
-          model = RENDERER.queueOrthoModel(RENDERER.lineBox, this.transforms);
+          model = RENDERER.queueOrthoModel(RENDERER.lineBox, this.transforms, QueuedModelStandard.class);
         } else {
-          model = RENDERER.queueOrthoModel(RENDERER.lineBoxBPlusF, this.transforms);
+          model = RENDERER.queueOrthoModel(RENDERER.lineBoxBPlusF, this.transforms, QueuedModelStandard.class);
         }
 
         if(hitArray[hitNum].isCounter_1c && borderNum != 16) {
@@ -398,10 +409,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
         // Renders rotating shadow on innermost rotating border
         if(borderOverlay.sideEffects_0d == 0) {
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08 * 2);
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08 * 2);
-          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08);
+          this.renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08);
         }
       }
       //LAB_80106fac
@@ -568,20 +579,21 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             if(this.autoCompleteType_3a < 1 || this.autoCompleteType_3a > 2) {
               //LAB_8010763c
               if(this.autoCompleteType_3a != 3) {
-                final int buttonType;
+                final InputAction right;
+                final InputAction wrong;
                 if(!hitOverlay.isCounter_1c) {
-                  buttonType = 0x20;
+                  right = INPUT_ACTION_BTTL_ATTACK.get();
+                  wrong = INPUT_ACTION_BTTL_COUNTER.get();
                 } else {
-                  buttonType = 0x40;
+                  right = INPUT_ACTION_BTTL_COUNTER.get();
+                  wrong = INPUT_ACTION_BTTL_ATTACK.get();
                 }
 
                 //LAB_80107664
-                final int buttonPressed = press_800bee94;
-
-                if((buttonPressed & 0x60) != 0) {
+                if(PLATFORM.isActionPressed(right) || PLATFORM.isActionPressed(wrong)) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
 
-                  if((buttonPressed & buttonType) == 0 || (buttonPressed & ~buttonType) != 0) {
+                  if(!PLATFORM.isActionPressed(right) || PLATFORM.isActionPressed(wrong)) {
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;

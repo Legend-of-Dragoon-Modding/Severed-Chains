@@ -1,0 +1,219 @@
+# Mod metadata
+lod_core.name=Legend of Dragoon (core)
+
+# Config categories
+lod_core.config.category.configure=Configure
+lod_core.config.category.gameplay.label=Gameplay
+lod_core.config.category.graphics.label=Graphics
+lod_core.config.category.audio.label=Audio
+lod_core.config.category.controls.label=Controls
+lod_core.config.category.other.label=Other
+
+# UI text
+lod_core.ui.hotkey=%s: %s
+
+lod_core.ui.campaign_selection.title=Campaigns
+lod_core.ui.campaign_selection.mods=Mods
+lod_core.ui.campaign_selection.delete=Delete
+lod_core.ui.campaign_selection.back=Back
+lod_core.ui.campaign_selection.change_mods_confirm=Changing mods can cause\nproblems, continue?
+lod_core.ui.campaign_selection.delete_campaign_confirm=Are you sure you want to\ndelete this campaign?
+lod_core.ui.campaign_selection.missing_mods_confirm=Missing mods, continue?
+lod_core.ui.campaign_selection.failed_to_delete_campaign=Failed to delete campaign
+
+lod_core.ui.load_game.delete=Delete
+lod_core.ui.load_game.back=Back
+
+lod_core.ui.save_game.delete=Delete
+lod_core.ui.save_game.back=Back
+
+lod_core.ui.mods.required=Required mod
+lod_core.ui.mods.error=Crashed: %s
+lod_core.ui.mods.wrong_version=Wrong version: %s
+lod_core.ui.mods.help=Help
+lod_core.ui.mods.back=Back
+
+lod_core.ui.options.help=Help
+lod_core.ui.options.back=Back
+lod_core.ui.options.error=Error
+
+lod_core.ui.options_category.back=Back
+
+lod_core.ui.links.click_on_any_link_to_open=Click on any link to open it
+lod_core.ui.links.view_link=View Link
+lod_core.ui.links.open_link=Open Link
+lod_core.ui.links.back=Back
+lod_core.ui.links.discord=Legend of Dragoon & Severed Chains Discord Community
+lod_core.ui.links.youtube=Legend of Dragoon & Severed Chains YouTube
+lod_core.ui.links.fandom=Legend of Dragoon Global Fandom Website
+lod_core.ui.links.wiki=Legend of Dragoon Wiki
+lod_core.ui.links.project=Severed Chains Project Page
+lod_core.ui.links.github=Severed Chains GitHub Page
+lod_core.ui.links.issue=Report an Issue
+
+# Global config
+lod_core.config.controller_keybinds.label=Controls
+lod_core.config.controller_keybinds.configure=Configure...
+lod_core.config.menu_inner_deadzone.label=Menu Deadzone (Inner)
+lod_core.config.menu_outer_deadzone.label=Menu Deadzone (Outer)
+lod_core.config.movement_inner_deadzone.label=Movement Deadzone (Inner)
+lod_core.config.movement_outer_deadzone.label=Movement Deadzone (Outer)
+lod_core.config.disable_mouse_input.label=Disable Mouse Input
+lod_core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
+lod_core.config.rumble.label=Rumble
+lod_core.config.rumble_intensity.label=Rumble Intensity
+lod_core.config.allow_widescreen.label=3D Widescreen
+lod_core.config.allow_widescreen.help=Use widescreen mode in 3D areas (world map, battle)
+lod_core.config.submap_widescreen_mode.label=2D Widescreen Mode
+lod_core.config.submap_widescreen_mode.help=Widescreen mode in 2D areas (towns, dungeons, etc.)\nExpanded lets you to see more but you may see strange things near the edges of the screen.
+lod_core.config.submap_widescreen_mode.EXPANDED=Expanded
+lod_core.config.submap_widescreen_mode.FORCED_4_3=Forced 4:3
+lod_core.config.submap_widescreen_mode.STRETCHED=Stretched
+lod_core.config.fullscreen.label=Fullscreen
+lod_core.config.resolution.label=Resolution
+lod_core.config.resolution.help=Native is generally recommended and will render at the exact size of the game window.\nUsing higher resolutions than your window size may improve image quality by anti-aliasing (SSAA).
+lod_core.config.resolution.ORIGINAL=240p (original)
+lod_core.config.resolution._480=480p
+lod_core.config.resolution._720=720p
+lod_core.config.resolution._1080=1080p
+lod_core.config.resolution._1440=1440p
+lod_core.config.resolution._4K=4K
+lod_core.config.resolution._8K=8K
+lod_core.config.resolution.NATIVE=Native (window size)
+lod_core.config.monitor.label=Monitor
+lod_core.config.reduce_motion_flashing.label=Reduce Motion/Flashing
+lod_core.config.reduce_motion_flashing.help=Reduces some fast motion and flashing. May help people who\nare sensitive to fast motion or flashing lights/colours.\n\nWARNING: use at your own risk. We cannot guarantee that\nthis feature will make the game safe to play for anyone.
+lod_core.config.audio_device.label=Audio Device
+lod_core.config.master_volume.label=Volume - All
+lod_core.config.music_volume.label=Volume - Music
+lod_core.config.sfx_volume.label=Volume - SFX
+lod_core.config.fmv_volume.label=Volume - FMV
+lod_core.config.music_interpolation_precision.label = Interpolation Precision
+lod_core.config.music_interpolation_precision.Quarter = Quarter
+lod_core.config.music_interpolation_precision.Half = Half
+lod_core.config.music_interpolation_precision.Retail = Retail
+lod_core.config.music_interpolation_precision.Double = Double
+lod_core.config.music_interpolation_precision.Quadruple = Quadruple
+lod_core.config.music_pitch_resolution.label = Pitch Resolution
+lod_core.config.music_pitch_resolution.Quarter = Quarter
+lod_core.config.music_pitch_resolution.Half = Half
+lod_core.config.music_pitch_resolution.Retail = Retail
+lod_core.config.music_pitch_resolution.Double = Double
+lod_core.config.music_pitch_resolution.Quadruple = Quadruple
+lod_core.config.music_pitch_resolution.Octuple = Octuple
+lod_core.config.music_sample_rate.label = Sample Rate
+lod_core.config.music_sample_rate._44100 = 41.1 kHz
+lod_core.config.music_sample_rate._48000 = 48 kHz
+lod_core.config.music_effects_over_time_granularity.label = Effects Granularity
+lod_core.config.music_effects_over_time_granularity.Retail = Retail
+lod_core.config.music_effects_over_time_granularity.Finer = Finer
+lod_core.config.music_effects_over_time_granularity.Finest = Finest
+lod_core.config.create_crash_save.label=Auto-Save on Crash
+lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
+lod_core.config.ignore_steam_input_mode.label=Steam Input Fix
+lod_core.config.ignore_steam_input_mode.help=Fixes duplicate keyboard input when Steam is running and Steam Input is\nenabled. Only change this if your keyboard isn't working.\n\nIgnore when gamepad used - ignores keyboard when gamepad buttons are pressed\nOff - allow duplicate inputs from Steam Input
+lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (recommended)
+lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
+lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
+
+# FMV config
+lod_core.config.fmv.skip_keyboard = Press %s to skip
+lod_core.config.fmv.skip_controller = Press %s to skip
+lod_core.config.fmv.skip_mouse = Click again to skip
+
+# Campaign config
+lod_core.config.indicator_mode.label=Indicator Mode
+lod_core.config.indicator_mode.help=Map indicators such as doors. Momentary shows indicators briefly and then hides them.
+lod_core.config.indicator_mode.OFF=Off
+lod_core.config.indicator_mode.MOMENTARY=Momentary
+lod_core.config.indicator_mode.ON=On
+lod_core.config.inventory_size.label=Inventory Size
+lod_core.config.encounter_rate.label=Encounter Rate
+lod_core.config.encounter_rate.help=Retail: original experience (bugged). 75%% fewer encounters than intended when walking in 2/4 directions.\nIntended: what the devs intended. Lots of encounters.\nAverage: recommended. Same number of encounters as retail but averaged in all directions.
+lod_core.config.encounter_rate.RETAIL=Retail
+lod_core.config.encounter_rate.AVERAGE=Average
+lod_core.config.encounter_rate.INTENDED=Intended
+lod_core.config.encounter_rate.NONE=None
+lod_core.config.addition_mode.label=Addition Mode
+lod_core.config.addition_mode.NORMAL=Normal
+lod_core.config.addition_mode.AUTOMATIC=Automatic
+lod_core.config.auto_dragoon_addition.label=Automatic Dragoon Addition
+lod_core.config.addition_overlay_mode.label=Addition Overlay Mode
+lod_core.config.addition_overlay_mode.help=No reticule: only shows middle square\nNo HUD: removes addition HUD entirely
+lod_core.config.addition_overlay_mode.FULL=Normal
+lod_core.config.addition_overlay_mode.PARTIAL=No reticule
+lod_core.config.addition_overlay_mode.OFF=No HUD
+lod_core.config.addition_overlay_size.label=Addition Overlay Size
+lod_core.config.addition_overlay_size.help=Adjusts the size of the attack quick time event reticule.\nNote: players tend to find additions easier with larger reticules.
+lod_core.config.transformation_mode.label=Dragoon Transformation Mode
+lod_core.config.transformation_mode.NORMAL=Normal
+lod_core.config.transformation_mode.SHORT=Short
+lod_core.config.quick_text.label=Quick Text
+lod_core.config.auto_text.label=Automatic Text Advance
+lod_core.config.auto_text_delay.label=Automatic Text Delay (seconds)
+lod_core.config.save_anywhere.label=Save Anywhere
+lod_core.config.save_anywhere.help=WARNING: do not save during story events, while crossing stepping stones, etc.
+lod_core.config.disable_status_effects.label=Disable Status Effects
+lod_core.config.enemy_hp_bars.label=Enemy HP Bars
+lod_core.config.mash_mode.label=Button Mash Mode
+lod_core.config.mash_mode.MASH=Mash
+lod_core.config.mash_mode.HOLD=Hold
+lod_core.config.mash_mode.AUTO=Automatic
+lod_core.config.secondary_character_xp_multiplier.label=Secondary Character XP Gain
+lod_core.config.secondary_character_xp_multiplier.help=Percentage of XP that characters who are not in your active party will gain
+lod_core.config.battle_transition_mode.label=Battle Transition
+lod_core.config.battle_transition_mode.NORMAL=Normal
+lod_core.config.battle_transition_mode.FAST=Fast
+lod_core.config.battle_transition_mode.INSTANT=Instant
+lod_core.config.unlock_party.label=Unlock Party
+lod_core.config.unlock_party.help=Allows removing Dart from party and playing with 1 or 2 characters
+lod_core.config.icon_set.label=Icon Set
+lod_core.config.icon_set.help=Enhanced changes some item and equipment icons to icons that were cut from the game
+lod_core.config.icon_set.ENHANCED=Enhanced
+lod_core.config.icon_set.RETAIL=Retail
+lod_core.config.run_by_default.label=Run by default
+lod_core.config.run_by_default.help=When enabled, the character will run by default and walk when the run input is held
+lod_core.config.show_turn_order.label=Show turn order
+lod_core.config.item_group_sort_mode.label=Item group sorting
+lod_core.config.item_group_sort_mode.help=Controls sorting within groups (e.g. potions, spells) of items
+lod_core.config.item_group_sort_mode.ALPHABETICAL=Alphabetical
+lod_core.config.item_group_sort_mode.RETAIL=Retail
+
+lod_core.input_actions.menu_up.name=Menu: up
+lod_core.input_actions.menu_down.name=Menu: down
+lod_core.input_actions.menu_left.name=Menu: left
+lod_core.input_actions.menu_right.name=Menu: right
+lod_core.input_actions.menu_top.name=Menu: top
+lod_core.input_actions.menu_bottom.name=Menu: bottom
+lod_core.input_actions.menu_home.name=Menu: home
+lod_core.input_actions.menu_end.name=Menu: end
+lod_core.input_actions.menu_page_up.name=Menu: page up
+lod_core.input_actions.menu_page_down.name=Menu: page down
+lod_core.input_actions.menu_confirm.name=Menu: confirm
+lod_core.input_actions.menu_back.name=Menu: back
+lod_core.input_actions.menu_delete.name=Menu: delete
+lod_core.input_actions.menu_sort.name=Menu: sort
+lod_core.input_actions.menu_help.name=Menu: help
+lod_core.input_actions.menu_mods.name=Menu: mods
+lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
+
+lod_core.input_actions.fmv_skip.name=FMV: skip
+
+lod_core.input_actions.general_toggle_fullscreen.name=General: toggle fullscreen
+lod_core.input_actions.general_speed_up.name=General: speed up
+lod_core.input_actions.general_slow_down.name=General: slow down
+
+lod_core.input_actions.freecam_toggle.name=Freecam: toggle
+lod_core.input_actions.freecam_forward.name=Freecam: forward
+lod_core.input_actions.freecam_backward.name=Freecam: backward
+lod_core.input_actions.freecam_left.name=Freecam: left
+lod_core.input_actions.freecam_right.name=Freecam: right
+lod_core.input_actions.freecam_up.name=Freecam: up
+lod_core.input_actions.freecam_down.name=Freecam: down
+
+lod_core.input_actions.debug_open_debugger.name=Debug: open debugger
+lod_core.input_actions.debug_pause.name=Debug: pause
+lod_core.input_actions.debug_frame_advance.name=Debug: frame advance
+lod_core.input_actions.debug_frame_advance_hold.name=Debug: frame advance (hold)
+lod_core.input_actions.debug_toggle_wireframe.name=Debug: toggle wireframe
+lod_core.input_actions.debug_reload_shaders.name=Debug: reload shaders

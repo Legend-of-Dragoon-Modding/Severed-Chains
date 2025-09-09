@@ -32,8 +32,8 @@ public final class SavedGame<Display extends SaveDisplay> {
     this.ids = ids;
   }
 
-  public static SavedGame<?> invalid(final String fileName) {
-    return new SavedGame<>(fileName, fileName, null, LodMod.RETAIL_SAVE_TYPE, null, null, null, null);
+  public static <T extends SaveDisplay> SavedGame<T> invalid(final String fileName) {
+    return (SavedGame<T>)new SavedGame<>(fileName, fileName, null, LodMod.RETAIL_SAVE_TYPE, null, null, null, null);
   }
 
   public boolean isValid() {

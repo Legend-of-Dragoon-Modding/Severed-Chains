@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -2153,15 +2153,14 @@
+ jmp inl[:LABEL_198]
+ LABEL_191:
+ gosub inl[:LABEL_94]
+-call 864, 0xd3, stor[24]
+-jmp_cmp ==, 0x0, stor[24], inl[:LABEL_192]
++call 890, id[lod_core:config], id[lod_core:inventory_size], 0, stor[24]
++jmp_cmp <, var[138], stor[24], inl[:LABEL_192]
+ mov 0x5b, stor[24]
+ gosub inl[:LABEL_199]
+ mov 0x5c, stor[24]
+ gosub inl[:LABEL_199]
+ jmp inl[:LABEL_198]
+ LABEL_192:
+-call 865, 0xd3, stor[25]
+ mov 0x3e, stor[24]
+ gosub inl[:LABEL_199]
+ mov 0x44, stor[24]

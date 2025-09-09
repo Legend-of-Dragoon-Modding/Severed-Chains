@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -616,7 +616,7 @@
+ wait stor[24]
+ call 117, 0x0
+ call 264, 0x2, 0x0, 0x0
+-call 258, 0x258, 0x258
++call 258, 0, 0x258
+ call 6, 0x4, 0x40
+ mov 0x20, stor[24]
+ wait stor[24]

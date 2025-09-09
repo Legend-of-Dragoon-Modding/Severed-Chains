@@ -1,0 +1,15 @@
+Widescreen patch
+Twin Castle, Main Hall (Daytime)
+Rose
+Extend cutscene exit further right before disappearing
+--- original
++++ modified
+@@ -297,7 +297,7 @@
+ mov 0x3, stor[27]
+ mov 0xfffffffe, stor[28]
+ gosub inl[:LABEL_11]
+-mov 0x1c5, stor[24]
++mov 0x1e0, stor[24]
+ mov 0xffffff10, stor[25]
+ mov 0x273, stor[26]
+ mov 0x4, stor[27]

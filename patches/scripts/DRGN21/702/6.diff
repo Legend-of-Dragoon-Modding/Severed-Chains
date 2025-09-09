@@ -1,0 +1,26 @@
+--- original
++++ modified
+@@ -190,6 +190,12 @@
+ LABEL_6:
+ gosub inl[:LABEL_10]
+ call 677, stor[24], stor[8], stor[9], stor[10]
+# Face ahead
++call 102, stor[24], stor[18], stor[19], stor[20]
++incr stor[18]
++incr stor[20]
++call 677, stor[24], stor[18], stor[19], stor[20]
+# Set rotation 90 degrees counter clockwise
++mov 0xfffffc00, stor[19]
++call 120, stor[24], 0, stor[19], 0, stor[27]
+ LABEL_7:
+ yield
+ gosub inl[:LABEL_8]
+@@ -206,7 +212,6 @@
+ shr 0xc, stor[8]
+ shr 0xc, stor[9]
+ shr 0xc, stor[10]
+# Remove old face point call
+-call 677, stor[24], stor[8], stor[9], stor[10]
+ call 101, stor[24], stor[8], stor[9], stor[10]
+ decr stor[27]
+ jmp_cmp !=, 0x0, stor[27], inl[:LABEL_9]

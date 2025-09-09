@@ -1,0 +1,29 @@
+Widescreen patch
+Hoax - Cutscene: Elite
+Serdio wall knight only, skip Sandora soldier (moved to another script)
+--- original
++++ modified
+@@ -133,6 +133,7 @@
+ rel :JMP_4a4_0
+ rel :JMP_4a4_1
+ JMP_4a4_0:
++jmp inl[:WALL_KNIGHT]
+ call 101, stor[0], 0x6c, 0x16, 0xb4
+ call 103, stor[0], 0x0, 0xc00, 0x0
+ call 96, 0x5
+@@ -183,6 +184,7 @@
+ mov 0xa, stor[27]
+ mov 0x2, stor[28]
+ gosub inl[:LABEL_10]
++WALL_KNIGHT:
+ call 101, stor[0], 0xfffffd9a, 0xfffffe8b, 0x2f2
+ call 103, stor[0], 0x0, 0x700, 0x0
+ call 96, 0x3
+@@ -228,6 +230,7 @@
+ mov 0xe, stor[24]
+ wait stor[24]
+ call 236, 0x8, 0x7, 0x0, 0x0, 0x0, 0x0
++return
+ call 101, stor[0], 0x11a, 0x16, 0xea
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 96, 0x4

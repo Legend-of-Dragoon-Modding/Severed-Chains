@@ -1,0 +1,72 @@
+Widescreen patch
+Twin Castle, Main Hall (Nighttime)
+Libria: New start/end position for cutscene. Albert no longer walks through her.
+Knight: Stand-in as opposite entrance knight when Libria is not present.
+--- original
++++ modified
+@@ -612,8 +612,26 @@
+ call 111, 0x1
+ call 311, stor[0]
+ jmp_cmp ==, 0x2, stor[stor[stor[0], 23], 31], inl[:LABEL_111]
++jmp_cmp >=, 1, stor[stor[stor[0], 23], 31], inl[:KNIGHT]
+ call 106, 0x1
+ rewind
++KNIGHT:
++call 96, 4
++call 101, stor[0], 0x122, 0xffffffa6, 0xffffffe0
++call 103, stor[0], 0, 0x400, 0
++call 257, stor[24], stor[25]
++jmp_cmp >, 0xfffffff3, stor[24], inl[:LEFT_SIDE]
++RIGHT_SIDE:
++yield
++call 257, stor[24], stor[25]
++jmp_cmp >, 0xfffffff3, stor[24], inl[:LEFT_SIDE]
++call 101, stor[0], 0x122, 0xffffffa6, 0xffffffe0
++call 103, stor[0], 0, 0x400, 0
++jmp inl[:RIGHT_SIDE]
++LEFT_SIDE:
++call 101, stor[0], 0xfffffee8, 0xffffffa6, 0xffffffea
++call 103, stor[0], 0, 0xfffffc00, 0
++jmp inl[:RIGHT_SIDE]
+ ENTRYPOINT_1:
+ mov stor[32], stor[24]
+ mov 0xff, stor[25]
+@@ -700,9 +718,17 @@
+ wait stor[24]
+ jmp inl[:LABEL_112]
+ JMP_1868_0:
+# Libria: new start
+-call 101, stor[0], 0x8, 0xffffffb8, 0x1b0
++call 96, 2
++call 101, stor[0], 0x8, 0xffffff88, 0x212
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 106, 0x0
+# Move to old start position
++mov 0x8, stor[24]
++mov 0xffffffb8, stor[25]
++mov 0x1b0, stor[26]
++mov 0x4, stor[27]
++mov 0x1, stor[28]
++gosub inl[:LABEL_30]
+# Idle animation
++call 673, stor[0], 0
++call 99, 1
+ mov 0x0, stor[24]
+ mov 0x2, stor[25]
+ mov 0x0, stor[26]
+@@ -789,11 +815,12 @@
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_30]
+ mov 0x8, stor[24]
+# Libria: new exit
+-mov 0xffffffae, stor[25]
+-mov 0x1c4, stor[26]
++mov 0xffffff88, stor[25]
++mov 0x212, stor[26]
+ mov 0x4, stor[27]
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_30]
++call 106, 1
+ return
+ JMP_1868_1:
+ call 104, stor[0], stor[24], stor[8], stor[24]

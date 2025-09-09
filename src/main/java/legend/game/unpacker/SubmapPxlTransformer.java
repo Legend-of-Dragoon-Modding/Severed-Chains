@@ -12,6 +12,8 @@ public final class SubmapPxlTransformer {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SubmapPxlTransformer.class);
 
+  private static final byte[] LENUS_2_REPLACEMENT_CLUT = {0x00, 0x00, (byte)0x9c, 0x73, (byte)0xda, 0x4a, (byte)0x99, 0x3e, 0x58, 0x32, (byte)0xf5, 0x29, (byte)0xb2, 0x25, 0x6f, 0x1d, 0x2c, 0x19, (byte)0xc8, 0x10, 0x64, 0x08, (byte)0xd6, 0x62, (byte)0xef, 0x45, 0x08, 0x29, (byte)0x98, 0x20, 0x4c, 0x10};
+
   public static void transform(final PathNode root, final Transformations transformations, final Set<String> flags) {
     for(int drgnIndex = 1; drgnIndex <= 4; drgnIndex++) {
       final PathNode drgn = root.children.get("SECT").children.get("DRGN2" + drgnIndex + ".BIN");
@@ -92,6 +94,12 @@ public final class SubmapPxlTransformer {
         for(final Tim pxl : pxls) {
           if(pxl.getImageRect().contains(textureRect.x, textureRect.y)) {
             final FileData tim = convertPxlSegment(pxl, textureRect);
+
+            // Patch Lenus 2 busted face texture (GH#1845)
+            if("SECT/DRGN22.BIN/980".equals(submapCutAssets.fullPath) && sobjIndex == 5) {
+              tim.write(0, LENUS_2_REPLACEMENT_CLUT, 0x14, LENUS_2_REPLACEMENT_CLUT.length);
+            }
+
             final String filename = Integer.toString(sobjIndex);
             transformations.addChild(textures, filename, tim);
             textureMap.addFile(filename, tim.size());

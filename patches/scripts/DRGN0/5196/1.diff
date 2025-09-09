@@ -1,0 +1,35 @@
+--- original
++++ modified
+@@ -1508,11 +1508,13 @@
+ wait stor[9]
+ call 144, stor[30]
+ mov 0x2, stor[8]
++mov 0x2, stor[17]
++add var[35], stor[17]
+ LABEL_20:
+ mov var[36][stor[8]], stor[18]
+ fork_reenter stor[18], 0x10, stor[8]
+ incr stor[8]
+-jmp_cmp >, 0x5, stor[8], inl[:LABEL_20]
++jmp_cmp >, stor[17], stor[8], inl[:LABEL_20]
+ mov 0xa, stor[9]
+ wait stor[9]
+ call 145, stor[30]
+@@ -1523,7 +1525,7 @@
+ mov var[36][stor[8]], stor[18]
+ fork_reenter stor[18], 0x11, stor[8]
+ incr stor[8]
+-jmp_cmp >, 0x5, stor[8], inl[:LABEL_22]
++jmp_cmp >, stor[17], stor[8], inl[:LABEL_22]
+ call 147, stor[30], stor[9]
+ jmp_cmp ==, 0x0, stor[9], inl[:LABEL_21]
+ yield
+@@ -1533,7 +1535,7 @@
+ mov var[36][stor[8]], stor[18]
+ fork_reenter stor[18], 0x12, stor[8]
+ incr stor[8]
+-jmp_cmp >, 0x5, stor[8], inl[:LABEL_23]
++jmp_cmp >, stor[17], stor[8], inl[:LABEL_23]
+ call 39, 0x0, 0x3c300, 0xfffb8700, 0x1400, 0x12, 0x1, 0x8000, 0x0, 0x0
+ call 40, 0x0, 0xffdb8600, 0xfffa7a00, 0x1400, 0x14, 0x1, 0x1000, 0x0, 0x0
+ mov 0x11, stor[9]

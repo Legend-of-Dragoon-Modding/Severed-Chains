@@ -3,10 +3,15 @@ package legend.game.wmap;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.Arrays;
 
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
+import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 
 public final class WmapStatics {
   public static final Vector3f[] placePositionVectors_800c74b8 = new Vector3f[257];
@@ -17,31 +22,28 @@ public final class WmapStatics {
 
   public static final UvAdjustmentMetrics14[] tmdUvAdjustmentMetrics_800eee48 = {
     UvAdjustmentMetrics14.NONE,
-    new UvAdjustmentMetrics14( 1, 608, 256),
-    new UvAdjustmentMetrics14( 2, 624, 256),
-    new UvAdjustmentMetrics14( 3, 576, 384),
-    new UvAdjustmentMetrics14( 4, 592, 384),
-    new UvAdjustmentMetrics14( 5, 608, 384),
-    new UvAdjustmentMetrics14( 6, 624, 384),
-    new UvAdjustmentMetrics14( 7, 672, 256),
-    new UvAdjustmentMetrics14( 8, 688, 256),
-    new UvAdjustmentMetrics14( 9, 640, 384),
-    new UvAdjustmentMetrics14(10, 656, 384),
-    new UvAdjustmentMetrics14(11, 672, 384),
-    new UvAdjustmentMetrics14(12, 688, 384),
-    new UvAdjustmentMetrics14(13, 736, 256),
-    new UvAdjustmentMetrics14(14, 752, 256),
-    new UvAdjustmentMetrics14(15, 704, 256),
-    new UvAdjustmentMetrics14(16, 720, 256),
-    new UvAdjustmentMetrics14(17, 1008, 256),
-    new UvAdjustmentMetrics14(18, 576, 256),
-    new UvAdjustmentMetrics14(19, 640, 256),
-    new UvAdjustmentMetrics14(20, 736, 256),
-    new UvAdjustmentMetrics14(21, 704, 384),
+    new UvAdjustmentMetrics14( 1,  608, 256, true),
+    new UvAdjustmentMetrics14( 2,  624, 256, true),
+    new UvAdjustmentMetrics14( 3,  576, 384, true),
+    new UvAdjustmentMetrics14( 4,  592, 384, true),
+    new UvAdjustmentMetrics14( 5,  608, 384, true),
+    new UvAdjustmentMetrics14( 6,  624, 384, true),
+    new UvAdjustmentMetrics14( 7,  672, 256, true),
+    new UvAdjustmentMetrics14( 8,  688, 256, true),
+    new UvAdjustmentMetrics14( 9,  640, 384, true),
+    new UvAdjustmentMetrics14(10,  656, 384, true),
+    new UvAdjustmentMetrics14(11,  672, 384, true),
+    new UvAdjustmentMetrics14(12,  688, 384, true),
+    new UvAdjustmentMetrics14(13,  736, 256, true),
+    new UvAdjustmentMetrics14(14,  752, 256, true),
+    new UvAdjustmentMetrics14(15,  704, 256, true),
+    new UvAdjustmentMetrics14(16,  720, 256, true),
+    new UvAdjustmentMetrics14(17, 1008, 256, true),
+    new UvAdjustmentMetrics14(18,  576, 256, true),
+    new UvAdjustmentMetrics14(19,  640, 256, true),
+    new UvAdjustmentMetrics14(20,  736, 256, true),
+    new UvAdjustmentMetrics14(21,  704, 384, true),
   };
-
-  public static final int[] mapTerrainTmdIndices_800ef194 = {12, 6, 13, 8, 4, 3, 3};
-  public static final int[] mapFrameTmdIndices_800ef19c = {4, 9, 14, 9, 8, 5, 5};
 
   /** These are where the 3D map disappears towards when you fully zoom out */
   public static final Vector3i[] mapPositions_800ef1a8 = {
@@ -206,11 +208,27 @@ public final class WmapStatics {
   public static final String[] regions_800f01ec = {"South of Serdio", "North of Serdio", "Tiberoa"};
 
   /** Each element is an input value mask, with values counter-clockwise from north */
-  public static final int[] positiveDirectionMovementMask_800f0204 = {0x1, 0x9, 0x8, 0xc, 0x4, 0x6, 0x2, 0x3, 0x1, 0x0, 0x0, 0x0};
+  public static final RegistryDelegate[][] positiveDirectionMovementMask_800f0204 = {
+    {INPUT_ACTION_GENERAL_MOVE_UP},
+    {INPUT_ACTION_GENERAL_MOVE_UP, INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT, INPUT_ACTION_GENERAL_MOVE_DOWN},
+    {INPUT_ACTION_GENERAL_MOVE_DOWN},
+    {INPUT_ACTION_GENERAL_MOVE_DOWN, INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT, INPUT_ACTION_GENERAL_MOVE_UP},
+  };
   /** Each element is an input value mask, with values counter-clockwise from south */
-  public static final int[] negativeDirectionMovementMask_800f0210 = {0x4, 0x6, 0x2, 0x3, 0x1, 0x9, 0x8, 0xc, 0x4, 0x0, 0x0, 0x0};
-  /** Used in calculation determining which path you take at a path intersection point */
-  public static final int[] inputAngleModifierAtPathIntersection_800f021c = {0x0, 0xc00, 0xe00, 0x800, 0x0, 0xa00, 0x0, 0x400, 0x200, 0x0, 0x0, 0x600};
+  public static final RegistryDelegate[][] negativeDirectionMovementMask_800f0210 = {
+    {INPUT_ACTION_GENERAL_MOVE_DOWN},
+    {INPUT_ACTION_GENERAL_MOVE_DOWN, INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT},
+    {INPUT_ACTION_GENERAL_MOVE_RIGHT, INPUT_ACTION_GENERAL_MOVE_UP},
+    {INPUT_ACTION_GENERAL_MOVE_UP},
+    {INPUT_ACTION_GENERAL_MOVE_UP, INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT},
+    {INPUT_ACTION_GENERAL_MOVE_LEFT, INPUT_ACTION_GENERAL_MOVE_DOWN},
+  };
 
   public static final Place0c[] places_800f0234 = {
     new Place0c(                      "Forest",  0,  0x0, new int[]{ 12, -1, -1, -1}),

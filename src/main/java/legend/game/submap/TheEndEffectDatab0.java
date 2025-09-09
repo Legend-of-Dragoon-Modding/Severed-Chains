@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -51,7 +52,7 @@ public class TheEndEffectDatab0 {
     this.shouldAdjustBrightness_04 = true;
     this.clutData_800d4bd4 = new FileData(new byte[0x20]);
   }
-  
+
   public void setTim(final Tim tim) {
     this.tim_800d4bf0 = tim;
   }
@@ -157,7 +158,7 @@ public class TheEndEffectDatab0 {
 
       //LAB_800eeb0c
       this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
-      RENDERER.queueOrthoModel(this.text, this.transforms)
+      RENDERER.queueOrthoModel(this.text, this.transforms, QueuedModelStandard.class)
         .monochrome(this.brightness_0c);
     }
 

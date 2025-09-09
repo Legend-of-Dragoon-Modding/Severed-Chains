@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelBattleTmd;
 import legend.core.RenderEngine;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -10,6 +11,7 @@ import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
+import org.joml.Matrix4f;
 
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
@@ -20,7 +22,8 @@ import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.SEffe.FUN_800e60e0;
@@ -39,6 +42,9 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
   /** ushort */
   public int tpage_10;
 
+  final MV transforms = new MV();
+  final Matrix4f glTransforms = new Matrix4f();
+
   @Override
   public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
 
@@ -51,8 +57,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
 
     if(manager.params_10.flags_00 >= 0) {
-      final MV sp0x10 = new MV();
-      calculateEffectTransforms(sp0x10, manager);
+      calculateEffectTransforms(this.transforms, manager);
       if((manager.params_10.flags_00 & 0x4000_0000) != 0) {
         tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
       } else {
@@ -63,21 +68,26 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
       //LAB_801182c8
       zOffset_1f8003e8 = manager.params_10.z_22;
       if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
+        FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       } else {
         //LAB_80118304
         FUN_800e60e0(1.0f, 1.0f, 1.0f);
       }
 
       //LAB_80118314
-      if(manager.scriptIndex_0c < -2) {
-        if(manager.scriptIndex_0c == -4) {
-          sp0x10.transfer.z = projectionPlaneDistance_1f8003f8;
+      if(manager.parentBobjIndex_0c < -2) {
+        if(manager.parentBobjIndex_0c == -4) {
+          this.transforms.transfer.z = projectionPlaneDistance_1f8003f8;
         }
 
         //LAB_8011833c
-        GsSetLightMatrix(sp0x10);
-        GTE.setTransforms(sp0x10);
+        GsSetLightMatrix(this.transforms);
+        GTE.setTransforms(this.transforms);
+
+        if(RenderEngine.legacyMode == 0) {
+          this.glTransforms.set(this.transforms).setTranslation(this.transforms.transfer);
+          this.glTransforms.mulLocal(inverseWorldToScreenMatrix);
+        }
 
         final ModelPart10 dobj2 = new ModelPart10();
         dobj2.attribute_00 = manager.params_10.flags_00;
@@ -89,25 +99,26 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zShift_1f8003c4 = 2;
         zMax_1f8003cc = 0xffe;
         zMin = 0xb;
-        Renderer.renderDobj2(dobj2, false, 0);
+        Renderer.renderDobj2(dobj2, false, 0x20);
         zShift_1f8003c4 = oldZShift;
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.obj, sp0x10)
+        final QueuedModelBattleTmd model = RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
+          .depthOffset(manager.params_10.z_22 * 4)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
-          .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-          .battleColour(((Battle)engineState_8004dd04)._800c6930.colour_00);
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
         if(this.tmd_08.vdf != null) {
           model.vdf(this.tmd_08.vdf);
         }
       } else {
         //LAB_80118370
-        renderTmdSpriteEffect(this.tmd_08, this.obj, manager.params_10, sp0x10);
+        renderTmdSpriteEffect(this.tmd_08, this.obj, manager.params_10, this.transforms);
       }
 
       //LAB_80118380

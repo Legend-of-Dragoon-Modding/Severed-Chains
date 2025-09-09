@@ -1,0 +1,11 @@
+Barrens - Disable dragon shadow
+--- original
++++ modified
+@@ -5,7 +5,6 @@
+ call 97, 0x0
+ call 106, 0x0
+ call 111, 0x1
+-call 311, stor[0]
+ call 292, stor[0], 0x600
+ jmp inl[:LABEL_0]
+ LABEL_0:

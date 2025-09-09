@@ -1,46 +1,54 @@
 package legend.game.fmv;
 
+import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.ProjectionMode;
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.audio.GenericSource;
-import legend.core.opengl.FrameBuffer;
-import legend.core.opengl.Mesh;
-import legend.core.opengl.Shader;
-import legend.core.opengl.ShaderManager;
-import legend.core.opengl.SimpleShaderOptions;
+import legend.core.gpu.Bpp;
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.Window;
+import legend.core.platform.WindowEvents;
+import legend.core.platform.input.ButtonInputActivation;
+import legend.core.platform.input.InputActivation;
+import legend.core.platform.input.InputBindings;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
+import legend.core.platform.input.InputKey;
+import legend.core.platform.input.KeyInputActivation;
+import legend.core.platform.input.ScancodeInputActivation;
 import legend.core.spu.XaAdpcm;
+import legend.game.EngineState;
 import legend.game.EngineStateType;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
+import legend.game.i18n.I18n;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.lwjgl.BufferUtils;
+import org.joml.Vector2i;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DISCORD;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.SItem.UI_WHITE;
 import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.startRumbleIntensity;
 import static legend.game.Scus94491BpeSegment_8002.stopRumble;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FMV_SKIP;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glViewport;
 
 public final class Fmv {
   private Fmv() { }
@@ -213,33 +221,85 @@ public final class Fmv {
   private static int sector;
   private static int frame;
 
+  private static float volume = 1.0f;
   private static GenericSource source;
 
-  private static Window.Events.Char charPress;
-  private static Window.Events.Click click;
-  private static Window.Events.Resize onResize;
+  private static WindowEvents.InputClassChanged inputClassChanged;
+  private static WindowEvents.KeyPressed keyPress;
+  private static WindowEvents.ButtonPressed buttonPressed;
+  private static WindowEvents.InputActionPressed inputActionPressed;
+  private static WindowEvents.Click click;
   private static boolean shouldStop;
 
-  private static Mesh fullScrenMesh;
+  private static Obj texturedObj;
   private static Texture displayTexture;
-  private static Shader.UniformBuffer transforms2Uniform;
-  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
-  private static final Matrix4f identity = new Matrix4f();
-  private static final Vector2f oldProjectionSize = new Vector2f();
+  private static final Vector2i oldProjectionSize = new Vector2i();
+  private static EngineState.RenderMode oldRenderMode;
 
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
+
+  private static InputClass currentInputSource;
+  private static int skipTextFramesRemained;
+  private static String skipText;
+  private static InputButton skipButton;
+  private static InputKey skipKey;
+  private static InputKey skipScancode;
+  private static boolean isKeyboardInput;
+  private static boolean isControllerInput;
+
+  public static boolean isPlaying;
 
   public static void playCurrentFmv(final int fmvIndex, final EngineStateType<?> afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808 = -1;
 
-    rumbleData = RumbleData.load(Unpacker.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
+    rumbleData = RumbleData.load(Loader.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
     rumbleFrames = 0;
 
+    isPlaying = true;
     Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
     engineStateOnceLoaded_8004dd24 = afterFmvState;
+  }
+
+  private static void displaySkipText() {
+    if(skipText != null) {
+      renderText(skipText, 10.0f, 10.0f, UI_WHITE);
+    }
+  }
+
+  private static void setSkipText(final String text, final InputClass inputSource) {
+    skipText = text;
+    currentInputSource = inputSource;
+    skipTextFramesRemained = 60;
+  }
+
+  private static void handleSkipText() {
+    if(isKeyboardInput) {
+      if(skipKey != null) {
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard", PLATFORM.getKeyName(skipKey)), InputClass.KEYBOARD);
+      } else if(skipScancode != null) {
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_keyboard", PLATFORM.getScancodeName(skipScancode)), InputClass.KEYBOARD);
+      }
+
+      isKeyboardInput = false;
+    } else if(isControllerInput) {
+      setSkipText(I18n.translate("lod_core.config.fmv.skip_controller", skipButton.codepoint), InputClass.GAMEPAD);
+      isControllerInput = false;
+    }
+
+    if(skipTextFramesRemained > 0) {
+      skipTextFramesRemained--;
+      if(skipTextFramesRemained == 0) {
+        skipText = null;
+        currentInputSource = null;
+      }
+    }
+  }
+
+  private static boolean isValidSkipInput(final InputClass source) {
+    return skipText != null && currentInputSource == source;
   }
 
   private static void play(final String file, final boolean doubleSpeed) {
@@ -254,41 +314,69 @@ public final class Fmv {
     final ByteBuffer demuxed = ByteBuffer.wrap(demuxedRaw);
     final FrameHeader frameHeader = new FrameHeader(demuxedRaw);
 
-    final FileData fileData = Unpacker.loadFile(file);
+    final FileData fileData = Loader.loadFile(file);
     sector = 0;
     frame = 0;
+    skipText = null;
 
     oldFps = RENDERER.window().getFpsLimit();
-    RENDERER.window().setFpsLimit(15);
-    oldProjectionSize.set(RENDERER.getProjectionSize());
-    RENDERER.setProjectionSize(320.0f, 240.0f);
-
-    final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
-    final SimpleShaderOptions simpleShaderOptions = simpleShader.makeOptions();
-
-    transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
+    oldProjectionSize.set(RENDERER.getNativeWidth(), RENDERER.getNativeHeight());
+    oldRenderMode = RENDERER.getRenderMode();
+    RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
+    RENDERER.setProjectionSize(320, 240);
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
+    volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
 
-    charPress = RENDERER.events().onCharPress((window, codepoint) -> shouldStop = true);
-    click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
-    onResize = RENDERER.events().onResize(Fmv::windowResize);
-    windowResize(RENDERER.window(), RENDERER.window().getWidth(), RENDERER.window().getHeight());
+    skipButton = null;
+    skipKey = null;
+    skipScancode = null;
 
-    RENDERER.usePs1Gpu = false;
+    final List<InputActivation> activations = InputBindings.getActivationsForAction(INPUT_ACTION_FMV_SKIP.get());
 
-    oldRenderer = RENDERER.setRenderCallback(() -> {
-      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
-        || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
-        || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+    for(final InputActivation activation : activations) {
+      if(activation instanceof final ButtonInputActivation button) {
+        skipButton = button.button;
+      } else if(activation instanceof final KeyInputActivation key) {
+        skipKey = key.key;
+      } else if(activation instanceof final ScancodeInputActivation key) {
+        skipScancode = key.key;
+      }
+    }
+
+    keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
+      if(!isControllerInput && !shouldStop && !repeat) {
+        isKeyboardInput = true;
+      }
+    });
+
+    buttonPressed = RENDERER.events().onButtonPress((window, action, repeat) -> {
+      if(!isKeyboardInput && !shouldStop && !repeat) {
+        isControllerInput = true;
+      }
+    });
+
+    inputActionPressed = RENDERER.events().onInputActionPressed((window, action, repeat) -> {
+      if(action == INPUT_ACTION_FMV_SKIP.get() && isValidSkipInput(window.getInputClass())) {
         shouldStop = true;
       }
+    });
 
+    click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
+      if(isValidSkipInput(InputClass.MOUSE)) {
+        shouldStop = true;
+      } else {
+        setSkipText(I18n.translate("lod_core.config.fmv.skip_mouse"), InputClass.MOUSE);
+      }
+    });
+
+    oldRenderer = RENDERER.setRenderCallback(() -> {
       if(shouldStop) {
         stop();
       }
 
-      glDisable(GL_BLEND);
+      RENDERER.window().setFpsLimit(15 * Config.getGameSpeedMultiplier());
+      PLATFORM.setInputTickRate(15 * Config.getGameSpeedMultiplier());
 
       int demuxedSize = 0;
 
@@ -316,10 +404,13 @@ public final class Fmv {
           // Halve the volume
           for(int i = 0; i < decodedXaAdpcm.length; i++) {
             decodedXaAdpcm[i] >>= 1;
+            decodedXaAdpcm[i] *= volume;
           }
 
-          if(source.canBuffer()) {
-            source.bufferOutput(decodedXaAdpcm);
+          synchronized(source) {
+            if(source.canBuffer()) {
+              source.bufferOutput(decodedXaAdpcm);
+            }
           }
         }
       }
@@ -476,19 +567,23 @@ public final class Fmv {
         displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
       }
 
-      FrameBuffer.unbind();
-      RENDERER.setProjectionMode(ProjectionMode._2D);
-      glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
+      if(texturedObj == null) {
+        texturedObj = new QuadBuilder("FMV")
+          .bpp(Bpp.BITS_24)
+          .size(1.0f, 1.0f)
+          .build();
+      }
 
-      identity.get(transforms2Buffer);
-      transforms2Uniform.set(transforms2Buffer);
-
-      simpleShader.use();
-      simpleShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
-      simpleShaderOptions.apply();
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
-      fullScrenMesh.draw();
+
+      final MV transforms = new MV();
+      transforms.scaling(320.0f, frameHeader.getHeight(), 1.0f);
+      transforms.transfer.set(0.0f, (240.0f - frameHeader.getHeight()) / 2.0f, 100.0f);
+
+      RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
+        .texture(displayTexture)
+      ;
 
       if(rumbleData != null) {
         for(final RumbleData rumble : rumbleData) {
@@ -505,15 +600,20 @@ public final class Fmv {
         }
       }
 
+      handleSkipText();
+      displaySkipText();
       frame++;
+
+      DISCORD.tick();
     });
   }
 
   public static void stop() {
+    isPlaying = false;
     RENDERER.setRenderCallback(() -> {
-      if(fullScrenMesh != null) {
-        fullScrenMesh.delete();
-        fullScrenMesh = null;
+      if(texturedObj != null) {
+        texturedObj.delete();
+        texturedObj = null;
       }
 
       if(displayTexture != null) {
@@ -521,9 +621,19 @@ public final class Fmv {
         displayTexture = null;
       }
 
-      if(charPress != null) {
-        RENDERER.events().removeCharPress(charPress);
-        charPress = null;
+      if(inputClassChanged != null) {
+        RENDERER.events().removeInputClassChanged(inputClassChanged);
+        inputClassChanged = null;
+      }
+
+      if(inputActionPressed != null) {
+        RENDERER.events().removeInputActionPressed(inputActionPressed);
+        inputActionPressed = null;
+      }
+
+      if(keyPress != null) {
+        RENDERER.events().removeKeyPress(keyPress);
+        keyPress = null;
       }
 
       if(click != null) {
@@ -531,14 +641,15 @@ public final class Fmv {
         click = null;
       }
 
-      if(onResize != null) {
-        RENDERER.events().removeOnResize(onResize);
-        onResize = null;
+      if(buttonPressed != null) {
+        RENDERER.events().removeButtonPress(buttonPressed);
+        buttonPressed = null;
       }
 
-      RENDERER.usePs1Gpu = true;
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
+      PLATFORM.setInputTickRate(oldFps);
+      RENDERER.setRenderMode(oldRenderMode);
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
       oldRenderer = null;
 
@@ -547,39 +658,6 @@ public final class Fmv {
 
       rumbleData = null;
     });
-  }
-
-  private static void windowResize(final Window window, int width, int height) {
-    if(fullScrenMesh != null) {
-      fullScrenMesh.delete();
-    }
-
-    width = (int)RENDERER.getProjectionSize().x;
-    height = 240;
-
-    final float aspect = 4.0f / 3.0f;
-
-    float w = width;
-    float h = w / aspect;
-
-    if(h > height) {
-      h = height;
-      w = h * aspect;
-    }
-
-    final float l = (width - w) / 2;
-    final float t = (height - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
-    fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 1.0f, 0, 0,
-      l, b, 1.0f, 0, 1,
-      r, t, 1.0f, 1, 0,
-      r, b, 1.0f, 1, 1,
-    }, 4);
-    fullScrenMesh.attribute(0, 0L, 3, 5);
-    fullScrenMesh.attribute(1, 3L, 2, 5);
   }
 
   private static boolean getNextVlc(final VariableLengthCode vlc, final ArrayBitReader bitReader) {

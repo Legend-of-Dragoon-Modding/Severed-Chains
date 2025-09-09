@@ -1,0 +1,29 @@
+--- original
++++ modified
+@@ -477,7 +477,7 @@
+ call 0, 0x1
+ call 111, 0x1
+ call 312, stor[0]
+-call 97, 0xd
++call 97, 0xe
+ call 101, stor[0], 0xfffffed3, 0xfffffe70, 0x87
+ call 103, stor[0], 0x0, 0x900, 0x0
+ call 267, 0x26, stor[24], stor[25], stor[26]
+@@ -496,7 +496,7 @@
+ call 0, 0x1
+ call 111, 0x1
+ call 312, stor[0]
+-call 97, 0xd
++call 97, 0xe
+ call 101, stor[0], 0x7c, 0xfffffe70, 0xffffff47
+ call 103, stor[0], 0x0, 0x900, 0x0
+ call 267, 0x2b, stor[24], stor[25], stor[26]
+@@ -626,7 +626,7 @@
+ mov 0x26, stor[24]
+ gosub inl[:LABEL_20]
+ call 103, stor[0], 0x0, 0x900, 0x0
+-call 97, 0xe
++call 97, 0xd
+ call 107, 0xfffffed3, 0xfffffe70, 0x87, 0x71
+ gosub inl[:LABEL_12]
+ call 0, 0x0

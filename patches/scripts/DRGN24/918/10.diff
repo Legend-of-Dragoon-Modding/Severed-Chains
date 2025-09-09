@@ -1,0 +1,13 @@
+Aglis - Kraken cutscene
+Lulu
+Hide model on exit
+--- original
++++ modified
+@@ -275,6 +275,7 @@
+ mov 0xffffffff, stor[28]
+ gosub inl[:LABEL_4]
+ wait stor[24]
++call 106, 1
+ rewind
+ LABEL_28:
+ mov 0x80, stor[24]

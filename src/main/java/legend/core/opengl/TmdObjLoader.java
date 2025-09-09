@@ -12,8 +12,12 @@ import legend.game.types.Model124;
 import legend.game.types.Translucency;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL32C.GL_TRIANGLES_ADJACENCY;
 
 public final class TmdObjLoader {
   private TmdObjLoader() { }
@@ -31,6 +35,8 @@ public final class TmdObjLoader {
   public static final int TEXTURED_FLAG = 0x2;
   public static final int COLOURED_FLAG = 0x4;
   public static final int TRANSLUCENT_FLAG = 0x8;
+  /** Used for culling quads that are too close to the screen */
+  public static final int QUAD_FLAG = 0x10;
 
   public static Obj[] fromTmd(final String name, final Tmd tmd) {
     return fromTmd(name, tmd, 0);
@@ -66,13 +72,7 @@ public final class TmdObjLoader {
   }
 
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, final int textureWidth, final int textureHeight) {
-    final int translucencyCount = Translucency.values().length + 1;
-    final float[][] allVertices = new float[translucencyCount][];
-    final int[][] allIndices = new int[translucencyCount][];
-    getTranslucencySizes(objTable, specialFlags, allVertices, allIndices);
-    final int[] vertexIndices = new int[translucencyCount];
-    final int[] vertexOffsets = new int[translucencyCount];
-    final int[] indexOffsets = new int[translucencyCount];
+    final TmdObjLoaderMeshes tmdMeshes = getTranslucencySizes(objTable, specialFlags);
 
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
@@ -123,13 +123,12 @@ public final class TmdObjLoader {
       final Polygon poly = new Polygon(vertexCount);
 
       for(final byte[] data : primitive.data()) {
-        float[] vertices = allVertices[0];
-        int[] indices = allIndices[0];
-        int translucencyIndex = 0;
+        TmdObjLoaderMesh mesh = tmdMeshes.opaque;
 
         // Read data from TMD ---
         int primitivesOffset = 0;
 
+        // NOTE: If translucent and untextured, LOD falls back to using tmdGp0Tpage_1f8003ec to determine translucency at runtime
         if(textured) {
           for(int tmdVertexIndex = 0; tmdVertexIndex < vertexCount; tmdVertexIndex++) {
             poly.vertices[tmdVertexIndex].u = IoHelper.readUByte(data, primitivesOffset++);
@@ -141,18 +140,19 @@ public final class TmdObjLoader {
               poly.tpage = IoHelper.readUShort(data, primitivesOffset);
 
               if(translucent) {
-                translucencyIndex = (poly.tpage >>> 5 & 0b11) + 1;
-                vertices = allVertices[translucencyIndex];
-                indices = allIndices[translucencyIndex];
+                final Translucency translucency = Translucency.of(poly.tpage >>> 5 & 0b11);
+                for(int i = 0; i < tmdMeshes.translucent.length; i++) {
+                  if(tmdMeshes.translucent[i].translucency == translucency) {
+                    mesh = tmdMeshes.translucent[i];
+                  }
+                }
               }
             }
 
             primitivesOffset += 2;
           }
         } else if(translucent) {
-          translucencyIndex = Translucency.B_PLUS_F.ordinal() + 1;
-          vertices = allVertices[translucencyIndex];
-          indices = allIndices[translucencyIndex];
+          mesh = tmdMeshes.untexturedTranslucent;
         }
 
         if(shaded || !lit) {
@@ -184,22 +184,36 @@ public final class TmdObjLoader {
         }
         // ---
 
-        indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 2;
-        indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 1;
-        indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex];
+        // Near-face culling is complicated. LOD culls the entire face if any vertex causes the GTE to error. In
+        // order to access the 4th vertex for faces that were quads, we use GL_TRIANGLES_ADJACENCY, and pass the
+        // fourth vertex as the adjacent vertex. We pass it for every adjacency even though it's only actually
+        // adjacent to one side of the triangle to simplify the geometry shader that does the culling (it doesn't
+        // have to care about which adjacency to check).
+        final int adjacent1 = mesh.vertexIndex + 3;
+        final int adjacent2 = mesh.vertexIndex;
+
+        mesh.indices[mesh.indexOffset++] = mesh.vertexIndex + 2;
+        mesh.indices[mesh.indexOffset++] = adjacent1;
+        mesh.indices[mesh.indexOffset++] = mesh.vertexIndex + 1;
+        mesh.indices[mesh.indexOffset++] = adjacent1;
+        mesh.indices[mesh.indexOffset++] = mesh.vertexIndex;
+        mesh.indices[mesh.indexOffset++] = adjacent1;
 
         if(quad) {
-          indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 1;
-          indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 2;
-          indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 3;
+          mesh.indices[mesh.indexOffset++] = mesh.vertexIndex + 1;
+          mesh.indices[mesh.indexOffset++] = adjacent2;
+          mesh.indices[mesh.indexOffset++] = mesh.vertexIndex + 2;
+          mesh.indices[mesh.indexOffset++] = adjacent2;
+          mesh.indices[mesh.indexOffset++] = mesh.vertexIndex + 3;
+          mesh.indices[mesh.indexOffset++] = adjacent2;
         }
 
         for(final Vertex vertex : poly.vertices) {
           final Vector3f pos = objTable.vert_top_00[vertex.vertexIndex];
-          vertices[vertexOffsets[translucencyIndex]++] = pos.x;
-          vertices[vertexOffsets[translucencyIndex]++] = pos.y;
-          vertices[vertexOffsets[translucencyIndex]++] = pos.z;
-          vertices[vertexOffsets[translucencyIndex]++] = vertex.vertexIndex;
+          mesh.vertices[mesh.vertexOffset++] = pos.x;
+          mesh.vertices[mesh.vertexOffset++] = pos.y;
+          mesh.vertices[mesh.vertexOffset++] = pos.z;
+          mesh.vertices[mesh.vertexOffset++] = vertex.vertexIndex;
 
           if(lit) {
             final Vector3f normal;
@@ -210,11 +224,11 @@ public final class TmdObjLoader {
               normal = objTable.normal_top_08[vertex.normalIndex];
             }
 
-            vertices[vertexOffsets[translucencyIndex]++] = normal.x;
-            vertices[vertexOffsets[translucencyIndex]++] = normal.y;
-            vertices[vertexOffsets[translucencyIndex]++] = normal.z;
+            mesh.vertices[mesh.vertexOffset++] = normal.x;
+            mesh.vertices[mesh.vertexOffset++] = normal.y;
+            mesh.vertices[mesh.vertexOffset++] = normal.z;
           } else {
-            vertexOffsets[translucencyIndex] += NORM_SIZE;
+            mesh.vertexOffset += NORM_SIZE;
           }
 
           if(textured) {
@@ -226,27 +240,36 @@ public final class TmdObjLoader {
                 throw new RuntimeException("24bpp textures must have texture width/height specified");
               }
 
-              vertices[vertexOffsets[translucencyIndex]++] = (float)vertex.u / textureWidth;
-              vertices[vertexOffsets[translucencyIndex]++] = (float)vertex.v / textureHeight;
+              mesh.vertices[mesh.vertexOffset++] = (float)vertex.u / textureWidth;
+              mesh.vertices[mesh.vertexOffset++] = (float)vertex.v / textureHeight;
             } else {
-              vertices[vertexOffsets[translucencyIndex]++] = vertex.u;
-              vertices[vertexOffsets[translucencyIndex]++] = vertex.v;
+              mesh.vertices[mesh.vertexOffset++] = vertex.u;
+              mesh.vertices[mesh.vertexOffset++] = vertex.v;
             }
 
-            vertices[vertexOffsets[translucencyIndex]++] = poly.tpage;
-            vertices[vertexOffsets[translucencyIndex]++] = poly.clut;
+            mesh.vertices[mesh.vertexOffset++] = poly.tpage;
+            mesh.vertices[mesh.vertexOffset++] = poly.clut;
           } else {
-            vertexOffsets[translucencyIndex] += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
+            mesh.vertexOffset += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
           }
 
           if(coloured) {
-            MathHelper.colourToFloat(vertex.colour, vertices, vertexOffsets[translucencyIndex]);
-            vertexOffsets[translucencyIndex] += COLOUR_SIZE;
+            MathHelper.colourToFloat(vertex.colour, mesh.vertices, mesh.vertexOffset);
+
+            // Textures recolours use a range of 0..2 instead of 0..1, so 0xff is actually 2x bright
+            if(textured) {
+              mesh.vertices[mesh.vertexOffset    ] *= 2.0f;
+              mesh.vertices[mesh.vertexOffset + 1] *= 2.0f;
+              mesh.vertices[mesh.vertexOffset + 2] *= 2.0f;
+              mesh.vertices[mesh.vertexOffset + 3] *= 2.0f;
+            }
+
+            mesh.vertexOffset += COLOUR_SIZE;
           } else {
-            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
-            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
-            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
-            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
+            mesh.vertices[mesh.vertexOffset++] = 1.0f;
+            mesh.vertices[mesh.vertexOffset++] = 1.0f;
+            mesh.vertices[mesh.vertexOffset++] = 1.0f;
+            mesh.vertices[mesh.vertexOffset++] = 1.0f;
           }
 
           int flags = 0;
@@ -270,58 +293,77 @@ public final class TmdObjLoader {
             }
           }
 
-          vertices[vertexOffsets[translucencyIndex]++] = flags;
+          if(quad) {
+            flags |= QUAD_FLAG;
+          }
+
+          mesh.vertices[mesh.vertexOffset++] = flags;
         }
 
-        vertexIndices[translucencyIndex] += vertexCount;
+        mesh.vertexIndex += vertexCount;
       }
     }
 
-    final Mesh[] meshes = new Mesh[translucencyCount];
+    final Mesh[] meshes = new Mesh[tmdMeshes.meshCount()];
+    int meshIndex = 0;
 
-    for(int i = 0; i < translucencyCount; i++) {
-      if(vertexOffsets[i] != 0) {
-        final Mesh mesh = new Mesh(GL_TRIANGLES, allVertices[i], allIndices[i]);
-
-        mesh.attribute(0, 0L, POS_SIZE, vertexSize);
-
-        int meshIndex = 1;
-        int meshOffset = POS_SIZE;
-
-        mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += NORM_SIZE;
-
-        mesh.attribute(meshIndex, meshOffset, UV_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += UV_SIZE;
-
-        mesh.attribute(meshIndex, meshOffset, TPAGE_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += TPAGE_SIZE;
-
-        mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += CLUT_SIZE;
-
-        mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += COLOUR_SIZE;
-
-        mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
-
-        meshes[i] = mesh;
-      }
+    if(tmdMeshes.opaque != null) {
+      meshes[meshIndex++] = createMesh(tmdMeshes.opaque, vertexSize);
     }
 
-    return new MeshObj(name, meshes, backfaceCulling);
+    if(tmdMeshes.untexturedTranslucent != null) {
+      meshes[meshIndex++] = createMesh(tmdMeshes.untexturedTranslucent, vertexSize);
+    }
+
+    for(int i = 0; i < tmdMeshes.translucent.length; i++) {
+      meshes[meshIndex++] = createMesh(tmdMeshes.translucent[i], vertexSize);
+    }
+
+    final Mesh[] reversed = new Mesh[meshes.length];
+    Arrays.setAll(reversed, i -> meshes[meshes.length - i - 1]);
+    return new TmdMeshObj(name, reversed, backfaceCulling);
   }
 
-  private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices) {
-    // Extra element 0 means none
-    final int translucencyCount = Translucency.values().length + 1;
-    final int[] vertexSizes = new int[translucencyCount];
-    final int[] indexSizes = new int[translucencyCount];
+  private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh, final int vertexSize) {
+    final Mesh mesh = new Mesh(GL_TRIANGLES_ADJACENCY, tmdMesh.vertices, tmdMesh.indices, tmdMesh.textured, tmdMesh.translucent, tmdMesh.translucency);
+
+    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
+
+    int meshIndex = 1;
+    int meshOffset = POS_SIZE;
+
+    mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
+    meshIndex++;
+    meshOffset += NORM_SIZE;
+
+    mesh.attribute(meshIndex, meshOffset, UV_SIZE, vertexSize);
+    meshIndex++;
+    meshOffset += UV_SIZE;
+
+    mesh.attribute(meshIndex, meshOffset, TPAGE_SIZE, vertexSize);
+    meshIndex++;
+    meshOffset += TPAGE_SIZE;
+
+    mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
+    meshIndex++;
+    meshOffset += CLUT_SIZE;
+
+    mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
+    meshIndex++;
+    meshOffset += COLOUR_SIZE;
+
+    mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
+    return mesh;
+  }
+
+  private static TmdObjLoaderMeshes getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags) {
+    int opaqueVertexSize = 0;
+    int opaqueIndexSize = 0;
+    int untexturedTranslucentVertexSize = 0;
+    int untexturedTranslucentIndexSize = 0;
+    final int[] translucentVertexSizes = new int[Translucency.values().length];
+    final int[] translucentIndexSizes = new int[Translucency.values().length];
+    boolean anyTextured = false;
 
     for(int primitiveIndex = 0; primitiveIndex < objTable.primitives_10.length; primitiveIndex++) {
       final TmdObjTable1c.Primitive primitive = objTable.primitives_10[primitiveIndex];
@@ -333,7 +375,12 @@ public final class TmdObjLoader {
       final boolean textured = (primitiveId & 0b100) != 0;
       final boolean translucent = ((primitiveId | specialFlags) & 0b10) != 0;
 
+      if(textured) {
+        anyTextured = true;
+      }
+
       final int vertexCount = quad ? 4 : 3;
+      final int indexCount = quad ? 6 : 3;
 
       int vertexSize = POS_SIZE;
       vertexSize += NORM_SIZE;
@@ -345,24 +392,36 @@ public final class TmdObjLoader {
         if(translucent && textured) {
           final int tpage = IoHelper.readUShort(data, 6);
           final Translucency translucency = Translucency.of(tpage >>> 5 & 0b11);
-          vertexSizes[translucency.ordinal() + 1] += vertexSize * vertexCount;
-          indexSizes[translucency.ordinal() + 1] += quad ? 6 : 3;
+          translucentVertexSizes[translucency.ordinal()] += vertexSize * vertexCount;
+          translucentIndexSizes[translucency.ordinal()] += indexCount;
         } else if(translucent) {
-          // Dunno if this is gonna work everywhere... if set to translucent but untextured, default to B+F
-          vertexSizes[Translucency.B_PLUS_F.ordinal() + 1] += vertexSize * vertexCount;
-          indexSizes[Translucency.B_PLUS_F.ordinal() + 1] += quad ? 6 : 3;
+          untexturedTranslucentVertexSize += vertexSize * vertexCount;
+          untexturedTranslucentIndexSize += indexCount;
         } else {
-          vertexSizes[0] += vertexSize * vertexCount;
-          indexSizes[0] += quad ? 6 : 3;
+          opaqueVertexSize += vertexSize * vertexCount;
+          opaqueIndexSize += indexCount;
         }
       }
     }
 
-    for(int i = 0; i < vertexSizes.length; i++) {
-      if(vertexSizes[i] != 0) {
-        vertices[i] = new float[vertexSizes[i]];
-        indices[i] = new int[indexSizes[i]];
+    final TmdObjLoaderMeshes meshes = new TmdObjLoaderMeshes();
+
+    if(opaqueVertexSize != 0) {
+      meshes.opaque = new TmdObjLoaderMesh(opaqueVertexSize, opaqueIndexSize, anyTextured, false, null);
+    }
+
+    if(untexturedTranslucentVertexSize != 0) {
+      meshes.untexturedTranslucent = new TmdObjLoaderMesh(untexturedTranslucentVertexSize, untexturedTranslucentIndexSize, false, true, null);
+    }
+
+    final List<TmdObjLoaderMesh> translucent = new ArrayList<>();
+    for(int i = 0; i < translucentVertexSizes.length; i++) {
+      if(translucentVertexSizes[i] != 0) {
+        translucent.add(new TmdObjLoaderMesh(translucentVertexSizes[i], translucentIndexSizes[i], anyTextured, true, Translucency.values()[i]));
       }
     }
+    meshes.translucent = translucent.toArray(TmdObjLoaderMesh[]::new);
+
+    return meshes;
   }
 }

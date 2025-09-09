@@ -14,7 +14,7 @@ import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class GameVarArrayParam extends Param {
   private final int varIndex;
@@ -36,12 +36,12 @@ public class GameVarArrayParam extends Param {
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
       case 45 -> this.readBattleVar(this.arrIndex);
       // Indices 6-9 are indices for the four camera positions in a battle
-      case 46 -> ((Battle)engineState_8004dd04).currentStageData_800c6718.get(this.arrIndex);
+      case 46 -> ((Battle)currentEngineState_8004dd04).currentStageData_800c6718.get(this.arrIndex);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex].index : -1;
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex].index : -1;
-      case 64 -> ((SMap)engineState_8004dd04).sobjs_800c6880[this.arrIndex] != null ? ((SMap)engineState_8004dd04).sobjs_800c6880[this.arrIndex].index : 0;
-      case 73 -> ((SMap)engineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex];
+      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex] != null ? ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex].index : 0;
+      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex];
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(this.arrIndex);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.getRaw(this.arrIndex);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
@@ -72,12 +72,12 @@ public class GameVarArrayParam extends Param {
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).set(val);
       case 45 -> this.writeCombatVar(this.arrIndex, val);
-      case 46 -> ((Battle)engineState_8004dd04).currentStageData_800c6718.set(this.arrIndex, val);
+      case 46 -> ((Battle)currentEngineState_8004dd04).currentStageData_800c6718.set(this.arrIndex, val);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex] = SCRIPTS.getState(val, BattleEntity27c.class);
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
-      case 64 -> ((SMap)engineState_8004dd04).sobjs_800c6880[this.arrIndex] = SCRIPTS.getState(val, SubmapObject210.class);
-      case 73 -> ((SMap)engineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex] = val;
+      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex] = SCRIPTS.getState(val, SubmapObject210.class);
+      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex] = val;
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(this.arrIndex, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.setRaw(this.arrIndex, val);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
@@ -181,15 +181,15 @@ public class GameVarArrayParam extends Param {
       case 66 -> Scus94491BpeSegment_8006.battleState_8006e398.counterAttackStage_288;
       case 67 -> Scus94491BpeSegment_8006.battleState_8006e398._28c;
       case 68 -> Scus94491BpeSegment_8006.battleState_8006e398._290;
-      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398._294[0];
-      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398._294[1];
-      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398._294[2];
+      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[0];
+      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[1];
+      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[2];
       case 72 -> Scus94491BpeSegment_8006.battleState_8006e398._2a0;
       case 73 -> Scus94491BpeSegment_8006.battleState_8006e398._2a4;
       case 74 -> Scus94491BpeSegment_8006.battleState_8006e398._2a8;
       case 75 -> Scus94491BpeSegment_8006.battleState_8006e398._2ac;
       case 76 -> Scus94491BpeSegment_8006.battleState_8006e398.specialFlag_2b0;
-      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398._2b4;
+      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398.runAwayFlags_2b4;
       case 78 -> Scus94491BpeSegment_8006.battleState_8006e398._2b8;
       case 79 -> Scus94491BpeSegment_8006.battleState_8006e398._2bc;
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0;
@@ -340,7 +340,7 @@ public class GameVarArrayParam extends Param {
       case 225 -> Scus94491BpeSegment_8006.battleState_8006e398._504;
       case 226 -> Scus94491BpeSegment_8006.battleState_8006e398._508;
       case 227 -> Scus94491BpeSegment_8006.battleState_8006e398._50c;
-      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398._510;
+      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398.globalMenuBlocks_510;
       case 229 -> Scus94491BpeSegment_8006.battleState_8006e398._514;
       case 230 -> Scus94491BpeSegment_8006.battleState_8006e398._518;
       case 231 -> Scus94491BpeSegment_8006.battleState_8006e398._51c;
@@ -356,7 +356,7 @@ public class GameVarArrayParam extends Param {
       case 241 -> Scus94491BpeSegment_8006.battleState_8006e398._544;
       case 242 -> Scus94491BpeSegment_8006.battleState_8006e398._548;
       case 243 -> Scus94491BpeSegment_8006.battleState_8006e398._54c;
-      case 244 -> Scus94491BpeSegment_8006.battleState_8006e398.dragonBlockStaff_550;
+      case 244 -> Scus94491BpeSegment_8006.battleState_8006e398.fieldFlags_550;
       case 245 -> Scus94491BpeSegment_8006.battleState_8006e398._554;
       case 246 -> Scus94491BpeSegment_8006.battleState_8006e398.attackTargets_558;
       case 247 -> Scus94491BpeSegment_8006.battleState_8006e398._55c;
@@ -444,15 +444,15 @@ public class GameVarArrayParam extends Param {
       case 66 -> Scus94491BpeSegment_8006.battleState_8006e398.counterAttackStage_288 = val;
       case 67 -> Scus94491BpeSegment_8006.battleState_8006e398._28c = val;
       case 68 -> Scus94491BpeSegment_8006.battleState_8006e398._290 = val;
-      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398._294[0] = val;
-      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398._294[1] = val;
-      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398._294[2] = val;
+      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[0] = val;
+      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[1] = val;
+      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsRemaining_294[2] = val;
       case 72 -> Scus94491BpeSegment_8006.battleState_8006e398._2a0 = val;
       case 73 -> Scus94491BpeSegment_8006.battleState_8006e398._2a4 = val;
       case 74 -> Scus94491BpeSegment_8006.battleState_8006e398._2a8 = val;
       case 75 -> Scus94491BpeSegment_8006.battleState_8006e398._2ac = val;
       case 76 -> Scus94491BpeSegment_8006.battleState_8006e398.specialFlag_2b0 = val;
-      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398._2b4 = val;
+      case 77 -> Scus94491BpeSegment_8006.battleState_8006e398.runAwayFlags_2b4 = val;
       case 78 -> Scus94491BpeSegment_8006.battleState_8006e398._2b8 = val;
       case 79 -> Scus94491BpeSegment_8006.battleState_8006e398._2bc = val;
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0 = val;
@@ -603,7 +603,7 @@ public class GameVarArrayParam extends Param {
       case 225 -> Scus94491BpeSegment_8006.battleState_8006e398._504 = val;
       case 226 -> Scus94491BpeSegment_8006.battleState_8006e398._508 = val;
       case 227 -> Scus94491BpeSegment_8006.battleState_8006e398._50c = val;
-      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398._510 = val;
+      case 228 -> Scus94491BpeSegment_8006.battleState_8006e398.globalMenuBlocks_510 = val;
       case 229 -> Scus94491BpeSegment_8006.battleState_8006e398._514 = val;
       case 230 -> Scus94491BpeSegment_8006.battleState_8006e398._518 = val;
       case 231 -> Scus94491BpeSegment_8006.battleState_8006e398._51c = val;
@@ -620,7 +620,7 @@ public class GameVarArrayParam extends Param {
       case 242 -> Scus94491BpeSegment_8006.battleState_8006e398._548 = val;
       case 243 -> Scus94491BpeSegment_8006.battleState_8006e398._54c = val;
       case 244 -> {
-        Scus94491BpeSegment_8006.battleState_8006e398.dragonBlockStaff_550 = val;
+        Scus94491BpeSegment_8006.battleState_8006e398.fieldFlags_550 = val;
         if (val == 1) {
           EVENTS.postEvent(new DragonBlockStaffOnEvent());
         } else {
@@ -654,7 +654,7 @@ public class GameVarArrayParam extends Param {
       case 4 -> conditions._10;
       case 5 -> conditions._14;
       case 6 -> conditions.menuBlockFlag_18;
-      case 7 -> (conditions.unknown_1f & 0xff) << 24 | (conditions.chargingSpirit_1e & 0xff) << 16 | (conditions.pandemoniumTurnsDiedAsDragoon_1d & 0xff) << 8 | conditions.shieldsSigStoneCharmTurns_1c & 0xff;
+      case 7 -> (conditions.stolenItem_1f & 0xff) << 24 | (conditions.chargingSpirit_1e & 0xff) << 16 | (conditions.pandemoniumTurnsDiedAsDragoon_1d & 0xff) << 8 | conditions.shieldsSigStoneCharmTurns_1c & 0xff;
 
       default -> throw new IllegalArgumentException("Unknown status condition var index " + varIndex);
     };
@@ -669,13 +669,13 @@ public class GameVarArrayParam extends Param {
       case 2 -> conditions._08 = val;
       case 3 -> conditions._0c = val;
       case 4 -> conditions._10 = val;
-      case 5 -> conditions._14 = val; // Move ID? (0x20 is pre-move, other values are SpellIDs)
+      case 5 -> conditions._14 = val; // Move ID? (0x20 is pre-move, other values are spell/item IDs)
       case 6 -> conditions.menuBlockFlag_18 = val;
       case 7 -> {
         conditions.shieldsSigStoneCharmTurns_1c = val & 0xff;
         conditions.pandemoniumTurnsDiedAsDragoon_1d = val >>> 8 & 0xff;
         conditions.chargingSpirit_1e = val >>> 16 & 0xff;
-        conditions.unknown_1f = val >>> 24 & 0xff;
+        conditions.stolenItem_1f = val >>> 24 & 0xff;
       }
 
       default -> throw new IllegalArgumentException("Unknown special effect var index " + varIndex);

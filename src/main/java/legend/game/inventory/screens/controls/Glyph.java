@@ -5,11 +5,13 @@ import legend.game.types.MenuGlyph06;
 import legend.game.types.Renderable58;
 import legend.game.types.UiType;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.initGlyph;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class Glyph extends Control {
   private final Renderable58 renderable;
@@ -34,6 +36,22 @@ public class Glyph extends Control {
     return uiElement(uiFile_800bdc3c.uiElements_0000(), startGlyph, endGlyph);
   }
 
+  public static Glyph blueSpinnerUp() {
+    if(CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      return uiElement(67, 67);
+    }
+
+    return uiElement(61, 68);
+  }
+
+  public static Glyph blueSpinnerDown() {
+    if(CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      return uiElement(59, 59);
+    }
+
+    return uiElement(53, 60);
+  }
+
   protected Glyph(final Renderable58 renderable) {
     this.renderable = renderable;
     this.ignoreInput();
@@ -47,6 +65,13 @@ public class Glyph extends Control {
   public void setZ(final int z) {
     super.setZ(z);
     this.renderable.z_3c = z;
+  }
+
+  @Override
+  public void setScale(final float scale) {
+    super.setScale(scale);
+    this.renderable.widthScale = scale;
+    this.renderable.heightScale_38 = scale;
   }
 
   @Override

@@ -6,8 +6,12 @@ import legend.game.inventory.screens.controls.NumberSpinner;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.scripting.Param;
+import legend.game.scripting.ScriptReadable;
 
-public class InventorySizeConfigEntry extends ConfigEntry<Integer> {
+import static legend.core.GameEngine.CONFIG;
+
+public class InventorySizeConfigEntry extends ConfigEntry<Integer> implements ScriptReadable {
   public InventorySizeConfigEntry() {
     super(32, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY, InventorySizeConfigEntry::serializer, InventorySizeConfigEntry::deserializer);
 
@@ -16,6 +20,11 @@ public class InventorySizeConfigEntry extends ConfigEntry<Integer> {
       spinner.onChange(val -> gameState.setConfig(this, val));
       return spinner;
     });
+  }
+
+  @Override
+  public void read(final int index, final Param out) {
+    out.set(CONFIG.getConfig(this));
   }
 
   private static byte[] serializer(final int val) {

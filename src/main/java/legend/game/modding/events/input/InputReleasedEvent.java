@@ -1,9 +1,9 @@
 package legend.game.modding.events.input;
 
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
 
 public class InputReleasedEvent extends InputEvent {
-  public InputReleasedEvent(final InputAction inputAction) {
-    super(inputAction);
+  public InputReleasedEvent(final InputAction action) {
+    super(action);
   }
 }

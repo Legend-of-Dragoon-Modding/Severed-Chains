@@ -1,0 +1,14 @@
+--- original
++++ modified
+@@ -1755,9 +1755,11 @@
+ gosub inl[:LABEL_71]
+ gosub inl[:LABEL_40]
+ mov var[34][2], stor[28]
++jmp_cmp ==, stor[28], 0xffffffff, inl[:SKIP_0]
+ mov stor[stor[stor[0], 28], 24], stor[24]
+ add 0x400, stor[24]
+ call 128, stor[28], stor[24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26]
++SKIP_0:
+ mov var[34][0], stor[28]
+ mov stor[stor[stor[0], 28], 24], stor[24]
+ add 0x200, stor[24]

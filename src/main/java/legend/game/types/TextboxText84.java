@@ -21,10 +21,15 @@ public class TextboxText84 {
   public static final int ARROW = 0xb2;
 
   public static final int SHOW_VAR = 0x10;
+  public static final int NO_INPUT = 0x20;
   public static final int HAS_NAME = 0x200;
   public static final int PROCESSED_NEW_LINE = 0x400;
   public static final int SELECTION = 0x800;
   public static final int SHOW_ARROW = 0x1000;
+  /**
+   * Added option to remove arrows. Used for special chest in phantom ship.
+   */
+  public static final int NO_ARROW = 0x2000;
 
   public TextboxTextState state_00;
   /**
@@ -42,7 +47,7 @@ public class TextboxText84 {
    *   <li>0x4 - ?</li>
    *   <li>0x8 - ?</li>
    *   <li>0x10 - textbox is displaying a var</li>
-   *   <li>0x20 - disables being able to advance the textbox, maybe part of automatic textboxes?</li>
+   *   <li>0x20 - disables being able to advance the textbox</li>
    *   <li>0x40 - ?</li>
    *   <li>0x80 - ?</li>
    *   <li>0x100 - ?</li>
@@ -75,7 +80,8 @@ public class TextboxText84 {
   public int charX_34;
   public int charY_36;
 
-  public float _3a;
+  /** Number of additional lines scrolled (first scroll is not counted) */
+  public int linesScrolled_3a;
 //  public int _3c;
   public int _3e;
   public int _40;

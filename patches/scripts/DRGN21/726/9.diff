@@ -1,0 +1,49 @@
+Widescreen patch
+Seles, Commander cutscene
+Knight of Sandora
+--- original
++++ modified
+@@ -208,14 +208,34 @@
+ rel :JMP_494_1
+ rel :JMP_494_1
+ rel :JMP_494_1
++#include ../../../../patches/libs/widescreen.txt
+ JMP_494_0:
+ call 3, 0x19, stor[8]
+ jmp_cmp !=, 0x0, stor[8], inl[:LABEL_13]
+# Wait for global script flag
++mov 0xa, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
+# Set new position
++call 101, stor[0], 0xfffffe52, 0xffffffe4, 0xfffffd00
++call 106, 0
+# Move to retail spawn position
++mov 0xfffffeb1, inl[:WS_TARGET_X]
++mov 0xffffffe4, inl[:WS_TARGET_Y]
++mov 0xfffffd15, inl[:WS_TARGET_Z]
++mov 2, inl[:WS_ANIMATION_0]
++mov 6, inl[:WS_SPEED]
++call 105, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++gosub inl[:WS_MOVE]
+# Face commander
++call 102, var[64][5], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 0, inl[:WS_ANIMATION_0]
++mov 10, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
+# Pause animation
++call 99, 1
+ mov 0x10, stor[24]
+ gosub inl[:LABEL_0]
+-mov 0x14, stor[24]
+-wait stor[24]
+-call 106, 0x0
+# Face destination
++mov 0xffffff4d, inl[:WS_TARGET_X]
++mov 0xfffffc7d, inl[:WS_TARGET_Z]
++mov 0, inl[:WS_ANIMATION_0]
++mov 20, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
+ mov 0xffffff4d, stor[24]
+ mov 0xffffffe4, stor[25]
+ mov 0xfffffc7d, stor[26]

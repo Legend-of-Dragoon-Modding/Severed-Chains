@@ -1,0 +1,79 @@
+Widescreen patch
+Hellena Prison, cutscene before fighting Fruegel (I): New start and pathing for warden
+Hellena Prison, cutscene after escaping Fruegel (I): Enable animation for Man in Hood movement after rotation animation
+--- original
++++ modified
+@@ -52,6 +52,7 @@
+ LABEL_5:
+ call 294, 0x0, 0x0
+ call 97, 0x1
+# Enable animation (For Man in Hood movement after rotation animation)
++call 99, 0
+ call 107, stor[8], stor[9], stor[10], stor[24]
+ call 105, stor[8], stor[9], stor[10]
+ LABEL_6:
+@@ -176,18 +177,49 @@
+ rel :JMP_630_0
+ rel :JMP_630_0
+ JMP_630_1:
+# New entrance at top of stairs
+-mov 0x10, stor[24]
++mov 0x21, stor[24]
+ gosub inl[:LABEL_3]
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 311, stor[0]
+# Wait for series of flags, then follow a series of collision primitives downstairs
++mov 0x79, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++mov 0x78, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++call 2, 0x78, 1
++call 96, 4
++call 106, 0
++mov 0x28, stor[24]
++gosub inl[:LABEL_4]
++mov 0x1d, stor[24]
++gosub inl[:LABEL_4]
+# Wait halfway down flight of stairs
++mov 0x78, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++call 2, 0x78, 1
++mov 0x23, stor[24]
++gosub inl[:LABEL_4]
++mov 0x17, stor[24]
++gosub inl[:LABEL_4]
++mov 0x2e, stor[24]
++gosub inl[:LABEL_4]
++mov 0xf, stor[24]
++gosub inl[:LABEL_4]
+ LABEL_18:
+ yield
+ call 3, 0x7a, stor[24]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_18]
+# Move to old start location
+-call 96, 0x4
+-call 106, 0x0
+-mov 0x3c, stor[24]
+-wait stor[24]
++mov 0x10, stor[24]
++gosub inl[:LABEL_4]
+# Rotate to face Shana and move when she's finished rotating
++call 102, var[64][1], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 10, inl[:WS_FRAMES]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 0x78, inl[:WS_WAIT_FLAG]
++mov 0, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++call 2, 0x78, 1
+ mov 0x18, stor[24]
+ gosub inl[:LABEL_4]
+ mov 0x1, stor[25]
+@@ -295,3 +327,4 @@
+ yield
+ jmp inl[:LABEL_24]
+ data 0x49
++#include ../../../../patches/libs/widescreen.txt

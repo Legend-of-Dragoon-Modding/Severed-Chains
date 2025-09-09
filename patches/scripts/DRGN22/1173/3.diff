@@ -1,0 +1,14 @@
+Fletz - Return from HoG cutscene
+Meru
+Move start position off-camera.
+--- original
++++ modified
+@@ -349,7 +349,7 @@
+ gosub inl[:LABEL_43]
+ rewind
+ JMP_c24_1:
+-call 101, stor[0], 0x5d, 0x0, 0xfffffaf8
++call 101, stor[0], 0x73, 0x0, 0xfffffaec
+ call 103, stor[0], 0x0, 0x0, 0x0
+ mov 0x1, stor[24]
+ mov 0x1, stor[25]

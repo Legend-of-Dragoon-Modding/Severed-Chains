@@ -1,17 +1,17 @@
 --- original
 +++ modified
-@@ -147,11 +147,14 @@
- call SMap::scriptReadModelPosition, var[64][0], stor[8], stor[9], stor[10] ; scriptIndex, x, y, z
- jmp_cmp ==, stor[8], 0xb0, inl[:LABEL_32] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xfffffeee, inl[:LABEL_33] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0xfffffeed, inl[:LABEL_33] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x4, inl[:LABEL_34] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x6c, inl[:LABEL_35] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0x54, inl[:LABEL_36] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0x55, inl[:LABEL_36] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xf4, inl[:LABEL_37] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff83, inl[:LABEL_38] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0xffffff82, inl[:LABEL_38] ; operand, left, right, addr
- LABEL_31:
+@@ -137,11 +137,14 @@
+ call 102, var[64][0], stor[8], stor[9], stor[10]
+ jmp_cmp ==, stor[8], 0xb0, inl[:LABEL_36]
+ jmp_cmp ==, stor[8], 0xfffffeee, inl[:LABEL_37]
++jmp_cmp ==, stor[8], 0xfffffeed, inl[:LABEL_37]
+ jmp_cmp ==, stor[8], 0x4, inl[:LABEL_38]
+ jmp_cmp ==, stor[8], 0x6c, inl[:LABEL_39]
+ jmp_cmp ==, stor[8], 0x54, inl[:LABEL_40]
++jmp_cmp ==, stor[8], 0x55, inl[:LABEL_40]
+ jmp_cmp ==, stor[8], 0xf4, inl[:LABEL_41]
+ jmp_cmp ==, stor[8], 0xffffff83, inl[:LABEL_42]
++jmp_cmp ==, stor[8], 0xffffff82, inl[:LABEL_42]
+ LABEL_15:
  return
- LABEL_22:
+ LABEL_16:

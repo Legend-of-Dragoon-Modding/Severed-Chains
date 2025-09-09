@@ -1,5 +1,10 @@
 package legend.core.audio;
 
+import org.lwjgl.system.MemoryUtil;
+
+import java.nio.IntBuffer;
+import java.util.Arrays;
+
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
 import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
@@ -13,6 +18,7 @@ import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public abstract class AudioSource {
   private final int[] buffers;
@@ -21,16 +27,44 @@ public abstract class AudioSource {
 
   private boolean playing;
 
+  private IntBuffer tmp;
+
   public AudioSource(final int bufferCount) {
     this.buffers = new int[bufferCount];
-    this.init();
   }
 
-  void init() {
+  protected boolean isInitialized() {
+    return this.sourceId != 0;
+  }
+
+  protected void init() {
     this.sourceId = alGenSources();
+    this.tmp = MemoryUtil.memAllocInt(1);
 
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
+  }
+
+  protected void destroy() {
+    this.playing = false;
+    alSourceStop(this.sourceId);
+
+    alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
+    final int processedBufferCount = this.tmp.get(0);
+
+    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
+      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
+      alDeleteBuffers(processedBufferName);
+    }
+
+    alDeleteBuffers(this.buffers);
+    alDeleteSources(this.sourceId);
+
+    memFree(this.tmp);
+
+    Arrays.fill(this.buffers, 0);
+    this.sourceId = 0;
+    this.tmp = null;
   }
 
   public void tick() {
@@ -41,44 +75,47 @@ public abstract class AudioSource {
   }
 
   public boolean canBuffer() {
-    if(!this.playing) {
+    if(!this.playing || !this.isInitialized()) {
       return false;
     }
 
     return this.bufferIndex >= 0;
   }
 
-  public void processBuffers() {
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+  protected void handleProcessedBuffers() {
+    if(this.bufferIndex < this.buffers.length - 1) {
+      alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
+      final int processedBufferCount = this.tmp.get(0);
 
-    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-
-      synchronized(this) {
-        this.buffers[++this.bufferIndex] = processedBufferName;
+      for(int buffer = 0; buffer < processedBufferCount; buffer++) {
+        this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
       }
     }
   }
 
   protected void bufferOutput(final int format, final short[] buffer, final int sampleRate) {
-    final int bufferId;
     synchronized(this) {
-      bufferId = this.buffers[this.bufferIndex--];
+      if(this.bufferIndex >= 0) {
+        final int bufferId = this.buffers[this.bufferIndex--];
+        alBufferData(bufferId, format, buffer, sampleRate);
+        alSourceQueueBuffers(this.sourceId, bufferId);
+      }
     }
-
-    alBufferData(bufferId, format, buffer, sampleRate);
-    alSourceQueueBuffers(this.sourceId, bufferId);
   }
 
   protected void play() {
-    if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) != AL_PLAYING) {
+    alGetSourcei(this.sourceId, AL_SOURCE_STATE, this.tmp);
+    if(this.tmp.get(0) != AL_PLAYING) {
       alSourcePlay(this.sourceId);
     }
   }
 
   protected void stop() {
     this.playing = false;
-    alSourceStop(this.sourceId);
+
+    if(this.isInitialized()) {
+      alSourceStop(this.sourceId);
+    }
   }
 
   protected void setPlaying(final boolean playing) {
@@ -89,18 +126,21 @@ public abstract class AudioSource {
     return this.playing;
   }
 
-  public void destroy() {
-    this.playing = false;
+  protected void resetBuffers() {
     alSourceStop(this.sourceId);
 
-    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+    final int processed = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 
-    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-      alDeleteBuffers(processedBufferName);
+    for (int i = 0; i < processed; i++) {
+      alSourceUnqueueBuffers(this.sourceId, this.buffers);
+      alDeleteBuffers(this.buffers[0]);
     }
 
-    alDeleteBuffers(this.buffers);
-    alDeleteSources(this.sourceId);
+    alGenBuffers(this.buffers);
+    this.bufferIndex = this.buffers.length - 1;
+
+    if(this.playing) {
+      alSourcePlay(this.sourceId);
+    }
   }
 }

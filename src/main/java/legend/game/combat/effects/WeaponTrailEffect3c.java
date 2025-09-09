@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
@@ -150,7 +151,6 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
             .addVertex(v0.x, v0.y, 0.0f)
             .monochrome(0.0f)
             .addVertex(v1.x, v1.y, 0.0f)
-            .monochrome(0.0f)
             .addVertex(v2.x, v2.y, 0.0f)
             .rgb((colour.x >>> 8) / 255.0f, (colour.y >>> 8) / 255.0f, (colour.z >>> 8) / 255.0f)
             .addVertex(v1.x, v1.y, 0.0f)
@@ -188,8 +188,8 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
         obj.delete(); // mark for deletion at end of frame
 
         //LAB_800ce138
-        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), zFinal);
-        RENDERER.queueOrthoModel(obj, this.transforms);
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), zFinal * 4.0f);
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
       }
 
       //LAB_800ce1a0

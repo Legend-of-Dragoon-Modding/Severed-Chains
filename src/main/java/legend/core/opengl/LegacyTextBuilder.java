@@ -1,7 +1,6 @@
 package legend.core.opengl;
 
 import legend.core.gpu.Bpp;
-import legend.game.types.Translucency;
 
 import static legend.core.MathHelper.makeClut;
 import static legend.core.MathHelper.makeTpage;
@@ -50,8 +49,8 @@ public class LegacyTextBuilder {
     final int v = chr / 16 * 16;
     offset = this.setVertex(offset, vertices, 0.0f,  0.0f, u, v);
     offset = this.setVertex(offset, vertices, 0.0f, 16.0f, u, v + 16.0f);
-    offset = this.setVertex(offset, vertices, 8.0f,  0.0f, u + 8.0f, v);
-    offset = this.setVertex(offset, vertices, 8.0f, 16.0f, u + 8.0f, v + 16.0f);
+    offset = this.setVertex(offset, vertices, 16.0f,  0.0f, u + 16.0f, v);
+    offset = this.setVertex(offset, vertices, 16.0f, 16.0f, u + 16.0f, v + 16.0f);
     return offset;
   }
 
@@ -98,8 +97,6 @@ public class LegacyTextBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
-    meshes[0] = mesh;
-    return new MeshObj(this.name, meshes, true);
+    return new MeshObj(this.name, new Mesh[] { mesh }, true);
   }
 }

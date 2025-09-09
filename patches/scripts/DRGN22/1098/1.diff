@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -698,7 +698,7 @@
+ mov 0x0, stor[24]
+ mov 0x2, stor[26]
+ gosub inl[:LABEL_35]
+-mov 0xa, stor[24]
++mov 0x4, stor[24]
+ mov 0xffffffff, stor[25]
+ gosub inl[:LABEL_44]
+ gosub inl[:LABEL_17]
+@@ -744,7 +744,7 @@
+ mov 0x1, stor[24]
+ mov 0x2, stor[26]
+ gosub inl[:LABEL_35]
+-mov 0xa, stor[24]
++mov 0x4, stor[24]
+ mov 0x0, stor[25]
+ gosub inl[:LABEL_44]
+ gosub inl[:LABEL_17]

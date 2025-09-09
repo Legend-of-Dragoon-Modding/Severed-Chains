@@ -1,0 +1,13 @@
+Zenebatos
+Coolon
+Do not hide during cutscene
+--- original
++++ modified
+@@ -245,7 +245,6 @@
+ LABEL_25:
+ return
+ LABEL_26:
+-call 106, 0x1
+ mov 0x2b, stor[24]
+ gosub inl[:LABEL_0]
+ call 106, 0x0

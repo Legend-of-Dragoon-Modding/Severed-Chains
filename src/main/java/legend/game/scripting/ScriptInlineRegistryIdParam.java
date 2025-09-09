@@ -37,7 +37,7 @@ public class ScriptInlineRegistryIdParam extends Param {
   public RegistryId getRegistryId() {
     final char[] chars = new char[this.length];
     for(int i = 0; i < this.length; i++) {
-      chars[i] = (char)(this.state.scriptPtr_14.getOp(this.offset + i / 4) >>> i % 4 * 8 & 0xff);
+      chars[i] = (char)(this.state.frame().file.getOp(this.offset + i / 4) >>> i % 4 * 8 & 0xff);
     }
 
     return new RegistryId(new String(chars));
@@ -46,5 +46,10 @@ public class ScriptInlineRegistryIdParam extends Param {
   @Override
   public Param set(final RegistryId id) {
     throw new IllegalStateException(this.getClass().getSimpleName() + " is immutable");
+  }
+
+  @Override
+  public String toString() {
+    return "script[%d].inl[0x%x] %s".formatted(this.state.index, this.offset * 4, this.getRegistryId());
   }
 }

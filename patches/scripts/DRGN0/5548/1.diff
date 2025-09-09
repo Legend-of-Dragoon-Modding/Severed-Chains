@@ -1,0 +1,57 @@
+--- original
++++ modified
+@@ -12,7 +12,6 @@
+ deallocate_other stor[27]
+ call 358, stor[8]
+ call 372
+-gosub inl[:LABEL_16]
+ yield
+ call 714
+ yield
+@@ -1014,6 +1013,10 @@
+ data 0x900fff2
+ LABEL_9:
+ data 0x2
++data 0xc
++data 0x55
++data 0x4e
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x50
+@@ -1116,30 +1119,30 @@
+ LABEL_10:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+-mov 0x5, stor[stor[stor[0], 23], 24]
++mov 0x6, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_11:
+ call 600, stor[23]
+-mov 0x5, stor[stor[stor[0], 23], 14]
++mov 0x6, stor[stor[stor[0], 23], 14]
+ mov 0x5, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_12:
+ call 600, stor[23]
+-mov 0xa, stor[stor[stor[0], 23], 14]
++mov 0xb, stor[stor[stor[0], 23], 14]
+ mov 0x5, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_13:
+ call 600, stor[23]
+-mov 0xf, stor[stor[stor[0], 23], 14]
++mov 0x10, stor[stor[stor[0], 23], 14]
+ mov 0x5, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_14:
+ call 600, stor[23]
+-mov 0x14, stor[stor[stor[0], 23], 14]
++mov 0x15, stor[stor[stor[0], 23], 14]
+ mov 0x5, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return

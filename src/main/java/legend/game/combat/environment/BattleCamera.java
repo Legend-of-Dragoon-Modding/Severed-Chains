@@ -2503,16 +2503,12 @@ public class BattleCamera {
 
     //LAB_800dcf48
     if(stepType == 1) {
-      if(val1 > val2) {
+      if(!MathHelper.flEq(0, val1 - val2, 0.0002f) && val1 > val2) {
         //LAB_800dcf6c
         return (val2 - val1 + MathHelper.TWO_PI) / divisor;
       }
-
-      return (val2 - val1) / divisor;
-    }
-
     //LAB_800dcf84
-    if(val1 <= val2) {
+    } else if(val1 <= val2) {
       return (val2 - val1 - MathHelper.TWO_PI) / divisor;
     }
 

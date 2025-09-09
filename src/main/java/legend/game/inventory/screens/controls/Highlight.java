@@ -58,11 +58,11 @@ public class Highlight extends Control {
   /** Corner width */
   private int cw = 9;
   /** Corner height */
-  private int ch = 6;
+  private int ch = 5;
   /** Middle width */
   private int mw = 1;
   /** Middle height */
-  private int mh = 1;
+  private int mh = 0;
   /** Middle grow */
   private int mg;
   private int clut = 0xff29;
@@ -85,13 +85,13 @@ public class Highlight extends Control {
 
     final UiPart bracketsPart = this.brackets.uiType_20.entries_08[0];
     bracketsPart.metrics_00()[0] = new RenderableMetrics14(240, 64, 8, 0, 0xfc29, 0x2c, 5, 5, 5, 5);
-    bracketsPart.metrics_00()[1] = new RenderableMetrics14(251, 64, 8 + this.getWidth() - 5, 0, 0xfc29, 0x2c, 5, 5, 5, 5);
+    bracketsPart.metrics_00()[1] = new RenderableMetrics14(251, 64, 8 + this.getWidth() - 4, 0, 0xfc29, 0x2c, 5, 5, 5, 5);
 
     bracketsPart.metrics_00()[2] = new RenderableMetrics14(240, 69, 8, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1);
-    bracketsPart.metrics_00()[3] = new RenderableMetrics14(251, 69, 8 + this.getWidth() - 5, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1);
+    bracketsPart.metrics_00()[3] = new RenderableMetrics14(251, 69, 8 + this.getWidth() - 4, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1);
 
     bracketsPart.metrics_00()[4] = new RenderableMetrics14(240, 71, 8, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5);
-    bracketsPart.metrics_00()[5] = new RenderableMetrics14(251, 71, 8 + this.getWidth() - 5, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5);
+    bracketsPart.metrics_00()[5] = new RenderableMetrics14(251, 71, 8 + this.getWidth() - 4, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5);
 
     if(this.background.uiType_20.obj != null) {
       this.background.uiType_20.obj.delete();

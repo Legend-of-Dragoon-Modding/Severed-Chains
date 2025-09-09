@@ -1,0 +1,411 @@
+; SUBROUTINE
+ALLOCATE_THROW_POTION_EFFECT:
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Battle::scriptGetCharOrMonsterId, stor[30], stor[22] ; bentIndex, id
+call Battle::scriptSetLoadingBentAnimationIndex, stor[30], 0x3 ; bentIndex, animIndex
+call Battle::scriptSetBentAnimationLoopState, stor[30], 0x0 ; bentIndex, loop
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
+call Battle::scriptGetBentStat, stor[30], HAND_MODEL_PART, inl[:ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX]
+call SEffe::scriptAttachEffectToBobj, stor[18], stor[30], inl[:ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX] ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[18], stor[1], 0x20, 0x90, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeRotation, stor[18], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x34 ; effectIndex, ticks
+mov inl[:ALLOCATE_THROW_POTION_EFFECT_CHAR_WAITS[stor[22]]], stor[23] ; source, dest
+wait stor[23] ; frames
+call SEffe::scriptGetEffectTranslationRelativeToParent, stor[18], 0xffffffff, stor[9], stor[10], stor[11] ; effectIndex, parentIndex, x, y, z
+call SEffe::scriptAttachEffectToBobj, stor[18], 0xffffffff, 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[9], stor[10], stor[11] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptRemoveEffectAttachment, stor[18], 0x1 ; effectIndex, attachmentId
+mov stor[8], stor[stor[stor[0], 18], 8] ; source, dest
+mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
+mov stor[30], stor[stor[stor[0], 18], 30] ; source, dest
+call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:ALLOCATE_THROW_POTION_EFFECT_FORK] ; scriptIndex, address
+mov 0x2, stor[23] ; source, dest
+wait stor[23] ; frames
+return
+
+ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX:
+data 0
+
+; For some reason different characters have different wait times
+ALLOCATE_THROW_POTION_EFFECT_CHAR_WAITS:
+data 0x10
+data 0x10
+data 0x10
+data 0x10
+data 0x11
+data 0x10
+data 0xe
+data 0x10
+data 0x10
+
+; variables to hold unpacked colours below
+UNPACKED_THROW_POTION_COLOURS_R:
+data 0
+UNPACKED_THROW_POTION_COLOURS_G:
+data 0
+UNPACKED_THROW_POTION_COLOURS_B:
+data 0
+
+; FORK RE-ENTRY
+ALLOCATE_THROW_POTION_EFFECT_FORK:
+
+; Unpack rgb
+mov stor[8], inl[:UNPACKED_THROW_POTION_COLOURS_R]
+mov stor[8], inl[:UNPACKED_THROW_POTION_COLOURS_G]
+mov stor[8], inl[:UNPACKED_THROW_POTION_COLOURS_B]
+shr  8, inl[:UNPACKED_THROW_POTION_COLOURS_G]
+shr 16, inl[:UNPACKED_THROW_POTION_COLOURS_B]
+and 0xff, inl[:UNPACKED_THROW_POTION_COLOURS_R]
+and 0xff, inl[:UNPACKED_THROW_POTION_COLOURS_G]
+and 0xff, inl[:UNPACKED_THROW_POTION_COLOURS_B]
+
+call Battle::allocateBillboardSpriteEffect, stor[18], 0xfff25 ; effectIndex, flags
+call SEffe::scriptSetRelativePosition, stor[18], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x500, 0x500, 0x500 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddRotationScalerAttachment, stor[18], stor[18], 0x0, 0xfffffe00, 0xfffffe00, 0x0, 0x0, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptAddPositionScalerAttachment, stor[18], 0xffffffff, 0x0, 0xffff7b00, 0x0, 0x0, 0xe00, 0x0 ; effectIndex, parentIndex, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:UNPACKED_THROW_POTION_COLOURS_R], inl[:UNPACKED_THROW_POTION_COLOURS_G], inl[:UNPACKED_THROW_POTION_COLOURS_B] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptAddConstantColourScalerAttachment, stor[18], 0xffffffff, 0xa, 0x0, 0x0, 0x0 ; effectIndex, parentIndex, ticks, destR, destG, destB
+call SEffe::scriptSetEffectTranslucencyModeFlag, stor[18], 0x1 ; effectIndex, set
+call SEffe::scriptAddLifespanAttachment, stor[18], 0xf ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff3e, 0x20, 0x120, 0xf, 0x200, 0x0, 0x37 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], stor[18], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x400, 0x400, 0x400 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddPositionScalerAttachment, stor[19], 0xffffffff, 0x0, 0xffff7b00, 0x0, 0x0, 0x1000, 0x0 ; effectIndex, parentIndex, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x20 ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff17 ; effectIndex, flags
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0xfffffc00, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff18 ; effectIndex, flags
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x400, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+
+THROW_POTION_FORK_WAIT_FOR_ANIMATION_LOOP:
+yield
+call Battle::scriptAnimationHasFinished, stor[30], stor[23] ; bentIndex, finished
+jmp_cmp ==, 0x0, stor[23], inl[:THROW_POTION_FORK_WAIT_FOR_ANIMATION_LOOP] ; operand, left, right, addr
+
+call Battle::scriptGetLoadingBentAnimationIndex, stor[30], stor[18] ; bentIndex, animationIndex
+jmp_cmp ==, 0x0, stor[18], inl[:THROW_POTION_FORK_SKIP_SET_ANIM] ; operand, left, right, addr
+mov stor[30], stor[28] ; source, dest
+gosub inl[:SET_BENT_ANIMATION] ; addr
+THROW_POTION_FORK_SKIP_SET_ANIM:
+rewind
+
+
+
+; SUBROUTINE
+ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT:
+call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x2c, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x21 ; effectIndex, ticks
+mov stor[8], stor[stor[stor[0], 18], 8] ; source, dest
+mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
+mov stor[30], stor[stor[stor[0], 18], 30] ; source, dest
+call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT_FORK] ; scriptIndex, address
+return
+
+; variables to hold unpacked colours below
+UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_R:
+data 0
+UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_G:
+data 0
+UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_B:
+data 0
+
+; FORK RE-ENTRY
+ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT_FORK:
+
+; Unpack rgb
+mov stor[8], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_R]
+mov stor[8], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_G]
+mov stor[8], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_B]
+shr  8, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_G]
+shr 16, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_B]
+and 0xff, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_R]
+and 0xff, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_G]
+and 0xff, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_B]
+
+call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff17, 0x2, 0x7f, 0x2, 0x200, 0x4207f00, 0x1c ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[18], stor[28], 0x0, 0xfffff900, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetGenericEffectValue, stor[18], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x20 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff18, 0x2, 0x7f, 0x2, 0x200, 0x4207f00, 0x1c ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[18], stor[28], 0x0, 0xfffff900, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetGenericEffectValue, stor[18], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x20 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff25, 0x4, 0x7f, 0x2, 0x200, 0x4207f00, 0x1c ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[18], stor[28], 0x0, 0xfffff900, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_R], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_G], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_B] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetEffectTranslucencyModeFlag, stor[18], 0x1 ; effectIndex, set
+call SEffe::scriptSetGenericEffectValue, stor[18], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x20 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff25, 0x4, 0x7f, 0x2, 0x200, 0x4207f00, 0x1c ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[18], stor[28], 0x0, 0xfffff900, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_R], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_G], inl[:UNPACKED_SHIELD_BUFF_PURIFIER_COLOURS_B] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetEffectTranslucencyModeFlag, stor[18], 0x1 ; effectIndex, set
+call SEffe::scriptSetGenericEffectValue, stor[18], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[18], 0x20 ; effectIndex, ticks
+rewind
+
+
+
+; @param int s8 rgb
+; @param int s28
+; @param int s30
+ALLOCATE_USE_ATTACK_ITEM_EFFECT:
+jmp_cmp >, 0, stor[8], inl[:ALLOCATE_USE_ATTACK_ITEM_EFFECT_NEGATIVE] ; we use negative numbers to handle items with special colours
+
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
+mov stor[30], stor[stor[stor[0], 18], 30] ; source, dest
+mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
+mov stor[8], stor[stor[stor[0], 18], 31] ; source, dest
+call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:ALLOCATE_USE_ATTACK_ITEM_EFFECT_MAIN] ; scriptIndex, address
+return
+
+ALLOCATE_USE_ATTACK_ITEM_EFFECT_NEGATIVE:
+neg stor[8]
+sub 0x9, stor[8] ; amount, operand
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
+mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
+mov stor[30], stor[stor[stor[0], 18], 30] ; source, dest
+mov stor[8], stor[stor[stor[0], 18], 8] ; source, dest
+jmp_cmp >=, 0x0, stor[28], inl[:LABEL_51] ; operand, left, right, addr
+call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:LABEL_52] ; scriptIndex, address
+LABEL_51:
+return
+
+; variables to hold unpacked colours below
+UNPACKED_THROW_ATTACK_ITEM_COLOURS_R:
+data 0
+UNPACKED_THROW_ATTACK_ITEM_COLOURS_G:
+data 0
+UNPACKED_THROW_ATTACK_ITEM_COLOURS_B:
+data 0
+
+; FORK RE-ENTRY
+; @param s30 (parent s30)
+; @param s28 (parent s28)
+; @param int s31 rgb
+ALLOCATE_USE_ATTACK_ITEM_EFFECT_MAIN:
+
+; Unpack rgb
+mov stor[31], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_R]
+mov stor[31], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_G]
+mov stor[31], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_B]
+shr  8, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_G]
+shr 16, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_B]
+and 0xff, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_R]
+and 0xff, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_G]
+and 0xff, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_B]
+
+gosub inl[:LABEL_42] ; addr
+call Battle::allocateBillboardSpriteEffect, stor[18], 0xfff25 ; effectIndex, flags
+call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[20], stor[21], stor[22] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x500, 0x500, 0x500 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddRotationScalerAttachment, stor[18], stor[18], 0x0, 0xfffffe00, 0xfffffe00, 0x0, 0x0, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptAddRelativePositionScalerTicks1, stor[18], 0xffffffff, 0xf, stor[10], stor[11], stor[12] ; effectIndex, parentIndex, ticks, x, y, z
+call SEffe::scriptUpdateParabolicPositionScalerAttachment, stor[18], 0xffffffff, 0x0, 0x2000, 0x0 ; effectIndex, unused, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_R], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_G], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_B] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptAddLifespanAttachment, stor[18], 0xf ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff3e, 0x20, 0x40, 0xc, 0x200, 0x0, 0x37 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[20], stor[21], stor[22] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x400, 0x400, 0x400 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddRelativePositionScalerTicks1, stor[19], 0xffffffff, 0xf, stor[10], stor[11], stor[12] ; effectIndex, parentIndex, ticks, x, y, z
+call SEffe::scriptUpdateParabolicPositionScalerAttachment, stor[19], 0xffffffff, 0x0, 0x2000, 0x0 ; effectIndex, unused, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x20 ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff17 ; effectIndex, flags
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0xfffffc00, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff18 ; effectIndex, flags
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x400, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff17 ; effectIndex, flags
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x0, 0xfffffc00 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff18 ; effectIndex, flags
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x0, 0x400 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+mov 0xf, stor[23] ; source, dest
+wait stor[23] ; frames
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff17, 0x4, 0x200, 0x2, 0x200, 0xc7f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x14 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff18, 0x4, 0x200, 0x2, 0x200, 0xc7f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x14 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff25, 0x10, 0x200, 0x2, 0x200, 0x40c7f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_R], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_G], inl[:UNPACKED_THROW_ATTACK_ITEM_COLOURS_B] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetGenericEffectValue, stor[19], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x14 ; effectIndex, ticks
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+deallocate
+
+; SUBROUTINE
+LABEL_42:
+jmp_cmp <=, 0x0, stor[28], inl[:LABEL_45] ; operand, left, right, addr
+mov var[53], stor[23] ; source, dest
+mov 0x0, stor[8] ; source, dest
+mov 0x0, stor[10] ; source, dest
+mov 0x0, stor[11] ; source, dest
+mov 0x0, stor[12] ; source, dest
+LABEL_43:
+mov var[52][stor[8]], stor[9] ; source, dest
+call Battle::scriptGetBentPos, stor[9], stor[20], stor[21], stor[22] ; bentIndex, x, y, z
+add stor[20], stor[10] ; amount, operand
+add stor[21], stor[11] ; amount, operand
+add stor[22], stor[12] ; amount, operand
+incr stor[8] ; operand
+jmp_cmp >, stor[23], stor[8], inl[:LABEL_43] ; operand, left, right, addr
+div stor[23], stor[10] ; amount, operand
+div stor[23], stor[11] ; amount, operand
+div stor[23], stor[12] ; amount, operand
+sub 0x600, stor[11] ; amount, operand
+sub 0x200, stor[11] ; amount, operand
+mov 0x0, stor[12] ; source, dest
+LABEL_44:
+call Battle::scriptGetBentPos, stor[30], stor[20], stor[21], stor[22] ; bentIndex, x, y, z
+sub 0x400, stor[21] ; amount, operand
+return
+
+
+
+; SUBROUTINE
+LABEL_45:
+gosub inl[:LABEL_57] ; addr
+memcpy 0x3, stor[24], stor[10] ; size, src, dest
+jmp inl[:LABEL_44] ; addr
+
+
+
+; FORK RE-ENTRY
+LABEL_52:
+gosub inl[:LABEL_45] ; addr
+call Battle::allocateBillboardSpriteEffect, stor[18], 0xfff26 ; effectIndex, flags
+call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[20], stor[21], stor[22] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddRotationScalerAttachment, stor[18], stor[18], 0x0, 0xfffffe00, 0xfffffe00, 0x0, 0x0, 0x0 ; effectIndex, unused, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptAddRelativePositionScalerTicks1, stor[18], 0xffffffff, 0xf, stor[10], stor[11], stor[12] ; effectIndex, parentIndex, ticks, x, y, z
+call SEffe::scriptUpdateParabolicPositionScalerAttachment, stor[18], 0xffffffff, 0x0, 0x2000, 0x0 ; effectIndex, unused, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetEffectTranslucencyModeFlag, stor[18], 0x3 ; effectIndex, set
+call SEffe::scriptAddLifespanAttachment, stor[18], 0xf ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff3e, 0x20, 0x40, 0xc, 0x200, 0x4207f00, 0x37 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[20], stor[21], stor[22] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x400, 0x400, 0x400 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddRelativePositionScalerTicks1, stor[19], 0xffffffff, 0xf, stor[10], stor[11], stor[12] ; effectIndex, parentIndex, ticks, x, y, z
+call SEffe::scriptUpdateParabolicPositionScalerAttachment, stor[19], 0xffffffff, 0x0, 0x2000, 0x0 ; effectIndex, unused, accelerationX, accelerationY, accelerationZ
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetGenericEffectValue, stor[19], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x20 ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff26 ; effectIndex, flags
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0xfffffa00, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x100, 0x100, 0x100 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff26 ; effectIndex, flags
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x600, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x100, 0x100, 0x100 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff26 ; effectIndex, flags
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x0, 0xfffffa00 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x100, 0x100, 0x100 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+call Battle::allocateBillboardSpriteEffect, stor[19], 0xfff26 ; effectIndex, flags
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptAttachEffectToBobj, stor[19], stor[18], 0xffffffff ; effectIndex, scriptIndex, coord2Index
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, 0x0, 0x0, 0x600 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x100, 0x100, 0x100 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0xf ; effectIndex, ticks
+mov 0xf, stor[23] ; source, dest
+wait stor[23] ; frames
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], inl[:LABEL_56[stor[8]]], 0x6, 0x200, 0x2, 0x200, 0xc7f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x14 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], inl[:LABEL_56[stor[8]]], 0x6, 0x200, 0x2, 0x200, 0xc7f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x14 ; effectIndex, ticks
+call SEffe::scriptAllocateParticleEffect, stor[19], stor[18], 0xfff26, 0xc, 0x200, 0x2, 0x200, 0x40c7f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
+call SEffe::scriptSetRelativePosition, stor[19], 0xffffffff, stor[10], stor[11], stor[12] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x100, 0x100, 0x100 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, inl[:LABEL_53[stor[8]]], inl[:LABEL_54[stor[8]]], inl[:LABEL_55[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetGenericEffectValue, stor[19], 0x0, 0x1 ; effectIndex, genericIndex, value
+call SEffe::scriptAddLifespanAttachment, stor[19], 0x14 ; effectIndex, ticks
+mov 0x14, stor[23] ; source, dest
+wait stor[23] ; frames
+deallocate
+
+LABEL_53:
+data 0xff
+data 0x78
+data 0x64
+data 0x1e
+data 0x78
+data 0xe8
+data 0x10
+data 0x0
+data 0xf5
+
+LABEL_54:
+data 0x20
+data 0x0
+data 0x64
+data 0x1e
+data 0x78
+data 0xe0
+data 0x10
+data 0x50
+data 0xff
+
+LABEL_55:
+data 0x0
+data 0x78
+data 0x0
+data 0xf0
+data 0x0
+data 0x88
+data 0xd8
+data 0x14
+data 0xd7
+
+LABEL_56:
+data 0xfff00
+data 0xfff2b
+data 0xfff2f
+data 0xfff33
+data 0xfff05
+data 0xfff00
+data 0xfff00
+data 0xfff38
+data 0xfff00

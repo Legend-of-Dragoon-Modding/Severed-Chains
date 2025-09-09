@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
-import legend.game.SItem;
-import legend.game.input.InputAction;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
@@ -18,18 +17,23 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.List;
 
 import static legend.core.GameEngine.SAVES;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
 
 public class SaveGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SaveGameScreen.class);
@@ -38,6 +42,7 @@ public class SaveGameScreen extends MenuScreen {
 
   private SaveCard<?> saveCard;
   private final BigList<SavedGame> saveList;
+  private final List<SavedGame<?>> saves;
 
   private final Runnable unload;
 
@@ -76,13 +81,22 @@ public class SaveGameScreen extends MenuScreen {
 
     this.saveList.addEntry(null);
 
-    for(final SavedGame<?> save : SAVES.loadAllSaves(gameState_800babc8.campaignName)) {
+    this.saves = gameState_800babc8.campaign.loadAllSaves();
+    for(final SavedGame<?> save : this.saves) {
       this.saveList.addEntry(save);
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.save_game.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(I18n.translate("lod_core.ui.save_game.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+  }
+
+  @Override
+  public void setFocus(@Nullable final Control control) {
+    super.setFocus(this.saveList);
   }
 
   private <T extends SaveDisplay> SaveCard<T> addSaveCard(final Campaign campaign) {
-    final SavedGame<T> latestSave = (SavedGame<T>)campaign.latestSave();
+    final SavedGame<T> latestSave = (SavedGame<T>)campaign.latestSave;
     final SaveCard<T> saveCard = this.addControl(latestSave.saveType.get().makeSaveCard());
     saveCard.setPos(16, 160);
     saveCard.setSaveData(latestSave);
@@ -92,15 +106,14 @@ public class SaveGameScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText("Save Game", 188, 10, TextColour.BROWN);
-    SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
+    renderText("Save Game", 188, 10, UI_TEXT_CENTERED);
   }
 
   private void onSelection(@Nullable final SavedGame<?> save) {
     playMenuSound(2);
 
     if(save == null) {
-      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), this::onNewSaveResult));
+      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(this.saves, gameState_800babc8), this::onNewSaveResult));
     } else {
       menuStack.pushScreen(new MessageBoxScreen(Overwrite_save_8011c9e8, 2, result -> this.onOverwriteResult(result, save)));
     }
@@ -108,7 +121,7 @@ public class SaveGameScreen extends MenuScreen {
 
   private void onNewSaveResult(final MessageBoxResult result, final String name) {
     if(result == MessageBoxResult.YES) {
-      if(SAVES.saveExists(gameState_800babc8.campaignName, name)) {
+      if(gameState_800babc8.campaign.saveExists(name)) {
         menuStack.pushScreen(new MessageBoxScreen("Save name already\nin use", 0, result1 -> { }));
         return;
       }
@@ -117,7 +130,7 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.newSave(name, gameState_800babc8, stats_800be5f8, campaignType.get(), engineState_8004dd04);
+        SAVES.newSave(name, gameState_800babc8, stats_800be5f8, campaignType.get(), currentEngineState_8004dd04);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
@@ -132,7 +145,7 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.overwriteSave(save.fileName, save.saveName, gameState_800babc8, stats_800be5f8, campaignType.get(), engineState_8004dd04);
+        SAVES.overwriteSave(save.fileName, save.saveName, gameState_800babc8, stats_800be5f8, campaignType.get(), currentEngineState_8004dd04);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
@@ -153,7 +166,8 @@ public class SaveGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteSave(this.saveList.getSelected().state.campaignName, this.saveList.getSelected().fileName);
+            this.saveList.getSelected().state.campaign.deleteSave(this.saveList.getSelected().fileName);
+            this.saves.removeIf(save -> save.fileName.equals(this.saveList.getSelected().fileName));
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
@@ -167,24 +181,5 @@ public class SaveGameScreen extends MenuScreen {
   private void menuEscape() {
     playMenuSound(3);
     this.unload.run();
-  }
-
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_WEST) {
-      this.menuDelete();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
   }
 }

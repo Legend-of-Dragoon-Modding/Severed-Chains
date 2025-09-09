@@ -1,0 +1,40 @@
+Widescreen patch
+Twin Castle, Emille's painting prison
+Emille
+Old: Model would be shrunk and hidden behind mirror as a reference for other sObjs to point to.
+New: Emille no longer teleports. She is always visible in her chair.
+--- original
++++ modified
+@@ -314,7 +314,11 @@
+ call 106, 0x0
+ call 111, 0x1
+ call 311, stor[0]
+-call 106, 0x1
++call 101, stor[0], 0xea, 0x0, 0x4a
++call 103, stor[0], 0x0, 0x500, 0x0
++call 292, stor[0], 0x1000
++call 99, 0x0
++call 97, 0xd
+ rewind
+ ENTRYPOINT_1:
+ gosub_table stor[32], inl[:LABEL_53]
+@@ -323,9 +327,6 @@
+ rel :JMP_c64_0
+ rel :JMP_c64_1
+ JMP_c64_0:
+-call 101, stor[0], 0xfffffe54, 0xffffffe2, 0x167
+-call 103, stor[0], 0x0, 0x0, 0x0
+-call 292, stor[0], 0x1
+ call 106, 0x0
+ mov 0x8, stor[24]
+ mov 0x1, stor[25]
+@@ -351,9 +352,6 @@
+ mov 0x3a, stor[24]
+ mov 0x4, stor[26]
+ gosub inl[:LABEL_43]
+-call 101, stor[0], 0xfffffe54, 0xffffffe2, 0x167
+-call 103, stor[0], 0x0, 0x0, 0x0
+-call 292, stor[0], 0x1
+ return
+ JMP_c64_1:
+ mov 0xa, stor[24]

@@ -18,7 +18,17 @@ public class TextObj extends Obj {
   }
 
   @Override
+  public boolean hasTexture(final int index) {
+    return true;
+  }
+
+  @Override
   public boolean hasTranslucency() {
+    return false;
+  }
+
+  @Override
+  public boolean hasTranslucency(final int index) {
     return false;
   }
 
@@ -28,12 +38,22 @@ public class TextObj extends Obj {
   }
 
   @Override
-  public void render(final int startVertex, final int vertexCount) {
+  public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
+    return this.shouldRender(translucency);
+  }
+
+  @Override
+  public int getLayers() {
+    return 1;
+  }
+
+  @Override
+  public void render(final int layer, final int startVertex, final int vertexCount) {
     this.mesh.draw(startVertex, vertexCount);
   }
 
   @Override
-  public void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount) {
+  public void render(@Nullable final Translucency translucency, final int layer, final int startVertex, final int vertexCount) {
     this.mesh.draw(startVertex, vertexCount);
   }
 

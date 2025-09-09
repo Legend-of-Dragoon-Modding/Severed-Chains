@@ -1,0 +1,50 @@
+--- original
++++ modified
+@@ -1723,10 +1723,14 @@
+ call 545, stor[0], stor[18], 0x0, 0xfffffc18, 0x0
+ mov 0xa, stor[9]
+ wait stor[9]
++jmp_cmp ==, stor[20], 0xffffffff, inl[:SKIP_P2]
+ call 597, stor[0], stor[20], 0xa, 0x0, 0xfffffc18, 0x0
++SKIP_P2:
+ mov 0xa, stor[9]
+ wait stor[9]
++jmp_cmp ==, stor[19], 0xffffffff, inl[:SKIP_P1]
+ call 597, stor[0], stor[19], 0x14, 0x0, 0xfffffc18, 0x0
++SKIP_P1:
+ mov 0x14, stor[9]
+ wait stor[9]
+ LABEL_22:
+@@ -1764,10 +1768,12 @@
+ call 551, stor[21], 0xffffffff, 0x0, 0x0, 0x0
+ call 627, stor[21], 0xffffff38
+ call 589, stor[21], 0x0
+-call 897, stor[22], 0x14400, 0x0, 0x0, 0x80, 0x60, 0x1
+ call 42, 0x1, 0x0, 0x0, 0x0, stor[11]
+ call 42, 0x1, 0x0, 0x1, 0x0, stor[12]
+ call 42, 0x1, 0x0, 0x2, 0x0, stor[13]
+# Moved camera updates before screen capture allocation and added 1 frame wait to get screen to capture on the correct frame
++mov 0x1, stor[9]
++wait stor[9]
++call 897, stor[22], 0x14400, 0x0, 0x0, 0x80, 0x60, 0x1
+ call 545, stor[22], 0xffffffff, stor[11], stor[12], stor[13]
+ call 547, stor[22], 0xffffffff, 0x0, 0x800, 0x0
+ call 549, stor[22], 0xffffffff, 0x1000, 0x1000, 0x1000
+@@ -1974,7 +1980,7 @@
+ mov var[34][stor[9]], stor[10]
+ call 138, stor[10], 0x0
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_32]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_32]
+ return
+ LABEL_33:
+ mov 0x0, stor[9]
+@@ -1982,7 +1988,7 @@
+ mov var[34][stor[9]], stor[10]
+ call 138, stor[10], 0x1
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_34]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_34]
+ return
+ LABEL_35:
+ mov var[36][1], stor[10]

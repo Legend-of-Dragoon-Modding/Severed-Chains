@@ -1,10 +1,10 @@
 --- original
 +++ modified
-@@ -408,6 +408,7 @@
+@@ -396,6 +396,7 @@
  LABEL_20:
- call SMap::scriptReadModelPosition, stor[0], stor[8], stor[9], stor[10] ; scriptIndex, x, y, z
- jmp_cmp ==, stor[8], 0xf0, inl[:LABEL_22] ; operand, left, right, addr
-+jmp_cmp ==, stor[8], 0xf1, inl[:LABEL_22] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff3d, inl[:LABEL_23] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff3c, inl[:LABEL_23] ; operand, left, right, addr
- jmp_cmp ==, stor[8], 0xffffff3b, inl[:LABEL_23] ; operand, left, right, addr
+ call 102, stor[0], stor[8], stor[9], stor[10]
+ jmp_cmp ==, stor[8], 0xf0, inl[:LABEL_30]
++jmp_cmp ==, stor[8], 0xf1, inl[:LABEL_30]
+ jmp_cmp ==, stor[8], 0xffffff3d, inl[:LABEL_26]
+ jmp_cmp ==, stor[8], 0xffffff3c, inl[:LABEL_26]
+ jmp_cmp ==, stor[8], 0xffffff3b, inl[:LABEL_26]

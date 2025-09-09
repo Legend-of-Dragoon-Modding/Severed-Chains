@@ -19,6 +19,7 @@ import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -151,6 +152,7 @@ public class LegendOfDragoonCampaign extends CampaignType {
   public void setUpLoadedGame(final GameState52c state) {
     submapScene_80052c34 = gameState_800babc8.submapScene_a4;
     submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+    submapCutForSave_800cb450 = submapCut_80052c30;
     collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
 
     if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto

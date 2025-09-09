@@ -1,0 +1,14 @@
+Widescreen patch
+Hoax - Cutscene: Aftermath
+Kaiser: new starting position off-screen
+--- original
++++ modified
+@@ -350,7 +350,7 @@
+ gosub inl[:LABEL_45]
+ consume
+ LABEL_56:
+-call 101, stor[0], 0xc8, 0x0, 0x12c
++call 101, stor[0], 0xf0, 0x0, 0xff
+ call 103, stor[0], 0x0, 0x0, 0x0
+ call 106, 0x1
+ mov 0x14, stor[24]

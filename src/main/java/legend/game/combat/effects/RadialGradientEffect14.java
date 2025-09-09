@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
@@ -52,12 +53,11 @@ public class RadialGradientEffect14 implements Effect<EffectManagerParams.Radial
         .addVertex(vertices[1].x, vertices[1].y, 0.0f)
         .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
         .addVertex(vertices[2].x, vertices[2].y, 0.0f)
-        .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
         .build();
 
       final MV transforms = new MV();
       transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.z_04 + manager.params_10.z_22);
-      RENDERER.queueOrthoModel(obj, transforms);
+      RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
 
       obj.delete(); // Mark for deletion after this frame
     }
@@ -99,16 +99,14 @@ public class RadialGradientEffect14 implements Effect<EffectManagerParams.Radial
         .addVertex(screenVert0.x, screenVert0.y, 0.0f)
         .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
         .addVertex(screenVert1.x, screenVert1.y, 0.0f)
-        .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
         .addVertex(vertices[1].x, vertices[1].y, 0.0f)
         .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
         .addVertex(vertices[2].x, vertices[2].y, 0.0f)
-        .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
         .build();
 
       final MV transforms = new MV();
       transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.z_04 + manager.params_10.z_22);
-      RENDERER.queueOrthoModel(obj, transforms);
+      RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
 
       obj.delete(); // Mark for deletion after this frame
     }

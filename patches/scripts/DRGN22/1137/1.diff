@@ -1,0 +1,19 @@
+Widescreen patch
+Twin Castle, Lisa Balcony cutscenes
+Dart/Player
+Old: Toggle flag on after camera pan
+New: Toggle flag before camera pan. Toggle another flag after camera pan.
+--- original
++++ modified
+## SECOND SCENE ##
+@@ -735,8 +735,9 @@
+ call 257, stor[24], stor[25]
+ mov 0xa, stor[24]
+ mov 0x1, stor[26]
++call 2, 0x8, 1
+ gosub inl[:LABEL_54]
+-call 2, 0x8, 0x1
++call 2, 0x63, 1
+ mov 0x9, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_16]

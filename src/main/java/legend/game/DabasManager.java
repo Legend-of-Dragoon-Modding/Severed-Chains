@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.MathHelper;
 import legend.game.unpacker.FileData;
 
 import java.io.IOException;
@@ -35,11 +34,6 @@ public final class DabasManager {
       throw new RuntimeException("Failed to load diiig", e);
     }
 
-    //LAB_80109e38
-    if(MathHelper.get(data, 0x52, 4) != 0x3058_434dL) { // MCX0
-      throw new RuntimeException("Invalid diiig data");
-    }
-
-    return new FileData(data, 0x580, 0x80);
+    return new FileData(data, 0, 0x80);
   }
 }

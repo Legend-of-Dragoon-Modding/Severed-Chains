@@ -1,0 +1,51 @@
+Widescreen patch
+Twin Castle, Docks
+Commodore Puler
+Old: Runs in place where it would be off-screen in 4:3. Teleports to top deck.
+New: Stop running in place. Run all the way down the boarding ramp.
+--- original
++++ modified
+@@ -552,8 +552,10 @@
+ mov 0x6, stor[27]
+ mov 0xfffffffe, stor[28]
+ gosub inl[:LABEL_29]
+# Stop running in place, happens off-screen in 4:3
++call 97, 0
+ mov 0x14, stor[24]
+ wait stor[24]
+# Restart running animation
++call 97, 2
+ mov 0xffffffc6, stor[24]
+ mov 0xffffff0d, stor[25]
+ mov 0xfffff31e, stor[26]
+@@ -585,8 +587,25 @@
+ mov 0xfffffffe, stor[28]
+ gosub inl[:LABEL_29]
+ call 2, 0xa, 0x1
+# Retail waits 10 frames before hiding Puler
+-mov 0xa, stor[24]
+-wait stor[24]
+# Series of movement commands so Puler boards the Queen Fury
++mov 0xe6, stor[24]
++mov 0xffffff60, stor[25]
++mov 0xfffff31c, stor[26]
++mov 6, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
++mov 0x165, stor[24]
++mov 0xffffff3c, stor[25]
++mov 0xfffff68b, stor[26]
++mov 6, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
++mov 0xd0, stor[24]
++mov 0xffffff84, stor[25]
++mov 0xfffff7f9, stor[26]
++mov 6, stor[27]
++mov 0xfffffffe, stor[28]
++gosub inl[:LABEL_29]
+# Hide upon boarding ship. Lack of Z-layering on ship means there isn't a good looking way to get him up to the top deck.
++call 106, 1
+ call 101, stor[0], 0xaa, 0xffffff74, 0xfffffc2c
+ call 103, stor[0], 0x0, 0x880, 0x0
+ call 99, 0x0

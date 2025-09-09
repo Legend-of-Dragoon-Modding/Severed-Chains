@@ -1,6 +1,7 @@
 package legend.game.saves;
 
 import legend.game.modding.events.config.ConfigUpdatedEvent;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashMap;
@@ -29,12 +30,19 @@ public class ConfigCollection {
     this.configValues.put(config.getRegistryId(), value);
   }
 
+  public boolean hasConfig(final ConfigEntry<?> config) {
+    return this.configValues.containsKey(config.getRegistryId());
+  }
+
   public void clearConfig() {
     this.configValues.clear();
   }
 
   public void clearConfig(final ConfigStorageLocation storageLocation) {
-    this.configValues.keySet().removeIf(id -> REGISTRIES.config.getEntry(id).get().storageLocation == storageLocation);
+    this.configValues.keySet().removeIf(id -> {
+      final RegistryDelegate<ConfigEntry<?>> delegate = REGISTRIES.config.getEntry(id);
+      return !delegate.isValid() || delegate.get().storageLocation == storageLocation;
+    });
   }
 
   public void copyConfigFrom(final ConfigCollection other) {

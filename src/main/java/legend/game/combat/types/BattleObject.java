@@ -3,10 +3,11 @@ package legend.game.combat.types;
 import legend.core.MathHelper;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.game.scripting.ScriptedObject;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public abstract class BattleObject {
+public abstract class BattleObject implements ScriptedObject {
   public static String EM__ = "EM  ";
   public static String BOBJ = "BOBJ";
 
@@ -16,9 +17,11 @@ public abstract class BattleObject {
     this.magic_00 = magic;
   }
 
+  @Override
   public abstract Vector3f getPosition();
   public abstract Vector3f getRotation();
   public abstract Vector3f getScale();
+  @Override
   public abstract Vector3i getColour();
 
   /** Translates a position relative to this BattleObject's local coordinate system */

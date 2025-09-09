@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -14,11 +15,13 @@ import org.joml.Vector3i;
 
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.VoidType> {
@@ -77,7 +80,9 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
 
   @Override
   public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-    this.additionStarburstRenderers_800c6dc4[this.type].accept(state);
+    if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+      this.additionStarburstRenderers_800c6dc4[this.type].accept(state);
+    }
   }
 
   @Override
@@ -161,8 +166,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
           .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
           .addVertex(x2, y2, 0.0f)
           .monochrome(0.0f)
-          .addVertex(x3, y3, 0.0f)
-          .monochrome(0.0f);
+          .addVertex(x3, y3, 0.0f);
       }
     }
 
@@ -170,7 +174,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     obj.delete();
 
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
-    RENDERER.queueOrthoModel(obj, this.transforms);
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
   }
 
   @Method(0x800d15d8L)
@@ -210,7 +214,6 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
           .addVertex(xArray[0], yArray[0], 0.0f)
           .monochrome(0.0f)
           .addVertex(xArray[1], yArray[1], 0.0f)
-          .monochrome(0.0f)
           .addVertex(xArray[2], yArray[2], 0.0f)
           .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f);
       }
@@ -220,6 +223,6 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     obj.delete();
 
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
-    RENDERER.queueOrthoModel(obj, this.transforms);
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
   }
 }

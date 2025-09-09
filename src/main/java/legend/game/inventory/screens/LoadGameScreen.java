@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
-import legend.game.SItem;
-import legend.game.input.InputAction;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
@@ -16,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.Registry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,16 +24,20 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.core.GameEngine.SAVES;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
 
 public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
 
   private SaveCard<?> saveCard;
+  private final Campaign campaign;
   private final BigList<SavedGame> saveList;
   private final Consumer<SavedGame<?>> saveSelected;
   private final Runnable closed;
@@ -41,6 +45,7 @@ public class LoadGameScreen extends MenuScreen {
   public LoadGameScreen(final Consumer<SavedGame<?>> saveSelected, final Runnable closed, final Campaign campaign) {
     this.saveSelected = saveSelected;
     this.closed = closed;
+    this.campaign = campaign;
 
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
@@ -69,12 +74,15 @@ public class LoadGameScreen extends MenuScreen {
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);
 
-    for(final SavedGame<?> save : SAVES.loadAllSaves(campaign.filename())) {
+    for(final SavedGame<?> save : campaign.loadAllSaves()) {
       this.saveList.addEntry(save);
     }
+
+    this.addHotkey(I18n.translate("lod_core.ui.load_game.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(I18n.translate("lod_core.ui.load_game.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
-  private void onSelection(final SavedGame save) {
+  private void onSelection(final SavedGame<?> save) {
     if(save.isValid()) {
       final Map<RegistryId, Set<RegistryId>> missingIds = new HashMap<>();
       this.findMissingRegistryIds(save, missingIds);
@@ -90,7 +98,7 @@ public class LoadGameScreen extends MenuScreen {
     }
   }
 
-  private void showLoadGameBox(final SavedGame save) {
+  private void showLoadGameBox(final SavedGame<?> save) {
     playMenuSound(2);
     menuStack.pushScreen(new MessageBoxScreen("Load this save?", 2, result -> this.onMessageboxResult(result, save)));
   }
@@ -104,16 +112,20 @@ public class LoadGameScreen extends MenuScreen {
     }));
   }
 
-  private void onMessageboxResult(final MessageBoxResult result, final SavedGame save) {
+  private void onMessageboxResult(final MessageBoxResult result, final SavedGame<?> save) {
     if(result == MessageBoxResult.YES) {
       this.saveSelected.accept(save);
     }
   }
 
   @Override
+  public void setFocus(@Nullable final Control control) {
+    super.setFocus(this.saveList);
+  }
+
+  @Override
   protected void render() {
-    SItem.renderCentredText("Load Game", 188, 10, TextColour.BROWN);
-    SItem.renderText("\u011f Delete", 297, 226, TextColour.BROWN);
+    renderText("Load Game", 188, 10, UI_TEXT_CENTERED);
   }
 
   private void menuDelete() {
@@ -128,7 +140,7 @@ public class LoadGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            SAVES.deleteSave(this.saveList.getSelected().state.campaignName, this.saveList.getSelected().fileName);
+            this.campaign.deleteSave(this.saveList.getSelected().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
@@ -142,25 +154,6 @@ public class LoadGameScreen extends MenuScreen {
   private void menuEscape() {
     playMenuSound(3);
     this.closed.run();
-  }
-
-  @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_WEST) {
-      this.menuDelete();
-      return InputPropagation.HANDLED;
-    }
-
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
-      return InputPropagation.HANDLED;
-    }
-
-    return InputPropagation.PROPAGATE;
   }
 
   private void findMissingRegistryIds(final SavedGame<?> save, final Map<RegistryId, Set<RegistryId>> missingIds) {

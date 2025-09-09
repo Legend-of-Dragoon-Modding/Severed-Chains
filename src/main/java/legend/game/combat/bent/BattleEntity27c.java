@@ -1,6 +1,6 @@
 package legend.game.combat.bent;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModelBattleTmd;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -13,16 +13,15 @@ import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.inventory.Item;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
-import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
 import legend.lodmod.LodMod;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -36,11 +35,9 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
@@ -52,9 +49,44 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
+  /** Unknown */
+  public static final int FLAG_1 = 0x1;
+  /** Transformed into a dragoon */
+  public static final int FLAG_DRAGOON = 0x2;
+  /** Monster */
+  public static final int FLAG_MONSTER = 0x4;
+  /** It is currently this bent's turn */
+  public static final int FLAG_CURRENT_TURN = 0x8;
+  /** Bent will not be rendered or ticked (script still ticks) */
+  public static final int FLAG_HIDE = 0x10;
+  /** Next battle tick, this bent will be selected to take a turn */
+  public static final int FLAG_TAKE_FORCED_TURN = 0x20;
+  /** Bent is dead */
+  public static final int FLAG_DEAD = 0x40;
+  /** After the current animation loop is done, stop animating */
+  public static final int FLAG_ANIMATE_ONCE = 0x80;
+  /** Unknown */
+  public static final int FLAG_100 = 0x100;
+  /** Unknown */
+  public static final int FLAG_200 = 0x200;
+  /** Unknown */
+  public static final int FLAG_400 = 0x400;
+  /** Don't load script (used by cutscene bents controlled by other scripts) */
+  public static final int FLAG_NO_SCRIPT = 0x800;
+  /** Unknown */
+  public static final int FLAG_1000 = 0x1000;
+  /** Don't drop loot (set when monster has died to prevent duplicate drops) */
+  public static final int FLAG_NO_LOOT = 0x2000;
+  /** Bent cannot be targeted */
+  public static final int FLAG_CANT_TARGET = 0x4000;
+  /** Unknown */
+  public static final int FLAG_8000 = 0x8000;
+
   private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
 
   public final BattleEntityType type;
+
+  public Element element;
 
   public final StatCollection stats;
 
@@ -143,7 +175,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int turnValue_4c;
   public int spellId_4e;
 
-  public int itemId_52;
+//  public int itemId_52;
   public int guard_54;
 
   /** Enemy aggressiveness with counters; lower means it can counter tighter timings; 0 = cannot counter */
@@ -180,11 +212,11 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
 
-  public ItemStats0c item_d4;
-  public int _ec;
-  public int _ee;
-  public int _f0;
-  public int _f2;
+  public Item item_d4;
+//  public int _ec;
+//  public int _ee;
+//  public int _f0;
+//  public int _f2;
 
   public boolean physicalImmunity_110;
   public boolean magicalImmunity_112;
@@ -232,6 +264,8 @@ public abstract class BattleEntity27c extends BattleObject {
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
   }
 
+  public abstract String getName();
+
   public void scissor(final int x, final int y, final int w, final int h) {
     this.scissor.set(x, y, w, h);
     this.useScissor = true;
@@ -250,7 +284,10 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract ElementSet getAttackElements();
-  public abstract Element getElement();
+
+  public Element getElement() {
+    return this.element;
+  }
 
   public abstract int calculatePhysicalDamage(final BattleEntity27c target);
   /**
@@ -258,7 +295,7 @@ public abstract class BattleEntity27c extends BattleObject {
    */
   public abstract int calculateMagicDamage(final BattleEntity27c target, final int magicType);
 
-  public int applyPhysicalDamageMultipliers(final int damage) {
+  public int applyPhysicalDamageMultipliers(final BattleEntity27c target, final int damage) {
     return damage;
   }
 
@@ -367,7 +404,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case TURN_VALUE -> this.turnValue_4c;
       case SPELL_ID -> this.spellId_4e;
 
-      case ITEM_ID -> this.itemId_52;
+//      case ITEM_ID -> this.itemId_52;
       case GUARD -> this.guard_54;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e;
@@ -386,7 +423,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case SPELL_ACCURACY -> this.spell_94.accuracy_05;
       case SPELL_MP -> this.spell_94.mp_06;
       case SPELL_STATUS_CHANCE -> this.spell_94.statusChance_07;
-      case SPELL_ELEMENT -> this.spell_94.element_08.flag;
+      case SPELL_ELEMENT -> this.spell_94.element_08.get().flag;
       case SPELL_STATUS_TYPE -> this.spell_94.statusType_09;
       case SPELL_BUFF_TYPE -> this.spell_94.buffType_0a;
       case SPELL_0b -> this.spell_94._0b;
@@ -402,21 +439,21 @@ public abstract class BattleEntity27c extends BattleObject {
       case TEMP_PHYSICAL_IMMUNITY -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
       case TEMP_MAGICAL_IMMUNITY -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
 
-      case ITEM_TARGET -> this.item_d4.target_00;
-      case ITEM_ELEMENT -> this.item_d4.element_01.flag;
-      case ITEM_DAMAGE_MULTIPLIER -> this.item_d4.damageMultiplier_02;
+//      case ITEM_TARGET -> this.item_d4.target_00;
+//      case ITEM_ELEMENT -> this.item_d4.element_01.flag;
+//      case ITEM_DAMAGE_MULTIPLIER -> this.item_d4.damageMultiplier_02;
 
-      case ITEM_DAMAGE -> this.item_d4.damage_05;
+//      case ITEM_DAMAGE -> this.item_d4.damage_05;
 
-      case ITEM_ICON -> this.item_d4.icon_07;
-      case ITEM_STATUS -> this.item_d4.status_08;
-      case ITEM_PERCENTAGE -> this.item_d4.percentage_09;
-      case ITEM_UU2 -> this.item_d4.uu2_0a;
-      case ITEM_TYPE -> this.item_d4.type_0b;
-      case _116 -> this._ec;
-      case _117 -> this._ee;
-      case _118 -> this._f0;
-      case _119 -> this._f2;
+//      case ITEM_ICON -> this.item_d4.icon_07;
+//      case ITEM_STATUS -> this.item_d4.status_08;
+//      case ITEM_PERCENTAGE -> this.item_d4.percentage_09;
+//      case ITEM_UU2 -> this.item_d4.uu2_0a;
+//      case ITEM_TYPE -> this.item_d4.type_0b;
+//      case _116 -> this._ec;
+//      case _117 -> this._ee;
+//      case _118 -> this._f0;
+//      case _119 -> this._f2;
 
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 ? 1 : 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 ? 1 : 0;
@@ -465,7 +502,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case TURN_VALUE -> this.turnValue_4c = value;
       case SPELL_ID -> this.spellId_4e = value;
 
-      case ITEM_ID -> this.itemId_52 = value;
+//      case ITEM_ID -> this.itemId_52 = value;
       case GUARD -> this.guard_54 = value;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
@@ -517,10 +554,10 @@ public abstract class BattleEntity27c extends BattleObject {
         this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
       }
 
-      case _116 -> this._ec = value;
-      case _117 -> this._ee = value;
-      case _118 -> this._f0 = value;
-      case _119 -> this._f2 = value;
+//      case _116 -> this._ec = value;
+//      case _117 -> this._ee = value;
+//      case _118 -> this._f0 = value;
+//      case _119 -> this._f2 = value;
 
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value != 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value != 0;
@@ -553,22 +590,12 @@ public abstract class BattleEntity27c extends BattleObject {
     return this.colour; // defaultEffectColour_800fb94c;
   }
 
-  @Method(0x800ec7e4L)
-  public Vector2f transformRelative(final float x, final float y, final float z) {
-    final MV ls = new MV();
-    GsGetLs(this.model_148.coord2_14, ls);
-    GTE.setTransforms(ls);
-
-    GTE.perspectiveTransform(x, y, z);
-    return new Vector2f(GTE.getScreenX(2), GTE.getScreenY(2));
-  }
-
   @Method(0x800cae50L)
   public void bentLoadingTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     this._278 = 0;
 
     final int v1;
-    if((state.storage_44[7] & 0x4) != 0) {
+    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
       v1 = battleFlags_800bc960 & 0x110;
     } else {
       //LAB_800cae94
@@ -584,7 +611,7 @@ public abstract class BattleEntity27c extends BattleObject {
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
-        if((state.storage_44[7] & 0x800) == 0) {
+        if((state.storage_44[7] & FLAG_NO_SCRIPT) == 0) {
           //LAB_800caf20
           state.loadScriptFile(this.getScript());
         }
@@ -608,10 +635,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cafb4L)
   protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & 0x211) == 0) {
+    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
       applyModelRotationAndScale(this.model_148);
 
-      if((state.storage_44[7] & 0x80) == 0 || this.model_148.remainingFrames_9e != 0) {
+      if((state.storage_44[7] & FLAG_ANIMATE_ONCE) == 0 || this.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
         animateModel(this.model_148);
       }
@@ -622,7 +649,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & 0x211) == 0) {
+    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
       this.renderBttlModel(this.model_148);
     }
 
@@ -635,7 +662,7 @@ public abstract class BattleEntity27c extends BattleObject {
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
     //LAB_800cb11c
-    if((state.storage_44[7] & 0x4) != 0) {
+    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
       battleState_8006e398.removeMonster((MonsterBattleEntity)this);
     } else {
       battleState_8006e398.removePlayer((PlayerBattleEntity)this);
@@ -665,13 +692,14 @@ public abstract class BattleEntity27c extends BattleObject {
         Renderer.renderDobj2(part, true, 0);
 
         if(model.modelParts_00[i].obj != null) {
-          final RenderEngine.QueuedModel<?> queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw)
+          final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw, QueuedModelBattleTmd.class)
+            .depthOffset(model.zOffset_a0 * 4)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
             .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
             .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)engineState_8004dd04)._800c6930.colour_00);
+            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
           if(this.useScissor) {
             queue.scissor(this.scissor);
@@ -695,13 +723,13 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setTempItemMagicStats() {
+  public void setActiveItem(final Item item) {
     //LAB_800f7a98
-    this.item_d4 = itemStats_8004f2ac[this.itemId_52];
-    this._ec = 0;
-    this._ee = 0;
-    this._f0 = 0;
-    this._f2 = 0;
+    this.item_d4 = item;
+//    this._ec = 0;
+//    this._ee = 0;
+//    this._f0 = 0;
+//    this._f2 = 0;
   }
 
   @Method(0x800f7b68L)

@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class SpellRegistry extends MutableRegistry<Spell> {
   public SpellRegistry() {
-    super(new RegistryId("lod-core", "spells"));
+    super(new RegistryId("lod_core", "spells"));
   }
 }

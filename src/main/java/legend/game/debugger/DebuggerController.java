@@ -24,7 +24,7 @@ import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
@@ -306,16 +306,10 @@ public class DebuggerController {
 
   @FXML
   private void startEncounter(final ActionEvent event) {
-    if(engineState_8004dd04 instanceof final SMap smap) {
-      smap.submap.generateEncounter();
-      encounterId_800bb0f8 = this.encounterId.getValue();
-
-      if(Config.combatStage()) {
-        battleStage_800bb0f4 = Config.getCombatStage();
-      }
-
+    if(currentEngineState_8004dd04 instanceof final SMap smap) {
+      smap.submap.prepareEncounter(this.encounterId.getValue(), false);
       smap.mapTransition(-1, 0);
-    } else if(engineState_8004dd04 instanceof final WMap wmap) {
+    } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       encounterId_800bb0f8 = this.encounterId.getValue();
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
@@ -346,7 +340,7 @@ public class DebuggerController {
   @FXML
   private void warpToMap(final ActionEvent event) {
     submapCut_80052c30 = this.mapId.getValue();
-    ((SMap)engineState_8004dd04).smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
+    ((SMap)currentEngineState_8004dd04).smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
   }
 
   @FXML
@@ -367,6 +361,7 @@ public class DebuggerController {
   @FXML
   private void setGameSpeedMultiplier(final ActionEvent event) {
     Config.setGameSpeedMultiplier(this.gameSpeedMultiplier.getValue());
+    Config.setLoadedGameSpeedMultiplier(this.gameSpeedMultiplier.getValue());
   }
 
   @FXML

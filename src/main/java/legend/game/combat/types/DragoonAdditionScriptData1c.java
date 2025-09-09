@@ -1,6 +1,10 @@
 package legend.game.combat.types;
 
-public class DragoonAdditionScriptData1c {
+import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptedObject;
+import org.joml.Vector3f;
+
+public class DragoonAdditionScriptData1c implements ScriptedObject {
   public int unused_00;
   public int baseAngle_02;
   public int currentTick_04;
@@ -18,4 +22,14 @@ public class DragoonAdditionScriptData1c {
   public int inputMode_13;
   public int totalPressCount_14;
   public int charId_18;
+
+  @Override
+  public Vector3f getPosition() {
+    return null;
+  }
+
+  @Override
+  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+
+  }
 }

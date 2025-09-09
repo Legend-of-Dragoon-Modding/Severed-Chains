@@ -3,11 +3,6 @@ package legend.game.unpacker;
 public class GrowableFileData extends FileData {
   private final GrowableFileData parent;
 
-  public GrowableFileData(final int startSize) {
-    super(new byte[startSize]);
-    this.parent = null;
-  }
-
   protected GrowableFileData(final GrowableFileData parent, final int offset, final int size) {
     super(parent.data, parent.offset + offset, size);
     this.parent = parent;

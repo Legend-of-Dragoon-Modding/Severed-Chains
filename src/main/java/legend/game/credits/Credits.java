@@ -1,6 +1,8 @@
 package legend.game.credits;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -9,9 +11,8 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.tim.Tim;
+import legend.game.types.GameState52c;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.sin;
@@ -32,6 +34,8 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Credits extends EngineState<Credits> {
@@ -215,9 +219,9 @@ public class Credits extends EngineState<Credits> {
   @Override
   @Method(0x800eaa88L)
   public void tick() {
-    if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
-      || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
-      || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+    super.tick();
+
+    if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
       this.loadingStage = 4;
     }
     this.creditsStates_800f9378[this.loadingStage].run();
@@ -609,9 +613,9 @@ public class Credits extends EngineState<Credits> {
   @Method(0x800eaf24L)
   private void renderCreditsGradient() {
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
-    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms, QueuedModelStandard.class);
     this.transforms.rotate(MathHelper.PI, 0, 0, 0);
-    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms, QueuedModelStandard.class);
   }
 
   @Method(0x800eb304L)
@@ -676,7 +680,7 @@ public class Credits extends EngineState<Credits> {
   private void renderQuad(final CreditData1c credit, final float x, final float y) {
     this.transforms.identity();
     this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() +  y, (orderingTableSize_1f8003c8 - 3) * 4.0f);
-    RENDERER.queueOrthoModel(this.credits, this.transforms)
+    RENDERER.queueOrthoModel(this.credits, this.transforms, QueuedModelStandard.class)
       .vertices(credit.index * 4, 4)
       .colour(credit.colour_00);
   }
@@ -709,6 +713,12 @@ public class Credits extends EngineState<Credits> {
     engineStateOnceLoaded_8004dd24 = LodMod.SUBMAP_STATE_TYPE.get();
 
     //LAB_800eaf14
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    activity.setDetails("Watching the Credits");
+    activity.setState(null);
   }
 
   public static class CreditHeader08 {

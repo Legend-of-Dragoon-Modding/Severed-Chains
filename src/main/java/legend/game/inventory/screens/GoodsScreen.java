@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
@@ -15,6 +16,9 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 
 public class GoodsScreen extends MenuScreen {
   private final Runnable unload;
@@ -29,13 +33,13 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c[item.item_00]);
+    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item == null || item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c[item.item_00]);
 
-    this.leftList = new ItemList<>(MenuEntryStruct04::getName, null, null, null);
+    this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null);
     this.leftList.setPos(8, 15);
     this.leftList.setTitle("Goods");
 
-    this.rightList = new ItemList<>(MenuEntryStruct04::getName, null, null, null);
+    this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null);
     this.rightList.setPos(188, 15);
     this.rightList.setTitle("Goods");
 
@@ -44,10 +48,13 @@ public class GoodsScreen extends MenuScreen {
       this.leftList.showHighlight();
       this.rightList.hideHighlight();
       this.description.show();
+      description.highlight(this.leftList.getSelectedItem());
     });
-    this.leftList.onPressedThisFrame(inputAction -> {
-      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+    this.leftList.onInputActionPressed((action, repeat) -> {
+      if(action == INPUT_ACTION_MENU_RIGHT.get()) {
+        playMenuSound(1);
         this.setFocus(this.rightList);
+        this.rightList.select(this.leftList.getSelectedIndex());
         return InputPropagation.HANDLED;
       }
 
@@ -59,10 +66,13 @@ public class GoodsScreen extends MenuScreen {
     this.rightList.onGotFocus(() -> {
       this.leftList.hideHighlight();
       this.rightList.showHighlight();
+      description.highlight(this.rightList.getSelectedItem());
     });
-    this.rightList.onPressedThisFrame(inputAction -> {
-      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+    this.rightList.onInputActionPressed((action, repeat) -> {
+      if(action == INPUT_ACTION_MENU_LEFT.get()) {
+        playMenuSound(1);
         this.setFocus(this.leftList);
+        this.leftList.select(this.rightList.getSelectedIndex());
         return InputPropagation.HANDLED;
       }
 
@@ -94,6 +104,8 @@ public class GoodsScreen extends MenuScreen {
         listIndex++;
       }
     }
+
+    description.highlight(this.leftList.getSelectedItem());
   }
 
   @Override
@@ -107,12 +119,12 @@ public class GoodsScreen extends MenuScreen {
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }

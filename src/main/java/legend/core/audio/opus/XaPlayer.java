@@ -1,6 +1,7 @@
 package legend.core.audio.opus;
 
 import legend.core.audio.AudioSource;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
+import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -30,19 +32,22 @@ public final class XaPlayer extends AudioSource {
   private long sampleCount;
   private long samplesRead;
 
-  public XaPlayer(final int frequency) {
+  private float playerVolume;
+
+  public XaPlayer() {
     super(8);
 
-    if(48_000 % frequency != 0) {
-      throw new IllegalArgumentException("Sample Rate (44_800) is not divisible by frequency");
-    }
-
-    this.samplesPerTick = 48_000 / frequency;
+    this.samplesPerTick = 48000 / 100;
 
     this.channelCount = 1;
     this.format = AL_FORMAT_MONO16;
     this.pcm = new short[this.samplesPerTick];
     this.pcmBuffer = BufferUtils.createShortBuffer(this.samplesPerTick);
+    this.playerVolume = CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+  }
+
+  public void setPlayerVolume(final float volume) {
+    this.playerVolume = volume;
   }
 
   public void loadXa(final FileData fileData) {
@@ -75,9 +80,13 @@ public final class XaPlayer extends AudioSource {
       throw new RuntimeException("XA file is less than 4 buffers in length (40ms)");
     }
 
-    for(int i = 0; i < 4; i++) {
-      this.readFile();
-      this.bufferOutput(this.format, this.pcm, 48_000);
+    this.setPlaying(true);
+
+    if(this.canBuffer()) {
+      for(int i = 0; i < 4; i++) {
+        this.readFile();
+        this.bufferOutput(this.format, this.pcm, 48_000);
+      }
     }
 
     if(this.isPlaying()) {
@@ -99,6 +108,10 @@ public final class XaPlayer extends AudioSource {
     this.pcmBuffer.rewind();
     this.pcmBuffer.get(this.pcm);
 
+    for(int i = 0; i < this.pcm.length; i++) {
+      this.pcm[i] *= this.playerVolume;
+    }
+
     this.samplesRead += this.pcm.length;
 
     this.setPlaying(this.samplesRead <= this.sampleCount);
@@ -114,7 +127,7 @@ public final class XaPlayer extends AudioSource {
   }
 
   @Override
-  public void destroy() {
+  protected void destroy() {
     if(this.opusFileData != null) {
       this.unloadOpusFile();
     }

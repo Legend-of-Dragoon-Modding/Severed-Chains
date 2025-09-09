@@ -9,7 +9,7 @@ import static legend.core.GameEngine.RENDERER;
 
 public class FullscreenConfigEntry extends BoolConfigEntry {
   public FullscreenConfigEntry() {
-    super(true, ConfigStorageLocation.GLOBAL, ConfigCategory.GRAPHICS);
+    super(false, ConfigStorageLocation.GLOBAL, ConfigCategory.GRAPHICS);
   }
 
   @Override

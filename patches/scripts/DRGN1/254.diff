@@ -1,0 +1,84 @@
+--- original
++++ modified
+@@ -4373,7 +4373,7 @@
+ gosub inl[:LABEL_146]
+ or 0x20, stor[stor[stor[0], 28], 7]
+ mov 0x9, var[45][243]
+-call 498, 0xc3, stor[8]
++call 498, id[lod:burn_out], reg[0]
+ return
+ JMP_70d4_7:
+ data 0x13
+@@ -4396,7 +4396,7 @@
+ jmp_cmp !=, 0x0, stor[8], inl[:JMP_70d4_1]
+ or 0x20, stor[stor[stor[0], 28], 7]
+ mov 0x9, var[45][243]
+-call 498, 0xc3, stor[8]
++call 498, id[lod:burn_out], reg[0]
+ return
+ JMP_70d4_11:
+ gosub inl[:LABEL_166]
+@@ -4446,56 +4446,22 @@
+ wait stor[23]
+ return
+ LABEL_160:
+-call 600, stor[8]
+-mov stor[8], var[45][208]
+-call 600, stor[9]
+-mov stor[9], var[45][209]
+-mov 0x0, stor[10]
++mov 0, stor[10]
+ LABEL_161:
+-mov 0xffffffff, stor[stor[8], 8 + stor[10]]
++call 497, null, reg[stor[10]]
++jmp_cmp ==, null, reg[stor[10]], inl[:LABEL_162]
+ incr stor[10]
+-jmp_cmp >, 0x18, stor[10], inl[:LABEL_161]
+-mov 0x0, stor[10]
++jmp_cmp >, 100, stor[10], inl[:LABEL_161]
+ LABEL_162:
+-mov 0xffffffff, stor[stor[9], 8 + stor[10]]
+-incr stor[10]
+-jmp_cmp >, 0x18, stor[10], inl[:LABEL_162]
+-mov 0x0, stor[10]
+-LABEL_163:
+-call 497, 0xffffffff, stor[11]
+-jmp_cmp ==, 0xffffffff, stor[11], inl[:LABEL_165]
+-mov stor[11], stor[stor[8], 8 + stor[10]]
+-incr stor[10]
+-jmp_cmp >, 0x18, stor[10], inl[:LABEL_163]
+-mov 0x0, stor[10]
+-LABEL_164:
+-call 497, 0xffffffff, stor[11]
+-jmp_cmp ==, 0xffffffff, stor[11], inl[:LABEL_165]
+-mov stor[11], stor[stor[9], 8 + stor[10]]
+-incr stor[10]
+-jmp_cmp >, 0x18, stor[10], inl[:LABEL_164]
+-LABEL_165:
+ return
+ LABEL_166:
+-mov var[45][208], stor[8]
+-mov var[45][209], stor[9]
+ mov 0x0, stor[10]
+ LABEL_167:
+-mov stor[stor[8], 8 + stor[10]], stor[11]
+-jmp_cmp ==, 0xffffffff, stor[11], inl[:LABEL_169]
+-call 498, stor[11], stor[11]
++jmp_cmp ==, null, reg[stor[10]], inl[:LABEL_169]
++call 498, reg[stor[10]], reg[stor[10]]
+ incr stor[10]
+-jmp_cmp >, 0x18, stor[10], inl[:LABEL_167]
+-mov 0x0, stor[10]
+-LABEL_168:
+-mov stor[stor[9], 8 + stor[10]], stor[11]
+-jmp_cmp ==, 0xffffffff, stor[11], inl[:LABEL_169]
+-call 498, stor[11], stor[11]
+-incr stor[10]
+-jmp_cmp >, 0x18, stor[10], inl[:LABEL_168]
++jmp_cmp >, 100, stor[10], inl[:LABEL_167]
+ LABEL_169:
+-deallocate_other stor[8]
+-deallocate_other stor[9]
+ return
+ LABEL_170:
+ mov 0x1, stor[17]

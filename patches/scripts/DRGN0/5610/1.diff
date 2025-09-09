@@ -1,0 +1,69 @@
+--- original
++++ modified
+@@ -9,7 +9,6 @@
+ call 647, 0xfffffffb
+ call 372
+ yield
+-gosub inl[:LABEL_15]
+ yield
+ call 714
+ yield
+@@ -651,7 +650,7 @@
+ incr stor[18]
+ call 354, 0x0, stor[18], stor[9]
+ call 355, stor[9]
+-call 364, stor[8], stor[9]
++gosub inl[:LOAD_SLOTTED_TEXTURES]
+ call 356, stor[9]
+ call 354, 0x0, stor[16], stor[9]
+ call 355, stor[9]
+@@ -1022,6 +1021,10 @@
+ data 0x0
+ data 0xa1
+ data 0x2
++data 0xc
++data 0x9c
++data 0x97
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x99
+@@ -1062,18 +1065,18 @@
+ LABEL_11:
+ call 600, stor[23]
+ mov 0x6, stor[stor[stor[0], 23], 14]
+-mov 0x6, stor[stor[stor[0], 23], 24]
++mov 0x7, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_12:
+ call 600, stor[23]
+-mov 0xc, stor[stor[stor[0], 23], 14]
++mov 0xd, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+ LABEL_13:
+ call 600, stor[23]
+-mov 0xe, stor[stor[stor[0], 23], 14]
++mov 0xf, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_5]
+ return
+@@ -2098,3 +2101,16 @@
+ data 0xe
+ LABEL_69:
+ data 0x1
++LOAD_SLOTTED_TEXTURES:
++jmp_cmp >=, inl[:CHAR_INDEX], 0x3, inl[:LOAD_ENEMY_TEXTURE]
++jmp_cmp ==, stor[13], 0xc, inl[:LOAD_PLAYER_TEXTURE]
++LOAD_ENEMY_TEXTURE:
++call 364, stor[8], stor[9]
++return
++LOAD_PLAYER_TEXTURE:
++incr inl[:CHAR_INDEX]
++call 1020, stor[8], inl[:CHAR_INDEX]
++call 364, stor[8], stor[9]
++return
++CHAR_INDEX:
++data 0x0

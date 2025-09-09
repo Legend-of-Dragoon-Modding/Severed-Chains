@@ -1,0 +1,14 @@
+Aglis - Teleporter to Zenebatos
+Kongol
+Skip hiding model parts
+--- original
++++ modified
+@@ -214,8 +214,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_12]
+-call 288, 0x6
+-call 288, 0xe
+ mov 0x3, stor[24]
+ gosub inl[:LABEL_1]
+ mov 0x1, stor[24]

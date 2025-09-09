@@ -27,6 +27,6 @@ public class ScriptStorageParam extends Param {
 
   @Override
   public String toString() {
-    return "script[%d].storage[%d] %d".formatted(this.state.index, this.index, this.get());
+    return "script[%d].stor[%d] 0x%x".formatted(this.state.index, this.index, this.get());
   }
 }

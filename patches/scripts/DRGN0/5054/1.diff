@@ -1,0 +1,38 @@
+--- original
++++ modified
+@@ -1323,7 +1323,7 @@
+ data 0x49
+ ENTRYPOINT_0:
+ mov var[36][0], stor[30]
+-mov var[34][0], stor[28]
++mov var[45][13], stor[28]
+ gosub inl[:LABEL_0]
+ call 33, 0x0, 0xfffbb400, 0xfff99800, 0x1e000, 0x0
+ call 34, 0x0, 0x90000, 0xfffc4a00, 0x0, 0x0
+@@ -1578,7 +1578,7 @@
+ deallocate
+ ENTRYPOINT_1:
+ mov var[36][0], stor[30]
+-mov var[34][0], stor[28]
++mov var[45][13], stor[28]
+ gosub inl[:LABEL_0]
+ call 33, 0x0, 0xfffbb400, 0xfff99800, 0x1e000, 0x0
+ call 34, 0x0, 0x90000, 0xfffc4a00, 0x0, 0x0
+@@ -2239,7 +2239,7 @@
+ mov var[34][stor[9]], stor[10]
+ call 138, stor[10], 0x1
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_36]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_36]
+ return
+ LABEL_37:
+ mov 0x0, stor[9]
+@@ -2247,7 +2247,7 @@
+ mov var[34][stor[9]], stor[10]
+ call 138, stor[10], 0x0
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_38]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_38]
+ return
+ LABEL_39:
+ call 600, stor[8]

@@ -1,0 +1,17 @@
+Hellena Prison (II), Jiango Pit
+Lavitz
+Retail: Checks if Lavitz is already at the target location. Poor math precision means he never arrives to the exact
+location, so it never exits the subroutine early.
+SC: High precision meets early exit conditions. Early exit doesn't reset to an idle animation or guarantee
+the wait timer's stor is positive, so he walks in place, sometimes indefinitely.
+Fix: Bypass unnecessary early exit.
+--- original
++++ modified
+@@ -157,6 +157,7 @@
+ call 97, 0x2
+ LABEL_25:
+ call 102, stor[0], stor[29], stor[30], stor[31]
++jmp inl[:LABEL_26]
+ jmp_cmp !=, stor[29], stor[24], inl[:LABEL_26]
+ jmp_cmp !=, stor[30], stor[25], inl[:LABEL_26]
+ jmp_cmp !=, stor[31], stor[26], inl[:LABEL_26]

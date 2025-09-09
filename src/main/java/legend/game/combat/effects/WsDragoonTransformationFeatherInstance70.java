@@ -14,7 +14,7 @@ public class WsDragoonTransformationFeatherInstance70 {
 
   public final Vector3f translation_08 = new Vector3f();
 
-  public int velocityTranslationMagnitudeY_1c;
+  public float velocityTranslationMagnitudeY_1c;
 
   /** ubytes */
   public int r_38;
@@ -22,16 +22,16 @@ public class WsDragoonTransformationFeatherInstance70 {
   public int b_3a;
 
   /** Magnitude of x and z components of translation vector around center of effect */
-  public int translationMagnitudeXz_3c;
-  public int velocityTranslationMagnitudeXz_40;
-  public int accelerationTranslationMagnitudeXz_44;
-  public int xOffset_48;
+  public float translationMagnitudeXz_3c;
+  public float velocityTranslationMagnitudeXz_40;
+  public float accelerationTranslationMagnitudeXz_44;
+  public float xOffset_48;
   /** short */
   public int countCallback1and3Frames_4c;
 
   /** Magnitude of y component of translation vector around center of effect */
-  public int translationMagnitudeY_50;
-  public int yOrigin_54;
+  public float translationMagnitudeY_50;
+  public float yOrigin_54;
   public float angle_58;
   public float angleNoiseXz_5c;
   public float angleStep_60;

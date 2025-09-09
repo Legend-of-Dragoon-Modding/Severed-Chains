@@ -1,0 +1,13 @@
+--- original
++++ modified
+@@ -2195,8 +2195,8 @@
+ data 0x24
+ data 0x5
+ PTR_3520_43:
+-data str[ gainst a Dragon, there is<line>nothing we can do.]
+-data 0x19
++data str[Against a Dragon, there is<line>nothing we can do.]
++data 0x1a
+ data 0x2
+ PTR_3520_44:
+ data str[<speed=0>The village is noisy because<line>the Dragon is dead.<line>I cannot fish quietly.]

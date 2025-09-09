@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -962,7 +962,7 @@
+ call 230, 0x43, 0x0
+ call 688, stor[0], 0x0
+ call 264, 0x2, 0x0, 0x0
+-call 258, 0x0, 0xfffffeca
++call 258, 0x0, 0xfffffec6
+ gosub inl[:LABEL_130]
+ call 678, stor[0], 0x1
+ mov var[64][3], stor[24]

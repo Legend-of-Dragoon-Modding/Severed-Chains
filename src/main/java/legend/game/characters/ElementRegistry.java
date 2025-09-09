@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class ElementRegistry extends MutableRegistry<Element> {
   public ElementRegistry() {
-    super(new RegistryId("lod-core", "elements"));
+    super(new RegistryId("lod_core", "elements"));
   }
 }

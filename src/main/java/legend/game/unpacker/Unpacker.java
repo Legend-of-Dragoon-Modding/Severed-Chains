@@ -1,7 +1,5 @@
 package legend.game.unpacker;
 
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.IoHelper;
@@ -13,11 +11,11 @@ import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
 import legend.game.Scus94491BpeSegment;
 import legend.game.tim.Tim;
+import legend.game.i18n.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -32,10 +30,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -46,21 +42,21 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public final class Unpacker {
-  private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
-  private static final Pattern DRGN_BIN = Pattern.compile("^DRGN(?:0|1|2[1234])?.BIN$");
-
   private Unpacker() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
 
   private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
   private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
+  private static final String[] OTHER_REGION_NAMES = {"europe", "france", "germany", "italy", "spain", "japan", "asia"};
   private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+  private static final Pattern DRGN_BIN = Pattern.compile("^DRGN(?:0|1|2[1234])?.BIN$");
   private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/.*");
   private static final Pattern DRGN0_SUBFILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/\\d+");
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
@@ -68,90 +64,83 @@ public final class Unpacker {
   /** Update this any time we make a breaking change */
   private static final int VERSION = 4;
 
-  static {
-    System.setProperty("log4j.skipJansi", "false");
-    System.setProperty("log4j2.configurationFile", "log4j2.xml");
-  }
-
-  public static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
-
   public static Path ROOT = Path.of(".", "files");
+  public static Path REPLACEMENTS = Path.of(".", "patches", "replacements");
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
-
-  private static final int availableProcessors = Runtime.getRuntime().availableProcessors();
-  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(availableProcessors);
-  private static final AtomicInteger loadingCount = new AtomicInteger();
 
   /**
    * Note: the transformation pipeline is recursive and after a transformation, the file will be placed back into the transformation queue
    * until no more transformers apply to it. Discriminators must be able to recognize their own changes and return false, or the file will
    * be transformed infinitely.
    */
-  private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
+  private static final List<LeafTransformation> transformers = new ArrayList<>();
   static {
     // This has to happen before MRG
-    transformers.put(Unpacker::monsterSfxDiscriminator, Unpacker::monsterSfxTransformer);
-    transformers.put(Unpacker::battlePhaseSfxDiscriminator, Unpacker::battlePhaseSfxTransformer);
-    transformers.put(Unpacker::monsterTextureDiscriminator, Unpacker::monsterTextureTransformer);
+    transformers.add(new LeafTransformation("Monster SFX", Unpacker::monsterSfxDiscriminator, Unpacker::monsterSfxTransformer));
+    transformers.add(new LeafTransformation("Battle phase SFX", Unpacker::battlePhaseSfxDiscriminator, Unpacker::battlePhaseSfxTransformer));
+    transformers.add(new LeafTransformation("Monster texture", Unpacker::monsterTextureDiscriminator, Unpacker::monsterTextureTransformer));
 
-    transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
-    transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
-    transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
+    transformers.add(new LeafTransformation("Decompressor", Unpacker::decompressDiscriminator, Unpacker::decompress));
+    transformers.add(new LeafTransformation("Unmrg", Unpacker::mrgDiscriminator, Unpacker::unmrg));
+    transformers.add(new LeafTransformation("Undeff", Unpacker::deffDiscriminator, Unpacker::undeff));
 
-    transformers.put(Unpacker::engineOverlayDiscriminator, Unpacker::engineOverlayExtractor);
+    transformers.add(new LeafTransformation("Engine overlay", Unpacker::engineOverlayDiscriminator, Unpacker::engineOverlayExtractor));
 
-    transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
-    transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
-    transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
+    transformers.add(new LeafTransformation("drgn21_402_3", Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher));
+    transformers.add(new LeafTransformation("drgn21_693_0", Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher));
+    transformers.add(new LeafTransformation("drgn0_142_anim", Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher));
 
-    // Item, equipment, spells, XP, and TIMs from lod_engine
-    transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
-    transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
-    transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
+    // Spells, XP, and TIMs from lod_engine
+    transformers.add(new LeafTransformation("LOD engine", Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor));
+    transformers.add(new LeafTransformation("XP", Unpacker::xpDiscriminator, Unpacker::xpExtractor));
+    transformers.add(new LeafTransformation("Spells", Unpacker::spellsDiscriminator, Unpacker::spellsExtractor));
 
     // Savepoint etc. from SMAP
-    transformers.put(Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor);
+    transformers.add(new LeafTransformation("SMAP assets", Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor));
 
     // Give Dart his hand back during oof
-    transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
+    transformers.add(new LeafTransformation("Lavitz oof Dart missing hand", Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher));
 
     // Yes there are 3 different magma fish files to patch
-    transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
-    transformers.put(Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher);
-    transformers.put(Unpacker::drgn0_3750_16_animPatcherDiscriminator, Unpacker::drgn0_3750_16_animPatcher);
+    transformers.add(new LeafTransformation("Magma fish drgn0_3667_16", Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher));
+    transformers.add(new LeafTransformation("Magma fish drgn0_3667_17", Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher));
+    transformers.add(new LeafTransformation("Magma fish drgn0_3750_16", Unpacker::drgn0_3750_16_animPatcherDiscriminator, Unpacker::drgn0_3750_16_animPatcher));
 
-    transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
-    transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
-    transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
-    transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
-    transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
-    transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
-    transformers.put(Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer);
-    transformers.put(Unpacker::portraitExtractorDiscriminator, Unpacker::portraitExtractorTransformer);
-    transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
+    transformers.add(new LeafTransformation("drgn1_343", Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher));
+    transformers.add(new LeafTransformation("Player combat sounds", Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer));
+    transformers.add(new LeafTransformation("Player combat models and textures", Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer));
+    transformers.add(new LeafTransformation("Dragoon combat models and textures", Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer));
+    transformers.add(new LeafTransformation("Skip party permutations", Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer));
+    transformers.add(new LeafTransformation("BTLD data extractor", Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer));
+    transformers.add(new LeafTransformation("UI patcher", Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer));
+    transformers.add(new LeafTransformation("Portrait extractor", Unpacker::portraitExtractorDiscriminator, Unpacker::portraitExtractorTransformer));
+    transformers.add(new LeafTransformation("CTMD converter", CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer));
 
     // Remove damage caps from scripts
-    transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
-    transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
-    transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+    transformers.add(new LeafTransformation("Player script damage caps", Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer));
+    transformers.add(new LeafTransformation("Enemy script damage caps", Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher));
+    transformers.add(new LeafTransformation("Item script damage caps", Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher));
 
-    transformers.put(Unpacker::xaDiscriminator, Unpacker::xaTransformer);
+    transformers.add(new LeafTransformation("XA audio converter", Unpacker::xaDiscriminator, Unpacker::xaTransformer));
   }
 
-  private static final List<Transformer> postTransformers = new ArrayList<>();
+  private static final List<BranchTransformation> postTransformers = new ArrayList<>();
   static {
     // Convert submap PXLs into individual TIMs
-    postTransformers.add(SubmapPxlTransformer::transform);
+    postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
+
+    postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
+  }
+
+  private static final List<Replacement> replacements = new ArrayList<>();
+  static {
+    // Guy in Bale library with face/chest swapped
+    replacements.add(new Replacement("Replace Chester texture", Unpacker::drgn21_260_textures_4_chesterTextureReplacementPatcher));
   }
 
   private static Consumer<String> statusListener = status -> { };
   private static boolean shouldStop;
-
-  public static void main(final String[] args) throws UnpackerException {
-    unpack();
-    EXECUTOR.shutdown();
-  }
 
   public static void stop() {
     shouldStop = true;
@@ -159,197 +148,6 @@ public final class Unpacker {
 
   public static void setStatusListener(final Consumer<String> listener) {
     statusListener = listener;
-  }
-
-  public static void shutdownLoader() {
-    EXECUTOR.shutdown();
-  }
-
-  public static FileData loadFile(final String name) {
-    LOGGER.info("Loading file %s", name);
-
-    try {
-      return new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name))));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load file " + name, e);
-    }
-  }
-
-  public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
-    final int total = loadingCount.incrementAndGet();
-    LOGGER.info("Queueing file %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadFile(name));
-      final int remaining = loadingCount.decrementAndGet();
-      LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
-    });
-  }
-
-  public static void loadFiles(final Consumer<List<FileData>> onCompletion, final String... files) {
-    final int total = loadingCount.updateAndGet(i -> i + files.length);
-    LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
-
-    EXECUTOR.execute(() -> {
-      final List<FileData> fileData = new ArrayList<>();
-      for(final String file : files) {
-        final FileData data = Unpacker.loadFile(file);
-        fileData.add(data);
-      }
-
-      onCompletion.accept(fileData);
-      final int remaining = loadingCount.updateAndGet(i -> i - files.length);
-      LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
-    });
-  }
-
-  public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
-    final int total = loadingCount.incrementAndGet();
-    LOGGER.info("Queueing directory %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadDirectory(name));
-      final int remaining = loadingCount.decrementAndGet();
-      LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
-    });
-  }
-
-  public static List<FileData> loadDirectory(final String name) {
-    LOGGER.info("Loading directory %s", name);
-
-    final Path dir = ROOT.resolve(fixPath(name));
-    final Path mrg = dir.resolve("mrg");
-
-    if(Files.exists(mrg)) {
-      try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
-        final Int2IntMap fileMap = new Int2IntArrayMap();
-        final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
-
-        reader.lines().forEach(line -> {
-          final String[] parts = MRG_ENTRY.split(line);
-
-          if(parts.length != 3) {
-            throw new RuntimeException("Invalid MRG entry! " + line);
-          }
-
-          final int virtual = Integer.parseInt(parts[0]);
-
-          // Indicates no file
-          if(parts[1].isBlank()) {
-            fileMap.put(virtual, -1);
-            virtualSizeMap.put(virtual, 0);
-            return;
-          }
-
-          final int real = Integer.parseInt(parts[1]);
-          fileMap.put(virtual, real);
-          virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
-        });
-
-        final List<FileData> files = new ArrayList<>();
-
-        // Add real files
-        for(final var entry : fileMap.int2IntEntrySet()) {
-          final int virtual = entry.getIntKey();
-          final int real = entry.getIntValue();
-
-          // No file
-          if(real == -1) {
-            files.add(null);
-            continue;
-          }
-
-          try {
-            final Path file = dir.resolve(String.valueOf(real));
-            if(Files.isRegularFile(file)) {
-              if(virtual == real) {
-                files.add(new FileData(Files.readAllBytes(file)));
-              } else {
-                files.add(null);
-              }
-            } else if(Files.isDirectory(file)) {
-              files.add(new FileData(new byte[0]));
-            }
-          } catch(final IOException e) {
-            throw new RuntimeException("Failed to load directory " + name, e);
-          }
-        }
-
-        // Add virtual files
-        for(final var entry : fileMap.int2IntEntrySet()) {
-          final int virtual = entry.getIntKey();
-          int real = entry.getIntValue();
-
-          if(virtual == real || real == -1) {
-            continue;
-          }
-
-          // Resolve to the realest file
-          while(fileMap.get(real) != real) {
-            real = fileMap.get(real);
-          }
-
-          final Path file = dir.resolve(String.valueOf(real));
-          if(Files.isRegularFile(file)) {
-            files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
-          }
-        }
-
-        return files;
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + name, e);
-      }
-    } else {
-      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
-        final List<FileData> files = new ArrayList<>();
-
-        StreamSupport.stream(ds.spliterator(), false)
-          .filter(Files::isRegularFile)
-          .sorted((path1, path2) -> {
-            final String filename1 = path1.getFileName().toString();
-            final String filename2 = path2.getFileName().toString();
-
-            try {
-              return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
-            } catch(final NumberFormatException ignored) { }
-
-            return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
-          })
-          .forEach(child -> {
-            try {
-              files.add(new FileData(Files.readAllBytes(child)));
-            } catch(final IOException e) {
-              throw new RuntimeException("Failed to load directory " + name, e);
-            }
-          });
-
-        return files;
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + name, e);
-      }
-    }
-  }
-
-  public static int getLoadingFileCount() {
-    return loadingCount.get();
-  }
-
-  public static boolean exists(final String name) {
-    return Files.exists(ROOT.resolve(fixPath(name)));
-  }
-
-  public static boolean isDirectory(final String name) {
-    return Files.isDirectory(ROOT.resolve(fixPath(name)));
-  }
-
-  private static String fixPath(String name) {
-    if(name.contains(";")) {
-      name = name.substring(0, name.lastIndexOf(';'));
-    }
-
-    if(name.startsWith("\\")) {
-      name = name.substring(1);
-    }
-
-    return name.replace('\\', '/');
   }
 
   public static void unpack() throws UnpackerException {
@@ -360,22 +158,55 @@ public final class Unpacker {
       if(getUnpackVersion() != VERSION) {
         final long start = System.nanoTime();
 
-        statusListener.accept("Deleting old unpacked files...");
+        statusListener.accept(I18n.translate("unpacker.deleting_old"));
         LOGGER.info("Deleting old unpacked files...");
         deleteUnpack();
         LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       }
 
+      statusListener.accept(I18n.translate("unpacker.loading_disks"));
+
+      // Wait for disks
+      final IsoReader[] readers = new IsoReader[4];
+      final String[] errors = new String[4];
+
+      while(true) {
+        getIsoReaders(readers, errors);
+
+        int diskCount = 0;
+        for(int i = 0; i < readers.length; i++) {
+          if(readers[i] != null) {
+            diskCount++;
+          }
+        }
+
+        if(diskCount == readers.length) {
+          break;
+        }
+
+        String help = I18n.translate("unpacker.disk_help");
+
+        for(int i = 0; i < readers.length; i++) {
+          help += '\n' + I18n.translate("unpacker.disk_status", i + 1, errors[i]);
+        }
+
+        statusListener.accept(help);
+
+        if(shouldStop) {
+          throw new UnpackerStoppedRuntimeException("Game closed");
+        }
+
+        DebugHelper.sleep(1000);
+      }
+
       final long start = System.nanoTime();
-      final IsoReader[] readers = getIsoReaders();
+
       final DirectoryEntry[] roots = new DirectoryEntry[4];
       final DirectoryEntry root = loadRoot(readers[3], null);
 
       for(int i = 0; i < roots.length - 1; i++) {
         loadRoot(readers[i], root);
       }
-
-      statusListener.accept("Loading disk images...");
 
       final long fileTreeTime = System.nanoTime();
       LOGGER.info("Populating initial file tree...");
@@ -384,10 +215,10 @@ public final class Unpacker {
       final Queue<PathNode> transformationQueue = new LinkedList<>();
       populateInitialFileTree(root, "", files, transformationQueue);
 
-      LOGGER.info("Initial file tree populated in %fs", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f);
+      LOGGER.info("Initial file tree populated in %fs with %d files", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f, transformationQueue.size());
 
       if(!transformationQueue.isEmpty()) {
-        statusListener.accept("Transforming files...");
+        statusListener.accept(I18n.translate("unpacker.transforming_files", 0));
 
         final long leafTransformTime = System.nanoTime();
         LOGGER.info("Performing leaf transformations...");
@@ -400,7 +231,7 @@ public final class Unpacker {
         try(final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
           executor.execute(() -> {
             while(!transformations.isEmpty() && transformationThrowable.get() == null) {
-              statusListener.accept("Transforming %d files...".formatted(transformations.getRemaining()));
+              statusListener.accept(I18n.translate("unpacker.transforming_files", transformations.getRemaining()));
               DebugHelper.sleep(50);
             }
           });
@@ -436,14 +267,27 @@ public final class Unpacker {
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
 
-        statusListener.accept("Transforming directories...");
+        statusListener.accept(I18n.translate("unpacker.transforming_directories"));
 
         final long branchTransformTime = System.nanoTime();
         LOGGER.info("Performing branch transformations...");
 
-        postTransformers.parallelStream().forEach(transformer -> transformer.transform(files, transformations, flags));
+        postTransformers.parallelStream().forEach(transformer -> {
+          LOGGER.info("Running branch transformer %s", transformer.name);
+          transformer.transformer.transform(files, transformations, flags);
+        });
 
         LOGGER.info("Branch transformations completed in %fs", (System.nanoTime() - branchTransformTime) / 1_000_000_000.0f);
+
+        final long replacementTime = System.nanoTime();
+        LOGGER.info("Performing replacements...");
+
+        replacements.parallelStream().forEach(replacement -> {
+          LOGGER.info("Running replacement %s", replacement.name);
+          replacement.transformer.transform(files, transformations, flags);
+        });
+
+        LOGGER.info("Replacements completed in %fs", (System.nanoTime() - replacementTime) / 1_000_000_000.0f);
 
         final Deque<PathNode> all = new ConcurrentLinkedDeque<>();
         files.flatten(all);
@@ -455,7 +299,7 @@ public final class Unpacker {
 
           executor.execute(() -> {
             while(remaining.get() > 0) {
-              statusListener.accept("Writing %d files...".formatted(remaining.get()));
+              statusListener.accept(I18n.translate("unpacker.writing_files", remaining.get()));
               DebugHelper.sleep(50);
             }
           });
@@ -479,7 +323,7 @@ public final class Unpacker {
       LOGGER.info("Files unpacked in %fs", (System.nanoTime() - start) / 1_000_000_000.0f);
     } catch(final OutOfMemoryError e) {
       LOGGER.info("Ran out of memory while unpacking, switching to low memory unpacker. Please restart the game.");
-      statusListener.accept("Ran out of memory while unpacking, switching to low memory unpacker. Please restart the game.");
+      statusListener.accept(I18n.translate("unpacker.low_memory"));
 
       Config.enableLowMemoryUnpacker();
       try {
@@ -537,43 +381,34 @@ public final class Unpacker {
     }
   }
 
-  private static IsoReader[] getIsoReaders() throws IOException {
-    final IsoReader[] readers = new IsoReader[4];
-    int diskCount = 0;
+  private static void getIsoReaders(final IsoReader[] readers, final String[] errors) throws IOException {
+    Arrays.fill(errors, I18n.translate("unpacker.disk_not_found"));
 
-    try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
-      for(final Path child : children) {
-        final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
+    final Path isos = Path.of("isos");
+    if(Files.isDirectory(isos)) {
+      try(final DirectoryStream<Path> children = Files.newDirectoryStream(isos)) {
+        for(final Path child : children) {
+          final Tuple<IsoReader, Integer> tuple = getIsoReader(child, errors);
 
-        if(tuple != null) {
-          final int diskNum = tuple.b();
+          if(tuple != null) {
+            final int diskNum = tuple.b();
 
-          if(readers[diskNum] != null) {
-            LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
-            continue;
+            errors[diskNum] = I18n.translate("unpacker.disk_found");
+
+            if(readers[diskNum] != null) {
+              tuple.a().close();
+              continue;
+            }
+
+            LOGGER.info("Found disk %d: %s", diskNum + 1, child);
+            readers[diskNum] = tuple.a();
           }
-
-          LOGGER.info("Found disk %d: %s", diskNum + 1, child);
-          readers[diskNum] = tuple.a();
-          diskCount++;
         }
       }
     }
-
-    if(diskCount < 4) {
-      for(int i = 0; i < readers.length; i++) {
-        if(readers[i] == null) {
-          LOGGER.error("Failed to find disk %d!", i + 1);
-        }
-      }
-
-      throw new UnpackerException("Failed to locate disk images");
-    }
-
-    return readers;
   }
 
-  private static Tuple<IsoReader, Integer> getIsoReader(final Path path) throws IOException {
+  private static Tuple<IsoReader, Integer> getIsoReader(final Path path, final String[] errors) throws IOException {
     final long fileSize = Files.size(path);
 
     if(fileSize < (PVD_SECTOR + 1) * IsoReader.SECTOR_SIZE) {
@@ -584,12 +419,21 @@ public final class Unpacker {
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-    final IsoReader reader = new IsoReader(path);
+    final IsoReader reader;
+
+    try {
+      reader = new IsoReader(path);
+    } catch(final IOException e) {
+      // Failed to open file, probably mid-copy
+      return null;
+    }
+
     reader.seekSector(PVD_SECTOR);
     reader.advance(IsoReader.SYNC_PATTER_SIZE);
     reader.read(sectorData);
 
     if(sectorBuffer.get() != 1 || !"CD001".equals(IoHelper.readString(sectorBuffer, 5)) || sectorBuffer.get() != 0x1 || !"PLAYSTATION".equals(IoHelper.readString(sectorBuffer, 32).trim())) {
+      reader.close();
       return null;
     }
 
@@ -602,9 +446,11 @@ public final class Unpacker {
     }
 
     if(OTHER_REGION_IDS.contains(readId)) {
-      LOGGER.warn("Found disk %s from another region: %s", readId, path);
+      final int index = OTHER_REGION_IDS.indexOf(readId);
+      errors[index % 4] = I18n.translate("unpacker.disk_wrong_region", I18n.translate("unpacker.region." + OTHER_REGION_NAMES[index / 4]));
     }
 
+    reader.close();
     return null;
   }
 
@@ -656,6 +502,7 @@ public final class Unpacker {
     if(!root.isDirectory()) {
       if(!Files.exists(ROOT.resolve(filename))) {
         final PathNode file = new PathNode(filename, root.name(), readFile(filename, root), parent);
+//        LOGGER.info("Adding file %s", file.fullPath);
         parent.addChild(file);
         transformationQueue.add(file);
       }
@@ -668,6 +515,7 @@ public final class Unpacker {
         newPath = "";
       } else {
         dir = new PathNode(filename, root.name(), null, null);
+//        LOGGER.info("Adding file %s", dir.fullPath);
         newPath = filename + '/';
         parent.addChild(dir);
       }
@@ -702,11 +550,12 @@ public final class Unpacker {
       throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
     }
 
-    for(final var entry : transformers.entrySet()) {
-      final var discriminator = entry.getKey();
-      final var transformer = entry.getValue();
+    for(final var entry : transformers) {
+      final var discriminator = entry.discriminator;
+      final var transformer = entry.transformer;
 
       if(discriminator.matches(node, flags)) {
+//        LOGGER.info("Running %s on %s", entry.name, node.fullPath);
         node.parent.children.remove(node.pathSegment);
         transformer.transform(node, transformations, flags);
         break;
@@ -852,11 +701,11 @@ public final class Unpacker {
     transformations.replaceNode(node, new FileData(newData));
   }
 
-  private static boolean equipmentAndXpDiscriminator(final PathNode node, final Set<String> flags) {
+  private static boolean xpDiscriminator(final PathNode node, final Set<String> flags) {
     return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static void equipmentAndXpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void xpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     transformations.addNode(node);
@@ -869,10 +718,6 @@ public final class Unpacker {
     transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
     transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
     transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
-
-    for(int i = 0; i < 192; i++) {
-      transformations.addNode("equipment/" + i + ".deqp", node.data.slice(0x16878 + i * 0x1c, 0x1c));
-    }
   }
 
   private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {
@@ -1010,6 +855,21 @@ public final class Unpacker {
   }
 
   /**
+   * Man in the Bale library with face/chest swapped
+   */
+  private static void drgn21_260_textures_4_chesterTextureReplacementPatcher(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    final PathNode sect = root.children.get("SECT");
+
+    if(sect != null) {
+      final PathNode drgn21 = sect.children.get("DRGN21.BIN");
+
+      if(drgn21 != null) {
+        transformations.replaceWithFile(drgn21.children.get("260").children.get("textures").children.get("4"), REPLACEMENTS.resolve("chester.tim"));
+      }
+    }
+  }
+
+  /**
    * @param expectedObjects Expected number of objects
    */
   private static byte[] patchAnimation(final FileData data, final int expectedObjects) {
@@ -1027,6 +887,30 @@ public final class Unpacker {
 
     newData[0xc] = (byte)expectedObjects;
     return newData;
+  }
+
+  /** Replaces the disk 2 Claire model (broken face UVs) with the good model from disk 3 */
+  private static void replaceBrokenClaireModel(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    if(!root.children.containsKey("SECT")) {
+      // Only doing a partial unpack, no SECT
+      return;
+    }
+
+    final PathNode sect = root.children.get("SECT");
+
+    // Not ideal because if DRGN23 isn't being unpacked, DRGN22's files won't be fixed, but not much we can do about that
+
+    if(sect.children.containsKey("DRGN22.BIN") && sect.children.containsKey("DRGN23.BIN")) {
+      final PathNode bad = sect.children.get("DRGN22.BIN").children.get("863").children.get("33");
+      final PathNode good = sect.children.get("DRGN23.BIN").children.get("506").children.get("33");
+      transformations.replaceNode(bad, good.data);
+    }
+
+    if(sect.children.containsKey("DRGN24.BIN") && sect.children.containsKey("DRGN23.BIN")) {
+      final PathNode bad = sect.children.get("DRGN24.BIN").children.get("260").children.get("33");
+      final PathNode good = sect.children.get("DRGN23.BIN").children.get("506").children.get("33");
+      transformations.replaceNode(bad, good.data);
+    }
   }
 
   /**
@@ -1343,9 +1227,9 @@ public final class Unpacker {
     final int fileId = Integer.parseInt(node.fullPath, 15, slash, 10);
     final int index = Integer.parseInt(node.fullPath, slash + 1, node.fullPath.length(), 10);
 
-    final int[] monsters = battleAssetIdentifier(fileId - 778);
+    final int[] monsters = battleAssetIdentifierSfx(fileId - 778);
 
-    if(monsters!= null && index < monsters.length && monsters[index] != -1) {
+    if(monsters != null && index < monsters.length && monsters[index] != -1) {
       transformations.addNode("monsters/" + monsters[index] + "/sounds/", node.data);
     }
   }
@@ -1370,6 +1254,14 @@ public final class Unpacker {
     if(monsters != null && index < monsters.length && monsters[index] != -1) {
       transformations.addNode("monsters/" + monsters[index] + "/textures/combat", node.data);
     }
+  }
+
+  private static int[] battleAssetIdentifierSfx(final int encounterId) {
+    if(encounterId == 397) {
+      return new int[] {279, -1, 294};
+    }
+
+    return battleAssetIdentifier(encounterId);
   }
 
   private static int[] battleAssetIdentifier(final int encounterId) {
@@ -1423,7 +1315,9 @@ public final class Unpacker {
       case 159 -> new int[] {96};
       case 161 -> new int[] {48};
       case 162 -> new int[] {114};
+      case 164 -> new int[] {67};
       case 168 -> new int[] {5, 32};
+      case 172 -> new int[] {11};
       case 177 -> new int[] {25, 49};
       case 179 -> new int[] {56, 144};
       case 183 -> new int[] {20};
@@ -1432,7 +1326,7 @@ public final class Unpacker {
       case 196 -> new int[] {39, 47};
       case 197 -> new int[] {41, 63};
       case 198 -> new int[] {65};
-      case 208 -> new int[] {11, 67, 93};
+      case 202 -> new int[] {93};
       case 232 -> new int[] {72};
       case 235 -> new int[] {60, 75};
       case 236 -> new int[] {9, 121};
@@ -1575,10 +1469,6 @@ public final class Unpacker {
   }
 
   private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    for(int i = 0; i < 64; i++) {
-      transformations.addNode("items/" + i + ".ditm", node.data.slice(0x3f2ac + i * 0xc, 0xc));
-    }
-
     transformations.addNode("shadow.ctmd", node.data.slice(0x3d0, 0x14c));
     transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
     transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));

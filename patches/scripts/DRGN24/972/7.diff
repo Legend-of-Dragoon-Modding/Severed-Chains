@@ -1,0 +1,21 @@
+Moon - Confronting Melbu cutscene
+Kongol
+Skip hiding model parts
+--- original
++++ modified
+@@ -52,6 +52,7 @@
+ JMP_140_0:
+ call 101, stor[0], 0xffffff9c, 0x50, 0xffffff86
+ call 103, stor[0], 0x100, 0x900, 0x0
++jmp inl[:THE_DISMEMBERMENT_PLAN]
+ call 288, 0x0
+ call 288, 0x4
+ call 288, 0x5
+@@ -62,6 +63,7 @@
+ call 288, 0xe
+ call 288, 0x10
+ call 288, 0x11
++THE_DISMEMBERMENT_PLAN:
+ call 106, 0x0
+ mov 0x1f, stor[24]
+ mov 0x1, stor[25]

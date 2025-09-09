@@ -1,0 +1,29 @@
+Widescreen patch
+Hoax - Cutscene: Siege begins
+Knight #2 in right tower: make visible from start of cutscene
+--- original
++++ modified
+@@ -190,10 +190,13 @@
+ call 311, stor[0]
+ call 312, stor[0]
+ call 106, 0x1
++mov 108, stor[22]
++gosub_table 0, inl[:LABEL_35]
+ rewind
+ ENTRYPOINT_1:
+ consume
+ ENTRYPOINT_2:
++mov 0, stor[22]
+ gosub_table stor[32], inl[:LABEL_35]
+ consume
+ LABEL_35:
+@@ -207,6 +210,9 @@
+ call 691, var[64][3], 0x6
+ call 691, var[64][3], 0xa
+ call 691, var[64][3], 0xb
++jmp_cmp !=, stor[22], 108, inl[:CONTINUE]
++return
++CONTINUE:
+ call 257, stor[24], stor[25]
+ mov 0xffffff79, stor[24]
+ mov 0x8, stor[26]

@@ -1,0 +1,28 @@
+Aglis - Kraken cutscene
+Meru
+Skip hiding model parts
+--- original
++++ modified
+@@ -135,8 +135,6 @@
+ gosub inl[:LABEL_4]
+ mov 0x1, stor[24]
+ gosub inl[:LABEL_0]
+-mov 0x0, stor[24]
+-gosub inl[:LABEL_9]
+ call 289, 0x6
+ call 289, 0x7
+ mov 0x5, stor[24]
+@@ -157,6 +155,7 @@
+ gosub inl[:LABEL_1]
+ mov 0x15, stor[24]
+ gosub inl[:LABEL_0]
++jmp inl[:THE_DISMEMBERMENT_PLAN]
+ call 288, 0x0
+ call 288, 0x2
+ call 288, 0x3
+@@ -171,4 +170,5 @@
+ call 288, 0x15
+ call 288, 0x16
+ call 288, 0x17
++THE_DISMEMBERMENT_PLAN:
+ rewind

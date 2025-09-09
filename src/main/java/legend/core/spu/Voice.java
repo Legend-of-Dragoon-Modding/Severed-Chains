@@ -1,10 +1,12 @@
 package legend.core.spu;
 
 import legend.core.MathHelper;
-
-import static legend.game.unpacker.Unpacker.LOGGER;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Voice {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Voice.class);
+
   private static final int[] positiveXaAdpcmTable = {0, 60, 115, 98, 122};
   private static final int[] negativeXaAdpcmTable = {0, 0, -52, -55, -60};
 

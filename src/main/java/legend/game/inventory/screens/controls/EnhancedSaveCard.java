@@ -1,9 +1,10 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.opengl.Texture;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
-import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.SavedGame;
 import legend.game.saves.types.EnhancedSaveDisplay;
 import legend.game.unpacker.FileData;
@@ -12,10 +13,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.SItem.renderCentredText;
-import static legend.game.SItem.renderText;
+import static legend.game.SItem.UI_GREEN;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
@@ -51,7 +53,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
     this.invalidSave = this.addControl(new Label("Invalid save"));
     this.invalidSave.setPos(258, 47);
     this.invalidSave.setWidth(0);
-    this.invalidSave.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    this.invalidSave.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
   }
 
   private void setTexture(final FileData data) {
@@ -140,9 +142,9 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
   }
 
   @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
     if(this.saveData != null) {
-      if(inputAction == InputAction.DPAD_LEFT) {
+      if(action == CoreMod.INPUT_ACTION_MENU_LEFT.get()) {
         if(this.selectedCharacter > 0) {
           if(this.selectedCharacter - this.scroll - 1 < 0) {
             this.scroll--;
@@ -155,7 +157,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
         return InputPropagation.HANDLED;
       }
 
-      if(inputAction == InputAction.DPAD_RIGHT) {
+      if(action == CoreMod.INPUT_ACTION_MENU_RIGHT.get()) {
         if(this.selectedCharacter < this.saveData.display.chars.size() - 1) {
           if(this.selectedCharacter - this.scroll + 1 > 2) {
             this.scroll++;
@@ -169,7 +171,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
       }
     }
 
-    return super.pressedWithRepeatPulse(inputAction);
+    return super.inputActionPressed(action, repeat);
   }
 
   @Override
@@ -179,7 +181,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
         final EnhancedSaveDisplay display = this.saveData.display;
         final EnhancedSaveDisplay.Char char0 = this.chars.get(this.selectedCharacter);
 
-        renderCentredText(display.location, x + 258, y + 47, TextColour.BROWN); // Location text
+        renderText(display.location, x + 258, y + 47, UI_TEXT_CENTERED); // Location text
         this.renderNumber(224, y + 6, char0.lvl, 2); // Level
         this.renderNumber(269, y + 6, char0.dlvl, 2); // Dragoon level
         this.renderNumber(302, y + 6, char0.hp, 4); // Current HP
@@ -195,7 +197,7 @@ public class EnhancedSaveCard extends SaveCard<EnhancedSaveDisplay> {
         for(int i = this.scroll; i < display.party.size(); i++) {
           final int oldTextZ = textZ_800bdf00;
           textZ_800bdf00 = 30;
-          renderText("*", x + 56 + (i - this.scroll) * 52, y + 50, TextColour.GREEN);
+          renderText("*", x + 56 + (i - this.scroll) * 52, y + 50, UI_GREEN);
           textZ_800bdf00 = oldTextZ;
         }
       }

@@ -1,0 +1,88 @@
+Widescreen patch
+Hoax - Cutscene: Elite
+Relocated and modified Serdio knight script
+--- original
++++ modified
+@@ -1,4 +1,6 @@
+ entrypoint :ENTRYPOINT_0
++entrypoint :ENTRYPOINT_1
++entrypoint :ENTRYPOINT_2
+ ENTRYPOINT_0:
+ mov var[65], stor[23]
+ incr stor[stor[stor[0], 23], 8]
+@@ -12,3 +14,75 @@
+ call 292, stor[0], 0x6000
+ call 312, stor[0]
+ rewind
++ENTRYPOINT_1:
++consume
++ENTRYPOINT_2:
++gosub_table stor[32], inl[:JUMP]
++consume
++#include ../../../../patches/libs/widescreen.txt
++JUMP:
++rel :JUMP_0
++JUMP_0:
++call 101, stor[0], 0x6c, 0x16, 0xb4
++call 103, stor[0], 0x0, 0xc00, 0x0
++call 96, 5
++mov 0, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++mov 10, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
++call 99, 0
++call 97, 10
++mov 0xa2, inl[:WS_TARGET_X]
++mov 0x16, inl[:WS_TARGET_Y]
++mov 0xb4, inl[:WS_TARGET_Z]
++mov 4, inl[:WS_SPEED]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_MOVE]
++mov 20, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
++call 99, 1
++mov 1, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
++call 99, 0
++gosub inl[:WS_ANIMATION_WAIT]
++mov 0x144, inl[:WS_TARGET_X]
++mov 0x16, inl[:WS_TARGET_Y]
++mov 0xc4, inl[:WS_TARGET_Z]
++mov 8, inl[:WS_FRAMES]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++gosub inl[:WS_MOVE]
++mov 0x1ba, inl[:WS_TARGET_X]
++mov 0xffffff4c, inl[:WS_TARGET_Y]
++mov 0x1d2, inl[:WS_TARGET_Z]
++mov 8, inl[:WS_FRAMES]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++gosub inl[:WS_MOVE]
++mov 0x229, inl[:WS_TARGET_X]
++mov 0xffffff4c, inl[:WS_TARGET_Y]
++mov 0x271, inl[:WS_TARGET_Z]
++mov 8, inl[:WS_FRAMES]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++gosub inl[:WS_MOVE]
++mov 0x2bc, inl[:WS_TARGET_X]
++mov 0xffffff4c, inl[:WS_TARGET_Y]
++mov 0x258, inl[:WS_TARGET_Z]
++mov 8, inl[:WS_FRAMES]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++gosub inl[:WS_MOVE]
++call 106, 1
++return

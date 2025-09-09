@@ -1,6 +1,5 @@
 package legend.core.gpu;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.ProjectionMode;
 import legend.core.RenderEngine;
@@ -22,13 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
-import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -97,20 +94,6 @@ public class Gpu {
   public void init() {
     RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture(width, height));
 
-    RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
-      if(key == GLFW_KEY_EQUAL) {
-        if(mods == 0) {
-          Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() + 1, 16));
-        }
-      }
-
-      if(key == GLFW_KEY_MINUS) {
-        if(mods == 0) {
-          Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() - 1, 1));
-        }
-      }
-    });
-
     this.vramShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     this.vramShaderOptions = this.vramShader.makeOptions();
 
@@ -147,24 +130,8 @@ public class Gpu {
     }
   }
 
-  private final float[] fps = new float[60];
-  private int fpsIndex;
-
   public void endFrame() {
     this.tick();
-
-    final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
-    this.fps[this.fpsIndex] = RENDERER.getFps();
-    this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
-
-    if(this.fpsIndex == 0) {
-      float avg = 0.0f;
-      for(int i = 0; i < fpsLimit; i++) {
-        avg += this.fps[i];
-      }
-
-      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
-    }
   }
 
   public void useVramTexture() {
@@ -440,7 +407,7 @@ public class Gpu {
     this.status.verticalResolution = height;
 
     // Always run on the GPU thread
-    if(glfwGetCurrentContext() == 0) {
+    if(!PLATFORM.isContextCurrent()) {
       this.displayChanged = true;
       return;
     }
@@ -920,48 +887,6 @@ public class Gpu {
         r = Math.min(0xff, br + fr / 4);
         g = Math.min(0xff, bg + fg / 4);
         b = Math.min(0xff, bb + fb / 4);
-      }
-
-      case FULL_BACKGROUND -> {
-        r = br;
-        g = bg;
-        b = bb;
-      }
-
-      case TQUATER_B_FOREGROUND -> {
-        r = Math.min(0xff, br * 3 / 4 + fr);
-        g = Math.min(0xff, bg * 3 / 4 + fg);
-        b = Math.min(0xff, bb * 3 / 4 + fb);
-      }
-
-      case HALF_B_FOREGROUND -> {
-        r = Math.min(0xff, br / 2 + fr);
-        g = Math.min(0xff, bg / 2 + fg);
-        b = Math.min(0xff, bb / 2 + fb);
-      }
-
-      case QUARTER_B_FOREGROUND -> {
-        r = Math.min(0xff, br / 4 + fr);
-        g = Math.min(0xff, bg / 4 + fg);
-        b = Math.min(0xff, bb / 4 + fb);
-      }
-
-      case FULL_FOREGROUND -> {
-        r = fr;
-        g = fg;
-        b = fb;
-      }
-
-      case QUARTER_B_QUARTER_F -> {
-        r = (br + fr) / 4;
-        g = (bg + fg) / 4;
-        b = (bb + fb) / 4;
-      }
-
-      case TQUARTER_B_TQUARTER_F -> {
-        r = Math.min(0xff, br * 3 / 4 + fr * 3 / 4);
-        g = Math.min(0xff, bg * 3 / 4 + fg * 3 / 4);
-        b = Math.min(0xff, bb * 3 / 4 + fb * 3 / 4);
       }
 
       default -> throw new RuntimeException();

@@ -1,0 +1,21 @@
+--- original
++++ modified
+@@ -205,9 +205,8 @@
+ call 371, stor[28], stor[10], 0x0
+ mov stor[8], var[128 + stor[10]][5]
+ mov 0x3, var[128 + stor[10]][0]
+-call 168, stor[30], stor[8], ITEM_ID
++call 168, stor[30], reg[0], ITEM_ID
+ mov stor[8], var[45][119]
+-call 496, stor[30]
+ call 495, stor[30], stor[28], stor[8], stor[8], stor[10]
+ mov stor[10], var[45][119]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_1]
+@@ -810,6 +809,7 @@
+ data 0x49
+ ENTRYPOINT_0:
+ call 592, stor[30], stor[28]
++mov id[lod:speed_up], reg[0]
+ mov 0x2d, stor[8]
+ gosub inl[:LABEL_0]
+ gosub inl[:LABEL_4]

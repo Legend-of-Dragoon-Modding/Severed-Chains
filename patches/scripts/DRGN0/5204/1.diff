@@ -1,0 +1,30 @@
+--- original
++++ modified
+@@ -1872,6 +1872,10 @@
+ call 141, stor[27]
+ call 142, stor[27]
+ call 146, stor[27], 0x0
++jmp_cmp ==, var[35], 0x1, inl[:THIRD_ROCK_ON_BOBJ_0]
++jmp_cmp ==, var[35], 0x2, inl[:FIRST_ROCK_ON_BOBJ_1]
++jmp_cmp ==, var[35], 0x3, inl[:FIRST_ROCK_ON_BOBJ_1]
++FIRST_ROCK_ON_BOBJ_1:
+ mov 0x16, stor[23]
+ wait stor[23]
+ mov 0x8, stor[23]
+@@ -1899,6 +1903,8 @@
+ call 600, stor[18]
+ mov 0x4, stor[stor[stor[0], 18], 23]
+ call 618, stor[18], inl[:LABEL_55]
++jmp_cmp ==, var[35], 0x2, inl[:THIRD_ROCK_ON_BOBJ_0]
++SECOND_ROCK_ON_BOBJ_2:
+ mov 0xe, stor[23]
+ wait stor[23]
+ mov 0x8, stor[23]
+@@ -1927,6 +1933,7 @@
+ call 600, stor[18]
+ mov 0x4, stor[stor[stor[0], 18], 23]
+ call 618, stor[18], inl[:LABEL_55]
++THIRD_ROCK_ON_BOBJ_0:
+ mov 0xe, stor[23]
+ wait stor[23]
+ mov 0x8, stor[23]

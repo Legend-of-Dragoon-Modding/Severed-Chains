@@ -1,0 +1,111 @@
+Widescreen patch
+Lohan - Entrance
+Haschel stops Lavitz cutscene: Extend knight start, skip hiding child, reposition Haschel start
+Shana poisoned cutscene: Hide default position, reposition Dart/Shana start, extend Dart/Shana exit, extend cart exit
+--- original
++++ modified
+@@ -1513,6 +1513,8 @@
+ call 0, 0x1
+ call 97, 0x0
+ call 117, 0x0
+# Earlier fork call for wounded knight
++mov var[64][6], stor[26]
++fork stor[26], inl[:LABEL_149], 0x0
+ mov var[64][7], stor[26]
+ fork stor[26], inl[:LABEL_151], 0x0
+ mov var[64][8], stor[26]
+@@ -1525,8 +1527,6 @@
+ gosub inl[:LABEL_69]
+ gosub inl[:LABEL_4]
+ call 2, 0x6e, 0x0
+-mov var[64][6], stor[26]
+-fork stor[26], inl[:LABEL_149], 0x0
+ mov 0xffffffc2, stor[24]
+ mov 0x9, stor[25]
+ mov 0xfffffecf, stor[26]
+@@ -1539,7 +1539,6 @@
+ gosub inl[:LABEL_109]
+ call 117, 0x1
+ mov var[64][11], stor[24]
+# Don't hide child in back lot
+-fork stor[24], inl[:LABEL_152], 0x0
+ mov var[64][1], stor[26]
+ fork stor[26], inl[:LABEL_142], 0x0
+ mov var[64][2], stor[26]
+@@ -1779,7 +1778,7 @@
+ gosub inl[:LABEL_133]
+ consume
+ LABEL_145:
+# New start position for Haschel
+-call 101, stor[0], 0xe7, 0x9, 0xfffffe06
++call 101, stor[0], 0x1a9, 0x9, 0xfffffd7e
+ call 103, stor[0], 0x0, 0x500, 0x0
+ call 106, 0x0
+ call 311, stor[0]
+@@ -1845,9 +1844,13 @@
+ gosub inl[:LABEL_108]
+ consume
+ LABEL_149:
+# Extended start for wounded knight
+-mov 0x4, stor[24]
++mov 0x0, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_55]
++mov 0x0, stor[24]
++mov 0x2, stor[27]
++gosub inl[:LABEL_85]
++gosub inl[:LABEL_22]
+ mov 0x4, stor[24]
+ mov 0x1, stor[27]
+ gosub inl[:LABEL_85]
+@@ -1959,6 +1962,7 @@
+ LABEL_156:
+ call 5, 0x38, stor[25]
+ jmp_cmp !=, 0x0, stor[25], inl[:LABEL_131]
+# Hide default Dart position
++call 106, 1
+ call 0, 0x1
+ call 117, 0x0
+ mov var[64][2], stor[24]
+@@ -1975,8 +1979,9 @@
+ fork stor[24], inl[:LABEL_162], 0x0
+ gosub inl[:LABEL_86]
+ gosub inl[:LABEL_86]
+# Unhide Dart/Shana
++call 106, 0
+ call 96, 0x5
+# New Dart/Shana start position
+-call 101, stor[0], 0xfffffe76, 0x9, 0x27
++call 101, stor[0], 0xfffffe20, 0x9, 0x5a
+ mov var[64][12], stor[24]
+ fork stor[24], inl[:LABEL_165], 0x0
+ mov 0xffffff03, stor[24]
+@@ -2010,9 +2015,9 @@
+ mov 0xfffffedf, stor[26]
+ gosub inl[:LABEL_103]
+ gosub inl[:LABEL_22]
+# New Dart/Shana exit position
+-mov 0x19a, stor[24]
++mov 0x1b3, stor[24]
+ mov 0x9, stor[25]
+-mov 0xfffffdf7, stor[26]
++mov 0xfffffdea, stor[26]
+ gosub inl[:LABEL_103]
+ gosub inl[:LABEL_22]
+ call 9, var[126], 0x11, 0x0
+@@ -2094,9 +2099,11 @@
+ call 313, stor[0], 0x3000, 0x7000
+ call 314, stor[0], 0x0, 0x0, 0x6e
+ call 101, stor[0], 0xfffffd89, 0x9, 0x12d
+# New cart exit position
+-mov 0x17d, stor[24]
++mov 0x228, stor[24]
+ mov 0x9, stor[25]
+-mov 0xfffffcf5, stor[26]
++mov 0xfffffc3e, stor[26]
+# Delay start for extended Dart/Shana entrance
++mov 45, stor[27]
++wait stor[27]
+ gosub inl[:LABEL_60]
+ gosub inl[:LABEL_22]
+ gosub inl[:LABEL_6]

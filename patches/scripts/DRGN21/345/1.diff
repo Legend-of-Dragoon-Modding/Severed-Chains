@@ -1,0 +1,23 @@
+Widescreen patch
+Hoax - Cutscene: Elite
+Revised fork calls
+--- original
++++ modified
+@@ -1018,6 +1018,8 @@
+ fork_reenter stor[26], 0x2, 0x0
+ fork_reenter stor[27], 0x2, 0x0
+ fork_reenter stor[28], 0x2, 0x0
++fork_reenter var[64][6], 0x2, 0x0
++fork_reenter var[64][7], 0x2, 0x0
+ wait_cmp >=, 0xa0, var[10]
+ call 2, 0x0, 0x1
+ mov 0xa, stor[24]
+@@ -1147,7 +1149,7 @@
+ mov var[64][3], stor[26]
+ fork_reenter stor[24], 0x2, 0x1
+ fork_reenter stor[25], 0x2, 0x1
+-fork_reenter stor[26], 0x2, 0x1
++fork_reenter var[64][6], 0x2, 0x1
+ call 2, 0x1e, 0x1
+ mov 0xfffffe35, stor[24]
+ mov 0xfffffe8b, stor[25]

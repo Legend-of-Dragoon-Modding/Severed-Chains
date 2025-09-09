@@ -1,0 +1,21 @@
+Moon - Before Melbu
+Meru
+Skip hiding model parts
+--- original
++++ modified
+@@ -362,6 +362,7 @@
+ gosub inl[:LABEL_31]
+ return
+ LABEL_31:
++jmp inl[:THE_DISMEMBERMENT_PLAN]
+ call 288, 0x0
+ call 288, 0x5
+ call 288, 0x7
+@@ -373,6 +374,7 @@
+ call 288, 0x16
+ call 288, 0x17
+ call 288, 0x19
++THE_DISMEMBERMENT_PLAN:
+ return
+ LABEL_32:
+ call 289, 0x0

@@ -1,6 +1,6 @@
 package legend.game.inventory.screens.controls;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
@@ -61,11 +61,11 @@ public class Image extends Control {
       this.transforms.scaling(this.getWidth(), this.getHeight(), 1.0f);
       this.transforms.transfer.set(x, y, this.getZ());
 
-      final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj, this.transforms)
+      final QueuedModelStandard model = RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
         .texture(this.texture);
 
       if(this.translucent) {
-        model.realTranslucency();
+        model.useTextureAlpha();
       }
     }
   }

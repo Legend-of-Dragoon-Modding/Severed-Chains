@@ -1,0 +1,38 @@
+--- original
++++ modified
+@@ -3561,7 +3561,9 @@
+ LABEL_227:
+ jmp_cmp &, 0x1000, var[45][31], inl[:LABEL_234]
+ jmp_cmp &, 0x80, var[45][31], inl[:LABEL_232]
++jmp_cmp ==, 0x1, var[35], inl[:SKIP_SUCKY]
+ gosub inl[:LABEL_228]
++SKIP_SUCKY:
+ jmp_cmp &, 0x80, var[45][31], inl[:LABEL_256]
+ incr var[45][11]
+ jmp_cmp <=, var[45][11], 0x1, inl[:LABEL_234]
+@@ -4317,17 +4319,25 @@
+ mov var[34][0], stor[8]
+ call 158, stor[8]
+ mov var[34][1], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_UNK_LOADER_0]
+ call 158, stor[8]
++SKIP_UNK_LOADER_0:
+ mov var[34][2], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_UNK_LOADER_1]
+ call 158, stor[8]
++SKIP_UNK_LOADER_1:
+ return
+ LABEL_289:
+ mov var[34][0], stor[8]
+ call 159, stor[8]
+ mov var[34][1], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_ATT_LOADER_0]
+ call 159, stor[8]
++SKIP_ATT_LOADER_0:
+ mov var[34][2], stor[8]
++jmp_cmp ==, stor[8], 0xffffffff, inl[:SKIP_ATT_LOADER_1]
+ call 159, stor[8]
++SKIP_ATT_LOADER_1:
+ return
+ LABEL_290:
+ mov 0xd, var[46][6]

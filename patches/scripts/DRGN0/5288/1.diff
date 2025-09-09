@@ -1,0 +1,29 @@
+--- original
++++ modified
+@@ -1536,7 +1536,7 @@
+ call 129, stor[27], stor[stor[stor[0], 27], 24], stor[stor[stor[0], 27], 25], stor[stor[stor[0], 27], 26]
+ call 134, stor[27], stor[stor[stor[0], 27], 21], stor[stor[stor[0], 27], 22], stor[stor[stor[0], 27], 23]
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_22]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_22]
+ return
+ LABEL_23:
+ yield
+@@ -2017,7 +2017,7 @@
+ add 0xf, stor[stor[stor[0], 18], 12]
+ call 618, stor[18], inl[:LABEL_61]
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_60]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_60]
+ mov 0x2d, stor[9]
+ wait stor[9]
+ deallocate
+@@ -2082,7 +2082,7 @@
+ call 322, stor[27], 0xe
+ call 146, stor[27], 0x0
+ incr stor[9]
+-jmp_cmp !=, stor[9], 0x3, inl[:LABEL_66]
++jmp_cmp !=, stor[9], var[35], inl[:LABEL_66]
+ return
+ LABEL_67:
+ mov 0x0, stor[9]

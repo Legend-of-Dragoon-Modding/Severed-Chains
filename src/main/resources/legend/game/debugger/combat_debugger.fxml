@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@script_debugger.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.CombatDebuggerController">
    <HBox prefHeight="402.0" prefWidth="600.0" stylesheets="@combat_debugger.css">
@@ -196,6 +197,31 @@
                   </HBox.margin>
                </Label>
                <Spinner fx:id="mavd" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="Status">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <ComboBox fx:id="statusCondition" prefHeight="25.0" prefWidth="140.0" />
+               <Button fx:id="getStatus" mnemonicParsing="false" onAction="#getStatusCondition" prefHeight="26.0" prefWidth="48.0" text="Get">
+                  <HBox.margin>
+                     <Insets right="3.0" />
+                  </HBox.margin>
+               </Button>
+               <Button fx:id="setStatus" mnemonicParsing="false" onAction="#setStatusCondition" prefHeight="26.0" prefWidth="48.0" text="Set">
+                  <HBox.margin>
+                     <Insets right="3.0" />
+                  </HBox.margin>
+               </Button>
+               <Button fx:id="setStatus" mnemonicParsing="false" onAction="#cureStatusCondition" prefHeight="26.0" prefWidth="64.0" text="Cure">
+                  <HBox.margin>
+                     <Insets right="3.0" />
+                  </HBox.margin>
+               </Button>
             </children>
          </HBox>
       </VBox>

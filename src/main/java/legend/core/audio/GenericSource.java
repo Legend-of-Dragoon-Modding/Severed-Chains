@@ -8,7 +8,12 @@ public class GenericSource extends AudioSource {
     super(16);
     this.format = format;
     this.sampleRate = sampleRate;
+  }
+
+  @Override
+  protected void init() {
     this.setPlaying(true);
+    super.init();
   }
 
   public void bufferOutput(final short[] buffer) {

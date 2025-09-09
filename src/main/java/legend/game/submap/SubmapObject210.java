@@ -1,12 +1,13 @@
 package legend.game.submap;
 
 import legend.core.opengl.Texture;
+import legend.game.scripting.ScriptedObject;
 import legend.game.types.Model124;
 import org.joml.Vector3f;
 
 import static legend.game.submap.AttachedSobjEffect.AttachedSobjEffectData40;
 
-public class SubmapObject210 {
+public class SubmapObject210 implements ScriptedObject {
   public final Model124 model_00;
 
   public boolean hidden_128;
@@ -30,20 +31,40 @@ public class SubmapObject210 {
 //  /** The total distance moved (.16) */
 //  public final Vector3f movementDistanceMoved12_160 = new Vector3f();
   public int collidedPrimitiveIndex_16c;
-  public int us_170;
-  public int s_172;
-  public int s_174;
+  /**
+   * Forced movement types
+   * <ul>
+   *   <li>0 - none</li>
+   *   <li>1 - linear</li>
+   *   <li>2 - non-linear</li>
+   * </ul>
+   */
+  public int movementType_170;
+  /** Forced movement geometry collision detection */
+  public int ignoreCollision_172;
+  /** Used to restore ignoreCollision_172 after SMap::scriptSobjMoveAlongArc2 */
+  public int ignoreCollisionMemory_174;
 
   public final Vector3f interpMovementStart = new Vector3f();
   public final Vector3f interpMovementDest = new Vector3f();
   public int interpMovementTicks;
   public int interpMovementTicksTotal;
   public int lastMovementTick = Integer.MIN_VALUE;
-  public final Vector3f interpRotationStart = new Vector3f();
-  public final Vector3f interpRotationDest = new Vector3f();
-  public int interpRotationTicks;
-  public int interpRotationTicksTotal;
-  public int lastRotationTick = Integer.MIN_VALUE;
+  public float interpRotationStartX;
+  public float interpRotationStartY;
+  public float interpRotationStartZ;
+  public float interpRotationDestX;
+  public float interpRotationDestY;
+  public float interpRotationDestZ;
+  public int interpRotationTicksX;
+  public int interpRotationTicksY;
+  public int interpRotationTicksZ;
+  public int interpRotationTicksTotalX;
+  public int interpRotationTicksTotalY;
+  public int interpRotationTicksTotalZ;
+  public long lastRotationTickX = Integer.MIN_VALUE;
+  public long lastRotationTickY = Integer.MIN_VALUE;
+  public long lastRotationTickZ = Integer.MIN_VALUE;
 
   /** Only one sobj may have this value set at a time */
   public boolean cameraAttached_178;
@@ -116,16 +137,37 @@ public class SubmapObject210 {
     }
   }
 
-  public void finishInterpolatedRotation() {
-    if(this.interpRotationTicksTotal != 0) {
-      this.model_00.coord2_14.transforms.rotate.set(this.interpRotationDest);
-      this.interpRotationTicksTotal = 0;
-      this.lastRotationTick = Integer.MIN_VALUE;
+  public void finishInterpolatedRotationX() {
+    if(this.interpRotationTicksTotalX != 0) {
+      this.model_00.coord2_14.transforms.rotate.x = this.interpRotationDestX;
+      this.interpRotationTicksTotalX = 0;
+      this.lastRotationTickX = Integer.MIN_VALUE;
+    }
+  }
+
+  public void finishInterpolatedRotationY() {
+    if(this.interpRotationTicksTotalY != 0) {
+      this.model_00.coord2_14.transforms.rotate.y = this.interpRotationDestY;
+      this.interpRotationTicksTotalY = 0;
+      this.lastRotationTickY = Integer.MIN_VALUE;
+    }
+  }
+
+  public void finishInterpolatedRotationZ() {
+    if(this.interpRotationTicksTotalZ != 0) {
+      this.model_00.coord2_14.transforms.rotate.z = this.interpRotationDestZ;
+      this.interpRotationTicksTotalZ = 0;
+      this.lastRotationTickZ = Integer.MIN_VALUE;
     }
   }
 
   @Override
   public String toString() {
     return this.model_00.toString();
+  }
+
+  @Override
+  public Vector3f getPosition() {
+    return this.model_00.coord2_14.coord.transfer;
   }
 }

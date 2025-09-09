@@ -1,12 +1,12 @@
 package legend.game.sound;
 
 import legend.game.unpacker.FileData;
-
-import java.util.function.BiFunction;
+import org.apache.commons.lang3.function.TriFunction;
 
 public class Sshd {
   public static final long MAGIC = 0x6468_5353L; //SShd
 
+  public final String name;
   private final FileData data;
 
   public int sshdSize_00;
@@ -23,7 +23,8 @@ public class Sshd {
    */
   private final Subfile[] subfiles = new Subfile[28];
 
-  public Sshd(final FileData data) {
+  public Sshd(final String name, final FileData data) {
+    this.name = name;
     if(data.readInt(0xc) != MAGIC) {
       throw new IllegalArgumentException("Invalid file magic");
     }
@@ -42,9 +43,9 @@ public class Sshd {
     return this.subfileOffsets[index] != -1;
   }
 
-  public <T extends Subfile> T getSubfile(final int index, final BiFunction<FileData, Integer, T> constructor) {
+  public <T extends Subfile> T getSubfile(final int index, final TriFunction<String, FileData, Integer, T> constructor) {
     if(this.subfiles[index] == null && this.hasSubfile(index)) {
-      this.subfiles[index] = constructor.apply(this.data, this.subfileOffsets[index]);
+      this.subfiles[index] = constructor.apply(this.name + " subfile " + index, this.data, this.subfileOffsets[index]);
     }
 
     //noinspection unchecked

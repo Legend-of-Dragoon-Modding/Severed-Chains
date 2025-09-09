@@ -1,20 +1,25 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.game.input.InputAction;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 
 import java.nio.file.Path;
+import java.util.Set;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class Checkbox extends Control {
   private final Obj obj;
@@ -23,7 +28,7 @@ public class Checkbox extends Control {
   private final Texture uncheckedTexture;
   private final Texture checkedTexture;
 
-  private Label.HorizontalAlign horizontalAlign = Label.HorizontalAlign.CENTRE;
+  private HorizontalAlign horizontalAlign = HorizontalAlign.CENTRE;
   private Label.VerticalAlign verticalAlign = Label.VerticalAlign.CENTRE;
   private boolean checked;
 
@@ -33,18 +38,18 @@ public class Checkbox extends Control {
 
     this.obj = new QuadBuilder("Checkbox")
       .bpp(Bpp.BITS_24)
-      .posSize(14.0f, 14.0f)
+      .posSize(1.0f, 1.0f)
       .uvSize(1.0f, 1.0f)
       .build();
 
     this.setSize(14, 14);
   }
 
-  public void setHorizontalAlign(final Label.HorizontalAlign horizontalAlign) {
+  public void setHorizontalAlign(final HorizontalAlign horizontalAlign) {
     this.horizontalAlign = horizontalAlign;
   }
 
-  public Label.HorizontalAlign getHorizontalAlign() {
+  public HorizontalAlign getHorizontalAlign() {
     return this.horizontalAlign;
   }
 
@@ -80,21 +85,24 @@ public class Checkbox extends Control {
 
   @Override
   protected void render(final int controlX, final int controlY) {
+    final int scale = Math.min(this.getWidth(), this.getHeight());
+
     final int x = switch(this.horizontalAlign) {
       case LEFT -> controlX;
-      case CENTRE -> controlX + (this.getWidth() - 14) / 2;
-      case RIGHT -> controlX + this.getWidth() - 14;
+      case CENTRE -> controlX + (this.getWidth() - scale) / 2;
+      case RIGHT -> controlX + this.getWidth() - scale;
     };
 
     final int y = switch(this.verticalAlign) {
       case TOP -> controlY;
-      case CENTRE -> controlY + (this.getHeight() - 14) / 2;
-      case BOTTOM -> controlY + this.getHeight() - 14;
+      case CENTRE -> controlY + (this.getHeight() - scale) / 2;
+      case BOTTOM -> controlY + this.getHeight() - scale;
     };
 
     this.transforms.transfer.set(x, y, this.getZ() * 4.0f);
-    final RenderEngine.QueuedModel<?> model = RENDERER
-      .queueOrthoModel(this.obj, this.transforms);
+    this.transforms.scaling(scale, scale, 1.0f);
+    final QueuedModelStandard model = RENDERER
+      .queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class);
 
     if(this.checked) {
       model.texture(this.checkedTexture);
@@ -104,12 +112,13 @@ public class Checkbox extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(button == GLFW_MOUSE_BUTTON_LEFT) {
+    if(button == PLATFORM.getMouseButton(0)) {
+      playMenuSound(2);
       this.setChecked(!this.isChecked());
       return InputPropagation.HANDLED;
     }
@@ -118,12 +127,13 @@ public class Checkbox extends Control {
   }
 
   @Override
-  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+    if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      playMenuSound(2);
       this.setChecked(!this.isChecked());
       return InputPropagation.HANDLED;
     }

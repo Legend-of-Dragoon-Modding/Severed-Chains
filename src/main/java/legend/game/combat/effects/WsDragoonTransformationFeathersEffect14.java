@@ -100,9 +100,9 @@ public class WsDragoonTransformationFeathersEffect14 implements Effect<EffectMan
     feather.velocityTranslationMagnitudeXz_40 += feather.accelerationTranslationMagnitudeXz_44;
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
 
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
+    final float x = (MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c;
+    final float y = feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58);
+    final float z = (MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c;
     feather.translation_08.set(x, y, z);
 
     feather.currentFrame_04++;
@@ -118,9 +118,9 @@ public class WsDragoonTransformationFeathersEffect14 implements Effect<EffectMan
     feather.angle_58 += feather.angleStep_60;
     feather.angle_58 %= MathHelper.TWO_PI;
 
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
+    final float x = (MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c;
+    final float y = feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58);
+    final float z = (MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c;
     feather.translation_08.set(x, y, z);
 
     feather.currentFrame_04++;
@@ -139,9 +139,9 @@ public class WsDragoonTransformationFeathersEffect14 implements Effect<EffectMan
     feather.angle_58 %= MathHelper.TWO_PI;
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
 
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
-    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8));
+    final float x = (MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c;
+    final float y = feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58);
+    final float z = (MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c;
     feather.translation_08.set(x, y, z);
     feather.translationMagnitudeY_50 += feather.velocityTranslationMagnitudeY_1c;
 

@@ -1,0 +1,18 @@
+Aglis - Teleporter to Zenebatos
+Meru
+Skip hiding model parts
+--- original
++++ modified
+@@ -233,12 +233,6 @@
+ mov 0xf, stor[25]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_12]
+-call 288, 0x7
+-call 288, 0x8
+-call 288, 0x9
+-call 288, 0xe
+-call 288, 0xf
+-call 288, 0x17
+ mov 0x2, stor[24]
+ gosub inl[:LABEL_1]
+ jmp inl[:LABEL_26]

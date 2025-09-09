@@ -1,0 +1,30 @@
+Widescreen patch
+Twin Castle, guest bedroom (Nighttime)
+Rose
+Old: Disappears on-screen.
+New: Move completely off-screen first.
+--- original
++++ modified
+@@ -220,8 +220,8 @@
+ mov 0x63, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+-mov 0xbd, stor[24]
+-mov 0xffffff86, stor[25]
++mov 0xf0, stor[24]
++mov 0xffffff70, stor[25]
+ mov 0xc, stor[26]
+ mov 0x1, stor[27]
+ gosub inl[:LABEL_14]
+@@ -233,9 +233,9 @@
+ mov 0x62, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_1]
+-mov 0xbd, stor[24]
++mov 0xf0, stor[24]
+ mov 0x0, stor[25]
+-mov 0xffffff86, stor[26]
++mov 0xffffff70, stor[26]
+ mov 0x4, stor[27]
+ mov 0x1, stor[28]
+ gosub inl[:LABEL_9]

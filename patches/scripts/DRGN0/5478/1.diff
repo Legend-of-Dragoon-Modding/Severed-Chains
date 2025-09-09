@@ -1,0 +1,58 @@
+--- original
++++ modified
+@@ -2149,13 +2149,17 @@
+ mov 0x9, stor[23]
+ wait stor[23]
+ incr stor[8]
++jmp_cmp ==, var[35], 0x1, inl[:ALLOCATE_SKIP_FOR_1P]
+ gosub inl[:LABEL_56]
+ mov stor[18], var[45][33]
++ALLOCATE_SKIP_FOR_1P:
+ mov 0x9, stor[23]
+ wait stor[23]
+ incr stor[8]
++jmp_cmp !=, var[35], 0x3, inl[:ALLOCATE_SKIP_END]
+ gosub inl[:LABEL_56]
+ mov stor[18], var[45][34]
++ALLOCATE_SKIP_END:
+ rewind
+ data 0x208
+ data 0x9
+@@ -2215,6 +2219,7 @@
+ call 545, stor[19], stor[30], 0x0, 0xffffe800, 0xfffffa00
+ call 564, stor[19], var[34][0], 0x0, 0xfffffce0, 0x0
+ gosub inl[:LABEL_65]
++jmp_cmp ==, var[35], 0x1, inl[:SKIP_EFF_P1]
+ mov var[45][33], stor[20]
+ mov stor[20], stor[18]
+ call 589, stor[20], 0x1
+@@ -2222,6 +2227,8 @@
+ call 564, stor[20], var[34][1], 0x0, 0xfffffce0, 0x0
+ call 549, stor[20], 0xffffffff, 0x2000, 0x2000, 0x2000
+ gosub inl[:LABEL_65]
++SKIP_EFF_P1:
++jmp_cmp !=, var[35], 0x3, inl[:SKIP_EFF_P2]
+ mov var[45][34], stor[21]
+ mov stor[21], stor[18]
+ call 589, stor[21], 0x1
+@@ -2229,6 +2236,7 @@
+ call 564, stor[21], var[34][2], 0x0, 0xfffffce0, 0x0
+ call 549, stor[21], 0xffffffff, 0x2000, 0x2000, 0x2000
+ gosub inl[:LABEL_65]
++SKIP_EFF_P2:
+ mov 0x14, stor[23]
+ wait stor[23]
+ mov 0xa, stor[23]
+@@ -2242,8 +2250,12 @@
+ wait stor[13]
+ while stor[23], inl[:LABEL_64]
+ call 581, stor[19], 0xffffffff, 0x14, 0x0, 0x0, 0x0
++jmp_cmp ==, var[35], 0x1, inl[:SKIP_SOME_BENT_1]
+ call 581, stor[20], 0xffffffff, 0x14, 0x0, 0x0, 0x0
++SKIP_SOME_BENT_1:
++jmp_cmp !=, var[35], 0x3, inl[:SKIP_SOME_BENT_2]
+ call 581, stor[21], 0xffffffff, 0x14, 0x0, 0x0, 0x0
++SKIP_SOME_BENT_2:
+ call 576, stor[22], 0xffffffff, 0x14, 0x0, 0x0, 0x1000
+ call 581, stor[22], 0xffffffff, 0x14, 0x0, 0x0, 0x0
+ mov 0x28, stor[23]

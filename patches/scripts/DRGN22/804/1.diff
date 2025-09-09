@@ -1,0 +1,123 @@
+Home of Gigantos
+1. Retail hides model parts to save performance. No more of that.
+2. Only change Haschel's party flag.
+--- original
++++ modified
+@@ -1013,12 +1013,6 @@
+ call 672, stor[24], 0x1
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
+-call 691, stor[24], 0x3
+-call 691, stor[24], 0x4
+-call 691, stor[24], 0x9
+-call 691, stor[24], 0xa
+-call 691, stor[24], 0xd
+-call 691, stor[24], 0xe
+ gosub inl[:LABEL_96]
+ mov 0x2, stor[stor[stor[0], 24], 22]
+ mov 0x0, stor[stor[stor[0], 24], 21]
+@@ -1033,7 +1027,6 @@
+ call 103, stor[24], 0x0, 0x0, 0x0
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
+# LABEL_88 is nothing but call 691
+-gosub inl[:LABEL_88]
+ memcpy 0x3, inl[:LABEL_204], stor[8]
+ call 677, stor[24], stor[8], stor[9], stor[10]
+ jmp inl[:LABEL_94]
+@@ -1120,7 +1113,7 @@
+ mov 0x1000, stor[25]
+ gosub inl[:LABEL_17]
+ wait_cmp ==, 0x0, stor[stor[stor[0], 24], 22]
+-jmp inl[:LABEL_88]
++return
+ data 0x208
+ data 0x1
+ data 0x2000018
+@@ -1201,6 +1194,7 @@
+ call 101, stor[24], stor[8], stor[9], stor[10]
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
++jmp inl[:THE_DISMEMBERMENT_PLAN_1]
+ call 691, stor[24], 0x0
+ call 691, stor[24], 0x2
+ call 691, stor[24], 0x3
+@@ -1215,6 +1209,7 @@
+ call 691, stor[24], 0x16
+ call 691, stor[24], 0x17
+ call 691, stor[24], 0x1a
++THE_DISMEMBERMENT_PLAN_1:
+ gosub inl[:LABEL_108]
+ mov 0x2, stor[stor[stor[0], 24], 22]
+ mov 0x0, stor[stor[stor[0], 24], 21]
+@@ -1232,6 +1227,7 @@
+ call 103, stor[24], 0x0, 0x87c, 0x0
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
++jmp inl[:THE_DISMEMBERMENT_PLAN_2]
+ call 691, stor[24], 0x0
+ call 691, stor[24], 0x2
+ call 691, stor[24], 0x3
+@@ -1246,6 +1242,7 @@
+ call 691, stor[24], 0x16
+ call 691, stor[24], 0x17
+ call 691, stor[24], 0x1a
++THE_DISMEMBERMENT_PLAN_2:
+ memcpy 0x3, inl[:LABEL_204], stor[8]
+ call 677, stor[24], stor[8], stor[9], stor[10]
+ jmp inl[:LABEL_107]
+@@ -1381,12 +1378,6 @@
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
+ call 311, stor[24]
+-call 691, stor[24], 0x3
+-call 691, stor[24], 0x4
+-call 691, stor[24], 0xb
+-call 691, stor[24], 0xc
+-call 691, stor[24], 0xf
+-call 691, stor[24], 0x10
+ gosub inl[:LABEL_134]
+ mov 0x2, stor[stor[stor[0], 24], 22]
+ mov 0x0, stor[stor[stor[0], 24], 21]
+@@ -1573,6 +1564,7 @@
+ call 101, stor[24], stor[8], stor[9], stor[10]
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
++jmp inl[:THE_DISMEMBERMENT_PLAN_3]
+ call 691, stor[24], 0x0
+ call 691, stor[24], 0x1
+ call 691, stor[24], 0x3
+@@ -1586,6 +1578,7 @@
+ call 691, stor[24], 0xe
+ call 691, stor[24], 0x14
+ call 691, stor[24], 0x15
++THE_DISMEMBERMENT_PLAN_3:
+ gosub inl[:LABEL_152]
+ mov 0x2, stor[stor[stor[0], 24], 22]
+ mov 0x0, stor[stor[stor[0], 24], 21]
+@@ -1600,6 +1593,7 @@
+ call 103, stor[24], 0x0, inl[:LABEL_148], 0x0
+ call 678, stor[24], 0x0
+ call 698, stor[24], 0x1
++jmp inl[:THE_DISMEMBERMENT_PLAN_4]
+ call 691, stor[24], 0x1
+ call 691, stor[24], 0x3
+ call 691, stor[24], 0x4
+@@ -1611,6 +1605,7 @@
+ call 691, stor[24], 0xe
+ call 691, stor[24], 0x14
+ call 691, stor[24], 0x15
++THE_DISMEMBERMENT_PLAN_4:
+ memcpy 0x3, inl[:LABEL_159], stor[8]
+ call 677, stor[24], stor[8], stor[9], stor[10]
+ jmp inl[:LABEL_151]
+@@ -2972,6 +2967,8 @@
+ LABEL_326:
+ mov var[17][1], var[17][2]
+ mov 0x4, var[17][1]
+# Only modify Haschel's party flag
++andor 0x40, 0x23, var[115 + 4]
++return
+ andor 0x40, 0x23, var[115 + 0]
+ andor 0x40, 0x0, var[115 + 1]
+ andor 0x40, 0x3, var[115 + 2]

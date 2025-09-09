@@ -1,0 +1,34 @@
+Widescreen patch
+Twin Castle, Shana Balcony cutscene
+Rose
+Old: Disappears after camera pan.
+New: Walk off-screen first.
+--- original
++++ modified
+@@ -302,6 +302,18 @@
+ mov 0x2e, stor[24]
+ mov 0x1, stor[26]
+ gosub inl[:LABEL_34]
++mov 0xb9, inl[:WS_TARGET_X]
++mov 0, inl[:WS_TARGET_Y]
++mov 0xb9, inl[:WS_TARGET_Z]
++mov 1, inl[:WS_ANIMATION_0]
++mov 15, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++mov 7, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
++mov 1, inl[:WS_ANIMATION_0]
++mov 3, inl[:WS_SPEED]
++gosub inl[:WS_MOVE]
+ call 106, 0x1
+ mov 0x16, stor[24]
+ mov 0x1, stor[25]
+@@ -335,6 +347,7 @@
+ mov 0x258, stor[26]
+ gosub inl[:LABEL_45]
+ return
++#include ../../../../patches/libs/widescreen.txt
+ LABEL_45:
+ call 101, var[64][3], stor[24], stor[25], stor[26]
+ sub 0x3, stor[24]

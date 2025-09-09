@@ -1,0 +1,227 @@
+Widescreen patch
+Twin Castle, Lisa Balcony cutscenes
+Libria
+Old: Libria animation handled by File 2.
+New: Libria animation handled by File 8, now on screen with Lisa
+--- original
++++ modified
+## FIRST SCENE ##
+@@ -13,6 +13,9 @@
+ JMP_44_0:
+ call 101, stor[0], 0x82, 0x32, 0xcd
+ call 103, stor[0], 0x0, 0x0, 0x0
++call 106, 1
++gosub inl[:SC_LIBRIA_SCENE_0]
++rewind
+ call 127, stor[31]
+ decr stor[31]
+ LABEL_1:
+## SECOND SCENE ##
+@@ -22,4 +25,185 @@
+ rewind
+ JMP_44_1:
+ call 106, 0x1
++gosub inl[:SC_LIBRIA_SCENE_1]
+ rewind
+## NEW SCRIPT ##
++SC_LIBRIA_SCENE_0:
+# Wait for Lisa (flag from file 2)
++mov 0x34, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
+# Disable shadow, unhide, and set position/rotation
++call 312, stor[0]
++call 106, 0
++call 101, stor[0], 0xac, inl[:SCENE_0_START_Y], 0xaa
++mov 0x7d, inl[:WS_TARGET_X]
++mov inl[:SCENE_0_START_Y], inl[:WS_TARGET_Y]
++mov 0xdc, inl[:WS_TARGET_Z]
++mov 1, inl[:WS_ANIMATION_0]
++mov 2, inl[:WS_SPEED]
++call 105, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++gosub inl[:WS_MOVE]
+# Face Lisa
++call 102, var[64][1], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 0xfffffffe, inl[:WS_ANIMATION_0]
++mov 10, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++call 97, 0
++call 99, 1
+# Wait for flag - Lisa exit
++mov 0x35, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++mov var[64][1], inl[:WS_WAIT_FLAG_SOBJ]
++gosub inl[:WS_FLAG_WAIT]
++mov 0xffffffff, inl[:WS_WAIT_FLAG_SOBJ]
+# Compare distance with Libria's retail start and wait
++mov inl[:SCENE_0_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_0_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_0_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_0_START_X], inl[:WS_START_X]
++mov inl[:SCENE_0_START_Y], inl[:WS_START_Y]
++mov inl[:SCENE_0_START_Z], inl[:WS_START_Z]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_GET_MOVE_TICKS]
++mov inl[:WS_FRAMES], stor[22]
++call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
++gosub inl[:WS_GET_MOVE_TICKS]
++mov inl[:WS_FRAMES], stor[23]
++jmp_cmp >, stor[23], stor[22], inl[:SCENE_0_NO_WAIT]
++sub stor[23], stor[22]
++wait stor[22]
++SCENE_0_NO_WAIT:
+# Rotate and move to greet party
++mov inl[:SCENE_0_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_0_MARK_Z], inl[:WS_TARGET_Z]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++mov 16, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
++mov inl[:SCENE_0_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_0_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_0_MARK_Z], inl[:WS_TARGET_Z]
++mov 1, inl[:WS_ANIMATION_0]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_MOVE]
++call 102, var[64][3], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++mov 16, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
+# Set flag for file 2 to handle textbox
++call 2, 0x62, 1
++mov 5, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
++gosub inl[:WS_ANIMATION]
+# Wait for textbox to close (flag from file 2)
++mov 0x36, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
+# Exit
++mov 0xac, inl[:WS_TARGET_X]
++mov inl[:SCENE_0_START_Y], inl[:WS_TARGET_Y]
++mov 0xab, inl[:WS_TARGET_Z]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++mov 16, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
++mov 1, inl[:WS_ANIMATION_0]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_MOVE]
++rewind
+# First scene retail coords
++SCENE_0_START_X:
++data 0x87
++SCENE_0_START_Y:
++data 0xfffffff6
++SCENE_0_START_Z:
++data 0x9b
++SCENE_0_MARK_X:
++data 0x44
++SCENE_0_MARK_Y:
++data 0xfffffff6
++SCENE_0_MARK_Z:
++data 0xdc
+## SECOND SCENE ##
++SC_LIBRIA_SCENE_1:
+# Wait for Lisa (flag from file 2)
++mov 9, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
+# Disable shadow, unhide, and set position/rotation
++call 312, stor[0]
++call 106, 0
++call 101, stor[0], 0xac, inl[:SCENE_1_START_Y], 0xaa
++mov 0x7d, inl[:WS_TARGET_X]
++mov inl[:SCENE_1_START_Y], inl[:WS_TARGET_Y]
++mov 0xfa, inl[:WS_TARGET_Z]
++mov 1, inl[:WS_ANIMATION_0]
++mov 2, inl[:WS_SPEED]
++call 105, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++gosub inl[:WS_MOVE]
+# Face Lisa
++call 102, var[64][1], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 0xfffffffe, inl[:WS_ANIMATION_0]
++mov 10, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++call 97, 0
++call 99, 1
++mov 0xc, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++mov var[64][1], inl[:WS_WAIT_FLAG_SOBJ]
++gosub inl[:WS_FLAG_WAIT]
++mov 0xffffffff, inl[:WS_WAIT_FLAG_SOBJ]
+# Compare distance with Libria's retail start and wait
++mov inl[:SCENE_1_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_1_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_1_MARK_Z], inl[:WS_TARGET_Z]
++mov inl[:SCENE_1_START_X], inl[:WS_START_X]
++mov inl[:SCENE_1_START_Y], inl[:WS_START_Y]
++mov inl[:SCENE_1_START_Z], inl[:WS_START_Z]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_GET_MOVE_TICKS]
++mov inl[:WS_FRAMES], stor[22]
++call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
++gosub inl[:WS_GET_MOVE_TICKS]
++mov inl[:WS_FRAMES], stor[23]
++jmp_cmp >, stor[23], stor[22], inl[:SCENE_1_NO_WAIT]
++sub stor[23], stor[22]
++wait stor[22]
++SCENE_1_NO_WAIT:
+# Rotate and move to greet party
++mov inl[:SCENE_1_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_1_MARK_Z], inl[:WS_TARGET_Z]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++mov 16, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
++mov inl[:SCENE_1_MARK_X], inl[:WS_TARGET_X]
++mov inl[:SCENE_1_MARK_Y], inl[:WS_TARGET_Y]
++mov inl[:SCENE_1_MARK_Z], inl[:WS_TARGET_Z]
++mov 1, inl[:WS_ANIMATION_0]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_MOVE]
+# Face Albert
++call 102, var[64][3], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++mov 16, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
+# Set flag for file 2 to handle textbox
++call 2, 0x62, 1
++mov 5, inl[:WS_ANIMATION_0]
++mov 0xffffffff, inl[:WS_ANIMATION_1]
++gosub inl[:WS_ANIMATION]
+# Wait for textbox to close (flag from file 2)
++mov 0xd, inl[:WS_WAIT_FLAG]
++mov 1, inl[:WS_WAIT_FLAG_MATCH]
++gosub inl[:WS_FLAG_WAIT]
+# Exit
++mov 0xac, inl[:WS_TARGET_X]
++mov inl[:SCENE_1_START_Y], inl[:WS_TARGET_Y]
++mov 0xab, inl[:WS_TARGET_Z]
++mov 0xffffffff, inl[:WS_ANIMATION_0]
++mov 16, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++mov 10, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
++mov 1, inl[:WS_ANIMATION_0]
++mov 2, inl[:WS_SPEED]
++gosub inl[:WS_MOVE]
++return
+# Second scene retail coords
++SCENE_1_START_X:
++data 0x86
++SCENE_1_START_Y:
++data 0xfffffff6
++SCENE_1_START_Z:
++data 0xc0
++SCENE_1_MARK_X:
++data 0x47
++SCENE_1_MARK_Y:
++data 0xfffffff6
++SCENE_1_MARK_Z:
++data 0xe1
++#include ../../../../patches/libs/widescreen.txt

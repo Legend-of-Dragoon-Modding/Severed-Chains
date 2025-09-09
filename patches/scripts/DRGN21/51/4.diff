@@ -1,0 +1,32 @@
+Widescreen patch
+Hellena Prison, cutscene after fighting Fruegel (I)
+Warden
+--- original
++++ modified
+@@ -922,14 +922,20 @@
+ JMP_1be0_2:
+ call 3, 0xd5, stor[24]
+ jmp_cmp ==, 0x1, stor[24], inl[:LABEL_80]
+# New entrance from drawbridge
++ENTER_WAIT:
++yield
++call 3, 0x80, stor[24]
++jmp_cmp ==, 0x0, stor[24], inl[:ENTER_WAIT]
++call 106, 0x0
++call 311, stor[0]
++mov 21, stor[24]
++gosub inl[:LABEL_2]
++mov 0x10, stor[24]
++gosub inl[:LABEL_3]
+ LABEL_78:
+ yield
+ call 3, 0xfc, stor[24]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_78]
+# Old entrance
+-mov 0x10, stor[24]
+-gosub inl[:LABEL_2]
+-call 106, 0x0
+-call 311, stor[0]
+ mov 0xa, stor[24]
+ wait stor[24]
+ mov 0x18, stor[24]

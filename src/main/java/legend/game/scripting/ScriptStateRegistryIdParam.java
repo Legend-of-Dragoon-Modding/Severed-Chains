@@ -18,6 +18,10 @@ public class ScriptStateRegistryIdParam extends Param {
 
   @Override
   public Param set(final int val) {
+    if(val == 0) {
+      return this.set((RegistryId)null);
+    }
+
     throw new IllegalStateException(this.getClass().getSimpleName() + " can only store registry IDs");
   }
 
@@ -49,5 +53,10 @@ public class ScriptStateRegistryIdParam extends Param {
   public Param set(final RegistryId id) {
     this.state.registryIds[this.index] = id;
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return "script[%d].reg[%d] %s".formatted(this.state.index, this.index, this.getRegistryId());
   }
 }

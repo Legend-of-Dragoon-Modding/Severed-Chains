@@ -1,0 +1,39 @@
+--- original
++++ modified
+@@ -1823,6 +1823,7 @@
+ call 549, stor[18], 0xffffffff, 0x300, 0x300, 0x300
+ call 553, stor[18], 0x0, 0x1
+ call 591, stor[18], 0x1
++jmp_cmp ==, stor[12], 0xffffffff, inl[:SKIP_0]
+ call 600, stor[21]
+ call 129, stor[12], stor[24], stor[25], stor[26]
+ call 545, stor[21], 0xffffffff, stor[24], stor[25], stor[26]
+@@ -1831,6 +1832,8 @@
+ call 549, stor[19], 0xffffffff, 0x300, 0x300, 0x300
+ call 553, stor[19], 0x0, 0x1
+ call 591, stor[19], 0x1
++SKIP_0:
++jmp_cmp ==, stor[13], 0xffffffff, inl[:SKIP_1]
+ call 600, stor[21]
+ call 129, stor[13], stor[24], stor[25], stor[26]
+ call 545, stor[21], 0xffffffff, stor[24], stor[25], stor[26]
+@@ -1839,14 +1842,19 @@
+ call 549, stor[20], 0xffffffff, 0x300, 0x300, 0x300
+ call 553, stor[20], 0x0, 0x1
+ call 591, stor[20], 0x1
++SKIP_1:
+ mov 0x3c, stor[23]
+ LABEL_30:
+ call 620, stor[29], 0x0, stor[24], stor[25], stor[26]
+ sub 0x1f4, stor[24]
+ sub 0x12c, stor[25]
+ call 545, stor[18], 0xffffffff, stor[24], stor[25], stor[26]
++jmp_cmp ==, stor[12], 0xffffffff, inl[:LOOP_SKIP_0]
+ call 545, stor[19], 0xffffffff, stor[24], stor[25], stor[26]
++LOOP_SKIP_0:
++jmp_cmp ==, stor[13], 0xffffffff, inl[:LOOP_SKIP_1]
+ call 545, stor[20], 0xffffffff, stor[24], stor[25], stor[26]
++LOOP_SKIP_1:
+ yield
+ while stor[23], inl[:LABEL_30]
+ deallocate

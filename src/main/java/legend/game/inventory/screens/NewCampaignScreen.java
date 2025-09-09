@@ -1,18 +1,19 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
-import legend.game.SItem;
+import legend.core.platform.input.InputAction;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.i18n.I18n;
-import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Dropdown;
+import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
+import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
@@ -33,19 +34,19 @@ import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 
 public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
   private final Set<String> enabledMods = new HashSet<>();
 
-  private final Dropdown campaignType;
+  private final Dropdown<String> campaignType;
   private final Textbox campaignName;
 
   private boolean unload;
@@ -59,8 +60,9 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.addControl(new Background());
 
-    this.campaignType = this.addRow("Campaign", new Dropdown());
+    this.campaignType = new Dropdown<>();
     this.campaignType.setZ(35);
+    this.addRow("Campaign", this.campaignType);
 
     final Map<String, RegistryId> campaignTypeIds = new HashMap<>();
     final List<String> campaignTypeNames = new ArrayList<>();
@@ -77,38 +79,51 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.get(index))));
     Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.getFirst()));
 
-    this.campaignName = this.addRow("Campaign name", new Textbox());
+    this.campaignName = new Textbox();
     this.campaignName.setText(SAVES.generateCampaignName());
     this.campaignName.setMaxLength(15);
     this.campaignName.setZ(35);
+    this.addRow("Campaign name", this.campaignName);
 
-    this.addRow("", new Button("Options")).onPressed(() ->
-      SItem.menuStack.pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+    final Button options = new Button("Options");
+    this.addRow("", options);
+    options.onPressed(() ->
+      this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
         startFadeEffect(2, 10);
-        SItem.menuStack.popScreen();
+        this.getStack().popScreen();
 
         // Update global config but don't save campaign config until an actual save file is made so we don't end up with orphan campaigns
         ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       }))
     );
 
-    this.addRow("", new Button("Mods")).onPressed(() ->
-      SItem.menuStack.pushScreen(new ModsScreen(this.enabledMods, () -> {
-        bootMods(this.enabledMods);
+    final Button mods = new Button("Mods");
+    this.addRow("", mods);
+    mods.onPressed(() ->
+      this.deferAction(() ->
+        this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
+          bootMods(this.enabledMods);
 
-        startFadeEffect(2, 10);
-        SItem.menuStack.popScreen();
-      }))
+          startFadeEffect(2, 10);
+          this.getStack().popScreen();
+        }))
+      )
     );
 
-    final Button startGame = this.addRow("", new Button("Start Game"));
+    final Button startGame = new Button("Start Game");
+    this.addRow("", startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { })));
       } else {
         this.unload = true;
       }
     });
+
+    final Label saveSlots = this.addControl(new Label("Severed Chains has unlimited save slots and we recommend\nyou save in a new slot each time."));
+    saveSlots.setWidth(this.getWidth());
+    saveSlots.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
+    saveSlots.setY(200);
   }
 
   @Override
@@ -116,7 +131,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     if(this.unload) {
       GameEngine.bootRegistries();
 
-      this.state.campaignName = this.campaignName.getText();
+      this.state.campaign = Campaign.create(SAVES, this.campaignName.getText().strip());
 
       Scus94491BpeSegment_800b.campaignType.get().setUpNewCampaign(this.state);
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
@@ -124,24 +139,25 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
       gameState_800babc8 = gameLoadedEvent.gameState;
 
+      this.state.campaign.loadConfigInto(CONFIG);
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
 
       loadingNewGameState_800bdc34 = true;
       playMenuSound(2);
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }
   }
 
   private void menuEscape() {
     playMenuSound(3);
-    whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
+    whichMenu_800bdc38 = WhichMenu.UNLOAD;
 
     bootMods(MODS.getAllModIds());
   }
 
   @Override
-  public InputPropagation pressedThisFrame(final InputAction inputAction) {
-    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+  protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -149,7 +165,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.BUTTON_EAST) {
+    if(action == INPUT_ACTION_MENU_BACK.get()) {
       this.menuEscape();
       return InputPropagation.HANDLED;
     }

@@ -5,8 +5,8 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
-import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.combat.types.battlestate.Status04;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.scripting.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
@@ -17,6 +17,9 @@ import java.util.Arrays;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 
 public class BattleStateEf4 {
   public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];
@@ -122,7 +125,7 @@ public class BattleStateEf4 {
   /** Used in player combat script */
   public int _290;
   /** Indexed by char slot */
-  public final int[] _294 = new int[3];
+  public final int[] dragoonTurnsRemaining_294 = new int[3];
   public int _2a0;
   public int _2a4;
   public int _2a8;
@@ -141,8 +144,15 @@ public class BattleStateEf4 {
    * </ul>
    */
   public int specialFlag_2b0;
-  /** Used in player combat script */
-  public int _2b4;
+  /**
+   * Used in player combat script, targeting with items, bitset
+   * <ul>
+   *   <li>0x1 - smoke bomb was used</li>
+   *   <li>0x2 - unknown, used in main loop of player combat script</li>
+   *   <li>0x8 - failed to escape (smoke bomb on stage with 0% escape rate)</li>
+   * </ul>
+   */
+  public int runAwayFlags_2b4;
   public int _2b8;
   public int _2bc;
   public int _2c0;
@@ -194,6 +204,7 @@ public class BattleStateEf4 {
   public final int[] _34c = new int[3];
   /** Sequence volume is stored in here when player combat script is initialized */
   public int sequenceVolume_358;
+  /** Set to item ID in attack item DEFFs, maybe just a temporary var so it can restore the value after registers are overwritten */
   public int _35c;
   public int _360;
   public int _364;
@@ -259,7 +270,7 @@ public class BattleStateEf4 {
   public final int[] _460 = new int[3];
   /** Combat stage ID is stored here when player combat script is initialized */
   public int _46c;
-  /** Used in player combat script */
+  /** Used in player combat script, one bit for each player bent slot */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];
   public int _494;
@@ -275,7 +286,9 @@ public class BattleStateEf4 {
   public int _4b4;
   public int _4b8;
   public int _4bc;
+  /** Used in merchant item tutorial. Script state index of temporary script allocated to back up player's original item list. No longer used in SC - we have enough registry IDs to not allocate extra states. */
   public int _4c0;
+  /** Used in merchant item tutorial. Script state index of temporary script allocated to back up player's original item list. No longer used in SC - we have enough registry IDs to not allocate extra states. */
   public int _4c4;
   public int _4c8;
   public int _4cc;
@@ -301,7 +314,8 @@ public class BattleStateEf4 {
   public int _504;
   public int _508;
   public int _50c;
-  public int _510;
+  /** Menu blocks that apply to all chars */
+  public int globalMenuBlocks_510;
   public int _514;
   public int _518;
   public int _51c;
@@ -317,7 +331,14 @@ public class BattleStateEf4 {
   public int _544;
   public int _548;
   public int _54c;
-  public int dragonBlockStaff_550;
+  /**
+   * Flags that have an effect on multiple combatants
+   * <ul>
+   *   <li>0x1 - Dragon block staff</li>
+   *   <li>0x2 - When players select a target to attack, the targeting arrow will start on a random enemy (used by Sandora Elite when he creates duplicates)</li>
+   * </ul>
+   */
+  public int fieldFlags_550;
   /**
    * <ul>
    *   <li>0x1 - causes the player combat script to rewind and yield in its main loop</li>
@@ -493,6 +514,30 @@ public class BattleStateEf4 {
     return this.aliveMonsterCount_800c6758 != 0;
   }
 
+  public ScriptState<? extends BattleEntity27c>[] getBentsForTargetType(final int targetType) {
+    if(targetType == 0) {
+      return this.playerBents_e40;
+    }
+
+    if(targetType == 1) {
+      return this.aliveMonsterBents_ebc;
+    }
+
+    return this.aliveBents_e78;
+  }
+
+  public int getBentCountForTargetType(final int targetType) {
+    if(targetType == 0) {
+      return this.getPlayerCount();
+    }
+
+    if(targetType == 1) {
+      return this.getAliveMonsterCount();
+    }
+
+    return this.getAliveBentCount();
+  }
+
   public void disableBents() {
     for(int i = 0; i < this.playerCount_800c677c; i++) {
       this.playerBents_e40[i].loadScriptFile(null);
@@ -540,7 +585,7 @@ public class BattleStateEf4 {
     //LAB_800c7330
     for(i = 0, count = 0; i < this.allBentCount_800c66d0; i++) {
       final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c[i];
-      if((bentState.storage_44[7] & 0x40) == 0) {
+      if((bentState.storage_44[7] & FLAG_DEAD) == 0) {
         this.aliveBents_e78[count] = bentState;
         count++;
       }
@@ -554,7 +599,7 @@ public class BattleStateEf4 {
     //LAB_800c73b0
     for(i = 0, count = 0; i < this.playerCount_800c677c; i++) {
       final ScriptState<PlayerBattleEntity> playerState = this.playerBents_e40[i];
-      if((playerState.storage_44[7] & 0x40) == 0) {
+      if((playerState.storage_44[7] & FLAG_DEAD) == 0) {
         this.alivePlayerBents_eac[count] = playerState;
         count++;
       }
@@ -568,7 +613,7 @@ public class BattleStateEf4 {
     //LAB_800c7430
     for(i = 0, count = 0; i < this.monsterCount_800c6768; i++) {
       final ScriptState<MonsterBattleEntity> monsterState = this.monsterBents_e50[i];
-      if((monsterState.storage_44[7] & 0x40) == 0) {
+      if((monsterState.storage_44[7] & FLAG_DEAD) == 0) {
         this.aliveMonsterBents_ebc[count] = monsterState;
         count++;
       }
@@ -585,7 +630,7 @@ public class BattleStateEf4 {
       final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c[i];
       final BattleEntity27c bent = bentState.innerStruct_00;
 
-      if((bentState.storage_44[7] & 0x4) != 0) {
+      if((bentState.storage_44[7] & FLAG_MONSTER) != 0) {
         bent.turnValue_4c = simpleRand() * 0xd9 / 0x10000;
       } else {
         //LAB_800c7b3c
@@ -601,7 +646,7 @@ public class BattleStateEf4 {
     //LAB_800c7e54
     for(int i = 0; i < this.aliveBentCount_800c669c; i++) {
       final ScriptState<? extends BattleEntity27c> bentState = this.aliveBents_e78[i];
-      if(bentState != null && (bentState.storage_44[7] & 0x20) != 0) {
+      if(bentState != null && (bentState.storage_44[7] & FLAG_TAKE_FORCED_TURN) != 0) {
         return bentState;
       }
 
@@ -635,7 +680,7 @@ public class BattleStateEf4 {
         final ScriptState<? extends BattleEntity27c> state = this.aliveBents_e78[highestCombatantindex];
         state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
 
-        if((state.storage_44[7] & 0x4) == 0) {
+        if((state.storage_44[7] & FLAG_MONSTER) == 0) {
           gameState_800babc8._b8++;
         }
 
@@ -647,9 +692,8 @@ public class BattleStateEf4 {
       //LAB_800c7fb0
       for(int combatantIndex = 0; combatantIndex < this.aliveBentCount_800c669c; combatantIndex++) {
         final BattleEntity27c bent = this.aliveBents_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
-        final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
-        bent.turnValue_4c += v1;
+        // Generate a random number between 0.0..0.2 and add 0.9 to bring it to 0.9..1.1
+        bent.turnValue_4c += Math.round(bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
       }
 
       //LAB_800c8028

@@ -71,10 +71,9 @@ public final class V5Serializer {
     return new SavedGame<>(filename, name, campaignType, (RegistryDelegate)saveType, display, state, config, registryIds);
   }
 
-  public static int toV5(final String name, final FileData data, final GameState52c gameState, final ActiveStatsa0[] activeStats, final CampaignType campaignType, final EngineState<?> engineState) {
+  public static void toV5(final String name, final FileData data, final IntRef offset, final GameState52c gameState, final ActiveStatsa0[] activeStats, final CampaignType campaignType, final EngineState<?> engineState) {
     final SaveType saveType = EVENTS.postEvent(new SaveTypeEvent(gameState, engineState)).saveType;
 
-    final IntRef offset = new IntRef();
     data.writeAscii(offset, name);
     data.writeRegistryId(offset, campaignType.getRegistryId());
     data.writeRegistryId(offset, saveType.getRegistryId());
@@ -82,7 +81,7 @@ public final class V5Serializer {
     saveType.serialize(data.slice(offset.get()), saveType.createDisplayData(gameState, activeStats, engineState), offset);
     campaignType.saveGameState(data, offset, gameState);
 
-    offset.add(ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data.slice(offset.get())));
+    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data, offset);
 
     // Cache registry keys to make sure mods haven't changed on load
     data.writeVarInt(offset, REGISTRIES.count());
@@ -94,7 +93,5 @@ public final class V5Serializer {
         data.writeRegistryId(offset, id);
       }
     }
-
-    return offset.get();
   }
 }

@@ -1,0 +1,40 @@
+--- original
++++ modified
+@@ -592,12 +592,14 @@
+ mov stor[10], var[45][14]
+ jmp inl[:LABEL_16]
+ LABEL_10:
++jmp inl[:SKIP_LOADER]
+ mov var[34][1], stor[8]
+ call 167, stor[8], stor[9]
+ jmp_cmp ==, stor[9], 0x8, inl[:LABEL_13]
+ mov var[34][2], stor[8]
+ call 167, stor[8], stor[9]
+ jmp_cmp ==, stor[9], 0x8, inl[:LABEL_13]
++SKIP_LOADER:
+ call 600, stor[23]
+ mov 0x2e, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+@@ -605,12 +607,14 @@
+ gosub inl[:LABEL_100]
+ LABEL_11:
+ yield
++jmp inl[:SKIP_LOADER_2]
+ mov var[34][1], stor[8]
+ call 167, stor[8], stor[9]
+ jmp_cmp ==, stor[9], 0x3, inl[:LABEL_14]
+ mov var[34][2], stor[8]
+ call 167, stor[8], stor[9]
+ jmp_cmp ==, stor[9], 0x3, inl[:LABEL_14]
++SKIP_LOADER_2:
+ call 600, stor[23]
+ mov 0x32, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+@@ -660,6 +664,7 @@
+ mov 0x1, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_102]
+ gosub inl[:LABEL_100]
++jmp inl[:LABEL_16]
+ mov var[34][1], stor[10]
+ call 167, stor[10], stor[9]
+ jmp_cmp ==, 0x5, stor[9], inl[:LABEL_9]

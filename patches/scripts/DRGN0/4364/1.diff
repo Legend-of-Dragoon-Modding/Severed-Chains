@@ -1,0 +1,52 @@
+--- original
++++ modified
+@@ -215,7 +215,7 @@
+ call 371, stor[28], stor[10], 0x0
+ mov stor[8], var[128 + stor[10]][5]
+ mov 0x3, var[128 + stor[10]][0]
+-call 168, stor[30], stor[8], ITEM_ID
++call 168, stor[30], reg[0], ITEM_ID
+ mov stor[8], var[45][119]
+ call 496, stor[30]
+ call 508, stor[30], stor[28], stor[9]
+@@ -223,8 +223,6 @@
+ call 495, stor[30], stor[28], stor[8], stor[8], stor[10]
+ mov stor[10], var[45][119]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_1]
+-call 169, stor[30], ITEM_PERCENTAGE, stor[10]
+-jmp_cmp !=, 0x0, stor[10], inl[:LABEL_1]
+ call 169, stor[30], STATUS, stor[10]
+ jmp_cmp !&, 0x8, stor[10], inl[:LABEL_1]
+ shr 0x1, stor[8]
+@@ -1270,6 +1268,8 @@
+ data 0x2000014
+ data 0x140
+ data 0x9000009
++VAR_BUTTON_MASH_MODE:
++data 0
+ LABEL_3:
+ mov 0x1, stor[17]
+ mov 0x0, stor[19]
+@@ -1285,7 +1285,14 @@
+ call 832, 0x24, 0x50, 0x2e, 0x1, 0x80
+ call 832, 0x21, 0x4c, 0x32, 0x1, 0x80
+ LABEL_6:
++call 890, id[lod_core:config], id[lod_core:mash_mode], 0, inl[:VAR_BUTTON_MASH_MODE]
++jmp_cmp ==, 2, inl[:VAR_BUTTON_MASH_MODE], inl[:LABEL_10]
++jmp_cmp ==, 1, inl[:VAR_BUTTON_MASH_MODE], inl[:READ_HOLD]
+ jmp_cmp &, 0x20, var[4], inl[:LABEL_10]
++jmp inl[:READ_HOLD_ELSE]
++READ_HOLD:
++jmp_cmp &, 0x20, var[3], inl[:LABEL_10]
++READ_HOLD_ELSE:
+ mov 0x0, stor[11]
+ LABEL_7:
+ jmp_cmp >=, 0x0, stor[20], inl[:LABEL_8]
+@@ -1895,6 +1902,7 @@
+ mov 0xd, stor[23]
+ wait stor[23]
+ mov 0x3, var[25]
++mov id[lod:rave_twister], reg[0]
+ mov 0xdc, stor[8]
+ gosub inl[:LABEL_25]
+ call 8, 0x0, 0x2

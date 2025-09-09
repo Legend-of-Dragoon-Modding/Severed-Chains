@@ -1,0 +1,204 @@
+; This is a generated file. To modify it, edit "widescreen.full.txt" and then run "s -i widescreen.full.txt -o widescreen.txt" to strip it. Use option "-F" to keep full line comments intact.
+WS_WAIT_FLAG:
+data 0xffffffff
+WS_WAIT_LINE_SOBJ:
+data 0
+WS_WAIT_LINE_STATUS:
+data 0
+WS_WAIT_OFFSET:
+data 0
+; Wait for sobj to not be on queued collision primitive.
+; @param int WS_WAIT_LINE_SOBJ - sobj index
+; @param int s24 - collision primitive index
+WS_WAIT_IN_LINE:
+call 681, inl[:WS_WAIT_LINE_SOBJ], inl[:WS_WAIT_LINE_STATUS]
+jmp_cmp !=, inl[:WS_WAIT_LINE_STATUS], stor[24], inl[:RETURN]
+yield
+gosub inl[:WS_WAIT_TIME]
+jmp inl[:WS_WAIT_IN_LINE]
+; If flag is set true, increase wait frame offset.
+; @param int WS_WAIT_FLAG - flags 1 bit
+WS_WAIT_TIME:
+jmp_cmp ==, inl[:WS_WAIT_FLAG], 0xffffffff, inl[:RETURN]
+call 3, inl[:WS_WAIT_FLAG], inl[:WS_WAIT_LINE_STATUS]
+jmp_cmp ==, inl[:WS_WAIT_LINE_STATUS], 0, inl[:RETURN]
+incr inl[:WS_WAIT_OFFSET]
+return
+WS_WAIT_FLAG_STATUS:
+data 0
+WS_WAIT_FLAG_MATCH:
+data 0
+WS_WAIT_FLAG_SOBJ:
+data 0xffffffff
+; Wait for flag to match a given value. Face sobj while waiting if provided.
+; @param int WS_WAIT_FLAG - flags 1 bit
+; @param int WS_WAIT_FLAG_MATCH - match value
+; @param int WS_WAIT_FLAG_SOBJ - sobj index
+WS_FLAG_WAIT:
+call 3, inl[:WS_WAIT_FLAG], inl[:WS_WAIT_FLAG_STATUS]
+jmp_cmp ==, inl[:WS_WAIT_FLAG_STATUS], inl[:WS_WAIT_FLAG_MATCH], inl[:RETURN]
+yield
+jmp_cmp ==, inl[:WS_WAIT_FLAG_SOBJ], 0xffffffff, inl[:WS_FLAG_WAIT]
+call 102, inl[:WS_WAIT_FLAG_SOBJ], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
+call 105, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
+jmp inl[:WS_FLAG_WAIT]
+WS_START_X:
+data 0
+WS_START_Y:
+data 0
+WS_START_Z:
+data 0
+WS_TARGET_X:
+data 0
+WS_TARGET_Y:
+data 0
+WS_TARGET_Z:
+data 0
+WS_MOVE_X:
+data 0
+WS_MOVE_Y:
+data 0
+WS_MOVE_Z:
+data 0
+WS_ANIMATION_0:
+data 0
+WS_ANIMATION_1:
+data 0
+WS_ANIMATION_STATUS:
+data 0
+WS_SPEED:
+data 0
+WS_FRAMES:
+data 0
+WS_COLLIDED:
+data 0
+; Rotate self to face provided coordinates.
+; @param int WS_TARGET_X - target x
+; @param int WS_TARGET_Z - target z
+; @param int WS_ANIMATION_0 - animation index (use -1 to return; use -2 to wait for WS_FRAMES)
+; @param int WS_FRAMES - rotation frames
+; @return int WS_FRAMES - remaining frames
+WS_ROTATE:
+call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
+mov inl[:WS_TARGET_X], inl[:WS_MOVE_X]
+mov inl[:WS_TARGET_Z], inl[:WS_MOVE_Z]
+sub inl[:WS_START_X], inl[:WS_MOVE_X]
+sub inl[:WS_START_Z], inl[:WS_MOVE_Z]
+atan2_12 inl[:WS_MOVE_X], inl[:WS_MOVE_Z], inl[:WS_MOVE_Y]
+call 104, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
+and 0xfff, inl[:WS_START_Y]
+and 0xfff, inl[:WS_MOVE_Y]
+sub inl[:WS_START_Y], inl[:WS_MOVE_Y]
+add 0x800, inl[:WS_MOVE_Y]
+WS_LT_N360_CHECK:
+jmp_cmp >=, inl[:WS_MOVE_Y], 0xfffff800, inl[:WS_GT_P360_CHECK]
+add 0x1000, inl[:WS_MOVE_Y]
+jmp inl[:WS_ROTATE_0]
+WS_GT_P360_CHECK:
+jmp_cmp <, inl[:WS_MOVE_Y], 0x800, inl[:WS_ROTATE_0]
+sub 0x1000, inl[:WS_MOVE_Y]
+WS_ROTATE_0:
+call 120, stor[0], 0x0, inl[:WS_MOVE_Y], 0x0, inl[:WS_FRAMES]
+jmp_cmp ==, inl[:WS_ANIMATION_0], 0xffffffff, inl[:RETURN]
+jmp_cmp ==, inl[:WS_ANIMATION_0], 0xfffffffe, inl[:WS_ROTATE_WAIT]
+call 99, 0
+call 97, inl[:WS_ANIMATION_0]
+WS_ROTATE_WAIT:
+wait inl[:WS_FRAMES]
+return
+; Move self to provided coordinates.
+; @param int WS_TARGET_X - target x
+; @param int WS_TARGET_Y - target y
+; @param int WS_TARGET_Z - target z
+; @param int WS_ANIMATION_0 - animation index (use -1 to return; use -2 to wait)
+; @param int WS_SPEED - movement speed (use negative values for very slow movement)
+; @return int WS_FRAMES - remaining frames/movement ticks
+WS_MOVE:
+call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
+gosub inl[:WS_GET_MOVE_TICKS]
+jmp_cmp <, inl[:WS_FRAMES], 0, inl[:RETURN]
+call 679, stor[0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z], inl[:WS_FRAMES]
+jmp_cmp ==, inl[:WS_ANIMATION_0], 0xffffffff, inl[:RETURN]
+jmp_cmp ==, inl[:WS_ANIMATION_0], 0xfffffffe, inl[:WS_MOVE_WAIT]
+call 99, 0
+call 97, inl[:WS_ANIMATION_0]
+WS_MOVE_WAIT:
+wait inl[:WS_FRAMES]
+return
+; Move self to provided coordinates. Includes collision detection for other sObjs. Meant for regular NPC movement.
+; @param int WS_TARGET_X - target x
+; @param int WS_TARGET_Y - target y
+; @param int WS_TARGET_Z - target z
+; @param int WS_ANIMATION_0 - animation index
+; @param int WS_SPEED - movement speed (use negative values for very slow movement)
+; @return int WS_FRAMES - remaining frames/movement ticks
+WS_NPC_MOVE:
+call 102, stor[0], inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z]
+call 107, inl[:WS_START_X], inl[:WS_START_Y], inl[:WS_START_Z], 1
+call 97, 0
+yield
+call 308, stor[0], inl[:WS_COLLIDED]
+jmp_cmp !=, inl[:WS_COLLIDED], 0xffffffff, inl[:WS_NPC_MOVE]
+gosub inl[:WS_GET_MOVE_TICKS]
+jmp_cmp <, inl[:WS_FRAMES], 0, inl[:RETURN]
+call 107, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z], inl[:WS_FRAMES]
+call 97, inl[:WS_ANIMATION_0]
+jmp_cmp ==, 0x0, inl[:WS_FRAMES], inl[:RETURN]
+WS_NPC_MOVE_0:
+yield
+call 308, stor[0], inl[:WS_COLLIDED]
+jmp_cmp !=, inl[:WS_COLLIDED], 0xffffffff, inl[:WS_NPC_MOVE]
+while inl[:WS_FRAMES], inl[:WS_NPC_MOVE_0]
+call 97, 0
+return
+; Calculate movement ticks between two points.
+; @param int WS_START_X - pointA x
+; @param int WS_START_Y - pointA y
+; @param int WS_START_Z - pointA z
+; @param int WS_TARGET_X - pointB x
+; @param int WS_TARGET_Y - pointB y
+; @param int WS_TARGET_Z - pointB z
+; @param int WS_SPEED - speed
+; @return int WS_FRAMES - frames/movement ticks
+WS_GET_MOVE_TICKS:
+mov inl[:WS_TARGET_X], inl[:WS_MOVE_X]
+mov inl[:WS_TARGET_Y], inl[:WS_MOVE_Y]
+mov inl[:WS_TARGET_Z], inl[:WS_MOVE_Z]
+sub inl[:WS_START_X], inl[:WS_MOVE_X]
+sub inl[:WS_START_Y], inl[:WS_MOVE_Y]
+sub inl[:WS_START_Z], inl[:WS_MOVE_Z]
+mul inl[:WS_MOVE_X], inl[:WS_MOVE_X]
+mul inl[:WS_MOVE_Y], inl[:WS_MOVE_Y]
+mul inl[:WS_MOVE_Z], inl[:WS_MOVE_Z]
+add inl[:WS_MOVE_X], inl[:WS_MOVE_Y]
+add inl[:WS_MOVE_Y], inl[:WS_MOVE_Z]
+sqrt inl[:WS_MOVE_Z], inl[:WS_FRAMES]
+jmp_cmp ==, inl[:WS_SPEED], 0, inl[:WS_INVALID_SPEED]
+jmp_cmp >, inl[:WS_SPEED], 0, inl[:WS_NORMAL_SPEED]
+WS_SLOW_SPEED:
+abs inl[:WS_SPEED]
+mul inl[:WS_SPEED], inl[:WS_FRAMES]
+return
+WS_INVALID_SPEED:
+mov 1, inl[:WS_SPEED]
+WS_NORMAL_SPEED:
+div inl[:WS_SPEED], inl[:WS_FRAMES]
+return
+; Load one animation and wait until complete
+; @param int WS_ANIMATION_0 - animation index, wait animation
+; @param int WS_ANIMATION_1 - animation index, return animation (use -1 to disable animation)
+WS_ANIMATION:
+call 99, 0
+call 97, inl[:WS_ANIMATION_0]
+WS_ANIMATION_WAIT:
+yield
+call 100, inl[:WS_ANIMATION_STATUS]
+jmp_cmp ==, inl[:WS_ANIMATION_STATUS], 0, inl[:WS_ANIMATION_WAIT]
+jmp_cmp ==, inl[:WS_ANIMATION_1], 0xffffffff, inl[:WS_FREEZE]
+call 97, inl[:WS_ANIMATION_1]
+return
+WS_FREEZE:
+call 99, 1
+return
+RETURN:
+return

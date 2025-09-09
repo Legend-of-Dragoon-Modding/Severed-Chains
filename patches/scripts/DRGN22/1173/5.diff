@@ -1,0 +1,16 @@
+Fletz - Return from HoG cutscene
+Rose
+Skip hiding model parts.
+--- original
++++ modified
+@@ -163,10 +163,6 @@
+ JMP_54c_1:
+ call 101, stor[0], 0x40, 0x0, 0xfffffa4c
+ call 103, stor[0], 0x0, 0x680, 0x0
+-call 288, 0x3
+-call 288, 0x4
+-call 288, 0xb
+-call 288, 0xc
+ mov 0x0, stor[24]
+ mov 0x1, stor[25]
+ gosub inl[:LABEL_0]

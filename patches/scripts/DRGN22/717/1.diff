@@ -1,0 +1,21 @@
+Twin Castle, Main Hall (Daytime)
+Dart
+Retail hides model parts to save performance. No more of that.
+--- original
++++ modified
+@@ -862,6 +862,7 @@
+ gosub inl[:LABEL_62]
+ call 99, 0x0
+ call 97, 0x0
++jmp inl[:THE_DISMEMBERMENT_PLAN]
+ call 691, var[64][2], 0x5
+ call 691, var[64][2], 0x6
+ call 691, var[64][3], 0x0
+@@ -881,6 +882,7 @@
+ call 691, var[64][5], 0x11
+ call 691, var[64][5], 0x12
+ call 691, var[64][5], 0x13
++THE_DISMEMBERMENT_PLAN:
+ mov 0x10, stor[24]
+ wait stor[24]
+ mov 0xf, stor[24]

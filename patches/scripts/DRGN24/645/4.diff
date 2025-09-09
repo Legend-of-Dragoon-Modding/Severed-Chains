@@ -1,0 +1,21 @@
+Aglis - Psyche Bomb Trial Hub
+Albert
+Skip hiding model parts
+--- original
++++ modified
+@@ -399,6 +399,7 @@
+ call 97, 0x5
+ gosub inl[:LABEL_0]
+ call 97, 0x0
++jmp inl[:THE_DISMEMBERMENT_PLAN]
+ call 288, 0x0
+ call 288, 0x1
+ call 288, 0x3
+@@ -409,6 +410,7 @@
+ call 288, 0xd
+ call 288, 0xe
+ call 288, 0x14
++THE_DISMEMBERMENT_PLAN:
+ mov 0x3, stor[24]
+ gosub inl[:LABEL_2]
+ mov 0x1, stor[24]

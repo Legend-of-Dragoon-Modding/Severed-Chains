@@ -1,0 +1,149 @@
+--- original
++++ modified
+@@ -16,6 +16,9 @@
+ call 641, 0x2
+ yield
+ gosub inl[:LABEL_9]
++gosub inl[:PRELOAD]
++gosub inl[:LABEL_11]
++gosub inl[:KILL_LAVITZ]
+ yield
+ call 714
+ yield
+@@ -72,6 +75,14 @@
+ data 0x1
+ LABEL_0:
+ data 0x2
++data 0xc
++data 0x1f1
++data 0x1e0
++data 0x3
++data 0xd
++data 0x1f8
++data 0x1f2
++data 0x2
+ data 0x1
+ data 0x0
+ data 0x1e2
+@@ -307,55 +318,62 @@
+ data 0x1
+ data 0x0
+ data 0x232
+-LABEL_1:
++PRELOAD:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
++mov 0x2, stor[stor[stor[0], 23], 24]
++call 618, stor[23], inl[:LABEL_15]
++return
++LABEL_1:
++call 600, stor[23]
++mov 0x2, stor[stor[stor[0], 23], 14]
+ mov 0x4, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_2:
+ call 600, stor[23]
+-mov 0x8, stor[stor[stor[0], 23], 14]
++mov 0xa, stor[stor[stor[0], 23], 14]
+ mov 0x4, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_3:
+ call 600, stor[23]
+-mov 0x10, stor[stor[stor[0], 23], 14]
++mov 0x12, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_4:
+ call 600, stor[23]
+-mov 0x18, stor[stor[stor[0], 23], 14]
++mov 0x1a, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_5:
+ call 600, stor[23]
+-mov 0x20, stor[stor[stor[0], 23], 14]
++mov 0x22, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_6:
+ call 600, stor[23]
+-mov 0x28, stor[stor[stor[0], 23], 14]
++mov 0x2a, stor[stor[stor[0], 23], 14]
+ mov 0x6, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_7:
+ call 600, stor[23]
+-mov 0x30, stor[stor[stor[0], 23], 14]
++mov 0x32, stor[stor[stor[0], 23], 14]
+ mov 0x2, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_8:
+ call 600, stor[23]
+-mov 0x38, stor[stor[stor[0], 23], 14]
++mov 0x3a, stor[stor[stor[0], 23], 14]
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_15]
+ return
+ LABEL_9:
++jmp inl[:SKIP_PLAYER_SETUP]
+ mov var[34][0], stor[27]
+ call 370, stor[27], stor[8]
+ mov stor[8], var[45][2]
+@@ -371,6 +389,7 @@
+ mov stor[8], var[45][3]
+ mov stor[27], var[45][13]
+ yield
++SKIP_PLAYER_SETUP:
+ mov var[36][0], stor[27]
+ call 138, stor[27], 0x0
+ call 370, stor[27], stor[8]
+@@ -601,7 +620,7 @@
+ incr stor[18]
+ call 354, 0x0, stor[18], stor[9]
+ call 355, stor[9]
+-call 364, stor[8], stor[9]
++gosub inl[:LOAD_SLOTTED_TEXTURES]
+ call 356, stor[9]
+ call 354, 0x0, stor[16], stor[9]
+ call 355, stor[9]
+@@ -3048,3 +3067,33 @@
+ data 0xa0ff0006
+ data 0x14
+ data 0x1
++LOAD_SLOTTED_TEXTURES:
++jmp_cmp >=, inl[:CHAR_INDEX], 0x3, inl[:LOAD_ENEMY_TEXTURE]
++jmp_cmp ==, stor[13], 0xc, inl[:LOAD_PLAYER_TEXTURE]
++jmp_cmp ==, stor[13], 0xd, inl[:LOAD_PLAYER_TEXTURE]
++LOAD_ENEMY_TEXTURE:
++call 364, stor[8], stor[9]
++return
++LOAD_PLAYER_TEXTURE:
++incr inl[:CHAR_INDEX]
++call 1020, stor[8], inl[:CHAR_INDEX]
++call 364, stor[8], stor[9]
++return
++CHAR_INDEX:
++data 0x0
++KILL_LAVITZ:
++mov inl[:P_INDEX], stor[10]
++call 167, var[34][stor[10]], stor[10]
++jmp_cmp ==, stor[10], 0x1, inl[:SET_DEAD]
++incr inl[:P_INDEX]
++jmp_cmp ==, var[35], inl[:P_INDEX], inl[:NOT_FOUND]
++jmp inl[:KILL_LAVITZ]
++return
++P_INDEX:
++data 0x0
++NOT_FOUND:
++return
++SET_DEAD:
++mov inl[:P_INDEX], stor[10]
++call 173, var[34][stor[10]], 0x1
++return

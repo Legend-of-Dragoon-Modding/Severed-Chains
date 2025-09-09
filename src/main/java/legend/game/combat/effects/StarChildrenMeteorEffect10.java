@@ -1,7 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -67,7 +67,7 @@ public class StarChildrenMeteorEffect10 implements Effect<EffectManagerParams.Vo
 
       this.transforms.scaling(meteor.scaleW_0c, meteor.scaleH_0e, 1.0f);
       this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 120.0f);
-      final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(this.obj, this.transforms)
+      final QueuedModelStandard model = RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
         .colour(r / 255.0f, g / 255.0f, b / 255.0f);
 
       if((flags >>> 30 & 1) != 0) {

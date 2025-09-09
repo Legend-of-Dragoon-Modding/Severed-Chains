@@ -1,0 +1,13 @@
+Widescreen patch
+Hellena Prison - cutscene before Fruegel (II): New start position off-screen for arrow
+--- original
++++ modified
+@@ -50,7 +50,7 @@
+ JMP_7c_0:
+ call 111, 0x1
+ call 106, 0x1
+-call 101, stor[0], 0x9c, 0xffffff84, 0xfffffee4
++call 101, stor[0], 0x164, 0xffffff84, 0xfffffe80
+ call 103, stor[0], 0x0, 0x600, 0x0
+ return
+ data 0x6f0138

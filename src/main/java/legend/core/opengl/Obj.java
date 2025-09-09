@@ -64,10 +64,14 @@ public abstract class Obj {
   }
 
   public abstract boolean hasTexture();
+  public abstract boolean hasTexture(final int index);
   public abstract boolean hasTranslucency();
+  public abstract boolean hasTranslucency(final int index);
   public abstract boolean shouldRender(@Nullable final Translucency translucency);
-  public abstract void render(final int startVertex, final int vertexCount);
-  public abstract void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount);
+  public abstract boolean shouldRender(@Nullable final Translucency translucency, final int layer);
+  public abstract int getLayers();
+  public abstract void render(final int layer, final int startVertex, final int vertexCount);
+  public abstract void render(@Nullable final Translucency translucency, final int layer, final int startVertex, final int vertexCount);
 
   @Override
   public String toString() {

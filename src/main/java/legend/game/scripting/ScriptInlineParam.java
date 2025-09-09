@@ -11,25 +11,24 @@ public class ScriptInlineParam extends Param {
 
   @Override
   public void jump(final RunningScript<?> script) {
-    script.scriptState_04.scriptPtr_14 = this.state.scriptPtr_14;
+    script.scriptState_04.replaceFrame(this.state.frame().copy()).offset = this.offset;
     script.commandOffset_0c = this.offset;
   }
 
   @Override
   public void jump(final ScriptState<?> state) {
-    state.scriptPtr_14 = this.state.scriptPtr_14;
-    state.offset_18 = this.offset;
+    state.replaceFrame(this.state.frame().copy()).offset = this.offset;
   }
 
   @Override
   public int get() {
-    return this.state.scriptPtr_14.getOp(this.offset);
+    return this.state.frame().file.getOp(this.offset);
   }
 
   @Override
   public Param set(final int val) {
     // Apparently this is possible
-    this.state.scriptPtr_14.setOp(this.offset, val);
+    this.state.frame().file.setOp(this.offset, val);
     return this;
   }
 
@@ -40,6 +39,6 @@ public class ScriptInlineParam extends Param {
 
   @Override
   public String toString() {
-    return "script[0x%x] 0x%x".formatted(this.offset, this.get());
+    return "script[%d].inl[0x%x] 0x%x".formatted(this.state.index, this.offset * 4, this.get());
   }
 }

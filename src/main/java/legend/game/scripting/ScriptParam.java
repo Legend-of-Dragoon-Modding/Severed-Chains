@@ -32,6 +32,7 @@ public @interface ScriptParam {
     STRING,
     REG,
     ENUM,
+    ANY,
   }
 
   enum Branch {
@@ -39,5 +40,7 @@ public @interface ScriptParam {
     JUMP,
     SUBROUTINE,
     REENTRY,
+    FORK_JUMP,
+    FORK_REENTRY,
   }
 }

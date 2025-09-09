@@ -1,0 +1,28 @@
+--- original
++++ modified
+@@ -215,16 +215,13 @@
+ call 371, stor[28], stor[10], 0x0
+ mov stor[8], var[128 + stor[10]][5]
+ mov 0x3, var[128 + stor[10]][0]
+-call 168, stor[30], stor[8], ITEM_ID
++call 168, stor[30], reg[0], ITEM_ID
+ mov stor[8], var[45][119]
+-call 496, stor[30]
+ call 508, stor[30], stor[28], stor[9]
+ jmp_cmp ==, 0x0, stor[9], inl[:LABEL_2]
+ call 495, stor[30], stor[28], stor[8], stor[8], stor[10]
+ mov stor[10], var[45][119]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_1]
+-call 169, stor[30], ITEM_PERCENTAGE, stor[10]
+-jmp_cmp !=, 0x0, stor[10], inl[:LABEL_1]
+ call 169, stor[30], STATUS, stor[10]
+ jmp_cmp !&, 0x8, stor[10], inl[:LABEL_1]
+ shr 0x1, stor[8]
+@@ -1257,6 +1254,7 @@
+ data 0x49
+ ENTRYPOINT_0:
+ call 592, stor[30], stor[28]
++mov id[lod:speed_down], reg[0]
+ mov 0x2e, stor[8]
+ gosub inl[:LABEL_0]
+ gosub inl[:LABEL_4]

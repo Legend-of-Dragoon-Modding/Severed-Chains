@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.QueuedModelBattleTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
@@ -21,7 +22,7 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.SEffe.FUN_800e60e0;
@@ -87,15 +88,16 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        //TODO remove
+        //TODO remove null check
         if(part.obj != null) {
-          RENDERER.queueModel(part.obj, lw)
+          RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
+            .depthOffset(model.zOffset_a0 * 4)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
             .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
             .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)engineState_8004dd04)._800c6930.colour_00);
+            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
         }
 
         part.attribute_00 = oldAttrib;
@@ -147,7 +149,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     if(manager.params_10.flags_00 >= 0) {
       if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
+        FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       } else {
         //LAB_800ea564
         FUN_800e60e0(1.0f, 1.0f, 1.0f);

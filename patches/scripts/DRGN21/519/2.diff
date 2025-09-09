@@ -1,0 +1,18 @@
+Kazas
+Warden
+Improved math precision exposed bug in movement/rotation loop.
+Rotating to face the sObj's current position produces a +/- 90 degree rotation when it shouldn't rotate at all.
+--- original
++++ modified
+@@ -129,6 +129,11 @@
+ jmp_cmp ==, stor[25], 0xffffffff, inl[:LABEL_10]
+ call 267, stor[25], stor[26], stor[27], stor[28]
+ call 102, stor[0], stor[29], stor[30], stor[31]
++jmp_cmp !=, stor[26], stor[29], inl[:CONTINUE]
++jmp_cmp !=, stor[27], stor[30], inl[:CONTINUE]
++jmp_cmp !=, stor[28], stor[31], inl[:CONTINUE]
++jmp inl[:LABEL_11]
++CONTINUE:
+ sub stor[29], stor[26]
+ sub stor[31], stor[28]
+ atan2_12 stor[26], stor[28], stor[26]

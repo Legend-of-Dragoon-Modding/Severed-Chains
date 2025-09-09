@@ -1,0 +1,39 @@
+Widescreen patch
+Prairie, escape from Hellena Prison cutscene #2
+Lavitz
+--- original
++++ modified
+@@ -430,7 +430,27 @@
+ mov 0x26, stor[24]
+ gosub inl[:LABEL_2]
+ call 106, 0x0
+# Move from behind tree instead of suddenly appearing on the path.
++mov 40, inl[:WS_FRAMES]
++wait inl[:WS_FRAMES]
++call 267, 0x11, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++call 677, stor[0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++add 45, inl[:WS_TARGET_X]
++mov 4, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++call 111, 1
++gosub inl[:WS_MOVE]
+ mov 0x1a, stor[24]
++call 267, stor[24], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++call 677, stor[0], inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 4, inl[:WS_SPEED]
++mov 2, inl[:WS_ANIMATION_0]
++call 111, 1
++gosub inl[:WS_MOVE]
++call 111, 0
++call 267, 0x14, inl[:WS_TARGET_X], inl[:WS_TARGET_Y], inl[:WS_TARGET_Z]
++mov 20, inl[:WS_FRAMES]
++gosub inl[:WS_ROTATE]
++call 97, 0
+ gosub inl[:LABEL_3]
+ call 267, 0x14, stor[24], stor[25], stor[26]
+ call 677, stor[0], stor[24], stor[25], stor[26]
+@@ -475,3 +495,4 @@
+ call 116, stor[24]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_22]
+ return
++#include ../../../../patches/libs/widescreen.txt

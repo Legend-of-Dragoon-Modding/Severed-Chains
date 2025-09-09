@@ -1,0 +1,46 @@
+--- original
++++ modified
+@@ -3528,18 +3528,18 @@
+ mov var[34][0], stor[27]
+ call 138, stor[27], 0x0
+ mov var[34][1], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_SET_BENT_INVIS_0]
+ call 138, stor[27], 0x0
++SKIP_SET_BENT_INVIS_0:
+ mov var[34][2], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_SET_BENT_INVIS_1]
+ call 138, stor[27], 0x0
++SKIP_SET_BENT_INVIS_1:
+ mov var[36][1], stor[26]
+ call 138, stor[26], 0x1
+ call 322, stor[26], 0x0
+ call 144, stor[26]
+-mov var[34][1], stor[27]
+-call 167, stor[27], stor[10]
+-jmp_cmp ==, stor[10], 0x4, inl[:LABEL_257]
+-mov var[34][2], stor[27]
+-LABEL_257:
++gosub inl[:PREPARE_FINISHER_SLOT]
+ call 138, stor[27], 0x1
+ call 128, stor[26], 0xffffec78, 0x0, 0x0
+ call 128, stor[27], 0xbb8, 0x0, 0x0
+@@ -3622,3 +3622,19 @@
+ mov 0x6, stor[23]
+ wait stor[23]
+ deallocate
++PREPARE_FINISHER_SLOT:
++mov var[34][2], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_FINISHER_CHECK_ON_SLOT_2]
++call 167, stor[27], stor[10]
++jmp_cmp ==, stor[10], inl[:TARGET_ID], inl[:FINISH]
++SKIP_FINISHER_CHECK_ON_SLOT_2:
++mov var[34][1], stor[27]
++jmp_cmp ==, stor[27], 0xffffffff, inl[:SKIP_FINISHER_CHECK_ON_SLOT_1]
++call 167, stor[27], stor[10]
++jmp_cmp ==, stor[10], inl[:TARGET_ID], inl[:FINISH]
++SKIP_FINISHER_CHECK_ON_SLOT_1:
++mov var[34][0], stor[27]
++FINISH:
++return
++TARGET_ID:
++data 0x4

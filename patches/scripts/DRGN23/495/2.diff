@@ -1,0 +1,14 @@
+--- original
++++ modified
+@@ -614,9 +614,9 @@
+ data 0x19
+ data 0x4
+ PTR_16ac_2:
+-data str[Rose<line>Rose<line>Let's move on.<line>There is no reason to be<line>here now.]
++data str[Rose<line>Let's move on.<line>There is no reason to be<line>here now.]
+ data 0x18
+-data 0x5
++data 0x4
+ PTR_16ac_10:
+ data str[Rose<line>(Nothing has changed<line>here. Not even a bit. Why?)]
+ data 0x1b

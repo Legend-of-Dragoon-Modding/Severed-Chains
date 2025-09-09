@@ -50,7 +50,7 @@ public class Action {
     this.nextRunTime += this.nanosPerTick;
 
     if(-(this.nextRunTime - System.nanoTime()) > this.nanosPerTick * 2) {
-      LOGGER.warn("Action running behind, skipping ticks to catch up");
+      LOGGER.debug("Action running behind, skipping ticks to catch up");
       this.nextRunTime = System.nanoTime() + this.nanosPerTick;
     }
   }

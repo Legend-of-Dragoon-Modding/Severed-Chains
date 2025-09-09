@@ -19,13 +19,16 @@ public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
   public int count_00;
   public RaindropEffect0c[] raindropArray_04;
 
+  private final float displayWidthModifier;
+
   public Obj obj;
   public final Matrix4f transforms = new Matrix4f();
 
-  public RainEffect08(final int count) {
+  public RainEffect08(final int count, final float displayWidthModifier) {
     this.count_00 = count;
     this.raindropArray_04 = new RaindropEffect0c[count];
     Arrays.setAll(this.raindropArray_04, RaindropEffect0c::new);
+    this.displayWidthModifier = displayWidthModifier;
   }
 
   @Override
@@ -36,14 +39,13 @@ public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
 
     //LAB_80109038
     for(int i = 0; i < this.count_00; i++) {
-      final int endpointShiftX = (int)(MathHelper.sin(manager.params_10.rot_10.x) * 32.0f * manager.params_10.scale_16.x * rainArray[i].speed_0a);
-      final int endpointShiftY = (int)(MathHelper.cos(manager.params_10.rot_10.x) * 32.0f * manager.params_10.scale_16.x * rainArray[i].speed_0a);
+      final float endpointShiftX = MathHelper.sin(manager.params_10.rot_10.x) * 32.0f * manager.params_10.scale_16.x * rainArray[i].speed_0a;
+      final float endpointShiftY = MathHelper.cos(manager.params_10.rot_10.x) * 32.0f * manager.params_10.scale_16.x * rainArray[i].speed_0a;
       rainArray[i].pos1_06.x = rainArray[i].pos0_02.x;
       rainArray[i].pos1_06.y = rainArray[i].pos0_02.y;
-      rainArray[i].pos0_02.x = (rainArray[i].pos0_02.x + endpointShiftX) % 512;
-      rainArray[i].pos0_02.y = (rainArray[i].pos0_02.y + endpointShiftY) % 256;
+      rainArray[i].pos0_02.x = MathHelper.floorMod(rainArray[i].pos0_02.x + endpointShiftX, 512 * this.displayWidthModifier);
+      rainArray[i].pos0_02.y = MathHelper.floorMod(rainArray[i].pos0_02.y + endpointShiftY, 256);
     }
-
     //LAB_80109110
   }
 
@@ -58,18 +60,16 @@ public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(0.0f)
         .addVertex(1.0f, 0.0f, 0.0f)
-        .monochrome(0.0f)
         .addVertex(0.0f, 1.0f, 0.0f)
         .monochrome(1.0f)
         .addVertex(1.0f, 1.0f, 0.0f)
-        .monochrome(1.0f)
         .build();
     }
 
     //LAB_80108e84
     for(int i = 0; i < this.count_00; i++) {
       if(Math.abs(Math.abs(rainArray[i].pos0_02.y + rainArray[i].pos0_02.x) - Math.abs(rainArray[i].pos1_06.y + rainArray[i].pos1_06.x)) <= 180) {
-        final float offsetX = GPU.getOffsetX() - 256;
+        final float offsetX = GPU.getOffsetX() - 256 * this.displayWidthModifier;
         final float offsetY = GPU.getOffsetY() - 128;
         rainArray[i].pos0_02.add(offsetX, offsetY);
         rainArray[i].pos1_06.add(offsetX, offsetY);
@@ -79,10 +79,8 @@ public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
         rainArray[i].pos0_02.sub(offsetX, offsetY);
         rainArray[i].pos1_06.sub(offsetX, offsetY);
       }
-
       //LAB_80108f6c
     }
-
     //LAB_80108f84
   }
 

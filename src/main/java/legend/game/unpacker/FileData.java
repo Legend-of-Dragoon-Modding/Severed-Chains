@@ -94,6 +94,7 @@ public class FileData {
 
   public void read(final byte[] dest) {
     this.read(0, dest, 0, Math.min(this.size(), dest.length));
+    this.read(0, dest, 0, this.size());
   }
 
   public void write(final int srcOffset, final byte[] src, final int destOffset, final int size) {
@@ -318,7 +319,7 @@ public class FileData {
     return new String(this.data, this.offset + offset + lengthSize, length, StandardCharsets.US_ASCII);
   }
 
-  public String readByte(final IntRef offset, final int lengthSize) {
+  public String readAscii(final IntRef offset, final int lengthSize) {
     final String read = this.readAscii(offset.get(), lengthSize);
     offset.add(lengthSize + read.length());
     return read;
@@ -344,7 +345,8 @@ public class FileData {
   }
 
   public RegistryId readRegistryId(final int offset) {
-    return new RegistryId(this.readAscii(offset));
+    // Replace the old core mod ID with the new one. Dunno how long we'll keep this. Maybe forever.
+    return new RegistryId(this.readAscii(offset).replace("lod-core", "lod_core"));
   }
 
   public RegistryId readRegistryId(final IntRef offset) {

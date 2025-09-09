@@ -1,0 +1,14 @@
+Widescreen patch
+Crystal Palace, Queen Theresa kidnapping
+Switch camera offset to y-axis so background isn't visible between fades
+--- original
++++ modified
+@@ -472,7 +472,7 @@
+ gosub inl[:LABEL_0]
+ gosub inl[:LABEL_21]
+ call 264, 0x2, 0x0, 0x0
+-call 258, 0x180, 0x14
++call 258, 0, 0x180
+ call 6, 0x4, 0xa
+ gosub inl[:LABEL_20]
+ call 6, 0x1, 0xa

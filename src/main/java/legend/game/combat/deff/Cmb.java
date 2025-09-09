@@ -8,6 +8,7 @@ import legend.game.types.Keyframe0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import org.joml.Math;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -146,23 +147,25 @@ public class Cmb extends TmdAnimationFile {
     //LAB_800ddfe4
     //LAB_800de158
     if(isInterpolationFrame != 0 && model.ub_a3 == 0 && a1_0 != (model.totalFrames_9a >> 1) - 1) { // Interpolation frame
+      final Quaternionf q0 = new Quaternionf();
+      final Quaternionf q1 = new Quaternionf();
+      final Vector3f translation = new Vector3f();
+
       //LAB_800de050
       for(int i = 0; i < count; i++) {
         final Cmb.SubTransforms08 subTransforms = this.subTransforms[a1_0][i];
         final Keyframe0c modelTransforms = cmbAnim.transforms_08[i];
 
         final MV modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
-        modelPartMatrix.rotationZYX(modelTransforms.rotate_00);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
-        final Vector3f rotation = new Vector3f();
-        rotation.set(modelTransforms.rotate_00).add(subTransforms.rot_01);
+        modelTransforms.translate_06.add(subTransforms.trans_05, translation);
 
-        final MV translation = new MV();
-        translation.rotationZYX(rotation);
-        translation.transfer.set(modelTransforms.translate_06).add(subTransforms.trans_05);
+        q0.rotationZYX(modelTransforms.rotate_00.z, modelTransforms.rotate_00.y, modelTransforms.rotate_00.x);
+        q1.rotationZYX(modelTransforms.rotate_00.z + subTransforms.rot_01.z, modelTransforms.rotate_00.y + subTransforms.rot_01.y, modelTransforms.rotate_00.x + subTransforms.rot_01.x);
 
-        this.lerp(modelPartMatrix, translation, 0.5f);
+        this.lerp(q0, q1, modelPartMatrix.transfer, translation, 0.5f);
+        modelPartMatrix.rotation(q0);
       }
     } else {
       //LAB_800de164
@@ -187,18 +190,18 @@ public class Cmb extends TmdAnimationFile {
   }
 
   @Method(0x800dd15cL)
-  private MV lerp(final MV a0, final MV a1, final float ratio) {
+  private Quaternionf lerp(final Quaternionf q0, final Quaternionf q1, final Vector3f v0, final Vector3f v1, final float ratio) {
     if(ratio > 0) {
-      final float v1 = 1.0f - ratio;
-      a0.lerp(a1, ratio);
-      a0.transfer.x = a0.transfer.x * v1 + a1.transfer.x * ratio;
-      a0.transfer.y = a0.transfer.y * v1 + a1.transfer.y * ratio;
-      a0.transfer.z = a0.transfer.z * v1 + a1.transfer.z * ratio;
+      final float recipRatio = 1.0f - ratio;
+      q0.nlerp(q1, ratio);
+      v0.x = v0.x * recipRatio + v1.x * ratio;
+      v0.y = v0.y * recipRatio + v1.y * ratio;
+      v0.z = v0.z * recipRatio + v1.z * ratio;
     }
 
     //LAB_800dd4b8
     //LAB_800dd4bc
-    return a0;
+    return q0;
   }
 
   public static class SubTransforms08 {

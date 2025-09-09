@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -2473,7 +2473,7 @@
+ jmp_cmp &, 0x2, stor[stor[stor[0], 9], 7], inl[:LABEL_169]
+ yield
+ incr stor[8]
+-jmp_cmp !=, 0x3, stor[8], inl[:LABEL_168]
++jmp_cmp !=, var[35], stor[8], inl[:LABEL_168]
+ return
+ LABEL_169:
+ or 0x4, var[45][31]

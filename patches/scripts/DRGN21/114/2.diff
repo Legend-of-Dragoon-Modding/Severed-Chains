@@ -1,0 +1,14 @@
+Widescreen patch
+Hellena Prison - cutscene before Fruegel (II): New start position off-screen for Dart
+--- original
++++ modified
+@@ -85,8 +85,7 @@
+ call 111, 0x1
+ call 106, 0x0
+ call 103, stor[0], 0x0, 0x400, 0x0
+-mov 0x6, stor[24]
+-gosub inl[:LABEL_1]
++call 101, stor[0], 0x195, 0, 0xffffff78
+ call 311, stor[0]
+ mov 0xfffff448, stor[8]
+ mov 0xfffff448, stor[9]

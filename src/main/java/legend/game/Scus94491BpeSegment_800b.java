@@ -18,7 +18,6 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.FullScreenEffect;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
@@ -54,7 +53,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static int drgnBinIndex_800bc058;
 
-  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
+  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[108];
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
   public static EngineStateType<?> postBattleEngineState_800bc91c;
@@ -81,6 +80,7 @@ public final class Scus94491BpeSegment_800b {
    * </ul>
    */
   public static int battleFlags_800bc960;
+  public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
   public static int[] livingCharIds_800bc968 = new int[3];
   /**
@@ -103,17 +103,19 @@ public final class Scus94491BpeSegment_800b {
   public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
-   * 0x1 - menu sounds
-   * 0x2 - submap sounds
-   * 0x4 - battle cutscene sounds
-   * 0x8 - battle character sounds
-   * 0x10 - battle phase sounds
-   * 0x20 - battle monster sounds
-   * 0x40 - battle DEFF sounds
-   * 0x80 - music
-   * 0x4000 - victory music
-   * 0x8000 - world map destination sounds
-   * 0x10000 - different battle character attack sounds?
+   * <ul>
+   *   <li>0x1 - menu sounds</li>
+   *   <li>0x2 - submap sounds</li>
+   *   <li>0x4 - battle cutscene sounds</li>
+   *   <li>0x8 - battle character sounds</li>
+   *   <li>0x10 - battle phase sounds</li>
+   *   <li>0x20 - battle monster sounds</li>
+   *   <li>0x40 - battle DEFF sounds</li>
+   *   <li>0x80 - music</li>
+   *   <li>0x4000 - victory music</li>
+   *   <li>0x8000 - world map destination sounds</li>
+   *   <li>0x10000 - different battle character attack sounds?</li>
+   * </ul>
    */
   public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 
@@ -131,8 +133,8 @@ public final class Scus94491BpeSegment_800b {
   public static BackgroundMusic victoryMusic;
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
-  public static int _800bd710;
-  public static int _800bd714;
+  public static int dissolveRowCount_800bd710;
+  public static int dissolveIterationsPerformed_800bd714;
   public static int battleDissolveTicks;
 
   public static int _800bd740;
@@ -170,8 +172,6 @@ public final class Scus94491BpeSegment_800b {
   public static final int[] characterIndices_800bdbb8 = new int[9];
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
-  public static InventoryMenuState inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
-
   public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
   /**
@@ -185,24 +185,6 @@ public final class Scus94491BpeSegment_800b {
   public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static McqHeader gameOverMcq_800bdc3c;
-
-  /**
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int inventoryJoypadInput_800bdc44;
 
   public static Renderable58 renderablePtr_800bdc5c;
 
@@ -227,69 +209,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static float rumbleDampener_800bee80;
 
-  /**
-   * Remains set for the duration of the button press
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int input_800bee90;
-  /**
-   * Only set for an instant after buttons are pressed
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int press_800bee94;
-  /**
-   * Only set for an instant after buttons are pressed, but repeats while button is held
-   * <ul>
-   *   <li>0x01 - L2</li>
-   *   <li>0x02 - R2</li>
-   *   <li>0x04 - L1</li>
-   *   <li>0x08 - R1</li>
-   *   <li>0x10 - Triangle</li>
-   *   <li>0x20 - Cross</li>
-   *   <li>0x40 - Circle</li>
-   *   <li>0x80 - Square</li>
-   *   <li>0x1000 - Up</li>
-   *   <li>0x2000 - Right</li>
-   *   <li>0x4000 - Down</li>
-   *   <li>0x8000 - Left</li>
-   * </ul>
-   */
-  public static int repeat_800bee98;
-  public static int analogAngle_800bee9c;
-
   public static int _800beea4;
 
   public static int _800beeac;
-
-  public static int analogMagnitude_800beeb4;
-
-  public static int analogInput_800beebc;
 
   public static int continentIndex_800bf0b0;
 

@@ -1,0 +1,129 @@
+--- original
++++ modified
+@@ -2248,6 +2248,7 @@
+ or 0x8000, stor[7]
+ or 0x20, stor[7]
+ mov 0x1, var[45][244]
++gosub inl[:SET_SLOT_0_CHAR]
+ LABEL_137:
+ wait_cmp &, 0x8, stor[7]
+ gosub inl[:LABEL_8]
+@@ -2259,6 +2260,7 @@
+ wait stor[8]
+ call 203, 0x0
+ gosub inl[:LABEL_145]
++gosub inl[:DEALLOC_DART]
+ call 200, 0x0, 0x1121, 0xa0, 0x32, inl[:LABEL_150], inl[:LABEL_151], inl[:LABEL_154 + inl[:LABEL_154 + 0x5]]
+ mov 0x3c, stor[8]
+ wait stor[8]
+@@ -2342,6 +2344,9 @@
+ return
+ LABEL_145:
+ mov var[34][0], stor[9]
++jmp_cmp ==, inl[:SLOT_0_CHAR], 0x0, inl[:SKIP_DART_LOAD]
++gosub inl[:LOAD_DART]
++SKIP_DART_LOAD:
+ jmp_cmp &, 0x40, stor[stor[stor[0], 9], 7], inl[:LABEL_146]
+ gosub inl[:LABEL_54]
+ return
+@@ -2719,3 +2724,100 @@
+ add 0xa, stor[18]
+ mov stor[10], var[45][stor[18]]
+ jmp inl[:LABEL_159]
++ASSETS:
++data 0x3
++data 0xd
++data 0x79
++data 0x70
++DEALLOC_DART:
++jmp_cmp ==, inl[:SLOT_0_CHAR], 0x0, inl[:END_DEALLOC]
++call 358, var[45][3]
++deallocate_other var[45][13]
++jmp_cmp ==, var[35], 0x2, inl[:END_DEALLOC]
++call 128, var[34][0], 0x900, 0x0, 0x0
++END_DEALLOC:
++return
++LOAD_DART:
++gosub inl[:LOAD_DART_ASSETS]
++gosub inl[:WAIT_ASSET_LOAD]
++call 132, var[45][13], 0x400
++call 128, var[45][13], 0x900, 0x0, 0x0
++jmp_cmp ==, var[35], 0x2, inl[:END_LOAD]
++call 128, var[34][0], 0x1000, 0x0, 0x0
++END_LOAD:
++return
++LOAD_DART_ASSETS:
++call 600, stor[12]
++mov 0x0, stor[stor[stor[0], 12], 14]
++mov 0x1, stor[stor[stor[0], 12], 24]
++call 618, stor[12], inl[:ASSET_LOADER]
++return
++ASSET_LOADER:
++mov 0x0, var[45][17]
++shl 0x2, stor[14]
++ASSET_LOADER_MAIN:
++yield
++mov inl[:ASSETS[stor[14]]], stor[19]
++incr stor[14]
++mov inl[:ASSETS[stor[14]]], stor[13]
++incr stor[14]
++mov inl[:ASSETS[stor[14]]], stor[16]
++incr stor[14]
++mov inl[:ASSETS[stor[14]]], stor[18]
++incr stor[14]
++jmp_cmp ==, stor[13], stor[16], inl[:TEXTURE_LOADER]
++jmp_cmp ==, 0x0, stor[16], inl[:ANIM_LOADER]
++call 357, 0xffffffff, stor[8]
++call 354, 0x0, stor[18], stor[9]
++call 355, stor[9]
++call 361, stor[8], stor[9]
++incr stor[18]
++call 354, 0x0, stor[18], stor[9]
++call 355, stor[9]
++call 364, stor[8], stor[9]
++call 356, stor[9]
++call 354, 0x0, stor[16], stor[9]
++call 355, stor[9]
++call 363, stor[8], 0x0, stor[9]
++yield
++call 360, 0x10, stor[8], stor[10]
++call 138, stor[10], 0x0
++yield
++call 524, stor[10], 0x8
++call 517, stor[10], 0x1800, 0x1800
++mov stor[8], var[45][stor[19]]
++mov stor[10], var[45][stor[13]]
++decr stor[24]
++jmp_cmp !=, stor[24], 0x0, inl[:ASSET_LOADER_MAIN]
++mov 0x4, var[45][17]
++deallocate
++ANIM_LOADER:
++mov var[45][stor[19]], stor[8]
++call 354, 0x0, stor[18], stor[9]
++call 355, stor[9]
++call 363, stor[8], stor[13], stor[9]
++decr stor[24]
++jmp_cmp !=, stor[24], 0x0, inl[:ASSET_LOADER_MAIN]
++mov 0x4, var[45][17]
++deallocate
++TEXTURE_LOADER:
++call 354, 0x0, stor[18], stor[9]
++call 355, stor[9]
++call 364, 0xffffffff, stor[9]
++call 356, stor[9]
++decr stor[24]
++jmp_cmp !=, stor[24], 0x0, inl[:ASSET_LOADER_MAIN]
++mov 0x4, var[45][17]
++deallocate
++WAIT_ASSET_LOAD:
++yield
++jmp_cmp !=, var[45][17], 0x4, inl[:WAIT_ASSET_LOAD]
++return
++SET_SLOT_0_CHAR:
++call 167, var[34][0], inl[:SLOT_0_CHAR]
++jmp_cmp !=, inl[:SLOT_0_CHAR], 0x0, inl[:END_SLOT_0_CHAR]
++mov var[34][0], var[45][13]
++END_SLOT_0_CHAR:
++return
++SLOT_0_CHAR:
++data 0xffffffff

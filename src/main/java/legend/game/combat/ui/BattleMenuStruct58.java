@@ -10,9 +10,8 @@ import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
 import legend.game.combat.environment.BattleMenuHighlightMetrics12;
 import legend.game.combat.environment.BattleMenuIconMetrics08;
 import legend.game.combat.environment.BattleMenuTextMetrics08;
-import legend.game.types.Translucency;
 
-import javax.annotation.Nullable;
+import java.util.Arrays;
 
 import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
 
@@ -32,7 +31,7 @@ public class BattleMenuStruct58 {
     new BattleItemMenuArrowUvMetrics06(184, 64, 7, 7, 1),
   };
 
-  private static final BattleMenuIconMetrics08[] battleMenuIconMetrics_800fb674 = {
+  public static final BattleMenuIconMetrics08[] battleMenuIconMetrics_800fb674 = {
     new BattleMenuIconMetrics08(112, 64, 28, 0),
     new BattleMenuIconMetrics08(80, 64, 25, -1),
     new BattleMenuIconMetrics08(64, 64, 24, 1),
@@ -85,6 +84,7 @@ public class BattleMenuStruct58 {
   public short iconCount_0e;
   /**
    * <ul>
+   *   <li>Lower 4 bits are selected action - defend, transform, d-magic, attack, item, run, special, ?, d-attack</li>
    *   <li>0x80 - disabled</li>
    * </ul>
    */
@@ -104,23 +104,24 @@ public class BattleMenuStruct58 {
   public int cameraPositionSwitchTicksRemaining_44;
   public int target_48;
   public boolean displayTargetArrowAndName_4c;
+  public boolean targetArrowHiding;
   public int targetType_50;
   public int combatantIndex_54;
 
   public final MV transforms = new MV();
-  public final Obj[][] actionIconObj = new Obj[9][3];
-  public final Obj[][] dragoonIconObj = new Obj[10][3];
-  public final Obj[] actionIconTextObj = new Obj[9];
-  public Obj actionDisabledObj;
-  public final Obj[] divineSpiritOverlay = new Obj[2];
-  public final Obj[] actionMenuBackground = new Obj[9];
-  public Obj highlight;
-  public final Obj[] targetArrows = new Obj[3];
+  public Obj menuObj;
+  public int actionDisabledObjOffset;
+  public int divineSpiritObjOffset;
+  public int actionIconObjOffset;
+  public int actionIconTextObjOffset;
+  public int actionDragoonIconObjOffset;
+  public int actionMenuBackgroundObjOffset;
+  public int highlightObjOffset;
+  public int targetArrowsObjOffset;
 
-  /** These three are related to targeting */
-  public int _800c697c;
-  public int _800c697e;
-  public int _800c6980;
+  public int targetedSlot_800c697c;
+  public int targetedMonsterSlot_800c697e;
+  public int targetedPlayerSlot_800c6980;
 
   private final BattleHud hud;
 
@@ -161,20 +162,26 @@ public class BattleMenuStruct58 {
     this.targetType_50 = 0;
     this.combatantIndex_54 = 0;
 
-    this._800c697e = 0;
-    this._800c6980 = 0;
+    this.targetedMonsterSlot_800c697e = 0;
+    this.targetedPlayerSlot_800c6980 = 0;
   }
 
   public void initIconObjs() {
-    if(this.actionDisabledObj == null) {
+    if(this.menuObj == null) {
+      final QuadBuilder builder = new QuadBuilder("Battle menu");
+
       // "X" icon over attack icon if attack is disabled
-      this.actionDisabledObj = this.hud.buildBattleMenuElement("Action Icon Disabled", 0, 0, 96, 112, 16, 16, 0x19, null);
+      this.actionDisabledObjOffset = builder.currentQuadIndex() * 4;
+      this.hud.buildBattleMenuElement(builder, 0, 0, 96, 112, 16, 16, 0x19);
 
       // Divine dragoon spirit overlay
+      this.divineSpiritObjOffset = builder.currentQuadIndex() * 4;
       for(int i = 0; i < 2; i++) {
-        this.divineSpiritOverlay[i] = this.hud.buildBattleMenuElement("Action Icon Divine Dragoon Spirit Overlay", 4, 0, 80 + i * 8, 112, 8, 16, 0x98, Translucency.B_PLUS_F);
+        this.hud.buildBattleMenuElement(builder, 4, 0, 80 + i * 8, 112, 8, 16, 0x98);
       }
 
+      // Combat menu icons
+      this.actionIconObjOffset = builder.currentQuadIndex() * 4;
       for(int iconId = 0; iconId < 9; iconId++) {
         final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674[iconId];
 
@@ -184,15 +191,19 @@ public class BattleMenuStruct58 {
           final int vOffset = battleMenuIconVOffsets_800fb6f4[iconId][iconState];
           final int iconH = battleMenuIconHeights_800fb6bc[iconId][iconState];
 
-          // Combat menu icons
-          this.actionIconObj[iconId][iconState] = this.hud.buildBattleMenuElement("Action Icon " + iconId + " state " + iconState, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06));
+          this.hud.buildBattleMenuElement(builder, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset);
         }
-
-        // Selected combat menu icon text
-        final BattleMenuTextMetrics08 textMetrics = battleMenuTextMetrics_800fb72c[iconId];
-        this.actionIconTextObj[iconId] = this.hud.buildBattleMenuElement("Action Icon Text " + iconId, -textMetrics.w_04 / 2 + 8, -24, textMetrics.u_00, textMetrics.v_02, textMetrics.w_04, 8, textMetrics.clutOffset_06, null);
       }
 
+      // Selected combat menu icon text
+      this.actionIconTextObjOffset = builder.currentQuadIndex() * 4;
+      for(int iconId = 0; iconId < 9; iconId++) {
+        final BattleMenuTextMetrics08 textMetrics = battleMenuTextMetrics_800fb72c[iconId];
+        this.hud.buildBattleMenuElement(builder, -textMetrics.w_04 / 2 + 8, -24, textMetrics.u_00, textMetrics.v_02, textMetrics.w_04, 8, textMetrics.clutOffset_06);
+      }
+
+      // Combat menu dragoon icons
+      this.actionDragoonIconObjOffset = builder.currentQuadIndex() * 4;
       for(int spiritId = 0; spiritId < 10; spiritId++) {
         final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674[1];
 
@@ -202,27 +213,30 @@ public class BattleMenuStruct58 {
           final int vOffset = battleMenuIconVOffsets_800fb6f4[1][iconState];
           final int iconH = battleMenuIconHeights_800fb6bc[1][iconState];
 
-          // Combat menu icons
-          this.dragoonIconObj[spiritId][iconState] = this.hud.buildBattleMenuElement("Spirit Icon " + spiritId + " state " + iconState, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06));
+          this.hud.buildBattleMenuElement(builder, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset);
         }
       }
 
-      this.actionMenuBackground[0] = this.hud.buildBattleMenuBackground("Action Background 0", battleMenuBackgroundMetrics_800fb5dc[0], 0, 0, 1, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc[0].uvShiftType_04);
+      this.actionMenuBackgroundObjOffset = builder.currentQuadIndex() * 4;
+      this.hud.buildBattleMenuBackground(builder, battleMenuBackgroundMetrics_800fb5dc[0], 0, 0, 1, 2, 0x2b, battleMenuBackgroundMetrics_800fb5dc[0].uvShiftType_04);
 
       for(int i = 1; i < 9; i++) {
-        this.actionMenuBackground[i] = this.hud.buildBattleMenuBackground("Action Background " + i, battleMenuBackgroundMetrics_800fb5dc[i], 0, 0, 1, 1, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc[i].uvShiftType_04);
+        this.hud.buildBattleMenuBackground(builder, battleMenuBackgroundMetrics_800fb5dc[i], 0, 0, 1, 1, 0x2b, battleMenuBackgroundMetrics_800fb5dc[i].uvShiftType_04);
       }
 
       // Red glow underneath selected menu item
-      this.highlight = this.buildBattleMenuSelectionHighlight("Action UI Highlight", battleMenuHighlightMetrics_800c71bc, 0xc, Translucency.B_PLUS_F, 1.0f);
+      this.highlightObjOffset = builder.currentQuadIndex() * 4;
+      this.buildBattleMenuSelectionHighlight(builder, battleMenuHighlightMetrics_800c71bc, 0xc, 1.0f);
 
-      for(int i = 0; i < this.targetArrows.length; i++) {
-        final QuadBuilder builder = new QuadBuilder("Target Arrow " + i)
+      this.targetArrowsObjOffset = builder.currentQuadIndex() * 4;
+      for(int i = 0; i < 3; i++) {
+        builder
+          .add()
           .bpp(Bpp.BITS_4)
-          .translucency(Translucency.HALF_B_PLUS_HALF_F)
           .vramPos(704, 256)
-          .monochrome(0.5f)
-          .size(16, 24)
+          .monochrome(1.0f)
+          .posSize(16, 24)
+          .uvSize(16, 23)
           .uv(240, 0);
 
         if(i == 0) {
@@ -232,16 +246,17 @@ public class BattleMenuStruct58 {
         } else if(i == 2) {
           builder.clut(736, 496);
         }
-
-        this.targetArrows[i] = builder.build();
       }
+
+      this.menuObj = builder.build();
     }
   }
 
   @Method(0x800f7210L)
-  private Obj buildBattleMenuSelectionHighlight(final String name, final BattleMenuHighlightMetrics12 highlightMetrics, final int clutOffset, @Nullable final Translucency transparencyMode, final float colour) {
+  private void buildBattleMenuSelectionHighlight(final QuadBuilder builder, final BattleMenuHighlightMetrics12 highlightMetrics, final int clutOffset, final float colour) {
     //LAB_800f7294
-    final QuadBuilder builder = new QuadBuilder(name)
+    builder
+      .add()
       .monochrome(colour)
       .pos(highlightMetrics.xBase_00, highlightMetrics.yBase_02, 0.0f)
       .posSize(highlightMetrics.w_04, highlightMetrics.h_06);
@@ -280,65 +295,24 @@ public class BattleMenuStruct58 {
       .bpp(Bpp.BITS_4)
       .clut(clutX, clutY)
       .vramPos(704, 256);
-
-    if(transparencyMode != null) {
-      builder.translucency(transparencyMode);
-    }
-
-    return builder.build();
   }
 
   public void delete() {
-    for(int i = 0; i < this.actionIconObj.length; i++) {
-      for(int state = 0; state < this.actionIconObj[i].length; state++) {
-        if(this.actionIconObj[i][state] != null) {
-          this.actionIconObj[i][state].delete();
-          this.actionIconObj[i][state] = null;
-        }
-      }
-
-      if(this.actionIconTextObj[i] != null) {
-        this.actionIconTextObj[i].delete();
-        this.actionIconTextObj[i] = null;
-      }
-
-      if(this.actionMenuBackground[i] != null) {
-        this.actionMenuBackground[i].delete();
-        this.actionMenuBackground[i] = null;
-      }
+    if(this.menuObj != null) {
+      this.menuObj.delete();
+      this.menuObj = null;
     }
+  }
 
-    for(int i = 0; i < this.dragoonIconObj.length; i++) {
-      for(int state = 0; state < this.dragoonIconObj[i].length; state++) {
-        if(this.dragoonIconObj[i][state] != null) {
-          this.dragoonIconObj[i][state].delete();
-          this.dragoonIconObj[i][state] = null;
-        }
-      }
-    }
+  public boolean isIconEnabled(final int value) {
+    return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
+      .anyMatch(i -> i == value);
+  }
 
-    if(this.actionDisabledObj != null) {
-      this.actionDisabledObj.delete();
-      this.actionDisabledObj = null;
-    }
-
-    for(int i = 0; i < 2; i++) {
-      if(this.divineSpiritOverlay[i] != null) {
-        this.divineSpiritOverlay[i].delete();
-        this.divineSpiritOverlay[i] = null;
-      }
-    }
-
-    if(this.highlight != null) {
-      this.highlight.delete();
-      this.highlight = null;
-    }
-
-    for(int i = 0; i < this.targetArrows.length; i++) {
-      if(this.targetArrows[i] != null) {
-        this.targetArrows[i].delete();
-        this.targetArrows[i] = null;
-      }
-    }
+  public int retrieveIconEnabled(final int... values) {
+    return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
+      .filter(i -> Arrays.stream(values).anyMatch(value -> value == i))
+      .findFirst()
+      .orElse(0);
   }
 }

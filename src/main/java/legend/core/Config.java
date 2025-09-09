@@ -1,5 +1,9 @@
 package legend.core;
 
+import legend.game.modding.coremod.CoreMod;
+import legend.game.saves.BoolConfigEntry;
+import legend.game.saves.ConfigStorage;
+import legend.game.saves.ConfigStorageLocation;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -16,6 +20,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static legend.core.GameEngine.CONFIG;
+
 public final class Config {
   private Config() {
   }
@@ -28,9 +34,8 @@ public final class Config {
 
   static {
     properties.setProperty("low_memory_unpacker", "false");
-    properties.setProperty("window_width", "640");
-    properties.setProperty("window_height", "480");
-    properties.setProperty("unlock_party", "false");
+    properties.setProperty("window_width", "960");
+    properties.setProperty("window_height", "720");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
@@ -75,6 +80,7 @@ public final class Config {
   }
 
   private static int gameSpeedMultiplier = 1;
+  private static int loadedGameSpeedMultiplier = 1;
 
   public static boolean lowMemoryUnpacker() {
     return readBool("low_memory_unpacker", false);
@@ -90,10 +96,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 480, 1, Integer.MAX_VALUE);
-  }
-
-  public static boolean unlockParty() {
-    return readBool("unlock_party", false);
   }
 
   public static boolean changeBattleRgb() {
@@ -135,6 +137,14 @@ public final class Config {
   public static void setGameSpeedMultiplier(final int multiplier) {
     gameSpeedMultiplier = multiplier;
     properties.setProperty("game_speed_multiplier", String.valueOf(multiplier));
+  }
+
+  public static int getLoadedGameSpeedMultiplier() {
+    return loadedGameSpeedMultiplier;
+  }
+
+  public static void setLoadedGameSpeedMultiplier(final int multiplier) {
+    loadedGameSpeedMultiplier = multiplier;
   }
 
   public static Vector3f getBattleRgb() {
@@ -234,6 +244,13 @@ public final class Config {
     properties.setProperty("textbox_colour_mode", String.valueOf(value));
   }
 
+  public static void switchFullScreen() {
+    final BoolConfigEntry fullScreenConfigEntry = CoreMod.FULLSCREEN_CONFIG.get();
+    final boolean isFullScreen = CONFIG.getConfig(fullScreenConfigEntry);
+    CONFIG.setConfig(fullScreenConfigEntry, !isFullScreen);
+    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+  }
+
   public static int getTextBoxRgb(final int textbox) {
     final int[] rgbArray = {
       readInt("textbox_colour" + textbox + "_r", 0, 0, 255),
@@ -301,6 +318,7 @@ public final class Config {
   public static void load() throws IOException {
     properties.load(Files.newInputStream(path, StandardOpenOption.READ));
     gameSpeedMultiplier = readInt("game_speed_multiplier", 1, 1, 16);
+    loadedGameSpeedMultiplier = gameSpeedMultiplier;
   }
 
   public static void save() throws IOException {

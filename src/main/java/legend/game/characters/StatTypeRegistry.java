@@ -5,6 +5,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 public class StatTypeRegistry extends MutableRegistry<StatType<?>> {
   public StatTypeRegistry() {
-    super(new RegistryId("lod-core", "stats"));
+    super(new RegistryId("lod_core", "stats"));
   }
 }

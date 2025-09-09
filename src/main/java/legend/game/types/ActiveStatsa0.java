@@ -48,7 +48,7 @@ public class ActiveStatsa0 {
   /** short */
   public int equipmentMpPerMagicalHit_54;
   /** short */
-  public int equipmentSpecial2Flag80_56;
+  public int equipmentEscapeBonus_56;
   /** short */
   public int equipmentHpRegen_58;
   /** short */
@@ -175,7 +175,7 @@ public class ActiveStatsa0 {
     this.equipmentMpPerPhysicalHit_50 = other.equipmentMpPerPhysicalHit_50;
     this.equipmentSpPerMagicalHit_52 = other.equipmentSpPerMagicalHit_52;
     this.equipmentMpPerMagicalHit_54 = other.equipmentMpPerMagicalHit_54;
-    this.equipmentSpecial2Flag80_56 = other.equipmentSpecial2Flag80_56;
+    this.equipmentEscapeBonus_56 = other.equipmentEscapeBonus_56;
     this.equipmentHpRegen_58 = other.equipmentHpRegen_58;
     this.equipmentMpRegen_5a = other.equipmentMpRegen_5a;
     this.equipmentSpRegen_5c = other.equipmentSpRegen_5c;

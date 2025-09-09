@@ -1,9 +1,10 @@
 package legend.game.submap;
 
+import legend.core.QueuedModelStandard;
+import legend.core.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
@@ -53,11 +54,9 @@ public class AttachedSobjEffect {
   private final LawPodTrailData18[] lawPodTrailsData_800f9e7c = new LawPodTrailData18[8];
 
   private Obj tmdDust;
-  private MeshObj footprints;
-  private MeshObj quadDust;
+  private Obj footprints;
+  private Obj quadDust;
   private final MV transforms = new MV();
-
-  // TODO Still need to implement law pod trail in opengl, but requires custom shader
 
   @Method(0x800f0370L)
   public void initAttachedSobjEffects() {
@@ -72,48 +71,34 @@ public class AttachedSobjEffect {
       this.footprints = new PolyBuilder("Footprints", GL_TRIANGLE_STRIP)
         .bpp(Bpp.BITS_4)
         .translucency(Translucency.B_MINUS_F)
+        .addVertex(-12.0f, 0.0f, - 8.0f)
         .clut(992, 472)
         .vramPos(960, 256)
-        .addVertex(-12.0f, 0.0f, - 8.0f)
         .uv(96, 0)
         .monochrome(1.0f)
         .addVertex(- 2.0f, 0.0f, - 8.0f)
         .uv(112, 0)
-        .monochrome(1.0f)
         .addVertex(-12.0f, 0.0f,   8.0f)
         .uv(96, 32)
-        .monochrome(1.0f)
         .addVertex(- 2.0f, 0.0f,   8.0f)
         .uv(112, 32)
-        .monochrome(1.0f)
         .addVertex(  2.0f, 0.0f, - 8.0f)
         .uv(112, 0)
-        .monochrome(1.0f)
         .addVertex( 12.0f, 0.0f, - 8.0f)
         .uv(128, 0)
-        .monochrome(1.0f)
         .addVertex(  2.0f, 0.0f,   8.0f)
         .uv(112, 32)
-        .monochrome(1.0f)
         .addVertex( 12.0f, 0.0f,   8.0f)
         .uv(128, 32)
-        .monochrome(1.0f)
         .addVertex(-10.0f, 0.0f, -22.0f)
-        .clutOverride(960, 464)
+        .clut(960, 464)
         .uv(0, 64)
-        .monochrome(1.0f)
         .addVertex( 10.0f, 0.0f, -22.0f)
-        .clutOverride(960, 464)
         .uv(24, 64)
-        .monochrome(1.0f)
         .addVertex(-10.0f, 0.0f,  22.0f)
-        .clutOverride(960, 464)
         .uv(0, 88)
-        .monochrome(1.0f)
         .addVertex( 10.0f, 0.0f,  22.0f)
-        .clutOverride(960, 464)
         .uv(24, 88)
-        .monochrome(1.0f)
         .build();
     }
 
@@ -383,8 +368,9 @@ public class AttachedSobjEffect {
         tmdGp0Tpage_1f8003ec = this.tmdDustModel_800d4d40.tpage_108;
         GsGetLw(this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04, inst.transforms);
 
-        RENDERER.queueModel(this.tmdDust, inst.transforms)
+        RENDERER.queueModel(this.tmdDust, inst.transforms, QueuedModelTmd.class)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+          .depthOffset(this.tmdDustModel_800d4d40.zOffset_a0)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -414,7 +400,7 @@ public class AttachedSobjEffect {
           }
         }
 
-        RENDERER.queueModel(this.footprints, inst.transforms)
+        RENDERER.queueModel(this.footprints, inst.transforms, QueuedModelStandard.class)
           .vertices(inst.textureIndex_02 * 4, 4)
           .monochrome(inst.brightness_48)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120);
@@ -447,7 +433,7 @@ public class AttachedSobjEffect {
 
         inst.transforms.scaling(inst.size_08);
         inst.transforms.transfer.set(GPU.getOffsetX() + screenOffsetX - inst.x_18 + inst.sxy0_20.x, GPU.getOffsetY() + screenOffsetY - inst.y_1c + inst.sxy0_20.y, inst.z_4c * 4.0f);
-        RENDERER.queueOrthoModel(this.quadDust, inst.transforms)
+        RENDERER.queueOrthoModel(this.quadDust, inst.transforms, QueuedModelStandard.class)
           .monochrome(inst.brightness_48);
         inst.tick_04++;
       } else {
@@ -495,16 +481,10 @@ public class AttachedSobjEffect {
           .addVertex(segment.originVerts01_24.vert0_00.x, segment.originVerts01_24.vert0_00.y, segment.z_20 - averageZ)
           .rgb(segment.colour_14)
           .addVertex(segment.originVerts01_24.vert1_08.x, segment.originVerts01_24.vert1_08.y, segment.z_20 - averageZ)
-          .rgb(segment.colour_14)
           .addVertex(segment.endpointVerts23_28.vert0_00.x, segment.endpointVerts23_28.vert0_00.y, segment.z_20 - averageZ)
-          .rgb(segment.colour_14)
           .addVertex(segment.originVerts01_24.vert1_08.x, segment.originVerts01_24.vert1_08.y, segment.z_20 - averageZ)
-          .rgb(segment.colour_14)
           .addVertex(segment.endpointVerts23_28.vert0_00.x, segment.endpointVerts23_28.vert0_00.y, segment.z_20 - averageZ)
-          .rgb(segment.colour_14)
-          .addVertex(segment.endpointVerts23_28.vert1_08.x, segment.endpointVerts23_28.vert1_08.y, segment.z_20 - averageZ)
-          .rgb(segment.colour_14)
-        ;
+          .addVertex(segment.endpointVerts23_28.vert1_08.x, segment.endpointVerts23_28.vert1_08.y, segment.z_20 - averageZ);
 
         segment.tick_00++;
       } else {
@@ -517,7 +497,7 @@ public class AttachedSobjEffect {
     obj.delete();
 
     this.transforms.transfer.set(GPU.getOffsetX() + screenOffsetX, GPU.getOffsetY() + screenOffsetY, averageZ);
-    RENDERER.queueOrthoModel(obj, this.transforms);
+    RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
   }
 
   @Method(0x800f0440L)

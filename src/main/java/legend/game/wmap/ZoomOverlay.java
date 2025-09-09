@@ -1,6 +1,6 @@
 package legend.game.wmap;
 
-import legend.core.RenderEngine;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
@@ -37,7 +37,7 @@ public class ZoomOverlay {
         .size(zoomUiMetrics_800ef104[i].w_04, zoomUiMetrics_800ef104[i].h_05)
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03)
         .translucency(Translucency.HALF_B_PLUS_HALF_F)
-        .monochrome(0.5f);
+        .monochrome(1.0f);
     }
 
     for(; i < 7; i++) {
@@ -51,9 +51,9 @@ public class ZoomOverlay {
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03);
 
         if(i >= 5) {
-          builderOpaque.monochrome(0.5f);
+          builderOpaque.monochrome(1.0f);
         } else {
-          builderOpaque.monochrome(0.25f);
+          builderOpaque.monochrome(0.5f);
         }
     }
 
@@ -61,7 +61,7 @@ public class ZoomOverlay {
     this.overlayOpaque = builderOpaque.build();
   }
 
-  public void render(final WMapModelAndAnimData258.ZoomState zoomState) {
+  public void render(final WMapModelAndAnimData258.ZoomState zoomState, final float brightness) {
     final int currentZoomLevel = switch(zoomState) {
       case LOCAL_0 -> 2;
       case CONTINENT_1, TRANSITION_MODEL_OUT_2 -> 3;
@@ -69,17 +69,19 @@ public class ZoomOverlay {
     };
 
     for(int i = 0; i < 5; i++) {
-      final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(this.overlayOpaque)
-        .vertices(i * 4, 4);
+      final QueuedModelStandard model = RENDERER.queueOrthoModel(this.overlayOpaque, QueuedModelStandard.class)
+        .vertices(i * 4, 4)
+        .monochrome(brightness);
 
       if(i + 2 == currentZoomLevel) {
-        model.monochrome(4.0f);
+        model.monochrome(8.0f * brightness);
       }
     }
 
     for(int i = 0; i < 2; i++) {
-      RENDERER.queueOrthoModel(this.overlayTranslucent)
-        .vertices(i * 4, 4);
+      RENDERER.queueOrthoModel(this.overlayTranslucent, QueuedModelStandard.class)
+        .vertices(i * 4, 4)
+        .monochrome(brightness);
     }
   }
 

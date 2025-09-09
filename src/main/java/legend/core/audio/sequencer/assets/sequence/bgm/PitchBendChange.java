@@ -10,7 +10,7 @@ public final class PitchBendChange implements Command {
 
   PitchBendChange(final Channel channel, final int pitchAmount, final int deltaTime) {
     this.channel = channel;
-    this.pitchAmount = pitchAmount;
+    this.pitchAmount = (pitchAmount - 0x40) * 2;
     this.deltaTime = deltaTime;
   }
 

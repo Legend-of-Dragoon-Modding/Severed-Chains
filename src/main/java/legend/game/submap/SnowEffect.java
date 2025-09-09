@@ -1,6 +1,7 @@
 package legend.game.submap;
 
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.Random;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
@@ -19,7 +20,7 @@ public class SnowEffect {
   private int snowEffectTick;
   private int snowOffsetXTick;
   private final SnowParticleData18 particleData;
-  private final SnowParticleInstance3c[] particles = new SnowParticleInstance3c[256];
+  private final SnowParticleInstance3c[] particles;
 
   public MeshObj particle;
   public final MV transforms = new MV();
@@ -66,7 +67,10 @@ public class SnowEffect {
   }
 
   public SnowEffect(final float stepAngleMax, final int translationScaleX, final int stepXMax, final int stepYDivisor) {
+    final float displayWidthModifier = RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+
     this.particleData = new SnowParticleData18(stepAngleMax, translationScaleX, stepXMax, stepYDivisor);
+    this.particles = new SnowParticleInstance3c[(int)(256 * displayWidthModifier)];
   }
 
   public void initSnowEffect() {
@@ -130,13 +134,16 @@ public class SnowEffect {
       .clut(960, 464)
       .monochrome(1.0f)
       .translucency(Translucency.B_PLUS_F)
-      .vramPos(960, 320)
+      .vramPos(960, 256)
+      .uv(0.0f, 64.0f)
       .size(1.0f, 1.0f)
       .uvSize(24, 24)
       .build();
   }
 
   public void render() {
+    final float displayWidthModifier = RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio();
+
     //LAB_800ee38c
     for(int i = 0; i < this.particles.length; i++) {
       final SnowParticleInstance3c inst = this.particles[i];
@@ -146,14 +153,14 @@ public class SnowEffect {
         inst.xAccumulator_24 += inst.stepX_1c / (2.0f / vsyncMode_8007a3b8);
         inst.x_16 = inst.xAccumulator_24 + ((inst.translationScaleX_10 * sin(inst.angle_08) / (MathHelper.TWO_PI)) / (2.0f / vsyncMode_8007a3b8));
 
-        if(inst.x_16 < -200.0f) {
-          inst.x_16 = 200.0f;
-          inst.xAccumulator_24 = 200.0f;
+        if(inst.x_16 < -200.0f * displayWidthModifier) {
+          inst.x_16 = 200.0f * displayWidthModifier;
+          inst.xAccumulator_24 = 200.0f * displayWidthModifier;
           inst.angle_08 = 0.0f;
           //LAB_800ee42c
-        } else if(inst.x_16 > 200.0f) {
-          inst.x_16 = -200.0f;
-          inst.xAccumulator_24 = -200.0f;
+        } else if(inst.x_16 > 200.0f * displayWidthModifier) {
+          inst.x_16 = -200.0f * displayWidthModifier;
+          inst.xAccumulator_24 = -200.0f * displayWidthModifier;
           inst.angle_08 = 0.0f;
         }
 
@@ -162,13 +169,13 @@ public class SnowEffect {
 
         this.transforms.scaling(inst.size_14);
         this.transforms.transfer.set(GPU.getOffsetX() + inst.x_16, GPU.getOffsetY() + inst.y_18, 160.0f);
-        RENDERER.queueOrthoModel(this.particle, this.transforms)
+        RENDERER.queueOrthoModel(this.particle, this.transforms, QueuedModelStandard.class)
           .monochrome(inst.brightness_34);
 
         inst.angle_08 = (inst.angle_08 + inst.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
       } else {
         //LAB_800ee52c
-        this.wrapAroundSnowEffect(inst);
+        this.wrapAroundSnowEffect(inst, displayWidthModifier);
       }
       //LAB_800ee534
     }
@@ -176,8 +183,8 @@ public class SnowEffect {
   }
 
   /** Reuse snow effect when it reaches the bottom of the screen */
-  private void wrapAroundSnowEffect(final SnowParticleInstance3c inst) {
-    inst.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowOffsetXTick;
+  private void wrapAroundSnowEffect(final SnowParticleInstance3c inst, final float displayWidthModifier) {
+    inst.x_16 = this.rand.nextFloat(400.0f * displayWidthModifier) - 200.0f * displayWidthModifier + this.snowOffsetXTick;
     inst.y_18 = -128.0f;
 
     final int stepXMax = this.particleData.stepXMax_10;

@@ -1,0 +1,82 @@
+--- original
++++ modified
+@@ -1525,6 +1525,7 @@
+ mov stor[26], stor[stor[stor[0], 18], 26]
+ mov 0xa, stor[stor[stor[0], 18], 10]
+ call 618, stor[18], inl[:LABEL_37]
++jmp_cmp ==, var[35], 0x1, inl[:SKIP_EFFECT]
+ call 600, stor[18]
+ mov stor[12], stor[stor[stor[0], 18], 28]
+ mov stor[24], stor[stor[stor[0], 18], 24]
+@@ -1532,6 +1533,15 @@
+ mov stor[26], stor[stor[stor[0], 18], 26]
+ mov 0xa, stor[stor[stor[0], 18], 10]
+ call 618, stor[18], inl[:LABEL_37]
++jmp_cmp ==, var[35], 0x2, inl[:SKIP_EFFECT]
++call 600, stor[18]
++mov var[45][150], stor[stor[stor[0], 18], 28]
++mov stor[24], stor[stor[stor[0], 18], 24]
++mov stor[25], stor[stor[stor[0], 18], 25]
++mov stor[26], stor[stor[stor[0], 18], 26]
++mov 0xa, stor[stor[stor[0], 18], 10]
++call 618, stor[18], inl[:LABEL_37]
++SKIP_EFFECT:
+ call 35, 0x6, 0x51400, 0xfff83000, 0xfff31c00, 0x0, 0x5, 0x0, stor[27]
+ call 36, 0x6, 0x11f800, 0xfffb5000, 0x0, 0x0, 0xf, 0x0, stor[27]
+ mov 0x5, stor[23]
+@@ -1566,6 +1576,7 @@
+ mov stor[11], stor[stor[stor[0], 18], 28]
+ mov 0x4c, stor[stor[stor[0], 18], 8]
+ call 618, stor[18], inl[:LABEL_22]
++jmp_cmp ==, var[35], 0x1, inl[:SKIP_DMG]
+ call 600, stor[18]
+ mov stor[12], stor[stor[stor[0], 18], 28]
+ mov 0x2, stor[stor[stor[0], 18], 8]
+@@ -1575,6 +1586,17 @@
+ mov stor[12], stor[stor[stor[0], 18], 28]
+ mov 0x4c, stor[stor[stor[0], 18], 8]
+ call 618, stor[18], inl[:LABEL_22]
++jmp_cmp ==, var[35], 0x2, inl[:SKIP_DMG]
++call 600, stor[18]
++mov stor[12], stor[stor[stor[0], 18], 28]
++mov 0x2, stor[stor[stor[0], 18], 8]
++call 618, stor[18], inl[:LABEL_42]
++call 600, stor[18]
++mov stor[27], stor[stor[stor[0], 18], 27]
++mov var[45][150], stor[stor[stor[0], 18], 28]
++mov 0x4c, stor[stor[stor[0], 18], 8]
++call 618, stor[18], inl[:LABEL_22]
++SKIP_DMG:
+ mov 0x1b, stor[23]
+ wait stor[23]
+ call 239, 0x2, stor[17], 0x9, 0x3
+@@ -1893,6 +1915,8 @@
+ LABEL_53:
+ mov var[34][0], stor[8]
+ mov var[34][1], stor[9]
++jmp_cmp ==, var[35], 0x1, inl[:SET_1_P]
++jmp_cmp ==, var[35], 0x3, inl[:SET_3_P]
+ call 129, stor[8], stor[21], stor[22], stor[23]
+ call 129, stor[9], stor[24], stor[25], stor[26]
+ jmp_cmp <, stor[8], stor[9], inl[:LABEL_54]
+@@ -1907,3 +1931,20 @@
+ jmp inl[:LABEL_56]
+ LABEL_56:
+ return
++
++SET_1_P:
++mov var[34][0], stor[8]
++call 129, stor[8], stor[24], stor[25], stor[26]
++mov stor[8], stor[11]
++return
++
++SET_3_P:
++mov var[34][0], stor[8]
++mov var[34][1], stor[9]
++mov var[34][2], var[45][150]
++call 129, stor[8], stor[21], stor[22], stor[23]
++call 129, stor[9], stor[24], stor[25], stor[26]
++call 129, var[45][150], var[45][151], var[45][152], var[45][153]
++mov stor[8], stor[11]
++mov stor[9], stor[12]
++return

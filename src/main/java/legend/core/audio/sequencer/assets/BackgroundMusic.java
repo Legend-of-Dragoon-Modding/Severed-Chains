@@ -1,24 +1,23 @@
 package legend.core.audio.sequencer.assets;
 
+import legend.core.audio.SampleRate;
 import legend.core.audio.sequencer.assets.sequence.Command;
 import legend.core.audio.sequencer.assets.sequence.bgm.SequenceBuilder;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 
 import java.util.List;
 
-import static legend.core.audio.AudioThread.ACTUAL_SAMPLE_RATE;
-
-
 public final class BackgroundMusic {
-  private static final double TEMPO_TICKS = ACTUAL_SAMPLE_RATE * 60;
   private final int songId;
 
-  private int volume;
+  private float volume;
   private final int tickPerQuarterNote;
+  private int tempo;
+  private double tempoTicks;
   private double samplesPerTick;
 
-  private final byte[][] breathControls;
+  private final Breath[] breathControls;
   private final byte[] velocityRamp = new byte[0x80];
 
   private final Channel[] channels;
@@ -34,7 +33,7 @@ public final class BackgroundMusic {
   private int repeatPosition;
   private boolean repeat;
 
-  public BackgroundMusic(final List<FileData> files, final int fileId) {
+  public BackgroundMusic(final List<FileData> files, final int fileId, final SampleRate sampleRate) {
     this.songId = files.get(0).readUShort(0);
 
     final int fileOffset = files.size() == 5 ? 1 : 0;
@@ -51,7 +50,7 @@ public final class BackgroundMusic {
       final int bankCount = files.get(1).readUShort(0x0);
 
       for(int i = 1; i < bankCount; i++) {
-        final FileData extraBank = Unpacker.loadFile("SECT/DRGN0.BIN/" + (fileId + i));
+        final FileData extraBank = Loader.loadFile("SECT/DRGN0.BIN/" + (fileId + i));
         extraBank.read(0, soundBankData, offset, extraBank.size());
         offset += extraBank.size();
       }
@@ -67,11 +66,12 @@ public final class BackgroundMusic {
 
     final FileData sssq = files.get(1 + fileOffset);
 
-    this.volume = sssq.readUByte(0x0);
+    this.volume = sssq.readUByte(0x0) / 128.0f;
     this.tickPerQuarterNote = sssq.readUShort(0x2);
+    this.tempoTicks = sampleRate.value * 60;
     this.setTempo(sssq.readUShort(0x4));
 
-    this.soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank);
+    this.soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank, sampleRate);
 
     this.channels = new Channel[0x10];
     for(int channel = 0; channel < this.channels.length; channel++) {
@@ -83,21 +83,22 @@ public final class BackgroundMusic {
     sshd.read(subfileOffsets[1] + 2, this.velocityRamp, 0, 0x80);
 
     if(subfileOffsets[2] == -1) {
-      this.breathControls = new byte[0][];
+      this.breathControls = new Breath[0];
     } else {
-      this.breathControls = new byte[sshd.readUShort(subfileOffsets[2]) + 1][];
+      this.breathControls = new Breath[sshd.readUShort(subfileOffsets[2]) + 1];
     }
 
     for(int i = 0; i < this.breathControls.length; i++) {
       final int relativeOffset = sshd.readShort(2 + i * 2 + subfileOffsets[2]);
 
       if(relativeOffset != -1) {
-        this.breathControls[i] = sshd.slice(subfileOffsets[2] + relativeOffset, 0x40).getBytes();
+        final int startingPosition = subfileOffsets[2] + relativeOffset;
+        this.breathControls[i] = Breath.get(sshd.slice(startingPosition, 0x40), fileId, i);
       }
     }
   }
 
-  private BackgroundMusic(final List<FileData> files, final byte[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont) {
+  private BackgroundMusic(final List<FileData> files, final Breath[] breathControls, final byte[] velocityRamp, final SoundFont soundFont, final double tempoTicks) {
     this.songId = files.get(0).readUShort(0);
 
     this.breathControls = breathControls;
@@ -106,8 +107,9 @@ public final class BackgroundMusic {
 
     final FileData sssq = files.get(2);
 
-    this.volume = sssq.readUByte(0x0);
+    this.volume = sssq.readUByte(0x0) / 128.0f;
     this.tickPerQuarterNote = sssq.readUShort(0x2);
+    this.tempoTicks = tempoTicks;
     this.setTempo(sssq.readUShort(0x4));
 
     this.channels = new Channel[0x10];
@@ -118,27 +120,32 @@ public final class BackgroundMusic {
     this.sequence = SequenceBuilder.create(sssq.slice(0x110), this.channels);
   }
 
+  public void reset() {
+    this.sequencePosition = 0;
+  }
+
   public BackgroundMusic createVictoryMusic(final List<FileData> files) {
-    return new BackgroundMusic(files, this.breathControls, this.velocityRamp, this.soundFont);
+    return new BackgroundMusic(files, this.breathControls, this.velocityRamp, this.soundFont, this.tempoTicks);
   }
 
   public Command getNextCommand() {
     return this.sequence[this.sequencePosition++];
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return this.volume;
   }
 
   public void setTempo(final int tempo) {
-    this.samplesPerTick = TEMPO_TICKS / (tempo * this.tickPerQuarterNote);
+    this.tempo = tempo;
+    this.samplesPerTick = calculateSamplesPerTick(this.tempoTicks, tempo, this.tickPerQuarterNote);
   }
 
   public double getSamplesPerTick() {
     return this.samplesPerTick;
   }
 
-  public byte[][] getBreathControls() {
+  public Breath[] getBreathControls() {
     return this.breathControls;
   }
 
@@ -214,11 +221,22 @@ public final class BackgroundMusic {
     return true;
   }
 
-  public void setVolume(final int volume) {
+  public void setVolume(final float volume) {
     this.volume = volume;
 
     for(final Channel channel : this.channels) {
       channel.changeVolume(channel.getVolume(), this.volume);
     }
+  }
+
+  public void changeSampleRate(final SampleRate sampleRate) {
+    this.soundFont.changeSampleRate(sampleRate);
+
+    this.tempoTicks = sampleRate.value * 60;
+    this.samplesPerTick = calculateSamplesPerTick(this.tempoTicks, this.tempo, this.tickPerQuarterNote);
+  }
+
+  private static double calculateSamplesPerTick(final double tempoTicks, final int tempo, final int ticksPerQuarterNote) {
+    return tempoTicks / (tempo * ticksPerQuarterNote);
   }
 }

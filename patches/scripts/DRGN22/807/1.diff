@@ -1,0 +1,12 @@
+Entire party leaves, force Dart to slot 0
+Unlock party fix
+--- original
++++ modified
+@@ -2513,6 +2513,7 @@
+ LABEL_271:
+ data 0x170
+ LABEL_272:
++mov 0, var[17][0]
+ mov 0xffffffff, var[17][1]
+ mov 0xffffffff, var[17][2]
+ andor 0x40, 0x0, var[115 + 1]

@@ -4,13 +4,17 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptedObject;
 import legend.game.types.Translucency;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
+import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.asciiTable_800fa788;
 
-public class AdditionNameTextEffect1c {
+public class AdditionNameTextEffect1c implements ScriptedObject {
   /** ushort */
   public int _00;
   /** ushort */
@@ -22,6 +26,18 @@ public class AdditionNameTextEffect1c {
   public int totalSp_10;
   public TriConsumer<AdditionCharEffectData0c, Integer, Integer> renderer_14;
   public AdditionCharEffectData0c[] ptr_18;
+
+  @Override
+  public Vector3f getPosition() {
+    return new Vector3f(this.ptr_18[0].offsetX_08, this.ptr_18[0].offsetY_06, 0.0f);
+  }
+
+  @Override
+  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+    final Vector2f viewspace = new Vector2f(this.ptr_18[0].offsetX_08, this.ptr_18[0].offsetY_06);
+    ScriptedObject.renderScriptDebug(viewspace, this.getColour());
+    ScriptedObject.renderScriptDebugText(state, viewspace.x + GPU.getOffsetX() - 9.0f, viewspace.y + GPU.getOffsetY() - 9.0f);
+  }
 
   @Method(0x800d37dcL)
   private void renderAdditionNameChar(final int x, final int y, final int additionId, final int charOffset, final int brightness) {

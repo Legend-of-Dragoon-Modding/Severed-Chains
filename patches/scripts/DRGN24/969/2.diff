@@ -1,0 +1,14 @@
+Moon - Before Melbu
+Rose
+Skip hiding model parts
+--- original
++++ modified
+@@ -179,8 +179,6 @@
+ gosub inl[:LABEL_19]
+ return
+ LABEL_19:
+-call 288, 0x3
+-call 288, 0x6
+ return
+ LABEL_20:
+ call 289, 0x3

@@ -1,0 +1,14 @@
+Moon - Before Melbu
+Haschel
+Skip hiding model parts
+--- original
++++ modified
+@@ -172,8 +172,6 @@
+ call 311, stor[0]
+ call 101, stor[0], 0x30, 0x0, 0xffffff58
+ call 103, stor[0], 0x0, 0x980, 0x0
+-call 288, 0x3
+-call 288, 0x4
+ call 307, stor[0], 0x14, 0x28, 0xa
+ call 294, 0x14, 0x1
+ call 294, 0x16, 0x1

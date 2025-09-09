@@ -1,0 +1,81 @@
+--- original
++++ modified
+@@ -2324,6 +2324,18 @@
+ data 0x0
+ data 0x0
+ data 0x28
++data 0x2
++data 0xc
++data 0x2
++data 0x0
++data 0x3
++data 0xd
++data 0x17
++data 0x15
++data 0x4
++data 0xe
++data 0x9
++data 0x7
+ LABEL_82:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+@@ -2372,7 +2384,14 @@
+ mov 0x5, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_95]
+ return
++LOAD_ASSETS:
++call 600, stor[23]
++mov 0x35, stor[stor[stor[0], 23], 14]
++mov 0x3, stor[stor[stor[0], 23], 24]
++call 618, stor[23], inl[:LABEL_95]
++return
+ LABEL_88:
++jmp inl[:SKIP_TO_SNAKE]
+ mov var[34][0], stor[27]
+ call 370, stor[27], stor[8]
+ mov stor[8], var[45][2]
+@@ -2380,6 +2399,7 @@
+ call 138, stor[10], 0x0
+ yield
+ mov stor[10], var[45][12]
++SKIP_TO_SNAKE:
+ mov var[36][0], stor[27]
+ call 370, stor[27], stor[8]
+ mov stor[8], var[45][1]
+@@ -2387,6 +2407,9 @@
+ call 138, stor[10], 0x0
+ yield
+ mov stor[10], var[45][11]
++gosub inl[:LOAD_ASSETS]
++gosub inl[:LABEL_92]
++return
+ mov var[34][2], stor[27]
+ call 167, stor[27], stor[10]
+ jmp_cmp ==, stor[10], 0x1, inl[:LABEL_89]
+@@ -2767,7 +2790,7 @@
+ incr stor[18]
+ call 354, 0x0, stor[18], stor[9]
+ call 355, stor[9]
+-call 364, stor[8], stor[9]
++gosub inl[:LOAD_SLOTTED_TEXTURES]
+ call 356, stor[9]
+ call 354, 0x0, stor[16], stor[9]
+ call 355, stor[9]
+@@ -3466,3 +3489,17 @@
+ data 0x6
+ LABEL_134:
+ data 0x1
++LOAD_SLOTTED_TEXTURES:
++jmp_cmp ==, stor[13], 0xc, inl[:LOAD_PLAYER_TEXTURE]
++jmp_cmp ==, stor[13], 0xd, inl[:LOAD_PLAYER_TEXTURE]
++jmp_cmp ==, stor[13], 0xe, inl[:LOAD_PLAYER_TEXTURE]
++LOAD_ENEMY_TEXTURE:
++call 364, stor[8], stor[9]
++return
++LOAD_PLAYER_TEXTURE:
++call 1020, stor[8], inl[:CHAR_INDEX]
++call 364, stor[8], stor[9]
++incr inl[:CHAR_INDEX]
++return
++CHAR_INDEX:
++data 0x1

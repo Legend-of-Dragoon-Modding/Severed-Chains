@@ -6,6 +6,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.ArcherSpEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
@@ -17,16 +18,16 @@ import java.util.Map;
 
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
-
-  public Element element;
 
   public int level_04;
   public int dlevel_06;
@@ -59,7 +60,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int mpPerPhysicalHit_12c;
   public int spPerMagicalHit_12e;
   public int mpPerMagicalHit_130;
-  public int _132;
+  /** Extra percent chance to run away */
+  public int escapeBonus_132;
   public int hpRegen_134;
   public int mpRegen_136;
   public int spRegen_138;
@@ -78,12 +80,17 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   @Override
+  public String getName() {
+    return this.charId_272 == 8 ? "Who?" : playerNames_800fb378[this.charId_272];
+  }
+
+  @Override
   protected ScriptFile getScript() {
     return this.script;
   }
 
   public boolean isDragoon() {
-    return (this.scriptState.get().storage_44[7] & 0x2) != 0;
+    return (this.scriptState.get().storage_44[7] & FLAG_DRAGOON) != 0;
   }
 
   @Override
@@ -115,7 +122,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       return LodMod.DIVINE_ELEMENT.get();
     }
 
-    return this.element;
+    return super.getElement();
   }
 
   @Override
@@ -167,9 +174,6 @@ public class PlayerBattleEntity extends BattleEntity27c {
     int matk = this.magicAttack_36;
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
-    } else {
-      //LAB_800f2ef8
-      matk += this.item_d4.damage_05;
     }
 
     //LAB_800f2f04
@@ -229,6 +233,161 @@ public class PlayerBattleEntity extends BattleEntity27c {
     }
   }
 
+  protected boolean hasWeaponTrail() {
+    return this.charId_272 != 4; // Haschel
+  }
+
+  protected int getWeaponTrailColour() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x2068e8 : 0x808080;
+      case 1, 5 -> 0x20a878;
+      case 2, 6, 8 -> 0x808080;
+      case 3 -> 0x1090d8;
+      case 4 -> 0x88d4d8;
+      case 7 -> 0x90d0f0;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getSpellRingColour() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x201996 : 0x808080;
+      case 1, 5 -> 0x297231;
+      case 2, 8 -> 0x6c8283;
+      case 3 -> 0x5e263a;
+      case 4 -> 0x6c306c;
+      case 6 -> 0x78462c;
+      case 7 -> 0x286499;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getHandModelPart() {
+    return switch(this.charId_272) {
+      case 0, 7 -> 5;
+      case 1, 4, 5, 6 -> 6;
+      case 2 -> 11;
+      case 3 -> 8;
+      case 8 -> 10;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getFootModelPart() {
+    if(this.isDragoon()) {
+      return switch(this.charId_272) {
+        case 0 -> (this.status_0e & 0x4000) == 0 ? 8 : 7;
+        case 1, 5 -> 9;
+        case 2, 3, 8 -> 11;
+        case 4, 7 -> 8;
+        case 6 -> 12;
+        default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+      };
+    }
+
+    return switch(this.charId_272) {
+      case 0, 7 -> 8;
+      case 1, 5 -> 9;
+      case 2 -> 13;
+      case 3 -> 11;
+      case 4 -> 10;
+      case 6, 8 -> 12;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getWeaponModelPart() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 14 : 0;
+      case 1, 5 -> 3;
+      case 2, 8 -> 0;
+      case 3 -> 18;
+      case 4 -> 5;
+      case 6 -> 21;
+      case 7 -> 9;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getWeaponTrailVertexComponent() {
+    return switch(this.charId_272) {
+      case 0, 2, 6, 8 -> 0;
+      case 1, 3, 4, 5, 7 -> 2;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getShadowSize() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x1800 : 0x1500;
+      case 1 -> 0x1800;
+      case 2 -> 0x1000;
+      case 3, 6 -> 0xe00;
+      case 4 -> 0x1600;
+      case 5, 8 -> 0x1300;
+      case 7 -> 0x2000;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getDragoonTransformDeff() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x20 : 0x2e;
+      case 1 -> 0x22;
+      case 2 -> 0x24;
+      case 3 -> 0x26;
+      case 4 -> 0x28;
+      case 5 -> 0x2f;
+      case 6 -> 0x2a;
+      case 7 -> 0x2c;
+      case 8 -> 0x40;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getDragoonAttackDeff() {
+    return switch(this.charId_272) {
+      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x30 : 0x39;
+      case 1 -> 0x31;
+      case 2, 8 -> -1;
+      case 3 -> 0x33;
+      case 4 -> 0x34;
+      case 5 -> 0x35;
+      case 6 -> 0x36;
+      case 7 -> 0x37;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getDragoonAttackSounds() {
+    return switch(this.charId_272) {
+      case 0 -> 0x68;
+      case 1 -> 0x69;
+      case 2 -> 0x6a;
+      case 3 -> 0x6b;
+      case 4 -> 0x6c;
+      case 5 -> 0x6d;
+      case 6 -> 0x6e;
+      case 7 -> 0x6f;
+      case 8 -> 0x70;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  protected int getArcherSp() {
+    int sp;
+    switch(this.dlevel_06) {
+      case 1 -> sp = 35;
+      case 2 -> sp = 50;
+      case 3 -> sp = 70;
+      case 4 -> sp = 100;
+      case 5 -> sp = 150;
+      default -> sp = 0;
+    }
+    sp = EVENTS.postEvent(new ArcherSpEvent(this, sp)).sp;
+    return sp;
+  }
+
   @Override
   public int getStat(final BattleEntityStat statIndex) {
     int disableStatusFlag = 0x0;
@@ -268,23 +427,32 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case _138 -> this._118;
       case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a;
       case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c;
-      case EQUIPMENT_WEAPON_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId()); //TODO
-      case EQUIPMENT_HELMET_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.HELMET).getRegistryId());
-      case EQUIPMENT_ARMOUR_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
-      case EQUIPMENT_BOOTS_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
-      case EQUIPMENT_ACCESSORY_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
+
       case SP_MULTIPLIER -> this.spMultiplier_128;
       case SP_PER_PHYSICAL_HIT -> this.spPerPhysicalHit_12a;
       case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c;
       case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e;
       case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130;
-      case _151 -> this._132;
+      case ESCAPE_BONUS_151 -> this.escapeBonus_132;
       case HP_REGEN -> this.hpRegen_134;
       case MP_REGEN -> this.mpRegen_136;
       case SP_REGEN -> this.spRegen_138;
       case REVIVE -> this.revive_13a;
       case HP_MULTI -> this.hpMulti_13c;
       case MP_MULTI -> this.mpMulti_13e;
+
+      case HAS_WEAPON_TRAIL -> this.hasWeaponTrail() ? 1 : 0;
+      case WEAPON_TRAIL_COLOUR -> this.getWeaponTrailColour();
+      case SPELL_RING_COLOUR -> this.getSpellRingColour();
+      case HAND_MODEL_PART -> this.getHandModelPart();
+      case FOOT_MODEL_PART -> this.getFootModelPart();
+      case WEAPON_MODEL_PART -> this.getWeaponModelPart();
+      case WEAPON_TRAIL_VERTEX_COMPONENT -> this.getWeaponTrailVertexComponent();
+      case SHADOW_SIZE -> this.getShadowSize();
+      case DRAGOON_TRANSFORM_DEFF -> this.getDragoonTransformDeff();
+      case DRAGOON_ATTACK_DEFF -> this.getDragoonAttackDeff();
+      case DRAGOON_ATTACK_SOUNDS -> this.getDragoonAttackSounds();
+      case ARCHER_SP -> this.getArcherSp();
 
       default -> super.getStat(statIndex);
     };
@@ -333,7 +501,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c = value;
       case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e = value;
       case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130 = value;
-      case _151 -> this._132 = value;
+      case ESCAPE_BONUS_151 -> this.escapeBonus_132 = value;
       case HP_REGEN -> this.hpRegen_134 = value;
       case MP_REGEN -> this.mpRegen_136 = value;
       case SP_REGEN -> this.spRegen_138 = value;

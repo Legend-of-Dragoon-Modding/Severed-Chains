@@ -1,5 +1,7 @@
 package legend.game.title;
 
+import de.jcm.discordgamesdk.activity.Activity;
+import legend.core.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -7,28 +9,27 @@ import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment_8002;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.types.GameState52c;
 import legend.game.types.McqHeader;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.core.GameEngine.bootMods;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
+import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class GameOver extends EngineState<GameOver> {
   private int loadingStage;
@@ -56,8 +57,8 @@ public class GameOver extends EngineState<GameOver> {
   }
 
   @Override
-  public boolean allowsWidescreen() {
-    return false;
+  public RenderMode getRenderMode() {
+    return RenderMode.LEGACY;
   }
 
   @Method(0x800c7558L)
@@ -79,18 +80,18 @@ public class GameOver extends EngineState<GameOver> {
     }
 
     this.transforms.transfer.set(GPU.getOffsetX() - 320.0f, GPU.getOffsetY() - 120.0f, 144.0f);
-    RENDERER.queueOrthoModel(this.background, this.transforms);
+    RENDERER.queueOrthoModel(this.background, this.transforms, QueuedModelStandard.class);
   }
 
   @Override
   @Method(0x800c75fcL)
   public void tick() {
+    super.tick();
+
     switch(this.loadingStage) {
       case 0 -> {
-        if(Unpacker.getLoadingFileCount() == 0) {
-          bootMods(MODS.getAllModIds());
-
-          FUN_8002a9c0();
+        if(Loader.getLoadingFileCount() == 0) {
+          resetSubmapToNewGame();
           resizeDisplay(640, 240);
           this.loadingStage = 1;
         }
@@ -109,7 +110,7 @@ public class GameOver extends EngineState<GameOver> {
 
       // Game Over Screen
       case 4 -> {
-        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           Scus94491BpeSegment_8002.playMenuSound(2);
           this.loadingStage = 5;
           startFadeEffect(1, 10);
@@ -135,11 +136,6 @@ public class GameOver extends EngineState<GameOver> {
           this.background = null;
         }
 
-        if(uiFile_800bdc3c != null) {
-          uiFile_800bdc3c.delete();
-        }
-
-        uiFile_800bdc3c = null;
         gameOverMcq_800bdc3c = null;
         engineStateOnceLoaded_8004dd24 = CoreMod.TITLE_STATE_TYPE.get();
         vsyncMode_8007a3b8 = 2;
@@ -147,5 +143,11 @@ public class GameOver extends EngineState<GameOver> {
     }
 
     //LAB_800c7788
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    activity.setDetails("Game Over");
+    activity.setState(null);
   }
 }

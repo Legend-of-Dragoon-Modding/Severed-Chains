@@ -1,0 +1,74 @@
+READ THIS FIRST: https://docs.google.com/document/d/10mZFyVBLpgNp58QH7MDpHnQAtZ1wvETXWLtMih-yS7g/
+--- original
++++ modified
+@@ -4,6 +4,7 @@
+ gosub inl[:LABEL_169]
+ yield
+ gosub inl[:LABEL_25]
+# Original code loaded no assets, adding wait to here was required
++gosub inl[:LABEL_202]
+ yield
+ call 714
+ yield
+@@ -282,6 +283,14 @@
+ data 0xa
+ data 0x0
+ data 0x16a
++data 0x2
++data 0xc
++data 0x13d
++data 0x13b
++data 0x4
++data 0xe
++data 0x14b
++data 0x149
+ LABEL_10:
+ call 600, stor[23]
+ mov 0x0, stor[stor[stor[0], 23], 14]
+@@ -375,12 +384,20 @@
+ mov 0x3, stor[stor[stor[0], 23], 24]
+ call 618, stor[23], inl[:LABEL_206]
+ return
++LOAD_ALLIES:
++call 600, stor[23]
++mov 0x25, stor[stor[stor[0], 23], 14]
++mov 0x2, stor[stor[stor[0], 23], 24]
++call 618, stor[23], inl[:LABEL_206]
++return
+ LABEL_25:
+ mov var[36][0], stor[23]
+ call 370, stor[23], stor[8]
+ mov stor[8], var[45][1]
+ mov stor[23], var[45][11]
+ call 138, stor[23], 0x0
++gosub inl[:LOAD_ALLIES]
++return
+ mov var[34][0], stor[27]
+ call 370, stor[27], stor[8]
+ mov stor[8], var[45][2]
+@@ -3523,7 +3540,7 @@
+ incr stor[18]
+ call 354, 0x0, stor[18], stor[9]
+ call 355, stor[9]
+-call 364, stor[8], stor[9]
++gosub inl[:LOAD_SLOTTED_TEXTURES]
+ call 356, stor[9]
+ call 354, 0x0, stor[16], stor[9]
+ call 355, stor[9]
+@@ -4028,3 +4045,16 @@
+ data 0x14
+ LABEL_233:
+ data 0x1
++LOAD_SLOTTED_TEXTURES:
++jmp_cmp ==, stor[13], 0xc, inl[:LOAD_PLAYER_TEXTURE]
++jmp_cmp ==, stor[13], 0xe, inl[:LOAD_PLAYER_TEXTURE]
++LOAD_ENEMY_TEXTURE:
++call 364, stor[8], stor[9]
++return
++LOAD_PLAYER_TEXTURE:
++call 1020, stor[8], inl[:CHAR_INDEX]
++call 364, stor[8], stor[9]
++incr inl[:CHAR_INDEX]
++return
++CHAR_INDEX:
++data 0x1

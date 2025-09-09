@@ -14,7 +14,7 @@ public interface SssqReader {
   }
 
   default int readShort(final int offset) {
-    return this.readByte(3) << 8 | this.readByte(2);
+    return this.readByte(offset + 1) << 8 | this.readByte(offset);
   }
 
   default void advance(final int amount) {

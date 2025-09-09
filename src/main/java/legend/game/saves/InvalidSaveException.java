@@ -1,10 +1,6 @@
 package legend.game.saves;
 
-public class InvalidSaveException extends Exception {
-  public InvalidSaveException() {
-    super();
-  }
-
+public class InvalidSaveException extends RuntimeException {
   public InvalidSaveException(final String message) {
     super(message);
   }
