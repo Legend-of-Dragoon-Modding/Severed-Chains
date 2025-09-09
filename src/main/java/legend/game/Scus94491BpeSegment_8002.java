@@ -4194,7 +4194,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bda4L)
-  public static void adjustRumbleOverTime(final int pad, int intensity, final int frames) {
+  public static void adjustRumbleOverTime(final int pad, final int intensity, final int frames) {
+    final int divisor = vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier();
+    adjustRumbleOverTime(pad, intensity, frames, divisor);
+  }
+
+  @Method(0x8002bda4L)
+  public static void adjustRumbleOverTime(final int pad, int intensity, final int frames, final int framesDivisor) {
     LOGGER.debug("adjustRumbleOverTime %x %x %x", pad, intensity, frames);
 
     if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
@@ -4208,14 +4214,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    final int divisor;
-    if(engineState_8004dd20 == EngineStateEnum.FMV_09) {
-      divisor = 1;
-    } else {
-      divisor = vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier();
-    }
-
-    PLATFORM.adjustRumble(intensity / (float)0x1ff, frames / divisor * 50);
+    PLATFORM.adjustRumble(intensity / (float)0x1ff, frames / framesDivisor * 50);
   }
 
   @Method(0x8002c150L)

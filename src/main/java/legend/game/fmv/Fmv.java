@@ -592,7 +592,7 @@ public final class Fmv {
             final EngineStateEnum oldEngineState = engineState_8004dd20;
             engineState_8004dd20 = EngineStateEnum.FMV_09;
             startRumbleIntensity(0, rumble.initialIntensity);
-            adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration);
+            adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration, 1);
             rumbleFrames = rumble.duration;
             engineState_8004dd20 = oldEngineState;
           }
