@@ -704,11 +704,16 @@ public class RenderEngine {
           this.scissorStack.reset();
         }
 
-        if(this.frameSkipIndex == Config.getGameSpeedMultiplier() - 1) {
-          this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
-        }
+        if(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get())) {
+          if(this.frameSkipIndex == Config.getGameSpeedMultiplier() - 1) {
+            this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+          }
 
-        this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
+          this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
+        } else {
+          this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+          this.frameSkipIndex = 0;
+        }
 
         final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
         this.lastFrame = System.nanoTime();
