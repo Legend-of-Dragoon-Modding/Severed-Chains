@@ -41,7 +41,6 @@ import legend.game.modding.coremod.config.MonitorConfigEntry;
 import legend.game.modding.coremod.config.MusicEffectsOverTimeGranularityConfigEntry;
 import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry;
 import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
-import legend.game.modding.coremod.config.MusicSampleRateConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.ReduceMotionFlashingConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
@@ -98,7 +97,6 @@ public class CoreMod {
   public static final RegistryDelegate<FmvVolumeConfigEntry> FMV_VOLUME_CONFIG = CONFIG_REGISTRAR.register("fmv_volume", FmvVolumeConfigEntry::new);
   public static final RegistryDelegate<MusicInterpolationPrecisionConfigEntry> MUSIC_INTERPOLATION_PRECISION_CONFIG = CONFIG_REGISTRAR.register("music_interpolation_precision", MusicInterpolationPrecisionConfigEntry::new);
   public static final RegistryDelegate<MusicPitchResolutionConfigEntry> MUSIC_PITCH_RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("music_pitch_resolution", MusicPitchResolutionConfigEntry::new);
-  public static final RegistryDelegate<MusicSampleRateConfigEntry> MUSIC_SAMPLE_RATE_CONFIG = CONFIG_REGISTRAR.register("music_sample_rate", MusicSampleRateConfigEntry::new);
   public static final RegistryDelegate<MusicEffectsOverTimeGranularityConfigEntry> MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG = CONFIG_REGISTRAR.register("music_effects_over_time_granularity", MusicEffectsOverTimeGranularityConfigEntry::new);
   public static final RegistryDelegate<CreateCrashSaveConfigEntry> CREATE_CRASH_SAVE_CONFIG = CONFIG_REGISTRAR.register("create_crash_save", CreateCrashSaveConfigEntry::new);
 

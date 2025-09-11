@@ -3,7 +3,7 @@ package legend.core.audio.sequencer.assets.sequence.bgm;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.sequence.Command;
 
-public final class KeyOn implements Command, Key {
+public final class KeyOn implements Command {
   private final Channel channel;
   private final int note;
   private final int velocity;
@@ -16,12 +16,10 @@ public final class KeyOn implements Command, Key {
     this.deltaTime = deltaTime;
   }
 
-  @Override
   public Channel getChannel() {
     return this.channel;
   }
 
-  @Override
   public int getNote() {
     return this.note;
   }

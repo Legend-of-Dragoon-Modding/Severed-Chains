@@ -1,18 +1,16 @@
 package legend.core.audio.sequencer;
 
-import legend.core.MathHelper;
-
 public final class SoundBankEntry {
-  private static final int[] POSITIVE_SPU_ADPCM_TABLE = {0, 60, 115, 98, 122};
-  private static final int[] NEGATIVE_SPU_ADPCM_TABLE = {0, 0, -52, -55, -60};
+  private static final float[] POSITIVE_SPU_ADPCM_TABLE = {0, 60, 115, 98, 122};
+  private static final float[] NEGATIVE_SPU_ADPCM_TABLE = {0, 0, -52, -55, -60};
 
   private byte[] data;
   private int index;
   private int repeatIndex;
   private boolean end;
 
-  private int old;
-  private int older;
+  private float old;
+  private float older;
 
   public void load(final byte[] data) {
     this.data = data;
@@ -22,7 +20,7 @@ public final class SoundBankEntry {
     this.old = 0;
     this.older = 0;
   }
-  public void loadSamples(final short[] samples) {
+  public void loadSamples(final float[] samples) {
     switch(this.data[this.index + 1]) {
       case 0, 2 -> this.index += 16;
       case 1 -> {
@@ -50,11 +48,9 @@ public final class SoundBankEntry {
       nibble = nibble + 1 & 0x1;
 
       final int t = signed4bit((byte)(this.data[this.index + position] >> nibble * 4 & 0x0f));
-      final int s = (t << shift) + (this.old * POSITIVE_SPU_ADPCM_TABLE[filter] + this.older * NEGATIVE_SPU_ADPCM_TABLE[filter] + 32) / 64;
+      final float sample = (t << shift) + (this.old * POSITIVE_SPU_ADPCM_TABLE[filter] + this.older * NEGATIVE_SPU_ADPCM_TABLE[filter] + 32) / 64;
 
-      final short sample = (short)MathHelper.clamp(s, -0x8000, 0x7fff);
-
-      samples[Voice.EMPTY.length + i] = sample;
+      samples[Voice.EMPTY.length + i] = sample / 0x8000;
 
       this.older = this.old;
       this.old = sample;

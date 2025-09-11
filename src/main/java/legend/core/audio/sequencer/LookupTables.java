@@ -2,33 +2,26 @@ package legend.core.audio.sequencer;
 
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import legend.core.MathHelper;
-import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
-import legend.core.audio.SampleRate;
 
-import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
+import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
+import static legend.core.audio.Constants.SAMPLE_RATE_RATIO;
 
 final public class LookupTables {
-  public static final int VOICE_COUNTER_BIT_PRECISION = 26;
-  private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION);
-  public static final int BREATH_BASE_SHIFT = 22;
-  /** Represents all 60 positions in a breath control table */
-  public static final int BREATH_BASE_VALUE = 0xf0 << (BREATH_BASE_SHIFT - 2);
-  private int effectsOverTimeScale = 1;
+  private static final double BASE_SAMPLE_RATE_VALUE = (1 << PITCH_BIT_SHIFT);
   private PitchResolution pitchResolution;
   private int[] sampleRates;
   private int interpolationStep;
   private final float[][] interpolationWeights = new float[2][];
   private final float[] pan = new float[0x80];
 
-  LookupTables(final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate) {
+  LookupTables(final InterpolationPrecision bitDepth, final PitchResolution pitchResolution) {
     this.pitchResolution = pitchResolution;
     this.sampleRates = new int[12 * pitchResolution.value];
 
-    final double sampleRateRatio = BASE_SAMPLE_RATE / (double)sampleRate.value;
     for(int i = 0; i < this.sampleRates.length; i++) {
-      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * sampleRateRatio * Math.pow(2, i / (double)this.sampleRates.length));
+      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * SAMPLE_RATE_RATIO * Math.pow(2, i / (double)this.sampleRates.length));
     }
 
     this.interpolationStep = 1 << bitDepth.value;
@@ -120,21 +113,16 @@ final public class LookupTables {
     return finePitch + Math.round(interpolatedBreath * modulation);
   }
 
-  int adjustBreath(final int breath) {
-    return Math.round((BREATH_BASE_VALUE / (60 - breath * 58 / 127.0f)) / this.effectsOverTimeScale);
-  }
-
-  void changeSampleRates(final PitchResolution pitchResolution, final SampleRate sampleRate) {
+  void changePitchResolution(final PitchResolution pitchResolution) {
     this.pitchResolution = pitchResolution;
     this.sampleRates = new int[12 * pitchResolution.value];
 
-    final double sampleRateRatio = BASE_SAMPLE_RATE / (double)sampleRate.value;
     for(int i = 0; i < this.sampleRates.length; i++) {
-      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * sampleRateRatio * Math.pow(2, i / (double)this.sampleRates.length));
+      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * SAMPLE_RATE_RATIO * Math.pow(2, i / (double)this.sampleRates.length));
     }
   }
 
-  void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
+  void changeInterpolationPrecision(final InterpolationPrecision bitDepth) {
     this.interpolationStep = 1 << bitDepth.value;
 
     // The weights for Catmull-Rom splines are symmetrical, hence we can just store both of the unique sets and use a reverse index for half of them
@@ -151,26 +139,7 @@ final public class LookupTables {
     }
   }
 
-  public PitchResolution getPitchResolution() {
-    return this.pitchResolution;
-  }
   public int getInterpolationStep() {
     return this.interpolationStep;
-  }
-
-  int getEffectsOverTimeScale() {
-    return this.effectsOverTimeScale;
-  }
-
-  void setEffectsOverTimeScale(final EffectsOverTimeGranularity granularity, final SampleRate sampleRate) {
-    this.effectsOverTimeScale = effectsOverTimeGranularityValue(granularity, sampleRate);
-  }
-
-  private static int effectsOverTimeGranularityValue(final EffectsOverTimeGranularity granularity, final SampleRate sampleRate) {
-    return switch(granularity) {
-      case EffectsOverTimeGranularity.Retail -> 1;
-      case EffectsOverTimeGranularity.Finer -> sampleRate == SampleRate._44100 ? 3 : 2;
-      case EffectsOverTimeGranularity.Finest -> 5;
-    };
   }
 }
