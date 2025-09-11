@@ -7,7 +7,8 @@ public enum EffectsOverTimeGranularity {
   Double(1),
   Quadruple(2),
   Octuple(3),
-  Sexdecuple(4);
+  Sexdecuple(4),
+  Duotrigintuple(5);
 
   public final int scale;
   public final int shift;

@@ -107,6 +107,7 @@ lod_core.config.music_effects_over_time_granularity.Double = Double
 lod_core.config.music_effects_over_time_granularity.Quadruple = Quadruple
 lod_core.config.music_effects_over_time_granularity.Octuple = Octuple
 lod_core.config.music_effects_over_time_granularity.Sexdecuple = Sexdecuple
+lod_core.config.music_effects_over_time_granularity.Duotrigintuple = Duotrigintuple
 lod_core.config.create_crash_save.label=Auto-Save on Crash
 lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
 lod_core.config.ignore_steam_input_mode.label=Steam Input Fix
