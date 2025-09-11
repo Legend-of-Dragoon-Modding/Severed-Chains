@@ -21,18 +21,18 @@ public final class Instrument {
     final int upperBoundByte = data.readUByte(0x00);
     this.type = Type.getType(upperBoundByte);
 
-    final int layerCount = this.type == Type.SFX ? (data.size() - 8) / 16 : (upperBoundByte & 0x7f) + 1;
-    this.layers = new InstrumentLayer[layerCount];
-    for(int layer = 0; layer < this.layers.length; layer++) {
-      this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
-    }
-
     this.volume = data.readUByte(0x01) / 128.0f;
     this.pan = data.readUByte(0x02);
     // 0x03 unused
     this.pitchBendMultiplier = data.readUByte(0x04);
     this.breathControlIndex = data.readUByte(0x05);
     this.startingNote = data.readUByte(0x06);
+
+    final int layerUpperBound = this.type == Type.SFX ? data.readByte(0x07) : upperBoundByte & 0x7f;
+    this.layers = new InstrumentLayer[layerUpperBound + 1];
+    for(int layer = 0; layer < this.layers.length; layer++) {
+      this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
+    }
   }
 
   public List<InstrumentLayer> getLayers(final int note) {
