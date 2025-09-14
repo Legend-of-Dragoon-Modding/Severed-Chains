@@ -251,8 +251,11 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return this.obj.getLayers();
   }
 
-  void render(@Nullable final Translucency translucency, final int layer) {
-    this.updateColours(translucency);
+  void render(@Nullable final Translucency translucency, final int layer, final boolean ssao) {
+    if(!ssao) {
+      this.updateColours(translucency);
+    }
+
     this.obj.render(translucency, layer, this.startVertex, this.vertexCount);
   }
 

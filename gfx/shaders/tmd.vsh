@@ -9,6 +9,7 @@ layout(location = 5) in vec4 inColour;
 layout(location = 6) in float inFlags;
 
 out VS_OUT {
+  smooth vec3 vertNorm;
   smooth vec2 vertUv;
   flat vec2 vertTpage;
   flat vec2 vertClut;
@@ -38,12 +39,6 @@ struct ModelTransforms {
   vec4 screenOffset;
 };
 
-struct Light {
-  mat4 lightDirection;
-  mat3 lightColour;
-  vec4 backgroundColour;
-};
-
 layout(std140) uniform transforms {
   mat4 camera;
   mat4 projection;
@@ -52,11 +47,6 @@ layout(std140) uniform transforms {
 /** 20-float (80-byte) stride */
 layout(std140) uniform transforms2 {
   ModelTransforms[128] modelTransforms;
-};
-
-/** 32-float (128-byte) stride */
-layout(std140) uniform lighting {
-  Light[128] lights;
 };
 
 layout(std140) uniform projectionInfo {
@@ -74,21 +64,10 @@ void main() {
   vs_out.vertFlags = int(inFlags);
   bool coloured = (vs_out.vertFlags & 0x4) != 0;
   bool textured = (vs_out.vertFlags & 0x2) != 0;
-  bool lit = (vs_out.vertFlags & 0x1) != 0;
 
   ModelTransforms t = modelTransforms[int(modelIndex)];
-  Light l = lights[int(modelIndex)];
 
-  if(lit) {
-    float range = 1.0;
-
-    // Textures use a colour range where 0xff = 200%. We've normalized that so that 0xff will equal 2.0 rather than 1.0 so we need to adjust the range
-    if(textured) {
-      range = 2.0;
-    }
-
-    vs_out.vertColour.rgb = clamp(clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb, 0.0, range);
-  } else if(coloured) {
+  if(coloured) {
     vs_out.vertColour = inColour;
   } else {
     vs_out.vertColour = vec4(1.0, 1.0, 1.0, 1.0);
@@ -140,6 +119,7 @@ void main() {
 
   gl_Position.xy += t.screenOffset.xy;
   gl_Position = projection * gl_Position;
+  vs_out.vertNorm = inNorm;
   vs_out.vertUv = inUv;
 
   vs_out.depth = gl_Position.z;

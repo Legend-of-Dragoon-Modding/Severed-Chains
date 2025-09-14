@@ -228,7 +228,18 @@ public final class TmdObjLoader {
             mesh.vertices[mesh.vertexOffset++] = normal.y;
             mesh.vertices[mesh.vertexOffset++] = normal.z;
           } else {
-            mesh.vertexOffset += NORM_SIZE;
+            final Vector3f v1 = objTable.vert_top_00[poly.vertices[0].vertexIndex];
+            final Vector3f v2 = objTable.vert_top_00[poly.vertices[1].vertexIndex];
+            final Vector3f v3 = objTable.vert_top_00[poly.vertices[2].vertexIndex];
+
+            final Vector3f d1 = v2.sub(v1, new Vector3f());
+            final Vector3f d2 = v3.sub(v1, new Vector3f());
+
+            final Vector3f normal = d2.cross(d1, new Vector3f()).normalize();
+
+            mesh.vertices[mesh.vertexOffset++] = normal.x;
+            mesh.vertices[mesh.vertexOffset++] = normal.y;
+            mesh.vertices[mesh.vertexOffset++] = normal.z;
           }
 
           if(textured) {

@@ -20,6 +20,8 @@ import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
 import legend.core.opengl.ShaderOptionsBattleTmd;
+import legend.core.opengl.ShaderOptionsSsao;
+import legend.core.opengl.ShaderOptionsSsaoDepthPrepass;
 import legend.core.opengl.ShaderOptionsStandard;
 import legend.core.opengl.ShaderOptionsTmd;
 import legend.core.opengl.ShaderType;
@@ -41,6 +43,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
@@ -50,6 +53,7 @@ import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumMap;
@@ -63,6 +67,7 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
@@ -97,6 +102,9 @@ import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
+import static org.lwjgl.opengl.GL11C.GL_RED;
+import static org.lwjgl.opengl.GL11C.GL_REPEAT;
+import static org.lwjgl.opengl.GL11C.GL_RGB;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_RGBA16;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
@@ -113,9 +121,13 @@ import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
 import static org.lwjgl.opengl.GL11C.glViewport;
+import static org.lwjgl.opengl.GL12C.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT1;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.GL30C.GL_RGBA16F;
+import static org.lwjgl.opengl.GL30C.GL_RGBA32F;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
@@ -158,6 +170,7 @@ public class RenderEngine {
       shader.use();
       shader.new UniformInt("tex24").set(0);
       shader.new UniformInt("tex15").set(1);
+      shader.new UniformInt("texSsao").set(2);
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
@@ -180,6 +193,7 @@ public class RenderEngine {
       shader.use();
       shader.new UniformInt("tex24").set(0);
       shader.new UniformInt("tex15").set(1);
+      shader.new UniformInt("texSsao").set(2);
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
@@ -201,6 +215,7 @@ public class RenderEngine {
       shader.use();
       shader.new UniformInt("tex24").set(0);
       shader.new UniformInt("tex15").set(1);
+      shader.new UniformInt("texSsao").set(2);
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
@@ -220,6 +235,66 @@ public class RenderEngine {
     }
   );
 
+  public static final ShaderType<ShaderOptionsSsaoDepthPrepass> SSAO_DEPTH_PREPASS = new ShaderType<>(
+    options -> loadShader("ssao/depth", "ssao/depth", options),
+    shader -> {
+      shader.use();
+      shader.new UniformInt("tex24").set(0);
+      shader.new UniformInt("tex15").set(1);
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      final Shader<ShaderOptionsSsaoDepthPrepass>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
+      final Shader<ShaderOptionsSsaoDepthPrepass>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
+      return () -> new ShaderOptionsSsaoDepthPrepass(modelIndex, discardTranslucency);
+    }
+  );
+
+  public static final ShaderType<ShaderOptionsSsao> SSAO = new ShaderType<>(
+    options -> loadShader("ssao/ssao", "ssao/ssao", options),
+    shader -> {
+      shader.use();
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.new UniformInt("texPos").set(0);
+      shader.new UniformInt("texNorm").set(1);
+      shader.new UniformInt("texNoise").set(2);
+      final Shader<ShaderOptionsSsao>.UniformVec2 screenSize = shader.new UniformVec2("screenSize");
+      final Shader<ShaderOptionsSsao>.UniformVec3[] samples = new Shader.UniformVec3[64];
+      Arrays.setAll(samples, i -> shader.new UniformVec3("samples[" + i + ']'));
+
+      final Random rand = new Random();
+      final Vector3f kernel = new Vector3f();
+      for(int i = 0; i < 64; i++) {
+        final float s = i / 64.0f;
+        final float scale = org.joml.Math.lerp(0.1f, 1.0f, s * s);
+
+        kernel.set(
+            rand.nextFloat(-1.0f, 1.0f),
+            rand.nextFloat(-1.0f, 1.0f),
+            rand.nextFloat()
+          )
+          .mul(rand.nextFloat())
+          // scale samples so that they're more aligned to center of kernel
+          .mul(scale)
+          .normalize()
+        ;
+
+        samples[i].set(kernel);
+      }
+
+      return () -> new ShaderOptionsSsao(screenSize, samples);
+    }
+  );
+
+  public static final ShaderType<VoidShaderOptions> SSAO_BLUR = new ShaderType<>(
+    options -> loadShader("ssao/ssao", "ssao/ssao_blur", options),
+    shader -> {
+      shader.use();
+      shader.new UniformInt("ssaoInput").set(0);
+      return () -> VoidShaderOptions.INSTANCE;
+    }
+  );
+
   public static final ShaderType<VoidShaderOptions> SCREEN_SHADER = new ShaderType<>(options -> loadShader("post", "screen", options), shader -> () -> VoidShaderOptions.INSTANCE);
 
   private static final int RENDER_BUFFER_COUNT = 2;
@@ -229,12 +304,26 @@ public class RenderEngine {
   ShaderOptionsTmd tmdShaderOptions;
   Shader<ShaderOptionsBattleTmd> battleTmdShader;
   ShaderOptionsBattleTmd battleTmdShaderOptions;
+  Shader<ShaderOptionsSsaoDepthPrepass> depthPrepassShader;
+  ShaderOptionsSsaoDepthPrepass depthPrepassShaderOptions;
+  Shader<ShaderOptionsSsao> shaderSSAO;
+  ShaderOptionsSsao ssaoShaderOptions;
+  Shader<VoidShaderOptions> shaderSSAOBlur;
   private final FrameBuffer[] renderBuffers = new FrameBuffer[RENDER_BUFFER_COUNT];
   private final Texture[] renderTextures = new Texture[RENDER_BUFFER_COUNT];
   private Texture depthTexture;
   private int renderBufferIndex;
   /** Set when resizing the window so that the render buffers will be resized on the next frame */
   private boolean resizeRenderBuffers;
+
+  // SSAO
+  private FrameBuffer depthPrepassBuffer;
+  private Texture posPrepassTexture;
+  private Texture normalPrepassTexture;
+  private FrameBuffer ssaoFBO;
+  private FrameBuffer ssaoBlurFBO;
+  private Texture ssaoColorBuffer;
+  private Texture ssaoColorBufferBlur;
 
   // Text
   public Texture textTexture;
@@ -482,6 +571,11 @@ public class RenderEngine {
     this.tmdShaderOptions = this.tmdShader.makeOptions();
     this.battleTmdShader = ShaderManager.addShader(BATTLE_TMD_SHADER);
     this.battleTmdShaderOptions = this.battleTmdShader.makeOptions();
+    this.depthPrepassShader = ShaderManager.addShader(SSAO_DEPTH_PREPASS);
+    this.depthPrepassShaderOptions = this.depthPrepassShader.makeOptions();
+    this.shaderSSAO = ShaderManager.addShader(SSAO);
+    this.ssaoShaderOptions = this.shaderSSAO.makeOptions();
+    this.shaderSSAOBlur = ShaderManager.addShader(SSAO_BLUR);
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
@@ -567,6 +661,27 @@ public class RenderEngine {
       .build();
     this.renderBufferQuad.persistent = true;
 
+    final Random rand = new Random();
+
+    final FloatBuffer ssaoNoise = BufferUtils.createFloatBuffer(16 * 3);
+    for(int i = 0; i < 16; i++) {
+      // Rotate noise around z-axis in tangent-space
+      ssaoNoise.put(rand.nextFloat(-1.0f, 1.0f));
+      ssaoNoise.put(rand.nextFloat(-1.0f, 1.0f));
+      ssaoNoise.put(0.0f);
+    }
+
+    ssaoNoise.flip();
+
+    final Texture noiseTexture = Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA32F);
+      builder.dataFormat(GL_RGB);
+      builder.dataType(GL_FLOAT);
+      builder.data(ssaoNoise, 4, 4);
+      builder.wrapS(GL_REPEAT);
+      builder.wrapT(GL_REPEAT);
+    });
+
     this.window.events().onDraw(() -> {
       synchronized(this.tasks) {
         Runnable task;
@@ -650,7 +765,45 @@ public class RenderEngine {
           this.battleTmdShaderOptions.battleColour(battle._800c6930.colour_00);
         }
 
+        // ======================================
+        // SSAO
+
+        this.depthPrepassBuffer.bind();
+        this.clear();
+
+        this.depthPrepassShader.use();
+        this.depthPrepassShaderOptions.discardMode(1);
+        GPU.useVramTexture();
+
+        // Render geometry
+        if(this.frameSkipIndex == 0) {
+          this.renderSsao(this.mainBatch);
+        }
+
+        // Generate SSAO texture
+        this.ssaoFBO.bind();
+        this.clearColour();
+        this.shaderSSAO.use();
+        this.ssaoShaderOptions.screenSize(this.renderWidth, this.renderHeight);
+
+        this.posPrepassTexture.use(0);
+        this.normalPrepassTexture.use(1);
+        noiseTexture.use(2);
+        postQuad.draw();
+        FrameBuffer.unbind();
+
+        this.ssaoBlurFBO.bind();
+        this.clearColour();
+        this.shaderSSAOBlur.use();
+
+        this.ssaoColorBuffer.use();
+        postQuad.draw();
+        FrameBuffer.unbind();
+
+        // ======================================
+
         this.renderBuffers[this.renderBufferIndex].bind();
+        this.ssaoColorBufferBlur.use(2);
 
         if(this.frameSkipIndex == 0) {
           this.clearColour();
@@ -686,6 +839,10 @@ public class RenderEngine {
         // draw final screen quad
         glViewport(0, 0, this.window.getWidth(), this.window.getHeight());
         this.renderTextures[this.renderBufferIndex].use();
+//        this.posPrepassTexture.use();
+//        this.normalPrepassTexture.use();
+//        this.ssaoColorBuffer.use();
+//        this.ssaoColorBufferBlur.use();
         postQuad.draw();
 
         // If we don't unbind the framebuffer textures, window resizing will crash since it has to resize the framebuffer
@@ -741,6 +898,68 @@ public class RenderEngine {
 
       this.handleMovement();
     });
+  }
+
+  private void renderSsao(final RenderBatch batch) {
+    this.state.initBatch(batch);
+    this.state.enableScissor();
+
+    this.setProjectionMode(batch, ProjectionMode._3D);
+    this.renderSsaoPool(batch.modelPool, true);
+  }
+
+  private void renderSsaoPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
+    if(pool.isEmpty()) {
+      return;
+    }
+
+    // Update the depth mask so nothing further away than this will render
+    glDepthMask(true);
+
+    glDisable(GL_BLEND);
+
+    this.state.backfaceCulling(backFaceCulling);
+
+    for(int i = 0; i < pool.size(); i++) {
+      final int modelIndex = i & 0x7f;
+
+      // Load the next 128 model transforms into the buffers
+      if(modelIndex == 0) {
+        for(int storeIndex = 0; storeIndex < Math.min(128, pool.size() - i); storeIndex++) {
+          pool.get(i + storeIndex).storeTransforms(storeIndex, this.transforms2Buffer);
+        }
+
+        this.transforms2Uniform.set(this.transforms2Buffer);
+      }
+
+      final QueuedModel<?, ?> entry = pool.get(i);
+      this.depthPrepassShaderOptions.modelIndex(modelIndex);
+      this.state.enableDepthTest(entry.opaqueDepthComparator);
+
+      this.state.scissor(entry);
+
+      for(int layer = 0; layer < entry.getLayers(); layer++) {
+        if(entry.shouldRender(null, layer)) {
+          if(backFaceCulling) {
+            this.state.backfaceCulling(entry.obj.useBackfaceCulling());
+          }
+
+          entry.render(null, layer, true);
+        }
+
+        // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (only applies to emulated VRAM)
+        if(!entry.texturesUsed && entry.hasTranslucency(layer)) {
+          for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+            final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
+            if(entry.shouldRender(translucency, layer)) {
+              this.state.backfaceCulling(false);
+              entry.render(translucency, layer, true);
+            }
+          }
+        }
+      }
+    }
   }
 
   private void renderBatch(final RenderBatch batch) {
@@ -811,7 +1030,7 @@ public class RenderEngine {
           }
 
           entry.useTexture();
-          entry.render(null, layer);
+          entry.render(null, layer, false);
         }
 
         // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (only applies to emulated VRAM)
@@ -822,7 +1041,7 @@ public class RenderEngine {
             if(entry.shouldRender(translucency, layer)) {
               this.state.backfaceCulling(false);
               entry.useTexture();
-              entry.render(translucency, layer);
+              entry.render(translucency, layer, false);
             }
           }
         }
@@ -868,22 +1087,22 @@ public class RenderEngine {
         for(int layer = 0; layer < entry.getLayers(); layer++) {
           if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F, layer)) {
             Translucency.HALF_B_PLUS_HALF_F.setGlState();
-            entry.render(Translucency.HALF_B_PLUS_HALF_F, layer);
+            entry.render(Translucency.HALF_B_PLUS_HALF_F, layer, false);
           }
 
           if(entry.shouldRender(Translucency.B_PLUS_F, layer)) {
             Translucency.B_PLUS_F.setGlState();
-            entry.render(Translucency.B_PLUS_F, layer);
+            entry.render(Translucency.B_PLUS_F, layer, false);
           }
 
           if(entry.shouldRender(Translucency.B_MINUS_F, layer)) {
             Translucency.B_MINUS_F.setGlState();
-            entry.render(Translucency.B_MINUS_F, layer);
+            entry.render(Translucency.B_MINUS_F, layer, false);
           }
 
           if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F, layer)) {
             Translucency.B_PLUS_F.setGlState();
-            entry.render(Translucency.B_PLUS_QUARTER_F, layer);
+            entry.render(Translucency.B_PLUS_QUARTER_F, layer, false);
           }
         }
       }
@@ -1158,6 +1377,77 @@ public class RenderEngine {
         builder.attachment(this.depthTexture, GL_DEPTH_ATTACHMENT);
       });
     }
+
+    // SSAO
+    if(this.depthPrepassBuffer != null) {
+      this.depthPrepassBuffer.delete();
+    }
+
+    if(this.posPrepassTexture != null) {
+      this.posPrepassTexture.delete();
+    }
+
+    if(this.normalPrepassTexture != null) {
+      this.normalPrepassTexture.delete();
+    }
+
+    if(this.ssaoFBO != null) {
+      this.ssaoFBO.delete();
+    }
+
+    if(this.ssaoBlurFBO != null) {
+      this.ssaoBlurFBO.delete();
+    }
+
+    if(this.ssaoColorBuffer != null) {
+      this.ssaoColorBuffer.delete();
+    }
+
+    if(this.ssaoColorBufferBlur != null) {
+      this.ssaoColorBufferBlur.delete();
+    }
+
+    this.posPrepassTexture = Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA16F);
+      builder.dataFormat(GL_RGBA);
+      builder.dataType(GL_FLOAT);
+      builder.wrapS(GL_CLAMP_TO_EDGE);
+      builder.wrapT(GL_CLAMP_TO_EDGE);
+      builder.size(this.renderWidth, this.renderHeight);
+    });
+
+    this.normalPrepassTexture = Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA16F);
+      builder.dataFormat(GL_RGBA);
+      builder.dataType(GL_FLOAT);
+      builder.size(this.renderWidth, this.renderHeight);
+    });
+
+    this.depthPrepassBuffer = FrameBuffer.create(builder -> {
+      builder.attachment(this.posPrepassTexture, GL_COLOR_ATTACHMENT0);
+      builder.attachment(this.normalPrepassTexture, GL_COLOR_ATTACHMENT1);
+      builder.drawBuffer(GL_COLOR_ATTACHMENT0);
+      builder.drawBuffer(GL_COLOR_ATTACHMENT1);
+      builder.renderBuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT, this.renderWidth, this.renderHeight);
+    });
+
+    this.ssaoColorBuffer = Texture.create(builder -> {
+      builder.internalFormat(GL_RED);
+      builder.dataFormat(GL_RED);
+      builder.dataType(GL_FLOAT);
+      builder.size(this.renderWidth, this.renderHeight);
+    });
+
+    this.ssaoFBO = FrameBuffer.create(builder -> builder.attachment(this.ssaoColorBuffer));
+
+    this.ssaoColorBufferBlur = Texture.create(builder -> {
+      builder.internalFormat(GL_RED);
+      builder.dataFormat(GL_RED);
+      builder.dataType(GL_FLOAT);
+      builder.size(this.renderWidth, this.renderHeight);
+    });
+
+    this.ssaoBlurFBO = FrameBuffer.create(builder -> builder.attachment(this.ssaoColorBufferBlur));
   }
 
   private boolean isMac() {

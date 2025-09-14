@@ -200,6 +200,20 @@ public final class Texture {
     }
   }
 
+  public void getData(final FloatBuffer data, final int dataFormat, final int dataType) {
+    if(data.capacity() != this.width * this.height) {
+      throw new RuntimeException("Buffer capacity does not match texture dimensions, Buffer size: " + data.capacity() + ", Texture size: " + this.width * this.height * 4);
+    }
+
+    this.use();
+    glGetTexImage(GL_TEXTURE_2D, 0, dataFormat, dataType, data);
+
+    final int error = glGetError();
+    if(error != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to acquire texture data, glError: " + Long.toString(error, 16));
+    }
+  }
+
   public void use(final int activeTexture) {
     if(currentTextures[activeTexture] != this.id) {
       currentTextures[activeTexture] = this.id;

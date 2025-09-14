@@ -3,6 +3,7 @@ layout (triangles_adjacency) in;
 layout (triangle_strip, max_vertices = 3) out;
 
 in VS_OUT {
+  smooth vec3 vertNorm;
   smooth vec2 vertUv;
   flat vec2 vertTpage;
   flat vec2 vertClut;
@@ -24,6 +25,7 @@ in VS_OUT {
 } vs_out[];
 
 out GS_OUT {
+  smooth vec3 vertNorm;
   smooth vec2 vertUv;
   flat vec2 vertTpage;
   flat vec2 vertClut;
@@ -81,6 +83,7 @@ void main() {
 }
 
 void emit(int i) {
+  gs_out.vertNorm = vs_out[i].vertNorm;
   gs_out.vertUv = vs_out[i].vertUv;
   gs_out.vertTpage = vs_out[i].vertTpage;
   gs_out.vertClut = vs_out[i].vertClut;

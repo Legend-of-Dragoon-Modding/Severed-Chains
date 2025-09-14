@@ -1685,7 +1685,7 @@ public class WMap extends EngineState {
         break;
     }
 
-    setProjectionPlaneDistance(cameraAndLights.projectionPlaneDistance_118);
+    setProjectionPlaneDistance(cameraAndLights.projectionPlaneDistance_118/**3*/);
   }
 
   @Method(0x800d562cL)

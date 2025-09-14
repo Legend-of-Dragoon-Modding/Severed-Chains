@@ -78,23 +78,28 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
-  void render(@Nullable final Translucency translucency, final int layer) {
-    if(translucency != null) {
-      this.shaderOptions.translucency(translucency);
-    } else {
-      this.shaderOptions.opaque();
-    }
+  void render(@Nullable final Translucency translucency, final int layer, final boolean ssao) {
+    if(!ssao) {
+      if(translucency != null) {
+        this.shaderOptions.translucency(translucency);
+      } else {
+        this.shaderOptions.opaque();
+      }
 
-    this.shaderOptions.alpha(this.alpha);
-    this.shaderOptions.useTextureAlpha(this.useTextureAlpha);
+      this.shaderOptions.alpha(this.alpha);
+      this.shaderOptions.useTextureAlpha(this.useTextureAlpha);
+    }
 
     if(this.hasTranslucencyOverride) {
       // Translucency override
-      this.updateColours(translucency);
+      if(!ssao) {
+        this.updateColours(translucency);
+      }
+
       this.obj.render(layer, this.startVertex, this.vertexCount);
       return;
     }
 
-    super.render(translucency, layer);
+    super.render(translucency, layer, ssao);
   }
 }

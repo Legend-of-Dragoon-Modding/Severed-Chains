@@ -9,34 +9,25 @@ layout(location = 5) in vec4 inColour;
 layout(location = 6) in float inFlags;
 
 out VS_OUT {
-  smooth vec3 vertNorm;
   smooth vec2 vertUv;
   flat vec2 vertTpage;
   flat vec2 vertClut;
   flat int vertBpp;
-  smooth vec4 vertColour;
   flat int vertFlags;
-
-  flat int translucency;
 
   flat float widthMultiplier;
   flat int widthMask;
   flat int indexShift;
   flat int indexMask;
 
-  smooth float viewspaceZ;
+  smooth vec3 pos;
+  smooth vec3 norm;
 
   smooth float depth;
   smooth float depthOffset;
 } vs_out;
 
-uniform vec2 clutOverride;
-uniform vec2 tpageOverride;
 uniform float modelIndex;
-uniform int ctmdFlags;
-uniform vec3 battleColour;
-
-uniform int useVdf;
 
 struct ModelTransforms {
   mat4 model;
@@ -62,64 +53,23 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
-layout(std140) uniform vdf {
-  vec4[1024] vertices;
-};
-
 void main() {
-  vec4 pos;
-
-  if(useVdf == 0) {
-    pos = vec4(inPos.xyz, 1.0f);
-  } else {
-    pos = vec4(vertices[int(inPos.w)].xyz, 1.0f);
-  }
+  vec4 pos = vec4(inPos.xyz, 1.0f);
 
   vs_out.vertFlags = int(inFlags);
-  bool ctmd = (ctmdFlags & 0x20) != 0;
-  bool uniformLit = (ctmdFlags & 0x10) != 0;
-  bool translucent = (vs_out.vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
-  bool coloured = (vs_out.vertFlags & 0x4) != 0;
+
   bool textured = (vs_out.vertFlags & 0x2) != 0;
-  bool lit = (vs_out.vertFlags & 0x1) != 0;
 
   ModelTransforms t = modelTransforms[int(modelIndex)];
 
-  if(textured && translucent && !lit && (ctmd || uniformLit)) {
-    vs_out.vertColour.rgb = inColour.rgb * battleColour.rgb;
-    // Individiually checks for retail color overflows
-    if(vs_out.vertColour.r > 2.0) {
-      vs_out.vertColour.r = mod(vs_out.vertColour.r, 2.0);
-    }
-    if(vs_out.vertColour.g > 2.0) {
-      vs_out.vertColour.g = mod(vs_out.vertColour.g, 2.0);
-    }
-    if(vs_out.vertColour.b > 2.0) {
-      vs_out.vertColour.b = mod(vs_out.vertColour.b, 2.0);
-    }
-  } else if(coloured) {
-    vs_out.vertColour = inColour;
-  } else {
-    vs_out.vertColour = vec4(1.0, 1.0, 1.0, 1.0);
-  }
-
   int intTpage = int(inTpage);
   vs_out.vertBpp = intTpage >> 7 & 0x3;
-  vs_out.translucency = intTpage >> 5 & 0x3;
 
   if(textured) {
-    if(tpageOverride.x == 0) {
-      vs_out.vertTpage = vec2((intTpage & 0xf) * 64, (intTpage & 0x10) != 0 ? 256 : 0);
-    } else {
-      vs_out.vertTpage = tpageOverride;
-    }
+    vs_out.vertTpage = vec2((intTpage & 0xf) * 64, (intTpage & 0x10) != 0 ? 256 : 0);
 
-    if(clutOverride.x == 0) {
-      int intClut = int(inClut);
-      vs_out.vertClut = vec2((intClut & 0x3f) * 16, intClut >> 6);
-    } else {
-      vs_out.vertClut = clutOverride;
-    }
+    int intClut = int(inClut);
+    vs_out.vertClut = vec2((intClut & 0x3f) * 16, intClut >> 6);
 
     if(vs_out.vertBpp == 0 || vs_out.vertBpp == 1) {
       int widthDivisor = 1 << 2 - vs_out.vertBpp;
@@ -131,7 +81,6 @@ void main() {
   }
 
   gl_Position = camera * t.model * pos;
-  vs_out.viewspaceZ = gl_Position.z;
 
   if(projectionMode == 1) { // Low quality submap projection
     // Projection plane division
@@ -148,9 +97,12 @@ void main() {
   }
 
   gl_Position.xy += t.screenOffset.xy;
+  vs_out.pos = gl_Position.xyz;
+
   gl_Position = projection * gl_Position;
-  vs_out.vertNorm = inNorm;
+
   vs_out.vertUv = inUv;
 
   vs_out.depth = gl_Position.z;
+  vs_out.norm = normalize(transpose(inverse(mat3(camera * t.model))) * inNorm);
 }
