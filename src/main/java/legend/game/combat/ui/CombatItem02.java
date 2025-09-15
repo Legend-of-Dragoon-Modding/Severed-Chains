@@ -26,6 +26,10 @@ public class CombatItem02 {
   }
 
   public ItemStack getStack() {
+    if(this.stacks.isEmpty()) {
+      return ItemStack.EMPTY;
+    }
+
     return this.stacks.getLast();
   }
 

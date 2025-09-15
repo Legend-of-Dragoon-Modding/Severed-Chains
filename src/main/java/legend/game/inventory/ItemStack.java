@@ -317,6 +317,21 @@ public class ItemStack implements InventoryEntry {
     return this.getItem().getAttackDamageMultiplier(this, user, target);
   }
 
+  @Override
+  public String toString() {
+    if(this.isEmpty()) {
+      return "EMPTY";
+    }
+
+    String out = this.getSize() + "x " + this.getItem();
+
+    if(this.hasDurability()) {
+      out += " (" + this.getCurrentDurability() + '/' + this.getMaxDurability() + ')';
+    }
+
+    return out;
+  }
+
   private static final class Empty extends ItemStack {
     public Empty() {
       super(CoreMod.NOTHING.get());

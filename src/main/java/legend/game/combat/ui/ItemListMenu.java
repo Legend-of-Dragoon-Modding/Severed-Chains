@@ -57,7 +57,11 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected void onUse(final int index) {
-    final ItemStack stack = this.player_08.item_d4.take(1);
+    final ItemStack original = this.player_08.item_d4;
+    this.player_08.item_d4 = this.player_08.item_d4.take(1);
+    gameState_800babc8.items_2e9.removeIfEmpty(original);
+
+    final ItemStack stack = this.player_08.item_d4;
     final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(stack, stack.isRepeat()));
 
     if(repeatItemReturnEvent.returnItem) {
