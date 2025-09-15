@@ -51,18 +51,12 @@ public final class Constants {
   private static final int BREATH_COUNT_SHIFT = 2;
   public static final int BREATH_COUNT = BASE_BREATH_COUNT << BREATH_COUNT_SHIFT;
 
-  /** The maximum speed for traversing the breath wave is x30.
+  /** The maximum value should be 47.
    * <pre>
-   *   (60 << 25) - 1 + (30 << 25) = 0xB3FF_FFFF
+   *   log2(60)≈5.9069
    * </pre>
-   * Any more than 25 and you could overflow the counter.
-   * <p>
-   * However, something interesting happens when you try to process at least 480 times a second (x8 the retail rate).
-   * On every tick, you'd have to add 1/8th of the value.
-   * <pre>
-   *   (60 << 26) - 1 + (30 << 23) = 0xFEFF_FFFF
-   * </pre>
-   * So when going from a x4 to x8, instead of halving the amount, we could double the max value.
+   * Mantissa of double has 53 bits, so it should be the maximal value that doesn't run
+   * into approximation.
    */
   private static final int BASE_BREATH_BIT_SHIFT = 47;
   public static final int BREATH_BIT_SHIFT = BASE_BREATH_BIT_SHIFT - BREATH_COUNT_SHIFT;
