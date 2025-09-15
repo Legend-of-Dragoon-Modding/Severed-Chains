@@ -10,7 +10,7 @@ public final class Channel {
   private int modulation;
   private int pitchBend;
   private int priority;
-  private int breath;
+  private long breath;
   private float adjustedVolume;
 
   private final SoundFont soundFont;
@@ -89,11 +89,11 @@ public final class Channel {
     this.priority = priority;
   }
 
-  public int getBreath() {
+  public long getBreath() {
     return this.breath;
   }
 
-  public void setBreath(final int breath) {
+  public void setBreath(final long breath) {
     this.breath = breath;
   }
 

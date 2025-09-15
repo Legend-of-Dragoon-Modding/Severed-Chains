@@ -19,7 +19,7 @@ final class VoiceCounter {
   */
   private final static long START_OFFSET = ((Voice.EMPTY.length) / 2 + 1L) << PITCH_BIT_SHIFT;
   private long sampleCounter = START_OFFSET;
-  private int breathCounter;
+  private long breathCounter;
 
   int getCurrentSampleIndex() {
     return (int)((this.sampleCounter >>> PITCH_BIT_SHIFT) & 0x1f);
@@ -42,14 +42,14 @@ final class VoiceCounter {
   }
 
   int getCurrentBreathIndex() {
-    return this.breathCounter >>> BREATH_BIT_SHIFT;
+    return (int)(this.breathCounter >>> BREATH_BIT_SHIFT);
   }
 
   int getBreathInterpolationIndex() {
-    return (this.breathCounter >>> interpolationPrecision.breathShift) & interpolationPrecision.interpolationAnd;
+    return (int)((this.breathCounter >>> interpolationPrecision.breathShift) & interpolationPrecision.interpolationAnd);
   }
 
-  void addBreath(final int breath) {
+  void addBreath(final long breath) {
     // We're losing some precision here, but the values are already so precise, that it should not matter.
     // At the x16 setting, we should still be only losing about 0.0000477% of precision.
     this.breathCounter += breath >>> effectsOverTimeGranularity.shift;

@@ -7,6 +7,7 @@ import legend.game.unpacker.FileData;
 
 import static legend.core.audio.Constants.BREATH_COUNT;
 import static legend.core.audio.Constants.BREATH_MAX_VALUE;
+import static legend.core.audio.Constants.SAMPLE_RATE_RATIO;
 
 
 public final class Breath {
@@ -146,8 +147,8 @@ public final class Breath {
     return breath;
   }
 
-  public static int convert(final int value) {
-    return Math.round(BREATH_MAX_VALUE / (60 - 58 * value / 127.0f));
+  public static long convert(final int value) {
+    return Math.round(BREATH_MAX_VALUE / (60 - 58 * value / 127.0d) * SAMPLE_RATE_RATIO);
   }
 
   public static Breath get(final FileData data, final int fileId, final int tableIndex) {

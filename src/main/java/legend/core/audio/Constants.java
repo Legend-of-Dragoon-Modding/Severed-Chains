@@ -64,9 +64,9 @@ public final class Constants {
    * </pre>
    * So when going from a x4 to x8, instead of halving the amount, we could double the max value.
    */
-  private static final int BASE_BREATH_BIT_SHIFT = 25;
+  private static final int BASE_BREATH_BIT_SHIFT = 47;
   public static final int BREATH_BIT_SHIFT = BASE_BREATH_BIT_SHIFT - BREATH_COUNT_SHIFT;
-  public static final int BREATH_MAX_VALUE = BASE_BREATH_COUNT << BASE_BREATH_BIT_SHIFT;
+  public static final long BREATH_MAX_VALUE = (long)BASE_BREATH_COUNT << BASE_BREATH_BIT_SHIFT;
 
   private Constants() {}
 }
