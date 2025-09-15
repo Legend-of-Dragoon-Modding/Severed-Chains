@@ -2035,7 +2035,7 @@ public final class Scus94491BpeSegment {
     darkeningTransforms.scaling(width * squish, displayHeight_1f8003e4, 1.0f);
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, darkeningTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())
-      .monochrome(MathHelper.clamp((int)(dissolveDarkening_800bd700.brightnessAccumulator_08 * 1.1f) >> 8, 0x80 - 2 * vsyncMode_8007a3b8, 0x80) / 128.0f);
+      .monochrome(Math.clamp((int)(dissolveDarkening_800bd700.brightnessAccumulator_08 * 1.1f) >> 8, 0x80 - 2 * vsyncMode_8007a3b8, 0x80) / 128.0f);
   }
 
   @Method(0x8001c4ecL)

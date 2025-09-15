@@ -1,7 +1,6 @@
 package legend.core.audio.sequencer;
 
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
-import legend.core.MathHelper;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
 
@@ -105,7 +104,7 @@ final public class LookupTables {
   }
 
   private static int mergePan(final int pan1, final int pan2) {
-    return MathHelper.clamp(pan1 + pan2 - 60, 0, 0x7f);
+    return Math.clamp(pan1 + pan2 - 60, 0, 0x7f);
   }
 
   // This will get scaled down later down the line, so we can to keep it in 128ths

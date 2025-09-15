@@ -1131,7 +1131,7 @@ public class BattleHud {
     //LAB_800f35dc
     //LAB_800f35e4
     //LAB_800f3608
-    int damage = MathHelper.clamp(number, 0, 999999999);
+    int damage = Math.clamp(number, 0, 999999999);
 
     //LAB_800f3614
     num.x_1c = x;
@@ -2302,12 +2302,12 @@ public class BattleHud {
 
   @Method(0x800fa068L)
   private float clampX(final float x) {
-    return MathHelper.clamp(x, 20.0f, 300.0f);
+    return Math.clamp(x, 20.0f, 300.0f);
   }
 
   @Method(0x800fa090L)
   private float clampY(final float y) {
-    return MathHelper.clamp(y, 20.0f, 220.0f);
+    return Math.clamp(y, 20.0f, 220.0f);
   }
 
   public void delete() {

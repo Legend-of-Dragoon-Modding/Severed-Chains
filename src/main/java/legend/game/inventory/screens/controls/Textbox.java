@@ -1,6 +1,5 @@
 package legend.game.inventory.screens.controls;
 
-import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.platform.input.InputAction;
@@ -88,7 +87,7 @@ public class Textbox extends Control {
   }
 
   public void setCaretIndex(final int index) {
-    this.caretIndex = MathHelper.clamp(index, 0, this.text.length());
+    this.caretIndex = Math.clamp(index, 0, this.text.length());
     this.caretX = this.calculateCaretX(this.caretIndex);
   }
 

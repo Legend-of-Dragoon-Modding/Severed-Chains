@@ -1,7 +1,6 @@
 package legend.game.unpacker.midi;
 
 import legend.core.DebugHelper;
-import legend.core.MathHelper;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -56,7 +55,7 @@ public class SoundbankDecoder {
 
         final int t = this.signed4bit(this.data[this.index + position] >> nibble * 4 & 0x0f);
         final int s = (t << this.getShift()) + (old * f0 + older * f1 + 32) / 64;
-        final short sample = (short)MathHelper.clamp(s, -0x8000, 0x7fff);
+        final short sample = (short)Math.clamp(s, -0x8000, 0x7fff);
 
         decodedSamples[i * 2] = (byte)(sample & 0xff);
         decodedSamples[i * 2 + 1] = (byte)(sample >> 8 & 0xff);

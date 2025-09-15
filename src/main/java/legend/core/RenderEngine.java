@@ -67,7 +67,6 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
-import static legend.core.MathHelper.clamp;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
@@ -1170,7 +1169,7 @@ public class RenderEngine {
       this.yaw += x * MOUSE_SPEED;
       this.pitch -= y * MOUSE_SPEED;
 
-      this.pitch = clamp(this.pitch, -PI / 2, PI / 2);
+      this.pitch = Math.clamp(this.pitch, -PI / 2, PI / 2);
 
       this.camera3d.look(-this.yaw, -this.pitch);
       this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
