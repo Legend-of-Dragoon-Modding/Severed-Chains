@@ -4,6 +4,7 @@ import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 
 import static legend.core.audio.Constants.BREATH_BIT_SHIFT;
+import static legend.core.audio.Constants.BREATH_COUNT;
 import static legend.core.audio.Constants.BREATH_MAX_VALUE;
 import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
 
@@ -54,7 +55,7 @@ final class VoiceCounter {
     // At the x16 setting, we should still be only losing about 0.0000477% of precision.
     this.breathCounter += breath >>> effectsOverTimeGranularity.shift;
 
-    if(this.breathCounter >= BREATH_MAX_VALUE) {
+    if(this.getCurrentBreathIndex() >= BREATH_COUNT) {
       this.breathCounter -= BREATH_MAX_VALUE;
     }
   }
