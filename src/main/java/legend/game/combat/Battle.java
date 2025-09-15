@@ -699,14 +699,14 @@ public class Battle extends EngineState {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
 
     functions[32] = this::scriptResetCameraMovement;
-    functions[33] = this::FUN_800dac20;
-    functions[34] = this::FUN_800db034;
-    functions[35] = this::FUN_800db460;
-    functions[36] = this::FUN_800db574;
+    functions[33] = this::scriptCameraSetViewpoint;
+    functions[34] = this::scriptCameraSetRefpoint;
+    functions[35] = this::scriptCameraMoveViewpoint;
+    functions[36] = this::scriptCameraMoveRefpoint;
     functions[37] = this::FUN_800db688;
     functions[38] = this::FUN_800db79c;
-    functions[39] = this::FUN_800db8b0;
-    functions[40] = this::FUN_800db9e0;
+    functions[39] = this::scriptCameraAccelerateViewpoint;
+    functions[40] = this::scriptCameraAccelerateRefpoint;
     functions[41] = this::scriptIsCameraMoving;
     functions[42] = this::scriptCalculateCameraValue;
     functions[43] = this::FUN_800dbb9c;
@@ -728,7 +728,7 @@ public class Battle extends EngineState {
     functions[135] = Scus94491BpeSegment::scriptRewindAndPause2;
     functions[136] = this::scriptGetMonsterStatusResistFlags;
     functions[137] = Scus94491BpeSegment::scriptRewindAndPause2;
-    functions[138] = this::FUN_800cb618;
+    functions[138] = this::scriptSetBentHidden;
     functions[139] = this::scriptSetInterpolationEnabled;
     functions[140] = this::FUN_800cb6bc;
     functions[141] = this::FUN_800cb764;
@@ -926,7 +926,7 @@ public class Battle extends EngineState {
     functions[589] = SEffe::scriptSetEffectErrorFlag;
     functions[590] = SEffe::scriptSetEffectTranslucencySourceFlag;
     functions[591] = SEffe::scriptSetEffectTranslucencyModeFlag;
-    functions[592] = this::FUN_800e74ac;
+    functions[592] = this::scriptGetDeffBentParams;
     functions[593] = SEffe::scriptGetPositionScalerAttachmentVelocity;
     functions[594] = this::scriptAddOrUpdateTextureAnimationAttachment;
     functions[595] = SEffe::scriptSetEffectLightingDisableFlag;
@@ -2942,11 +2942,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets bit 10 of battle entity script flags (possibly whether a battle entity renders and animates?)")
+  @ScriptDescription("Sets whether or not a bent is hidden")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set the flag, false otherwise")
   @Method(0x800cb618L)
-  public FlowControl FUN_800cb618(final RunningScript<?> script) {
+  public FlowControl scriptSetBentHidden(final RunningScript<?> script) {
     final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
 
     //LAB_800cb668
@@ -4814,14 +4814,14 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Sets battle camera viewpoint")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800dac20L)
-  public FlowControl FUN_800dac20(final RunningScript<?> script) {
+  public FlowControl scriptCameraSetViewpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4848,19 +4848,19 @@ public class Battle extends EngineState {
       bobj = null;
     }
 
-    this.camera_800c67f0.FUN_800dac70(script.params_20[0].get(), x, y, z, bobj);
+    this.camera_800c67f0.cameraSetViewpoint(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
   /** Note: sometimes nonsense values are passed for the script index (assassin cock passes -2 during yell attack) */
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Sets battle camera refpoint")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db034L)
-  public FlowControl FUN_800db034(final RunningScript<?> script) {
+  public FlowControl scriptCameraSetRefpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4887,11 +4887,11 @@ public class Battle extends EngineState {
       bobj = null;
     }
 
-    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, bobj);
+    this.camera_800c67f0.cameraSetRefpoint(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Moves battle camera viewpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -4901,7 +4901,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db460L)
-  public FlowControl FUN_800db460(final RunningScript<?> script) {
+  public FlowControl scriptCameraMoveViewpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4912,11 +4912,11 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db4ec(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.cameraMoveViewpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Moves battle camera refpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -4926,7 +4926,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db574L)
-  public FlowControl FUN_800db574(final RunningScript<?> script) {
+  public FlowControl scriptCameraMoveRefpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4937,7 +4937,7 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db600(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.cameraMoveRefpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4999,7 +4999,7 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Accelerates camera viewpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -5010,7 +5010,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db8b0L)
-  public FlowControl FUN_800db8b0(final RunningScript<?> script) {
+  public FlowControl scriptCameraAccelerateViewpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -5023,11 +5023,11 @@ public class Battle extends EngineState {
       stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.cameraAccelerateViewpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Accelerates camera refpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -5038,7 +5038,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db9e0L)
-  public FlowControl FUN_800db9e0(final RunningScript<?> script) {
+  public FlowControl scriptCameraAccelerateRefpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -5051,7 +5051,7 @@ public class Battle extends EngineState {
       stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.cameraAccelerateRefpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -6459,11 +6459,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Returns two unknown values")
+  @ScriptDescription("Returns deff's calling bent index and target param")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "bentIndex")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "target")
   @Method(0x800e74acL)
-  public FlowControl FUN_800e74ac(final RunningScript<?> script) {
+  public FlowControl scriptGetDeffBentParams(final RunningScript<?> script) {
     final LoadedDeff24 struct24 = this.loadedDeff_800c6938;
     script.params_20[0].set(struct24.bentState_04.index);
     script.params_20[1].set(struct24.param_08);
