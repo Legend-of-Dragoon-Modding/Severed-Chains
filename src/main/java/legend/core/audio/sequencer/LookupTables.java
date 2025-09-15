@@ -8,7 +8,7 @@ import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
 import static legend.core.audio.Constants.SAMPLE_RATE_RATIO;
 
 final public class LookupTables {
-  private static final double BASE_SAMPLE_RATE_VALUE = (1 << PITCH_BIT_SHIFT);
+  private static final double BASE_SAMPLE_RATE_VALUE = (1L << PITCH_BIT_SHIFT);
   private PitchResolution pitchResolution;
   private int[] sampleRates;
   private int interpolationStep;
@@ -62,19 +62,19 @@ final public class LookupTables {
     }
   }
 
-  int calculateSampleRate(final int rootKey, final int note, final int finePitch, final int pitchBend, final int pitchBendMultiplier) {
+  long calculateSampleRate(final int rootKey, final int note, final int finePitch, final int pitchBend, final int pitchBendMultiplier) {
     final int offsetIn128ths = (note - rootKey) * 128 + finePitch + pitchBend * pitchBendMultiplier;
     final int scaledOffset = offsetIn128ths >> this.pitchResolution.sampleRateShift;
 
     if(scaledOffset >= 0) {
       final int octaveOffset = scaledOffset / this.sampleRates.length;
       final int sampleRateOffset = scaledOffset - octaveOffset * this.sampleRates.length;
-      return this.sampleRates[sampleRateOffset] << octaveOffset;
+      return (this.sampleRates[sampleRateOffset] & 0xFFFF_FFFFL) << octaveOffset;
     }
 
     final int octaveOffset = (scaledOffset + 1) / -this.sampleRates.length + 1;
     final int sampleRateOffset = scaledOffset + octaveOffset * this.sampleRates.length;
-    return this.sampleRates[sampleRateOffset] >> octaveOffset;
+    return (this.sampleRates[sampleRateOffset] & 0xFFFF_FFFFL) >> octaveOffset;
   }
 
   /**

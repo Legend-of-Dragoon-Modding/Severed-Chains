@@ -7,7 +7,7 @@ import legend.core.audio.sequencer.assets.sequence.Command;
 public final class BreathChange implements Command {
 
   private final Channel channel;
-  private final int breath;
+  private final long breath;
   private final int deltaTime;
 
   BreathChange(final Channel channel, final int breath, final int deltaTime) {
@@ -24,7 +24,7 @@ public final class BreathChange implements Command {
     this.channel.setBreath(this.breath);
   }
 
-  public int getBreath() {
+  public long getBreath() {
     return this.breath;
   }
 

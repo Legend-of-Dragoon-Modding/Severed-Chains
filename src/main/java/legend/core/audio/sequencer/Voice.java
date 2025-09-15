@@ -30,7 +30,7 @@ final class Voice {
   /** playingNote.used_00 */
   private boolean used;
   /** voice.pitch */
-  private int sampleRate;
+  private long sampleRate;
   /** playingNote.noteNumber_02 */
   private int note;
   /** playingNote.velocityVolume_2c */
