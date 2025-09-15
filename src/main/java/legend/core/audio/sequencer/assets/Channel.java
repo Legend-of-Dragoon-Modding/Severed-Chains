@@ -32,7 +32,7 @@ public final class Channel {
     this.pitchBend = (data.readUByte(0x0a) - 0x40) * 2;
     // TODO this should probably be converted to an Enum
     this.priority = data.readUByte(0x0b);
-    this.breath = data.readUByte(0x0c);
+    this.breath = Breath.convert(data.readUByte(0x0c));
 
 //    this.adjustedVolume = data.readUByte(0x0e) / 128f;
   }

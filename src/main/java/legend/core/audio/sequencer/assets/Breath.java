@@ -5,16 +5,28 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.audio.sequencer.LookupTables;
 import legend.game.unpacker.FileData;
 
+import static legend.core.audio.Constants.BREATH_COUNT;
+import static legend.core.audio.Constants.BREATH_MAX_VALUE;
+
 
 public final class Breath {
   private static final int HASH_MUL = 16777619;
   private static final int HASH_BASE = (int)2166136261L;
-  private static final int BREATH_COUNT = 240;
   /**
-   * 0 - Sine wave
-   * 1 - Triangular wave
-   * 2 - Double frequency sine wave
-   * 3 - Double frequency triangular wave
+   * <ul>
+   *   <li>
+   *     <b>0</b> - Sine wave
+   *   </li>
+   *   <li>
+   *     <b>1</b> - Triangular wave
+   *   </li>
+   *    <li>
+   *      <b>2</b> - Double frequency sine wave
+   *    </li>
+   *    <li>
+   *      <b>3</b> - Double frequency triangular wave
+   *    </li>
+   * </ul>
    */
   private static final float[][] waveforms = new float[4][];
   private static final Int2ObjectMap<Breath> map = new Int2ObjectOpenHashMap<>();
@@ -113,7 +125,7 @@ public final class Breath {
     this.abs = abs;
   }
 
-  public float get(final int position, final int interpolationIndex, final LookupTables lookupTables) {
+  public float getValue(final int position, final int interpolationIndex, final LookupTables lookupTables) {
     if(this.half) {
       if(position >= BREATH_COUNT / 2) {
         return 0;
@@ -132,6 +144,10 @@ public final class Breath {
     }
 
     return breath;
+  }
+
+  public static int convert(final int value) {
+    return Math.round(BREATH_MAX_VALUE / (60 - 58 * value / 127.0f));
   }
 
   public static Breath get(final FileData data, final int fileId, final int tableIndex) {

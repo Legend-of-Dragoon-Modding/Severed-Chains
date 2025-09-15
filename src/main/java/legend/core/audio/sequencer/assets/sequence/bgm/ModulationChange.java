@@ -18,6 +18,10 @@ public final class ModulationChange implements Command {
     return this.channel;
   }
 
+  public void apply() {
+    this.channel.setModulation(this.modulation);
+  }
+
   public int getModulation() {
     return this.modulation;
   }

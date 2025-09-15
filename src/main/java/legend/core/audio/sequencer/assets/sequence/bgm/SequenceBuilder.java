@@ -46,7 +46,7 @@ public final class SequenceBuilder {
     final int velocity = this.data.readUByte(this.position++);
     final int deltaTime = this.readDeltaTime();
 
-    return new KeyOn(this.channels[channelIndex], note, velocity, deltaTime);
+    return velocity != 0 ? new KeyOn(this.channels[channelIndex], note, velocity, deltaTime) : new KeyOff(this.channels[channelIndex], note, deltaTime);
   }
 
   private Command controlChange(final int channelIndex) {
