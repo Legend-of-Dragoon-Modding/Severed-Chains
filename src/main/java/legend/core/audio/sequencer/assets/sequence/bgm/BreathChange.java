@@ -1,17 +1,18 @@
 package legend.core.audio.sequencer.assets.sequence.bgm;
 
+import legend.core.audio.sequencer.assets.Breath;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.sequence.Command;
 
 public final class BreathChange implements Command {
 
   private final Channel channel;
-  private final int breath;
+  private final long breath;
   private final int deltaTime;
 
   BreathChange(final Channel channel, final int breath, final int deltaTime) {
     this.channel = channel;
-    this.breath = breath;
+    this.breath = Breath.convert(breath);
     this.deltaTime = deltaTime;
   }
 
@@ -19,7 +20,11 @@ public final class BreathChange implements Command {
     return this.channel;
   }
 
-  public int getBreath() {
+  public void apply() {
+    this.channel.setBreath(this.breath);
+  }
+
+  public long getBreath() {
     return this.breath;
   }
 

@@ -296,7 +296,7 @@ public final class Config {
       val = defaultVal;
     }
 
-    return MathHelper.clamp(val, min, max);
+    return Math.clamp(val, min, max);
   }
 
   private static boolean readBool(final String key, final boolean defaultVal) {

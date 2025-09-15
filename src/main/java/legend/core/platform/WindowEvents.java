@@ -46,7 +46,9 @@ public final class WindowEvents {
 
   void onResize(final int width, final int height) {
     synchronized(LOCK) {
-      this.resize.forEach(cb -> cb.resize(this.window, width, height));
+      for(int i = 0; i < this.resize.size(); i++) {
+        this.resize.get(i).resize(this.window, width, height);
+      }
     }
   }
 
@@ -66,9 +68,13 @@ public final class WindowEvents {
   void onFocus(final boolean focus) {
     synchronized(LOCK) {
       if(focus) {
-        this.gotFocus.forEach(cb -> cb.focus(this.window));
+        for(int i = 0; i < this.gotFocus.size(); i++) {
+          this.gotFocus.get(i).focus(this.window);
+        }
       } else {
-        this.lostFocus.forEach(cb -> cb.focus(this.window));
+        for(int i = 0; i < this.lostFocus.size(); i++) {
+          this.lostFocus.get(i).focus(this.window);
+        }
       }
     }
   }
@@ -100,28 +106,40 @@ public final class WindowEvents {
   }
 
   void onKeyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
-    this.keyPress.forEach(cb -> cb.action(this.window, key, scancode, mods, repeat));
+    for(int i = 0; i < this.keyPress.size(); i++) {
+      this.keyPress.get(i).action(this.window, key, scancode, mods, repeat);
+    }
   }
 
   void onKeyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods) {
-    this.keyRelease.forEach(cb -> cb.action(this.window, key, scancode, mods));
+    for(int i = 0; i < this.keyRelease.size(); i++) {
+      this.keyRelease.get(i).action(this.window, key, scancode, mods);
+    }
   }
 
   void onButtonPress(final InputButton button, final boolean repeat) {
-    this.buttonPress.forEach(cb -> cb.action(this.window, button, repeat));
+    for(int i = 0; i < this.buttonPress.size(); i++) {
+      this.buttonPress.get(i).action(this.window, button, repeat);
+    }
   }
 
   void onButtonRelease(final InputButton button) {
-    this.buttonRelease.forEach(cb -> cb.action(this.window, button));
+    for(int i = 0; i < this.buttonRelease.size(); i++) {
+      this.buttonRelease.get(i).action(this.window, button);
+    }
   }
 
   void onAxis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
-    this.axis.forEach(cb -> cb.action(this.window, axis, direction, menuValue, movementValue));
+    for(int i = 0; i < this.axis.size(); i++) {
+      this.axis.get(i).action(this.window, axis, direction, menuValue, movementValue);
+    }
   }
 
   void onChar(final int codepoint) {
     synchronized(LOCK) {
-      this.charPress.forEach(cb -> cb.action(this.window, codepoint));
+      for(int i = 0; i < this.charPress.size(); i++) {
+        this.charPress.get(i).action(this.window, codepoint);
+      }
     }
   }
 
@@ -129,51 +147,70 @@ public final class WindowEvents {
     synchronized(LOCK) {
       this.mouseX = x;
       this.mouseY = y;
-      this.mouseMove.forEach(cb -> cb.action(this.window, x, y));
+
+      for(int i = 0; i < this.mouseMove.size(); i++) {
+        this.mouseMove.get(i).action(this.window, x, y);
+      }
     }
   }
 
   void onMousePress(final int button, final Set<InputMod> mods) {
-    this.mousePress.forEach(cb -> cb.action(this.window, this.mouseX, this.mouseY, button, mods));
+    for(int i = 0; i < this.mousePress.size(); i++) {
+      this.mousePress.get(i).action(this.window, this.mouseX, this.mouseY, button, mods);
+    }
   }
 
   void onMouseRelease(final int button, final Set<InputMod> mods) {
-    this.mouseRelease.forEach(cb -> cb.action(this.window, this.mouseX, this.mouseY, button, mods));
+    for(int i = 0; i < this.mouseRelease.size(); i++) {
+      this.mouseRelease.get(i).action(this.window, this.mouseX, this.mouseY, button, mods);
+    }
   }
 
   void onMouseScroll(final double deltaX, final double deltaY) {
     synchronized(LOCK) {
-      this.mouseScroll.forEach(cb -> cb.action(this.window, deltaX, deltaY));
+      for(int i = 0; i < this.mouseScroll.size(); i++) {
+        this.mouseScroll.get(i).action(this.window, deltaX, deltaY);
+      }
     }
   }
 
   void onInputClassChanged(final InputClass classification) {
     synchronized(LOCK) {
-      this.inputClassChanged.forEach(cb -> cb.action(this.window, classification));
+      for(int i = 0; i < this.inputClassChanged.size(); i++) {
+        this.inputClassChanged.get(i).action(this.window, classification);
+      }
     }
   }
 
   void onInputActionPressed(final InputAction action, final boolean repeat) {
     synchronized(LOCK) {
-      this.inputActionPressed.forEach(cb -> cb.action(this.window, action, repeat));
+      for(int i = 0; i < this.inputActionPressed.size(); i++) {
+        this.inputActionPressed.get(i).action(this.window, action, repeat);
+      }
     }
   }
 
   void onInputActionReleased(final InputAction action) {
     synchronized(LOCK) {
-      this.inputActionReleased.forEach(cb -> cb.action(this.window, action));
+      for(int i = 0; i < this.inputActionReleased.size(); i++) {
+        this.inputActionReleased.get(i).action(this.window, action);
+      }
     }
   }
 
   void onControllerConnected(final int id) {
     synchronized(LOCK) {
-      this.controllerConnected.forEach(cb -> cb.action(this.window, id));
+      for(int i = 0; i < this.controllerConnected.size(); i++) {
+        this.controllerConnected.get(i).action(this.window, id);
+      }
     }
   }
 
   void onControllerDisconnected(final int id) {
     synchronized(LOCK) {
-      this.controllerDisconnected.forEach(cb -> cb.action(this.window, id));
+      for(int i = 0; i < this.controllerDisconnected.size(); i++) {
+        this.controllerDisconnected.get(i).action(this.window, id);
+      }
     }
   }
 
@@ -395,8 +432,8 @@ public final class WindowEvents {
 
   void onClose() {
     synchronized(LOCK) {
-      for(final Runnable close : this.close) {
-        close.run();
+      for(int i = 0; i < this.close.size(); i++) {
+        this.close.get(i).run();
       }
     }
   }

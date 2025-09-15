@@ -468,10 +468,10 @@ public class WMap extends EngineState {
     }
   }
 
+  private final MV modelLw = new MV();
+
   @Method(0x800c925cL)
   private void renderWmapModel(final Model124 model) {
-    final MV lw = new MV();
-
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     //LAB_800c92c8
@@ -479,14 +479,14 @@ public class WMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        GsGetLw(dobj2.coord2_04, lw);
+        GsGetLw(dobj2.coord2_04, this.modelLw);
 
         float screenOffsetY = 0.0f;
         if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3 || this.modelAndAnimData_800c66a8.coolonWarpState_220.state > 2) {
           screenOffsetY = -8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
-        RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
+        RENDERER.queueModel(dobj2.obj, this.modelLw, QueuedModelTmd.class)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -1917,6 +1917,10 @@ public class WMap extends EngineState {
     }
   }
 
+  private final boolean[] pathSegmentsRendered = new boolean[0xff];
+  private final MV pathLw = new MV();
+  private final MV pathLs = new MV();
+
   @Method(0x800d7a34L)
   private void renderPath() {
     if(
@@ -1953,10 +1957,8 @@ public class WMap extends EngineState {
 
     this.rotateCoord2(this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[0], this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0]);
 
-    final MV lw = new MV();
-    final MV ls = new MV();
-    GsGetLws(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], lw, ls);
-    GTE.setTransforms(ls);
+    GsGetLws(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], this.pathLw, this.pathLs);
+    GTE.setTransforms(this.pathLs);
 
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
@@ -1964,7 +1966,7 @@ public class WMap extends EngineState {
       if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
         if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7 || i == 31 || i == 78) {
-          this.mapState_800c6798.pathDots.transforms.set(lw)
+          this.mapState_800c6798.pathDots.transforms.set(this.pathLw)
             .rotateLocalX(-MathHelper.PI / 2.0f);
           if(zoomState == ZoomState.LOCAL_0) {
             this.mapState_800c6798.pathDots.transforms.scale(0.5f);
@@ -1993,7 +1995,7 @@ public class WMap extends EngineState {
       //LAB_800d84c0
     }
 
-    final boolean[] pathSegmentsRendered = new boolean[0xff];
+    Arrays.fill(this.pathSegmentsRendered, false);
 
     //LAB_800d852c
     //LAB_800d8540
@@ -2006,9 +2008,9 @@ public class WMap extends EngineState {
           final int pathIndexAndDirection = directionalPathSegmentData_800f2248[locations_800f0e34[i].directionalPathIndex_00].pathSegmentIndexAndDirection_00;
           final int pathSegmentIndex = Math.abs(pathIndexAndDirection) - 1;
 
-          if(!pathSegmentsRendered[pathSegmentIndex]) {
+          if(!this.pathSegmentsRendered[pathSegmentIndex]) {
             //LAB_800d863c
-            pathSegmentsRendered[pathSegmentIndex] = true;
+            this.pathSegmentsRendered[pathSegmentIndex] = true;
             final int pathPointCount = pathSegmentLengths_800f5810[pathSegmentIndex] - 1;
 
             final Vector3f[] dots = pathDotPosArr_800f591c[pathSegmentIndex];
@@ -2026,7 +2028,7 @@ public class WMap extends EngineState {
                 pathPoint = dots[pathPointIndexBase - pathPointIndex];
               }
 
-              this.mapState_800c6798.pathDots.transforms.set(lw)
+              this.mapState_800c6798.pathDots.transforms.set(this.pathLw)
                 .rotateLocalX(-MathHelper.PI / 2.0f)
                 .scale(0.25f);
               this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
@@ -2087,10 +2089,10 @@ public class WMap extends EngineState {
     //LAB_800d9030
   }
 
+  private final MV mapLw = new MV();
+
   @Method(0x800d9044L)
   private void renderWorldMap() {
-    final MV lw = new MV();
-
     this.renderAndHandleWorldMap();
     this.handleCoolonAndQueenFuryPrompts();
 
@@ -2135,18 +2137,18 @@ public class WMap extends EngineState {
       }
 
       //LAB_800d9320
-      GsGetLw(dobj2.coord2_04, lw);
+      GsGetLw(dobj2.coord2_04, this.mapLw);
 
       if(i == 0) {
-        lw.transfer.add(0.0f, 1.0f, 0.0f);
+        this.mapLw.transfer.add(0.0f, 1.0f, 0.0f);
       }
 
       // Fix path/Dart's feet being underground (GH#864)
       if(this.mapState_800c6798.continent_00 == Continent.ILLISA_BAY_3 || this.mapState_800c6798.continent_00 == Continent.DEATH_FRONTIER_6) {
-        lw.transfer.y += 6.0f;
+        this.mapLw.transfer.y += 6.0f;
       }
 
-      final QueuedModelTmd model = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class);
+      final QueuedModelTmd model = RENDERER.queueModel(dobj2.obj, this.mapLw, QueuedModelTmd.class);
 
       if(i == 0) {
         if(this.mapState_800c6798.continent_00.continentNum < 9) {

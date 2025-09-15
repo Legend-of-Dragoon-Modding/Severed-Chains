@@ -9,26 +9,10 @@ import javax.annotation.Nullable;
 public final class MathHelper {
   private MathHelper() { }
 
-  public static short clamp(final short value, final short min, final short max) {
-    return (short)Math.max(min, Math.min(value, max));
-  }
-
-  public static int clamp(final int value, final int min, final int max) {
-    return Math.max(min, Math.min(value, max));
-  }
-
-  public static long clamp(final long value, final long min, final long max) {
-    return Math.max(min, Math.min(value, max));
-  }
-
-  public static float clamp(final float value, final float min, final float max) {
-    return Math.max(min, Math.min(value, max));
-  }
-
   public static Vector3f clamp(final Vector3f value, final float min, final float max) {
-    value.x = clamp(value.x, min, max);
-    value.y = clamp(value.y, min, max);
-    value.z = clamp(value.z, min, max);
+    value.x = Math.clamp(value.x, min, max);
+    value.y = Math.clamp(value.y, min, max);
+    value.z = Math.clamp(value.z, min, max);
     return value;
   }
 

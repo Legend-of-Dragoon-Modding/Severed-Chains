@@ -18,6 +18,10 @@ public final class VolumeChange implements Command {
     return this.channel;
   }
 
+  public void apply(final float sssqVolume) {
+    this.channel.changeVolume(this.volume, sssqVolume);
+  }
+
   public float getVolume() {
     return this.volume;
   }

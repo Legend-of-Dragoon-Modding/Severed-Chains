@@ -1,6 +1,5 @@
 package legend.game.combat.effects;
 
-import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -68,9 +67,9 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
     }
 
     effectZ /= 4.0f;
-    int r = MathHelper.clamp(manager.params_10.colour_1c.x - 1 << 8, 0, 0x8000) >>> 7;
-    int g = MathHelper.clamp(manager.params_10.colour_1c.y - 1 << 8, 0, 0x8000) >>> 7;
-    int b = MathHelper.clamp(manager.params_10.colour_1c.z - 1 << 8, 0, 0x8000) >>> 7;
+    int r = Math.clamp(manager.params_10.colour_1c.x - 1 << 8, 0, 0x8000) >>> 7;
+    int g = Math.clamp(manager.params_10.colour_1c.y - 1 << 8, 0, 0x8000) >>> 7;
+    int b = Math.clamp(manager.params_10.colour_1c.z - 1 << 8, 0, 0x8000) >>> 7;
     r = Math.min((r + g + b) / 3 * 2, 0xff);
 
     //LAB_800d2a80

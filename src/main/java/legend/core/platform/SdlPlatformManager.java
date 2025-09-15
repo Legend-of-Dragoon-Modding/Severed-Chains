@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import legend.core.MathHelper;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.FailedToLoadDeviceException;
@@ -891,7 +890,7 @@ public class SdlPlatformManager extends PlatformManager {
 
     if(this.rumbleLerpStart != 0) {
       final long time = System.nanoTime() - this.rumbleLerpStart;
-      final float ratio = MathHelper.clamp(time / (float)this.rumbleLerpDuration, 0.0f, 1.0f);
+      final float ratio = Math.clamp(time / (float)this.rumbleLerpDuration, 0.0f, 1.0f);
       final float big = Math.lerp(this.rumbleBigStartingIntensity, this.rumbleBigEndingIntensity, ratio);
       final float small = Math.lerp(this.rumbleSmallStartingIntensity, this.rumbleSmallEndingIntensity, ratio);
       this.rumble(big, small, 0);

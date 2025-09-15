@@ -102,7 +102,7 @@ public class EquipmentScreen extends MenuScreen {
 
         this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
         this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8[this.charSlot]);
-        this.slotScroll = MathHelper.clamp(this.slotScroll, 0, Math.max(0, this.equipmentCount - 4));
+        this.slotScroll = Math.clamp(this.slotScroll, 0, Math.max(0, this.equipmentCount - 4));
 
         this.renderEquipmentScreen(this.charSlot, this.selectedSlot, this.slotScroll, 0xff);
         this.loadingStage++;

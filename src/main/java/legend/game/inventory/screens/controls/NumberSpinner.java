@@ -1,6 +1,5 @@
 package legend.game.inventory.screens.controls;
 
-import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -39,19 +38,19 @@ public class NumberSpinner<T extends Number> extends Control {
   private final Function<T, String> toString;
 
   public static NumberSpinner<Integer> intSpinner(final int number, final int min, final int max) {
-    return new NumberSpinner<>(number, 1, 5, Integer::sum, (a, b) -> a - b, Integer::sum, num -> MathHelper.clamp(num, min, max));
+    return new NumberSpinner<>(number, 1, 5, Integer::sum, (a, b) -> a - b, Integer::sum, num -> Math.clamp(num, min, max));
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float min, final float max) {
-    return new NumberSpinner<>(number, step, step * 5, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
+    return new NumberSpinner<>(number, step, step * 5, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
-    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
   }
 
   public static NumberSpinner<Float> percentSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
-    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> Math.round(num * 100) + "%");
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> Math.round(num * 100) + "%");
   }
 
   public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp) {
