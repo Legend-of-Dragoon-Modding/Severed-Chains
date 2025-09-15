@@ -37,7 +37,8 @@ public final class Constants {
    *   </li>
    * </ul>
    */
-  public static final int PITCH_BIT_SHIFT = 27;
+  public static final int PITCH_BIT_SHIFT = 31;
+  public static final long PITCH_MAX_VALUE = 28L << PITCH_BIT_SHIFT;
 
   /** There are 60 values in the original breath wave */
   private static final int BASE_BREATH_COUNT = 60;
