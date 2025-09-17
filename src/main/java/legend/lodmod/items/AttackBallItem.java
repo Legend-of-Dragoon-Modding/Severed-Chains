@@ -10,14 +10,21 @@ import legend.game.scripting.ScriptState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.combat.Battle.seed_800fa754;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class AttackBallItem extends Item {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AttackBallItem.class);
 
   public AttackBallItem() {
     super(ItemIcon.SACK, 50);
+  }
+
+  @Override
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
   }
 
   @Override

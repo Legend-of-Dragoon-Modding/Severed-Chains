@@ -9,6 +9,9 @@ import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
+
 public class BuffItem extends BattleItem {
   private final int useItemEntrypoint;
   private final TargetType target;
@@ -49,6 +52,11 @@ public class BuffItem extends BattleItem {
     this.mpPerPhysicalHit = mpPerPhysicalHit;
     this.spPerMagicalHit = spPerMagicalHit;
     this.mpPerMagicalHit = mpPerMagicalHit;
+  }
+
+  @Override
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
   }
 
   @Override

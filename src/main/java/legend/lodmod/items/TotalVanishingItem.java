@@ -5,9 +5,17 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
+
 public class TotalVanishingItem extends BattleItem {
   public TotalVanishingItem() {
     super(ItemIcon.SACK, 10);
+  }
+
+  @Override
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
   }
 
   @Override

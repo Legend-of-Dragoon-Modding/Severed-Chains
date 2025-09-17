@@ -81,6 +81,14 @@ public abstract class ControlHost implements Iterable<Control> {
       .findFirst();
   }
 
+  public <T extends Control> List<T> findControls(final Class<T> type, final Predicate<T> predicate) {
+    return this.controls.stream()
+      .filter(type::isInstance)
+      .map(type::cast)
+      .filter(predicate)
+      .toList();
+  }
+
   protected void renderControls(final int parentX, final int parentY) {
     this.controls.forEach(control -> control.renderControl(parentX, parentY));
   }

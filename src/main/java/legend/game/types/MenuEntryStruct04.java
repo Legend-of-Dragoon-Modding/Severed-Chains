@@ -28,10 +28,14 @@ public class MenuEntryStruct04<T extends InventoryEntry> {
   }
 
   public int getSize() {
-    if(this.item_00.getMaxSize() == 0) {
-      return 0;
-    }
-
     return this.item_00.getSize();
+  }
+
+  public int getMaxSize() {
+    return this.item_00.getMaxSize();
+  }
+
+  public boolean isEmpty() {
+    return this.item_00.isEmpty();
   }
 }

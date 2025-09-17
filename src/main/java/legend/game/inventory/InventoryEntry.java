@@ -11,6 +11,7 @@ public interface InventoryEntry {
   int getPrice();
   int getSize();
   int getMaxSize();
+  boolean isEmpty();
 
   default Renderable58 renderIcon(final int x, final int y, final int flags) {
     return this.getIcon().render(x, y, flags);

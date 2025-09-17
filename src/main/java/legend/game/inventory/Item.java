@@ -47,7 +47,7 @@ public abstract class Item extends RegistryEntry {
   }
 
   public int getMaxStackSize(final ItemStack stack) {
-    return 10;
+    return 1;
   }
 
   public boolean hasDurability(final ItemStack stack) {

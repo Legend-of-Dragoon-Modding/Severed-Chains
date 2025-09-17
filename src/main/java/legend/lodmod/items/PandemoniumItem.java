@@ -5,9 +5,17 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
+
 public class PandemoniumItem extends BattleItem {
   public PandemoniumItem() {
     super(ItemIcon.CHARM, 200);
+  }
+
+  @Override
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
   }
 
   @Override

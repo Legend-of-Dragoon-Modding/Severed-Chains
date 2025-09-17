@@ -54,6 +54,7 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.saves.ConfigRegistryEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Loader;
@@ -258,6 +259,11 @@ public class LodMod {
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ScancodeInputActivation(InputKey.ESCAPE))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ButtonInputActivation(InputButton.START))
     ;
+  }
+
+  @EventListener
+  public static void registerConfig(final ConfigRegistryEvent event) {
+    LodConfig.register(event);
   }
 
   @EventListener

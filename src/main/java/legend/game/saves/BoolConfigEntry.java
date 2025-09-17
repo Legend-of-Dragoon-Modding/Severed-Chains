@@ -3,7 +3,7 @@ package legend.game.saves;
 import legend.game.inventory.screens.controls.Checkbox;
 import legend.game.inventory.screens.HorizontalAlign;
 
-/** Convenience class for simple enum-backed configs */
+/** Convenience class for simple bool-backed configs */
 public class BoolConfigEntry extends ConfigEntry<Boolean> {
   public BoolConfigEntry(final boolean defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category) {
     super(

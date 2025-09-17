@@ -8,9 +8,11 @@ import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class RecoverHpItem extends BattleItem {
   private final boolean targetAll;
@@ -20,6 +22,11 @@ public class RecoverHpItem extends BattleItem {
     super(icon, price);
     this.targetAll = targetAll;
     this.percentage = percentage;
+  }
+
+  @Override
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
   }
 
   @Override

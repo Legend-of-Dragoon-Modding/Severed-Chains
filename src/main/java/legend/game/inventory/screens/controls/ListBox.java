@@ -122,7 +122,7 @@ public class ListBox<T> extends Control {
   }
 
   public void remove(final T data) {
-    this.findControl(ListBox.Entry.class, c -> c.data == data).ifPresent(entry -> {
+    this.findControl(Entry.class, c -> c.data == data).ifPresent(entry -> {
       this.removeControl(entry);
       this.entries.removeIf(e -> e.data == data);
 
@@ -136,6 +136,28 @@ public class ListBox<T> extends Control {
 
       this.updateEntries();
     });
+  }
+
+  public void removeIf(final Predicate<T> predicate) {
+    final List<ListBox<T>.Entry> entries = this.findControls((Class<ListBox<T>.Entry>)(Class)Entry.class, c -> predicate.test(c.data));
+
+    for(int i = 0; i < entries.size(); i++) {
+      final ListBox<T>.Entry entry = entries.get(i);
+
+      this.removeControl(entry);
+      this.entries.removeIf(e -> predicate.test(e.data));
+
+      if(this.visibleEntries() < this.maxVisibleEntries) {
+        if(this.scroll > 0) {
+          this.scroll--;
+        } else if(this.slot >= this.entries.size() && !this.entries.isEmpty()) {
+          this.select(this.entries.size() - 1);
+        }
+      }
+
+      this.updateEntries();
+
+    }
   }
 
   public void clear() {
@@ -192,12 +214,12 @@ public class ListBox<T> extends Control {
       final Entry entry = this.entries.get(i);
 
       if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries) {
+        entry.updateText();
+
         if(this.isDisabled != null) {
           if(this.isDisabled.test(entry.data)) {
-            entry.updateText();
             entry.fontOptions.colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN);
           } else {
-            entry.updateText();
             entry.fontOptions.colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
           }
         }

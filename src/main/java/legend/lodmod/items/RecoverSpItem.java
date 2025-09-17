@@ -7,7 +7,9 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8002.addSp;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class RecoverSpItem extends Item {
   private final boolean targetAll;
@@ -17,6 +19,11 @@ public class RecoverSpItem extends Item {
     super(ItemIcon.RED_POTION, price);
     this.targetAll = targetAll;
     this.percentage = percentage;
+  }
+
+  @Override
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
   }
 
   @Override

@@ -21,8 +21,8 @@ public class ItemStack implements InventoryEntry {
 
   public ItemStack(final Item item, final int size, final int durability) {
     this.item = item;
-    this.size = Math.clamp(size, 1, item.getMaxStackSize(this));
-    this.durability = Math.clamp(durability, 1, item.getMaxDurability(this));
+    this.size = size;
+    this.durability = durability;
   }
 
   public ItemStack(final Item item, final int size) {
@@ -73,7 +73,7 @@ public class ItemStack implements InventoryEntry {
       return 0;
     }
 
-    return this.getMaxSize() - this.getSize();
+    return Math.max(0, this.getMaxSize() - this.getSize());
   }
 
   public boolean isFull() {
@@ -174,6 +174,7 @@ public class ItemStack implements InventoryEntry {
     return (float)this.getCurrentDurability() / this.getMaxDurability();
   }
 
+  @Override
   public boolean isEmpty() {
     return this.size < 1 || this.durability < 1;
   }
@@ -202,6 +203,11 @@ public class ItemStack implements InventoryEntry {
     }
 
     final int amountToTransfer = Math.min(this.getRemainingCapacity(), other.getSize());
+
+    if(amountToTransfer == 0) {
+      return other;
+    }
+
     this.grow(amountToTransfer);
     this.damage(other.getMaxDurability() - other.getCurrentDurability());
 

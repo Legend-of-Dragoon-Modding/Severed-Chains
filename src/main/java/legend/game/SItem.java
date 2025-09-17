@@ -1653,10 +1653,8 @@ public final class SItem {
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
       menuItem.item_00.renderIcon(x + 4, y + FUN_800fc814(i), 0x8);
 
-      final int size = menuItem.getSize();
-
-      if(size > 0) {
-        renderNumber(x + 96, y + FUN_800fc814(i) + 3, size, 0x2, 10);
+      if(menuItem.getMaxSize() > 1) {
+        renderNumber(x + 96, y + FUN_800fc814(i) + 3, menuItem.getSize(), 0x2, 10);
       }
 
       final int s0 = menuItem.flags_02;

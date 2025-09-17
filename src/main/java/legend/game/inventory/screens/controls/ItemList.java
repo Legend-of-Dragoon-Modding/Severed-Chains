@@ -114,6 +114,10 @@ public class ItemList<T extends InventoryEntry> extends Control {
     this.items.remove(item);
   }
 
+  public void removeIf(final Predicate<MenuEntryStruct04<T>> predicate) {
+    this.items.removeIf(predicate);
+  }
+
   public void clear() {
     this.items.clear();
   }
