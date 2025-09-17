@@ -1,6 +1,5 @@
 package legend.core.spu;
 
-import legend.core.MathHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,7 +94,7 @@ public class Voice {
 
       final int t = signed4bit((byte)(this.spuAdpcm[position] >> nibble * 4 & 0x0f));
       final int s = (t << shift) + (this.old * f0 + this.older * f1 + 32) / 64;
-      final short sample = (short)MathHelper.clamp(s, -0x8000, 0x7fff);
+      final short sample = (short)Math.clamp(s, -0x8000, 0x7fff);
 
       this.decodedSamples[i] = sample;
 
@@ -209,7 +208,7 @@ public class Voice {
       envelopeStep = envelopeStep * this.adsrVolume >> 15;
     }
 
-    this.adsrVolume = MathHelper.clamp(this.adsrVolume + envelopeStep, 0, 0x7fff);
+    this.adsrVolume = Math.clamp(this.adsrVolume + envelopeStep, 0, 0x7fff);
     this.adsrCounter = envelopeCycles;
 
     final boolean nextPhase = isDecreasing ? this.adsrVolume <= adsrTarget : this.adsrVolume >= adsrTarget;

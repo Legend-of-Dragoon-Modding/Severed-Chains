@@ -42,4 +42,5 @@ exit 0
 
 : DOWNLOAD_FAILED
 echo Java download failed
+pause
 exit 2

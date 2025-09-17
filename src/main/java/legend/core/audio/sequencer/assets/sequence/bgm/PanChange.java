@@ -18,6 +18,16 @@ public final class PanChange implements Command {
     return this.channel;
   }
 
+  public void apply(final boolean isStereo) {
+    if(isStereo) {
+      this.channel.setPan(this.pan);
+
+      return;
+    }
+
+    this.channel.setPan(0x40);
+  }
+
   public int getPan() {
     return this.pan;
   }

@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
@@ -492,7 +491,7 @@ public final class Scus94491BpeSegment_8004 {
       SPU.setReverbMode(0);
       SPU.enableReverb();
       SPU.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
-      AUDIO_THREAD.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
+      AUDIO_THREAD.setReverb(type);
       return;
     }
 
@@ -756,8 +755,8 @@ public final class Scus94491BpeSegment_8004 {
 //      }
 
       //LAB_8004d714
-      soundEnv.pitchShiftVolLeft_26 = MathHelper.clamp(pitchShiftVolLeft, -0x1000, 0x1000);
-      soundEnv.pitchShiftVolRight_28 = MathHelper.clamp(pitchShiftVolRight, -0x1000, 0x1000);
+      soundEnv.pitchShiftVolLeft_26 = Math.clamp(pitchShiftVolLeft, -0x1000, 0x1000);
+      soundEnv.pitchShiftVolRight_28 = Math.clamp(pitchShiftVolRight, -0x1000, 0x1000);
       soundEnv.pitch_24 = pitch;
       soundEnv.pitchShifted_22 = true;
 

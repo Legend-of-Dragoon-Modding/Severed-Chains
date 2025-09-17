@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
@@ -562,7 +561,7 @@ public final class SItem {
   }
 
   private static void menuMusicLoaded(final List<FileData> files) {
-    menuMusic = new BackgroundMusic(files, 5815, AUDIO_THREAD.getSampleRate());
+    menuMusic = new BackgroundMusic(files, 5815);
   }
 
   /** FUN_8001e010 with param 0 */

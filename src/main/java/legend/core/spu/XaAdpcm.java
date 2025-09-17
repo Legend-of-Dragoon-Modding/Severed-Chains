@@ -2,7 +2,6 @@ package legend.core.spu;
 
 import it.unimi.dsi.fastutil.shorts.ShortArrayList;
 import it.unimi.dsi.fastutil.shorts.ShortList;
-import legend.core.MathHelper;
 import legend.core.memory.Ref;
 
 import java.util.List;
@@ -155,7 +154,7 @@ public final class XaAdpcm {
       sum += resampleRingBuffer[channel][resamplePointer - i & 0x1F] * zigZagTable[table][i] / 0x8000;
     }
 
-    return (short)MathHelper.clamp(sum, -0x8000, 0x7FFF);
+    return (short)Math.clamp(sum, -0x8000, 0x7FFF);
   }
 
   public static ShortList decodeNibbles(final byte[] xaapdcm, final int position, final int blk, final int nibble, final Ref<Short> old, final Ref<Short> older) {
@@ -170,7 +169,7 @@ public final class XaAdpcm {
     for(int i = 0; i < 28; i++) {
       final int t = signed4bit((byte)(xaapdcm[position + 16 + blk + i * 4] >> nibble * 4 & 0x0F));
       final int s = (t << shift) + (old.get() * f0 + older.get() * f1 + 32) / 64;
-      final short sample = (short)MathHelper.clamp(s, -0x8000, 0x7FFF);
+      final short sample = (short)Math.clamp(s, -0x8000, 0x7FFF);
 
       list.add(sample);
       older.set(old.get());

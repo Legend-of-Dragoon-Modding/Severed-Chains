@@ -844,6 +844,11 @@ public class Ttle extends EngineState {
     }
   }
 
+  private final Matrix4f optionTransforms = new Matrix4f();
+  private final Vector3f normalColour = new Vector3f(0xf0 / 255.0f, 0xf0 / 255.0f, 0xf0 / 255.0f);
+  private final Vector3f highlightColour = new Vector3f(0xc0 / 255.0f, 0x38 / 255.0f, 0x10 / 255.0f);
+  private final Vector3f tempColour = new Vector3f();
+
   @Method(0x800c8634L)
   private void renderMenuOptions() {
     if(this.hasSavedGames == 0) {
@@ -957,12 +962,7 @@ public class Ttle extends EngineState {
       }
     }
 
-    final Matrix4f transforms = new Matrix4f();
     final float scale = 1.0f / 3.0f;
-
-    final Vector3f normalColour = new Vector3f(0xf0 / 255.0f, 0xf0 / 255.0f, 0xf0 / 255.0f);
-    final Vector3f highlightColour = new Vector3f(0xc0 / 255.0f, 0x38 / 255.0f, 0x10 / 255.0f);
-    final Vector3f tempColour = new Vector3f();
 
     //LAB_800c8a70
     for(int i = 0; i < MENU_OPTIONS; i++) {
@@ -973,14 +973,14 @@ public class Ttle extends EngineState {
         alpha = this.menuOptionTransparency[i] / 2;
       }
 
-      transforms
+      this.optionTransforms
         .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f + RENDERER.getWidescreenOrthoOffsetX(), 130.0f + i * 16.0f, 100.0f)
         .scale(scale, scale, 1.0f)
       ;
 
       //LAB_800c8a8c
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
         .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
         .alpha(alpha / 128.0f)
@@ -988,15 +988,15 @@ public class Ttle extends EngineState {
         .useTextureAlpha()
         .vertices((i + MENU_OPTIONS) * 4, 4);
 
-      transforms
+      this.optionTransforms
         .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f + RENDERER.getWidescreenOrthoOffsetX(), 130.0f + i * 16.0f, 100.1f)
         .scale(scale, scale, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
-        .colour(normalColour.lerp(highlightColour, (alpha - 0x40) / (float)0x60, tempColour))
+        .colour(this.normalColour.lerp(this.highlightColour, (alpha - 0x40) / (float)0x60, this.tempColour))
         .alpha(alpha / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()
@@ -1004,13 +1004,13 @@ public class Ttle extends EngineState {
     }
 
     if(this.update != null) {
-      transforms
+      this.optionTransforms
         .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.0f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
         .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
         .alpha(this.menuUpdateTransparency / 128.0f)
@@ -1018,29 +1018,29 @@ public class Ttle extends EngineState {
         .useTextureAlpha()
         .vertices(this.updateAvailableIndex * 4, 4);
 
-      transforms
+      this.optionTransforms
         .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
-        .colour(normalColour)
+        .colour(this.normalColour)
         .alpha(this.menuUpdateTransparency / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()
         .vertices(this.updateAvailableShadowIndex * 4, 4);
 
-      transforms
+      this.optionTransforms
         .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
-        .colour(normalColour)
+        .colour(this.normalColour)
         .alpha(this.menuUpdateTransparency / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()

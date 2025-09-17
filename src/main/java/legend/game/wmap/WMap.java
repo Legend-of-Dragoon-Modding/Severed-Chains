@@ -28,6 +28,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
+import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
@@ -468,10 +469,10 @@ public class WMap extends EngineState {
     }
   }
 
+  private final MV modelLw = new MV();
+
   @Method(0x800c925cL)
   private void renderWmapModel(final Model124 model) {
-    final MV lw = new MV();
-
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     //LAB_800c92c8
@@ -479,14 +480,14 @@ public class WMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        GsGetLw(dobj2.coord2_04, lw);
+        GsGetLw(dobj2.coord2_04, this.modelLw);
 
         float screenOffsetY = 0.0f;
         if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3 || this.modelAndAnimData_800c66a8.coolonWarpState_220.state > 2) {
           screenOffsetY = -8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
-        RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
+        RENDERER.queueModel(dobj2.obj, this.modelLw, QueuedModelTmd.class)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -1771,6 +1772,19 @@ public class WMap extends EngineState {
     //LAB_800d5c40
   }
 
+  @Method(0x800d5a30L)
+  private void loadPlayerCharModelFiles(final List<FileData> files, final int fileOffset) {
+    this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[0].extendedTmd_00 = new CContainer("Player model", files.get(fileOffset));
+
+    for(int i = 1; i < 4; i++) {
+      if(files.get(fileOffset + i).size() != 0) {
+        this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[0].tmdAnim_08[i - 1] = new TmdAnimationFile(files.get(fileOffset + i));
+      }
+    }
+
+    this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x10);
+  }
+
   @Method(0x800d5c50L)
   private void loadLocationThumbnailImage(final Tim tim, final int imageX, final int imageY, final int clutX, final int clutY) {
     final Rect4i imageRect = tim.getImageRect();
@@ -1904,6 +1918,10 @@ public class WMap extends EngineState {
     }
   }
 
+  private final boolean[] pathSegmentsRendered = new boolean[0xff];
+  private final MV pathLw = new MV();
+  private final MV pathLs = new MV();
+
   @Method(0x800d7a34L)
   private void renderPath() {
     if(
@@ -1940,10 +1958,8 @@ public class WMap extends EngineState {
 
     this.rotateCoord2(this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[0], this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0]);
 
-    final MV lw = new MV();
-    final MV ls = new MV();
-    GsGetLws(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], lw, ls);
-    GTE.setTransforms(ls);
+    GsGetLws(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], this.pathLw, this.pathLs);
+    GTE.setTransforms(this.pathLs);
 
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
@@ -1951,7 +1967,7 @@ public class WMap extends EngineState {
       if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
         if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7 || i == 31 || i == 78) {
-          this.mapState_800c6798.pathDots.transforms.set(lw)
+          this.mapState_800c6798.pathDots.transforms.set(this.pathLw)
             .rotateLocalX(-MathHelper.PI / 2.0f);
           if(zoomState == ZoomState.LOCAL_0) {
             this.mapState_800c6798.pathDots.transforms.scale(0.5f);
@@ -1980,7 +1996,7 @@ public class WMap extends EngineState {
       //LAB_800d84c0
     }
 
-    final boolean[] pathSegmentsRendered = new boolean[0xff];
+    Arrays.fill(this.pathSegmentsRendered, false);
 
     //LAB_800d852c
     //LAB_800d8540
@@ -1993,9 +2009,9 @@ public class WMap extends EngineState {
           final int pathIndexAndDirection = directionalPathSegmentData_800f2248[locations_800f0e34[i].directionalPathIndex_00].pathSegmentIndexAndDirection_00;
           final int pathSegmentIndex = Math.abs(pathIndexAndDirection) - 1;
 
-          if(!pathSegmentsRendered[pathSegmentIndex]) {
+          if(!this.pathSegmentsRendered[pathSegmentIndex]) {
             //LAB_800d863c
-            pathSegmentsRendered[pathSegmentIndex] = true;
+            this.pathSegmentsRendered[pathSegmentIndex] = true;
             final int pathPointCount = pathSegmentLengths_800f5810[pathSegmentIndex] - 1;
 
             final Vector3f[] dots = pathDotPosArr_800f591c[pathSegmentIndex];
@@ -2013,7 +2029,7 @@ public class WMap extends EngineState {
                 pathPoint = dots[pathPointIndexBase - pathPointIndex];
               }
 
-              this.mapState_800c6798.pathDots.transforms.set(lw)
+              this.mapState_800c6798.pathDots.transforms.set(this.pathLw)
                 .rotateLocalX(-MathHelper.PI / 2.0f)
                 .scale(0.25f);
               this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
@@ -2074,10 +2090,10 @@ public class WMap extends EngineState {
     //LAB_800d9030
   }
 
+  private final MV mapLw = new MV();
+
   @Method(0x800d9044L)
   private void renderWorldMap() {
-    final MV lw = new MV();
-
     this.renderAndHandleWorldMap();
     this.handleCoolonAndQueenFuryPrompts();
 
@@ -2122,18 +2138,18 @@ public class WMap extends EngineState {
       }
 
       //LAB_800d9320
-      GsGetLw(dobj2.coord2_04, lw);
+      GsGetLw(dobj2.coord2_04, this.mapLw);
 
       if(i == 0) {
-        lw.transfer.add(0.0f, 1.0f, 0.0f);
+        this.mapLw.transfer.add(0.0f, 1.0f, 0.0f);
       }
 
       // Fix path/Dart's feet being underground (GH#864)
       if(this.mapState_800c6798.continent_00 == Continent.ILLISA_BAY_3 || this.mapState_800c6798.continent_00 == Continent.DEATH_FRONTIER_6) {
-        lw.transfer.y += 6.0f;
+        this.mapLw.transfer.y += 6.0f;
       }
 
-      final QueuedModelTmd model = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class);
+      final QueuedModelTmd model = RENDERER.queueModel(dobj2.obj, this.mapLw, QueuedModelTmd.class);
 
       if(i == 0) {
         if(this.mapState_800c6798.continent_00.continentNum < 9) {
@@ -2921,23 +2937,99 @@ public class WMap extends EngineState {
     coord2.coord.rotationXYZ(rotation);
   }
 
+  private static final String[] charModelDirs = {
+    "SECT/DRGN22.BIN/836", // Dart
+    "SECT/DRGN21.BIN/290", // Lavitz
+    "SECT/DRGN22.BIN/836", // Shana
+    "SECT/DRGN22.BIN/836", // Rose
+    "SECT/DRGN22.BIN/836", // Haschel
+    "SECT/DRGN22.BIN/836", // Albert
+    "SECT/DRGN22.BIN/836", // Meru
+    "SECT/DRGN22.BIN/836", // Kongol
+    "SECT/DRGN22.BIN/836", // Miranda
+  };
+
+  private static final String[] charTextureFiles = {
+    "SECT/DRGN22.BIN/836/textures/8", // Dart
+    "SECT/DRGN21.BIN/290/textures/1", // Lavitz
+    "SECT/DRGN22.BIN/836/textures/1", // Shana
+    "SECT/DRGN22.BIN/836/textures/3", // Rose
+    "SECT/DRGN22.BIN/836/textures/5", // Haschel
+    "SECT/DRGN22.BIN/836/textures/4", // Albert
+    "SECT/DRGN22.BIN/836/textures/2", // Meru
+    "SECT/DRGN22.BIN/836/textures/6", // Kongol
+    "SECT/DRGN22.BIN/836/textures/7", // Miranda
+  };
+
+  private static final int[] charModelFileOffsets = {
+    264, // Dart
+    33, // Lavitz
+    33, // Shana
+    99, // Rose
+    165, // Haschel
+    132, // Albert
+    66, // Meru
+    198, // Kongol
+    231, // Miranda
+  };
+
   @Method(0x800dfa70L)
   private void loadPlayerAvatarTextureAndModelFiles() {
-    this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fd57);
+    this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x2a8);
 
-    loadDrgnDir(0, 5713, files -> this.timsLoaded(files, 0x2a8));
+    loadDrgnDir(0, 5713, files -> {
+      for(int i = 1; i < 4; i++) {
+        final FileData file = files.get(i);
+
+        //LAB_800d5898
+        if(file.size() != 0) {
+          //LAB_800d58c8
+          new Tim(file).uploadToGpu();
+        }
+      }
+
+      //LAB_800d5938
+      this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x2a8);
+
+    });
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       this.modelAndAnimData_800c66a8.models_0c[i] = new Model124("Player " + i);
-      final int finalI = i;
-      loadDrgnDir(0, 5714 + i, files -> this.loadPlayerAvatarModelFiles(files, finalI));
       this.modelAndAnimData_800c66a8.models_0c[i].uvAdjustments_9d = tmdUvAdjustmentMetrics_800eee48[playerAvatarVramSlots_800ef694[i]];
     }
 
+    for(int i = 1; i < 4; i++) {
+      final int finalI = i;
+      loadDrgnDir(0, 5714 + i, files -> this.loadPlayerAvatarModelFiles(files, finalI));
+    }
+
+    this.loadPlayerModelAndAnimsForFirstChar();
+
     //LAB_800dfbb4
     this.modelAndAnimData_800c66a8.teleportAnimationState_248 = TeleportAnimationState.INIT_ANIM_0;
+  }
+
+  private void loadPlayerModelAndAnimsForFirstChar() {
+    this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x10);
+
+    final int charId = gameState_800babc8.charIds_88[0];
+    final String model = charModelDirs[charId];
+    final String texture = charTextureFiles[charId];
+    final int offset = charModelFileOffsets[charId];
+    final UvAdjustmentMetrics14 vramSlot = tmdUvAdjustmentMetrics_800eee48[playerAvatarVramSlots_800ef694[0]];
+    Loader.loadDirectory(model, files -> this.loadPlayerCharModelFiles(files, offset));
+
+    Loader.loadFile(texture, data -> {
+      final Tim tim = new Tim(data);
+      final Rect4i originalImage = tim.getImageRect();
+      final Rect4i originalClut = tim.getClutRect();
+      final Rect4i image = new Rect4i(vramSlot.tpageX, vramSlot.tpageY, originalImage.w, originalImage.h);
+      final Rect4i clut = new Rect4i(vramSlot.clutX, vramSlot.clutY, originalClut.w, originalClut.h);
+      GPU.uploadData15(image, tim.getImageData());
+      GPU.uploadData15(clut, tim.getClutData());
+    });
   }
 
   @Method(0x800dfbd8L)

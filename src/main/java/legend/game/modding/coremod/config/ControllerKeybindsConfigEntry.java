@@ -11,8 +11,8 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.GrowableFileData;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDeleg
   }
 
   private static byte[] serializer(final Map<RegistryDelegate<InputAction>, List<InputActivation>> actionMap) {
-    final FileData out = new GrowableFileData(100);
+    final FileData out = new ExpandableFileData(100);
     final IntRef offset = new IntRef();
 
     out.writeShort(offset, actionMap.size());

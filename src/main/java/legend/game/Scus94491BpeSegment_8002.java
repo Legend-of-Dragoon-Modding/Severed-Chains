@@ -3481,7 +3481,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
     final float height = 12.0f * options.getSize();
-    final float trim = MathHelper.clamp(options.getTrim() * options.getSize(), -height, height);
+    final float trim = Math.clamp(options.getTrim() * options.getSize(), -height, height);
 
     textTransforms.scaling(options.getSize());
 
@@ -4196,28 +4196,27 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bda4L)
-  public static void adjustRumbleOverTime(final int pad, int intensity, final int frames) {
+  public static void adjustRumbleOverTime(final int pad, final int intensity, final int frames) {
+    final int divisor = vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier();
+    adjustRumbleOverTime(pad, intensity, frames, divisor);
+  }
+
+  @Method(0x8002bda4L)
+  public static void adjustRumbleOverTime(final int pad, int intensity, final int frames, final int framesDivisor) {
     LOGGER.debug("adjustRumbleOverTime %x %x %x", pad, intensity, frames);
 
     if(!CONFIG.getConfig(CoreMod.RUMBLE_CONFIG.get())) {
       return;
     }
 
-    intensity = MathHelper.clamp(intensity, 0, 0x1ff);
+    intensity = Math.clamp(intensity, 0, 0x1ff);
 
     if(frames == 0) {
       startRumbleIntensity(pad, intensity);
       return;
     }
 
-    final int divisor;
-    if(engineState_8004dd20 == EngineStateEnum.FMV_09) {
-      divisor = 1;
-    } else {
-      divisor = vsyncMode_8007a3b8 * currentEngineState_8004dd04.tickMultiplier();
-    }
-
-    PLATFORM.adjustRumble(intensity / (float)0x1ff, frames / divisor * 50);
+    PLATFORM.adjustRumble(intensity / (float)0x1ff, frames / framesDivisor * 50);
   }
 
   @Method(0x8002c150L)

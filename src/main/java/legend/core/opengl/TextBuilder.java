@@ -2,7 +2,6 @@ package legend.core.opengl;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.game.types.LodString;
 
@@ -84,7 +83,7 @@ public class TextBuilder {
   }
 
   public TextBuilder trim(final int trim) {
-    this.trim = MathHelper.clamp(trim, -12, 12);
+    this.trim = Math.clamp(trim, -12, 12);
     return this;
   }
 

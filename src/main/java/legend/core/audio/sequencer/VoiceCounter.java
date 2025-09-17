@@ -1,44 +1,40 @@
 package legend.core.audio.sequencer;
 
+import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 
-import static legend.core.audio.sequencer.LookupTables.BREATH_BASE_SHIFT;
-import static legend.core.audio.sequencer.LookupTables.BREATH_BASE_VALUE;
-import static legend.core.audio.sequencer.LookupTables.VOICE_COUNTER_BIT_PRECISION;
+import static legend.core.audio.Constants.BREATH_BIT_SHIFT;
+import static legend.core.audio.Constants.BREATH_COUNT;
+import static legend.core.audio.Constants.BREATH_MAX_VALUE;
+import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
+import static legend.core.audio.Constants.PITCH_MAX_VALUE;
 
 final class VoiceCounter {
-  //TODO verify this is actually correct for other values in case we want to change
-  //     the window size. This should be a generic solution but it wasn't verified.
-  private final static int START_OFFSET = ((Voice.EMPTY.length) / 2 + 1) << VOICE_COUNTER_BIT_PRECISION;
-  private final static int CLEAR_AND = (1 << VOICE_COUNTER_BIT_PRECISION) - 1;
-  private int sampleCounter = START_OFFSET;
-  private int breathCounter = 0;
+  private static InterpolationPrecision interpolationPrecision;
+  private static EffectsOverTimeGranularity effectsOverTimeGranularity;
 
-  private int sampleInterpolationShift;
-  private int breathInterpolationShift;
-  private int interpolationAnd;
 
-  VoiceCounter(final InterpolationPrecision bitDepth) {
-    this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
-    this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value - 2;
-    this.interpolationAnd = (1 << bitDepth.value) - 1;
-  }
+  /* TODO verify this is actually correct for other values in case we want to change
+  *   the window size. This should be a generic solution but it wasn't verified.
+  */
+  private final static long START_OFFSET = ((Voice.EMPTY.length) / 2 + 1L) << PITCH_BIT_SHIFT;
+  private long sampleCounter = START_OFFSET;
+  private long breathCounter;
 
   int getCurrentSampleIndex() {
-    return (this.sampleCounter >>> VOICE_COUNTER_BIT_PRECISION) & 0x1f;
+    return (int)((this.sampleCounter >>> PITCH_BIT_SHIFT) & 0x1f);
   }
 
   int getSampleInterpolationIndex() {
-    return this.sampleCounter >>> this.sampleInterpolationShift & this.interpolationAnd;
+    return (int)((this.sampleCounter >>> interpolationPrecision.sampleShift) & interpolationPrecision.interpolationAnd);
   }
 
   /** Adds value to the counter, returns true if the end of block was reached */
-  boolean add(final int value) {
+  boolean add(final long value) {
     this.sampleCounter += value;
 
-    final int sampleIndex = this.getCurrentSampleIndex();
-    if(sampleIndex >= 28) {
-      this.sampleCounter = ((sampleIndex - 28) << VOICE_COUNTER_BIT_PRECISION) + (this.sampleCounter & CLEAR_AND);
+    if(this.sampleCounter >= PITCH_MAX_VALUE) {
+      this.sampleCounter -= PITCH_MAX_VALUE;
       return true;
     }
 
@@ -46,29 +42,37 @@ final class VoiceCounter {
   }
 
   int getCurrentBreathIndex() {
-    return this.breathCounter >>> (BREATH_BASE_SHIFT - 2);
+    return (int)(this.breathCounter >>> BREATH_BIT_SHIFT);
   }
 
   int getBreathInterpolationIndex() {
-    return (this.breathCounter >>> this.breathInterpolationShift) & this.interpolationAnd;
+    return (int)((this.breathCounter >>> interpolationPrecision.breathShift) & interpolationPrecision.interpolationAnd);
   }
 
-  void addBreath(final int breath) {
-    this.breathCounter += breath;
+  void addBreath(final long breath) {
+    // We're losing some precision here, but the values are already so precise, that it should not matter.
+    // At the x16 setting, we should still be only losing about 0.0000477% of precision.
+    this.breathCounter += breath >>> effectsOverTimeGranularity.shift;
 
-    if(this.breathCounter >= BREATH_BASE_VALUE) {
-      this.breathCounter -= BREATH_BASE_VALUE;
+    if(this.getCurrentBreathIndex() >= BREATH_COUNT) {
+      this.breathCounter -= BREATH_MAX_VALUE;
     }
   }
 
   void reset() {
     this.sampleCounter = START_OFFSET;
+    this.resetBreath();
+  }
+
+  void resetBreath() {
     this.breathCounter = 0;
   }
 
-  void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
-    this.sampleInterpolationShift = VOICE_COUNTER_BIT_PRECISION - bitDepth.value;
-    this.breathInterpolationShift = BREATH_BASE_SHIFT - bitDepth.value - 2;
-    this.interpolationAnd = (1 << bitDepth.value) - 1;
+  static void changeInterpolationPrecision (final InterpolationPrecision precision) {
+    interpolationPrecision = precision;
+  }
+
+  static void changeEffectsOverTimeGranularity(final EffectsOverTimeGranularity granularity) {
+    effectsOverTimeGranularity = granularity;
   }
 }
