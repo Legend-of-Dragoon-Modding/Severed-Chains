@@ -133,12 +133,10 @@ public class RenderEngine {
   private Shader.UniformBuffer transforms2Uniform;
   private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
-  private Shader.UniformBuffer vdfUniform;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
-  private final FloatBuffer vdfBuffer = BufferUtils.createFloatBuffer(4 * 1024);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -204,7 +202,6 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
-      shader.bindUniformBlock("vdf", Shader.UniformBuffer.VDF);
       final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -214,8 +211,7 @@ public class RenderEngine {
       final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
       final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags = shader.new UniformInt("ctmdFlags");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour = shader.new UniformVec3("battleColour");
-      final Shader<ShaderOptionsBattleTmd>.UniformInt useVdf = shader.new UniformInt("useVdf");
-      return () -> new ShaderOptionsBattleTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour, useVdf);
+      return () -> new ShaderOptionsBattleTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour);
     }
   );
 
@@ -291,7 +287,7 @@ public class RenderEngine {
   private final Deque<Runnable> tasks = new LinkedList<>();
 
   public RenderEngine() {
-    this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    this.mainBatch = new RenderBatch(this, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
     this.state = new RenderState(this);
   }
@@ -305,7 +301,7 @@ public class RenderEngine {
    * out with a copy of the main render batch's config when they are created.
    */
   public RenderBatch addBatch() {
-    final RenderBatch batch = new RenderBatch(this, this.mainBatch, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    final RenderBatch batch = new RenderBatch(this, this.mainBatch, this.lightBuffer);
     this.batches.add(batch);
     return batch;
   }
@@ -486,7 +482,6 @@ public class RenderEngine {
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
-    this.vdfUniform = ShaderManager.addUniformBuffer("vdf", new Shader.UniformBuffer((long)this.vdfBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.VDF));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,

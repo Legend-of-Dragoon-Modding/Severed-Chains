@@ -354,7 +354,7 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    final QueuedModelBattleTmd model = RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
+    RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
       .depthOffset(effectParams.z_22 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
@@ -363,9 +363,6 @@ public final class SEffe {
       .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
       .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-    if(objTable.vdf != null) {
-      model.vdf(objTable.vdf);
-    }
     //LAB_800de528
   }
 
@@ -1714,8 +1711,8 @@ public final class SEffe {
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
+    animation.obj = source.obj;
     animation.tmd = sourceModel;
-    animation.tmd.vdf = sourceModel.vert_top_00;
     animation.ticksRemaining_00 = ticks;
     animation.embiggener_04 = embiggener;
     animation.vertexCount_08 = sourceModel.n_vert_04;
