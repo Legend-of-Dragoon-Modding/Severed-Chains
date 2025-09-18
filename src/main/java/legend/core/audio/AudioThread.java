@@ -4,7 +4,6 @@ import legend.core.DebugHelper;
 import legend.core.audio.opus.XaPlayer;
 import legend.core.audio.sequencer.Sequencer;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +20,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
@@ -46,6 +44,7 @@ public final class AudioThread implements Runnable {
   private InterpolationPrecision interpolationPrecision;
   private PitchResolution pitchResolution;
   private EffectsOverTimeGranularity effectsGranularity;
+  private Interpolation interpolation;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
   private final List<AudioSource> sources = new ArrayList<>();
@@ -55,6 +54,7 @@ public final class AudioThread implements Runnable {
 
   private ALCapabilities alCapabilities;
   private ALCCapabilities alcCapabilities;
+  private String currentDevice = "";
 
   private IntBuffer tmp;
 
@@ -66,13 +66,14 @@ public final class AudioThread implements Runnable {
     return ALUtil.getStringList(0, ALC_DEVICE_SPECIFIER);
   }
 
-  public AudioThread(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final EffectsOverTimeGranularity granularity) {
+  public AudioThread(final boolean stereo, final int voiceCount) {
     this.nanosPerTick = 1_000_000_000 / 120;
     this.stereo = stereo;
     this.voiceCount = voiceCount;
-    this.interpolationPrecision = bitDepth;
-    this.pitchResolution = pitchResolution;
-    this.effectsGranularity = granularity;
+    this.interpolationPrecision = InterpolationPrecision.Double;
+    this.pitchResolution = PitchResolution.Quadruple;
+    this.effectsGranularity = EffectsOverTimeGranularity.Quadruple;
+    this.interpolation = Interpolation.Four;
   }
 
   public void init() {
@@ -178,12 +179,11 @@ public final class AudioThread implements Runnable {
   }
 
   private void openDevice() {
-    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
     final List<String> devices = getDevices();
 
-    if(devices.contains(currentDevice)) {
-      LOGGER.info(AUDIO_THREAD_MARKER, "Using selected audio device %s", currentDevice);
-      this.audioDevice = alcOpenDevice(currentDevice);
+    if(devices.contains(this.currentDevice)) {
+      LOGGER.info(AUDIO_THREAD_MARKER, "Using selected audio device %s", this.currentDevice);
+      this.audioDevice = alcOpenDevice(this.currentDevice);
     } else if(!devices.isEmpty()) {
       LOGGER.info(AUDIO_THREAD_MARKER, "Using first audio device %s", devices.getFirst());
       this.audioDevice = alcOpenDevice(devices.getFirst());
@@ -194,7 +194,7 @@ public final class AudioThread implements Runnable {
   }
 
   private void addDefaultSources() {
-    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationPrecision, this.pitchResolution, this.effectsGranularity));
+    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationPrecision, this.pitchResolution, this.effectsGranularity, this.interpolation));
     this.xaPlayer = this.addSource(new XaPlayer());
   }
 
@@ -421,30 +421,63 @@ public final class AudioThread implements Runnable {
     }
   }
 
+  public void changeInterpolation(final Interpolation interpolation) {
+    synchronized(this) {
+      if(this.interpolation == interpolation) {
+        return;
+      }
+
+      this.interpolation = interpolation;
+
+      if(this.sequencer != null) {
+        this.sequencer.changeInterpolation(this.interpolationPrecision, interpolation);
+      }
+    }
+  }
+
   public void changeInterpolationBitDepth(final InterpolationPrecision bitDepth) {
     synchronized(this) {
-      if(this.interpolationPrecision != bitDepth) {
-        this.interpolationPrecision = bitDepth;
-        this.sequencer.changeInterpolationBitDepth(this.interpolationPrecision);
+      if(this.interpolationPrecision == bitDepth) {
+        return;
+      }
+
+      this.interpolationPrecision = bitDepth;
+
+      if(this.sequencer != null) {
+        this.sequencer.changeInterpolationBitDepth(bitDepth, this.interpolation);
       }
     }
   }
 
   public void changePitchResolution(final PitchResolution pitchResolution) {
     synchronized(this) {
-      if(this.pitchResolution != pitchResolution) {
-        this.pitchResolution = pitchResolution;
-        this.sequencer.changePitchResolution(this.pitchResolution);
+      if(this.pitchResolution == pitchResolution) {
+        return;
+      }
+
+      this.pitchResolution = pitchResolution;
+
+      if(this.sequencer != null) {
+        this.sequencer.changePitchResolution(pitchResolution);
       }
     }
   }
 
   public void changeEffectsOverTimeGranularity(final EffectsOverTimeGranularity effectsGranularity) {
     synchronized(this) {
-      if(this.effectsGranularity != effectsGranularity) {
-        this.effectsGranularity = effectsGranularity;
+      if(this.effectsGranularity == effectsGranularity) {
+        return;
+      }
+
+      this.effectsGranularity = effectsGranularity;
+
+      if(this.sequencer != null) {
         this.sequencer.changeEffectsOverTimeGranularity(effectsGranularity);
       }
     }
+  }
+
+  public void setCurrentAudioDevice(final String audioDevice) {
+    this.currentDevice = audioDevice;
   }
 }

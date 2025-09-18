@@ -35,6 +35,7 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
   @Override
   public void onChange(final ConfigCollection configCollection, final String oldValue, final String newValue) {
     super.onChange(configCollection, oldValue, newValue);
+    AUDIO_THREAD.setCurrentAudioDevice(newValue);
     AUDIO_THREAD.reinit();
   }
 

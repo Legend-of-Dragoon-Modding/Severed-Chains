@@ -2,9 +2,11 @@ package legend.core.audio.sequencer;
 
 import legend.core.audio.AudioSource;
 import legend.core.audio.EffectsOverTimeGranularity;
+import legend.core.audio.Interpolation;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
+import legend.core.audio.sequencer.assets.Breath;
 import legend.core.audio.sequencer.assets.InstrumentLayer;
 import legend.core.audio.sequencer.assets.sequence.Command;
 import legend.core.audio.sequencer.assets.sequence.bgm.BreathChange;
@@ -71,24 +73,28 @@ public final class Sequencer extends AudioSource {
   private int samplesToProcess;
   private boolean paused;
 
-  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final EffectsOverTimeGranularity effectsGranularity) {
+  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final EffectsOverTimeGranularity effectsGranularity, final Interpolation interpolation) {
     super(3);
 
     this.outputBuffer = new float[(ENGINE_SAMPLE_RATE / 60) * 2];
 
     this.stereo = stereo;
 
-    this.lookupTables = new LookupTables(bitDepth, pitchResolution);
+    this.lookupTables = new LookupTables(bitDepth, pitchResolution, interpolation);
     this.effectsOverTimeGranularity = effectsGranularity;
 
+    Voice.changeInterpolation(interpolation);
     this.voices = new Voice[voiceCount];
 
     for(int voice = 0; voice < this.voices.length; voice++) {
       this.voices[voice] = new Voice(voice, this.lookupTables);
     }
 
+    VoiceCounter.changeInterpolation(interpolation);
     VoiceCounter.changeInterpolationPrecision(bitDepth);
     VoiceCounter.changeEffectsOverTimeGranularity(effectsGranularity);
+
+    Breath.initializeWaveforms(interpolation);
 
     this.reverb.setConfig(3);
   }
@@ -586,8 +592,19 @@ public final class Sequencer extends AudioSource {
   }
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
-  public void changeInterpolationBitDepth(final InterpolationPrecision interpolationPrecision) {
-    this.lookupTables.changeInterpolationPrecision(interpolationPrecision);
+  public void changeInterpolation(final InterpolationPrecision interpolationPrecision, final Interpolation interpolation) {
+    this.lookupTables.calculateInterpolationWeights(interpolationPrecision, interpolation);
+
+    Voice.changeInterpolation(interpolation);
+
+    VoiceCounter.changeInterpolation(interpolation);
+
+    Breath.initializeWaveforms(interpolation);
+  }
+
+  /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
+  public void changeInterpolationBitDepth(final InterpolationPrecision interpolationPrecision, final Interpolation interpolation) {
+    this.lookupTables.calculateInterpolationWeights(interpolationPrecision, interpolation);
 
     VoiceCounter.changeInterpolationPrecision(interpolationPrecision);
   }

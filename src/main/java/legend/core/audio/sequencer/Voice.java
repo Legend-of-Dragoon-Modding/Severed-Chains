@@ -1,5 +1,6 @@
 package legend.core.audio.sequencer;
 
+import legend.core.audio.Interpolation;
 import legend.core.audio.sequencer.assets.Breath;
 import legend.core.audio.sequencer.assets.Channel;
 import legend.core.audio.sequencer.assets.Instrument;
@@ -15,7 +16,7 @@ import javax.annotation.Nullable;
 final class Voice {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Voice.class);
   private static final Marker VOICE_MARKER = MarkerManager.getMarker("VOICE");
-  static final float[] EMPTY = {0, 0, 0};
+  static float[] EMPTY = {0, 0, 0};
 
   private final int index;
   private final LookupTables lookupTables;
@@ -49,7 +50,8 @@ final class Voice {
   private float volumeRight;
 
   private boolean hasSamples;
-  private final float[] samples = new float[28 + EMPTY.length];
+  /** This has to be set to support the largest interpolation setting */
+  private final float[] samples = new float[28 + 15];
 
   Voice(final int index, final LookupTables lookupTables) {
     this.index = index;
@@ -148,7 +150,7 @@ final class Voice {
 
     this.used = true;
     this.hasSamples = false;
-    this.samples[30] = 0;
+    System.arraycopy(EMPTY, 0, this.samples, 28, EMPTY.length);
   }
 
   void keyOff() {
@@ -172,7 +174,7 @@ final class Voice {
     this.breath = null;
     this.priority = VoicePriority.LOW;
     this.hasSamples = false;
-    this.samples[30] = 0;
+    System.arraycopy(EMPTY, 0, this.samples, 28, EMPTY.length);
   }
 
   @Nullable
@@ -250,5 +252,9 @@ final class Voice {
     if(!this.isModulation) {
       this.counter.resetBreath();
     }
+  }
+
+  static void changeInterpolation(final Interpolation interpolation) {
+    EMPTY = new float[interpolation.taps - 1];
   }
 }
