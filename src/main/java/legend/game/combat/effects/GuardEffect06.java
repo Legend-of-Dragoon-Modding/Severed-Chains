@@ -67,9 +67,9 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
     }
 
     effectZ /= 4.0f;
-    int r = Math.clamp(manager.params_10.colour_1c.x - 1 << 8, 0, 0x8000) >>> 7;
-    int g = Math.clamp(manager.params_10.colour_1c.y - 1 << 8, 0, 0x8000) >>> 7;
-    int b = Math.clamp(manager.params_10.colour_1c.z - 1 << 8, 0, 0x8000) >>> 7;
+    int r = java.lang.Math.clamp(manager.params_10.colour_1c.x - 1 << 8, 0, 0x8000) >>> 7;
+    int g = java.lang.Math.clamp(manager.params_10.colour_1c.y - 1 << 8, 0, 0x8000) >>> 7;
+    int b = java.lang.Math.clamp(manager.params_10.colour_1c.z - 1 << 8, 0, 0x8000) >>> 7;
     r = Math.min((r + g + b) / 3 * 2, 0xff);
 
     //LAB_800d2a80

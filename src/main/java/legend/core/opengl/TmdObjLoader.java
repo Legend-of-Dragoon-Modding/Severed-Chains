@@ -31,6 +31,8 @@ public final class TmdObjLoader {
   public static final int CLUT_SIZE = 1;
   public static final int FLAGS_SIZE = 1;
 
+  public static final int VERTEX_SIZE = POS_SIZE + NORM_SIZE + UV_SIZE + TPAGE_SIZE + CLUT_SIZE + COLOUR_SIZE + FLAGS_SIZE;
+
   public static final int LIT_FLAG = 0x1;
   public static final int TEXTURED_FLAG = 0x2;
   public static final int COLOURED_FLAG = 0x4;
@@ -73,12 +75,6 @@ public final class TmdObjLoader {
 
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, final int textureWidth, final int textureHeight) {
     final TmdObjLoaderMeshes tmdMeshes = getTranslucencySizes(objTable, specialFlags);
-
-    int vertexSize = POS_SIZE;
-    vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
-    vertexSize += COLOUR_SIZE;
-    vertexSize += FLAGS_SIZE;
 
     // Backface culling is on by default for opaque primitives. LOD sets some untextured primitives to translucent
     // even though the translucency settings can only come from textures in order to disable backface culling
@@ -308,15 +304,15 @@ public final class TmdObjLoader {
     int meshIndex = 0;
 
     if(tmdMeshes.opaque != null) {
-      meshes[meshIndex++] = createMesh(tmdMeshes.opaque, vertexSize);
+      meshes[meshIndex++] = createMesh(tmdMeshes.opaque);
     }
 
     if(tmdMeshes.untexturedTranslucent != null) {
-      meshes[meshIndex++] = createMesh(tmdMeshes.untexturedTranslucent, vertexSize);
+      meshes[meshIndex++] = createMesh(tmdMeshes.untexturedTranslucent);
     }
 
     for(int i = 0; i < tmdMeshes.translucent.length; i++) {
-      meshes[meshIndex++] = createMesh(tmdMeshes.translucent[i], vertexSize);
+      meshes[meshIndex++] = createMesh(tmdMeshes.translucent[i]);
     }
 
     final Mesh[] reversed = new Mesh[meshes.length];
@@ -324,35 +320,35 @@ public final class TmdObjLoader {
     return new TmdMeshObj(name, reversed, backfaceCulling);
   }
 
-  private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh, final int vertexSize) {
+  private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh) {
     final Mesh mesh = new Mesh(GL_TRIANGLES_ADJACENCY, tmdMesh.vertices, tmdMesh.indices, tmdMesh.textured, tmdMesh.translucent, tmdMesh.translucency);
 
-    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
+    mesh.attribute(0, 0L, POS_SIZE, VERTEX_SIZE);
 
     int meshIndex = 1;
     int meshOffset = POS_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
+    mesh.attribute(meshIndex, meshOffset, NORM_SIZE, VERTEX_SIZE);
     meshIndex++;
     meshOffset += NORM_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, UV_SIZE, vertexSize);
+    mesh.attribute(meshIndex, meshOffset, UV_SIZE, VERTEX_SIZE);
     meshIndex++;
     meshOffset += UV_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, TPAGE_SIZE, vertexSize);
+    mesh.attribute(meshIndex, meshOffset, TPAGE_SIZE, VERTEX_SIZE);
     meshIndex++;
     meshOffset += TPAGE_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
+    mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, VERTEX_SIZE);
     meshIndex++;
     meshOffset += CLUT_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
+    mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, VERTEX_SIZE);
     meshIndex++;
     meshOffset += COLOUR_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
+    mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, VERTEX_SIZE);
     return mesh;
   }
 

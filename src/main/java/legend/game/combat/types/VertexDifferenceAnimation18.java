@@ -2,6 +2,10 @@ package legend.game.combat.types;
 
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
+import legend.core.opengl.Mesh;
+import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptedObject;
 import org.joml.Vector3f;
@@ -15,6 +19,7 @@ public class VertexDifferenceAnimation18 implements ScriptedObject {
   public Vector3f[] current_14;
 
   public TmdObjTable1c tmd;
+  public Obj obj;
 
   @Method(0x80109b44L)
   public static void applyVertexDifferenceAnimation(final ScriptState<VertexDifferenceAnimation18> state, final VertexDifferenceAnimation18 animation) {
@@ -41,6 +46,19 @@ public class VertexDifferenceAnimation18 implements ScriptedObject {
     }
 
     //LAB_80109ce0
+    final MeshObj obj = (MeshObj)animation.obj;
+
+    for(final Mesh mesh : obj.meshes) {
+      for(int offset = 0; offset < mesh.vertexData.length; offset += TmdObjLoader.VERTEX_SIZE) {
+        final int vertexIndex = (int)mesh.vertexData[offset + 0x3];
+        final Vector3f vertex = animation.tmd.vert_top_00[vertexIndex];
+        mesh.vertexData[offset] = vertex.x;
+        mesh.vertexData[offset + 0x1] = vertex.y;
+        mesh.vertexData[offset + 0x2] = vertex.z;
+      }
+
+      mesh.update();
+    }
   }
 
   @Override

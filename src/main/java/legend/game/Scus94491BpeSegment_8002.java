@@ -3481,7 +3481,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
     final float height = 12.0f * options.getSize();
-    final float trim = Math.clamp(options.getTrim() * options.getSize(), -height, height);
+    final float trim = java.lang.Math.clamp(options.getTrim() * options.getSize(), -height, height);
 
     textTransforms.scaling(options.getSize());
 
@@ -4209,7 +4209,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    intensity = Math.clamp(intensity, 0, 0x1ff);
+    intensity = java.lang.Math.clamp(intensity, 0, 0x1ff);
 
     if(frames == 0) {
       startRumbleIntensity(pad, intensity);
