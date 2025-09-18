@@ -69,7 +69,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID, version = "^3.0.0")
 @EventListener
-public final class CoreMod {
+public class CoreMod {
   public static final String MOD_ID = "lod_core";
 
   private static final Registrar<ConfigEntry<?>, ConfigRegistryEvent> CONFIG_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.config, MOD_ID);
@@ -182,7 +182,6 @@ public final class CoreMod {
     .then(PhysicalDamageFormula::applyElementalResistanceAndImmunity)
   );
 
-  private CoreMod() {}
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
