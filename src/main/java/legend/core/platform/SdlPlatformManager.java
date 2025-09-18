@@ -890,7 +890,7 @@ public class SdlPlatformManager extends PlatformManager {
 
     if(this.rumbleLerpStart != 0) {
       final long time = System.nanoTime() - this.rumbleLerpStart;
-      final float ratio = Math.clamp(time / (float)this.rumbleLerpDuration, 0.0f, 1.0f);
+      final float ratio = java.lang.Math.clamp(time / (float)this.rumbleLerpDuration, 0.0f, 1.0f);
       final float big = Math.lerp(this.rumbleBigStartingIntensity, this.rumbleBigEndingIntensity, ratio);
       final float small = Math.lerp(this.rumbleSmallStartingIntensity, this.rumbleSmallEndingIntensity, ratio);
       this.rumble(big, small, 0);
