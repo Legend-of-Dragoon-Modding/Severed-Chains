@@ -7814,7 +7814,9 @@ public class Battle extends EngineState {
 
     //LAB_800eed78
     for(final Item item : this.usedRepeatItems_800c6c3c) {
-      giveItem(item);
+      if(!giveItem(item)) {
+        itemOverflow.add(item);
+      }
     }
 
     this.usedRepeatItems_800c6c3c.clear();
