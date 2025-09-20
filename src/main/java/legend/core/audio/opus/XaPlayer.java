@@ -1,7 +1,6 @@
 package legend.core.audio.opus;
 
 import legend.core.audio.AudioSource;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -32,7 +30,7 @@ public final class XaPlayer extends AudioSource {
   private long sampleCount;
   private long samplesRead;
 
-  private float playerVolume;
+  private float playerVolume = 1.0f;
 
   public XaPlayer() {
     super(8);
@@ -43,7 +41,6 @@ public final class XaPlayer extends AudioSource {
     this.format = AL_FORMAT_MONO16;
     this.pcm = new short[this.samplesPerTick];
     this.pcmBuffer = BufferUtils.createShortBuffer(this.samplesPerTick);
-    this.playerVolume = CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
   }
 
   public void setPlayerVolume(final float volume) {

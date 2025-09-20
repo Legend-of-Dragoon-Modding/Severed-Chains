@@ -1,6 +1,7 @@
 package legend.core.audio.sequencer;
 
 import legend.core.audio.EffectsOverTimeGranularity;
+import legend.core.audio.Interpolation;
 import legend.core.audio.InterpolationPrecision;
 
 import static legend.core.audio.Constants.BREATH_BIT_SHIFT;
@@ -13,12 +14,8 @@ final class VoiceCounter {
   private static InterpolationPrecision interpolationPrecision;
   private static EffectsOverTimeGranularity effectsOverTimeGranularity;
 
-
-  /* TODO verify this is actually correct for other values in case we want to change
-  *   the window size. This should be a generic solution but it wasn't verified.
-  */
-  private final static long START_OFFSET = ((Voice.EMPTY.length) / 2 + 1L) << PITCH_BIT_SHIFT;
-  private long sampleCounter = START_OFFSET;
+  private static long START_OFFSET;
+  private long sampleCounter;
   private long breathCounter;
 
   int getCurrentSampleIndex() {
@@ -66,6 +63,10 @@ final class VoiceCounter {
 
   void resetBreath() {
     this.breathCounter = 0;
+  }
+
+  static void changeInterpolation(final Interpolation interpolation) {
+    START_OFFSET = ((long)interpolation.taps / 2) << PITCH_BIT_SHIFT;
   }
 
   static void changeInterpolationPrecision (final InterpolationPrecision precision) {

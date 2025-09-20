@@ -3,9 +3,6 @@ package legend.core;
 import com.github.difflib.patch.PatchFailedException;
 import discord.DiscordRichPresence;
 import legend.core.audio.AudioThread;
-import legend.core.audio.EffectsOverTimeGranularity;
-import legend.core.audio.InterpolationPrecision;
-import legend.core.audio.PitchResolution;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
@@ -134,7 +131,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, EffectsOverTimeGranularity.Double);
+    AUDIO_THREAD = new AudioThread(true, 24);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -249,11 +246,15 @@ public final class GameEngine {
 
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
-    AUDIO_THREAD.init();
-    AUDIO_THREAD.setMusicPlayerVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
+    AUDIO_THREAD.setCurrentAudioDevice(CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get()));
+    AUDIO_THREAD.changeInterpolation(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_CONFIG.get()));
     AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get()));
     AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
     AUDIO_THREAD.changeEffectsOverTimeGranularity(CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get()));
+    AUDIO_THREAD.init();
+    // This can be safely done after initialization, since it doesn't require any recalculation
+    AUDIO_THREAD.setMusicPlayerVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
+    AUDIO_THREAD.setXaPlayerVolume(CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
 
     SPU.init();
     RENDERER.init();
