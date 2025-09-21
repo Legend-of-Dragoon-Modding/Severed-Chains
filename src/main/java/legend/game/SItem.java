@@ -11,8 +11,8 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
@@ -78,7 +78,7 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
+import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.textHeight;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -407,7 +407,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
   public static FlowControl scriptIsItemSlotUsed(final RunningScript<?> script) {
     final int slot = script.params_20[0].get();
-    script.params_20[1].set(slot < gameState_800babc8.items_2e9.size() ? 1 : 0);
+    script.params_20[1].set(slot < gameState_800babc8.items_2e9.getSize() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -425,7 +425,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGetItemSlot(final RunningScript<?> script) {
     final int slot = script.params_20[0].get();
-    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getRegistryId());
+    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
@@ -483,7 +483,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean taken = takeItemId(REGISTRIES.items.getEntry(id).get());
+    final boolean taken = takeItem(REGISTRIES.items.getEntry(id).get());
     script.params_20[1].set(taken ? 1 : 0);
     return FlowControl.CONTINUE;
   }
@@ -501,18 +501,18 @@ public final class SItem {
   @ScriptDescription("Picks a random attack item")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGenerateAttackItem(final RunningScript<?> script) {
-    final Item[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    script.params_20[0].set(item.getRegistryId());
+    final ItemStack[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getStacks();
+    final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Picks a random recovery item")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGenerateRecoveryItem(final RunningScript<?> script) {
-    final Item[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    script.params_20[0].set(item.getRegistryId());
+    final ItemStack[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getStacks();
+    final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
@@ -734,20 +734,6 @@ public final class SItem {
   }
 
   @Method(0x80103910L)
-  public static Renderable58 renderItemIcon(final ItemIcon icon, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
-    renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = icon.resolve().icon;
-    renderable.startGlyph_10 = renderable.glyph_04;
-    renderable.endGlyph_14 = renderable.glyph_04;
-    renderable.tpage_2c = 0x19;
-    renderable.clut_30 = 0;
-    renderable.x_40 = x;
-    renderable.y_44 = y;
-    return renderable;
-  }
-
-  @Method(0x80103910L)
   public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
@@ -872,13 +858,13 @@ public final class SItem {
   }
 
   @Method(0x80104738L)
-  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<Item> items, final long a0) {
+  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<ItemStack> items, final long a0) {
     if(items != null) {
       items.clear();
 
-      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-        final Item item = gameState_800babc8.items_2e9.get(i);
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+      for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+        final ItemStack item = gameState_800babc8.items_2e9.get(i);
+        final MenuEntryStruct04<ItemStack> menuEntry = new MenuEntryStruct04<>(item);
         items.add(menuEntry);
       }
     }
@@ -889,7 +875,7 @@ public final class SItem {
       int equipmentIndex;
       for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment_1e8.size(); equipmentIndex++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
-        final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+        final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
 
         if(a0 != 0 && !gameState_800babc8.equipment_1e8.get(equipmentIndex).canBeDiscarded()) {
           menuEntry.flags_02 = 0x2000;
@@ -903,7 +889,7 @@ public final class SItem {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             if(gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot) != null) {
               final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot);
-              final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+              final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
               menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8[i];
               equipments.add(menuEntry);
 
@@ -1621,7 +1607,7 @@ public final class SItem {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipment_14.get(slot) != null) {
-          renderItemIcon(charData.equipment_14.get(slot).icon_0e, 202, 17 + 14 * slot.ordinal(), 0);
+          charData.equipment_14.get(slot).renderIcon(202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
@@ -1665,14 +1651,20 @@ public final class SItem {
 
       //LAB_801094ac
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
-      renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
+      menuItem.item_00.renderIcon(x + 4, y + FUN_800fc814(i), 0x8);
+
+      final int size = menuItem.getSize();
+
+      if(size > 0) {
+        renderNumber(x + 96, y + FUN_800fc814(i) + 3, size, 0x2, 10);
+      }
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {
         renderCharacterPortrait(s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
       } else if((s0 & 0x2000) != 0) {
-        renderItemIcon(ItemIcon.WARNING, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
+        ItemIcon.WARNING.render(x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
       }
 
       //LAB_801095a4

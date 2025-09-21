@@ -20,9 +20,8 @@ import legend.core.platform.input.InputMod;
 import legend.game.combat.Battle;
 import legend.game.combat.BattleTransitionMode;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
-import legend.game.combat.environment.EncounterData38;
-import legend.game.combat.environment.StageData2c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
@@ -150,7 +149,7 @@ import static legend.game.Scus94491BpeSegment_800b.dissolveDarkening_800bd700;
 import static legend.game.Scus94491BpeSegment_800b.dissolveIterationsPerformed_800bd714;
 import static legend.game.Scus94491BpeSegment_800b.dissolveRowCount_800bd710;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -167,7 +166,6 @@ import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
-import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
@@ -2209,26 +2207,15 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001d1c4L)
   public static void loadMonsterSounds() {
-    final int encounterId = encounterId_800bb0f8;
-    switch(encounterId) {
-      case 390 -> loadBattlePhaseSounds("doel", 0);
-      case 431 -> loadBattlePhaseSounds("zackwell", 0);
-      case 443 -> loadBattlePhaseSounds("melbu", 0);
-      default -> loadEncounterSounds(encounterId);
-    }
+    encounter.loadSounds(0);
   }
 
   @Method(0x8001d2d8L)
   public static void loadMonsterSoundsWithPhases() {
-    switch(encounterId_800bb0f8) {
-      case 390 -> loadBattlePhaseSounds("doel", battleState_8006e398.battlePhase_eec);
-      case 431 -> loadBattlePhaseSounds("zackwell", battleState_8006e398.battlePhase_eec);
-      case 443 -> loadBattlePhaseSounds("melbu", battleState_8006e398.battlePhase_eec);
-      default -> loadEncounterSounds(encounterId_800bb0f8);
-    }
+    encounter.loadSounds(battleState_8006e398.battlePhase_eec);
   }
 
-  private static void loadBattlePhaseSounds(final String boss, final int phase) {
+  public static void loadBattlePhaseSounds(final String boss, final int phase) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
     final AtomicInteger soundbankOffset = new AtomicInteger();
     final AtomicInteger count = new AtomicInteger(0);
@@ -2258,39 +2245,39 @@ public final class Scus94491BpeSegment {
     }
   }
 
-  private static void loadEncounterSounds(final int encounterId) {
+  public static void loadEncounterSounds(final Encounter encounter) {
+    loadEncounterSounds(encounter.uniqueIds.toIntArray());
+  }
+
+  public static void loadEncounterSounds(final int[] monsterIds) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
 
-    loadFile("encounters", file -> {
-      final AtomicInteger soundbankOffset = new AtomicInteger();
-      final AtomicInteger count = new AtomicInteger(0);
+    final AtomicInteger soundbankOffset = new AtomicInteger();
+    final AtomicInteger count = new AtomicInteger(0);
 
-      final EncounterData38 encounterData = new EncounterData38(file.getBytes(), encounterId * 0x38);
-
-      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Loader.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
-          count.incrementAndGet();
-        }
+    for(int monsterSlot = 0; monsterSlot < monsterIds.length; monsterSlot++) {
+      if(Loader.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
+        count.incrementAndGet();
       }
+    }
 
-      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-        final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-        soundFile.id_02 = -1;
-        soundFile.used_00 = false;
+    for(int monsterSlot = 0; monsterSlot < monsterIds.length; monsterSlot++) {
+      final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
+      soundFile.id_02 = -1;
+      soundFile.used_00 = false;
 
-        if(monsterSlot < encounterData.enemyIndices_00.length && encounterData.enemyIndices_00[monsterSlot] != -1 && Loader.exists("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds")) {
-          final int finalMonsterSlot = monsterSlot;
-          loadDir("monsters/" + encounterData.enemyIndices_00[monsterSlot] + "/sounds", files -> {
-            final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
-            monsterSoundLoaded(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, encounterData.enemyIndices_00[finalMonsterSlot]), finalMonsterSlot, offset);
+      if(Loader.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
+        final int finalMonsterSlot = monsterSlot;
+        loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> {
+          final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
+          monsterSoundLoaded(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot, offset);
 
-            if(count.decrementAndGet() == 0) {
-              loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x10);
-            }
-          });
-        }
+          if(count.decrementAndGet() == 0) {
+            loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x10);
+          }
+        });
       }
-    });
+    }
   }
 
   @Method(0x8001d51cL)
@@ -2388,27 +2375,25 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    final StageData2c stageData = getEncounterStageData(encounterId_800bb0f8);
-
-    if(stageData.musicIndex_04 != 0xff) {
+    if(encounter.musicIndex != 0xff) {
       stopMusicSequence();
 
       // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final int musicIndex = combatMusicFileIndices_800501bc[stageData.musicIndex_04 & 0x1f];
-      final int victoryType = switch(combatSoundEffectsTypes_8005019c[stageData.musicIndex_04 & 0x1f]) {
+      final int musicIndex = combatMusicFileIndices_800501bc[encounter.musicIndex & 0x1f];
+      final int victoryType = switch(combatSoundEffectsTypes_8005019c[encounter.musicIndex & 0x1f]) {
         case 0xc -> 696;
         case 0xd -> 697;
         case 0xe -> 698;
         case 0xf -> 699;
         case 0x56 -> 700;
         case 0x58 -> 701;
-        default -> parseMelbuVictory(stageData.musicIndex_04 & 0x1f);
+        default -> parseMelbuVictory(encounter.musicIndex & 0x1f);
       };
 
-      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(victoryType, musicIndex, stageData));
+      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(victoryType, musicIndex, encounter));
 
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4000);
 

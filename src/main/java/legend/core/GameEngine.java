@@ -37,6 +37,7 @@ import legend.game.saves.serializers.V1Serializer;
 import legend.game.saves.serializers.V2Serializer;
 import legend.game.saves.serializers.V3Serializer;
 import legend.game.saves.serializers.V4Serializer;
+import legend.game.saves.serializers.V5Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.types.Translucency;
@@ -103,7 +104,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
+  public static final SaveManager SAVES = new SaveManager(V5Serializer.MAGIC_V5, V5Serializer::toV5);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
@@ -200,6 +201,7 @@ public final class GameEngine {
         SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
         SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
+        SAVES.registerDeserializer(V5Serializer::fromV5Matcher, V5Serializer::fromV5);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);
@@ -300,6 +302,9 @@ public final class GameEngine {
 
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);
+
+    // Load mod registries
+    EVENTS.postEvent(new AddRegistryEvent(REGISTRIES));
 
     // Initialize config and input registries
     REGISTRY_ACCESS.initialize(REGISTRIES.config);

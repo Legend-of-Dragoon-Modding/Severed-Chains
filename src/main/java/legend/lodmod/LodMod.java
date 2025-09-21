@@ -29,12 +29,14 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.combat.deff.RegisterDeffsEvent;
+import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.IconMapEvent;
 import legend.game.inventory.IconSet;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.coremod.CoreMod;
@@ -274,6 +276,11 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerEncounters(final EncounterRegistryEvent event) {
+    LodEncounters.register(event);
+  }
+
+  @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
       if(spellStats_800fa0b8[spellId] == null) {
@@ -323,49 +330,49 @@ public class LodMod {
 
   @EventListener
   public static void gatherAttackItems(final GatherAttackItemsEvent event) {
-    event.add(LodItems.SPARK_NET.get());
-    event.add(LodItems.BURN_OUT.get());
-    event.add(LodItems.PELLET.get());
-    event.add(LodItems.SPEAR_FROST.get());
-    event.add(LodItems.SPINNING_GALE.get());
-    event.add(LodItems.TRANS_LIGHT.get());
-    event.add(LodItems.DARK_MIST.get());
-    event.add(LodItems.PANIC_BELL.get());
-    event.add(LodItems.STUNNING_HAMMER.get());
-    event.add(LodItems.POISON_NEEDLE.get());
-    event.add(LodItems.MIDNIGHT_TERROR.get());
-    event.add(LodItems.THUNDERBOLT.get());
-    event.add(LodItems.METEOR_FALL.get());
-    event.add(LodItems.GUSHING_MAGMA.get());
-    event.add(LodItems.DANCING_RAY.get());
-    event.add(LodItems.FATAL_BLIZZARD.get());
-    event.add(LodItems.BLACK_RAIN.get());
-    event.add(LodItems.RAVE_TWISTER.get());
-    event.add(LodItems.BURNING_WAVE.get());
-    event.add(LodItems.FROZEN_JET.get());
-    event.add(LodItems.DOWN_BURST.get());
-    event.add(LodItems.GRAVITY_GRABBER.get());
-    event.add(LodItems.SPECTRAL_FLASH.get());
-    event.add(LodItems.NIGHT_RAID.get());
-    event.add(LodItems.FLASH_HALL.get());
+    event.add(new ItemStack(LodItems.SPARK_NET.get()));
+    event.add(new ItemStack(LodItems.BURN_OUT.get()));
+    event.add(new ItemStack(LodItems.PELLET.get()));
+    event.add(new ItemStack(LodItems.SPEAR_FROST.get()));
+    event.add(new ItemStack(LodItems.SPINNING_GALE.get()));
+    event.add(new ItemStack(LodItems.TRANS_LIGHT.get()));
+    event.add(new ItemStack(LodItems.DARK_MIST.get()));
+    event.add(new ItemStack(LodItems.PANIC_BELL.get()));
+    event.add(new ItemStack(LodItems.STUNNING_HAMMER.get()));
+    event.add(new ItemStack(LodItems.POISON_NEEDLE.get()));
+    event.add(new ItemStack(LodItems.MIDNIGHT_TERROR.get()));
+    event.add(new ItemStack(LodItems.THUNDERBOLT.get()));
+    event.add(new ItemStack(LodItems.METEOR_FALL.get()));
+    event.add(new ItemStack(LodItems.GUSHING_MAGMA.get()));
+    event.add(new ItemStack(LodItems.DANCING_RAY.get()));
+    event.add(new ItemStack(LodItems.FATAL_BLIZZARD.get()));
+    event.add(new ItemStack(LodItems.BLACK_RAIN.get()));
+    event.add(new ItemStack(LodItems.RAVE_TWISTER.get()));
+    event.add(new ItemStack(LodItems.BURNING_WAVE.get()));
+    event.add(new ItemStack(LodItems.FROZEN_JET.get()));
+    event.add(new ItemStack(LodItems.DOWN_BURST.get()));
+    event.add(new ItemStack(LodItems.GRAVITY_GRABBER.get()));
+    event.add(new ItemStack(LodItems.SPECTRAL_FLASH.get()));
+    event.add(new ItemStack(LodItems.NIGHT_RAID.get()));
+    event.add(new ItemStack(LodItems.FLASH_HALL.get()));
   }
 
   @EventListener
   public static void gatherRecoveryItems(final GatherRecoveryItemsEvent event) {
-    event.add(LodItems.SPIRIT_POTION.get());
-    event.add(LodItems.SUN_RHAPSODY.get());
-    event.add(LodItems.HEALING_POTION.get());
-    event.add(LodItems.HEALING_FOG.get());
-    event.add(LodItems.MOON_SERENADE.get());
-    event.add(LodItems.HEALING_RAIN.get());
-    event.add(LodItems.HEALING_BREEZE.get());
+    event.add(new ItemStack(LodItems.SPIRIT_POTION.get()));
+    event.add(new ItemStack(LodItems.SUN_RHAPSODY.get()));
+    event.add(new ItemStack(LodItems.HEALING_POTION.get()));
+    event.add(new ItemStack(LodItems.HEALING_FOG.get()));
+    event.add(new ItemStack(LodItems.MOON_SERENADE.get()));
+    event.add(new ItemStack(LodItems.HEALING_RAIN.get()));
+    event.add(new ItemStack(LodItems.HEALING_BREEZE.get()));
   }
 
   @EventListener
   public static void newGame(final NewGameEvent event) {
-    event.gameState.items_2e9.add(LodItems.BURN_OUT.get());
-    event.gameState.items_2e9.add(LodItems.HEALING_POTION.get());
-    event.gameState.items_2e9.add(LodItems.HEALING_POTION.get());
+    event.gameState.items_2e9.give(LodItems.BURN_OUT.get());
+    event.gameState.items_2e9.give(LodItems.HEALING_POTION.get());
+    event.gameState.items_2e9.give(LodItems.HEALING_POTION.get());
 
     final Map<EquipmentSlot, Equipment> dart = event.gameState.charData_32c[0].equipment_14;
     dart.put(EquipmentSlot.WEAPON, LodEquipment.BROAD_SWORD.get());

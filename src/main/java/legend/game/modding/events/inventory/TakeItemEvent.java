@@ -1,18 +1,18 @@
 package legend.game.modding.events.inventory;
 
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 
 /**
  * Fired any time the player's item is taken
  */
 public class TakeItemEvent extends InventoryEvent {
-  /** The item that was taken */
-  public final Item item;
-  /** The slot from which the item was taken. Modify this to take an item from a different slot. */
-  public int itemSlot;
+  /** The slot from which the item was taken */
+  public final Inventory inventory;
+  /** The stack to be removed from the inventory */
+  public ItemStack stack;
 
-  public TakeItemEvent(final Item item, final int itemSlot) {
-    this.item = item;
-    this.itemSlot = itemSlot;
+  public TakeItemEvent(final Inventory inventory, final ItemStack stack) {
+    this.inventory = inventory;
+    this.stack = stack;
   }
 }

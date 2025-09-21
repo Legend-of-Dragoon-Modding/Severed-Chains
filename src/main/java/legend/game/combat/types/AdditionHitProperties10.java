@@ -2,6 +2,8 @@ package legend.game.combat.types;
 
 /** Same as AdditionHitProperties20 in BattlePreloadedEntities_18cb0, except fields are bytes */
 public class AdditionHitProperties10 {
+  private static final AdditionSound NO_SOUND = new AdditionSound(-1, 0);
+
   public int flags_00;
   public int totalFrames_01;
   public int overlayHitFrameOffset_02;
@@ -20,7 +22,9 @@ public class AdditionHitProperties10 {
   public int _0e;
   public int overlayStartingFrameOffset_0f;
 
-  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int panDistance, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset) {
+  public final AdditionSound[] sounds;
+
+  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int panDistance, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset, final AdditionSound... sounds) {
     this.flags_00 = flags;
     this.totalFrames_01 = totalFrames;
     this.overlayHitFrameOffset_02 = overlayHitFrameOffset;
@@ -37,9 +41,27 @@ public class AdditionHitProperties10 {
     this._0d = _0d;
     this._0e = _0e;
     this.overlayStartingFrameOffset_0f = overlayStartingFrameOffset;
+    this.sounds = sounds;
   }
 
   public int get(final int index) {
+    if(index >= 16) {
+      final int soundIndex = (index - 16) / 2;
+      final AdditionSound sound;
+
+      if(soundIndex < this.sounds.length) {
+        sound = this.sounds[soundIndex];
+      } else {
+        sound = NO_SOUND;
+      }
+
+      return switch(index & 0x1) {
+        case 0 -> sound.soundIndex;
+        case 1 -> sound.initialDelay;
+        default -> throw new IllegalStateException("Unexpected value: " + (index & 0x1));
+      };
+    }
+
     return switch(index) {
       case 0 -> this.flags_00;
       case 1 -> this.totalFrames_01;

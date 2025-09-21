@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
 public class TotalVanishingItem extends BattleItem {
@@ -10,17 +11,17 @@ public class TotalVanishingItem extends BattleItem {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ENEMIES;
   }
 
   @Override
-  public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
+  public int getSpecialEffect(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     if((target.specialEffectFlag_14 & 0x80) != 0) { // Resistance
       return -1;
     }

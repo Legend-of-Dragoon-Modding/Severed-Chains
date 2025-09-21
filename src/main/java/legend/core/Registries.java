@@ -18,6 +18,9 @@ import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.deff.DeffRegistry;
 import legend.game.combat.deff.RegisterDeffsEvent;
+import legend.game.combat.encounters.Encounter;
+import legend.game.combat.encounters.EncounterRegistry;
+import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistry;
 import legend.game.inventory.EquipmentRegistryEvent;
@@ -34,9 +37,13 @@ import legend.game.saves.ConfigRegistry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.types.Shop;
 import org.legendofdragoon.modloader.events.EventManager;
+import org.legendofdragoon.modloader.events.registries.RegistryEvent;
+import org.legendofdragoon.modloader.registries.MutableRegistry;
 import org.legendofdragoon.modloader.registries.Registry;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
   public final Registry<InputAction> inputActions = this.addRegistry(new InputActionRegistry(), InputActionRegistryEvent::new);
@@ -50,8 +57,14 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);
+  public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);
+  }
+
+  @Override
+  protected <Type extends RegistryEntry> Registry<Type> addRegistry(final Registry<Type> registry, final Function<MutableRegistry<Type>, RegistryEvent.Register<Type>> registryEvent) {
+    return super.addRegistry(registry, registryEvent);
   }
 }

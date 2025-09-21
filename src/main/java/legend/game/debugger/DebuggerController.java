@@ -30,6 +30,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
@@ -310,18 +311,19 @@ public class DebuggerController {
       smap.submap.prepareEncounter(this.encounterId.getValue(), false);
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
-      encounterId_800bb0f8 = this.encounterId.getValue();
+      final int encounterId = this.encounterId.getValue();
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
+      final int stageId;
       if(Config.combatStage()) {
-        battleStage_800bb0f4 = Config.getCombatStage();
+        stageId = Config.getCombatStage();
+      } else if(directionalPathSegment.battleStage_04 == -1) {
+        stageId = 1;
       } else {
-        if(directionalPathSegment.battleStage_04 == -1) {
-          battleStage_800bb0f4 = 1;
-        } else {
-          battleStage_800bb0f4 = directionalPathSegment.battleStage_04;
-        }
+        stageId = directionalPathSegment.battleStage_04;
       }
+
+      startLegacyEncounter(encounterId, stageId);
 
       gameState_800babc8.directionalPathIndex_4de = wmap.mapState_800c6798.directionalPathIndex_12;
       gameState_800babc8.pathIndex_4d8 = wmap.mapState_800c6798.pathIndex_14;

@@ -1,13 +1,15 @@
 package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
-import legend.game.i18n.I18n;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.ListBox;
 import legend.game.types.MenuEntryStruct04;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.IoHelper.getPackedFlag;
 import static legend.game.SItem.goodsDescriptions_8011b75c;
@@ -23,8 +25,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 public class GoodsScreen extends MenuScreen {
   private final Runnable unload;
 
-  private final ItemList<Integer> leftList;
-  private final ItemList<Integer> rightList;
+  private final ItemList<GoodsEntry> leftList;
+  private final ItemList<GoodsEntry> rightList;
   private final Label description = new Label("");
 
   public GoodsScreen(final Runnable unload) {
@@ -33,13 +35,13 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item == null || item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c[item.item_00]);
+    final ListBox.Highlight<MenuEntryStruct04<GoodsEntry>> description = item -> this.description.setText(item == null || item.item_00.id >= 0xff ? "" : goodsDescriptions_8011b75c[item.item_00.id]);
 
-    this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null);
+    this.leftList = new ItemList<>(entry -> goodsItemNames_8011c008[entry.item_00.id], null, null, null, null, null);
     this.leftList.setPos(8, 15);
     this.leftList.setTitle("Goods");
 
-    this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null);
+    this.rightList = new ItemList<>(entry -> goodsItemNames_8011c008[entry.item_00.id], null, null, null, null, null);
     this.rightList.setPos(188, 15);
     this.rightList.setTitle("Goods");
 
@@ -93,7 +95,7 @@ public class GoodsScreen extends MenuScreen {
 
     for(int i = 0, listIndex = 0; i < 64; i++) {
       if(getPackedFlag(gameState_800babc8.goods_19c, i)) {
-        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008[goodsIndex], null, null, i);
+        final MenuEntryStruct04<GoodsEntry> item = new MenuEntryStruct04<>(new GoodsEntry(i));
 
         if(listIndex % 2 == 0) {
           this.leftList.add(item);
@@ -130,5 +132,48 @@ public class GoodsScreen extends MenuScreen {
     }
 
     return InputPropagation.PROPAGATE;
+  }
+
+  private static class GoodsEntry implements InventoryEntry {
+    public final int id;
+
+    private GoodsEntry(final int id) {
+      this.id = id;
+    }
+
+    @Override
+    public RegistryId getRegistryId() {
+      return null;
+    }
+
+    @Override
+    public ItemIcon getIcon() {
+      return null;
+    }
+
+    @Override
+    public String getNameTranslationKey() {
+      return "";
+    }
+
+    @Override
+    public String getDescriptionTranslationKey() {
+      return "";
+    }
+
+    @Override
+    public int getPrice() {
+      return 0;
+    }
+
+    @Override
+    public int getSize() {
+      return 0;
+    }
+
+    @Override
+    public int getMaxSize() {
+      return 0;
+    }
   }
 }

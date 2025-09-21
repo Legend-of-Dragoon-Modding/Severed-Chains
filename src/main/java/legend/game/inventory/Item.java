@@ -7,7 +7,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
-public abstract class Item extends RegistryEntry implements InventoryEntry {
+public abstract class Item extends RegistryEntry {
   private final ItemIcon icon;
   private final int price;
 
@@ -16,61 +16,73 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
     this.price = price;
   }
 
-  @Override
-  public ItemIcon getIcon() {
+  public ItemIcon getIcon(final ItemStack stack) {
     return this.icon;
   }
 
-  @Override
-  public String getNameTranslationKey() {
+  public String getNameTranslationKey(final ItemStack stack) {
     return this.getTranslationKey();
   }
 
-  @Override
-  public String getDescriptionTranslationKey() {
+  public String getDescriptionTranslationKey(final ItemStack stack) {
     return this.getTranslationKey("description");
   }
 
-  public String getBattleDescriptionTranslationKey() {
+  public String getBattleDescriptionTranslationKey(final ItemStack stack) {
     return this.getTranslationKey("battle_description");
   }
 
-  @Override
-  public int getPrice() {
+  public int getPrice(final ItemStack stack) {
     return this.price;
   }
 
   /** Item can't be stolen by enemies */
-  public boolean isProtected() {
+  public boolean isProtected(final ItemStack stack) {
     return false;
   }
 
   /** Item is returned after battle */
-  public boolean isRepeat() {
+  public boolean isRepeat(final ItemStack stack) {
     return false;
   }
 
-  /** Check if an item can ever be used in this location */
-  public abstract boolean canBeUsed(final UsageLocation location);
-
-  /** Check if an item can be used in this location right now */
-  public boolean canBeUsedNow(final UsageLocation location) {
-    return this.canBeUsed(location);
+  public int getMaxStackSize(final ItemStack stack) {
+    return 10;
   }
 
-  public abstract boolean canTarget(final TargetType type);
+  public boolean hasDurability(final ItemStack stack) {
+    return false;
+  }
+
+  public int getMaxDurability(final ItemStack stack) {
+    return 1;
+  }
+
+  public boolean isSame(final ItemStack stack) {
+    return this == stack.getItem();
+  }
+
+  /** Check if an item can ever be used in this location */
+  public abstract boolean canBeUsed(final ItemStack stack, final UsageLocation location);
+
+  /** Check if an item can be used in this location right now */
+  public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
+    return this.canBeUsed(stack, location);
+  }
+
+  public abstract boolean canTarget(final ItemStack stack, final TargetType type);
 
   @Method(0x80022d88L)
-  public void useInMenu(final UseItemResponse response, final int charId) {
-    if(!this.canBeUsed(UsageLocation.MENU)) {
+  public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
+    if(!this.canBeUsed(stack, UsageLocation.MENU)) {
       throw new RuntimeException(this + " cannot be used in menu");
     }
 
     throw new RuntimeException(this + " usage in menu has yet been implemented");
   }
 
-  public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
-    if(!this.canBeUsed(UsageLocation.BATTLE)) {
+  public FlowControl useInBattle(final ItemStack stack, final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    if(!this.canBeUsed(stack, UsageLocation.BATTLE)) {
       throw new RuntimeException(this + " cannot be used in battle");
     }
 
@@ -78,33 +90,33 @@ public abstract class Item extends RegistryEntry implements InventoryEntry {
   }
 
   /** If you implement this, you have to implement {@link #calculateStatMod} */
-  public boolean isStatMod() {
+  public boolean isStatMod(final ItemStack stack) {
     return false;
   }
 
-  public int calculateStatMod(final BattleEntity27c user, final BattleEntity27c target) {
+  public int calculateStatMod(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     throw new IllegalStateException(this + " is not a stat mod item");
   }
 
-  public void applyBuffs(final BattleEntity27c user, final BattleEntity27c target) {
+  public void applyBuffs(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
 
   }
 
-  public boolean alwaysHits() {
+  public boolean alwaysHits(final ItemStack stack) {
     return false;
   }
 
-  public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
+  public int getSpecialEffect(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     //TODO should we update the DEFFs to not call these?
     //throw new IllegalStateException(this + " is not an attack item");
     return 0;
   }
 
-  public Element getAttackElement() {
+  public Element getAttackElement(final ItemStack stack) {
     throw new IllegalStateException(this + " is not an attack item");
   }
 
-  public int getAttackDamageMultiplier(final BattleEntity27c user, final BattleEntity27c target) {
+  public int getAttackDamageMultiplier(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     //TODO should we update the DEFFs to not call these?
     //throw new IllegalStateException(this + " is not an attack item");
     return 0;

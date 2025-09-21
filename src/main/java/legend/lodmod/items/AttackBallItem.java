@@ -3,6 +3,7 @@ package legend.lodmod.items;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
@@ -20,24 +21,24 @@ public class AttackBallItem extends Item {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ENEMIES;
   }
 
   @Override
-  public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
-    final Item[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    LOGGER.info("%s has selected %s", this, item);
+  public FlowControl useInBattle(final ItemStack stack, final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+    final ItemStack[] stacks = EVENTS.postEvent(new GatherAttackItemsEvent()).getStacks();
+    final ItemStack selected = stacks[seed_800fa754.nextInt(stacks.length)];
+    LOGGER.info("%s has selected %s", this, selected);
 
-    user.innerStruct_00.item_d4 = item;
-    user.registryIds[0] = item.getRegistryId();
+    user.innerStruct_00.item_d4 = selected;
+    user.registryIds[0] = selected.getItem().getRegistryId();
 
-    return item.useInBattle(user, item.canTarget(TargetType.ALL) ? -1 : targetBentIndex);
+    return selected.useInBattle(user, selected.canTarget(TargetType.ALL) ? -1 : targetBentIndex);
   }
 }

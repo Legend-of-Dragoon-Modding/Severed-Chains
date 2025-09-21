@@ -105,12 +105,10 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
@@ -120,6 +118,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -3662,34 +3661,38 @@ public class WMap extends EngineState {
     if(this.encounterAccumulator_800c6ae8 >= 5120) {
       this.encounterAccumulator_800c6ae8 = 0;
 
+      final int stageId;
       if(directionalPathSegment.battleStage_04 == -1) {
-        battleStage_800bb0f4 = 1;
+        stageId = 1;
       } else {
         //LAB_800e386c
-        battleStage_800bb0f4 = directionalPathSegment.battleStage_04;
+        stageId = directionalPathSegment.battleStage_04;
       }
 
       //LAB_800e3894
       final int encounterIndex = directionalPathSegment.encounterIndex_05;
+      final int encounterId;
 
       if(encounterIndex == -1) {
-        encounterId_800bb0f8 = 0;
+        encounterId = 0;
       } else {
         //LAB_800e38dc
         final int rand = simpleRand() % 100;
         if(rand < 35) {
-          encounterId_800bb0f8 = encounterIds_800ef364[encounterIndex][0];
+          encounterId = encounterIds_800ef364[encounterIndex][0];
           //LAB_800e396c
         } else if(rand < 70) {
-          encounterId_800bb0f8 = encounterIds_800ef364[encounterIndex][1];
+          encounterId = encounterIds_800ef364[encounterIndex][1];
           //LAB_800e39c0
         } else if(rand < 90) {
-          encounterId_800bb0f8 = encounterIds_800ef364[encounterIndex][2];
+          encounterId = encounterIds_800ef364[encounterIndex][2];
         } else {
           //LAB_800e3a14
-          encounterId_800bb0f8 = encounterIds_800ef364[encounterIndex][3];
+          encounterId = encounterIds_800ef364[encounterIndex][3];
         }
       }
+
+      startLegacyEncounter(encounterId, stageId);
 
       //LAB_800e3a38
       gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;

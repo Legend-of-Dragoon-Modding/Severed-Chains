@@ -243,6 +243,7 @@ public class RenderEngine {
   public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
   public Obj opaqueQuad;
   // Simple quads
+  public Obj centredQuadOpaque;
   public Obj centredQuadBPlusF;
   public Obj centredQuadBMinusF;
   // Line box (reticles)
@@ -523,6 +524,13 @@ public class RenderEngine {
       .size(1.0f, 1.0f)
       .build();
     this.opaqueQuad.persistent = true;
+
+    this.centredQuadOpaque = new QuadBuilder("Centred Quad Opaque")
+      .monochrome(1.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.centredQuadOpaque.persistent = true;
 
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)

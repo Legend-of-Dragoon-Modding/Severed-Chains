@@ -3,12 +3,14 @@ package legend.game.inventory.screens;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -36,8 +38,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
 
-  private final ItemList<Item> itemList = new ItemList<>();
-  private final ItemList<Equipment> equipmentList = new ItemList<>(i -> gameState_800babc8.equipment_1e8.size());
+  private final ItemList<ItemStack> itemList = new ItemList<>(stack -> stack.item_00.canStack() ? stack.item_00.getSize() : 0, null);
+  private final ItemList<Equipment> equipmentList = new ItemList<>(null, i -> gameState_800babc8.equipment_1e8.size());
   private final Label description = new Label("");
 
   public ItemListScreen(final Runnable unload) {
@@ -106,11 +108,11 @@ public class ItemListScreen extends MenuScreen {
 
     this.setFocus(this.itemList);
 
-    final MenuEntries<Item> items = new MenuEntries<>();
+    final MenuEntries<ItemStack> items = new MenuEntries<>();
     final MenuEntries<Equipment> equipment = new MenuEntries<>();
     loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
-    for(final MenuEntryStruct04<Item> item : items) {
+    for(final MenuEntryStruct04<ItemStack> item : items) {
       this.itemList.add(item);
     }
 
@@ -135,7 +137,7 @@ public class ItemListScreen extends MenuScreen {
 
   }
 
-  private <T> void showDiscardMenu(final ItemList<T> list, final List<T> inv) {
+  private <T extends InventoryEntry> void showDiscardMenu(final ItemList<T> list, final List<T> inv) {
     if(((list.getSelectedItem().flags_02 & 0x2000) != 0)) {
       playMenuSound(40);
     } else {
@@ -144,10 +146,28 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private <T> void discard(final MessageBoxResult result, final ItemList<T> list, final List<T> inv) {
+  private void showDiscardMenu(final ItemList<ItemStack> list, final Inventory inv) {
+    if(((list.getSelectedItem().flags_02 & 0x2000) != 0)) {
+      playMenuSound(40);
+    } else {
+      playMenuSound(2);
+      menuStack.pushScreen(new MessageBoxScreen("Discard?", 2, result -> this.discard(result, list, inv)));
+    }
+  }
+
+  private <T extends InventoryEntry> void discard(final MessageBoxResult result, final ItemList<T> list, final List<T> inv) {
     if(result == MessageBoxResult.YES) {
       list.remove(list.getSelectedItem());
       final List<MenuEntryStruct04<T>> items = list.getItems();
+      setInventoryFromDisplay(items, inv, items.size());
+      this.updateDescription(list.getSelectedItem());
+    }
+  }
+
+  private void discard(final MessageBoxResult result, final ItemList<ItemStack> list, final Inventory inv) {
+    if(result == MessageBoxResult.YES) {
+      list.remove(list.getSelectedItem());
+      final List<MenuEntryStruct04<ItemStack>> items = list.getItems();
       setInventoryFromDisplay(items, inv, items.size());
       this.updateDescription(list.getSelectedItem());
     }
@@ -170,7 +190,7 @@ public class ItemListScreen extends MenuScreen {
 
   private void menuSort() {
     playMenuSound(2);
-    this.itemList.sort(menuItemIconComparator(List.of(LodMod.ITEM_IDS)));
+    this.itemList.sort(menuItemIconComparator(List.of(LodMod.ITEM_IDS), stack -> stack.getItem().getRegistryId()));
     this.equipmentList.sort(menuEquipmentSlotComparator());
     setInventoryFromDisplay(this.itemList.getItems(), gameState_800babc8.items_2e9, this.itemList.getItems().size());
     setInventoryFromDisplay(this.equipmentList.getItems(), gameState_800babc8.equipment_1e8, this.equipmentList.getItems().size());

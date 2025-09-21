@@ -9,6 +9,7 @@ import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.combat.types.EnemyDrop;
+import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Renderable58;
@@ -27,7 +28,6 @@ import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.addLevelUpOverlay;
 import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
@@ -833,8 +833,8 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010eae0
     for(final EnemyDrop enemyDrop : itemsDroppedByEnemies_800bc928) {
-      renderItemIcon(enemyDrop.icon, 18, y1, 0x8);
-      renderText(enemyDrop.name, 28, y2, this.fontOptions);
+      enemyDrop.item.renderIcon(18, y1, 0x8);
+      renderText(I18n.translate(enemyDrop.item.getNameTranslationKey()), 28, y2, this.fontOptions);
 
       //LAB_8010eb38
       y2 += 16;

@@ -3,6 +3,7 @@ package legend.lodmod.items;
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
 
@@ -20,17 +21,17 @@ public class RecoverStatusItem extends BattleItem {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return true;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ALLIES;
   }
 
   @Override
-  public boolean canBeUsedNow(final UsageLocation location) {
+  public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     if(location == UsageLocation.MENU) {
       int allStatus = 0;
       for(int i = 0; i < characterCount_8011d7c4; i++) {
@@ -45,7 +46,7 @@ public class RecoverStatusItem extends BattleItem {
 
   @Override
   @Method(0x80022d88L)
-  public void useInMenu(final UseItemResponse response, final int charId) {
+  public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
     final int status = gameState_800babc8.charData_32c[charId].status_10;
 
     if((this.status & status) != 0) {
@@ -57,23 +58,23 @@ public class RecoverStatusItem extends BattleItem {
   }
 
   @Override
-  public boolean isStatMod() {
+  public boolean isStatMod(final ItemStack stack) {
     return true;
   }
 
   @Override
-  public int calculateStatMod(final BattleEntity27c user, final BattleEntity27c target) {
+  public int calculateStatMod(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     return 0;
   }
 
   @Override
-  public boolean alwaysHits() {
+  public boolean alwaysHits(final ItemStack stack) {
     return true;
   }
 
   /** TODO I dunno if this does anything for status recovery */
   @Override
-  public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
+  public int getSpecialEffect(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     int effect = -1;
     if(simpleRand() * 101 >> 16 < 101) {
       if((this.status & 0xff) != 0) {
