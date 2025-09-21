@@ -67,8 +67,10 @@ public enum OpType {
   DEPTH(99, "depth"),
   ;
 
+  private static final OpType[] VALUES = OpType.values();
+
   public static OpType byOpcode(final int opcode) {
-    for(final OpType op : OpType.values()) {
+    for(final OpType op : VALUES) {
       if(op.opcode == opcode) {
         return op;
       }

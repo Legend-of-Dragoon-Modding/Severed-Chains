@@ -133,12 +133,12 @@ public class RenderEngine {
   private Shader.UniformBuffer transforms2Uniform;
   private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
-  private Shader.UniformBuffer vdfUniform;
+  Shader.UniformBuffer scissorUniform;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
-  private final FloatBuffer vdfBuffer = BufferUtils.createFloatBuffer(4 * 1024);
+  final FloatBuffer scissorBuffer = BufferUtils.createFloatBuffer(4);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -160,6 +160,7 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
       final Shader<ShaderOptionsStandard>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsStandard>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsStandard>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -183,6 +184,7 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
       final Shader<ShaderOptionsTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -204,7 +206,7 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
-      shader.bindUniformBlock("vdf", Shader.UniformBuffer.VDF);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
       final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -214,8 +216,7 @@ public class RenderEngine {
       final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
       final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags = shader.new UniformInt("ctmdFlags");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour = shader.new UniformVec3("battleColour");
-      final Shader<ShaderOptionsBattleTmd>.UniformInt useVdf = shader.new UniformInt("useVdf");
-      return () -> new ShaderOptionsBattleTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour, useVdf);
+      return () -> new ShaderOptionsBattleTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour);
     }
   );
 
@@ -292,7 +293,7 @@ public class RenderEngine {
   private final Deque<Runnable> tasks = new LinkedList<>();
 
   public RenderEngine() {
-    this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    this.mainBatch = new RenderBatch(this, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
     this.state = new RenderState(this);
   }
@@ -306,7 +307,7 @@ public class RenderEngine {
    * out with a copy of the main render batch's config when they are created.
    */
   public RenderBatch addBatch() {
-    final RenderBatch batch = new RenderBatch(this, this.mainBatch, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    final RenderBatch batch = new RenderBatch(this, this.mainBatch, this.lightBuffer);
     this.batches.add(batch);
     return batch;
   }
@@ -487,7 +488,7 @@ public class RenderEngine {
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
-    this.vdfUniform = ShaderManager.addUniformBuffer("vdf", new Shader.UniformBuffer((long)this.vdfBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.VDF));
+    this.scissorUniform = ShaderManager.addUniformBuffer("scissor", new Shader.UniformBuffer((long)this.scissorBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.SCISSOR));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
@@ -671,11 +672,6 @@ public class RenderEngine {
           this.renderBatch(this.mainBatch);
         }
 
-        // Fix for GH#1885
-        // Don't know why it's broken or why this fixes it. The scissoring for the text is somehow getting
-        // applied to the render buffer rendering. Resetting the scissor rect to the full screen fixes it.
-        this.state.fullScreenScissor();
-
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // set render states
@@ -757,7 +753,6 @@ public class RenderEngine {
     }
 
     this.state.initBatch(batch);
-    this.state.enableScissor();
 
     this.clearDepth();
 
@@ -776,8 +771,6 @@ public class RenderEngine {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPoolTranslucent(batch, batch.orthoPool);
-
-    this.state.disableScissor();
   }
 
   private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
@@ -809,7 +802,7 @@ public class RenderEngine {
       entry.useShader(modelIndex, 1);
       this.state.enableDepthTest(entry.opaqueDepthComparator);
 
-      this.state.scissor(entry);
+      this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
 
       for(int layer = 0; layer < entry.getLayers(); layer++) {
         if(entry.shouldRender(null, layer)) {
@@ -868,7 +861,7 @@ public class RenderEngine {
         entry.useShader(modelIndex, entry.texturesUsed ? 0 : 2); // Don't discard if we aren't using the emulated VRAM texture
         this.state.enableDepthTest(entry.translucentDepthComparator);
 
-        this.state.scissor(entry);
+        this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
 
         entry.useTexture();
 

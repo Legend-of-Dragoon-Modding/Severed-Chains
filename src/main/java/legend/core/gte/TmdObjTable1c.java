@@ -22,8 +22,6 @@ public class TmdObjTable1c {
   public final int n_primitive_14;
   public final int scale_18;
 
-  public Vector3f[] vdf;
-
   public TmdObjTable1c(final String name, final FileData data, final FileData baseOffset) {
     this.name = name;
 

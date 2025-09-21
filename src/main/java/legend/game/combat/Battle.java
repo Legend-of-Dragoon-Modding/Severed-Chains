@@ -7802,7 +7802,9 @@ public class Battle extends EngineState {
 
     //LAB_800eed78
     for(final ItemStack stack : this.usedRepeatItems_800c6c3c) {
-      giveItem(stack);
+      if(!giveItem(stack)) {
+        itemOverflow.add(stack);
+      }
     }
 
     this.usedRepeatItems_800c6c3c.clear();

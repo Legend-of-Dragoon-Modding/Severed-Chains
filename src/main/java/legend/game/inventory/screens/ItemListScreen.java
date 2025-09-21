@@ -96,17 +96,11 @@ public class ItemListScreen extends MenuScreen {
     this.addControl(Glyph.glyph(83)).setPos( 16, 164); // Button prompt pane
     this.addControl(Glyph.glyph(91)).setPos(194, 173); // Description pane
 
-    this.addControl(new Label("Press   to sort")).setPos(30, 179);
-    this.addControl(new Label("Press   to discard")).setPos(30, 194);
+    this.addHotkey("Sort", INPUT_ACTION_MENU_SORT, this::menuSort);
+    this.addHotkey("Discard", INPUT_ACTION_MENU_DELETE, this::menuDiscard);
+    this.addHotkey("Back", INPUT_ACTION_MENU_BACK, this::menuEscape);
 
-    final Glyph sortButton = this.addControl(Glyph.glyph(0x89));
-    final Glyph discardButton = this.addControl(Glyph.glyph(0x88));
-    sortButton.setPos(81, 179);
-    sortButton.getRenderable().clut_30 = 0x7ceb;
-    discardButton.setPos(81, 194);
-    discardButton.getRenderable().clut_30 = 0x7ceb;
-
-    this.description.setPos(194, 178);
+    this.description.setPos(14, 168);
 
     this.addControl(this.itemList);
     this.addControl(this.equipmentList);
@@ -212,16 +206,6 @@ public class ItemListScreen extends MenuScreen {
 
     if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       this.menuEscape();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_DELETE.get()) {
-      this.menuDiscard();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_SORT.get() && !repeat) {
-      this.menuSort();
       return InputPropagation.HANDLED;
     }
 
