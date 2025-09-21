@@ -14,8 +14,6 @@ import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 
 public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, QueuedModelBattleTmd> implements LitModel {
-  private final Shader.UniformBuffer vdfUniform;
-  private final FloatBuffer vdfBuffer;
   private final Matrix4f lightTransforms = new Matrix4f();
   private final FloatBuffer lightingBuffer;
 
@@ -29,12 +27,9 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
 
   private int ctmdFlags;
   private final Vector3f battleColour = new Vector3f();
-  private Vector3f[] vdf;
 
-  public QueuedModelBattleTmd(final RenderBatch batch, final Shader<ShaderOptionsBattleTmd> shader, final ShaderOptionsBattleTmd shaderOptions, final Shader.UniformBuffer vdfUniform, final FloatBuffer vdfBuffer, final FloatBuffer lightingBuffer) {
+  public QueuedModelBattleTmd(final RenderBatch batch, final Shader<ShaderOptionsBattleTmd> shader, final ShaderOptionsBattleTmd shaderOptions, final FloatBuffer lightingBuffer) {
     super(batch, shader, shaderOptions);
-    this.vdfUniform = vdfUniform;
-    this.vdfBuffer = vdfBuffer;
     this.lightingBuffer = lightingBuffer;
   }
 
@@ -71,11 +66,6 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
     return this;
   }
 
-  public QueuedModelBattleTmd vdf(final Vector3f[] vdf) {
-    this.vdf = vdf;
-    return this;
-  }
-
   public boolean isTranslucent() {
     return (this.ctmdFlags & 0x2) != 0;
   }
@@ -97,7 +87,6 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
     this.tmdTranslucency = 0;
     this.ctmdFlags = 0;
     this.battleColour.zero();
-    this.vdf = null;
   }
 
   @Override
@@ -133,21 +122,6 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
     this.shaderOptions.tmdTranslucency(this.tmdTranslucency);
     this.shaderOptions.ctmdFlags(this.ctmdFlags);
     this.shaderOptions.battleColour(this.battleColour);
-
-    if(this.vdf != null) {
-      this.shaderOptions.useVdf(true);
-      this.setVdf(this.vdf);
-    } else {
-      this.shaderOptions.useVdf(false);
-    }
-  }
-
-  private void setVdf(final Vector3f[] vertices) {
-    for(int i = 0; i < vertices.length; i++) {
-      vertices[i].get(i * 0x4, this.vdfBuffer);
-    }
-
-    this.vdfUniform.set(this.vdfBuffer);
   }
 
   @Override

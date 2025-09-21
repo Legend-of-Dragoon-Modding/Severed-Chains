@@ -104,7 +104,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        final QueuedModelBattleTmd model = RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
+        RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
           .depthOffset(manager.params_10.z_22 * 4)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
@@ -112,10 +112,6 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
           .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
-
-        if(this.tmd_08.vdf != null) {
-          model.vdf(this.tmd_08.vdf);
-        }
       } else {
         //LAB_80118370
         renderTmdSpriteEffect(this.tmd_08, this.obj, manager.params_10, this.transforms);

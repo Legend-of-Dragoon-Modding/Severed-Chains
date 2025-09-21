@@ -22,6 +22,13 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
+layout(std140) uniform scissor {
+  float scissorX;
+  float scissorY;
+  float scissorW;
+  float scissorH;
+};
+
 uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float translucency;
@@ -34,6 +41,12 @@ uniform usampler2D tex15;
 layout(location = 0) out vec4 outColour;
 
 void main() {
+  // Older Intel iGPUs are buggy and don't implement scissoring properly, causing the Shirley fight to lock up when
+  // she transforms into another character. This is a workaround and reimplements scissoring at the shader level.
+  if(gl_FragCoord.x < scissorX || gl_FragCoord.x >= scissorX + scissorW || gl_FragCoord.y < scissorY || gl_FragCoord.y >= scissorY + scissorH) {
+    discard;
+  }
+
   // Linearize depth for perspective transforms so that we can render ortho models at specific depths
   if(projectionMode == 2) {
     gl_FragDepth = (depth - znear) * zdiffInv + depthOffset;

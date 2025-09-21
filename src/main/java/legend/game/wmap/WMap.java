@@ -557,6 +557,10 @@ public class WMap extends EngineState {
         resizeDisplay(320, 240);
         loadWmapMusic(gameState_800babc8.chapterIndex_98);
         this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS_12;
+
+        this.unloadWmapPlayerModels();
+        this.loadPlayerAvatarTextureAndModelFiles();
+        this.playerState_800c669c = PlayerState.LOAD_MODEL_2;
       }
 
       //LAB_800cc828

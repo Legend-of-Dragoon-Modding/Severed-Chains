@@ -179,11 +179,6 @@ public final class Texture {
   public void dataInt(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
     glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT, data);
-
-    final int error = glGetError();
-    if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to upload data, rect: (" + x + ", " + y + ", " + w + ", " + h + "), glError: " + Long.toString(error, 16));
-    }
   }
 
   public void getData(final ByteBuffer data) {
@@ -193,11 +188,6 @@ public final class Texture {
 
     this.use();
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-    final int error = glGetError();
-    if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to acquire texture data, glError: " + Long.toString(error, 16));
-    }
   }
 
   public void use(final int activeTexture) {

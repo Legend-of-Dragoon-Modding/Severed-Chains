@@ -1055,6 +1055,8 @@ public class SMap extends EngineState {
     this.restoreCharDataVitals(-1);
   }
 
+  private final MV smapShadowLw = new MV();
+
   @Method(0x800da524L)
   private void renderSmapShadow(final Model124 model) {
     GsInitCoordinate2(model.coord2_14, shadowModel_800bda10.coord2_14);
@@ -1076,11 +1078,10 @@ public class SMap extends EngineState {
     partCoord.coord.rotationZYX(partCoord.transforms.rotate);
     partCoord.coord.transfer.set(partCoord.transforms.trans);
 
-    final MV lw = new MV();
-    GsGetLw(partCoord, lw);
+    GsGetLw(partCoord, this.smapShadowLw);
 
     RENDERER
-      .queueModel(modelPart.obj, lw, QueuedModelTmd.class)
+      .queueModel(modelPart.obj, this.smapShadowLw, QueuedModelTmd.class)
       .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
       .depthOffset(shadowModel_800bda10.zOffset_a0 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
@@ -1090,6 +1091,8 @@ public class SMap extends EngineState {
     partCoord.flg--;
   }
 
+  private final MV smapModelLw = new MV();
+
   // TODO Clean this up
   @Method(0x800daa3cL)
   public void renderSmapModel(final Model124 model, @Nullable final Texture texture) {
@@ -1097,34 +1100,25 @@ public class SMap extends EngineState {
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     //LAB_800daaa8
-    final MV lw = new MV();
-    final MV ls = new MV();
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 dobj2 = model.modelParts_00[i];
 
-        GsGetLws(dobj2.coord2_04, lw, ls);
-//        GsSetLightMatrix(lw);
-//        GTE.setTransforms(ls);
-//        Renderer.renderDobj2(dobj2, false, 0);
+        GsGetLw(dobj2.coord2_04, this.smapModelLw);
 
-        if(dobj2.obj != null) { //TODO remove me
-          GsGetLw(dobj2.coord2_04, lw);
+        final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, this.smapModelLw, QueuedModelTmd.class)
+          .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+          .depthOffset(model.zOffset_a0 * 4)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          // Fix for chest shadow rendering on top of lid (GH#1408)
+          .translucentDepthComparator(GL_LESS)
+        ;
 
-          final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
-            .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-            .depthOffset(model.zOffset_a0 * 4)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            // Fix for chest shadow rendering on top of lid (GH#1408)
-            .translucentDepthComparator(GL_LESS)
-          ;
-
-          if(texture != null) {
-            queue.texture(texture);
-          }
+        if(texture != null) {
+          queue.texture(texture);
         }
       }
     }

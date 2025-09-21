@@ -35,8 +35,6 @@ uniform float modelIndex;
 uniform int ctmdFlags;
 uniform vec3 battleColour;
 
-uniform int useVdf;
-
 struct ModelTransforms {
   mat4 model;
   vec4 screenOffset;
@@ -72,18 +70,8 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
-layout(std140) uniform vdf {
-  vec4[1024] vertices;
-};
-
 void main() {
-  vec4 pos;
-
-  if(useVdf == 0) {
-    pos = vec4(inPos.xyz, 1.0f);
-  } else {
-    pos = vec4(vertices[int(inPos.w)].xyz, 1.0f);
-  }
+  vec4 pos = vec4(inPos.xyz, 1.0);
 
   vs_out.vertFlags = int(inFlags);
   bool ctmd = (ctmdFlags & 0x20) != 0;
@@ -98,7 +86,7 @@ void main() {
 
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
     vs_out.vertColour.rgb = inColour.rgb * battleColour.rgb;
-    // Individiually checks for retail color overflows
+    // Individually checks for retail color overflows
     if(vs_out.vertColour.r > 2.0) {
       vs_out.vertColour.r = mod(vs_out.vertColour.r, 2.0);
     }

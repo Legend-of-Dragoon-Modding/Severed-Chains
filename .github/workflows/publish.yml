@@ -66,6 +66,9 @@ jobs:
     - name: Write ISOs help file
       run: mkdir ./build/libs/isos && echo "Place your ISOs or BINs in this folder" > ./build/libs/isos/help.txt
 
+    - name: Don't know why this is necessary but these files are getting included in the Windows zip
+      run: 'rm build/libs/launch build/libs/download-java'
+
     - name: ZIP Windows x64 Build
       uses: thedoctor0/zip-release@main
       with:
