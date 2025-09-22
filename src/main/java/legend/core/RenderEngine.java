@@ -7,7 +7,6 @@ import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
 import legend.core.opengl.FrameBuffer;
-import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
@@ -47,7 +46,6 @@ import org.lwjgl.opengl.GLUtil;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -236,9 +234,6 @@ public class RenderEngine {
   /** Set when resizing the window so that the render buffers will be resized on the next frame */
   private boolean resizeRenderBuffers;
 
-  // Text
-  public Texture textTexture;
-  public Obj chars;
   // Plain quads
   public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
   public Obj opaqueQuad;
@@ -501,11 +496,6 @@ public class RenderEngine {
 
     postQuad.attribute(0, 0L, 2, 4);
     postQuad.attribute(1, 2L, 2, 4);
-
-    // Build text quads
-    this.textTexture = Texture.png(Path.of("./gfx/fonts/ingame.png"));
-    this.chars = new LegacyTextBuilder("Text Characters").build();
-    this.chars.persistent = true;
 
     // Build fullscreen fade quads
     for(final Translucency translucency : Translucency.FOR_RENDERING) {

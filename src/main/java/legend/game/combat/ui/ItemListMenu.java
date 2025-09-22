@@ -43,7 +43,7 @@ public class ItemListMenu extends ListMenu {
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
     renderText(I18n.translate(this.combatItems_800c6988.get(index).item), x, y, this.fontOptions);
-    renderText("\u011d", x + 143, y, this.fontOptions);
+    renderText("×", x + 143, y, this.fontOptions);
 
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
     renderText(String.valueOf(this.combatItems_800c6988.get(index).count), x + 168, y, this.fontOptions);

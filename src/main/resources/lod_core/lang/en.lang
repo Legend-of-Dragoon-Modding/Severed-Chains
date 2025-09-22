@@ -51,6 +51,10 @@ lod_core.ui.links.project=Severed Chains Project Page
 lod_core.ui.links.github=Severed Chains GitHub Page
 lod_core.ui.links.issue=Report an Issue
 
+lod_core.ui.item_list.sort=Sort
+lod_core.ui.item_list.discard=Discard
+lod_core.ui.item_list.back=Back
+
 # Global config
 lod_core.config.controller_keybinds.label=Controls
 lod_core.config.controller_keybinds.configure=Configure...
@@ -115,6 +119,7 @@ lod_core.config.ignore_steam_input_mode.help=Fixes duplicate keyboard input when
 lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (recommended)
 lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
 lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
+lod_core.config.retail_font.label=Font
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press %s to skip

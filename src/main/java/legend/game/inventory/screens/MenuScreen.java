@@ -20,9 +20,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -96,8 +96,8 @@ public abstract class MenuScreen extends ControlHost {
     for(int i = 0; i < this.hotkeys.size(); i++) {
       final Hotkey hotkey = this.hotkeys.get(i);
       final String string = I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get()));
-      renderText(string, 8 + offsetX, 228, this.fontOptions);
-      offsetX += (textWidth(string) + 12.0f) * this.fontOptions.getSize();
+      renderText(DEFAULT_FONT, string, 8 + offsetX, 228, this.fontOptions, null);
+      offsetX += (DEFAULT_FONT.textWidth(string) + 12.0f) * this.fontOptions.getSize();
     }
   }
 

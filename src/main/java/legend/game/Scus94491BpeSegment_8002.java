@@ -1,7 +1,9 @@
 package legend.game;
 
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
+import legend.core.font.Font;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.Rect4i;
@@ -89,6 +91,7 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MODS;
@@ -3311,10 +3314,10 @@ public final class Scus94491BpeSegment_8002 {
         nudgeX = 0;
       }
 
+      final char c = LodString.fromLodChar(chr.char_06);
+
       //LAB_8002835c
       if(chr.char_06 != 0) {
-        nudgeX -= getCharShrink(chr.char_06);
-
         int scrollY = 0;
         int scrollH = 0;
         if((textboxText.flags_08 & 0x1) != 0) {
@@ -3333,7 +3336,7 @@ public final class Scus94491BpeSegment_8002 {
 
         //LAB_8002840c
         if(scrollH < 13) {
-          final int x = (int)(textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc - nudgeX);
+          final int x = (int)(textboxText._18 - centreScreenX_1f8003dc + nudgeX);
           final int y;
 
           // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
@@ -3349,24 +3352,21 @@ public final class Scus94491BpeSegment_8002 {
 
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(GPU.getOffsetX() + x + 1, GPU.getOffsetY() + y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
-          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms, QueuedModelStandard.class)
-            .texture(RENDERER.textTexture)
-            .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
+          DEFAULT_FONT.queueChar(c, textboxText.transforms)
             .monochrome(0.0f)
             .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 2, 8, height);
 
           textboxText.transforms.transfer.x--;
           textboxText.transforms.transfer.y--;
           textboxText.transforms.transfer.z -= 4.0f;
-          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms, QueuedModelStandard.class)
-            .texture(RENDERER.textTexture)
-            .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
+
+          DEFAULT_FONT.queueChar(c, textboxText.transforms)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
             .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 1, 8, height);
         }
-
-        nudgeX += getCharWidth(chr.char_06);
       }
+
+      nudgeX += DEFAULT_FONT.charWidth(c) + 1;
     }
 
     //LAB_800287f8
@@ -3478,6 +3478,18 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+    renderText(GameEngine.DEFAULT_FONT, text, originX, originY, options, queueCallback);
+  }
+
+  @Method(0x80029300L)
+  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options) {
+    renderText(font, text, originX, originY, options, null);
+  }
+
+  @Method(0x80029300L)
+  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+    font.init();
+
     final float height = 12.0f * options.getSize();
     final float trim = java.lang.Math.clamp(options.getTrim() * options.getSize(), -height, height);
 
@@ -3486,8 +3498,8 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
       float x = switch(options.getHorizontalAlign()) {
         case LEFT -> originX;
-        case CENTRE -> originX - lineWidth(text, 0) * options.getSize() / 2.0f;
-        case RIGHT -> originX - lineWidth(text, 0) * options.getSize();
+        case CENTRE -> originX - font.lineWidth(text) * options.getSize() / 2.0f;
+        case RIGHT -> originX - font.lineWidth(text) * options.getSize();
       };
 
       // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
@@ -3496,14 +3508,13 @@ public final class Scus94491BpeSegment_8002 {
 
       for(int charIndex = 0; charIndex < text.length(); charIndex++) {
         final char c = text.charAt(charIndex);
-        int charWidth = charWidth(c);
 
         if(c != ' ') {
           if(c == '\n') {
             x = switch(options.getHorizontalAlign()) {
               case LEFT -> originX;
-              case CENTRE -> originX - lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
-              case RIGHT -> originX - lineWidth(text, charIndex + 1) * options.getSize();
+              case CENTRE -> originX - font.lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
+              case RIGHT -> originX - font.lineWidth(text, charIndex + 1) * options.getSize();
             };
 
             glyphNudge = 0.0f;
@@ -3518,53 +3529,7 @@ public final class Scus94491BpeSegment_8002 {
               textTransforms.transfer.y += trim;
             }
 
-            final QueuedModelStandard model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms, QueuedModelStandard.class)
-              .texture(RENDERER.textTexture)
-            ;
-
-            if(c < 0xe000) {
-              model.vertices((c - 33) * 4, 4);
-            } else {
-              final char modifiedChar = InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), c);
-              charWidth = charWidth(modifiedChar);
-
-              final int index = switch(modifiedChar) {
-                case InputCodepoints.DPAD_UP -> 224;
-                case InputCodepoints.DPAD_DOWN -> 225;
-                case InputCodepoints.DPAD_LEFT -> 226;
-                case InputCodepoints.DPAD_RIGHT -> 227;
-                case InputCodepoints.SELECT-> 245;
-                case InputCodepoints.START -> 244;
-                case InputCodepoints.LEFT_BUMPER -> 230;
-                case InputCodepoints.LEFT_TRIGGER -> 231;
-                case InputCodepoints.LEFT_STICK -> 232;
-                case InputCodepoints.RIGHT_BUMPER -> 233;
-                case InputCodepoints.RIGHT_TRIGGER -> 234;
-                case InputCodepoints.RIGHT_STICK -> 235;
-                case InputCodepoints.LEFT_AXIS_X -> 241;
-                case InputCodepoints.LEFT_AXIS_Y -> 240;
-                case InputCodepoints.RIGHT_AXIS_X -> 243;
-                case InputCodepoints.RIGHT_AXIS_Y -> 242;
-                case InputCodepoints.A -> 236;
-                case InputCodepoints.B -> 237;
-                case InputCodepoints.X -> 238;
-                case InputCodepoints.Y -> 239;
-                case InputCodepoints.XBOX_BUTTON_BACK -> 245; //TODO uses select
-                case InputCodepoints.XBOX_BUTTON_MENU -> 228;
-                case InputCodepoints.XBOX_BUTTON_VIEW -> 229;
-                case InputCodepoints.PS_BUTTON_CROSS -> 252;
-                case InputCodepoints.PS_BUTTON_CIRCLE -> 253;
-                case InputCodepoints.PS_BUTTON_SQUARE -> 254;
-                case InputCodepoints.PS_BUTTON_TRIANGLE -> 255;
-                default -> 0;
-              };
-
-              if(index == 0) {
-                continue;
-              }
-
-              model.vertices(index * 4, 4);
-            }
+            final QueuedModelStandard model = font.queueChar(InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), c), textTransforms);
 
             if(i == 0) {
               model.colour(options.getRed(), options.getGreen(), options.getBlue());
@@ -3586,7 +3551,9 @@ public final class Scus94491BpeSegment_8002 {
           }
         }
 
-        glyphNudge += charWidth * options.getSize();
+        if(c != '\n') {
+          glyphNudge += font.charWidth(c) * options.getSize();
+        }
       }
     }
   }
@@ -3850,37 +3817,6 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x8002a1fcL)
-  public static int getCharWidth(final int chr) {
-    //LAB_8002a254
-    return switch(chr) {
-      case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 1;
-      case 0x2, 0x8, 0x3e, 0x4c -> 2;
-      case 0xb, 0xc, 0x42 -> 3;
-      case 0x1, 0x3, 0x4, 0x9, 0x16, 0x41, 0x44 -> 4;
-      case 0x6, 0x27 -> 5;
-      default -> 0;
-    };
-  }
-
-  /** This value is subtracted from the X position */
-  @Method(0x8002a25cL)
-  public static int getCharShrink(final int chr) {
-    if(chr == 0x45) { // m
-      return 1;
-    }
-
-    if(chr == 0x2) { // .
-      return 2;
-    }
-
-    if(chr >= 0x5 && chr < 0x7) { // ?!
-      return 3;
-    }
-
-    return 0;
-  }
-
   @Method(0x8002a2b4L)
   public static void clearTextboxChars(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
@@ -3946,38 +3882,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002a554
   }
 
-  @Method(0x8002a59cL)
-  public static int textWidth(final String text) {
-    int width = 0;
-    int currentWidth = 0;
-    for(int index = 0; index < text.length(); index++) {
-      if(text.charAt(index) == '\n') {
-        currentWidth = 0;
-      }
-
-      currentWidth += charWidth(text.charAt(index));
-
-      if(currentWidth > width) {
-        width = currentWidth;
-      }
-    }
-
-    return width;
-  }
-
-  public static int lineWidth(final String text, final int start) {
-    int width = 0;
-    for(int index = start; index < text.length(); index++) {
-      if(text.charAt(index) == '\n') {
-        break;
-      }
-
-      width += charWidth(text.charAt(index));
-    }
-
-    return width;
-  }
-
   public static int charWidth(final char chr) {
     switch(chr) {
       case InputCodepoints.DPAD_LEFT, InputCodepoints.DPAD_RIGHT -> {
@@ -4020,16 +3924,6 @@ public final class Scus94491BpeSegment_8002 {
     };
 
     return 8 - nudge;
-  }
-
-  public static int textHeight(final String text) {
-    int lines = 1;
-    int newlinePos = -1;
-    while((newlinePos = text.indexOf('\n', newlinePos + 1)) != -1) {
-      lines++;
-    }
-
-    return lines * 12;
   }
 
   @Method(0x8002a6fcL)

@@ -6,6 +6,8 @@ import legend.core.audio.AudioThread;
 import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
+import legend.core.font.Font;
+import legend.core.font.FontManager;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
@@ -107,6 +109,9 @@ public final class GameEngine {
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
+
+  public static final FontManager FONTS = new FontManager();
+  public static Font DEFAULT_FONT = FONTS.get(Path.of("./gfx/fonts/default.json"));
 
   public static final Gte GTE;
   public static final Gpu GPU;
@@ -248,6 +253,8 @@ public final class GameEngine {
     bootMods(MODS.getAllModIds());
 
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+
+    DEFAULT_FONT = FONTS.get(Path.of("gfx", "fonts", CONFIG.getConfig(CoreMod.RETAIL_FONT_CONFIG.get())));
 
     AUDIO_THREAD.init();
     AUDIO_THREAD.setMusicPlayerVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
@@ -563,7 +570,7 @@ public final class GameEngine {
     }
 
     if(!statusText.isBlank() && loadingFade != 0.0f) {
-      renderMenuCentredText(statusText, 160, 30, 300, fontOptions, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     textZ_800bdf00 = oldTextZ;

@@ -1,6 +1,7 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.core.font.RetailFontConfigEntry;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
@@ -89,6 +90,7 @@ public class CoreMod {
   public static final RegistryDelegate<ResolutionConfig> RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("resolution", ResolutionConfig::new);
   public static final RegistryDelegate<MonitorConfigEntry> MONITOR_CONFIG = CONFIG_REGISTRAR.register("monitor", MonitorConfigEntry::new);
   public static final RegistryDelegate<ReduceMotionFlashingConfigEntry> REDUCE_MOTION_FLASHING_CONFIG = CONFIG_REGISTRAR.register("reduce_motion_flashing", ReduceMotionFlashingConfigEntry::new);
+  public static final RegistryDelegate<RetailFontConfigEntry> RETAIL_FONT_CONFIG = CONFIG_REGISTRAR.register("retail_font", RetailFontConfigEntry::new);
 
   public static final RegistryDelegate<AudioDeviceConfig> AUDIO_DEVICE_CONFIG = CONFIG_REGISTRAR.register("audio_device", AudioDeviceConfig::new);
   public static final RegistryDelegate<MasterVolumeConfigEntry> MASTER_VOLUME_CONFIG = CONFIG_REGISTRAR.register("master_volume", MasterVolumeConfigEntry::new);
