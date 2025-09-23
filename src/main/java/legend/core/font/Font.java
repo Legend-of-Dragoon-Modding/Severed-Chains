@@ -67,6 +67,14 @@ public class Font {
     ;
   }
 
+  public boolean usesColour(final char chr) {
+    if(!this.glyphs.containsKey(chr)) {
+      return false;
+    }
+
+    return this.glyphs.get(chr).colour;
+  }
+
   public int charWidth(final char chr) {
     if(!this.glyphs.containsKey(chr)) {
       return 8;
