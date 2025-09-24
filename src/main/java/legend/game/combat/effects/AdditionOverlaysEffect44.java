@@ -9,9 +9,13 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.ui.AdditionOverlayMode;
+import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -25,6 +29,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
@@ -36,6 +41,8 @@ import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
 public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.VoidType> {
+  private static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+
   public int attackerScriptIndex_00;
   public int targetScriptIndex_04;
 
@@ -240,15 +247,17 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   /** Runs callbacks to render correct button icon effects during addition */
   @Method(0x80106050L)
   private void renderAdditionButton(final int frames, final boolean isCounter) {
-    final int offset = isCounter ? 1 : 0;
+    renderText(InputCodepoints.getActionName(isCounter ? INPUT_ACTION_BTTL_COUNTER.get() : INPUT_ACTION_BTTL_ATTACK.get()), GPU.getOffsetX() + 124.5f, GPU.getOffsetY() + 56.0f, UI_WHITE_SHADOWED);
+
     if(Math.abs(frames) >= 2) {  // Button up position
-      renderButtonPressHudElement1(0x24, 119, 43, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, Translucency.B_PLUS_F, 0x80);
+      // Arrow
+      renderButtonPressHudElement1(0x24, 119.0f, 43.0f, Translucency.B_PLUS_F, 0x80);
     } else {  // Button down position
       //LAB_80106114
-      renderButtonPressHudElement1(0x24, 119, 51, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F, 0x80);
-      renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
+      // Arrow
+      renderButtonPressHudElement1(0x24, 119.0f, 51.0f, Translucency.B_PLUS_F, 0x80);
+      // Glow
+      renderButtonPressHudElement1(0x25, 113.5f, 50.0f, Translucency.B_PLUS_F, 0x80);
     }
   }
 
