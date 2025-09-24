@@ -229,6 +229,8 @@ public final class GameEngine {
             throw e;
           }
 
+          statusText = "";
+
           loadXpTables();
 
           synchronized(UPDATER_LOCK) {
