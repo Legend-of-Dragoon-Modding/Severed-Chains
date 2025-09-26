@@ -1,20 +1,4 @@
-#!/usr/bin/env bash
-
-# Skip download on NixOS - Java should be provided by the flake environment
-if [[ -f /etc/NIXOS ]]; then
-  echo "NixOS detected - skipping Java download."
-  echo "Java should be provided by your flake environment."
-  if command -v java >/dev/null 2>&1; then
-    JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
-    echo "Found Java $JAVA_VERSION in PATH"
-    if [[ "$JAVA_VERSION" != "21" ]]; then
-      echo "WARNING: Java 21 is required but Java $JAVA_VERSION found."
-    fi
-  else
-    echo "WARNING: No Java found in PATH. Ensure your flake provides Java 21."
-  fi
-  exit 0
-fi
+#!/bin/bash
 
 if [[ -d ./jdk21 ]]
 then
@@ -23,4 +7,4 @@ fi
 
 echo Downloading java...
 mkdir "jdk21"
-curl -s -L "https://corretto.aws/downloads/resources/21.0.6.7.1/amazon-corretto-21.0.6.7.1-linux-x64.tar.gz" | tar -vxz -C jdk21 --strip-components=1
+curl -s -L "https://corretto.aws/downloads/resources/21.0.6.7.1/amazon-corretto-21.0.6.7.1-@os@-@arch@.tar.gz" | tar -vxz -C jdk21 --strip-components=1
