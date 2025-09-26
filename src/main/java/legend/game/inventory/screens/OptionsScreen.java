@@ -17,20 +17,26 @@ import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_ADVANCED;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
+import static legend.game.modding.coremod.CoreMod.SHOW_ADVANCED_OPTIONS_CONFIG;
 
 public class OptionsScreen extends VerticalLayoutScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(OptionsScreen.class);
   private final Runnable unload;
 
+  private final List<ConfigEntry<?>> configs = new ArrayList<>();
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
 
@@ -58,6 +64,8 @@ public class OptionsScreen extends VerticalLayoutScreen {
         final String text = entry.getValue();
 
         if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl() && (!this.hideNonBattleEntries() || configEntry.availableInBattle())) {
+          this.configs.add(configEntry);
+
           Control editControl;
           boolean error = false;
 
@@ -88,6 +96,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
         }
       });
 
+    this.addToggleHotkey(I18n.translate("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, CONFIG.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
     this.addHotkey(I18n.translate("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
     this.addHotkey(I18n.translate("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
@@ -129,6 +138,14 @@ public class OptionsScreen extends VerticalLayoutScreen {
   private void back() {
     playMenuSound(3);
     this.unload.run();
+  }
+
+  private void advanced(final boolean advanced) {
+    CONFIG.setConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get(), advanced);
+
+    for(int i = 0; i < this.configs.size(); i++) {
+      this.setRowVisible(i, !this.configs.get(i).isAdvanced() || advanced);
+    }
   }
 
   private void help() {

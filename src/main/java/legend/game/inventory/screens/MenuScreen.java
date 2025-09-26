@@ -1,14 +1,19 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputAxis;
 import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputCodepoints;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.SItem;
 import legend.game.i18n.I18n;
+import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Checkbox;
+import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
@@ -20,9 +25,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -32,11 +35,57 @@ public abstract class MenuScreen extends ControlHost {
   private Control hover;
   private Control focus;
 
-  private final FontOptions fontOptions = new FontOptions().size(0.66f).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
   private final List<Hotkey> hotkeys = new ArrayList<>();
+  private int hotkeyX = 8;
 
   public void addHotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
-    this.hotkeys.add(new Hotkey(label, action, handler));
+    final Button button = this.addControl(new Button(I18n.translate("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
+    button.setScale(0.66f);
+    button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
+    button.setPos(this.hotkeyX, 227);
+    button.onPressed(handler::run);
+    this.hotkeyX += button.getWidth();
+
+    this.hotkeys.add(new Hotkey(label, action, handler, button));
+  }
+
+  public void addToggleHotkey(final String label, final RegistryDelegate<InputAction> action, final boolean checked, final BooleanConsumer handler) {
+    final Checkbox checkbox = this.addControl(new Checkbox());
+    checkbox.setSize(10, 10);
+    checkbox.setPos(this.hotkeyX, 226);
+    checkbox.onToggled(handler);
+    checkbox.setChecked(checked);
+    this.hotkeyX += checkbox.getWidth() + 3;
+
+    final Label checkboxLabel = this.addControl(new Label(I18n.translate("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
+    checkboxLabel.setScale(0.66f);
+    checkboxLabel.setSize((int)(checkboxLabel.getFont().textWidth(checkboxLabel.getText()) * checkboxLabel.getFontOptions().getSize() + 10), 10);
+    checkboxLabel.setPos(this.hotkeyX, 228);
+    this.hotkeyX += checkboxLabel.getWidth() - 5;
+
+    this.hotkeys.add(new Hotkey(label, action, () -> checkbox.setChecked(!checkbox.isChecked()), checkbox, checkboxLabel));
+  }
+
+  private void updateHotkeys() {
+    this.hotkeyX = 8;
+    for(int hotkeyIndex = 0; hotkeyIndex < this.hotkeys.size(); hotkeyIndex++) {
+      final Hotkey hotkey = this.hotkeys.get(hotkeyIndex);
+      for(int controlIndex = 0; controlIndex < hotkey.controls.length; controlIndex++) {
+        final Control control = hotkey.controls[controlIndex];
+        control.setX(this.hotkeyX);
+        this.hotkeyX += control.getWidth();
+
+        if(control instanceof final Button button) {
+          button.setText(I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
+          button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
+        } else if(control instanceof Checkbox) {
+          this.hotkeyX += 3;
+        } else if(control instanceof final Label label) {
+          label.setText(I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
+          this.hotkeyX -= 5;
+        }
+      }
+    }
   }
 
   void setStack(@Nullable final MenuStack stack) {
@@ -91,14 +140,6 @@ public abstract class MenuScreen extends ControlHost {
     this.runDeferredActions();
     this.render();
     this.renderControls(0, 0);
-
-    float offsetX = 0.0f;
-    for(int i = 0; i < this.hotkeys.size(); i++) {
-      final Hotkey hotkey = this.hotkeys.get(i);
-      final String string = I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get()));
-      renderText(DEFAULT_FONT, string, 8 + offsetX, 228, this.fontOptions, null);
-      offsetX += (DEFAULT_FONT.textWidth(string) + 12.0f) * this.fontOptions.getSize();
-    }
   }
 
   @Override
@@ -244,6 +285,23 @@ public abstract class MenuScreen extends ControlHost {
     return InputPropagation.PROPAGATE;
   }
 
+  @Override
+  protected InputPropagation inputClassChanged(final InputClass type) {
+    this.updateHotkeys();
+
+    if(super.inputClassChanged(type) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(int i = 0; i < this.getControls().size(); i++) {
+      if(this.getControls().get(i).inputClassChanged(type) == InputPropagation.HANDLED) {
+        return InputPropagation.HANDLED;
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
   private void updateHover(final int x, final int y) {
     final Control hover = this.findControlAt(x, y, true);
 
@@ -316,11 +374,13 @@ public abstract class MenuScreen extends ControlHost {
     private final String label;
     private final RegistryDelegate<InputAction> action;
     private final Runnable handler;
+    private final Control[] controls;
 
-    private Hotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
+    private Hotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler, final Control... controls) {
       this.label = label;
       this.action = action;
       this.handler = handler;
+      this.controls = controls;
     }
   }
 }

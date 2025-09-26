@@ -44,6 +44,10 @@ public class Button extends Control {
     return this.font;
   }
 
+  public FontOptions getFontOptions() {
+    return this.fontOptions;
+  }
+
   @Override
   public void setZ(final int z) {
     super.setZ(z);

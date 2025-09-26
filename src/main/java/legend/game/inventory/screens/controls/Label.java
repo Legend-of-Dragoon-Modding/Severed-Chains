@@ -2,8 +2,10 @@ package legend.game.inventory.screens.controls;
 
 import legend.core.GameEngine;
 import legend.core.font.Font;
+import legend.core.platform.input.InputClass;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 
 import static legend.game.Scus94491BpeSegment_8002.renderText;
@@ -67,6 +69,12 @@ public class Label extends Control {
     this.fontOptions.size(scale);
     this.updateTextSize();
     this.updateAutoSize();
+  }
+
+  @Override
+  protected InputPropagation inputClassChanged(final InputClass type) {
+    this.updateTextSize();
+    return super.inputClassChanged(type);
   }
 
   private void updateTextSize() {

@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
+import it.unimi.dsi.fastutil.booleans.BooleanList;
 import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Brackets;
@@ -33,6 +35,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private final List<Label> rows = new ArrayList<>();
   private final List<Control> configControls = new ArrayList<>();
+  private final BooleanList visible = new BooleanArrayList();
 
   protected final Glyph upArrow;
   protected final Glyph downArrow;
@@ -45,6 +48,11 @@ public class VerticalLayoutScreen extends MenuScreen {
 
     this.upArrow = this.addControl(Glyph.blueSpinnerUp());
     this.downArrow = this.addControl(Glyph.blueSpinnerDown());
+  }
+
+  public void setRowVisible(final int index, final boolean visible) {
+    this.visible.set(index, visible);
+    this.updateEntries();
   }
 
   protected float getSizeScale() {
@@ -79,6 +87,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     this.rows.add(label);
+    this.visible.add(true);
 
     if(this.rows.size() == 1) {
       this.highlightRow(0);
@@ -123,12 +132,14 @@ public class VerticalLayoutScreen extends MenuScreen {
   }
 
   private void updateEntries() {
-    for(int i = 0; i < this.rows.size(); i++) {
-      final Control control = this.rows.get(i);
+    for(int rowIndex = 0, visibleIndex = 0; rowIndex < this.rows.size(); rowIndex++) {
+      final Control control = this.rows.get(rowIndex);
+      final boolean visible = this.visible.getBoolean(rowIndex);
 
-      if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries()) {
-        control.setY(32 + (i - this.scroll) * 13);
+      if(visible && visibleIndex >= this.scroll && visibleIndex < this.scroll + this.maxVisibleEntries()) {
+        control.setY(32 + (visibleIndex - this.scroll) * 13);
         control.show();
+        visibleIndex++;
       } else {
         control.hide();
       }
