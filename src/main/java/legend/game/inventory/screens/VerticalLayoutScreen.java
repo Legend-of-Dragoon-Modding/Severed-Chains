@@ -136,13 +136,19 @@ public class VerticalLayoutScreen extends MenuScreen {
       final Control control = this.rows.get(rowIndex);
       final boolean visible = this.visible.getBoolean(rowIndex);
 
-      if(visible && visibleIndex >= this.scroll && visibleIndex < this.scroll + this.maxVisibleEntries()) {
+      if(!visible) {
+        control.hide();
+        continue;
+      }
+
+      if(visibleIndex >= this.scroll && visibleIndex < this.scroll + this.maxVisibleEntries()) {
         control.setY(32 + (visibleIndex - this.scroll) * 13);
         control.show();
-        visibleIndex++;
       } else {
         control.hide();
       }
+
+      visibleIndex++;
     }
 
     if(!this.rows.isEmpty() && this.highlightedRow != -1) {
