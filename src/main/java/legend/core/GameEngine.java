@@ -113,6 +113,8 @@ public final class GameEngine {
   public static final FontManager FONTS = new FontManager();
   public static Font DEFAULT_FONT = FONTS.get(Path.of("./gfx/fonts/default.json"));
 
+  private static Texture UI_TEXTURE;
+
   public static final Gte GTE;
   public static final Gpu GPU;
   public static final Spu SPU;
@@ -282,6 +284,10 @@ public final class GameEngine {
     }
   }
 
+  public static Texture getUiTexture() {
+    return UI_TEXTURE;
+  }
+
   private static void loadUnpackerLang() {
     try {
       LANG_ACCESS.loadLang(LANG_ACCESS.getLangPath(Path.of("lang", "unpacker"), Main.ORIGINAL_LOCALE));
@@ -446,9 +452,11 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    title1Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title1.png"));
-    title2Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title2.png"));
-    eyeTexture = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
+    UI_TEXTURE = Texture.png(Path.of("gfx", "ui", "ui.png"));
+
+    title1Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title1.png"));
+    title2Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title2.png"));
+    eyeTexture = Texture.png(Path.of("gfx", "textures", "loading.png"));
 
     texturedObj = new QuadBuilder("Textured Obj")
       .bpp(Bpp.BITS_24)
