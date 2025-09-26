@@ -152,6 +152,9 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_TEXTBOX_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_textbox_confirm", InputAction::fixed);
 
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_UPDATE = INPUT_ACTION_REGISTRAR.register("title_update", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_CONVERT_MEMCARD = INPUT_ACTION_REGISTRAR.register("title_convert_memcard", InputAction::fixed);
+
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::fixed);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::editable);
@@ -243,6 +246,11 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
+
+      .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
+      .add(INPUT_ACTION_TITLE_UPDATE.get(), new KeyInputActivation(InputKey.U))
+      .add(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get(), new KeyInputActivation(InputKey.C))
 
       .add(INPUT_ACTION_FMV_SKIP.get(), new KeyInputActivation(InputKey.RETURN))
       .add(INPUT_ACTION_FMV_SKIP.get(), new ButtonInputActivation(InputButton.Y))

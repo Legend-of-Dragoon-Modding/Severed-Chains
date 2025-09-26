@@ -10,6 +10,8 @@ lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
 # UI text
+lod_core.ui.title.hotkey=(%s)
+
 lod_core.ui.hotkey=%s (%s)
 
 lod_core.ui.campaign_selection.title=Campaigns
@@ -204,6 +206,9 @@ lod_core.input_actions.menu_sort.name=Menu: sort
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
 lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
+
+lod_core.input_actions.title_update.name=Title: download update
+lod_core.input_actions.title_convert_memcard.name=Title: convert memcard
 
 lod_core.input_actions.fmv_skip.name=FMV: skip
 
