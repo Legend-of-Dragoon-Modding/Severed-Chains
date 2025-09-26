@@ -26,6 +26,7 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -44,6 +45,7 @@ public abstract class MenuScreen extends ControlHost {
     button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
     button.setPos(this.hotkeyX, 227);
     button.onPressed(handler::run);
+    button.onHoverIn(() -> playMenuSound(1));
     this.hotkeyX += button.getWidth();
 
     this.hotkeys.add(new Hotkey(label, action, handler, button));
@@ -63,7 +65,10 @@ public abstract class MenuScreen extends ControlHost {
     checkboxLabel.setPos(this.hotkeyX, 228);
     this.hotkeyX += checkboxLabel.getWidth() - 5;
 
-    this.hotkeys.add(new Hotkey(label, action, () -> checkbox.setChecked(!checkbox.isChecked()), checkbox, checkboxLabel));
+    this.hotkeys.add(new Hotkey(label, action, () -> {
+      playMenuSound(2);
+      checkbox.setChecked(!checkbox.isChecked());
+    }, checkbox, checkboxLabel));
   }
 
   private void updateHotkeys() {
