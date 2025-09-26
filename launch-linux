@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # die on errors
 set -e
 
-COMPILED="true"
+COMPILED="@false@"
 
 if [ "$COMPILED" != "true" ] ; then
   echo "You are trying to run the Severed Chains source code. Please see our installation instructions at https://legendofdragoon.org/projects/severed-chains/"
@@ -21,31 +21,12 @@ if [[ $(pwd) == *":"* ]]; then
   exit 1;
 fi
 
-# Check if we're on NixOS and have Java 21 available in PATH
-if [[ -f /etc/NIXOS ]] && command -v java >/dev/null 2>&1; then
-  JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
-  if [[ "$JAVA_VERSION" == "21" ]]; then
-    JAVA=java
-  else
-    echo "Java 21 is required but Java $JAVA_VERSION found in PATH."
-    echo "Please ensure Java 21 is available in your NixOS flake environment."
-    read -p "Press enter to exit"
-    exit 1
-  fi
-else
-  # Use bundled Java for non-NixOS systems
-  JAVA=./jdk21/bin/java
-  if [[ ! -f $JAVA ]]
-  then
-    ./download-java
-  fi
+JAVA=./jdk21/bin/java
+
+if [[ ! -f $JAVA ]]
+then
+  ./download-java
 fi
 
-# Set up library paths for NixOS
-if [[ -f /etc/NIXOS ]]; then
-  # Add Mesa OpenGL libraries to library path
-  export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
-fi
-
-__GL_THREADED_OPTIMIZATIONS=0 "$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-fca23cc5172d17be9e886c616163b0d7b565f916.jar:libs/mod-loader-4.2.1.jar:libs/script-recompiler-0.5.6.jar:libs/lwjgl-openal-3.4.0-SNAPSHOT.jar:libs/lwjgl-opengl-3.4.0-SNAPSHOT.jar:libs/lwjgl-opus-3.4.0-SNAPSHOT.jar:libs/lwjgl-sdl-3.4.0-SNAPSHOT.jar:libs/lwjgl-stb-3.4.0-SNAPSHOT.jar:libs/lwjgl-3.4.0-SNAPSHOT.jar:libs/joml-1.10.8.jar:libs/slugify-3.0.7.jar:libs/fastutil-8.5.15.jar:libs/log4j-core-2.24.3.jar:libs/log4j-api-2.24.3.jar:libs/jansi-2.4.1.jar:libs/async-http-client-3.0.1.jar:libs/json-20250107.jar:libs/opencsv-5.9.jar:libs/java-diff-utils-4.15.jar:libs/commons-io-2.18.0.jar:libs/jsr305-3.0.2.jar:libs/jna-5.16.0.jar:libs/discord-game-sdk4j-v1.0.0.jar:libs/javafx-fxml-21.0.1-linux.jar:libs/javafx-controls-21.0.1-linux.jar:libs/kotlin-stdlib-jdk8-1.8.20.jar:libs/netty-handler-proxy-4.1.115.Final.jar:libs/netty-codec-http-4.1.115.Final.jar:libs/netty-codec-socks-4.1.115.Final.jar:libs/netty-resolver-dns-4.1.115.Final.jar:libs/netty-handler-4.1.115.Final.jar:libs/netty-codec-dns-4.1.115.Final.jar:libs/netty-codec-4.1.115.Final.jar:libs/netty-transport-native-unix-common-4.1.115.Final.jar:libs/netty-transport-4.1.115.Final.jar:libs/netty-buffer-4.1.115.Final.jar:libs/netty-resolver-4.1.115.Final.jar:libs/netty-common-4.1.115.Final.jar:libs/slf4j-api-2.0.16.jar:libs/jakarta.activation-2.0.1.jar:libs/kotlin-stdlib-jdk7-1.8.20.jar:libs/kotlin-stdlib-1.8.20.jar:libs/annotations-26.0.1.jar:libs/commons-text-1.11.0.jar:libs/commons-lang3-3.13.0.jar:libs/commons-beanutils-1.9.4.jar:libs/commons-collections4-4.4.jar:libs/gson-2.9.1.jar:libs/javafx-graphics-21.0.1-linux.jar:libs/commons-logging-1.2.jar:libs/commons-collections-3.2.2.jar:libs/javafx-base-21.0.1-linux.jar:libs/kotlin-stdlib-common-1.8.20.jar:libs/lwjgl-openal-3.4.0-SNAPSHOT-natives-linux.jar:libs/lwjgl-opengl-3.4.0-SNAPSHOT-natives-linux.jar:libs/lwjgl-opus-3.4.0-SNAPSHOT-natives-linux.jar:libs/lwjgl-sdl-3.4.0-SNAPSHOT-natives-linux.jar:libs/lwjgl-stb-3.4.0-SNAPSHOT-natives-linux.jar:libs/lwjgl-3.4.0-SNAPSHOT-natives-linux.jar:libs/reflections-0.10.2.jar:libs/semver4j-3.1.0.jar:libs/slf4j-nop-2.0.7.jar:libs/commons-cli-1.6.0.jar:libs/javassist-3.28.0-GA.jar" legend.game.Main -Xmx2G -ea
+__GL_THREADED_OPTIMIZATIONS=0 "$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar:@libs@" legend.game.Main -Xmx2G -ea
 read -p "Press enter to exit"
