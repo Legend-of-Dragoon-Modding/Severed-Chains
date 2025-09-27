@@ -2149,7 +2149,8 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms, QueuedModelStandard.class);
+        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms, QueuedModelStandard.class)
+          .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2205,7 +2206,8 @@ public final class Scus94491BpeSegment_8002 {
           .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
       }
 
-      RENDERER.queueOrthoModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex], QueuedModelStandard.class);
+      RENDERER.queueOrthoModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex], QueuedModelStandard.class)
+        .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -3354,7 +3356,8 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.transforms.transfer.set(GPU.getOffsetX() + x + 1, GPU.getOffsetY() + y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
           DEFAULT_FONT.queueChar(c, textboxText.transforms)
             .monochrome(0.0f)
-            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 2, 8, height);
+            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 2, 8, height)
+            .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
 
           textboxText.transforms.transfer.x--;
           textboxText.transforms.transfer.y--;
@@ -3362,7 +3365,8 @@ public final class Scus94491BpeSegment_8002 {
 
           DEFAULT_FONT.queueChar(c, textboxText.transforms)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
-            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 1, 8, height);
+            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 1, 8, height)
+            .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
         }
       }
 
@@ -3589,7 +3593,8 @@ public final class Scus94491BpeSegment_8002 {
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
         textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c * 4.0f);
-        RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms, QueuedModelStandard.class);
+        RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms, QueuedModelStandard.class)
+          .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
       }
     }
 
