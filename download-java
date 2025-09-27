@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [[ -d ./jdk21 ]]
+if [[ -d ./jdk25 ]]
 then
-  rm -rf ./jdk21
+  rm -rf ./jdk25
 fi
 
 echo Downloading java...
-mkdir "jdk21"
-curl -s -L "https://corretto.aws/downloads/resources/21.0.6.7.1/amazon-corretto-21.0.6.7.1-@os@-@arch@.tar.gz" | tar -vxz -C jdk21 --strip-components=1
+mkdir "jdk25"
+curl -s -L "https://corretto.aws/downloads/resources/25.0.0.36.2/amazon-corretto-25.0.0.36.2-@os@-@arch@.tar.gz" | tar -vxz -C jdk25 --strip-components=1

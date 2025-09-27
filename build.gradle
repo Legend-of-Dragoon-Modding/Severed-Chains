@@ -18,7 +18,7 @@ group = 'legend'
 version = project.ext.hash
 
 java {
-  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_25
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -54,8 +54,8 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 repositories {
   mavenCentral()
   mavenLocal()
-  maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
-  maven { url "https://jitpack.io" }
+  maven { url = "https://central.sonatype.com/repository/maven-snapshots/" }
+  maven { url = "https://jitpack.io" }
 }
 
 dependencies {
