@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# die on errors
+set -e
+
+COMPILED="true"
+
+if [ "$COMPILED" != "true" ] ; then
+  echo "You are trying to run the Severed Chains source code. Please see our installation instructions at https://legendofdragoon.org/projects/severed-chains/"
+  read -p "Press enter to exit"
+  exit 1;
+fi
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$SCRIPT_DIR"
+
+if [[ $(pwd) == *":"* ]]; then
+  echo "Java cannot launch with a colon (:) in the path. Please rename the directory or move Severed Chains to a different directory."
+  echo "Current directory: $(pwd)"
+  read -p "Press enter to exit"
+  exit 1;
+fi
+
+# NixOS-only launch script - assumes Java 21 is available in PATH
+if ! command -v java >/dev/null 2>&1; then
+  echo "Error: Java not found in PATH. Ensure Java 21 is provided by your NixOS flake environment."
+  read -p "Press enter to exit"
+  exit 1
+fi
+
+JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
+if [[ "$JAVA_VERSION" != "21" ]]; then
+  echo "Error: Java 21 is required but Java $JAVA_VERSION found in PATH."
+  echo "Please ensure Java 21 is available in your NixOS flake environment."
+  read -p "Press enter to exit"
+  exit 1
+fi
+
+JAVA=java
+
+# Set up library paths for NixOS
+# Add Mesa OpenGL libraries to library path
+export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
+
+# Find the main game JAR
+GAME_JAR=$(ls lod-game-*.jar 2>/dev/null | head -n 1)
+if [[ -z "$GAME_JAR" ]]; then
+  echo "Error: No lod-game-*.jar file found in current directory"
+  read -p "Press enter to exit"
+  exit 1
+fi
+
+__GL_THREADED_OPTIMIZATIONS=0 "$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "$GAME_JAR:libs/*" legend.game.Main -Xmx2G -ea
+read -p "Press enter to exit"
