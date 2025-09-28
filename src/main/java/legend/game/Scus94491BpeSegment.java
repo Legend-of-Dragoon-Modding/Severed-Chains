@@ -682,6 +682,37 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013778L)
   public static void handleFullScreenEffects() {
+    //LAB_80013994
+    // This causes the bright flash of light from the lightning, etc.
+    if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
+      // Make sure effect fills the whole screen
+      final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+      fullScreenEffect_800bb140.transforms
+        .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
+        .translate(0.0f, 0.0f, 156.0f)
+      ;
+
+      //LAB_800139c4
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
+        .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
+    }
+
+    //LAB_80013adc
+
+    // This causes the screen darkening from the lightning, etc.
+    if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
+      // Make sure effect fills the whole screen
+      final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
+      fullScreenEffect_800bb140.transforms
+        .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
+        .translate(0.0f, 0.0f, 156.0f)
+      ;
+
+      //LAB_80013b10
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
+        .colour(fullScreenEffect_800bb140.red1_18 / 255.0f, fullScreenEffect_800bb140.green1_10 / 255.0f, fullScreenEffect_800bb140.blue1_0c / 255.0f);
+    }
+
     final int v1 = Math.min(fullScreenEffect_800bb140.totalFrames_08, (RENDERER.getVsyncCount() - fullScreenEffect_800bb140.startTime_04) / 2);
 
     //LAB_800137d0
@@ -740,38 +771,6 @@ public final class Scus94491BpeSegment {
           }
         }
       }
-    }
-
-    //caseD_0
-    //LAB_80013994
-    // This causes the bright flash of light from the lightning, etc.
-    if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
-      // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
-      fullScreenEffect_800bb140.transforms
-        .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
-        .translate(0.0f, 0.0f, 156.0f)
-      ;
-
-      //LAB_800139c4
-      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
-        .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
-    }
-
-    //LAB_80013adc
-
-    // This causes the screen darkening from the lightning, etc.
-    if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
-      // Make sure effect fills the whole screen
-      final float fullWidth = Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4 * 1.1f);
-      fullScreenEffect_800bb140.transforms
-        .scaling(fullWidth, displayHeight_1f8003e4, 1.0f)
-        .translate(0.0f, 0.0f, 156.0f)
-      ;
-
-      //LAB_80013b10
-      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
-        .colour(fullScreenEffect_800bb140.red1_18 / 255.0f, fullScreenEffect_800bb140.green1_10 / 255.0f, fullScreenEffect_800bb140.blue1_0c / 255.0f);
     }
 
     //LAB_80013c20
