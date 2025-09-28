@@ -6178,15 +6178,18 @@ public class Battle extends EngineState {
     this.loadedDeff_800c6938.script_14 = null;
     this.deffLoadingStage_800fafe8 = 1;
 
-    Loader.loadDirectory(tims, this::uploadTims);
-    Loader.loadDirectory(deff.resolve("0"), files -> {
+    final DrgnFileEvent eventTims = EVENTS.postEvent(new DrgnFileEvent(tims));
+    final DrgnFileEvent eventDeff = EVENTS.postEvent(new DrgnFileEvent(deff));
+
+    Loader.loadDirectory(eventTims.path, this::uploadTims);
+    Loader.loadDirectory(eventDeff.path.resolve("0"), files -> {
       this.loadDeffPackage(files, this.loadedDeff_800c6938.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      Loader.loadFile(deff.resolve("1"), file -> {
+      Loader.loadFile(eventDeff.path.resolve("1"), file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        final DrgnFileEvent event = EVENTS.postEvent(new DrgnFileEvent(deff.resolve("1"), file.getBytes()));
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), event.fileData);
+        final DrgnFileEvent eventFile = EVENTS.postEvent(new DrgnFileEvent(eventDeff.path.resolve("1"), file.getBytes()));
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(eventDeff.path.toString(), eventFile.fileData);
       });
     });
   }
