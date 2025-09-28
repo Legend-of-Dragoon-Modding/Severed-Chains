@@ -162,6 +162,6 @@ jobs:
         draft: 'false'
         generateReleaseNotes: 'true'
         name: 'Latest Development Build'
-        prerelease: 'true'
+        prerelease: 'false'
         tag: 'devbuild'
         token: ${{ secrets.GITHUB_TOKEN }}
