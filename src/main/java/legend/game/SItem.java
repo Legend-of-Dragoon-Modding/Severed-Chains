@@ -3,6 +3,7 @@ package legend.game;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
+import legend.core.font.Font;
 import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -82,8 +83,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -121,7 +120,8 @@ public final class SItem {
   public static final FontOptions UI_TEXT_DISABLED_CENTERED = new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_TEXT_SELECTED_CENTERED = new FontOptions().colour(TextColour.RED).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_WHITE = new FontOptions().colour(TextColour.WHITE);
-  public static final FontOptions UI_WHITE_SMALL = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.RIGHT);
+  public static final FontOptions UI_WHITE_CENTERED = new FontOptions().colour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_WHITE_SMALL = new FontOptions().colour(TextColour.WHITE).size(0.67f);
 
    public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
    public static final MenuStatus08[] menuStatus_800fba7c = {
@@ -803,14 +803,14 @@ public final class SItem {
   }
 
   @Method(0x80103e90L)
-  public static void renderMenuCentredText(final String text, final int x, int y, final int maxWidth, final FontOptions options) {
-    renderMenuCentredText(text, x, y, maxWidth, options, null);
+  public static void renderMenuCentredText(final Font font, final String text, final int x, final int y, final int maxWidth, final FontOptions options) {
+    renderMenuCentredText(font, text, x, y, maxWidth, options, null);
   }
 
   @Method(0x80103e90L)
-  public static void renderMenuCentredText(final String text, final int x, int y, final int maxWidth, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+  public static void renderMenuCentredText(final Font font, final String text, final int x, int y, final int maxWidth, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
     final String[] split;
-    if(textWidth(text) * options.getSize() <= maxWidth) {
+    if(font.textWidth(text) * options.getSize() <= maxWidth) {
       split = new String[] {text};
     } else {
       final List<String> temp = new ArrayList<>();
@@ -818,7 +818,7 @@ public final class SItem {
       int startIndex = 0;
       for(int i = 0; i < text.length(); i++) {
         final char current = text.charAt(i);
-        final float charWidth = Scus94491BpeSegment_8002.charWidth(current) * options.getSize();
+        final float charWidth = font.charWidth(current) * options.getSize();
 
         if(current == '\n') {
           temp.add(text.substring(startIndex, i));
@@ -852,8 +852,8 @@ public final class SItem {
 
     for(int i = 0; i < split.length; i++) {
       final String str = split[i];
-      renderText(str, x - textWidth(str) * options.getSize() / 2.0f, y, options, queueCallback);
-      y += textHeight(str);
+      renderText(str, x - font.textWidth(str) * options.getSize() / 2.0f, y, options, queueCallback);
+      y += font.textHeight(str);
     }
   }
 

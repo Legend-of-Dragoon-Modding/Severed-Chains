@@ -474,8 +474,7 @@ lod.input_actions.wmap_rotate_right.name=World map: rotate camera right
 lod.input_actions.wmap_rotate_left.name=World map: rotate camera left
 lod.input_actions.wmap_zoom_out.name=World map: zoom out
 lod.input_actions.wmap_zoom_in.name=World map: zoom in
-lod.input_actions.wmap_coolon.name=World map: open Coolon map
-lod.input_actions.wmap_queen_fury.name=World map: enter Queen Fury
+lod.input_actions.wmap_queen_fury_coolon.name=World map: open Queen Fury/Coolon map
 lod.input_actions.wmap_services.name=World map: view services
 lod.input_actions.wmap_destinations.name=World map: view destinations
 

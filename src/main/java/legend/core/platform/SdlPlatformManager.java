@@ -829,6 +829,10 @@ public class SdlPlatformManager extends PlatformManager {
           case SDL_EVENT_GAMEPAD_BUTTON_UP -> {
             this.buttonsHeld--;
 
+            if(this.buttonsHeld < 0) {
+              this.buttonsHeld = 0;
+            }
+
             final SDL_GamepadButtonEvent button = this.event.gbutton();
 
             LOGGER.info(INPUT_MARKER, "Button up gamepad %d button %d", button.which(), button.button());

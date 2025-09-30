@@ -88,8 +88,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_LEFT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_left", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_OUT = INPUT_ACTION_REGISTRAR.register("wmap_zoom_out", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_IN = INPUT_ACTION_REGISTRAR.register("wmap_zoom_in", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_coolon", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury_coolon", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_SERVICES = INPUT_ACTION_REGISTRAR.register("wmap_services", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_DESTINATIONS = INPUT_ACTION_REGISTRAR.register("wmap_destinations", InputAction::editable);
 
@@ -226,10 +225,8 @@ public class LodMod {
       .add(INPUT_ACTION_WMAP_ZOOM_OUT.get(), new AxisInputActivation(InputAxis.LEFT_TRIGGER, InputAxisDirection.POSITIVE))
       .add(INPUT_ACTION_WMAP_ZOOM_IN.get(), new ScancodeInputActivation(InputKey.X))
       .add(INPUT_ACTION_WMAP_ZOOM_IN.get(), new AxisInputActivation(InputAxis.RIGHT_TRIGGER, InputAxisDirection.POSITIVE))
-      .add(INPUT_ACTION_WMAP_COOLON.get(), new ScancodeInputActivation(InputKey.Q))
-      .add(INPUT_ACTION_WMAP_COOLON.get(), new ButtonInputActivation(InputButton.X))
-      .add(INPUT_ACTION_WMAP_QUEEN_FURY.get(), new ScancodeInputActivation(InputKey.Q))
-      .add(INPUT_ACTION_WMAP_QUEEN_FURY.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get(), new ButtonInputActivation(InputButton.X))
       .add(INPUT_ACTION_WMAP_SERVICES.get(), new ScancodeInputActivation(InputKey.Q))
       .add(INPUT_ACTION_WMAP_SERVICES.get(), new ButtonInputActivation(InputButton.X))
       .add(INPUT_ACTION_WMAP_DESTINATIONS.get(), new KeyInputActivation(InputKey.L))

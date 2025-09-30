@@ -23,9 +23,11 @@ import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputCodepoints;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.FontOptions;
@@ -72,6 +74,7 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
+import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -95,6 +98,8 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_CONVERT_MEMCARD;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_UPDATE;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class Ttle extends EngineState {
@@ -129,6 +134,7 @@ public class Ttle extends EngineState {
 
   private int loadingStage;
   private int selectedMenuOption;
+  private boolean foundMemcard;
   private boolean memcardConversionShown;
   private boolean saveCategorizationShown;
 
@@ -143,7 +149,10 @@ public class Ttle extends EngineState {
   private Obj menuTextObj;
   private int updateAvailableIndex;
   private int updateAvailableShadowIndex;
-  private int updateIconIndex;
+  private int updateAvailableIconIndex;
+  private int memcardFoundIndex;
+  private int memcardFoundShadowIndex;
+  private int memcardFoundIconIndex;
   private Obj copyrightObj;
   private final Matrix4f flashTransforms = new Matrix4f();
 
@@ -240,6 +249,8 @@ public class Ttle extends EngineState {
       this.fireAnimation_800c66d4[i] = this.FUN_800cdaa0(rect, this._800ce7b0[i]);
     }
 
+    this.foundMemcard = !SAVES.findMemcards().isEmpty();
+
     startFadeEffect(2, 15);
     GTE.setScreenOffset(0, 0);
     this.loadingStage = 1;
@@ -319,13 +330,40 @@ public class Ttle extends EngineState {
       .uv(512.0f / this.menuTextTex.width, 6 * 64.0f / this.menuTextTex.height)
     ;
 
-    this.updateIconIndex = menuTextBuilder.currentQuadIndex();
+    this.updateAvailableIconIndex = menuTextBuilder.currentQuadIndex();
     menuTextBuilder
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(64.0f, 64.0f)
       .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
       .uv(0, 7 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.memcardFoundIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(512.0f, 64.0f)
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 5 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.memcardFoundShadowIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(512.0f, 64.0f)
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(512.0f / this.menuTextTex.width, 5 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.memcardFoundIconIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(64.0f, 64.0f)
+      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(64.0f / this.menuTextTex.width, 7 * 64.0f / this.menuTextTex.height)
     ;
 
     this.menuTextObj = menuTextBuilder.build();
@@ -470,6 +508,8 @@ public class Ttle extends EngineState {
       } else {
         whichMenu_800bdc38 = WhichMenu.UNLOAD;
       }
+
+      this.foundMemcard = !SAVES.findMemcards().isEmpty();
     }), () -> false);
   }
 
@@ -704,10 +744,25 @@ public class Ttle extends EngineState {
             }
           }
 
-          if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
+          if(this.update != null || this.foundMemcard) {
+            float clickY = top / scaleY + 5.0f;
+            boolean setCursor = false;
+
+            if(this.update != null) {
+              if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+                RENDERER.window().usePointerCursor();
+                setCursor = true;
+              }
+
+              clickY += 14.0f;
+            }
+
+            if(this.foundMemcard && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 111, 14)) {
               RENDERER.window().usePointerCursor();
-            } else {
+              setCursor = true;
+            }
+
+            if(!setCursor) {
               RENDERER.window().useNormalCursor();
             }
           }
@@ -778,10 +833,20 @@ public class Ttle extends EngineState {
             }
           }
 
+          float clickY = top / scaleY + 5.0f;
+
           if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
-              PLATFORM.openUrl(this.update.uri);
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+              this.downloadUpdate();
             }
+
+            clickY += 14.0f;
+          }
+
+          if(this.foundMemcard && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+            this.menuState_800c672c = 4;
+            this.menuTransitionState_800c6728 = 2;
+            this.loadingStage = 10;
           }
         }
       }
@@ -791,6 +856,10 @@ public class Ttle extends EngineState {
     onButtonPressed = RENDERER.events().onButtonPress((window, button, repeat) -> this.resetIdleTime());
 
     onInputActionPressed = RENDERER.events().onInputActionPressed(this::handleMainInput);
+  }
+
+  private void downloadUpdate() {
+    PLATFORM.openUrl(this.update.uri);
   }
 
   private static void removeInputHandlers() {
@@ -839,6 +908,12 @@ public class Ttle extends EngineState {
           }
 
           this.menuState_800c672c = 2;
+        } else if(this.update != null && action == INPUT_ACTION_TITLE_UPDATE.get()) {
+          this.downloadUpdate();
+        } else if(this.foundMemcard && action == INPUT_ACTION_TITLE_CONVERT_MEMCARD.get()) {
+          this.menuState_800c672c = 4;
+          this.menuTransitionState_800c6728 = 2;
+          this.loadingStage = 10;
         }
       }
     }
@@ -858,7 +933,7 @@ public class Ttle extends EngineState {
         this.loadingStage = 9;
       }
 
-      if(!this.memcardConversionShown && !SAVES.findMemcards().isEmpty()) {
+      if(!this.memcardConversionShown && this.foundMemcard) {
         this.menuState_800c672c = 4;
         this.menuTransitionState_800c6728 = 2;
         this.loadingStage = 10;
@@ -1003,9 +1078,11 @@ public class Ttle extends EngineState {
         .vertices(i * 4, 4);
     }
 
+    float y = 5.0f;
+
     if(this.update != null) {
       this.optionTransforms
-        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.0f)
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.0f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
@@ -1019,7 +1096,7 @@ public class Ttle extends EngineState {
         .vertices(this.updateAvailableIndex * 4, 4);
 
       this.optionTransforms
-        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
@@ -1033,7 +1110,7 @@ public class Ttle extends EngineState {
         .vertices(this.updateAvailableShadowIndex * 4, 4);
 
       this.optionTransforms
-        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
+        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
@@ -1044,7 +1121,57 @@ public class Ttle extends EngineState {
         .alpha(this.menuUpdateTransparency / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()
-        .vertices(this.updateIconIndex * 4, 4);
+        .vertices(this.updateAvailableIconIndex * 4, 4);
+
+      renderText(I18n.translate("lod_core.ui.title.hotkey", InputCodepoints.getActionName(INPUT_ACTION_TITLE_UPDATE.get())), 111.0f, y + 3.0f, UI_WHITE_SMALL);
+
+      y += 14.0f;
+    }
+
+    if(this.foundMemcard) {
+      this.optionTransforms
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.0f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.memcardFoundIndex * 4, 4);
+
+      this.optionTransforms
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(this.normalColour)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.memcardFoundShadowIndex * 4, 4);
+
+      this.optionTransforms
+        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(this.normalColour)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.memcardFoundIconIndex * 4, 4);
+
+      renderText(I18n.translate("lod_core.ui.title.hotkey", InputCodepoints.getActionName(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get())), 115.0f, y + 3.0f, UI_WHITE_SMALL);
     }
 
     renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, model -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));

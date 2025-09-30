@@ -14,8 +14,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class KeybindScreen extends InputBoxScreen {
@@ -122,7 +120,7 @@ public class KeybindScreen extends InputBoxScreen {
 
         final int oldZ = textZ_800bdf00;
         textZ_800bdf00 = this.text.getZ() - 2;
-        renderText(str, this.text.calculateTotalX() + this.text.getWidth() - textWidth(str) - 4, this.text.calculateTotalY() + (this.text.getHeight() - textHeight(str)) / 2.0f, this.fontOptions);
+        renderText(this.text.getFont(), str, this.text.calculateTotalX() + this.text.getWidth() - this.text.getFont().textWidth(str) - 4, this.text.calculateTotalY() + (this.text.getHeight() - this.text.getFont().textHeight(str)) / 2.0f, this.fontOptions);
         textZ_800bdf00 = oldZ;
       } else {
         this.text.unfocus();

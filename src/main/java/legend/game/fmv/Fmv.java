@@ -25,8 +25,6 @@ import legend.game.i18n.I18n;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joml.Vector2i;
 
 import java.nio.ByteBuffer;
@@ -53,8 +51,6 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
 public final class Fmv {
   private Fmv() { }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
 
   private static final int[] _80052d6c = {0, 4, 7, 15};
   private static final String[][] diskFmvs_80052d7c = {
@@ -225,7 +221,6 @@ public final class Fmv {
   private static float volume = 1.0f;
   private static GenericSource source;
 
-  private static WindowEvents.InputClassChanged inputClassChanged;
   private static WindowEvents.KeyPressed keyPress;
   private static WindowEvents.ButtonPressed buttonPressed;
   private static WindowEvents.InputActionPressed inputActionPressed;
@@ -623,11 +618,6 @@ public final class Fmv {
       if(displayTexture != null) {
         displayTexture.delete();
         displayTexture = null;
-      }
-
-      if(inputClassChanged != null) {
-        RENDERER.events().removeInputClassChanged(inputClassChanged);
-        inputClassChanged = null;
       }
 
       if(inputActionPressed != null) {

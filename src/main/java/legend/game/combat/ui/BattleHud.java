@@ -14,7 +14,6 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Resolution;
 import legend.core.opengl.Texture;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
@@ -61,12 +60,13 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.SItem.UI_WHITE;
+import static legend.game.SItem.UI_WHITE_CENTERED;
 import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -75,8 +75,6 @@ import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -125,6 +123,7 @@ public class BattleHud {
     new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
   };
 
+  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
   private static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
@@ -933,6 +932,7 @@ public class BattleHud {
               final int top = displayStats.y_02 - centreScreenY_1f8003de + 8;
               final int right = left + spBarW;
               final int bottom = top + 3;
+
               final int[] spBarColours = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[spBarIndex];
 
               if(this.spBars == null) {
@@ -1057,7 +1057,7 @@ public class BattleHud {
         }
 
         this.battleUiName.render(element.colour);
-        renderText(str, 160 - textWidth(str) / 2, 24, UI_WHITE);
+        renderText(str, 160, 24, UI_WHITE_CENTERED);
       }
     }
     //LAB_800f0f2c

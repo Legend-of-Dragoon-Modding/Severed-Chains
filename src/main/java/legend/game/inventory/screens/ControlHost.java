@@ -4,6 +4,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputAxis;
 import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
@@ -214,6 +215,10 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected InputPropagation inputActionReleased(final InputAction action) {
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation inputClassChanged(final InputClass type) {
     return InputPropagation.PROPAGATE;
   }
 }

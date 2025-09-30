@@ -167,9 +167,8 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
-import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_COOLON;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_DESTINATIONS;
-import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_QUEEN_FURY;
+import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_QUEEN_FURY_COOLON;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ROTATE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ROTATE_RIGHT;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_SERVICES;
@@ -228,7 +227,8 @@ public class WMap extends EngineState {
     SET_DEST_9,
   }
 
-  private static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_WHITE_SHADOWED_RIGHT = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.RIGHT);
 
   private boolean reinitializingWmap_80052c6c;
 
@@ -558,6 +558,10 @@ public class WMap extends EngineState {
         resizeDisplay(320, 240);
         loadWmapMusic(gameState_800babc8.chapterIndex_98);
         this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS_12;
+
+        this.unloadWmapPlayerModels();
+        this.loadPlayerAvatarTextureAndModelFiles();
+        this.playerState_800c669c = PlayerState.LOAD_MODEL_2;
       }
 
       //LAB_800cc828
@@ -2420,7 +2424,7 @@ public class WMap extends EngineState {
     //LAB_800da4ec
     this.coolonQueenFuryOverlay.render(0);
 
-    if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_COOLON.get())) {
+    if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get())) {
       this.destinationLabelStage_800c86f0 = 0;
       modelAndAnimData.fastTravelTransitionMode_250 = FastTravelTransitionMode.OPEN_COOLON_MAP_2;
     }
@@ -2565,7 +2569,7 @@ public class WMap extends EngineState {
         break;
 
       case MAIN_LOOP_3:
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get()) || PLATFORM.isActionPressed(INPUT_ACTION_WMAP_COOLON.get())) {
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get()) || PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get())) {
           this.shouldSetCoolonWarpDestLabelMetrics = false;
           this.coolonWarpDestLabelName = null;
 
@@ -4969,7 +4973,7 @@ public class WMap extends EngineState {
                       //LAB_800e905c
                       if(this.tickMainMenuOpenTransition_800c6690 == 0) {
                         //LAB_800e9078
-                        if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY.get())) {
+                        if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get())) {
                           if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
                             this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[93].submapCutTo_08;
                             this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[93].submapSceneTo_0a;

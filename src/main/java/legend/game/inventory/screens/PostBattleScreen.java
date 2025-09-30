@@ -7,6 +7,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.EngineState;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
@@ -40,9 +41,11 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.renderMode;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
+import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
@@ -367,13 +370,14 @@ public class PostBattleScreen extends MenuScreen {
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(3);
 
-          if(itemsDroppedByEnemies_800bc928.isEmpty() || giveItems(itemsDroppedByEnemies_800bc928) == 0) {
+          if((itemsDroppedByEnemies_800bc928.isEmpty() || giveItems(itemsDroppedByEnemies_800bc928) == 0) && itemOverflow.isEmpty()) {
             //LAB_8010dfac
             // No items remaining
             this.fadeToMenuState(MenuState.UNLOAD_18);
           } else {
             // Some items remaining
             resizeDisplay(384, 240);
+            renderMode = EngineState.RenderMode.LEGACY;
             deallocateRenderables(0xff);
             menuStack.popScreen();
             menuStack.pushScreen(new TooManyItemsScreen());
