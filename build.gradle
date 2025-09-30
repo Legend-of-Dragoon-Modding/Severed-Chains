@@ -30,6 +30,7 @@ final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : Op
 final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
 final def isArm = architecture.startsWith("arm") || architecture.startsWith("aarch64")
 final def isSteamDeck = hasProperty("steamdeck") && "true" == steamdeck
+final def isNixOS = hasProperty("nixos") && "true" == nixos
 
 switch(operatingSystem) {
   case OperatingSystem.LINUX:
@@ -153,14 +154,27 @@ tasks.register('copySupportFiles', Copy) {
         final var archives = configurations.compileClasspath + configurations.runtimeClasspath
         final var libs = "libs/" + archives*.name.join(":libs/")
 
-        from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
+        final var scriptName = isNixOS ? 'launch-nix' : (isSteamDeck ? 'launch-steamdeck' : 'launch-linux')
+
+
+        from(scriptName) {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
           filter(ReplaceTokens, tokens: [false: "true"])
           filter(ReplaceTokens, tokens: [libs: libs])
+          if (isNixOS) {
+            filter { line ->
+              line.startsWith('#!/bin/bash') ? '#!/usr/bin/env bash' : line
+            }
+          }
           rename("-\\w+", "")
         }
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
+          if (isNixOS) {
+            filter { line ->
+              line.startsWith('#!/bin/bash') ? '#!/usr/bin/env bash' : line
+            }
+          }
         }
         break
 
