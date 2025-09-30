@@ -3,7 +3,7 @@
 # die on errors
 set -e
 
-COMPILED="true"
+COMPILED="@false@"
 
 if [ "$COMPILED" != "true" ] ; then
   echo "You are trying to run the Severed Chains source code. Please see our installation instructions at https://legendofdragoon.org/projects/severed-chains/"
@@ -21,34 +21,106 @@ if [[ $(pwd) == *":"* ]]; then
   exit 1;
 fi
 
-# NixOS-only launch script - assumes Java 21 is available in PATH
-if ! command -v java >/dev/null 2>&1; then
-  echo "Error: Java not found in PATH. Ensure Java 21 is provided by your NixOS flake environment."
+# On NixOS, prefer system Java if available and compatible
+if command -v java >/dev/null 2>&1; then
+  JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
+  if [[ "$JAVA_VERSION" == "21" ]]; then
+    echo "Using system Java 21"
+    JAVA=java
+  else
+    echo "System Java version $JAVA_VERSION found, but Java 21 required"
+    JAVA=./jdk21/bin/java
+  fi
+else
+  echo "No system Java found"
+  JAVA=./jdk21/bin/java
+fi
+
+# If using bundled Java, ensure it's downloaded
+if [[ "$JAVA" == "./jdk21/bin/java" && ! -f $JAVA ]]; then
+  echo "Downloading bundled Java 21..."
+  ./download-java
+fi
+
+# Test if Java actually works (important for NixOS)
+if ! $JAVA -version >/dev/null 2>&1; then
+  echo "Error: Java binary cannot execute. On NixOS, you may need:"
+  echo "1. Install Java 21 in your system/environment, or"
+  echo "2. Use nix-ld to run generic Linux binaries"
+  echo "3. Run this from a nix-shell with Java 21 available"
   read -p "Press enter to exit"
   exit 1
 fi
-
-JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
-if [[ "$JAVA_VERSION" != "21" ]]; then
-  echo "Error: Java 21 is required but Java $JAVA_VERSION found in PATH."
-  echo "Please ensure Java 21 is available in your NixOS flake environment."
-  read -p "Press enter to exit"
-  exit 1
-fi
-
-JAVA=java
 
 # Set up library paths for NixOS
-# Add Mesa OpenGL libraries to library path
-export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
+# Dynamically find OpenGL and audio libraries in nix store without hardcoding hashes
+echo "Setting up graphics and audio libraries for NixOS..."
 
-# Find the main game JAR
-GAME_JAR=$(ls lod-game-*.jar 2>/dev/null | head -n 1)
-if [[ -z "$GAME_JAR" ]]; then
-  echo "Error: No lod-game-*.jar file found in current directory"
-  read -p "Press enter to exit"
-  exit 1
+# === OpenGL Library Detection ===
+# Method 1: Find libGL.so.1 in nix store
+OPENGL_PATHS=$(find /nix/store -name "libGL.so.1*" -type f 2>/dev/null | head -1 | xargs dirname 2>/dev/null)
+
+# Method 2: Check common NixOS OpenGL locations
+if [[ -z "$OPENGL_PATHS" && -d "/run/opengl-driver/lib" ]]; then
+  OPENGL_PATHS="/run/opengl-driver/lib"
 fi
 
-__GL_THREADED_OPTIMIZATIONS=0 "$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "$GAME_JAR:libs/*" legend.game.Main -Xmx2G -ea
+# Method 3: Check if OpenGL is in current environment
+if [[ -z "$OPENGL_PATHS" ]]; then
+  for path in $(echo "${LD_LIBRARY_PATH:-}" | tr ':' ' '); do
+    if [[ -f "$path/libGL.so.1" ]]; then
+      OPENGL_PATHS="$path"
+      break
+    fi
+  done
+fi
+
+# === Audio Library Detection ===
+# Find OpenAL libraries (primary audio system for the game)
+OPENAL_PATHS=$(find /nix/store -name "libopenal.so*" -type f 2>/dev/null | head -1 | xargs dirname 2>/dev/null)
+
+# Also find ALSA libraries (fallback audio system)
+ALSA_PATHS=$(find /nix/store -name "libasound.so*" -type f 2>/dev/null | head -1 | xargs dirname 2>/dev/null)
+
+# Check if audio libraries are already in current environment
+if [[ -z "$OPENAL_PATHS" ]]; then
+  for path in $(echo "${LD_LIBRARY_PATH:-}" | tr ':' ' '); do
+    if [[ -f "$path/libopenal.so" || -f "$path/libopenal.so.1" ]]; then
+      OPENAL_PATHS="$path"
+      break
+    fi
+  done
+fi
+
+# === Apply Found Library Paths ===
+NEW_LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}"
+
+if [[ -n "$OPENGL_PATHS" ]]; then
+  NEW_LD_LIBRARY_PATH="${OPENGL_PATHS}:${NEW_LD_LIBRARY_PATH}"
+  echo "Found OpenGL libraries: $OPENGL_PATHS"
+else
+  echo "Warning: Could not locate OpenGL libraries"
+fi
+
+if [[ -n "$OPENAL_PATHS" ]]; then
+  NEW_LD_LIBRARY_PATH="${OPENAL_PATHS}:${NEW_LD_LIBRARY_PATH}"
+  echo "Found OpenAL libraries: $OPENAL_PATHS"
+else
+  echo "Warning: Could not locate OpenAL libraries"
+fi
+
+if [[ -n "$ALSA_PATHS" && "$ALSA_PATHS" != "$OPENAL_PATHS" ]]; then
+  NEW_LD_LIBRARY_PATH="${ALSA_PATHS}:${NEW_LD_LIBRARY_PATH}"
+  echo "Found ALSA libraries: $ALSA_PATHS"
+fi
+
+export LD_LIBRARY_PATH="$NEW_LD_LIBRARY_PATH"
+
+if [[ -z "$OPENGL_PATHS" || -z "$OPENAL_PATHS" ]]; then
+  echo "Note: Missing libraries. You may need to:"
+  echo "  - Run from a nix-shell with mesa and openal packages"
+  echo "  - Ensure graphics and audio drivers are properly configured"
+fi
+
+__GL_THREADED_OPTIMIZATIONS=0 "$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar:@libs@" legend.game.Main -Xmx2G -ea
 read -p "Press enter to exit"
