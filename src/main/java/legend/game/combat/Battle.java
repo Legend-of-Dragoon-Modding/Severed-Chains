@@ -3597,7 +3597,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The number to show")
   @Method(0x800ccb70L)
   public FlowControl scriptAddFloatingNumberForBent(final RunningScript<?> script) {
-    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13);
+    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13, 0);
     return FlowControl.CONTINUE;
   }
 
@@ -8655,7 +8655,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
   @Method(0x800f9730L)
   public FlowControl scriptAddFloatingNumber(final RunningScript<?> script) {
-    this.hud.addFloatingNumber(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    this.hud.addFloatingNumber(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 0);
     return FlowControl.CONTINUE;
   }
 
@@ -8675,7 +8675,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 0);
     return FlowControl.CONTINUE;
   }
 

@@ -1176,19 +1176,19 @@ public class BattleHud {
     }
   }
 
-  public void addFloatingNumber(final int number, final float x, final float y) {
+  public void addFloatingNumber(final int number, final float x, final float y, final int yOffset) {
     for(int i = 0; i < this.floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = this.floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        this.addFloatingNumber(i, 0, 0, number, x, y, 60 / vsyncMode_8007a3b8 * 5, 0);
+        this.addFloatingNumber(i, 0, 0, number, x, y, 60 / vsyncMode_8007a3b8 * 5, 0, yOffset);
         break;
       }
     }
   }
 
   @Method(0x800f3354L)
-  public void addFloatingNumber(final int numIndex, final int onHitTextType, final int onHitClutCol, final int number, final float x, final float y, int ticks, int colour) {
+  public void addFloatingNumber(final int numIndex, final int onHitTextType, final int onHitClutCol, final int number, final float x, final float y, int ticks, int colour, final int yOffset) {
     if(this.miss == null) {
       for(int i = 0; i < 10; i++) {
         final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
@@ -1320,7 +1320,7 @@ public class BattleHud {
       final FloatingNumberDigit20 digit = num.digits_24[digitStructIdx];
       digit.flags_00 = 0x8000;
       digit.x_0e = displayPosX;
-      digit.y_10 = 0;
+      digit.y_10 = 0 + yOffset;
 
       if(clutCol == 2) {
         digit.flags_00 = 0;
@@ -1558,7 +1558,7 @@ public class BattleHud {
   }
 
   @Method(0x800f4268L)
-  public void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4) {
+  public void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4, final int yOffset) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
@@ -1582,7 +1582,7 @@ public class BattleHud {
     Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
 
     //LAB_800f4394
-    this.FUN_800f89f4(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);
+    this.FUN_800f89f4(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4, yOffset);
   }
 
 
@@ -2349,13 +2349,13 @@ public class BattleHud {
   }
 
   @Method(0x800f89f4L)
-  public boolean FUN_800f89f4(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int a6, final int a7) {
+  public boolean FUN_800f89f4(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int a6, final int a7, final int yOffset) {
     //LAB_800f8a30
     for(int i = 0; i < this.floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = this.floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
+        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7, yOffset);
         num.bentIndex_04 = bentIndex;
         return true;
       }
@@ -2369,7 +2369,7 @@ public class BattleHud {
 
   @Method(0x800f8aa4L)
   public void renderDamage(final int bentIndex, final int damage) {
-    this.addFloatingNumberForBent(bentIndex, damage, 8);
+    this.addFloatingNumberForBent(bentIndex, damage, 8, 0);
   }
 
   @Method(0x800f8cd8L)
