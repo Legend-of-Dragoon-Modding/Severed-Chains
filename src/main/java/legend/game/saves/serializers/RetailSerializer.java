@@ -1,5 +1,6 @@
 package legend.game.saves.serializers;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
@@ -26,8 +27,8 @@ public final class RetailSerializer {
   public static SavedGame fromRetail(final String name, final FileData data) {
     final GameState52c state = deserializeRetailGameState(data.slice(0x1fc));
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
-    final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
+    final int maxHp = CoreMod.CHARACTER_DATA[state.charIds_88[0]].statsTable[charData.level_12].hp_00;
+    final int maxMp = CoreMod.CHARACTER_DATA[state.charIds_88[0]].dragoonStatsTable[charData.dlevel_13].mp_00;
     return new SavedGame(name, name, data.readUByte(0x1a9), data.readUByte(0x1a8), state, new ConfigCollection(), maxHp, maxMp);
   }
 
