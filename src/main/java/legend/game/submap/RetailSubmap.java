@@ -953,6 +953,11 @@ public class RetailSubmap extends Submap {
         renderPacket.offsetY_1e++;
       }
 
+      // Fix misaligned cutout in Rouge training area (GH#2291)
+      if(this.cut == 595 && i == 5) {
+        renderPacket.offsetY_1e++;
+      }
+
       // Fix misaligned cutout in Hellena (GH#2203)
       if(this.cut == 642 && i == 2) {
         renderPacket.w_18--;
