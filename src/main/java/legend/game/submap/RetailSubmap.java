@@ -556,7 +556,7 @@ public class RetailSubmap extends Submap {
       .set(submapCutMatrix).setTranslation(submapCutMatrix.transfer)
       .mulLocal(inverseW2s);
 
-    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256, true);
+    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256);
     initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
   }
 
@@ -586,7 +586,7 @@ public class RetailSubmap extends Submap {
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
       // sobj 16 uses the submap overlay texture
       if(pxlIndex == 16) {
-        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256, true));
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256));
         continue;
       }
 
@@ -618,7 +618,7 @@ public class RetailSubmap extends Submap {
             if(this.sobjTextureOverrides.containsKey(pxlIndex)) {
               this.uvAdjustments.add(UvAdjustmentMetrics14.PNG);
             } else {
-              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y, pxlIndex != 17 && pxlIndex != 18));
+              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
             }
 
             continue outer;
