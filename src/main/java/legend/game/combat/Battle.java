@@ -7867,14 +7867,14 @@ public class Battle extends EngineState {
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
       player.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
-      player.attack_34 = stats.equipmentAttack_88 + stats.bodyAttack_6a;
-      player.magicAttack_36 = stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b;
-      player.defence_38 = stats.equipmentDefence_8c + stats.bodyDefence_6c;
-      player.magicDefence_3a = stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d;
+      player.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
+      player.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
+      player.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
+      player.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
       player.attackHit_3c = stats.equipmentAttackHit_90;
       player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.attackAvoid_40 = stats.equipmentAttackAvoid_94;
-      player.magicAvoid_42 = stats.equipmentMagicAvoid_96;
+      player.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
+      player.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
       player.equipment_19_46 = stats.equipment_19_99;
       player.equipment_1a_48 = stats.equipment_1a_9a;
@@ -7943,10 +7943,10 @@ public class Battle extends EngineState {
 
     final int avoidChance;
     if(attackType == AttackType.PHYSICAL) {
-      avoidChance = defender.attackAvoid_40;
+      avoidChance = defender.stats.getStat(LodMod.AVOID_STAT.get()).get();
     } else {
       //LAB_800f1c9c
-      avoidChance = defender.magicAvoid_42;
+      avoidChance = defender.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
     }
 
     boolean effectHit = false;
@@ -8332,14 +8332,14 @@ public class Battle extends EngineState {
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
     monster.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
-    monster.attack_34 = statsEvent.attack;
-    monster.magicAttack_36 = statsEvent.magicAttack;
-    monster.defence_38 = statsEvent.defence;
-    monster.magicDefence_3a = statsEvent.magicDefence;
+    monster.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(statsEvent.attack);
+    monster.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
+    monster.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(statsEvent.defence);
+    monster.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.attackAvoid_40 = statsEvent.attackAvoid;
-    monster.magicAvoid_42 = statsEvent.magicAvoid;
+    monster.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
+    monster.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
     monster.equipment_19_46 = 0;
     monster.equipment_1a_48 = 0;
