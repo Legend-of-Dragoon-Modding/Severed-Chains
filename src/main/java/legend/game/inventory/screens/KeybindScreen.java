@@ -5,6 +5,7 @@ import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActivation;
 import legend.core.platform.input.InputBindings;
+import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.i18n.I18n;
 import legend.game.types.MessageBoxResult;
@@ -62,7 +63,7 @@ public class KeybindScreen extends InputBoxScreen {
     // Handle keyboard input
     this.text.onKeyPress((key, scancode, mods, repeat) -> {
       if(!repeat) {
-        final InputActivation activation = new ScancodeInputActivation(scancode);
+        final InputActivation activation = scancode != null ? new ScancodeInputActivation(scancode) : new KeyInputActivation(key);
         this.removeSimilarActivations(activation);
         this.activations.add(activation);
         this.updateText();
