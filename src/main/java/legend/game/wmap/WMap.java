@@ -32,6 +32,7 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.TextboxState;
@@ -6202,5 +6203,10 @@ public class WMap extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     super.updateDiscordRichPresence(activity);
     activity.setState("Exploring");
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.wmapCameraAndLights19c0_800c66b0.currRview2_00;
   }
 }

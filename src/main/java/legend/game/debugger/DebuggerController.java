@@ -17,6 +17,7 @@ import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapState;
+import legend.game.types.GsRVIEW2;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
 import legend.game.wmap.WmapState;
@@ -24,6 +25,8 @@ import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
+import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -169,6 +172,19 @@ public class DebuggerController {
   @FXML
   public Spinner<Integer> textBoxTransparencyMode;
 
+  @FXML
+  public Spinner<Double> viewpointX;
+  @FXML
+  public Spinner<Double> viewpointY;
+  @FXML
+  public Spinner<Double> viewpointZ;
+  @FXML
+  public Spinner<Double> refpointX;
+  @FXML
+  public Spinner<Double> refpointY;
+  @FXML
+  public Spinner<Double> refpointZ;
+
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -219,6 +235,13 @@ public class DebuggerController {
     this.textBox8G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 8) & 0xff)));
     this.textBox8B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 16) & 0xff)));
     this.textBoxTransparencyMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, Config.getTextBoxTransparencyMode()));
+
+    this.viewpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.viewpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.viewpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.refpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.refpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.refpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
 
     if(Config.getTextBoxColourMode() == 0) {
       this.textBoxBase.setSelected(true);
@@ -656,5 +679,61 @@ public class DebuggerController {
   @FXML
   private void setTextBoxTransparencyMode() {
     Config.setTextBoxTransparencyMode(this.textBoxTransparencyMode.getValue());
+  }
+
+  @FXML
+  private void getViewpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
+
+    if(camera != null) {
+      this.viewpointX.getValueFactory().setValue((double)camera.viewpoint_00.x);
+      this.viewpointY.getValueFactory().setValue((double)camera.viewpoint_00.y);
+      this.viewpointZ.getValueFactory().setValue((double)camera.viewpoint_00.z);
+    }
+  }
+
+  @FXML
+  private void setViewpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
+
+    if(camera != null) {
+      camera.viewpoint_00.x = (float)(double)this.viewpointX.getValueFactory().getValue();
+      camera.viewpoint_00.y = (float)(double)this.viewpointY.getValueFactory().getValue();
+      camera.viewpoint_00.z = (float)(double)this.viewpointZ.getValueFactory().getValue();
+
+      if(currentEngineState_8004dd04 instanceof SMap) {
+        GsSetSmapRefView2L(camera);
+      } else {
+        GsSetRefView2L(camera);
+      }
+    }
+  }
+
+  @FXML
+  private void getRefpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
+
+    if(camera != null) {
+      this.refpointX.getValueFactory().setValue((double)camera.refpoint_0c.x);
+      this.refpointY.getValueFactory().setValue((double)camera.refpoint_0c.y);
+      this.refpointZ.getValueFactory().setValue((double)camera.refpoint_0c.z);
+    }
+  }
+
+  @FXML
+  private void setRefpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
+
+    if(camera != null) {
+      camera.refpoint_0c.x = (float)(double)this.refpointX.getValueFactory().getValue();
+      camera.refpoint_0c.y = (float)(double)this.refpointY.getValueFactory().getValue();
+      camera.refpoint_0c.z = (float)(double)this.refpointZ.getValueFactory().getValue();
+
+      if(currentEngineState_8004dd04 instanceof SMap) {
+        GsSetSmapRefView2L(camera);
+      } else {
+        GsSetRefView2L(camera);
+      }
+    }
   }
 }

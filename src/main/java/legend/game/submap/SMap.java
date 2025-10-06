@@ -49,6 +49,7 @@ import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
@@ -5553,5 +5554,10 @@ public class SMap extends EngineState {
     }
 
     return super.getLocation();
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.submap.getCamera();
   }
 }

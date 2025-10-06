@@ -6,6 +6,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
 import org.joml.Math;
 
@@ -139,6 +140,8 @@ public abstract class EngineState {
 
     return "Unknown Location";
   }
+
+  public abstract GsRVIEW2 getCamera();
 
   public enum RenderMode {
     /** Used by submaps and title screen, pseudo-perspective using orthographic projection with H division */

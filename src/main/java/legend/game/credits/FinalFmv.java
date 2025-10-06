@@ -5,6 +5,7 @@ import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
+import legend.game.types.GsRVIEW2;
 
 /** Plays the final cutscene tying everything up */
 public class FinalFmv extends EngineState {
@@ -24,5 +25,10 @@ public class FinalFmv extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     super.updateDiscordRichPresence(activity);
     activity.setState("Final Cutscene");
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return null;
   }
 }

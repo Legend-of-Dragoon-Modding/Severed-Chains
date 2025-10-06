@@ -986,6 +986,11 @@ public class RetailSubmap extends Submap {
     }
   }
 
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.rview2_800cbd10;
+  }
+
   @Method(0x800e7328L)
   private void updateCamera() {
     setProjectionPlaneDistance(projectionPlaneDistance_800bd810);
