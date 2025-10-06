@@ -3018,7 +3018,11 @@ public class WMap extends EngineState {
   private void loadPlayerModelAndAnimsForFirstChar() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x10);
 
-    final int charId = gameState_800babc8.charIds_88[0];
+    int charId = -1;
+    for(int i = 0; i < gameState_800babc8.charIds_88.length && charId == -1; i++) {
+      charId = gameState_800babc8.charIds_88[i];
+    }
+
     final String model = charModelDirs[charId];
     final String texture = charTextureFiles[charId];
     final int offset = charModelFileOffsets[charId];
