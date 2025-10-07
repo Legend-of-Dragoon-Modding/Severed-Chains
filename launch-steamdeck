@@ -21,7 +21,7 @@ if [[ $(pwd) == *":"* ]]; then
   exit 1;
 fi
 
-JAVA=./jdk21/bin/java
+JAVA=./jdk25/bin/java
 
 if [[ ! -f $JAVA ]]
 then

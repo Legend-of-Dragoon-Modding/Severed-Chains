@@ -96,9 +96,9 @@ public class ItemListScreen extends MenuScreen {
     this.addControl(Glyph.glyph(83)).setPos( 16, 164); // Button prompt pane
     this.addControl(Glyph.glyph(91)).setPos(194, 173); // Description pane
 
-    this.addHotkey("Sort", INPUT_ACTION_MENU_SORT, this::menuSort);
-    this.addHotkey("Discard", INPUT_ACTION_MENU_DELETE, this::menuDiscard);
-    this.addHotkey("Back", INPUT_ACTION_MENU_BACK, this::menuEscape);
+    this.addHotkey(I18n.translate("lod_core.ui.item_list.sort"), INPUT_ACTION_MENU_SORT, this::menuSort);
+    this.addHotkey(I18n.translate("lod_core.ui.item_list.discard"), INPUT_ACTION_MENU_DELETE, this::menuDiscard);
+    this.addHotkey(I18n.translate("lod_core.ui.item_list.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
 
     this.description.setPos(14, 168);
 

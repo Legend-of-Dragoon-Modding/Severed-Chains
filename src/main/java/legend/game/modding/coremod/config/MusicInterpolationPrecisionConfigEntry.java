@@ -9,9 +9,13 @@ import legend.game.saves.EnumConfigEntry;
 import static legend.core.GameEngine.AUDIO_THREAD;
 
 public class MusicInterpolationPrecisionConfigEntry extends EnumConfigEntry<InterpolationPrecision> {
-
   public MusicInterpolationPrecisionConfigEntry() {
     super(InterpolationPrecision.class, InterpolationPrecision.Double, ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO);
+  }
+
+  @Override
+  public boolean isAdvanced() {
+    return true;
   }
 
   @Override

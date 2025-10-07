@@ -275,8 +275,10 @@ import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_BACKSPACE;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_C;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_COMMA;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_D;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_DELETE;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_DOWN;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_E;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_END;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_EQUALS;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_ESCAPE;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F;
@@ -284,7 +286,19 @@ import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F1;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F10;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F11;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F12;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F13;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F14;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F15;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F16;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F17;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F18;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F19;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F2;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F20;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F21;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F22;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F23;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F24;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F3;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F4;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F5;
@@ -295,9 +309,28 @@ import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_F9;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_G;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_GRAVE;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_H;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_HOME;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_I;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_INSERT;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_J;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_K;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_0;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_1;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_2;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_3;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_4;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_5;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_6;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_7;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_8;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_9;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_DIVIDE;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_ENTER;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_EQUALS;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_MINUS;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_MULTIPLY;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_PERIOD;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_PLUS;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_L;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_LALT;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_LCTRL;
@@ -310,7 +343,11 @@ import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_MINUS;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_N;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_O;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_P;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_PAGEDOWN;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_PAGEUP;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_PAUSE;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_PERIOD;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_PRINTSCREEN;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_Q;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_R;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_RALT;
@@ -321,6 +358,7 @@ import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_RIGHT;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_RIGHTBRACKET;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_RSHIFT;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_S;
+import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_SCROLLLOCK;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_SEMICOLON;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_SLASH;
 import static org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_SPACE;
@@ -560,18 +598,25 @@ public class SdlPlatformManager extends PlatformManager {
 
             final InputKey inputKey = this.getInputFromKeycode(key.key());
 
+            if(inputKey == null) {
+              LOGGER.warn("Unknown key %s", SDL_GetKeyName(key.key()));
+              continue;
+            }
+
+            final InputKey inputScan = this.getInputKeyFromScanCode(key.scancode());
+
             if(key.down()) {
               if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
                 LOGGER.info(ACTIONS_MARKER, "Triggering press key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
               }
 
-              window.events().onKeyPress(inputKey, this.getInputKeyFromScanCode(key.scancode()), window.mods, key.repeat());
+              window.events().onKeyPress(inputKey, inputScan, window.mods, key.repeat());
             } else {
               if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
                 LOGGER.info(ACTIONS_MARKER, "Triggering release key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
               }
 
-              window.events().onKeyRelease(inputKey, this.getInputKeyFromScanCode(key.scancode()), window.mods);
+              window.events().onKeyRelease(inputKey, inputScan, window.mods);
             }
 
             final List<InputBinding<KeyInputActivation>> keycodeBindings = InputBindings.getBindings(KeyInputActivation.class);
@@ -828,6 +873,10 @@ public class SdlPlatformManager extends PlatformManager {
 
           case SDL_EVENT_GAMEPAD_BUTTON_UP -> {
             this.buttonsHeld--;
+
+            if(this.buttonsHeld < 0) {
+              this.buttonsHeld = 0;
+            }
 
             final SDL_GamepadButtonEvent button = this.event.gbutton();
 
@@ -1453,11 +1502,48 @@ public class SdlPlatformManager extends PlatformManager {
       case F10 -> SDL_SCANCODE_F10;
       case F11 -> SDL_SCANCODE_F11;
       case F12 -> SDL_SCANCODE_F12;
-
-      case RIGHT -> SDL_SCANCODE_RIGHT;
-      case LEFT -> SDL_SCANCODE_LEFT;
-      case DOWN -> SDL_SCANCODE_DOWN;
-      case UP -> SDL_SCANCODE_UP;
+      case InputKey.PRINT_SCREEN -> SDL_SCANCODE_PRINTSCREEN;
+      case InputKey.SCROLL_LOCK -> SDL_SCANCODE_SCROLLLOCK;
+      case InputKey.PAUSE -> SDL_SCANCODE_PAUSE;
+      case InputKey.INSERT -> SDL_SCANCODE_INSERT;
+      case InputKey.HOME -> SDL_SCANCODE_HOME;
+      case InputKey.PAGE_UP -> SDL_SCANCODE_PAGEUP;
+      case InputKey.DELETE -> SDL_SCANCODE_DELETE;
+      case InputKey.END -> SDL_SCANCODE_END;
+      case InputKey.PAGE_DOWN -> SDL_SCANCODE_PAGEDOWN;
+      case InputKey.RIGHT -> SDL_SCANCODE_RIGHT;
+      case InputKey.LEFT -> SDL_SCANCODE_LEFT;
+      case InputKey.DOWN -> SDL_SCANCODE_DOWN;
+      case InputKey.UP -> SDL_SCANCODE_UP;
+      case InputKey.KP_DIVIDE -> SDL_SCANCODE_KP_DIVIDE;
+      case InputKey.KP_MULTIPLY -> SDL_SCANCODE_KP_MULTIPLY;
+      case InputKey.KP_MINUS -> SDL_SCANCODE_KP_MINUS;
+      case InputKey.KP_PLUS -> SDL_SCANCODE_KP_PLUS;
+      case InputKey.KP_ENTER -> SDL_SCANCODE_KP_ENTER;
+      case InputKey.KP_1 -> SDL_SCANCODE_KP_1;
+      case InputKey.KP_2 -> SDL_SCANCODE_KP_2;
+      case InputKey.KP_3 -> SDL_SCANCODE_KP_3;
+      case InputKey.KP_4 -> SDL_SCANCODE_KP_4;
+      case InputKey.KP_5 -> SDL_SCANCODE_KP_5;
+      case InputKey.KP_6 -> SDL_SCANCODE_KP_6;
+      case InputKey.KP_7 -> SDL_SCANCODE_KP_7;
+      case InputKey.KP_8 -> SDL_SCANCODE_KP_8;
+      case InputKey.KP_9 -> SDL_SCANCODE_KP_9;
+      case InputKey.KP_0 -> SDL_SCANCODE_KP_0;
+      case InputKey.KP_PERIOD -> SDL_SCANCODE_KP_PERIOD;
+      case InputKey.KP_EQUALS -> SDL_SCANCODE_KP_EQUALS;
+      case InputKey.F13 -> SDL_SCANCODE_F13;
+      case InputKey.F14 -> SDL_SCANCODE_F14;
+      case InputKey.F15 -> SDL_SCANCODE_F15;
+      case InputKey.F16 -> SDL_SCANCODE_F16;
+      case InputKey.F17 -> SDL_SCANCODE_F17;
+      case InputKey.F18 -> SDL_SCANCODE_F18;
+      case InputKey.F19 -> SDL_SCANCODE_F19;
+      case InputKey.F20 -> SDL_SCANCODE_F20;
+      case InputKey.F21 -> SDL_SCANCODE_F21;
+      case InputKey.F22 -> SDL_SCANCODE_F22;
+      case InputKey.F23 -> SDL_SCANCODE_F23;
+      case InputKey.F24 -> SDL_SCANCODE_F24;
 
       case LEFT_CTRL -> SDL_SCANCODE_LCTRL;
       case LEFT_SHIFT -> SDL_SCANCODE_LSHIFT;
@@ -1539,11 +1625,48 @@ public class SdlPlatformManager extends PlatformManager {
       case SDL_SCANCODE_F10 -> InputKey.F10;
       case SDL_SCANCODE_F11 -> InputKey.F11;
       case SDL_SCANCODE_F12 -> InputKey.F12;
-
+      case SDL_SCANCODE_PRINTSCREEN -> InputKey.PRINT_SCREEN;
+      case SDL_SCANCODE_SCROLLLOCK -> InputKey.SCROLL_LOCK;
+      case SDL_SCANCODE_PAUSE -> InputKey.PAUSE;
+      case SDL_SCANCODE_INSERT -> InputKey.INSERT;
+      case SDL_SCANCODE_HOME -> InputKey.HOME;
+      case SDL_SCANCODE_PAGEUP -> InputKey.PAGE_UP;
+      case SDL_SCANCODE_DELETE -> InputKey.DELETE;
+      case SDL_SCANCODE_END -> InputKey.END;
+      case SDL_SCANCODE_PAGEDOWN -> InputKey.PAGE_DOWN;
       case SDL_SCANCODE_RIGHT -> InputKey.RIGHT;
       case SDL_SCANCODE_LEFT -> InputKey.LEFT;
       case SDL_SCANCODE_DOWN -> InputKey.DOWN;
       case SDL_SCANCODE_UP -> InputKey.UP;
+      case SDL_SCANCODE_KP_DIVIDE -> InputKey.KP_DIVIDE;
+      case SDL_SCANCODE_KP_MULTIPLY -> InputKey.KP_MULTIPLY;
+      case SDL_SCANCODE_KP_MINUS -> InputKey.KP_MINUS;
+      case SDL_SCANCODE_KP_PLUS -> InputKey.KP_PLUS;
+      case SDL_SCANCODE_KP_ENTER -> InputKey.KP_ENTER;
+      case SDL_SCANCODE_KP_1 -> InputKey.KP_1;
+      case SDL_SCANCODE_KP_2 -> InputKey.KP_2;
+      case SDL_SCANCODE_KP_3 -> InputKey.KP_3;
+      case SDL_SCANCODE_KP_4 -> InputKey.KP_4;
+      case SDL_SCANCODE_KP_5 -> InputKey.KP_5;
+      case SDL_SCANCODE_KP_6 -> InputKey.KP_6;
+      case SDL_SCANCODE_KP_7 -> InputKey.KP_7;
+      case SDL_SCANCODE_KP_8 -> InputKey.KP_8;
+      case SDL_SCANCODE_KP_9 -> InputKey.KP_9;
+      case SDL_SCANCODE_KP_0 -> InputKey.KP_0;
+      case SDL_SCANCODE_KP_PERIOD -> InputKey.KP_PERIOD;
+      case SDL_SCANCODE_KP_EQUALS -> InputKey.KP_EQUALS;
+      case SDL_SCANCODE_F13 -> InputKey.F13;
+      case SDL_SCANCODE_F14 -> InputKey.F14;
+      case SDL_SCANCODE_F15 -> InputKey.F15;
+      case SDL_SCANCODE_F16 -> InputKey.F16;
+      case SDL_SCANCODE_F17 -> InputKey.F17;
+      case SDL_SCANCODE_F18 -> InputKey.F18;
+      case SDL_SCANCODE_F19 -> InputKey.F19;
+      case SDL_SCANCODE_F20 -> InputKey.F20;
+      case SDL_SCANCODE_F21 -> InputKey.F21;
+      case SDL_SCANCODE_F22 -> InputKey.F22;
+      case SDL_SCANCODE_F23 -> InputKey.F23;
+      case SDL_SCANCODE_F24 -> InputKey.F24;
 
       case SDL_SCANCODE_LCTRL -> InputKey.LEFT_CTRL;
       case SDL_SCANCODE_LSHIFT -> InputKey.LEFT_SHIFT;

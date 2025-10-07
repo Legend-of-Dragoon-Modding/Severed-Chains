@@ -433,6 +433,13 @@ public final class Sequencer extends AudioSource {
       return;
     }
 
+    // TODO this need more of a systemic fix
+    if(this.backgroundMusic == null) {
+      this.volumeChanging = false;
+      this.volumeChangingTimeRemaining = 0;
+      return;
+    }
+
     if(this.volumeChangingTimeRemaining <= 0) {
       this.volumeChanging = false;
       this.backgroundMusic.setVolume(this.newVolume);

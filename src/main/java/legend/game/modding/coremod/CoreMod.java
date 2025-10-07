@@ -1,6 +1,7 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.core.font.RetailFontConfigEntry;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
@@ -51,6 +52,7 @@ import legend.game.modding.coremod.config.RunByDefaultConfig;
 import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
 import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
+import legend.game.modding.coremod.config.ShowAdvancedOptionsConfigEntry;
 import legend.game.modding.coremod.config.ShowTurnOrderConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
@@ -96,6 +98,7 @@ public class CoreMod {
   public static final RegistryDelegate<ResolutionConfig> RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("resolution", ResolutionConfig::new);
   public static final RegistryDelegate<MonitorConfigEntry> MONITOR_CONFIG = CONFIG_REGISTRAR.register("monitor", MonitorConfigEntry::new);
   public static final RegistryDelegate<ReduceMotionFlashingConfigEntry> REDUCE_MOTION_FLASHING_CONFIG = CONFIG_REGISTRAR.register("reduce_motion_flashing", ReduceMotionFlashingConfigEntry::new);
+  public static final RegistryDelegate<RetailFontConfigEntry> RETAIL_FONT_CONFIG = CONFIG_REGISTRAR.register("retail_font", RetailFontConfigEntry::new);
 
   public static final RegistryDelegate<AudioDeviceConfig> AUDIO_DEVICE_CONFIG = CONFIG_REGISTRAR.register("audio_device", AudioDeviceConfig::new);
   public static final RegistryDelegate<MasterVolumeConfigEntry> MASTER_VOLUME_CONFIG = CONFIG_REGISTRAR.register("master_volume", MasterVolumeConfigEntry::new);
@@ -106,6 +109,7 @@ public class CoreMod {
   public static final RegistryDelegate<MusicPitchResolutionConfigEntry> MUSIC_PITCH_RESOLUTION_CONFIG = CONFIG_REGISTRAR.register("music_pitch_resolution", MusicPitchResolutionConfigEntry::new);
   public static final RegistryDelegate<MusicEffectsOverTimeGranularityConfigEntry> MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG = CONFIG_REGISTRAR.register("music_effects_over_time_granularity", MusicEffectsOverTimeGranularityConfigEntry::new);
   public static final RegistryDelegate<CreateCrashSaveConfigEntry> CREATE_CRASH_SAVE_CONFIG = CONFIG_REGISTRAR.register("create_crash_save", CreateCrashSaveConfigEntry::new);
+  public static final RegistryDelegate<ShowAdvancedOptionsConfigEntry> SHOW_ADVANCED_OPTIONS_CONFIG = CONFIG_REGISTRAR.register("show_advanced_options", ShowAdvancedOptionsConfigEntry::new);
 
   // Per-campaign config
   public static final RegistryDelegate<ControllerKeybindsConfigEntry> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
@@ -150,9 +154,13 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BACK = INPUT_ACTION_REGISTRAR.register("menu_back", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DELETE = INPUT_ACTION_REGISTRAR.register("menu_delete", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_ADVANCED = INPUT_ACTION_REGISTRAR.register("menu_advanced", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_TEXTBOX_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_textbox_confirm", InputAction::fixed);
+
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_UPDATE = INPUT_ACTION_REGISTRAR.register("title_update", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_CONVERT_MEMCARD = INPUT_ACTION_REGISTRAR.register("title_convert_memcard", InputAction::fixed);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FMV_SKIP = INPUT_ACTION_REGISTRAR.register("fmv_skip", InputAction::fixed);
 
@@ -242,12 +250,19 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_DELETE.get(), new ScancodeInputActivation(InputKey.Q))
       .add(INPUT_ACTION_MENU_SORT.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_MENU_SORT.get(), new KeyInputActivation(InputKey.X))
+      .add(INPUT_ACTION_MENU_ADVANCED.get(), new ButtonInputActivation(InputButton.SELECT))
+      .add(INPUT_ACTION_MENU_ADVANCED.get(), new KeyInputActivation(InputKey.V))
       .add(INPUT_ACTION_MENU_HELP.get(), new ButtonInputActivation(InputButton.START))
       .add(INPUT_ACTION_MENU_HELP.get(), new KeyInputActivation(InputKey.H))
       .add(INPUT_ACTION_MENU_MODS.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
+
+      .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
+      .add(INPUT_ACTION_TITLE_UPDATE.get(), new KeyInputActivation(InputKey.U))
+      .add(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get(), new KeyInputActivation(InputKey.C))
 
       .add(INPUT_ACTION_FMV_SKIP.get(), new KeyInputActivation(InputKey.RETURN))
       .add(INPUT_ACTION_FMV_SKIP.get(), new ButtonInputActivation(InputButton.Y))

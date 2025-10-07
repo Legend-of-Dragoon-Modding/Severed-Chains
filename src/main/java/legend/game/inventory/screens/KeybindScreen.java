@@ -5,6 +5,7 @@ import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActivation;
 import legend.core.platform.input.InputBindings;
+import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.i18n.I18n;
 import legend.game.types.MessageBoxResult;
@@ -14,8 +15,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class KeybindScreen extends InputBoxScreen {
@@ -64,7 +63,7 @@ public class KeybindScreen extends InputBoxScreen {
     // Handle keyboard input
     this.text.onKeyPress((key, scancode, mods, repeat) -> {
       if(!repeat) {
-        final InputActivation activation = new ScancodeInputActivation(scancode);
+        final InputActivation activation = scancode != null ? new ScancodeInputActivation(scancode) : new KeyInputActivation(key);
         this.removeSimilarActivations(activation);
         this.activations.add(activation);
         this.updateText();
@@ -122,7 +121,7 @@ public class KeybindScreen extends InputBoxScreen {
 
         final int oldZ = textZ_800bdf00;
         textZ_800bdf00 = this.text.getZ() - 2;
-        renderText(str, this.text.calculateTotalX() + this.text.getWidth() - textWidth(str) - 4, this.text.calculateTotalY() + (this.text.getHeight() - textHeight(str)) / 2.0f, this.fontOptions);
+        renderText(this.text.getFont(), str, this.text.calculateTotalX() + this.text.getWidth() - this.text.getFont().textWidth(str) - 4, this.text.calculateTotalY() + (this.text.getHeight() - this.text.getFont().textHeight(str)) / 2.0f, this.fontOptions);
         textZ_800bdf00 = oldZ;
       } else {
         this.text.unfocus();

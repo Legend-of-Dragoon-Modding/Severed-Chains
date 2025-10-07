@@ -1167,7 +1167,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
+  public static void renderButtonPressHudElement1(final int type, final float x, final float y, final Translucency translucency, final int brightness) {
     battleUiParts.queueButton(type, x, y, translucency, brightness, 1.0f, 1.0f);
   }
 

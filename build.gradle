@@ -18,7 +18,7 @@ group = 'legend'
 version = project.ext.hash
 
 java {
-  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_25
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -54,17 +54,17 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 repositories {
   mavenCentral()
   mavenLocal()
-  maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
-  maven { url "https://jitpack.io" }
+  maven { url = "https://central.sonatype.com/repository/maven-snapshots/" }
+  maven { url = "https://jitpack.io" }
 }
 
 dependencies {
-  api group: 'org.legendofdragoon', name: 'mod-loader', version: '4.2.1'
-  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.5.6'
+  api 'org.legendofdragoon:mod-loader:4.2.1'
+  api 'org.legendofdragoon:script-recompiler:0.5.6'
 
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.3'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.3'
-  implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.4.1'
+  implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+  implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+  implementation 'org.fusesource.jansi:jansi:2.4.1'
 
   api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
@@ -84,22 +84,22 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
-  implementation group: 'org.asynchttpclient', name: 'async-http-client', version: '3.0.1' // update check
-  implementation group: 'org.json', name: 'json', version: '20250107'
+  implementation 'org.asynchttpclient:async-http-client:3.0.1' // update check
+  implementation 'org.json:json:20250107'
 
-  implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
-  implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.15'
-  implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'
+  implementation 'com.opencsv:opencsv:5.9'
+  implementation 'io.github.java-diff-utils:java-diff-utils:4.15'
+  implementation 'commons-io:commons-io:2.18.0'
 
-  api group: 'com.github.slugify', name: 'slugify', version: '3.0.7'
+  api 'com.github.slugify:slugify:3.0.7'
 
-  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.15'
+  api 'it.unimi.dsi:fastutil:8.5.15'
 
-  implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.16.0'
+  implementation 'net.java.dev.jna:jna:5.16.0'
 
-  implementation group: 'com.github.JnCrMx', name: 'discord-game-sdk4j', version: 'v1.0.0'
+  implementation 'com.github.JnCrMx:discord-game-sdk4j:v1.0.0'
 }
 
 javafx {

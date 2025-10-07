@@ -122,6 +122,7 @@ import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
@@ -8817,5 +8818,10 @@ public class Battle extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     super.updateDiscordRichPresence(activity);
     activity.setState("In Combat");
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.camera_800c67f0.rview2_00;
   }
 }
