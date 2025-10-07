@@ -2,18 +2,18 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.RadioButton?>
 
-<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.DebuggerController">
+<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.DebuggerController">
    <MenuBar VBox.vgrow="NEVER">
       <Menu mnemonicParsing="false" text="Debuggers">
          <MenuItem fx:id="menuDebuggersScript" mnemonicParsing="false" onAction="#showScriptDebugger" text="Script" />
@@ -73,9 +73,17 @@
                   <Button fx:id="setGameSpeedMultiplier" mnemonicParsing="false" onAction="#setGameSpeedMultiplier" text="Set" />
                </children>
             </HBox>
-            <CheckBox fx:id="saveAnywhere" mnemonicParsing="false" onAction="#toggleSaveAnywhere" text="Save Anywhere" />
-            <CheckBox fx:id="fastTextSpeed" mnemonicParsing="false" onAction="#toggleFastText" text="Fast Text Speed" />
-            <CheckBox fx:id="autoAdvanceText" mnemonicParsing="false" onAction="#toggleAutoAdvanceText" text="Auto Advance Text" />
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Options" textFill="RED" />
+                  <CheckBox fx:id="saveAnywhere" mnemonicParsing="false" onAction="#toggleSaveAnywhere" text="Save Anywhere" />
+                  <CheckBox fx:id="fastTextSpeed" mnemonicParsing="false" onAction="#toggleFastText" text="Fast Text Speed" />
+                  <CheckBox fx:id="autoAdvanceText" mnemonicParsing="false" onAction="#toggleAutoAdvanceText" text="Auto Advance Text" />
+                  <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions  " />
+                  <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter" />
+                  <CheckBox fx:id="disableStatusEffects" mnemonicParsing="false" onAction="#toggleDisableStatusEffects" text="Disable Status Effects" />
+               </children>
+            </VBox>
          </VBox>
          <VBox prefHeight="400.0" prefWidth="300.0">
             <children>
@@ -110,9 +118,31 @@
                      <Button mnemonicParsing="false" onAction="#setCounterOverlayRgb" text="Set" />
                   </children>
                </HBox>
-               <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions  " />
-               <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter" />
-               <CheckBox fx:id="disableStatusEffects" mnemonicParsing="false" onAction="#toggleDisableStatusEffects" text="Disable Status Effects" />
+               <VBox prefHeight="200.0" prefWidth="100.0">
+                  <children>
+                     <Label text="Camera" textFill="RED" />
+                     <Label text="Viewpoint" />
+                     <HBox>
+                        <children>
+                           <Spinner fx:id="viewpointX" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                           <Spinner fx:id="viewpointY" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                           <Spinner fx:id="viewpointZ" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                           <Button mnemonicParsing="false" onAction="#getViewpoint" text="Get" />
+                           <Button mnemonicParsing="false" onAction="#setViewpoint" text="Set" />
+                        </children>
+                     </HBox>
+                     <Label text="Refpoint" />
+                     <HBox>
+                        <children>
+                           <Spinner fx:id="refpointX" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                           <Spinner fx:id="refpointY" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                           <Spinner fx:id="refpointZ" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                           <Button mnemonicParsing="false" onAction="#getRefpoint" text="Get" />
+                           <Button mnemonicParsing="false" onAction="#setRefpoint" text="Set" />
+                        </children>
+                     </HBox>
+                  </children>
+               </VBox>
             </children>
          </VBox>
          <VBox prefHeight="374.0" prefWidth="300.0">
@@ -121,9 +151,9 @@
             </padding>
             <Label text="Text Box" textFill="RED" />
             <CheckBox fx:id="textBoxColour" mnemonicParsing="false" onAction="#toggleTextBoxColour" text="Text Box Colour" />
-            <RadioButton fx:id="textBoxBase" onAction="#setTextBoxRadio" mnemonicParsing="false" text="Base (1 Box)" />
-            <RadioButton fx:id="textBoxHorizontal" onAction="#setTextBoxRadio" mnemonicParsing="false" text="Horizontal (Box 1 - Left / Box 2 - Right)" />
-            <RadioButton fx:id="textBoxVertical" onAction="#setTextBoxRadio" mnemonicParsing="false" text="Vertical (Box 1 - Top / Box 2 - Bottom)" />
+            <RadioButton fx:id="textBoxBase" mnemonicParsing="false" onAction="#setTextBoxRadio" text="Base (1 Box)" />
+            <RadioButton fx:id="textBoxHorizontal" mnemonicParsing="false" onAction="#setTextBoxRadio" text="Horizontal (Box 1 - Left / Box 2 - Right)" />
+            <RadioButton fx:id="textBoxVertical" mnemonicParsing="false" onAction="#setTextBoxRadio" text="Vertical (Box 1 - Top / Box 2 - Bottom)" />
             <Label text="Box 1-1 (Top Left)" />
             <HBox>
                <children>

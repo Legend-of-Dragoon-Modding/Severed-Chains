@@ -14,6 +14,11 @@ public class MusicEffectsOverTimeGranularityConfigEntry extends EnumConfigEntry<
   }
 
   @Override
+  public boolean isAdvanced() {
+    return true;
+  }
+
+  @Override
   public void onChange(final ConfigCollection configCollection, final EffectsOverTimeGranularity oldValue, final EffectsOverTimeGranularity newValue) {
     AUDIO_THREAD.changeEffectsOverTimeGranularity(newValue);
   }

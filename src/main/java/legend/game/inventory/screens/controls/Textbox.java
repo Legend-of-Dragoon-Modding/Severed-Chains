@@ -1,6 +1,8 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.GameEngine;
 import legend.core.QueuedModelStandard;
+import legend.core.font.Font;
 import legend.core.gte.MV;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputKey;
@@ -13,10 +15,7 @@ import legend.game.inventory.screens.TextColour;
 import java.util.Set;
 
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.charWidth;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TEXTBOX_CONFIRM;
@@ -32,10 +31,20 @@ public class Textbox extends Control {
   private int caretIndex;
   private int caretX;
 
+  private Font font = GameEngine.DEFAULT_FONT;
+
   public Textbox() {
     this.background = this.addControl(Panel.subtle());
     this.background.ignoreInput();
     this.setText("");
+  }
+
+  public void setFont(final Font font) {
+    this.font = font;
+  }
+
+  public Font getFont() {
+    return this.font;
   }
 
   @Override
@@ -92,7 +101,7 @@ public class Textbox extends Control {
   }
 
   private int calculateCaretX(final int index) {
-    return (int)(textWidth(this.getText().substring(0, index)) * this.getScale());
+    return (int)(this.font.textWidth(this.getText().substring(0, index)) * this.getScale());
   }
 
   private void updateText(final String text) {
@@ -101,7 +110,7 @@ public class Textbox extends Control {
   }
 
   private void updateTextSize() {
-    this.textHeight = textHeight(this.text) * this.getScale();
+    this.textHeight = this.font.textHeight(this.text) * this.getScale();
     this.setCaretIndex(this.caretIndex);
   }
 
@@ -131,7 +140,7 @@ public class Textbox extends Control {
     }
 
     for(int i = this.text.length(); i >= 0; i--) {
-      final int nudge = i < this.text.length() ? charWidth(this.text.charAt(i)) / 2 : 0;
+      final int nudge = i < this.text.length() ? this.font.charWidth(this.text.charAt(i)) / 2 : 0;
 
       if(this.calculateCaretX(i) - nudge + 4 < x) {
         this.setCaretIndex(i);

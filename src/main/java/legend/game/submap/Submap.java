@@ -4,6 +4,7 @@ import legend.core.QueuedModel;
 import legend.core.gte.MV;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
+import legend.game.types.GsRVIEW2;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -48,4 +49,6 @@ public abstract class Submap {
   void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) { }
 
   public abstract SubmapSavable canSave();
+
+  public abstract GsRVIEW2 getCamera();
 }

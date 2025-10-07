@@ -10,7 +10,9 @@ lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
 # UI text
-lod_core.ui.hotkey=%s: %s
+lod_core.ui.title.hotkey=(%s)
+
+lod_core.ui.hotkey=%s (%s)
 
 lod_core.ui.campaign_selection.title=Campaigns
 lod_core.ui.campaign_selection.mods=Mods
@@ -33,9 +35,11 @@ lod_core.ui.mods.wrong_version=Wrong version: %s
 lod_core.ui.mods.help=Help
 lod_core.ui.mods.back=Back
 
+lod_core.ui.options.advanced=Advanced
 lod_core.ui.options.help=Help
 lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
+lod_core.ui.options.show_advanced=Show Advanced
 
 lod_core.ui.options_category.back=Back
 
@@ -54,6 +58,10 @@ lod_core.ui.links.issue=Report an Issue
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
+
+lod_core.ui.item_list.sort=Sort
+lod_core.ui.item_list.discard=Discard
+lod_core.ui.item_list.back=Back
 
 # Global config
 lod_core.config.controller_keybinds.label=Controls
@@ -119,6 +127,7 @@ lod_core.config.ignore_steam_input_mode.help=Fixes duplicate keyboard input when
 lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (recommended)
 lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
 lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
+lod_core.config.retail_font.label=Font
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press %s to skip
@@ -196,10 +205,14 @@ lod_core.input_actions.menu_page_down.name=Menu: page down
 lod_core.input_actions.menu_confirm.name=Menu: confirm
 lod_core.input_actions.menu_back.name=Menu: back
 lod_core.input_actions.menu_delete.name=Menu: delete
+lod_core.input_actions.menu_advanced.name=Menu: advanced
 lod_core.input_actions.menu_sort.name=Menu: sort
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
 lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
+
+lod_core.input_actions.title_update.name=Title: download update
+lod_core.input_actions.title_convert_memcard.name=Title: convert memcard
 
 lod_core.input_actions.fmv_skip.name=FMV: skip
 

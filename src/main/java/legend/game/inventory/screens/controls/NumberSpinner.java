@@ -1,5 +1,6 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.font.Font;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -14,7 +15,6 @@ import java.util.function.Function;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -84,6 +84,14 @@ public class NumberSpinner<T extends Number> extends Control {
     this.setStep(step, bigStep);
   }
 
+  public void setFont(final Font font) {
+    this.label.setFont(font);
+  }
+
+  public Font getFont() {
+    return this.label.getFont();
+  }
+
   public void setNumber(final T number) {
     final T oldValue = this.number;
     this.number = this.clamp.apply(number);
@@ -91,7 +99,7 @@ public class NumberSpinner<T extends Number> extends Control {
       playMenuSound(1);
     }
     this.label.setText(this.toString.apply(this.number));
-    this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
 
     if(this.changeHandler != null) {
@@ -124,7 +132,7 @@ public class NumberSpinner<T extends Number> extends Control {
     this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
     this.downArrow.setScale(scale);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
-    this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
   }
 

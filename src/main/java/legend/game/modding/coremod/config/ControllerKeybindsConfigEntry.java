@@ -13,6 +13,8 @@ import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 
 public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDelegate<InputAction>, List<InputActivation>>> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ControllerKeybindsConfigEntry.class);
+
   public ControllerKeybindsConfigEntry() {
     super(Map.of(), ConfigStorageLocation.CAMPAIGN, ConfigCategory.CONTROLS, ControllerKeybindsConfigEntry::serializer, ControllerKeybindsConfigEntry::deserializer);
 
@@ -72,12 +76,20 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDeleg
 
       for(int actionIndex = 0; actionIndex < actionsSize; actionIndex++) {
         final RegistryDelegate<InputAction> action = REGISTRIES.inputActions.getEntry(in.readRegistryId(offset));
+
         final int activationsSize = in.readUByte(offset);
 
-        out.put(action, new ArrayList<>());
+        final List<InputActivation> activations = new ArrayList<>();
+
+        if(action.isValid()) {
+          out.put(action, activations);
+        } else {
+          LOGGER.warn("Skipping unknown keybind %s", action.getId());
+          // We still need to read the activations so the save loads right
+        }
 
         for(int activationIndex = 0; activationIndex < activationsSize; activationIndex++) {
-          out.get(action).add(InputActivation.deserialize(in, offset));
+          activations.add(InputActivation.deserialize(in, offset));
         }
       }
 

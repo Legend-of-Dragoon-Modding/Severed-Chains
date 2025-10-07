@@ -5,6 +5,7 @@ import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.types.CharacterData2c;
+import legend.game.types.GsRVIEW2;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -76,5 +77,10 @@ public class NewGame extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     activity.setDetails("Starting a New Game");
     activity.setState(null);
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return null;
   }
 }

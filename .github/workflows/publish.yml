@@ -32,10 +32,10 @@ jobs:
     - name: Replace build time
       run: sed -i "s/TIMESTAMP = null/TIMESTAMP = ZonedDateTime.parse(\"$(date --date="+5 minutes" -Iseconds -u)\")/g" ./src/main/java/legend/core/Version.java
 
-    - name: Set up JDK 21
+    - name: Set up JDK 25
       uses: actions/setup-java@v3
       with:
-        java-version: '21'
+        java-version: '25'
         distribution: 'temurin'
         cache: gradle
 
@@ -65,6 +65,9 @@ jobs:
 
     - name: Write ISOs help file
       run: mkdir ./build/libs/isos && echo "Place your ISOs or BINs in this folder" > ./build/libs/isos/help.txt
+
+    - name: Write mods help file
+      run: mkdir ./build/libs/mods && echo "Place your mods in this folder" > ./build/libs/mods/help.txt
 
     - name: Don't know why this is necessary but these files are getting included in the Windows zip
       run: 'rm build/libs/launch build/libs/download-java'
@@ -159,6 +162,6 @@ jobs:
         draft: 'false'
         generateReleaseNotes: 'true'
         name: 'Latest Development Build'
-        prerelease: 'true'
+        prerelease: 'false'
         tag: 'devbuild'
         token: ${{ secrets.GITHUB_TOKEN }}
