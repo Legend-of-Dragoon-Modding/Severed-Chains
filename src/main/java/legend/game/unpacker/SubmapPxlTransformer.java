@@ -80,12 +80,16 @@ public final class SubmapPxlTransformer {
 
       if(modelFileIndex.equals(Integer.toString(sobjIndex * 33))) {
         final int textureSlot;
+        final boolean highRes;
         if(sobjIndex == highResTextureIndices[0]) {
           textureSlot = 17;
+          highRes = true;
         } else if(sobjIndex == highResTextureIndices[1]) {
           textureSlot = 18;
+          highRes = true;
         } else {
           textureSlot = sobjIndex;
+          highRes = false;
         }
 
         final Rect4i textureRect = textureSlotRects[textureSlot];
@@ -93,7 +97,7 @@ public final class SubmapPxlTransformer {
         boolean found = false;
         for(final Tim pxl : pxls) {
           if(pxl.getImageRect().contains(textureRect.x, textureRect.y)) {
-            final FileData tim = convertPxlSegment(pxl, textureRect);
+            final FileData tim = convertPxlSegment(pxl, textureRect, highRes);
 
             // Patch Lenus 2 busted face texture (GH#1845)
             if("SECT/DRGN22.BIN/980".equals(submapCutAssets.fullPath) && sobjIndex == 5) {
@@ -121,21 +125,24 @@ public final class SubmapPxlTransformer {
     transformations.addChild(textures, "mrg", textureMap.build());
   }
 
-  public static FileData convertPxlSegment(final Tim pxl, final Rect4i tileRect) {
+  public static FileData convertPxlSegment(final Tim pxl, final Rect4i tileRect, final boolean highRes) {
     final Rect4i imageRect = pxl.getImageRect();
     final byte[] imageData = pxl.getImageData().getBytes();
 
     final int tileX = tileRect.x - imageRect.x;
     final int tileY = tileRect.y - imageRect.y;
 
+    final int clutW = highRes ? 32 : 16;
+    final int clutSize = clutW * 16 * 2;
+
     final FileData newData = new FileData(new byte[
       4 + // 0 ID
       4 + // 4 Flags
       4 + // 8 Image data offset
       8 + // c CLUT rect
-      16 * 16 * 2 + // 14 CLUT data
-      4 + // 214 Image segment size
-      8 + // 218 Image rect
+      clutSize + // 14 CLUT data
+      4 + // clutSize + 14 Image segment size
+      8 + // clutSize + 18 Image rect
       tileRect.w * tileRect.h * 2 // 220 Image data
     ]);
 
@@ -143,16 +150,16 @@ public final class SubmapPxlTransformer {
 
     newData.writeInt(0x0, 0x10);
     newData.writeInt(0x4, 0x8); // 4 BPP, CLUT
-    newData.writeInt(0x8, 0xc + 16 * 16 * 2); // Image data offset
+    newData.writeInt(0x8, 0xc + clutSize); // Image data offset
     newData.writeShort(0xc, 0); // CLUT rect X
     newData.writeShort(0xe, tileRect.h - 16); // CLUT rect Y
-    newData.writeShort(0x10, 16); // CLUT rect W
+    newData.writeShort(0x10, clutW); // CLUT rect W (high-res aren't actually 32 wide, there are two columns of CLUTs)
     newData.writeShort(0x12, 16); // CLUT rect H
-    newData.writeInt(0x214, tileRect.w * tileRect.h * 2); // Image segment size
-    newData.writeShort(0x218, 0); // Image rect X
-    newData.writeShort(0x21a, 0); // Image rect Y
-    newData.writeShort(0x21c, tileRect.w); // Image rect W
-    newData.writeShort(0x21e, tileRect.h - 16); // Image rect H
+    newData.writeInt(clutSize + 0x14, tileRect.w * tileRect.h * 2); // Image segment size
+    newData.writeShort(clutSize + 0x18, 0); // Image rect X
+    newData.writeShort(clutSize + 0x1a, 0); // Image rect Y
+    newData.writeShort(clutSize + 0x1c, tileRect.w); // Image rect W
+    newData.writeShort(clutSize + 0x1e, tileRect.h - 16); // Image rect H
 
     final Rect4i newImageRect = newTim.getImageRect();
     final Rect4i newClutRect = newTim.getClutRect();
