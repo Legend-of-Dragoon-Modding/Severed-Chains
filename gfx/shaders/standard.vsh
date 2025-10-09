@@ -33,9 +33,9 @@ struct ModelTransforms {
 };
 
 struct Light {
-    mat4 lightDirection;
-    mat3 lightColour;
-    vec4 backgroundColour;
+  mat4 lightDirection;
+  mat3 lightColour;
+  vec4 backgroundColour;
 };
 
 layout(std140) uniform transforms {
@@ -50,7 +50,7 @@ layout(std140) uniform transforms2 {
 
 /** 32-float (128-byte) stride */
 layout(std140) uniform lighting {
-    Light[128] lights;
+  Light[128] lights;
 };
 
 layout(std140) uniform projectionInfo {
