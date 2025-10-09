@@ -64,7 +64,7 @@ public class RenderBatch {
 
   private QueuePool<QueuedModel<?, ?>> makePool(final FloatBuffer lightingBuffer) {
     final QueuePool<QueuedModel<?, ?>> pool = new QueuePool<>();
-    pool.addType(QueuedModelStandard.class, () -> new QueuedModelStandard(this, this.engine.standardShader, this.engine.standardShaderOptions));
+    pool.addType(QueuedModelStandard.class, () -> new QueuedModelStandard(this, this.engine.standardShader, this.engine.standardShaderOptions, lightingBuffer));
     pool.addType(QueuedModelTmd.class, () -> new QueuedModelTmd(this, this.engine.tmdShader, this.engine.tmdShaderOptions, lightingBuffer));
     pool.addType(QueuedModelBattleTmd.class, () -> new QueuedModelBattleTmd(this, this.engine.battleTmdShader, this.engine.battleTmdShaderOptions, lightingBuffer));
     return pool;
