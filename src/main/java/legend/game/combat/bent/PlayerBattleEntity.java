@@ -128,7 +128,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2af4L)
   public int calculatePhysicalDamage(final BattleEntity27c target) {
-    int attack = this.attack_34;
+    int attack = this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
     int attackMultiplier = 100;
 
     if(this.selectedAddition_58 == -1) { // No addition (Shana/???)
@@ -171,7 +171,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2e98L)
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
-    int matk = this.magicAttack_36;
+    int matk = this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
     }
