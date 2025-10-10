@@ -59,6 +59,10 @@ layout(std140) uniform lighting {
   Light[128] lights;
 };
 
+layout(std140) uniform clutAnimation {
+  vec4[1024] clutAnimations;
+};
+
 layout(std140) uniform projectionInfo {
   float znear;
   /** PS1 projection plane distance (H) */
@@ -110,6 +114,19 @@ void main() {
       vs_out.vertClut = vec2((intClut & 0x3f) * 16, intClut >> 6);
     } else {
       vs_out.vertClut = clutOverride;
+    }
+
+    for(int clutAnimationIndex = 0; clutAnimationIndex < 1024; clutAnimationIndex++) {
+      vec4 anim = clutAnimations[clutAnimationIndex];
+
+      if(anim.x == -1) {
+        break;
+      }
+
+      if(anim.xy == vs_out.vertClut.xy) {
+        vs_out.vertClut.xy = anim.zw;
+        break;
+      }
     }
 
     if(vs_out.vertBpp == 0 || vs_out.vertBpp == 1) {

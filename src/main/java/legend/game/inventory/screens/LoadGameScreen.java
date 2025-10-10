@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.core.GameEngine.EVENTS;
@@ -24,6 +25,7 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
 
@@ -34,14 +36,14 @@ public class LoadGameScreen extends MenuScreen {
   private final BigList<SavedGame> saveList;
   private final Consumer<SavedGame> saveSelected;
   private final Runnable closed;
+  private boolean closing;
 
-  public LoadGameScreen(final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
+  public LoadGameScreen(final List<SavedGame> saves, final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
     this.saveSelected = saveSelected;
     this.closed = closed;
     this.campaign = campaign;
 
     deallocateRenderables(0xff);
-    startFadeEffect(2, 10);
 
     this.addControl(new Background());
 
@@ -59,7 +61,7 @@ public class LoadGameScreen extends MenuScreen {
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);
 
-    for(final SavedGame save : campaign.loadAllSaves()) {
+    for(final SavedGame save : saves) {
       this.saveList.addEntry(save);
     }
 
@@ -68,6 +70,10 @@ public class LoadGameScreen extends MenuScreen {
   }
 
   private void onSelection(final SavedGame save) {
+    if(this.closing) {
+      return;
+    }
+
     if(save.isValid()) {
       playMenuSound(2);
       menuStack.pushScreen(new MessageBoxScreen("Load this save?", 2, result -> this.onMessageboxResult(result, save)));
@@ -92,9 +98,17 @@ public class LoadGameScreen extends MenuScreen {
   @Override
   protected void render() {
     renderText("Load Game", 188, 10, UI_TEXT_CENTERED);
+
+    if(this.closing && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
+      this.closed.run();
+    }
   }
 
   private void menuDelete() {
+    if(this.closing) {
+      return;
+    }
+
     playMenuSound(40);
 
     if(this.saveList.size() == 1) {
@@ -119,7 +133,12 @@ public class LoadGameScreen extends MenuScreen {
   }
 
   private void menuEscape() {
+    if(this.closing) {
+      return;
+    }
+
+    startFadeEffect(1, 5);
     playMenuSound(3);
-    this.closed.run();
+    this.closing = true;
   }
 }

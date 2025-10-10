@@ -114,7 +114,6 @@ public class Gpu {
     synchronized(this.vramLock) {
       if(this.vramDirty) {
         this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
-        this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
         this.vramDirty = false;
       }
     }
@@ -129,7 +128,6 @@ public class Gpu {
   }
 
   public void useVramTexture() {
-    this.vramTexture24.use(0);
     this.vramTexture15.use(1);
   }
 
@@ -448,6 +446,7 @@ public class Gpu {
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
     this.vramShaderOptions.apply();
     this.vramTexture24.use();
+    this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
     this.displayMesh.draw();
   }
 

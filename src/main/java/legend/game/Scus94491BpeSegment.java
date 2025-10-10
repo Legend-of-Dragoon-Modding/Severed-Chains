@@ -5,6 +5,7 @@ import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
+import legend.core.RenderEngine;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -587,7 +588,11 @@ public final class Scus94491BpeSegment {
   @Method(0x80013148L)
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
-    GsSortClear(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
+
+    if(RenderEngine.legacyMode == 1) {
+      GsSortClear(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
+    }
+
     RENDERER.setClearColour(clearRed_8007a3a8 / 255.0f, clearGreen_800bb104 / 255.0f, clearBlue_800babc0 / 255.0f);
   }
 
