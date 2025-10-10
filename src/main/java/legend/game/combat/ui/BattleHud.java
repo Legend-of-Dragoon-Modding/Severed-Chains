@@ -23,6 +23,7 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
 import legend.game.modding.coremod.CoreMod;
@@ -1753,7 +1754,7 @@ public class BattleHud {
           } else {
             selectedIconFlag = selectedIconFlag & 0xf;
             if(selectedIconFlag == 5) {
-              if(gameState_800babc8.items_2e9.isEmpty()) {
+              if(gameState_800babc8.items_2e9.isEmpty(Item.UsageLocation.BATTLE)) {
                 playSound(0, 3, (short)0, (short)0);
               } else {
                 playSound(0, 2, (short)0, (short)0);
