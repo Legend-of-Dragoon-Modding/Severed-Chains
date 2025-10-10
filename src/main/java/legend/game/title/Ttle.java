@@ -1499,4 +1499,9 @@ public class Ttle extends EngineState {
     activity.setDetails("Title Screen");
     activity.setState(null);
   }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.GsRVIEW2_800c6760;
+  }
 }

@@ -112,7 +112,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     }
 
     this.transforms.scaling(fullWidth, 1.0f, 1.0f);
-    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 119.0f);
 
     final Obj obj = builder.build();
     obj.delete();
@@ -152,7 +152,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
 
     final float extraWidth = fullWidth - displayWidth_1f8003e0;
     this.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 119.0f);
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.transforms, QueuedModelStandard.class)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3))

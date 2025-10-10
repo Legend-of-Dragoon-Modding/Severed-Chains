@@ -4,12 +4,12 @@ import it.unimi.dsi.fastutil.shorts.ShortArrayList;
 import it.unimi.dsi.fastutil.shorts.ShortList;
 import legend.game.unpacker.FileData;
 
-public class TmdSubExtension {
-  public final short s_02;
-  public final short[] sa_04;
+public class ClutAnimation {
+  public final short clutIndex_02;
+  public final short[] dataStream_04;
 
-  public TmdSubExtension(final FileData data) {
-    this.s_02 = data.readShort(0x2);
+  public ClutAnimation(final FileData data) {
+    this.clutIndex_02 = data.readShort(0x2);
 
     final ShortList shorts = new ShortArrayList();
     for(int i = 0; ; i++) {
@@ -21,6 +21,6 @@ public class TmdSubExtension {
       }
     }
 
-    this.sa_04 = shorts.toShortArray();
+    this.dataStream_04 = shorts.toShortArray();
   }
 }

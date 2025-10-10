@@ -50,8 +50,8 @@ public class Model124 {
   public boolean disableInterpolation_a2;
   /** ubyte */
   public int ub_a3;
-  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#ext_04} */
-  public SmallerStruct smallerStructPtr_a4;
+  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#clutAnimations_04} */
+  public ClutAnimations clutAnimations_a4;
   /** Pointer to the subfile pointed to by {@link CContainer#ptr_08} */
   public CContainerSubfile2 ptr_a8;
   /** ushort */
@@ -149,7 +149,7 @@ public class Model124 {
     this.zOffset_a0 = other.zOffset_a0;
     this.disableInterpolation_a2 = other.disableInterpolation_a2;
     this.ub_a3 = other.ub_a3;
-    this.smallerStructPtr_a4 = other.smallerStructPtr_a4;
+    this.clutAnimations_a4 = other.clutAnimations_a4;
     this.ptr_a8 = other.ptr_a8;
     System.arraycopy(other.usArr_ac, 0, this.usArr_ac, 0, 7);
     System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
