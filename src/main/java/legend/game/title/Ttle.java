@@ -555,7 +555,7 @@ public class Ttle extends EngineState {
     //LAB_800c7fcc
     this.fadeOutTimer_800c6754++;
 
-    if(this.fadeOutTimer_800c6754 >= 16 && this.menuLoadAction.isDone() && this.menuTransitionState_800c6728 == 2) {
+    if(this.fadeOutTimer_800c6754 >= 16 && (this.menuLoadAction == null || this.menuLoadAction.isDone()) && this.menuTransitionState_800c6728 == 2) {
       initMenu(WhichMenu.RENDER_NEW_MENU, () -> destScreen.apply(this.menuLoadAction != null ? (T)this.menuLoadAction.resultNow() : null));
       removeInputHandlers();
       this.deallocate();
