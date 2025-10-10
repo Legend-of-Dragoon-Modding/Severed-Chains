@@ -29,6 +29,7 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.AddGoldEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
 import legend.game.modding.events.inventory.GiveItemEvent;
 import legend.game.modding.events.inventory.TakeEquipmentEvent;
@@ -869,7 +870,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final MagicStuff08 spellStuff = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[dlevel];
       final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
@@ -900,8 +901,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022a50
     //LAB_80022a64
     int unlockedSpells = 0;
-    for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
+    for(int i = 0; i < CoreMod.MAX_DRAGOON_LEVEL + 1; i++) {
+      if(CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i].spellIndex_02 != -1) {
         unlockedSpells++;
       }
 
@@ -1149,7 +1150,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002363cL)
   public static int addGold(final int amount) {
-    gameState_800babc8.gold_94 += amount;
+    final AddGoldEvent event = EVENTS.postEvent(new AddGoldEvent(amount));
+    gameState_800babc8.gold_94 += event.gold;
 
     if(gameState_800babc8.gold_94 > 99999999) {
       gameState_800babc8.gold_94 = 99999999;
@@ -1212,7 +1214,7 @@ public final class Scus94491BpeSegment_8002 {
   public static <T extends RegistryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
-    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().resolve().icon);
+    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().icon);
 
     if(retail) {
       comparator = comparator.thenComparingInt(item -> {
