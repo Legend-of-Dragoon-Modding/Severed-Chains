@@ -1,6 +1,7 @@
 package legend.game.tmd;
 
 import legend.core.IoHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.ModelPart10;
@@ -40,14 +41,13 @@ public final class Renderer {
     }
   }
 
-  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices, final Vector3f[] normals, final int attribute) {
-    final int specialFlags = (attribute & 0x4000_0000) != 0 ? 0x12 : 0x0;
-    renderTmdPrimitive(primitive, vertices, normals, false, specialFlags);
-  }
-
   private static final Vector3f ZERO = new Vector3f();
 
   public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices, final Vector3f[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
+    if(RenderEngine.legacyMode != 1) {
+      return;
+    }
+
     // Read type info from command ---
     final int command = (primitive.header() | specialFlags) & 0xff04_0000; // I can only find specialFlags getting set to the bits 0x32 so it probably does nothing here
     final int primitiveId = command >>> 24;

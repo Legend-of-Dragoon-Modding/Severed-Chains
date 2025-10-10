@@ -55,7 +55,7 @@ import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.SmallerStruct;
+import legend.game.types.ClutAnimations;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxBorderMetrics0c;
@@ -64,7 +64,7 @@ import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.TmdSubExtension;
+import legend.game.types.ClutAnimation;
 import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -403,16 +403,18 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020be8
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
-    if(model.subFrameIndex == 0 || model.subFrameIndex == framesPerKeyframe / 2) {
-      if(model.smallerStructPtr_a4 != null) {
-        //LAB_800da138
-        for(int i = 0; i < 4; i++) {
-          if(model.smallerStructPtr_a4.uba_04[i]) {
-            animateSubmapModelClut(model, i);
-          }
+    final boolean tickAnimations = model.subFrameIndex == 0 || model.subFrameIndex == framesPerKeyframe / 2;
+
+    if(model.clutAnimations_a4 != null) {
+      //LAB_800da138
+      for(int animIndex = 0; animIndex < 4; animIndex++) {
+        if(model.clutAnimations_a4.used_04[animIndex]) {
+          animateModelClut(model, animIndex, tickAnimations);
         }
       }
+    }
 
+    if(tickAnimations) {
       for(int i = 0; i < 7; i++) {
         if(model.animateTextures_ec[i]) {
           animateModelTextures(model, i);
@@ -452,43 +454,40 @@ public final class Scus94491BpeSegment_8002 {
 
   /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
   @Method(0x800dde70L)
-  private static void animateSubmapModelClut(final Model124 model, final int index) {
-    final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
+  private static void animateModelClut(final Model124 model, final int animIndex, final boolean tickAnimations) {
+    final ClutAnimations anims = model.clutAnimations_a4;
 
-    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
-      smallerStruct.uba_04[index] = false;
+    if(anims.clutAnimation_20[animIndex] == null) {
+      anims.used_04[animIndex] = false;
     } else {
       //LAB_800ddeac
       final int x = model.uvAdjustments_9d.clutX;
       final int y = model.uvAdjustments_9d.clutY;
 
-      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
-      int a1 = 0;
-
-      //LAB_800ddef8
-      for(int i = 0; i < smallerStruct.sa_08[index]; i++) {
-        a1 += 2;
-      }
+      final ClutAnimation anim = anims.clutAnimation_20[animIndex];
+      int dataOffset = anims.dataIndex_08[animIndex] * 2;
 
       //LAB_800ddf08
-      final int sourceYOffset = v.sa_04[a1];
-      a1++;
+      final int sourceYOffset = anim.dataStream_04[dataOffset];
+      dataOffset++;
 
-      smallerStruct.sa_10[index]++;
+      if(tickAnimations) {
+        anims.frameIndex_10[animIndex]++;
 
-      if(smallerStruct.sa_10[index] == v.sa_04[a1]) {
-        smallerStruct.sa_10[index] = 0;
+        if(anims.frameIndex_10[animIndex] == anim.dataStream_04[dataOffset]) {
+          anims.frameIndex_10[animIndex] = 0;
 
-        if(v.sa_04[a1 + 1] == -1) {
-          smallerStruct.sa_08[index] = 0;
-        } else {
-          //LAB_800ddf70
-          smallerStruct.sa_08[index]++;
+          if(anim.dataStream_04[dataOffset + 1] == -1) {
+            anims.dataIndex_08[animIndex] = 0;
+          } else {
+            //LAB_800ddf70
+            anims.dataIndex_08[animIndex]++;
+          }
         }
       }
 
       //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18[index], 16, 1));
+      RENDERER.addClutAnimation(x, y + anims.clutIndex_18[animIndex], x, y + sourceYOffset);
     }
     //LAB_800ddff4
   }

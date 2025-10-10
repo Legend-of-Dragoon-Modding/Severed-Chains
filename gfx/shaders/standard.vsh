@@ -33,9 +33,9 @@ struct ModelTransforms {
 };
 
 struct Light {
-    mat4 lightDirection;
-    mat3 lightColour;
-    vec4 backgroundColour;
+  mat4 lightDirection;
+  mat3 lightColour;
+  vec4 backgroundColour;
 };
 
 layout(std140) uniform transforms {
@@ -50,7 +50,11 @@ layout(std140) uniform transforms2 {
 
 /** 32-float (128-byte) stride */
 layout(std140) uniform lighting {
-    Light[128] lights;
+  Light[128] lights;
+};
+
+layout(std140) uniform clutAnimation {
+  vec4[1024] clutAnimations;
 };
 
 layout(std140) uniform projectionInfo {
@@ -103,6 +107,19 @@ void main() {
       vertClut = vec2((intClut & 0x3f) * 16, intClut >> 6);
     } else {
       vertClut = clutOverride;
+    }
+
+    for(int clutAnimationIndex = 0; clutAnimationIndex < 1024; clutAnimationIndex++) {
+      vec4 anim = clutAnimations[clutAnimationIndex];
+
+      if(anim.x == -1) {
+        break;
+      }
+
+      if(anim.xy == vertClut.xy) {
+        vertClut.xy = anim.zw;
+        break;
+      }
     }
 
     if(vertBpp == 0 || vertBpp == 1) {

@@ -191,9 +191,7 @@ public final class SaveManager {
     return false;
   }
 
-  public void moveCategorizedSaves(final String campaignName) throws IOException {
-    final List<Path> saves = this.findUncategorizedSaves();
-
+  public void moveCategorizedSaves(final List<Path> saves, final String campaignName) throws IOException {
     if(!saves.isEmpty()) {
       LOGGER.info("Upgrading legacy saves to campaign");
 
@@ -206,9 +204,7 @@ public final class SaveManager {
     }
   }
 
-  public void splitMemcards(final String campaignName, final boolean deleteFile) throws IOException, InvalidSaveException, SaveFailedException {
-    final List<Path> memcards = this.findMemcards();
-
+  public void splitMemcards(final List<Path> memcards, final String campaignName, final boolean deleteFile) throws IOException, InvalidSaveException, SaveFailedException {
     if(!memcards.isEmpty()) {
       LOGGER.info("Converting memcards to campaign");
 

@@ -6683,7 +6683,7 @@ public class Battle extends EngineState {
     model.zOffset_a0 = 0x200;
     model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
-    model.smallerStructPtr_a4 = null;
+    model.clutAnimations_a4 = null;
     model.remainingFrames_9e = a1.remainingFrames_5e2;
     model.subFrameIndex = 0;
     model.ptr_a8 = a1._5ec;

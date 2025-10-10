@@ -44,7 +44,6 @@ import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
@@ -270,7 +269,7 @@ public final class GameEngine {
 
     SPU.init();
     RENDERER.init();
-    RENDERER.events().onClose(Loader::shutdownLoader);
+    RENDERER.events().onClose(Async::shutdown);
     GPU.init();
     DISCORD.init();
 
