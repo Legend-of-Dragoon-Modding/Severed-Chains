@@ -52,6 +52,10 @@ public class Inventory implements Iterable<ItemStack> {
     return this.getSize() == 0;
   }
 
+  public boolean isEmpty(final Item.UsageLocation usageLocation) {
+    return this.stacks.stream().noneMatch(stack -> stack.canBeUsed(usageLocation));
+  }
+
   public void clear() {
     this.stacks.clear();
   }

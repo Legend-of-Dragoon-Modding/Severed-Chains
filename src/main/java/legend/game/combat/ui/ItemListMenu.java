@@ -106,6 +106,7 @@ public class ItemListMenu extends ListMenu {
     //LAB_800f8420
     for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.getSize(); itemSlot++) {
       final ItemStack stack = gameState_800babc8.items_2e9.get(itemSlot);
+      if(!stack.canBeUsed(Item.UsageLocation.BATTLE)) { continue; }
 
       boolean found = false;
 
