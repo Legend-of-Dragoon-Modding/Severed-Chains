@@ -198,6 +198,7 @@ public class Shader<Options extends ShaderOptions<Options>> {
     public static final int LIGHTING = 2;
     public static final int PROJECTION_INFO = 3;
     public static final int SCISSOR = 4;
+    public static final int CLUT_ANIMATION = 5;
 
     private final int id;
 

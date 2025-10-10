@@ -78,10 +78,18 @@ void main() {
       int p = (indexVec.r >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
 
       // Pull actual pixel colour from CLUT
-      texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
+      uint pixel = texelFetch(tex15, ivec2(vertClut.x + p, vertClut.y), 0).r;
+      texColour.a = (pixel >> 15 & 0x1fu) / 31.0;
+      texColour.b = (pixel >> 10 & 0x1fu) / 31.0;
+      texColour.g = (pixel >>  5 & 0x1fu) / 31.0;
+      texColour.r = (pixel       & 0x1fu) / 31.0;
     } else if(vertBpp == 2) {
       ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
-      texColour = texelFetch(tex24, ivec2(uv.x, uv.y), 0);
+      uint pixel = texelFetch(tex15, uv, 0).r;
+      texColour.a = (pixel >> 15 & 0x1fu) / 31.0;
+      texColour.b = (pixel >> 10 & 0x1fu) / 31.0;
+      texColour.g = (pixel >>  5 & 0x1fu) / 31.0;
+      texColour.r = (pixel       & 0x1fu) / 31.0;
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }

@@ -401,16 +401,18 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020be8
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
-    if(model.subFrameIndex == 0 || model.subFrameIndex == framesPerKeyframe / 2) {
-      if(model.clutAnimations_a4 != null) {
-        //LAB_800da138
-        for(int animIndex = 0; animIndex < 4; animIndex++) {
-          if(model.clutAnimations_a4.used_04[animIndex]) {
-            animateSubmapModelClut(model, animIndex);
-          }
+    final boolean tickAnimations = model.subFrameIndex == 0 || model.subFrameIndex == framesPerKeyframe / 2;
+
+    if(model.clutAnimations_a4 != null) {
+      //LAB_800da138
+      for(int animIndex = 0; animIndex < 4; animIndex++) {
+        if(model.clutAnimations_a4.used_04[animIndex]) {
+          animateModelClut(model, animIndex, tickAnimations);
         }
       }
+    }
 
+    if(tickAnimations) {
       for(int i = 0; i < 7; i++) {
         if(model.animateTextures_ec[i]) {
           animateModelTextures(model, i);
@@ -450,7 +452,7 @@ public final class Scus94491BpeSegment_8002 {
 
   /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
   @Method(0x800dde70L)
-  private static void animateSubmapModelClut(final Model124 model, final int animIndex) {
+  private static void animateModelClut(final Model124 model, final int animIndex, final boolean tickAnimations) {
     final ClutAnimations anims = model.clutAnimations_a4;
 
     if(anims.clutAnimation_20[animIndex] == null) {
@@ -467,21 +469,23 @@ public final class Scus94491BpeSegment_8002 {
       final int sourceYOffset = anim.dataStream_04[dataOffset];
       dataOffset++;
 
-      anims.frameIndex_10[animIndex]++;
+      if(tickAnimations) {
+        anims.frameIndex_10[animIndex]++;
 
-      if(anims.frameIndex_10[animIndex] == anim.dataStream_04[dataOffset]) {
-        anims.frameIndex_10[animIndex] = 0;
+        if(anims.frameIndex_10[animIndex] == anim.dataStream_04[dataOffset]) {
+          anims.frameIndex_10[animIndex] = 0;
 
-        if(anim.dataStream_04[dataOffset + 1] == -1) {
-          anims.dataIndex_08[animIndex] = 0;
-        } else {
-          //LAB_800ddf70
-          anims.dataIndex_08[animIndex]++;
+          if(anim.dataStream_04[dataOffset + 1] == -1) {
+            anims.dataIndex_08[animIndex] = 0;
+          } else {
+            //LAB_800ddf70
+            anims.dataIndex_08[animIndex]++;
+          }
         }
       }
 
       //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + anims.clutIndex_18[animIndex], 16, 1));
+      RENDERER.addClutAnimation(x, y + anims.clutIndex_18[animIndex], x, y + sourceYOffset);
     }
     //LAB_800ddff4
   }

@@ -3,20 +3,8 @@ package legend.core.gpu;
 import legend.core.MathHelper;
 import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
-import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.file.Path;
 import java.util.Arrays;
-
-import static legend.core.IoHelper.pathToByteBuffer;
-import static org.lwjgl.stb.STBImage.stbi_failure_reason;
-import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
-import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public final class VramTextureLoader {
   private VramTextureLoader() { }
@@ -44,66 +32,6 @@ public final class VramTextureLoader {
     }
 
     return new VramTextureSingle(bpp, new Rect4i(imageSize.x, imageSize.y, width, height), data);
-  }
-
-  public static VramTexture textureFromPng(final Path path) {
-    final ByteBuffer imageBuffer;
-    try {
-      imageBuffer = pathToByteBuffer(path);
-    } catch(final IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    try(final MemoryStack stack = stackPush()) {
-      final IntBuffer w = stack.mallocInt(1);
-      final IntBuffer h = stack.mallocInt(1);
-      final IntBuffer comp = stack.mallocInt(1);
-
-      stbi_set_flip_vertically_on_load(false);
-      final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
-      if(data == null) {
-        throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-      }
-
-      final int[] pixels = new int[w.get(0) * h.get(0)];
-      data.asIntBuffer().get(pixels);
-
-      memFree(data);
-
-      return new VramTextureSingle(Bpp.BITS_24, new Rect4i(0, 0, w.get(0), h.get(0)), pixels);
-    }
-  }
-
-  public static VramTexture textureFromPngOneChannelBlue(final Path path) {
-    final ByteBuffer imageBuffer;
-    try {
-      imageBuffer = pathToByteBuffer(path);
-    } catch(final IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    try(final MemoryStack stack = stackPush()) {
-      final IntBuffer w = stack.mallocInt(1);
-      final IntBuffer h = stack.mallocInt(1);
-      final IntBuffer comp = stack.mallocInt(1);
-
-      stbi_set_flip_vertically_on_load(false);
-      final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
-      if(data == null) {
-        throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-      }
-
-      final int[] pixels = new int[w.get(0) * h.get(0)];
-      data.asIntBuffer().get(pixels);
-
-      for(int i = 0; i < pixels.length; i++) {
-        pixels[i] = pixels[i] >>> 16 & 0xff;
-      }
-
-      memFree(data);
-
-      return new VramTextureSingle(Bpp.BITS_24, new Rect4i(0, 0, w.get(0), h.get(0)), pixels);
-    }
   }
 
   /** Stitch textures using their absolute VRAM positions */
