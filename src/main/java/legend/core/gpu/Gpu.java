@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
-import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,6 @@ import java.util.List;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
-import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
@@ -79,10 +77,6 @@ public class Gpu {
 
   private boolean displayChanged;
 
-  public int getDrawBufferIndex() {
-    return this.drawBufferIndex;
-  }
-
   public VramTextureSingle getDisplayBuffer() {
     return this.renderBuffers[this.drawBufferIndex ^ 1];
   }
@@ -120,7 +114,6 @@ public class Gpu {
     synchronized(this.vramLock) {
       if(this.vramDirty) {
         this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
-        this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
         this.vramDirty = false;
       }
     }
@@ -135,7 +128,6 @@ public class Gpu {
   }
 
   public void useVramTexture() {
-    this.vramTexture24.use(0);
     this.vramTexture15.use(1);
   }
 
@@ -271,30 +263,6 @@ public class Gpu {
       for(int y = rectY; y < rectY + rectH; y++) {
         for(int x = rectX; x < rectX + rectW; x++) {
           this.setVramPixel(x, y, colour15To24(data[i]), data[i]);
-          i++;
-        }
-      }
-
-      this.vramDirty = true;
-    }
-  }
-
-  public void uploadData24(final Rect4i rect, final int[] data) {
-    final int rectX = rect.x;
-    final int rectY = rect.y;
-    final int rectW = rect.w;
-    final int rectH = rect.h;
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
-
-    synchronized(this.vramLock) {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          this.setVramPixel(x, y, data[i], colour24To15(data[i]));
           i++;
         }
       }
@@ -478,6 +446,7 @@ public class Gpu {
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
     this.vramShaderOptions.apply();
     this.vramTexture24.use();
+    this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
     this.displayMesh.draw();
   }
 
@@ -497,7 +466,7 @@ public class Gpu {
     return this.displayTexture.height;
   }
 
-  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
+  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
     int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
     if(area == 0) {
       return;
@@ -584,35 +553,7 @@ public class Gpu {
             final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
             final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
 
-            int texel;
-            if(texture == null) {
-              texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
-            } else {
-              texel = 0;
-              if(palettes == null) {
-                if(texture == this.getDisplayBuffer() || texture == this.getDrawBuffer()) {
-                  if(texelX < this.drawingArea.x + this.drawingArea.w && texelY < this.drawingArea.y + this.drawingArea.h) {
-                    texel = texture.getPixel(texelX, texelY) & 0xffffff;
-                  }
-                } else {
-                  texel = texture.getPixel(texelX, texelY) & 0xffffff;
-                }
-              } else {
-                boolean found = false;
-                for(final VramTexture palette : palettes) {
-                  if(palette.rect.y() - clutY == 0) {
-                    texel = texture.getTexel(palette, textureBaseX, texelX, texelY);
-                    found = true;
-                    break;
-                  }
-                }
-
-                if(!found) {
-                  throw new RuntimeException("Failed to find palette");
-                }
-              }
-            }
-
+            int texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
             if(texel == 0) {
               w0 += A12;
               w1 += A20;
@@ -675,21 +616,6 @@ public class Gpu {
   public static int interpolateCoords(final long w0, final long w1, final long w2, final int t0, final int t1, final int t2, final long area) {
     //https://codeplea.com/triangular-interpolation
     return (int)((t0 * w0 + t1 * w1 + t2 * w2) / area);
-  }
-
-  private static int interpolateColours(final int c1, final int c2, final float ratio) {
-    final int c1B = c1       & 0xff;
-    final int c1G = c1 >>  8 & 0xff;
-    final int c1R = c1 >> 16 & 0xff;
-    final int c2B = c2       & 0xff;
-    final int c2G = c2 >>  8 & 0xff;
-    final int c2R = c2 >> 16 & 0xff;
-
-    final byte b = (byte)(c2B * ratio + c1B * (1 - ratio));
-    final byte g = (byte)(c2G * ratio + c1G * (1 - ratio));
-    final byte r = (byte)(c2R * ratio + c1R * (1 - ratio));
-
-    return (r & 0xff) << 16 | (g & 0xff) << 8 | b & 0xff;
   }
 
   public static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {

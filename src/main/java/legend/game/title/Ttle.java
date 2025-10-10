@@ -1,6 +1,7 @@
 package legend.game.title;
 
 import de.jcm.discordgamesdk.activity.Activity;
+import legend.core.Async;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
@@ -60,7 +61,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
@@ -109,7 +112,6 @@ public class Ttle extends EngineState {
 
   private TmdRenderingStruct _800c66d0;
   private final FireAnimationData20[] fireAnimation_800c66d4 = new FireAnimationData20[4];
-  private int hasSavedGames;
   private int menuLoadingStage;
   private float logoFadeInAmount;
   private int logoFlashStage;
@@ -134,9 +136,13 @@ public class Ttle extends EngineState {
 
   private int loadingStage;
   private int selectedMenuOption;
-  private boolean foundMemcard;
-  private boolean memcardConversionShown;
+  private boolean hasCampaigns;
+  private List<Path> uncategorizedSaves = List.of();
+  private List<Path> foundMemcards = List.of();
   private boolean saveCategorizationShown;
+  private boolean memcardConversionShown;
+
+  private Future<?> loadingFiles;
 
   private Texture backgroundTex;
   private Texture logoTex;
@@ -192,6 +198,7 @@ public class Ttle extends EngineState {
     switch(this.loadingStage) {
       case 0 -> this.initializeMainMenu();
       case 1 -> this.loadTextures();
+      case 2 -> this.waitForFilesToLoad();
       case 3 -> this.renderMainMenu();
       case 4 -> this.fadeOutForNewGame();
       case 5 -> this.waitForSaveSelection();
@@ -225,7 +232,6 @@ public class Ttle extends EngineState {
     this.fireLoaded = false;
     this.renderablesLoaded = false;
 
-    this.hasSavedGames = 0;
     this.selectedMenuOption = 0;
 
     resizeDisplay(384, 240);
@@ -249,7 +255,11 @@ public class Ttle extends EngineState {
       this.fireAnimation_800c66d4[i] = this.FUN_800cdaa0(rect, this._800ce7b0[i]);
     }
 
-    this.foundMemcard = !SAVES.findMemcards().isEmpty();
+    this.loadingFiles = Async.run(() -> {
+      this.hasCampaigns = SAVES.hasCampaigns();
+      this.foundMemcards = SAVES.findMemcards();
+      this.uncategorizedSaves = SAVES.findUncategorizedSaves();
+    });
 
     startFadeEffect(2, 15);
     GTE.setScreenOffset(0, 0);
@@ -377,7 +387,7 @@ public class Ttle extends EngineState {
       .translucency(Translucency.B_PLUS_F)
       .build();
 
-    this.loadingStage = 3;
+    this.loadingStage = 2;
   }
 
   /**
@@ -439,6 +449,24 @@ public class Ttle extends EngineState {
     this.renderablesLoaded = true;
   }
 
+  private void waitForFilesToLoad() {
+    if(this.loadingFiles.isDone()) {
+      this.selectedMenuOption = this.hasCampaigns ? 1 : 0;
+
+      if(!this.saveCategorizationShown && !this.uncategorizedSaves.isEmpty()) {
+        this.menuState_800c672c = 4;
+        this.menuTransitionState_800c6728 = 2;
+        this.loadingStage = 9;
+      } else if(!this.memcardConversionShown && !this.foundMemcards.isEmpty()) {
+        this.menuState_800c672c = 4;
+        this.menuTransitionState_800c6728 = 2;
+        this.loadingStage = 10;
+      } else {
+        this.loadingStage = 3;
+      }
+    }
+  }
+
   @Method(0x800c7e50L)
   private void fadeOutForNewGame() {
     this.fadeOutToMenu(NewCampaignScreen::new, () -> {
@@ -477,7 +505,7 @@ public class Ttle extends EngineState {
         }
 
         try {
-          SAVES.moveCategorizedSaves(name);
+          SAVES.moveCategorizedSaves(this.uncategorizedSaves, name);
         } catch(final IOException e) {
           LOGGER.error("Failed to categorize saves", e);
         }
@@ -499,7 +527,7 @@ public class Ttle extends EngineState {
 
         menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", 2, result1 -> {
           try {
-            SAVES.splitMemcards(name, result1 == MessageBoxResult.YES);
+            SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {
             LOGGER.error("Failed to convert memcard", e);
           }
@@ -509,20 +537,26 @@ public class Ttle extends EngineState {
         whichMenu_800bdc38 = WhichMenu.UNLOAD;
       }
 
-      this.foundMemcard = !SAVES.findMemcards().isEmpty();
+      this.foundMemcards = SAVES.findMemcards();
     }), () -> false);
   }
 
-  private void fadeOutToMenu(final Supplier<MenuScreen> destScreen, final BooleanSupplier transition) {
+  private Future<?> menuLoadAction;
+
+  private <T> void fadeOutToMenuAsync(@Nullable final Supplier<Future<T>> waitAction, final Function<T, MenuScreen> destScreen, final BooleanSupplier transition) {
     if(this.fadeOutTimer_800c6754 == 0) {
+      if(waitAction != null) {
+        this.menuLoadAction = waitAction.get();
+      }
+
       startFadeEffect(1, 15);
     }
 
     //LAB_800c7fcc
     this.fadeOutTimer_800c6754++;
 
-    if(this.fadeOutTimer_800c6754 >= 16 && this.menuTransitionState_800c6728 == 2) {
-      initMenu(WhichMenu.RENDER_NEW_MENU, destScreen);
+    if(this.fadeOutTimer_800c6754 >= 16 && this.menuLoadAction.isDone() && this.menuTransitionState_800c6728 == 2) {
+      initMenu(WhichMenu.RENDER_NEW_MENU, () -> destScreen.apply(this.menuLoadAction != null ? (T)this.menuLoadAction.resultNow() : null));
       removeInputHandlers();
       this.deallocate();
       this.menuTransitionState_800c6728 = 3;
@@ -544,6 +578,10 @@ public class Ttle extends EngineState {
         this.renderCopyright();
       }
     }
+  }
+
+  private void fadeOutToMenu(final Supplier<MenuScreen> destScreen, final BooleanSupplier transition) {
+    this.fadeOutToMenuAsync(null, _ -> destScreen.get(), transition);
   }
 
   private void fadeOutForQuit() {
@@ -569,7 +607,7 @@ public class Ttle extends EngineState {
 
   @Method(0x800c7fa0L)
   private void waitForSaveSelection() {
-    this.fadeOutToMenu(CampaignSelectionScreen::new, () -> {
+    this.fadeOutToMenuAsync(() -> Async.run(SAVES::loadAllCampaigns), CampaignSelectionScreen::new, () -> {
       if(loadingNewGameState_800bdc34) {
         if(gameState_800babc8.isOnWorldMap_4e4) {
           engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
@@ -725,7 +763,7 @@ public class Ttle extends EngineState {
       if(this.menuLoadingStage == 3) {
         if(this.menuState_800c672c < 3) {
           for(int i = 0; i < MENU_OPTIONS; i++) {
-            if(i == 1 && this.hasSavedGames != 1) {
+            if(i == 1 && !this.hasCampaigns) {
               continue;
             }
 
@@ -744,7 +782,7 @@ public class Ttle extends EngineState {
             }
           }
 
-          if(this.update != null || this.foundMemcard) {
+          if(this.update != null || !this.foundMemcards.isEmpty()) {
             float clickY = top / scaleY + 5.0f;
             boolean setCursor = false;
 
@@ -757,7 +795,7 @@ public class Ttle extends EngineState {
               clickY += 14.0f;
             }
 
-            if(this.foundMemcard && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 111, 14)) {
+            if(!this.foundMemcards.isEmpty() && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 111, 14)) {
               RENDERER.window().usePointerCursor();
               setCursor = true;
             }
@@ -815,7 +853,7 @@ public class Ttle extends EngineState {
 
         if(this.menuState_800c672c < 3) {
           for(int i = 0; i < MENU_OPTIONS; i++) {
-            if(i == 1 && this.hasSavedGames != 1) {
+            if(i == 1 && !this.hasCampaigns) {
               continue;
             }
 
@@ -843,7 +881,7 @@ public class Ttle extends EngineState {
             clickY += 14.0f;
           }
 
-          if(this.foundMemcard && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+          if(!this.foundMemcards.isEmpty() && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
             this.menuState_800c672c = 4;
             this.menuTransitionState_800c6728 = 2;
             this.loadingStage = 10;
@@ -890,7 +928,7 @@ public class Ttle extends EngineState {
             this.selectedMenuOption = MENU_OPTIONS - 1;
           }
 
-          if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
+          if(this.selectedMenuOption == 1 && !this.hasCampaigns) {
             this.selectedMenuOption--;
           }
 
@@ -903,14 +941,14 @@ public class Ttle extends EngineState {
             this.selectedMenuOption = 0;
           }
 
-          if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
+          if(this.selectedMenuOption == 1 && !this.hasCampaigns) {
             this.selectedMenuOption++;
           }
 
           this.menuState_800c672c = 2;
         } else if(this.update != null && action == INPUT_ACTION_TITLE_UPDATE.get()) {
           this.downloadUpdate();
-        } else if(this.foundMemcard && action == INPUT_ACTION_TITLE_CONVERT_MEMCARD.get()) {
+        } else if(!this.foundMemcards.isEmpty() && action == INPUT_ACTION_TITLE_CONVERT_MEMCARD.get()) {
           this.menuState_800c672c = 4;
           this.menuTransitionState_800c6728 = 2;
           this.loadingStage = 10;
@@ -926,24 +964,6 @@ public class Ttle extends EngineState {
 
   @Method(0x800c8634L)
   private void renderMenuOptions() {
-    if(this.hasSavedGames == 0) {
-      if(!this.saveCategorizationShown && !SAVES.findUncategorizedSaves().isEmpty()) {
-        this.menuState_800c672c = 4;
-        this.menuTransitionState_800c6728 = 2;
-        this.loadingStage = 9;
-      }
-
-      if(!this.memcardConversionShown && this.foundMemcard) {
-        this.menuState_800c672c = 4;
-        this.menuTransitionState_800c6728 = 2;
-        this.loadingStage = 10;
-      }
-
-      this.hasSavedGames = SAVES.hasCampaigns() ? 1 : 2;
-      this.selectedMenuOption = this.hasSavedGames == 1 ? 1 : 0;
-      return;
-    }
-
     //LAB_800c868c
     switch(this.menuState_800c672c) {
       case 0 -> {
@@ -1042,7 +1062,7 @@ public class Ttle extends EngineState {
     //LAB_800c8a70
     for(int i = 0; i < MENU_OPTIONS; i++) {
       final int alpha;
-      if(i != 1 || this.hasSavedGames == 1) {
+      if(i != 1 || this.hasCampaigns) {
         alpha = this.menuOptionTransparency[i];
       } else {
         alpha = this.menuOptionTransparency[i] / 2;
@@ -1128,7 +1148,7 @@ public class Ttle extends EngineState {
       y += 14.0f;
     }
 
-    if(this.foundMemcard) {
+    if(!this.foundMemcards.isEmpty()) {
       this.optionTransforms
         .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.0f)
         .scale(0.2f, 0.2f, 1.0f)

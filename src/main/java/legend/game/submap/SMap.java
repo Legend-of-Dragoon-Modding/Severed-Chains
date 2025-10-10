@@ -54,7 +54,7 @@ import legend.game.types.GsRVIEW2;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
-import legend.game.types.SmallerStruct;
+import legend.game.types.ClutAnimations;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
@@ -660,9 +660,9 @@ public class SMap extends EngineState {
     functions[680] = this::scriptSobjMoveAlongArc;
     functions[681] = this::scriptCheckSobjCollision;
     functions[682] = this::scriptGetSobjIgnoreCollision;
-    functions[683] = this::FUN_800e01bc;
+    functions[683] = this::scriptResetClutAnimations;
     functions[684] = this::scriptEnableTextureAnimation;
-    functions[685] = this::FUN_800e0204;
+    functions[685] = this::scriptDisableClutAnimation;
     functions[686] = this::scriptDisableTextureAnimation;
     functions[687] = this::scriptGetSobjMovementType;
     functions[688] = this::scriptAttachCameraToSobj;
@@ -1135,28 +1135,28 @@ public class SMap extends EngineState {
   @Override
   @Method(0x800de004L)
   public void modelLoaded(final Model124 model, final CContainer cContainer) {
-    if(cContainer.ext_04 == null) {
+    if(cContainer.clutAnimations_04 == null) {
       //LAB_800de120
-      model.smallerStructPtr_a4 = null;
+      model.clutAnimations_a4 = null;
       return;
     }
 
-    final SmallerStruct smallerStruct = new SmallerStruct();
-    model.smallerStructPtr_a4 = smallerStruct;
+    final ClutAnimations clutAnimations = new ClutAnimations();
+    model.clutAnimations_a4 = clutAnimations;
 
-    smallerStruct.tmdExt_00 = cContainer.ext_04;
+    clutAnimations.source_00 = cContainer.clutAnimations_04;
 
     //LAB_800de05c
     for(int i = 0; i < 4; i++) {
-      smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
+      clutAnimations.clutAnimation_20[i] = clutAnimations.source_00.clutAnimation_00[i];
 
-      if(smallerStruct.tmdSubExtensionArr_20[i] == null) {
-        smallerStruct.uba_04[i] = false;
+      if(clutAnimations.clutAnimation_20[i] == null) {
+        clutAnimations.used_04[i] = false;
       } else {
-        smallerStruct.sa_08[i] = 0;
-        smallerStruct.sa_10[i] = 0;
-        smallerStruct.sa_18[i] = smallerStruct.tmdSubExtensionArr_20[i].s_02;
-        smallerStruct.uba_04[i] = smallerStruct.sa_18[i] != -1;
+        clutAnimations.dataIndex_08[i] = 0;
+        clutAnimations.frameIndex_10[i] = 0;
+        clutAnimations.clutIndex_18[i] = clutAnimations.clutAnimation_20[i].clutIndex_02;
+        clutAnimations.used_04[i] = clutAnimations.clutIndex_18[i] != -1;
       }
 
       //LAB_800de108
@@ -1166,19 +1166,19 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800de138L)
-  private void FUN_800de138(final Model124 model, final int index) {
-    final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
+  private void initClutAnimation(final Model124 model, final int animIndex) {
+    final ClutAnimations clutAnimations = model.clutAnimations_a4;
 
-    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
-      smallerStruct.uba_04[index] = false;
+    if(clutAnimations.clutAnimation_20[animIndex] == null) {
+      clutAnimations.used_04[animIndex] = false;
       return;
     }
 
     //LAB_800de164
-    smallerStruct.sa_08[index] = 0;
-    smallerStruct.sa_10[index] = 0;
-    smallerStruct.sa_18[index] = smallerStruct.tmdSubExtensionArr_20[index].s_02;
-    smallerStruct.uba_04[index] = smallerStruct.sa_18[index] != -1;
+    clutAnimations.dataIndex_08[animIndex] = 0;
+    clutAnimations.frameIndex_10[animIndex] = 0;
+    clutAnimations.clutIndex_18[animIndex] = clutAnimations.clutAnimation_20[animIndex].clutIndex_02;
+    clutAnimations.used_04[animIndex] = clutAnimations.clutIndex_18[animIndex] != -1;
   }
 
   @ScriptDescription("Moves the player")
@@ -2219,23 +2219,23 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to texture animation")
+  @ScriptDescription("Resets a submap object's CLUT animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "clutAnimationIndex", description = "The CLUT animation index")
   @Method(0x800e01bcL)
-  private FlowControl FUN_800e01bc(final RunningScript<?> script) {
+  private FlowControl scriptResetClutAnimations(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    this.FUN_800de138(sobj.model_00, script.params_20[1].get());
+    this.initClutAnimation(sobj.model_00, script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to texture animation")
+  @ScriptDescription("Disables a submap object's CLUT animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "clutAnimationIndex", description = "The CLUT animation index")
   @Method(0x800e0204L)
-  private FlowControl FUN_800e0204(final RunningScript<?> script) {
+  private FlowControl scriptDisableClutAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.smallerStructPtr_a4.uba_04[script.params_20[1].get()] = false;
+    sobj.model_00.clutAnimations_a4.used_04[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2656,19 +2656,19 @@ public class SMap extends EngineState {
 
     Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
-    if(cContainer.ext_04 != null) {
-      final SmallerStruct smallerStruct = new SmallerStruct();
-      model.smallerStructPtr_a4 = smallerStruct;
-      smallerStruct.tmdExt_00 = cContainer.ext_04;
+    if(cContainer.clutAnimations_04 != null) {
+      final ClutAnimations clutAnimations = new ClutAnimations();
+      model.clutAnimations_a4 = clutAnimations;
+      clutAnimations.source_00 = cContainer.clutAnimations_04;
 
       //LAB_800e0e28
       for(int i = 0; i < 4; i++) {
-        smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
-        this.FUN_800de138(model, i);
+        clutAnimations.clutAnimation_20[i] = clutAnimations.source_00.clutAnimation_00[i];
+        this.initClutAnimation(model, i);
       }
     } else {
       //LAB_800e0e70
-      model.smallerStructPtr_a4 = null;
+      model.clutAnimations_a4 = null;
     }
 
     //LAB_800e0e74

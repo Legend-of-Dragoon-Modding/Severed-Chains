@@ -132,11 +132,14 @@ public class RenderEngine {
   private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
   Shader.UniformBuffer scissorUniform;
+  private Shader.UniformBuffer clutAnimationUniform;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
   final FloatBuffer scissorBuffer = BufferUtils.createFloatBuffer(4);
+  private final FloatBuffer clutAnimationBuffer = BufferUtils.createFloatBuffer(2 * 2 * 1024); // 2 sets of 2 vectors
+  private int clutAnimationBufferIndex;
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -160,6 +163,7 @@ public class RenderEngine {
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
       shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      shader.bindUniformBlock("clutAnimation", Shader.UniformBuffer.CLUT_ANIMATION);
       final Shader<ShaderOptionsStandard>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsStandard>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsStandard>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -184,6 +188,7 @@ public class RenderEngine {
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
       shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      shader.bindUniformBlock("clutAnimation", Shader.UniformBuffer.CLUT_ANIMATION);
       final Shader<ShaderOptionsTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -206,6 +211,7 @@ public class RenderEngine {
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
       shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      shader.bindUniformBlock("clutAnimation", Shader.UniformBuffer.CLUT_ANIMATION);
       final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -256,7 +262,7 @@ public class RenderEngine {
 
   private long lastFrame;
   private double vsyncCount;
-  private final float[] fps = new float[60];
+  private final long[] frameTimes = new long[60];
   private int fpsIndex;
 
   private Runnable renderCallback = () -> { };
@@ -485,6 +491,7 @@ public class RenderEngine {
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
     this.scissorUniform = ShaderManager.addUniformBuffer("scissor", new Shader.UniformBuffer((long)this.scissorBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.SCISSOR));
+    this.clutAnimationUniform = ShaderManager.addUniformBuffer("clutAnimation", new Shader.UniformBuffer((long)this.clutAnimationBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.CLUT_ANIMATION));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
@@ -639,7 +646,15 @@ public class RenderEngine {
           this.mainBatch.orthoPool.ignoreQueues = true;
         }
 
+        // Reset CLUT animations
+        this.clutAnimationBufferIndex = 0;
+
+        // Run game callback
         this.renderCallback.run();
+
+        // Upload CLUT animations
+        this.clutAnimationBuffer.put(this.clutAnimationBufferIndex, -1);
+        this.clutAnimationUniform.set(this.clutAnimationBuffer);
       }
 
       if(legacyMode == 0) {
@@ -704,21 +719,21 @@ public class RenderEngine {
 
         this.frameSkipIndex = (this.frameSkipIndex + 1) % Config.getGameSpeedMultiplier();
 
-        final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
+        final long frameTime = System.nanoTime() - this.lastFrame;
         this.lastFrame = System.nanoTime();
         this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
         final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
-        this.fps[this.fpsIndex] = fps;
+        this.frameTimes[this.fpsIndex] = frameTime;
         this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
 
         if(this.fpsIndex == 0) {
-          float avg = 0.0f;
+          long avg = 0L;
           for(int i = 0; i < fpsLimit; i++) {
-            avg += this.fps[i];
+            avg += this.frameTimes[i];
           }
 
-          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
+          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, 1_000_000_000.0f / (avg / (float)fpsLimit), fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
         }
       }
 
@@ -879,6 +894,13 @@ public class RenderEngine {
         }
       }
     }
+  }
+
+  public void addClutAnimation(final int originalX, final int originalY, final int replacementX, final int replacementY) {
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, originalX);
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, originalY);
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, replacementX);
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, replacementY);
   }
 
   private void handleMovement() {
