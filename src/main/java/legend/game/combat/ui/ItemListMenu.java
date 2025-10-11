@@ -105,6 +105,10 @@ public class ItemListMenu extends ListMenu {
     for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
       final Item item = gameState_800babc8.items_2e9.get(itemSlot);
 
+      if(!item.canBeUsedNow(Item.UsageLocation.BATTLE)) {
+        continue;
+      }
+
       boolean found = false;
 
       //LAB_800f843c
