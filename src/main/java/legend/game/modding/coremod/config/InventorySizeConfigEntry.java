@@ -27,7 +27,10 @@ public class InventorySizeConfigEntry extends ConfigEntry<Integer> implements Sc
   @Override
   public void onChange(final ConfigCollection configCollection, final Integer oldValue, final Integer newValue) {
     super.onChange(configCollection, oldValue, newValue);
-    gameState_800babc8.items_2e9.setMaxSize(newValue);
+
+    if(gameState_800babc8 != null) {
+      gameState_800babc8.items_2e9.setMaxSize(newValue);
+    }
   }
 
   @Override
