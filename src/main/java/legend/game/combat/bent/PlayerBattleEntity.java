@@ -128,7 +128,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2af4L)
   public int calculatePhysicalDamage(final BattleEntity27c target) {
-    int attack = this.attack_34;
+    int attack = this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
     int attackMultiplier = 100;
 
     if(this.selectedAddition_58 == -1) { // No addition (Shana/???)
@@ -171,7 +171,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2e98L)
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
-    int matk = this.magicAttack_36;
+    int matk = this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
     if(magicType == 1) {
       matk += spellStats_800fa0b8_Player[this.spellId_4e].multi_04;
     }
@@ -262,7 +262,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getHandModelPart() {
+  public int getLeftHandModelPart() {
     return switch(this.charId_272) {
       case 0, 7 -> 5;
       case 1, 4, 5, 6 -> 6;
@@ -273,7 +273,18 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getFootModelPart() {
+  public int getRightHandModelPart() {
+    return switch(this.charId_272) {
+      case 0, 7 -> 6;
+      case 1, 4, 5, 6 -> 7;
+      case 2 -> 12;
+      case 3 -> 9;
+      case 8 -> 11;
+      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
+    };
+  }
+
+  public int getFootModelPart() {
     if(this.isDragoon()) {
       return switch(this.charId_272) {
         case 0 -> (this.status_0e & 0x4000) == 0 ? 8 : 7;
@@ -296,7 +307,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getWeaponModelPart() {
+  public int getWeaponModelPart() {
     return switch(this.charId_272) {
       case 0 -> (this.status_0e & 0x4000) == 0 ? 14 : 0;
       case 1, 5 -> 3;
@@ -309,7 +320,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     };
   }
 
-  protected int getWeaponTrailVertexComponent() {
+  public int getWeaponTrailVertexComponent() {
     return switch(this.charId_272) {
       case 0, 2, 6, 8 -> 0;
       case 1, 3, 4, 5, 7 -> 2;
@@ -444,7 +455,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case HAS_WEAPON_TRAIL -> this.hasWeaponTrail() ? 1 : 0;
       case WEAPON_TRAIL_COLOUR -> this.getWeaponTrailColour();
       case SPELL_RING_COLOUR -> this.getSpellRingColour();
-      case HAND_MODEL_PART -> this.getHandModelPart();
+      case HAND_MODEL_PART -> this.getLeftHandModelPart();
       case FOOT_MODEL_PART -> this.getFootModelPart();
       case WEAPON_MODEL_PART -> this.getWeaponModelPart();
       case WEAPON_TRAIL_VERTEX_COMPONENT -> this.getWeaponTrailVertexComponent();

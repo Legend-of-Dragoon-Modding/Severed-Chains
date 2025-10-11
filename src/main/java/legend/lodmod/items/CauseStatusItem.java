@@ -2,9 +2,12 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class CauseStatusItem extends BattleItem {
   private final int useItemColour;
@@ -17,27 +20,32 @@ public class CauseStatusItem extends BattleItem {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
+  }
+
+  @Override
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ENEMIES;
   }
 
   @Override
-  public boolean isStatMod() {
+  public boolean isStatMod(final ItemStack stack) {
     return true;
   }
 
   @Override
-  public int calculateStatMod(final BattleEntity27c user, final BattleEntity27c target) {
+  public int calculateStatMod(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     return 0;
   }
 
   @Override
-  public int getSpecialEffect(final BattleEntity27c user, final BattleEntity27c target) {
+  public int getSpecialEffect(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     int effect = -1;
     if(simpleRand() * 101 >> 16 < 101) {
       final int statusType = this.status;

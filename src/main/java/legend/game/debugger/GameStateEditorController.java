@@ -435,7 +435,7 @@ public class GameStateEditorController {
 
   public void getItems() {
     if(!gameState_800babc8.items_2e9.isEmpty()) {
-      this.textItems.setText(gameState_800babc8.items_2e9.get(this.getItems.getValue()).getRegistryId().toString());
+      this.textItems.setText(gameState_800babc8.items_2e9.get(this.getItems.getValue()).getItem().getRegistryId().toString());
     } else {
       this.textEquipment.clear();
     }
@@ -443,8 +443,8 @@ public class GameStateEditorController {
 
   @FXML
   public void setItems() {
-    if(this.getItems.getValue() >= gameState_800babc8.items_2e9.size()) {
-      gameState_800babc8.items_2e9.add(REGISTRIES.items.getEntry(this.textItems.getText()).get());
+    if(this.getItems.getValue() >= gameState_800babc8.items_2e9.getSize()) {
+      gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(this.textItems.getText()).get());
     } else {
       gameState_800babc8.items_2e9.set(this.getItems.getValue(), REGISTRIES.items.getEntry(this.textItems.getText()).get());
     }

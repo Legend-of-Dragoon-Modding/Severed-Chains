@@ -69,6 +69,12 @@ public class PolyBuilder {
     return this;
   }
 
+  public PolyBuilder normal(final float x, final float y, final float z) {
+    this.current.normal.set(x, y, z);
+    this.flags |= TmdObjLoader.LIT_FLAG;
+    return this;
+  }
+
   public PolyBuilder uv(final Vector2f uv) {
     this.current.uv.set(uv);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
@@ -154,9 +160,9 @@ public class PolyBuilder {
     vertices[i++] = vert.pos.y;
     vertices[i++] = vert.pos.z;
     vertices[i++] = 0.0f; // Vertex index, only used for VDF
-    vertices[i++] = 0.0f;
-    vertices[i++] = 0.0f;
-    vertices[i++] = 0.0f;
+    vertices[i++] = vert.normal.x;
+    vertices[i++] = vert.normal.y;
+    vertices[i++] = vert.normal.z;
     vertices[i++] = vert.uv.x;
     vertices[i++] = vert.uv.y;
     vertices[i++] = makeTpage(vert.vramPos.x, vert.vramPos.y, this.bpp, this.translucency);
@@ -210,6 +216,7 @@ public class PolyBuilder {
 
   private static class Vertex {
     private final Vector3f pos = new Vector3f();
+    private final Vector3f normal = new Vector3f();
     private final Vector2f uv = new Vector2f();
     private final Vector3f colour = new Vector3f();
     private final Vector2i clut = new Vector2i();

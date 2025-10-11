@@ -2,11 +2,12 @@ package legend.game;
 
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gte.MV;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.QueuedSound28;
@@ -41,6 +42,7 @@ public final class Scus94491BpeSegment_800b {
   public static GameState52c gameState_800babc8;
   public static int battleStage_800bb0f4;
   public static int encounterId_800bb0f8;
+  public static Encounter encounter;
   public static int tickCount_800bb0fc;
 
   public static int clearGreen_800bb104;
@@ -58,7 +60,7 @@ public final class Scus94491BpeSegment_800b {
   public static int goldGainedFromCombat_800bc920;
 
   public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
-  public static final List<Item> itemOverflow = new ArrayList<>();
+  public static final List<ItemStack> itemOverflow = new ArrayList<>();
   public static final List<Equipment> equipmentOverflow = new ArrayList<>();
   public static boolean battleLoaded_800bc94c;
   public static final int[] spGained_800bc950 = new int[3];

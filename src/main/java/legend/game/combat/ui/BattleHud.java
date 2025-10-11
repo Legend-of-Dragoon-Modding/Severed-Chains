@@ -33,6 +33,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.ModMenuEvent;
 import legend.game.modding.events.battle.SingleMonsterTargetEvent;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
 import legend.game.modding.events.battle.StatDisplayEvent;
@@ -80,6 +81,7 @@ import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -1714,7 +1716,7 @@ public class BattleHud {
         int cameraPositionIndex;
         for(cameraPositionIndicesIndex = 0; cameraPositionIndicesIndex < 4; cameraPositionIndicesIndex++) {
           addCameraPositionIndex = true;
-          cameraPositionIndex = this.battle.currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
+          cameraPositionIndex = encounter.cameraPosIndices[cameraPositionIndicesIndex];
 
           //LAB_800f646c
           for(int i = 0; i < 4; i++) { // don't add duplicate indices
@@ -1726,7 +1728,7 @@ public class BattleHud {
           }
 
           if(addCameraPositionIndex) {
-            previousIndicesList[this.countCameraPositionIndicesIndices_800c6ba0] = this.battle.currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
+            previousIndicesList[this.countCameraPositionIndicesIndices_800c6ba0] = encounter.cameraPosIndices[cameraPositionIndicesIndex];
             this.cameraPositionIndicesIndices_800c6c30[this.countCameraPositionIndicesIndices_800c6ba0] = cameraPositionIndicesIndex;
 
             if(this.currentCameraPositionIndicesIndex_800c66b0 == cameraPositionIndicesIndex) {
@@ -1890,32 +1892,40 @@ public class BattleHud {
             this.checkInvalidSelectedAction(selectedAction);
           }
 
-          // Input for pressing X on menu bar
-          //LAB_800f671c
-          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-            int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
-            if((selectedIconFlag & 0x80) != 0) {
-              playSound(0, 3, (short)0, (short)0);
-            } else {
-              selectedIconFlag = selectedIconFlag & 0xf;
-              if(selectedIconFlag == 5) {
-                if(gameState_800babc8.items_2e9.isEmpty()) {
-                  playSound(0, 3, (short)0, (short)0);
-                } else {
-                  playSound(0, 2, (short)0, (short)0);
-                  selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+        // Input for pressing X on menu bar
+        //LAB_800f671c
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+          int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
+          if((selectedIconFlag & 0x80) != 0) {
+            playSound(0, 3, (short)0, (short)0);
+          } else {
+            selectedIconFlag = selectedIconFlag & 0xf;
+            if(selectedIconFlag == 5) {
+              boolean hasUsableItems = false;
+              for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+                if(gameState_800babc8.items_2e9.get(i).canBeUsedNow(Item.UsageLocation.BATTLE)) {
+                  hasUsableItems = true;
+                  break;
                 }
-                //LAB_800f6790
-              } else if(selectedIconFlag == 3) {
-                //LAB_800f67b8
-                //LAB_800f67d8
-                //LAB_800f67f4
-                int spellIndex;
-                for(spellIndex = 0; spellIndex < 8; spellIndex++) {
-                  if(this.battle.dragoonSpells_800c6960[this.battleMenu_800c6c34.player_04.charSlot_276].spellIndex_01[spellIndex] != -1) {
-                    break;
-                  }
+              }
+
+              if(hasUsableItems) {
+                playSound(0, 2, (short)0, (short)0);
+                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              } else {
+                playSound(0, 3, (short)0, (short)0);
+              }
+              //LAB_800f6790
+            } else if(selectedIconFlag == 3) {
+              //LAB_800f67b8
+              //LAB_800f67d8
+              //LAB_800f67f4
+              int spellIndex;
+              for(spellIndex = 0; spellIndex < 8; spellIndex++) {
+                if(this.battle.dragoonSpells_800c6960[this.battleMenu_800c6c34.player_04.charSlot_276].spellIndex_01[spellIndex] != -1) {
+                  break;
                 }
+              }
 
                 //LAB_800f681c
                 if(spellIndex == 8) {

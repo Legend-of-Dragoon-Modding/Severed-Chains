@@ -7,7 +7,7 @@ import legend.game.DabasManager;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.DabasData100;
 import legend.game.types.MenuEntries;
@@ -35,7 +35,6 @@ import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.setMessageBoxText;
@@ -126,9 +125,9 @@ public class DabasScreen extends MenuScreen {
 
           if(itemId != 0) {
             if(itemId > 192) {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()));
+              this.menuItems.add(new MenuEntryStruct04<>(new ItemStack(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get())));
             } else {
-              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()));
+              this.menuItems.add(new MenuEntryStruct04<>(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()));
             }
 
             this.hasItems = true;
@@ -137,7 +136,7 @@ public class DabasScreen extends MenuScreen {
 
         final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
-          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get());
+          this.specialItem = new MenuEntryStruct04<>(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[specialItemId])).get());
           this.hasItems = true;
         }
 
@@ -259,7 +258,7 @@ public class DabasScreen extends MenuScreen {
       equipmentCount++;
     }
 
-    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
+    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.getSize() + itemCount > CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
       menuStack.pushScreen(new MessageBoxScreen("Dabas has more items\nthan you can hold", 0, result -> {}));
       return;
     }
@@ -267,7 +266,7 @@ public class DabasScreen extends MenuScreen {
     this.hasItems = false;
 
     for(final MenuEntryStruct04<? extends InventoryEntry> entry : this.menuItems) {
-      if(entry.item_00 instanceof final Item item) {
+      if(entry.item_00 instanceof final ItemStack item) {
         giveItem(item);
       } else if(entry.item_00 instanceof final Equipment equipment) {
         giveEquipment(equipment);
@@ -615,7 +614,7 @@ public class DabasScreen extends MenuScreen {
     renderEightDigitNumber(100, 147, this.gold, 0x2);
 
     if(this.specialItem != null) {
-      renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8);
+      this.specialItem.item_00.renderIcon(198, 192, 0x8);
       renderText(I18n.translate(this.specialItem.getNameTranslationKey()), 214, 194, UI_TEXT);
     }
 

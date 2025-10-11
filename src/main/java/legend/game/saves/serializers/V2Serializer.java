@@ -4,17 +4,23 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.saves.InventoryEntry;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 
 public final class V2Serializer {
   private V2Serializer() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSerializer.class);
 
   public static final int MAGIC_V2 = 0x32615344; // DSa2
 
@@ -112,12 +118,28 @@ public final class V2Serializer {
     offset += 2;
 
     for(int i = 0; i < equipmentCount; i++) {
-      state.equipmentIds_1e8.add(data.readUByte(offset));
+      final int id = data.readUByte(offset);
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown equipment ID %#x", id);
+        continue;
+      }
+
+      state.equipmentRegistryIds_1e8.add(LodMod.id(idStr));
       offset++;
     }
 
     for(int i = 0; i < itemCount; i++) {
-      state.itemIds_2e9.add(data.readUByte(offset));
+      final int id = data.readUByte(offset);
+      final String idStr = LodMod.ITEM_IDS[id - 192];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown item ID %#x", id);
+        continue;
+      }
+
+      state.itemRegistryIds_2e9.add(new InventoryEntry(LodMod.id(idStr), 1, 1));
       offset++;
     }
 

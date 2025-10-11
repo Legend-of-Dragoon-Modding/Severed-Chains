@@ -40,6 +40,8 @@ lod_core.ui.options.help=Help
 lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
 lod_core.ui.options.show_advanced=Show Advanced
+lod_core.ui.options.locked=Locked
+lod_core.ui.options.locked_by=Locked by %s
 
 lod_core.ui.options_category.back=Back
 
@@ -54,6 +56,10 @@ lod_core.ui.links.wiki=Legend of Dragoon Wiki
 lod_core.ui.links.project=Severed Chains Project Page
 lod_core.ui.links.github=Severed Chains GitHub Page
 lod_core.ui.links.issue=Report an Issue
+
+# Core items
+lod_core.items.nothing.name=Nothing
+lod_core.items.nothing.description=Nothing
 
 lod_core.ui.item_list.sort=Sort
 lod_core.ui.item_list.discard=Discard

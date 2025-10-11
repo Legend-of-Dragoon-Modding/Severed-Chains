@@ -86,6 +86,10 @@ public class ScriptManager {
     this.paused = false;
   }
 
+  public boolean isPaused() {
+    return this.paused;
+  }
+
   public void clear() {
     for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       scriptStatePtrArr_800bc1c0[i] = null;

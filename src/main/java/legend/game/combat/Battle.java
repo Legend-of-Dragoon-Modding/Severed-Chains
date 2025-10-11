@@ -65,6 +65,7 @@ import legend.game.combat.effects.SpTextEffect40;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.TextureAnimationAttachment1c;
 import legend.game.combat.effects.WeaponTrailEffect3c;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
@@ -73,9 +74,7 @@ import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BattleStruct14;
 import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
-import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageAmbiance4c;
-import legend.game.combat.environment.StageData2c;
 import legend.game.combat.particles.ParticleManager;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
@@ -94,9 +93,8 @@ import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.DragoonDetransformationMode;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
-import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
@@ -214,7 +212,6 @@ import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -296,7 +293,6 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
-import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
@@ -415,7 +411,7 @@ public class Battle extends EngineState {
 
   public int _800c6710;
 
-  public StageData2c currentStageData_800c6718;
+//  public StageData2c currentStageData_800c6718;
   public int cameraScriptMainTableJumpIndex_800c6748;
   private ScriptState<ScriptedObject> scriptState_800c674c;
 
@@ -466,7 +462,7 @@ public class Battle extends EngineState {
 
   public final String[] melbuMonsterNames_800c6ba8 = new String[3];
 
-  public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
+  public final List<ItemStack> usedRepeatItems_800c6c3c = new ArrayList<>();
 
   public int countCombatUiFilesLoaded_800c6cf4;
 
@@ -1205,10 +1201,10 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "itemId", description = "The ID of the item being used")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The ID of the bent being targeted")
   private FlowControl scriptUseItem(final RunningScript<BattleEntity27c> script) {
-    final Item item = REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get();
+    final ItemStack stack = new ItemStack(REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get());
     final int targetIndex = script.params_20[1].get();
 
-    return item.useInBattle(script.scriptState_04, targetIndex);
+    return stack.useInBattle(script.scriptState_04, targetIndex);
   }
 
   @ScriptDescription("Calls the applyEffect method for the given equipment")
@@ -1533,26 +1529,17 @@ public class Battle extends EngineState {
 
   @Method(0x800c788cL)
   public void allocateEnemyBattleEntities() {
-    final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
-
     //LAB_801095a0
-    for(int i = 0; i < 3; i++) {
-      final int enemyIndex = fp.encounterData_00.enemyIndices_00[i] & 0x1ff;
-      if(enemyIndex == 0x1ff) {
-        break;
-      }
-
+    for(final int enemyId : encounter.uniqueIds) {
+      final int enemyIndex = enemyId & 0x1ff;
       this.loadEnemyDropsAndScript((this.addCombatant(enemyIndex, -1) << 16) + enemyIndex);
     }
 
     //LAB_801095ec
     //LAB_801095fc
-    for(int i = 0; i < 6; i++) {
-      final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08[i];
-      final int charIndex = s5.index_00 & 0x1ff;
-      if(charIndex == 0x1ff) {
-        break;
-      }
+    for(int i = 0; i < encounter.monsters.size(); i++) {
+      final Encounter.Monster s5 = encounter.monsters.get(i);
+      final int charIndex = s5.id & 0x1ff;
 
       final int combatantIndex = this.getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
@@ -1563,7 +1550,7 @@ public class Battle extends EngineState {
       bent.charId_272 = charIndex;
       bent.combatant_144 = this.getCombatant(combatantIndex);
       bent.combatantIndex_26c = combatantIndex;
-      bent.model_148.coord2_14.coord.transfer.set(s5.pos_02);
+      bent.model_148.coord2_14.coord.transfer.set(s5.pos);
       bent.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
       state.storage_44[7] |= FLAG_MONSTER;
       battleState_8006e398.addMonster(state);
@@ -1986,13 +1973,13 @@ public class Battle extends EngineState {
       //LAB_800c8558
       postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
 
-      final int postCombatSubmapScene = this.currentStageData_800c6718.postCombatSubmapScene_0c;
+      final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
         submapScene_80052c34 = postCombatSubmapScene;
       }
 
       //LAB_800c8578
-      final int postCombatSubmapCut = this.currentStageData_800c6718.postCombatSubmapCut_28;
+      final int postCombatSubmapCut = encounter.postCombatSubmapCut;
       if(postCombatSubmapCut != 0xffff) {
         submapCut_80052c30 = postCombatSubmapCut;
       }
@@ -3666,7 +3653,7 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].getRegistryId())).registryValue).get();
+      case ITEM_ID -> bent.item_d4 = new ItemStack(EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].getRegistryId())).registryValue).get();
       default -> {
         int value = script.params_20[1].get();
         if(script.params_20[2].get() == 2 && value < 0) {
@@ -3692,7 +3679,7 @@ public class Battle extends EngineState {
     final SetBentStatEvent event = EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
       default -> bent.setStat(stat, event.value);
     }
 
@@ -3715,7 +3702,7 @@ public class Battle extends EngineState {
       case EQUIPMENT_ARMOUR_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
       case EQUIPMENT_BOOTS_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
       case EQUIPMENT_ACCESSORY_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
-      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getRegistryId());
+      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getItem().getRegistryId());
       case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
       case ELEMENT -> script.params_20[2].set(bent.getElement().getRegistryId());
       default -> script.params_20[2].set(bent.getStat(stat));
@@ -3779,9 +3766,9 @@ public class Battle extends EngineState {
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
                 if(drop.item() instanceof final Equipment equipment) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), I18n.translate(equipment), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
-                } else if(drop.item() instanceof final Item item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item), () -> giveItem(item), () -> itemOverflow.add(item)));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment, () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
+                } else if(drop.item() instanceof final ItemStack item) {
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item, () -> giveItem(new ItemStack(item)), () -> itemOverflow.add(new ItemStack(item))));
                 }
 
                 flags |= FLAG_NO_LOOT;
@@ -7925,9 +7912,9 @@ public class Battle extends EngineState {
     }
 
     //LAB_800eed78
-    for(final Item item : this.usedRepeatItems_800c6c3c) {
-      if(!giveItem(item)) {
-        itemOverflow.add(item);
+    for(final ItemStack stack : this.usedRepeatItems_800c6c3c) {
+      if(!giveItem(stack)) {
+        itemOverflow.add(stack);
       }
     }
 
@@ -7991,14 +7978,14 @@ public class Battle extends EngineState {
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
       player.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
-      player.attack_34 = stats.equipmentAttack_88 + stats.bodyAttack_6a;
-      player.magicAttack_36 = stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b;
-      player.defence_38 = stats.equipmentDefence_8c + stats.bodyDefence_6c;
-      player.magicDefence_3a = stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d;
+      player.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
+      player.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
+      player.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
+      player.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
       player.attackHit_3c = stats.equipmentAttackHit_90;
       player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.attackAvoid_40 = stats.equipmentAttackAvoid_94;
-      player.magicAvoid_42 = stats.equipmentMagicAvoid_96;
+      player.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
+      player.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
       player.equipment_19_46 = stats.equipment_19_99;
       player.equipment_1a_48 = stats.equipment_1a_9a;
@@ -8067,10 +8054,10 @@ public class Battle extends EngineState {
 
     final int avoidChance;
     if(attackType == AttackType.PHYSICAL) {
-      avoidChance = defender.attackAvoid_40;
+      avoidChance = defender.stats.getStat(LodMod.AVOID_STAT.get()).get();
     } else {
       //LAB_800f1c9c
-      avoidChance = defender.magicAvoid_42;
+      avoidChance = defender.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
     }
 
     boolean effectHit = false;
@@ -8456,14 +8443,14 @@ public class Battle extends EngineState {
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
     monster.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
-    monster.attack_34 = statsEvent.attack;
-    monster.magicAttack_36 = statsEvent.magicAttack;
-    monster.defence_38 = statsEvent.defence;
-    monster.magicDefence_3a = statsEvent.magicDefence;
+    monster.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(statsEvent.attack);
+    monster.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
+    monster.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(statsEvent.defence);
+    monster.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.attackAvoid_40 = statsEvent.attackAvoid;
-    monster.magicAvoid_42 = statsEvent.magicAvoid;
+    monster.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
+    monster.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
     monster.equipment_19_46 = 0;
     monster.equipment_1a_48 = 0;
@@ -8703,23 +8690,25 @@ public class Battle extends EngineState {
       return FlowControl.CONTINUE;
     }
 
-    Item item;
+    ItemStack stack;
     if(itemId == null) {
-      item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      stack = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.getSize()) >> 16);
 
-      if(item.isProtected()) {
-        item = null;
+      if(stack.isProtected()) {
+        stack = ItemStack.EMPTY;
+      } else {
+        stack = gameState_800babc8.items_2e9.take(stack);
       }
     } else {
-      item = REGISTRIES.items.getEntry(itemId).get();
+      stack = gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(itemId).get());
     }
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(item == null || !takeItemId(item)) {
-      script.params_20[1].set(0);
+    if(!stack.isEmpty()) {
+      script.params_20[1].set(stack.getItem().getRegistryId());
     } else {
-      script.params_20[1].set(item.getRegistryId());
+      script.params_20[1].set(0);
     }
 
     return FlowControl.CONTINUE;
@@ -8884,8 +8873,6 @@ public class Battle extends EngineState {
 
   @Method(0x80109050L)
   private void loadStageDataAndControllerScripts() {
-    this.currentStageData_800c6718 = getEncounterStageData(encounterId_800bb0f8);
-
     this.playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Loader.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", this::combatControllerScriptLoaded);
@@ -8898,15 +8885,15 @@ public class Battle extends EngineState {
 
     final int openingCamera;
     if((simpleRand() & 0x8000) == 0) {
-      openingCamera = this.currentStageData_800c6718.monsterOpeningCamera_14;
+      openingCamera = encounter.monsterOpeningCamera;
     } else {
-      openingCamera = this.currentStageData_800c6718.playerOpeningCamera_10;
+      openingCamera = encounter.playerOpeningCamera;
     }
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
     this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
-    this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
+    this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
     battleFlags_800bc960 |= 0x2;
   }
 

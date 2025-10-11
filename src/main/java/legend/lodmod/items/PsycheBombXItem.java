@@ -2,6 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.characters.Element;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.lodmod.LodMod;
 
 public class PsycheBombXItem extends AttackItem {
@@ -14,12 +15,12 @@ public class PsycheBombXItem extends AttackItem {
   }
 
   @Override
-  public boolean isRepeat() {
+  public boolean isRepeat(final ItemStack stack) {
     return true;
   }
 
   @Override
-  public boolean isProtected() {
+  public boolean isProtected(final ItemStack stack) {
     return true;
   }
 }
