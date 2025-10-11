@@ -48,7 +48,7 @@ public class RecoverStatusItem extends BattleItem {
       return (this.status & allStatus) != 0;
     }
 
-    throw new RuntimeException("Not yet implemented");
+    return true;
   }
 
   @Override
