@@ -1754,11 +1754,19 @@ public class BattleHud {
           } else {
             selectedIconFlag = selectedIconFlag & 0xf;
             if(selectedIconFlag == 5) {
-              if(gameState_800babc8.items_2e9.isEmpty(Item.UsageLocation.BATTLE)) {
-                playSound(0, 3, (short)0, (short)0);
-              } else {
+              boolean hasUsableItems = false;
+              for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+                if(gameState_800babc8.items_2e9.get(i).canBeUsedNow(Item.UsageLocation.BATTLE)) {
+                  hasUsableItems = true;
+                  break;
+                }
+              }
+
+              if(hasUsableItems) {
                 playSound(0, 2, (short)0, (short)0);
                 selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              } else {
+                playSound(0, 3, (short)0, (short)0);
               }
               //LAB_800f6790
             } else if(selectedIconFlag == 3) {

@@ -40,6 +40,8 @@ lod_core.ui.options.help=Help
 lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
 lod_core.ui.options.show_advanced=Show Advanced
+lod_core.ui.options.locked=Locked
+lod_core.ui.options.locked_by=Locked by %s
 
 lod_core.ui.options_category.back=Back
 
