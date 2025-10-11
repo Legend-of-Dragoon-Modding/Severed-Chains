@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -39,6 +40,8 @@ public class OptionsScreen extends VerticalLayoutScreen {
   private final List<ConfigEntry<?>> configs = new ArrayList<>();
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
+  private final Map<Control, Label> lockedLabels = new HashMap<>();
+  private final Map<Control, ConfigEntry<?>> lockedEntries = new HashMap<>();
 
   public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
     deallocateRenderables(0xff);
@@ -77,6 +80,8 @@ public class OptionsScreen extends VerticalLayoutScreen {
             error = true;
           }
 
+          final Set<String> locked = config.getLocked(configEntry);
+
           editControl.setZ(35);
 
           final Label label = this.addRow(text, editControl);
@@ -85,13 +90,26 @@ public class OptionsScreen extends VerticalLayoutScreen {
             label.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
           }
 
+          int extrasX = (int)(label.getFont().textWidth(text) * label.getScale());
+
           if(configEntry.hasHelp()) {
             final Label help = label.addControl(new Label("?"));
             help.setScale(0.4f);
-            help.setPos((int)(help.getFont().textWidth(text) * label.getScale()) + 2, 1);
+            help.setPos(extrasX + 2, 1);
             help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), this.mouseX, this.mouseY)));
             this.helpLabels.put(label, help);
             this.helpEntries.put(label, configEntry);
+            extrasX += help.getWidth();
+          }
+
+          if(!locked.isEmpty()) {
+            editControl.disable();
+            final Label lock = label.addControl(new Label(I18n.translate("lod_core.ui.options.locked")));
+            lock.setScale(0.4f);
+            lock.setPos(extrasX + 2, 1);
+            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), this.mouseX, this.mouseY)));
+            this.lockedLabels.put(label, lock);
+            this.lockedEntries.put(label, configEntry);
           }
         }
       });
