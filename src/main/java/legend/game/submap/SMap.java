@@ -30,6 +30,7 @@ import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
+import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -188,8 +189,6 @@ public class SMap extends EngineState {
   private final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_2_800c66f8 = new GsF_LIGHT();
-
-  public int sobjCount_800c6730;
 
   public ScriptState<ScriptedObject> submapControllerState_800c6740;
 
@@ -1448,7 +1447,7 @@ public class SMap extends EngineState {
     //LAB_800df00c
     //LAB_800df02c
     // Handle collision with other sobjs
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 struct = this.sobjs_800c6880[i].innerStruct_00;
 
       if(struct != sobj && (struct.flags_190 & 0x10_0000) != 0) {
@@ -1808,7 +1807,7 @@ public class SMap extends EngineState {
     this.setCameraPos(3 - vsyncMode_8007a3b8, new Vector3f().set(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())); // Retail bugfix - these were all 0
 
     //LAB_800df744
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 sobj = this.sobjs_800c6880[i].innerStruct_00;
       sobj.cameraAttached_178 = false;
     }
@@ -2280,7 +2279,7 @@ public class SMap extends EngineState {
 
     if(script.params_20[1].get() != 0) {
       //LAB_800e035c
-      for(int i = 0; i < this.sobjCount_800c6730; i++) {
+      for(int i = 0; i < this.submap.objects.size(); i++) {
         final SubmapObject210 struct2 = this.sobjs_800c6880[i].innerStruct_00;
 
         if(struct2.sobjIndex_130 != struct1.sobjIndex_130) {
@@ -3009,10 +3008,10 @@ public class SMap extends EngineState {
       case FINALIZE_SUBMAP_LOADING_7 -> {
         FUN_800218f0();
 
-        // Removed setting of unused sobjCount static
-        this.sobjCount_800c6730 = this.submap.objects.size();
-
         this.firstMovement = true;
+
+        final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this.submap.script, this.submap.objects));
+        this.submap.script = loadedEvent.submapScript;
 
         //LAB_800e1914
         final ScriptState<ScriptedObject> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
@@ -3023,11 +3022,11 @@ public class SMap extends EngineState {
 
         //LAB_800e1b20
         //LAB_800e1b54
-        for(int i = 0; i < this.sobjCount_800c6730; i++) {
+        for(int i = 0; i < this.submap.objects.size(); i++) {
           final SubmapObject obj = this.submap.objects.get(i);
 
           final String name = "Submap object " + i + " (file " + i * 33 + ')';
-          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, new SubmapObject210(name));
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, obj.constructor.apply(name));
           this.sobjs_800c6880[i] = state;
           state.setTicker(this::submapObjectTicker);
           state.setRenderer(this::submapObjectRenderer);
@@ -3184,7 +3183,7 @@ public class SMap extends EngineState {
     submapFullyLoaded_800bd7b4 = false;
 
     //LAB_800e229c
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SobjPos14 pos = sobjPositions_800bd818[i];
 
       final ScriptState<SubmapObject210> sobjState = this.sobjs_800c6880[i];
@@ -3242,7 +3241,7 @@ public class SMap extends EngineState {
   @Method(0x800e3df4L)
   private void scriptDestructor(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     //LAB_800e3e24
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       if(this.sobjs_800c6880[i] == state) {
         this.sobjs_800c6880[i] = null;
       }
@@ -3311,7 +3310,7 @@ public class SMap extends EngineState {
     //LAB_800e43ec
     //LAB_800e43f0
     //LAB_800e4414
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 sobj2 = this.sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
@@ -3347,7 +3346,7 @@ public class SMap extends EngineState {
     //LAB_800e45d8
     //LAB_800e45dc
     //LAB_800e4600
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 sobj2 = this.sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
@@ -3535,8 +3534,8 @@ public class SMap extends EngineState {
   @Method(0x800e519cL)
   private void renderEnvironment() {
     //LAB_800e51e8
-    final MV[] matrices = new MV[this.sobjCount_800c6730];
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    final MV[] matrices = new MV[this.submap.objects.size()];
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       if(!this.isScriptLoaded(i)) {
         return;
       }
@@ -3632,7 +3631,7 @@ public class SMap extends EngineState {
           model.colour(0.0f, 1.0f, 1.0f);
         }
 
-        for(int sobjIndex = 0; sobjIndex < this.sobjCount_800c6730; sobjIndex++) {
+        for(int sobjIndex = 0; sobjIndex < this.submap.objects.size(); sobjIndex++) {
           if(this.sobjs_800c6880[sobjIndex].innerStruct_00.collidedPrimitiveIndex_16c == i) {
             model.colour(0.0f, 0.0f, sobjIndex == 0 ? 1.0f : 0.5f);
           }

@@ -85,7 +85,14 @@ public class CampaignSelectionScreen extends MenuScreen {
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
+  private boolean selectLock;
+
   private void onSelection(final Campaign campaign) {
+    if(this.selectLock) {
+      return;
+    }
+
+    this.selectLock = true;
     playMenuSound(2);
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
@@ -105,6 +112,8 @@ public class CampaignSelectionScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.missing_mods_confirm"), 2, result -> {
         if(result == MessageBoxResult.YES) {
           this.loadSaves(campaign);
+        } else {
+          this.selectLock = false;
         }
       }));
     }
@@ -151,6 +160,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       startFadeEffect(2, 5);
       menuStack.popScreen();
       bootMods(MODS.getAllModIds());
+      this.selectLock = false;
     }, this.selectedCampaign));
   }
 
