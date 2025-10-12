@@ -83,7 +83,7 @@ public class SmapDebuggerController {
   private SubmapObject210 sobj;
 
   public void initialize() {
-    for(int i = 0; i < ((SMap)currentEngineState_8004dd04).sobjCount_800c6730; i++) {
+    for(int i = 0; i < ((SMap)currentEngineState_8004dd04).submap.objects.size(); i++) {
       this.sobjs.add(new ListItem(this::getSobjName, i));
     }
 
