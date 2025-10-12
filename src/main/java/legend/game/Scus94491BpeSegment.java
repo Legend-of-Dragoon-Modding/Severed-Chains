@@ -679,7 +679,6 @@ public final class Scus94491BpeSegment {
 
     fullScreenEffect_800bb140._24 = _8004dd48[effectType];
     fullScreenEffect_800bb140.currentColour_28 = 1;
-    System.out.println("set");
 
     //LAB_80013768
   }
