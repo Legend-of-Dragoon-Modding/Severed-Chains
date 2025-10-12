@@ -207,7 +207,13 @@ public class ScriptManager {
       // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
       // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
-        scriptState.tick();
+        try {
+          scriptState.tick();
+        } catch(final Throwable t) {
+          scriptState.dump();
+
+          throw new RuntimeException("An error occurred while ticking scripted object " + i, t);
+        }
       }
     }
 
@@ -215,7 +221,13 @@ public class ScriptManager {
     for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
-        scriptState.tempTick();
+        try {
+          scriptState.tempTick();
+        } catch(final Throwable t) {
+          scriptState.dump();
+
+          throw new RuntimeException("An error occurred while temp-ticking scripted object " + i, t);
+        }
       }
     }
   }
@@ -231,7 +243,13 @@ public class ScriptManager {
       // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
       // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
-        scriptState.render();
+        try {
+          scriptState.render();
+        } catch(final Throwable t) {
+          scriptState.dump();
+
+          throw new RuntimeException("An error occurred while rendering scripted object " + i, t);
+        }
       }
     }
   }
