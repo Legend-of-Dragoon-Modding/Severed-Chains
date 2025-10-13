@@ -121,7 +121,7 @@ public final class XaPlayer extends AudioSource {
     }
   }
 
-  private void unloadOpusFile() {
+  public void unloadOpusFile() {
     OpusFile.op_free(this.opusFile);
     this.opusFileData = null;
   }

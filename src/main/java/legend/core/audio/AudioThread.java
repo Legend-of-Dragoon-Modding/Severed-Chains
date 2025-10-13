@@ -403,6 +403,15 @@ public final class AudioThread implements Runnable {
     }
   }
 
+  public void stopXa() {
+    synchronized(this) {
+      if(this.xaPlayer.isInitialized()) {
+        this.xaPlayer.stop();
+        this.xaPlayer.unloadOpusFile();
+      }
+    }
+  }
+
   public boolean isMusicPlaying() {
     synchronized(this) {
       return this.sequencer.isPlaying();

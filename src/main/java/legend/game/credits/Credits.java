@@ -32,6 +32,7 @@ import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
+import static legend.game.Scus94491BpeSegment_8002.stopXaAudio;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -691,6 +692,9 @@ public class Credits extends EngineState {
       this.credits.delete();
       this.credits = null;
     }
+
+    stopXaAudio();
+
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
 
     //LAB_800eaf14
