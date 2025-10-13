@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -50,6 +50,7 @@
+ call 698, stor[24], 0x1
+ call 678, stor[24], 0x1
+ call 103, stor[24], 0x0, 0x0, 0x0
++call 293, stor[24], -20
+ mov 0x0, stor[22]
+ jmp inl[:LABEL_0]
+ ENTRYPOINT_0:
