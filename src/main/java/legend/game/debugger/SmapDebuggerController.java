@@ -51,6 +51,8 @@ public class SmapDebuggerController {
   public Spinner<Double> scaleY;
   @FXML
   public Spinner<Double> scaleZ;
+  @FXML
+  public Spinner<Integer> depthOffset;
 
   @FXML
   public CheckBox collideByPlayer;
@@ -120,6 +122,7 @@ public class SmapDebuggerController {
     this.scaleX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.scaleY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.scaleZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.depthOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
 
     this.sobjList.getSelectionModel().select(0);
   }
@@ -158,6 +161,7 @@ public class SmapDebuggerController {
     this.scaleX.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.x));
     this.scaleY.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.y));
     this.scaleZ.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.z));
+    this.depthOffset.getValueFactory().setValue(this.sobj.model_00.zOffset_a0);
 
     this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
     this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
@@ -222,6 +226,12 @@ public class SmapDebuggerController {
       this.sobj.model_00.coord2_14.transforms.scale.x = this.scaleX.getValueFactory().getValue().floatValue();
       this.sobj.model_00.coord2_14.transforms.scale.y = this.scaleY.getValueFactory().getValue().floatValue();
       this.sobj.model_00.coord2_14.transforms.scale.z = this.scaleZ.getValueFactory().getValue().floatValue();
+    }
+  }
+
+  public void updateDepthOffset(final ActionEvent event) {
+    if(this.sobj != null) {
+      this.sobj.model_00.zOffset_a0 = this.depthOffset.getValueFactory().getValue();
     }
   }
 
