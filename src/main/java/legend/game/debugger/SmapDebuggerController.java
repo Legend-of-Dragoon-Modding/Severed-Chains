@@ -53,6 +53,8 @@ public class SmapDebuggerController {
   public Spinner<Double> scaleZ;
   @FXML
   public Spinner<Integer> depthOffset;
+  @FXML
+  public CheckBox usePs1Depth;
 
   @FXML
   public CheckBox collideByPlayer;
@@ -162,6 +164,7 @@ public class SmapDebuggerController {
     this.scaleY.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.y));
     this.scaleZ.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.z));
     this.depthOffset.getValueFactory().setValue(this.sobj.model_00.zOffset_a0);
+    this.usePs1Depth.setSelected(this.sobj.model_00.usePs1Depth);
 
     this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
     this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
@@ -232,6 +235,13 @@ public class SmapDebuggerController {
   public void updateDepthOffset(final ActionEvent event) {
     if(this.sobj != null) {
       this.sobj.model_00.zOffset_a0 = this.depthOffset.getValueFactory().getValue();
+    }
+  }
+
+  @FXML
+  public void usePs1DepthClick(final ActionEvent actionEvent) {
+    if(this.sobj != null) {
+      this.sobj.model_00.usePs1Depth = this.usePs1Depth.isSelected();
     }
   }
 

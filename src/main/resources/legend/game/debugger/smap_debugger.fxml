@@ -167,7 +167,11 @@
                               <Insets right="8.0" />
                            </HBox.margin>
                         </Spinner>
-                        <Button mnemonicParsing="false" onAction="#updateDepthOffset" prefHeight="26.0" prefWidth="55.0" text="Update" />
+                        <Button mnemonicParsing="false" onAction="#updateDepthOffset" prefHeight="26.0" prefWidth="55.0" text="Update">
+                           <HBox.margin>
+                              <Insets right="8.0" />
+                           </HBox.margin></Button>
+                        <CheckBox fx:id="usePs1Depth" mnemonicParsing="false" onAction="#usePs1DepthClick" text="Use PS1 depth" />
                      </children>
                      <VBox.margin>
                         <Insets top="8.0" />
