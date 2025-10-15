@@ -53,11 +53,11 @@ layout(std140) uniform projectionInfo {
 
 uniform int usePs1Depth;
 
-in gl_PerVertex {
-  vec4 gl_Position;
-  float gl_PointSize;
-  float gl_ClipDistance[];
-} gl_in[];
+//in gl_PerVertex {
+//  vec4 gl_Position;
+//  float gl_PointSize;
+//  float gl_ClipDistance[];
+//} gl_in[];
 
 void emit(int, float);
 
