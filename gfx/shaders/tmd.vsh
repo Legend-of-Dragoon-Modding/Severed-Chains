@@ -29,12 +29,6 @@ out VS_OUT {
   smooth float depthOffset;
 } vs_out;
 
-//out gl_PerVertex {
-//    vec4 gl_Position;
-//    float gl_PointSize;
-//    float gl_ClipDistance[];
-//};
-
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
