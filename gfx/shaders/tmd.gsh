@@ -51,7 +51,9 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
-void emit(int);
+uniform int usePs1Depth;
+
+void emit(int, float);
 
 void main() {
   // If any vertex is too close to the camera, cull the whole face
@@ -67,20 +69,28 @@ void main() {
     return;
   }
 
+  float avgDepth = gl_in[0].gl_Position.z + gl_in[2].gl_Position.z + gl_in[4].gl_Position.z;
+  int vertexCount = 3;
+
   // Quad, check adjacent vertex
   if((vs_out[0].vertFlags & 0x10) != 0) {
     if(zfar >= vs_out[1].viewspaceZ * 2.0) {
       return;
     }
+
+    avgDepth += gl_in[1].gl_Position.z;
+    vertexCount++;
   }
 
-  emit(0);
-  emit(2);
-  emit(4);
+  avgDepth /= vertexCount;
+
+  emit(0, avgDepth);
+  emit(2, avgDepth);
+  emit(4, avgDepth);
   EndPrimitive();
 }
 
-void emit(int i) {
+void emit(int i, float depth) {
   gs_out.vertUv = vs_out[i].vertUv;
   gs_out.vertTpage = vs_out[i].vertTpage;
   gs_out.vertClut = vs_out[i].vertClut;
@@ -96,5 +106,10 @@ void emit(int i) {
   gs_out.depthOffset = vs_out[i].depthOffset;
 
   gl_Position = gl_in[i].gl_Position;
+
+  if(usePs1Depth != 0) {
+    gl_Position.z = depth;
+  }
+
   EmitVertex();
 }

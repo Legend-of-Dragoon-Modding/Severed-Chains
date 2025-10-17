@@ -8,7 +8,6 @@ import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
@@ -24,8 +23,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canSave_8011dc88;
@@ -43,10 +42,6 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
@@ -380,31 +375,8 @@ public class MainMenuScreen extends MenuScreen {
     startFadeEffect(2, 10);
 
     menuStack.pushScreen(new LoadGameScreen(gameState_800babc8.campaign.loadAllSaves(), save -> {
-      menuStack.reset();
-
-      final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state));
       _800bd7ac = true;
-
-      gameState_800babc8 = event.gameState;
-      gameState_800babc8.syncIds();
-
-      loadingNewGameState_800bdc34 = true;
-      whichMenu_800bdc38 = WhichMenu.UNLOAD;
-
-      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-      submapCutForSave_800cb450 = submapCut_80052c30;
-      collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
-
-      if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-        submapScene_80052c34 = 53;
-      }
-
-      if(gameState_800babc8.isOnWorldMap_4e4) {
-        submapCut_80052c30 = 0;
-      } else {
-        submapCut_80052c30 = gameState_800babc8.submapCut_a8;
-      }
-
+      SAVES.loadGameState(save.state, save.config, false);
       currentEngineState_8004dd04.loadGameFromMenu(gameState_800babc8);
     }, () -> {
       startFadeEffect(2, 5);

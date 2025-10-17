@@ -79,6 +79,8 @@ public class Model124 {
   public final Vector3f shadowSize_10c = new Vector3f();
   public final Vector3f shadowOffset_118 = new Vector3f();
 
+  public boolean usePs1Depth;
+
   public Model124(final String name) {
     this.name = name;
   }

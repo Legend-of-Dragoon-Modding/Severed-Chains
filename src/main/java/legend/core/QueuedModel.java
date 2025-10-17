@@ -24,6 +24,8 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
   protected final Shader<Options> shader;
   protected final Options shaderOptions;
 
+  final Matrix4f modelView = new Matrix4f();
+
   Obj obj;
   final Matrix4f transforms = new Matrix4f();
   final Vector3f screenspaceOffset = new Vector3f();

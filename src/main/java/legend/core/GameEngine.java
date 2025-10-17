@@ -161,7 +161,7 @@ public final class GameEngine {
 
   private static String statusText = "";
 
-  private static boolean loading;
+  private static boolean loading = true;
 
   public static boolean isLoading() {
     return loading;
@@ -189,7 +189,6 @@ public final class GameEngine {
       try {
         LOGGER.info("Severed Chains %s commit %s built %s starting", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
-        loading = true;
         RENDERER.setRenderCallback(GameEngine::loadGfx);
 
         Files.createDirectories(Path.of("saves"));
@@ -232,8 +231,6 @@ public final class GameEngine {
               statusText = I18n.translate("unpacker.checking_for_updates");
             }
           }
-
-          loading = false;
         }
       } catch(final Exception e) {
         throw new RuntimeException(e);
@@ -437,6 +434,8 @@ public final class GameEngine {
 
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
     onShutdown = RENDERER.events().onClose(Unpacker::stop);
+
+    loading = false;
   }
 
   private static void skip() {

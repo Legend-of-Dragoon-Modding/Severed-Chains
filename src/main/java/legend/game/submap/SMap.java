@@ -704,6 +704,9 @@ public class SMap extends EngineState {
     functions[788] = this::FUN_800f2554;
     functions[789] = this::scriptDeallocateLawPodTrail;
     functions[790] = this::scriptAllocateUnusedSmokeEffectData;
+
+    functions[940] = this::scriptSetSobjUsePs1Depth;
+
     return functions;
   }
 
@@ -1110,6 +1113,7 @@ public class SMap extends EngineState {
         final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, this.smapModelLw, QueuedModelTmd.class)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(model.zOffset_a0 * 4)
+          .usePs1Depth(model.usePs1Depth)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -2011,6 +2015,16 @@ public class SMap extends EngineState {
   private FlowControl scriptSetModelZOffset(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.zOffset_a0 = script.params_20[1].get();
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Set whether or not a submap object uses PS1 depth (legacy average Z) or normal depth (modern per-fragment)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "usePs1Depth", description = "True to use PS1 depth, false to use modern depth")
+  @Method(0x800dfca0L)
+  private FlowControl scriptSetSobjUsePs1Depth(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    sobj.model_00.usePs1Depth = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 

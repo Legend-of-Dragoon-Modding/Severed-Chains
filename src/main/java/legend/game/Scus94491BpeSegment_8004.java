@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.RenderEngine;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
@@ -229,6 +230,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[911] = SItem::scriptTakeEquipment;
     scriptSubFunctions_8004e29c[912] = SItem::scriptGenerateAttackItem;
     scriptSubFunctions_8004e29c[913] = SItem::scriptGenerateRecoveryItem;
+
+    scriptSubFunctions_8004e29c[960] = RenderEngine::scriptGetRenderAspectMultiplier;
   }
   // 8004f29c end of jump table
 
