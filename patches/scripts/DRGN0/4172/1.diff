@@ -1,0 +1,21 @@
+--- original
++++ modified
+@@ -3536,12 +3536,17 @@
+ mov 0x7, stor[23]
+ wait stor[23]
+ rewind
++ASPECT_MULTIPLIER:
++data 0x0
+ LABEL_169:
+ call 606, stor[14], 0x14400
+ call 611, stor[14], 0xfffffffe, 0xffffffff
+ call 545, stor[14], 0xffffffff, 0x0, 0x0, 0x780
+ call 547, stor[14], 0xffffffff, 0x0, 0x0, 0x0
+-call 549, stor[14], 0xffffffff, 0x800, 0x800, 0x800
++call 960, inl[:ASPECT_MULTIPLIER]
++mul 0x800, inl[:ASPECT_MULTIPLIER]
++shr 12, inl[:ASPECT_MULTIPLIER]
++call 549, stor[14], 0xffffffff, inl[:ASPECT_MULTIPLIER], 0x800, 0x800
+ call 551, stor[14], 0xffffffff, 0x0, 0x0, 0x0
+ call 581, stor[14], 0xffffffff, 0x9, 0x80, 0x80, 0x80
+ return

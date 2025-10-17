@@ -35,6 +35,10 @@ import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.scripting.FlowControl;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1313,5 +1317,12 @@ public class RenderEngine {
     if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD.get()) {
       this.frameAdvance = false;
     }
+  }
+
+  @ScriptDescription("Returns a .12 aspect ratio multiplier for adjusting widths for widescreen")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "multiplier", description = "The width multiplier (.12)")
+  public static FlowControl scriptGetRenderAspectMultiplier(final RunningScript<?> script) {
+    script.params_20[0].set((int)(RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio() * 0x1000));
+    return FlowControl.CONTINUE;
   }
 }
