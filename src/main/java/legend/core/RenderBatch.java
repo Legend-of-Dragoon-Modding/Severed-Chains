@@ -160,6 +160,10 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
+    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.needsSorting = true;
+    }
+
     this.temp.identity();
 
     final T entry = this.modelPool.acquire(type);
@@ -172,6 +176,10 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
+    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.needsSorting = true;
+    }
+
     final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, mv);
     return entry;
@@ -180,6 +188,10 @@ public class RenderBatch {
   public <T extends QueuedModel<?, ?> & LitModel> T queueModel(final Obj obj, final MV mv, final MV lightMv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
+    }
+
+    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.needsSorting = true;
     }
 
     final T entry = this.modelPool.acquire(type);
@@ -193,6 +205,10 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
+    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.needsSorting = true;
+    }
+
     final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, mv);
     return entry;
@@ -201,6 +217,10 @@ public class RenderBatch {
   public <T extends QueuedModel<?, ?> & LitModel> T queueModel(final Obj obj, final Matrix4f mv, final MV lightMv, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
+    }
+
+    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.needsSorting = true;
     }
 
     final T entry = this.modelPool.acquire(type);
