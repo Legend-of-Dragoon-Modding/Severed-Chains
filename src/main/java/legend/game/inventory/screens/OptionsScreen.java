@@ -40,8 +40,6 @@ public class OptionsScreen extends VerticalLayoutScreen {
   private final List<ConfigEntry<?>> configs = new ArrayList<>();
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
-  private final Map<Control, Label> lockedLabels = new HashMap<>();
-  private final Map<Control, ConfigEntry<?>> lockedEntries = new HashMap<>();
 
   public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
     deallocateRenderables(0xff);
@@ -108,8 +106,6 @@ public class OptionsScreen extends VerticalLayoutScreen {
             lock.setScale(0.4f);
             lock.setPos(extrasX + 2, 1);
             lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), this.mouseX, this.mouseY)));
-            this.lockedLabels.put(label, lock);
-            this.lockedEntries.put(label, configEntry);
           }
         }
       });

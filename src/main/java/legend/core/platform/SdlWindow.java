@@ -144,7 +144,7 @@ public class SdlWindow extends Window {
     SDL_DestroyWindow(this.window);
   }
 
-  long getWindowPtr() {
+  public long getWindowPtr() {
     return this.window;
   }
 

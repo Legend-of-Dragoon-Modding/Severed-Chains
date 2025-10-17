@@ -4148,7 +4148,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002c984L)
-  public static long playXaAudio(final int xaLoadingStage, final int xaArchiveIndex, final int xaFileIndex) {
+  public static int playXaAudio(final int xaLoadingStage, final int xaArchiveIndex, final int xaFileIndex) {
     //LAB_8002c9f0
     if(xaFileIndex == 0 || xaFileIndex >= 32 || xaLoadingStage >= 5) {
       return 0;
@@ -4167,6 +4167,10 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     return 0;
+  }
+
+  public static void stopXaAudio() {
+    AUDIO_THREAD.stopXa();
   }
 
   @Method(0x8002ced8L)

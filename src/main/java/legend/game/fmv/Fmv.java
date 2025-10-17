@@ -353,8 +353,12 @@ public final class Fmv {
     });
 
     inputActionPressed = RENDERER.events().onInputActionPressed((window, action, repeat) -> {
-      if(action == INPUT_ACTION_FMV_SKIP.get() && isValidSkipInput(window.getInputClass())) {
-        shouldStop = true;
+      if(action == INPUT_ACTION_FMV_SKIP.get()) {
+        if(isValidSkipInput(window.getInputClass()) && !repeat) {
+          shouldStop = true;
+        } else {
+          handleSkipText();
+        }
       }
     });
 

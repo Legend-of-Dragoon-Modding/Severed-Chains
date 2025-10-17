@@ -4,18 +4,25 @@ import org.joml.Vector3f;
 
 public class ShaderOptionsBattleTmd extends ShaderOptionsBase<ShaderOptionsBattleTmd> {
   private final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency;
+  private final Shader<ShaderOptionsBattleTmd>.UniformInt usePs1Depth;
   private final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags;
   private final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour;
 
-  public ShaderOptionsBattleTmd(final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex, final Shader<ShaderOptionsBattleTmd>.UniformVec3 colourUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffsetUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 clutUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 tpageUniform, final Shader<ShaderOptionsBattleTmd>.UniformFloat discardTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags, final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour) {
+  public ShaderOptionsBattleTmd(final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex, final Shader<ShaderOptionsBattleTmd>.UniformVec3 colourUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffsetUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 clutUniform, final Shader<ShaderOptionsBattleTmd>.UniformVec2 tpageUniform, final Shader<ShaderOptionsBattleTmd>.UniformFloat discardTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency, final Shader<ShaderOptionsBattleTmd>.UniformInt usePs1Depth, final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags, final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour) {
     super(modelIndex, colourUniform, uvOffsetUniform, clutUniform, tpageUniform, discardTranslucency);
     this.tmdTranslucency = tmdTranslucency;
+    this.usePs1Depth = usePs1Depth;
     this.ctmdFlags = ctmdFlags;
     this.battleColour = battleColour;
   }
 
   public ShaderOptionsBattleTmd tmdTranslucency(final int translucency) {
     this.tmdTranslucency.set(translucency);
+    return this;
+  }
+
+  public ShaderOptionsBattleTmd usePs1Depth(final boolean use) {
+    this.usePs1Depth.set(use ? 1 : 0);
     return this;
   }
 

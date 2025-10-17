@@ -24,6 +24,7 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
 
   /** The untextured translucency override from the TMD header */
   private int tmdTranslucency;
+  boolean usePs1Depth;
 
   private int ctmdFlags;
   private final Vector3f battleColour = new Vector3f();
@@ -56,6 +57,11 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
     return this;
   }
 
+  public QueuedModelBattleTmd usePs1Depth(final boolean use) {
+    this.usePs1Depth = use;
+    return this;
+  }
+
   public QueuedModelBattleTmd ctmdFlags(final int ctmdFlags) {
     this.ctmdFlags = ctmdFlags;
     return this;
@@ -85,6 +91,7 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
     this.lightTransforms.set(this.transforms);
     this.lightUsed = false;
     this.tmdTranslucency = 0;
+    this.usePs1Depth = false;
     this.ctmdFlags = 0;
     this.battleColour.zero();
   }
@@ -120,6 +127,7 @@ public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, Qu
   public void useShader(final int modelIndex, final int discardMode) {
     super.useShader(modelIndex, discardMode);
     this.shaderOptions.tmdTranslucency(this.tmdTranslucency);
+    this.shaderOptions.usePs1Depth(this.usePs1Depth);
     this.shaderOptions.ctmdFlags(this.ctmdFlags);
     this.shaderOptions.battleColour(this.battleColour);
   }
