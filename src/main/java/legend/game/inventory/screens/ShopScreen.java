@@ -244,7 +244,7 @@ public class ShopScreen extends MenuScreen {
           count = gameState_800babc8.items_2e9.getSize();
 
           if(this.invScroll_8011e0e4 + this.invIndex_8011e0e0 < count) {
-            final Item selected = gameState_800babc8.items_2e9.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
+            final ItemStack selected = gameState_800babc8.items_2e9.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
             renderString(193, 122, EVENTS.postEvent(new DescriptionEvent(selected.getDescriptionTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, false);
           }
         } else {

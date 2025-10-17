@@ -181,7 +181,7 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      final Item selected = this.menuItems.get(selectedSlot + slotScroll).item_00;
+      final ItemStack selected = this.menuItems.get(selectedSlot + slotScroll).item_00;
       renderString(194, 16, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, allocate);
     } else {
       renderString(194, 16, "", allocate);

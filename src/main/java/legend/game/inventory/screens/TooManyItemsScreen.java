@@ -230,7 +230,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
       if((a4 & 0x2) != 0) {
         if(slotScroll + slotIndex < this.items.size()) {
-          final Item selected = this.items.get(slotScroll + slotIndex).item_00.getItem();
+          final ItemStack selected = this.items.get(slotScroll + slotIndex).item_00;
           renderString(194, 164, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, allocate);
         }
 
