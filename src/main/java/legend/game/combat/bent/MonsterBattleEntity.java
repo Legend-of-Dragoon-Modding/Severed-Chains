@@ -85,7 +85,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2d48L)
   public int calculatePhysicalDamage(final BattleEntity27c target) {
-    final int atk = this.attack_34 + spellStats_800fa0b8[this.spellId_4e].multi_04;
+    final int atk = this.stats.getStat(LodMod.ATTACK_STAT.get()).get() + spellStats_800fa0b8[this.spellId_4e].multi_04;
 
     //LAB_800f2e28
     //LAB_800f2e88
@@ -98,7 +98,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f8768L)
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
-    int matk = this.magicAttack_36;
+    int matk = this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
     }
