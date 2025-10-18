@@ -144,7 +144,12 @@ public class ItemListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText(I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack().getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
+
+        final ItemStack selected = this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack();
+
+        if(!selected.isEmpty()) {
+          renderText(I18n.translate(selected.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
+        }
       }
     }
   }
