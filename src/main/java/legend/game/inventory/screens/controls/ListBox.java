@@ -1,9 +1,9 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
+import legend.core.memory.types.QuadConsumer;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
-import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
@@ -20,7 +20,6 @@ import java.util.function.ToIntFunction;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderCharacterPortrait;
-import static legend.game.SItem.renderItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -37,7 +36,9 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
   @Nullable
-  private final Function<T, ItemIcon> entryToIcon;
+  private final ToIntFunction<T> entryToCount;
+  @Nullable
+  private final QuadConsumer<T, Integer, Integer, Integer> entryToIcon;
   @Nullable
   private final ToIntFunction<T> entryToRightIcon;
   @Nullable
@@ -58,9 +59,10 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, String> entryToString, @Nullable final Function<T, ItemIcon> entryToIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
+  public ListBox(final Function<T, String> entryToString, @Nullable final ToIntFunction<T> entryToCount, @Nullable final QuadConsumer<T, Integer, Integer, Integer> renderIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
     this.entryToString = entryToString;
-    this.entryToIcon = entryToIcon;
+    this.entryToCount = entryToCount;
+    this.entryToIcon = renderIcon;
     this.entryToRightIcon = entryToRightIcon;
     this.isDisabled = isDisabled;
 
@@ -120,7 +122,7 @@ public class ListBox<T> extends Control {
   }
 
   public void remove(final T data) {
-    this.findControl(ListBox.Entry.class, c -> c.data == data).ifPresent(entry -> {
+    this.findControl(Entry.class, c -> c.data == data).ifPresent(entry -> {
       this.removeControl(entry);
       this.entries.removeIf(e -> e.data == data);
 
@@ -134,6 +136,28 @@ public class ListBox<T> extends Control {
 
       this.updateEntries();
     });
+  }
+
+  public void removeIf(final Predicate<T> predicate) {
+    final List<ListBox<T>.Entry> entries = this.findControls((Class<ListBox<T>.Entry>)(Class)Entry.class, c -> predicate.test(c.data));
+
+    for(int i = 0; i < entries.size(); i++) {
+      final ListBox<T>.Entry entry = entries.get(i);
+
+      this.removeControl(entry);
+      this.entries.removeIf(e -> predicate.test(e.data));
+
+      if(this.visibleEntries() < this.maxVisibleEntries) {
+        if(this.scroll > 0) {
+          this.scroll--;
+        } else if(this.slot >= this.entries.size() && !this.entries.isEmpty()) {
+          this.select(this.entries.size() - 1);
+        }
+      }
+
+      this.updateEntries();
+
+    }
   }
 
   public void clear() {
@@ -190,12 +214,12 @@ public class ListBox<T> extends Control {
       final Entry entry = this.entries.get(i);
 
       if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries) {
+        entry.updateText();
+
         if(this.isDisabled != null) {
           if(this.isDisabled.test(entry.data)) {
-            entry.updateText();
             entry.fontOptions.colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN);
           } else {
-            entry.updateText();
             entry.fontOptions.colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
           }
         }
@@ -522,8 +546,16 @@ public class ListBox<T> extends Control {
       renderText(this.string, x + 28, y + 3, this.fontOptions);
       textZ_800bdf00 = oldZ;
 
+      if(ListBox.this.entryToCount != null) {
+        final int count = ListBox.this.entryToCount.applyAsInt(this.data);
+
+        if(count > 0) {
+          this.renderNumber(x + this.getWidth() - 69, y + 5, count, 10);
+        }
+      }
+
       if(ListBox.this.entryToIcon != null) {
-        renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8);
+        ListBox.this.entryToIcon.accept(this.data, x + 13, y + 1, 0x8);
       }
 
       if(ListBox.this.entryToRightIcon != null) {

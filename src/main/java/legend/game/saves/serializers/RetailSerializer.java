@@ -1,17 +1,24 @@
 package legend.game.saves.serializers;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
+import legend.game.saves.InventoryEntry;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 
 public final class RetailSerializer {
   private RetailSerializer() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSerializer.class);
 
   public static final int MAGIC_RETAIL = 0x01114353; // SC__
 
@@ -26,8 +33,8 @@ public final class RetailSerializer {
   public static SavedGame fromRetail(final String name, final FileData data) {
     final GameState52c state = deserializeRetailGameState(data.slice(0x1fc));
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
-    final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
+    final int maxHp = CoreMod.CHARACTER_DATA[state.charIds_88[0]].statsTable[charData.level_12].hp_00;
+    final int maxMp = CoreMod.CHARACTER_DATA[state.charIds_88[0]].dragoonStatsTable[charData.dlevel_13].mp_00;
     return new SavedGame(name, name, data.readUByte(0x1a9), data.readUByte(0x1a8), state, new ConfigCollection(), maxHp, maxMp);
   }
 
@@ -90,7 +97,14 @@ public final class RetailSerializer {
         break;
       }
 
-      state.equipmentIds_1e8.add(id);
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown equipment ID %#x", id);
+        continue;
+      }
+
+      state.equipmentRegistryIds_1e8.add(LodMod.id(idStr));
     }
 
     for(int i = 0; i < 64; i++) {
@@ -100,7 +114,14 @@ public final class RetailSerializer {
         break;
       }
 
-      state.itemIds_2e9.add(id);
+      final String idStr = LodMod.ITEM_IDS[id - 192];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown item ID %#x", id);
+        continue;
+      }
+
+      state.itemRegistryIds_2e9.add(new InventoryEntry(LodMod.id(idStr), 1, 1));
     }
 
     for(int charSlot = 0; charSlot < 9; charSlot++) {

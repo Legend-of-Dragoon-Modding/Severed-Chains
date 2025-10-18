@@ -4,9 +4,12 @@ import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8002.addSp;
+import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class RecoverSpItem extends Item {
   private final boolean targetAll;
@@ -19,18 +22,23 @@ public class RecoverSpItem extends Item {
   }
 
   @Override
-  public boolean canBeUsed(final UsageLocation location) {
+  public int getMaxStackSize(final ItemStack stack) {
+    return CONFIG.getConfig(ITEM_STACK_SIZE.get());
+  }
+
+  @Override
+  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;
   }
 
   @Override
-  public boolean canTarget(final TargetType type) {
+  public boolean canTarget(final ItemStack stack, final TargetType type) {
     return type == TargetType.ALLIES || type == TargetType.ALL && this.targetAll;
   }
 
   @Override
   @Method(0x80022d88L)
-  public void useInMenu(final UseItemResponse response, final int charId) {
+  public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
     final int amount;
     if(this.percentage == 100) {
       amount = -1;
@@ -43,17 +51,17 @@ public class RecoverSpItem extends Item {
   }
 
   @Override
-  public boolean isStatMod() {
+  public boolean isStatMod(final ItemStack stack) {
     return true;
   }
 
   @Override
-  public int calculateStatMod(final BattleEntity27c user, final BattleEntity27c target) {
+  public int calculateStatMod(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     return 0;
   }
 
   @Override
-  public boolean alwaysHits() {
+  public boolean alwaysHits(final ItemStack stack) {
     return true;
   }
 }

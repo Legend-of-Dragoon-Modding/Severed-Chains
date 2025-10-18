@@ -13,7 +13,7 @@ import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
@@ -45,7 +45,8 @@ import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.Battle.FUN_800ca194;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
@@ -140,14 +141,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
   public int _2e;
   public int equipmentIcon_30;
-  public int attack_34;
-  public int magicAttack_36;
-  public int defence_38;
-  public int magicDefence_3a;
   public int attackHit_3c;
   public int magicHit_3e;
-  public int attackAvoid_40;
-  public int magicAvoid_42;
   /**
    * Player only - if you have a weapon that inflicts a status, this will be a %
    * <p>
@@ -212,7 +207,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
 
-  public Item item_d4;
+  public ItemStack item_d4;
 //  public int _ec;
 //  public int _ee;
 //  public int _f0;
@@ -254,6 +249,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public final Rect4i scissor = new Rect4i();
   public boolean useScissor;
 
+  public int spellDamageOverride = 0;
+
   public BattleEntity27c(final BattleEntityType type, final String name) {
     super(BattleObject.BOBJ);
     this.type = type;
@@ -276,11 +273,11 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public int getEffectiveDefence() {
-    return this.defence_38;
+    return this.stats.getStat(LodMod.DEFENSE_STAT.get()).get();
   }
 
   public int getEffectiveMagicDefence() {
-    return this.magicDefence_3a;
+    return this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get();
   }
 
   public abstract ElementSet getAttackElements();
@@ -389,14 +386,14 @@ public abstract class BattleEntity27c extends BattleObject {
       case _21 -> this._2e;
       case EQUIPMENT_ICON -> this.equipmentIcon_30;
       case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
-      case ATTACK -> this.attack_34;
-      case MAGIC_ATTACK -> this.magicAttack_36;
-      case DEFENCE -> this.defence_38;
-      case MAGIC_DEFENCE -> this.magicDefence_3a;
+      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
+      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
+      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).get();
+      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get();
       case ATTACK_HIT -> this.attackHit_3c;
       case MAGIC_HIT -> this.magicHit_3e;
-      case ATTACK_AVOID -> this.attackAvoid_40;
-      case MAGIC_AVOID -> this.magicAvoid_42;
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.AVOID_STAT.get()).get();
+      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44;
       case EQUIPMENT_19 -> this.equipment_19_46;
       case EQUIPMENT_1a -> this.equipment_1a_48;
@@ -487,14 +484,14 @@ public abstract class BattleEntity27c extends BattleObject {
 
       case _21 -> this._2e = value;
       case EQUIPMENT_ICON -> this.equipmentIcon_30 = value;
-      case ATTACK -> this.attack_34 = value;
-      case MAGIC_ATTACK -> this.magicAttack_36 = value;
-      case DEFENCE -> this.defence_38 = value;
-      case MAGIC_DEFENCE -> this.magicDefence_3a = value;
+      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value);
+      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value);
+      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value);
+      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value);
       case ATTACK_HIT -> this.attackHit_3c = value;
       case MAGIC_HIT -> this.magicHit_3e = value;
-      case ATTACK_AVOID -> this.attackAvoid_40 = value;
-      case MAGIC_AVOID -> this.magicAvoid_42 = value;
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(value);
+      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value);
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value;
       case EQUIPMENT_19 -> this.equipment_19_46 = value;
       case EQUIPMENT_1a -> this.equipment_1a_48 = value;
@@ -724,7 +721,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setActiveItem(final Item item) {
+  public void setActiveItem(final ItemStack item) {
     //LAB_800f7a98
     this.item_d4 = item;
 //    this._ec = 0;
@@ -738,11 +735,14 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800f7b8c
     // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
     if(this.spellId_4e != -1 && this.spellId_4e <= 127) {
-      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this.spellId_4e, spellStats_800fa0b8[this.spellId_4e])).spell;
+      if(this instanceof PlayerBattleEntity) {
+        this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this, this.spellId_4e, spellStats_800fa0b8_Player[this.spellId_4e])).spell;
+      } else {
+        this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this, this.spellId_4e, spellStats_800fa0b8_Monster[this.spellId_4e])).spell;
+      }
     } else {
       this.spell_94 = new SpellStats0c();
     }
-
     //LAB_800f7c54
   }
 

@@ -3,10 +3,13 @@ package legend.game.inventory;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.modding.events.inventory.IconDisplayEvent;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptReadable;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
+
+import static legend.core.GameEngine.EVENTS;
 
 public class Equipment extends RegistryEntry implements InventoryEntry, ScriptReadable {
   public final int price;
@@ -117,7 +120,7 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
 
   @Override
   public ItemIcon getIcon() {
-    return this.icon_0e;
+    return EVENTS.postEvent(new IconDisplayEvent(this, this.icon_0e)).icon;
   }
 
   @Override
@@ -133,6 +136,21 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
   @Override
   public int getPrice() {
     return this.price;
+  }
+
+  @Override
+  public int getSize() {
+    return 1;
+  }
+
+  @Override
+  public int getMaxSize() {
+    return 1;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return false;
   }
 
   public void applyEffect(final BattleEntity27c wearer) {

@@ -20,8 +20,10 @@ import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.OverflowMode;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.FontOptions;
@@ -29,10 +31,10 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.AddGoldEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
-import legend.game.modding.events.inventory.GiveItemEvent;
+import legend.game.modding.events.inventory.Inventory;
 import legend.game.modding.events.inventory.TakeEquipmentEvent;
-import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
 import legend.game.scripting.RunningScript;
@@ -87,6 +89,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
@@ -869,7 +872,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final MagicStuff08 spellStuff = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[dlevel];
       final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
@@ -900,8 +903,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022a50
     //LAB_80022a64
     int unlockedSpells = 0;
-    for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
+    for(int i = 0; i < CoreMod.MAX_DRAGOON_LEVEL + 1; i++) {
+      if(CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i].spellIndex_02 != -1) {
         unlockedSpells++;
       }
 
@@ -1011,31 +1014,27 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
-  public static boolean takeItemId(final Item item) {
-    final int itemSlot = gameState_800babc8.items_2e9.indexOf(item);
+  public static boolean takeItem(final Item item) {
+    return gameState_800babc8.items_2e9.take(item).isEmpty();
+  }
 
-    if(itemSlot != -1) {
-      return takeItem(itemSlot);
-    }
-
-    return false;
+  public static boolean takeItem(final ItemStack stack) {
+    return gameState_800babc8.items_2e9.take(stack).isEmpty();
   }
 
   @Method(0x800232dcL)
-  public static boolean takeItem(final int itemSlot) {
-    if(itemSlot >= gameState_800babc8.items_2e9.size()) {
+  public static boolean takeItemFromSlot(final int itemSlot) {
+    return takeItemFromSlot(itemSlot, gameState_800babc8.items_2e9.get(itemSlot).getSize());
+  }
+
+  @Method(0x800232dcL)
+  public static boolean takeItemFromSlot(final int itemSlot, final int amount) {
+    if(itemSlot >= gameState_800babc8.items_2e9.getSize()) {
       LOGGER.warn("Tried to take item index %d (out of bounds)", itemSlot);
       return false;
     }
 
-    final Item item = gameState_800babc8.items_2e9.get(itemSlot);
-    final TakeItemEvent event = EVENTS.postEvent(new TakeItemEvent(item, itemSlot));
-
-    if(event.isCanceled()) {
-      return false;
-    }
-
-    gameState_800babc8.items_2e9.remove(event.itemSlot);
+    gameState_800babc8.items_2e9.takeFromSlot(itemSlot, amount);
     return true;
   }
 
@@ -1069,28 +1068,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023484L)
   public static boolean giveItem(final Item item) {
-    final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(item, Collections.unmodifiableList(gameState_800babc8.items_2e9), CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())));
+    return gameState_800babc8.items_2e9.give(item).isEmpty();
+  }
 
-    if(event.isCanceled() || event.givenItems.isEmpty()) {
-      return false;
-    }
-
-    final boolean overflowed = event.currentItems.size() + event.givenItems.size() > event.maxInventorySize;
-
-    if(event.overflowMode == OverflowMode.FAIL && overflowed) {
-      return false;
-    }
-
-    if(event.overflowMode == OverflowMode.TRUNCATE && overflowed) {
-      for(int i = 0; i < event.givenItems.size() && event.currentItems.size() <= event.maxInventorySize; i++) {
-        gameState_800babc8.items_2e9.add(event.givenItems.get(i));
-      }
-
-      return true;
-    }
-
-    gameState_800babc8.items_2e9.addAll(event.givenItems);
-    return true;
+  /**
+   * Note: does NOT consume the passed in item stack
+   */
+  @Method(0x80023484L)
+  public static boolean giveItem(final ItemStack item) {
+    return gameState_800babc8.items_2e9.give(new ItemStack(item)).isEmpty();
   }
 
   @Method(0x80023484L)
@@ -1149,7 +1135,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002363cL)
   public static int addGold(final int amount) {
-    gameState_800babc8.gold_94 += amount;
+    final AddGoldEvent event = EVENTS.postEvent(new AddGoldEvent(amount));
+    gameState_800babc8.gold_94 += event.gold;
 
     if(gameState_800babc8.gold_94 > 99999999) {
       gameState_800babc8.gold_94 = 99999999;
@@ -1192,7 +1179,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static <T> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
+  public static <T extends InventoryEntry> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
     out.clear();
 
     //LAB_800239ec
@@ -1203,28 +1190,50 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  @Method(0x800239e0L)
+  public static void setInventoryFromDisplay(final List<MenuEntryStruct04<ItemStack>> display, final Inventory out, final int count) {
+    out.clear();
+
+    //LAB_800239ec
+    for(int i = 0; i < count; i++) {
+      if((display.get(i).flags_02 & 0x1000) == 0) {
+        out.give(display.get(i).item_00);
+      }
+    }
+  }
+
   @Method(0x80023a2cL)
-  public static <T extends RegistryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
-    display.sort(menuItemIconComparator(retailSorting));
+  public static <T extends InventoryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
+    display.sort(menuItemIconComparator(retailSorting, InventoryEntry::getRegistryId));
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static <T extends RegistryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting) {
+  @Method(0x80023a2cL)
+  public static void sortItems(final List<MenuEntryStruct04<ItemStack>> display, final Inventory items, final int count, final List<String> retailSorting) {
+    display.sort(menuItemIconComparator(retailSorting, stack -> stack.getItem().getRegistryId()));
+    setInventoryFromDisplay(display, items, count);
+  }
+
+  public static <T extends InventoryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
-    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.getIcon().resolve().icon);
+    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.item_00.getIcon().resolve().icon);
 
     if(retail) {
       comparator = comparator.thenComparingInt(item -> {
-        if(!LodMod.MOD_ID.equals(item.item_00.getRegistryId().modId()) || !retailSorting.contains(item.item_00.getRegistryId().entryId())) {
+        final RegistryId id = idExtractor.apply(item.item_00);
+
+        if(!LodMod.MOD_ID.equals(id.modId()) || !retailSorting.contains(id.entryId())) {
           return Integer.MAX_VALUE;
         }
 
-        return retailSorting.indexOf(item.item_00.getRegistryId().entryId());
+        return retailSorting.indexOf(id.entryId());
       });
 
       comparator = comparator.thenComparing(item -> {
-        if(LodMod.MOD_ID.equals(item.item_00.getRegistryId().modId()) && retailSorting.contains(item.item_00.getRegistryId().entryId())) {
+        final RegistryId id = idExtractor.apply(item.item_00);
+
+        if(LodMod.MOD_ID.equals(id.modId()) && retailSorting.contains(id.entryId())) {
           return "";
         }
 
@@ -1245,13 +1254,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023a88L)
   public static void sortItems() {
-    final List<MenuEntryStruct04<Item>> items = new ArrayList<>();
+    final List<MenuEntryStruct04<ItemStack>> items = new ArrayList<>();
 
-    for(final Item item : gameState_800babc8.items_2e9) {
-      items.add(MenuEntryStruct04.make(item));
+    for(final ItemStack stack : gameState_800babc8.items_2e9) {
+      items.add(new MenuEntryStruct04<>(stack));
     }
 
-    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size(), List.of(LodMod.ITEM_IDS));
+    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize(), List.of(LodMod.ITEM_IDS));
   }
 
   @Method(0x80023b54L)
@@ -1507,6 +1516,7 @@ public final class Scus94491BpeSegment_8002 {
               .vertices(metrics.vertexStart, 4)
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride(clutX, clut >>> 6)
+              .colour(renderable.colour)
             ;
 
             if((metrics.clut_04 & 0x8000) != 0) {
@@ -1515,6 +1525,8 @@ public final class Scus94491BpeSegment_8002 {
                 .translucentDepthComparator(GL_LEQUAL)
               ;
             }
+
+            metrics.useTexture(model);
 
             if(renderable.widthCut != 0 || renderable.heightCut != 0) {
               final int y;
@@ -1658,7 +1670,7 @@ public final class Scus94491BpeSegment_8002 {
     if(itemId < 0xc0) {
       script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff);
     } else {
-      script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff);
+      script.params_20[1].set(takeItem(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff);
     }
 
     return FlowControl.CONTINUE;

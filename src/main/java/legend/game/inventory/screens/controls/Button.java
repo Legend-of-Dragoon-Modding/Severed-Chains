@@ -48,6 +48,19 @@ public class Button extends Control {
     return this.fontOptions;
   }
 
+
+  public Button(final String text, final TextColour textColour, final TextColour shadowColour) {
+    this.hover = this.addControl(new Highlight());
+    this.hover.setZ(this.getZ());
+    this.hover.hide();
+
+    this.setSize(59, 14);
+
+    this.setText(text);
+
+    this.fontOptions.colour(textColour).shadowColour(shadowColour);
+  }
+
   @Override
   public void setZ(final int z) {
     super.setZ(z);
@@ -65,6 +78,10 @@ public class Button extends Control {
 
   public void setTextColour(final TextColour colour) {
     this.fontOptions.colour(colour);
+  }
+
+  public void setShadowColour(final TextColour colour) {
+    this.fontOptions.shadowColour(colour);
   }
 
   @Override

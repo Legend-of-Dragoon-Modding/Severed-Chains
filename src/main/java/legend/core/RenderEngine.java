@@ -32,6 +32,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
 import legend.game.modding.coremod.CoreMod;
@@ -70,6 +71,7 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD;
@@ -251,6 +253,7 @@ public class RenderEngine {
   public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
   public Obj opaqueQuad;
   // Simple quads
+  public Obj centredQuadOpaque;
   public Obj centredQuadBPlusF;
   public Obj centredQuadBMinusF;
   // Line box (reticles)
@@ -527,6 +530,13 @@ public class RenderEngine {
       .size(1.0f, 1.0f)
       .build();
     this.opaqueQuad.persistent = true;
+
+    this.centredQuadOpaque = new QuadBuilder("Centred Quad Opaque")
+      .monochrome(1.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.centredQuadOpaque.persistent = true;
 
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
@@ -1091,6 +1101,7 @@ public class RenderEngine {
       throw t;
     } finally {
       LOGGER.info("Shutting down...");
+      engineState_8004dd20 = EngineStateEnum.GAME_CLOSED_12;
 
       try {
         Config.save();

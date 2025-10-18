@@ -5,17 +5,14 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.RunningScript;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.AdditionData0e;
 import legend.game.types.CharacterData2c;
 import legend.game.types.MenuAdditionInfo;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
@@ -75,8 +72,8 @@ public class AdditionListMenu extends ListMenu {
     renderText(String.valueOf(charData.additionXp_22[index]), x + 145, y, this.fontOptions);
 
     final String max;
-    if(charData.additionLevels_1a[index] < 5) {
-      max = String.valueOf(charData.additionLevels_1a[index] * 20);
+    if(charData.additionLevels_1a[index] < CoreMod.MAX_ADDITION_LEVEL) {
+      max = String.valueOf(charData.additionLevels_1a[index] * CoreMod.ADDITIONS_PER_LEVEL);
     } else {
       max = "-";
     }
@@ -155,9 +152,9 @@ public class AdditionListMenu extends ListMenu {
         final int index = this.menuAdditions[listIndex].index_01;
         final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
         final int level = charData.additionLevels_1a[index];
-        final AdditionData0e additionData = additionData_80052884[offset];
-        final int damage = additionData.damage_0c * (additions_80114070[offset][level].damageMultiplier_03 + 100) / 100;
-        final int sp = additionData.sp_02[level - 1];
+        final int hits = CoreMod.CHARACTER_DATA[this.player_08.charId_272].getAdditionHitCount(listIndex);
+        final int damage = CoreMod.CHARACTER_DATA[this.player_08.charId_272].getAdditionDamage(listIndex, level);
+        final int sp = CoreMod.CHARACTER_DATA[this.player_08.charId_272].getAdditionLevelSp(listIndex, level);
 
         //Selected item description
         if(this.description == null) {
@@ -168,7 +165,7 @@ public class AdditionListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText("Hits: " + additionData.attacks_01 + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
+        renderText("Hits: " + hits + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
     }
   }

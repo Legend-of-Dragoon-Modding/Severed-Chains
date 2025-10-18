@@ -1,14 +1,14 @@
 package legend.game.modding.events.inventory;
 
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import org.legendofdragoon.modloader.events.Event;
 
 public class RepeatItemReturnEvent extends Event {
-  public final Item item;
+  public final ItemStack stack;
   public boolean returnItem;
 
-  public RepeatItemReturnEvent(final Item item, final boolean returnItem) {
-    this.item = item;
+  public RepeatItemReturnEvent(final ItemStack stack, final boolean returnItem) {
+    this.stack = stack;
     this.returnItem = returnItem;
   }
 }

@@ -158,7 +158,7 @@ public class BattleStateEf4 {
   public int _2c0;
   public int _2c4;
   public int _2c8;
-  public int _2cc;
+  public int additionHitIndex_2cc;
   public int _2d0;
   public int _2d4;
   public int _2d8;

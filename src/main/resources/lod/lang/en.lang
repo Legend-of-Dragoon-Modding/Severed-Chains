@@ -1,6 +1,9 @@
 # Mod metadata
 lod.name=Legend of Dragoon
 
+# Config
+lod.config.item_stack_size.label=Item Stack Size
+
 # Equipment
 lod.equipment.broad_sword.name=Broad Sword
 lod.equipment.broad_sword.description=

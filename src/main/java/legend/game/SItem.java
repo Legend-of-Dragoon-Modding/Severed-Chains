@@ -8,12 +8,12 @@ import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.characters.Addition04;
 import legend.game.i18n.I18n;
-import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
@@ -23,9 +23,11 @@ import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
+import legend.game.modding.events.inventory.EquipmentCanEquipEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.modding.events.inventory.IconDisplayEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -48,6 +50,7 @@ import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -79,7 +82,7 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
+import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -120,29 +123,29 @@ public final class SItem {
   public static final FontOptions UI_WHITE_CENTERED = new FontOptions().colour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_WHITE_SMALL = new FontOptions().colour(TextColour.WHITE).size(0.67f);
 
-  public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
-  public static final MenuStatus08[] menuStatus_800fba7c = {
-    new MenuStatus08("Petrify", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("Charmed", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("Confused", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("Fear", new FontOptions().colour(TextColour.PURPLE).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("Stunned", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("Dspirit", new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
-    new MenuStatus08("Poison", new FontOptions().colour(TextColour.LIME).shadowColour(TextColour.GREEN).horizontalAlign(HorizontalAlign.CENTRE)),
-  };
+   public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
+   public static final MenuStatus08[] menuStatus_800fba7c = {
+   new MenuStatus08("Petrify", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("Charmed", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("Confused", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("Fear", new FontOptions().colour(TextColour.PURPLE).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("Stunned", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("Dspirit", new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
+   new MenuStatus08("Poison", new FontOptions().colour(TextColour.LIME).shadowColour(TextColour.GREEN).horizontalAlign(HorizontalAlign.CENTRE)),
+   };
 
-  /** Note: arrays run into the next array's first element */
+   /** Note: arrays run into the next array's first element */
   public static final int[][] dragoonXpRequirements_800fbbf0 = {
-    {0, 0, 1200, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1200, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 2000, 12000, 20000, 0},
-    {0, 0, 1000, 2000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
+    {0, 1200, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1200, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
+    {0, 1000, 2000, 12000, 20000, 0},
+    {0, 1000, 2000, 12000, 20000, 0},
+    {0, 1000, 6000, 12000, 20000, 0},
   };
 
   public static final int[] dragoonGoodsBits_800fbd08 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
@@ -169,17 +172,6 @@ public final class SItem {
     {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 29, 255, 150, 200, 200, 200), new MagicStuff08(40, -1, 255, 155, 205, 210, 210), new MagicStuff08(60, 30, 255, 160, 210, 220, 220), new MagicStuff08(80, -1, 255, 165, 215, 230, 230), new MagicStuff08(100, 31, 255, 170, 220, 250, 250), },
     {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 66, 255, 200, 150, 200, 200), new MagicStuff08(40, 65, 255, 205, 155, 210, 210), new MagicStuff08(60, 67, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 13, 255, 220, 170, 250, 250), },
   };
-
-  public static final int[] kongolXpTable_801134f0 = new int[61];
-  public static final int[] dartXpTable_801135e4 = new int[61];
-  public static final int[] haschelXpTable_801136d8 = new int[61];
-  public static final int[] meruXpTable_801137cc = new int[61];
-  public static final int[] lavitzXpTable_801138c0 = new int[61];
-  public static final int[] albertXpTable_801138c0 = new int[61];
-  public static final int[] roseXpTable_801139b4 = new int[61];
-  public static final int[] shanaXpTable_80113aa8 = new int[61];
-  public static final int[] mirandaXpTable_80113aa8 = new int[61];
-  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
 
   public static final Addition04[][] additions_80114070 = {
     {new Addition04(0, 0, 0), new Addition04(0, 0, 0), new Addition04(25, 0, 5), new Addition04(50, 0, 10), new Addition04(75, 0, 20), new Addition04(100, 0, 35)},
@@ -407,7 +399,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "used")
   public static FlowControl scriptIsItemSlotUsed(final RunningScript<?> script) {
     final int slot = script.params_20[0].get();
-    script.params_20[1].set(slot < gameState_800babc8.items_2e9.size() ? 1 : 0);
+    script.params_20[1].set(slot < gameState_800babc8.items_2e9.getSize() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -425,7 +417,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGetItemSlot(final RunningScript<?> script) {
     final int slot = script.params_20[0].get();
-    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getRegistryId());
+    script.params_20[1].set(gameState_800babc8.items_2e9.get(slot).getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
@@ -483,7 +475,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean taken = takeItemId(REGISTRIES.items.getEntry(id).get());
+    final boolean taken = takeItem(REGISTRIES.items.getEntry(id).get());
     script.params_20[1].set(taken ? 1 : 0);
     return FlowControl.CONTINUE;
   }
@@ -501,18 +493,18 @@ public final class SItem {
   @ScriptDescription("Picks a random attack item")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGenerateAttackItem(final RunningScript<?> script) {
-    final Item[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    script.params_20[0].set(item.getRegistryId());
+    final ItemStack[] items = EVENTS.postEvent(new GatherAttackItemsEvent()).getStacks();
+    final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Picks a random recovery item")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGenerateRecoveryItem(final RunningScript<?> script) {
-    final Item[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getItems();
-    final Item item = items[seed_800fa754.nextInt(items.length)];
-    script.params_20[0].set(item.getRegistryId());
+    final ItemStack[] items = EVENTS.postEvent(new GatherRecoveryItemsEvent()).getStacks();
+    final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
+    script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
   }
 
@@ -526,11 +518,11 @@ public final class SItem {
     //LAB_800fc6ac
     final int level = gameState_800babc8.charData_32c[charIndex].level_12;
 
-    if(level >= 60) {
+    if(level >= CoreMod.MAX_CHARACTER_LEVEL) {
       return 0; // Max level
     }
 
-    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
+    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, CoreMod.CHARACTER_DATA[charIndex].xpTable[level + 1]));
 
     //LAB_800fc70c
     return event.xp;
@@ -734,20 +726,6 @@ public final class SItem {
   }
 
   @Method(0x80103910L)
-  public static Renderable58 renderItemIcon(final ItemIcon icon, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
-    renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = icon.resolve().icon;
-    renderable.startGlyph_10 = renderable.glyph_04;
-    renderable.endGlyph_14 = renderable.glyph_04;
-    renderable.tpage_2c = 0x19;
-    renderable.clut_30 = 0;
-    renderable.x_40 = x;
-    renderable.y_44 = y;
-    return renderable;
-  }
-
-  @Method(0x80103910L)
   public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
@@ -763,7 +741,8 @@ public final class SItem {
 
   @Method(0x801039a0L)
   public static boolean canEquip(final Equipment equipment, final int charIndex) {
-    return (characterValidEquipment_80114284[charIndex] & equipment.equipableFlags_03) != 0;
+    final EquipmentCanEquipEvent event = EVENTS.postEvent(new EquipmentCanEquipEvent(equipment, equipment.equipableFlags_03));
+    return (characterValidEquipment_80114284[charIndex] & event.equipableFlags_03) != 0;
   }
 
   /**
@@ -872,13 +851,13 @@ public final class SItem {
   }
 
   @Method(0x80104738L)
-  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<Item> items, final long a0) {
+  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<ItemStack> items, final long a0) {
     if(items != null) {
       items.clear();
 
-      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-        final Item item = gameState_800babc8.items_2e9.get(i);
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+      for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+        final ItemStack item = gameState_800babc8.items_2e9.get(i);
+        final MenuEntryStruct04<ItemStack> menuEntry = new MenuEntryStruct04<>(item);
         items.add(menuEntry);
       }
     }
@@ -889,7 +868,7 @@ public final class SItem {
       int equipmentIndex;
       for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment_1e8.size(); equipmentIndex++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
-        final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+        final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
 
         if(a0 != 0 && !gameState_800babc8.equipment_1e8.get(equipmentIndex).canBeDiscarded()) {
           menuEntry.flags_02 = 0x2000;
@@ -903,7 +882,7 @@ public final class SItem {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             if(gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot) != null) {
               final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot);
-              final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+              final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
               menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8[i];
               equipments.add(menuEntry);
 
@@ -1621,7 +1600,7 @@ public final class SItem {
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(charData.equipment_14.get(slot) != null) {
-          renderItemIcon(charData.equipment_14.get(slot).icon_0e, 202, 17 + 14 * slot.ordinal(), 0);
+          charData.equipment_14.get(slot).renderIcon(202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
@@ -1665,14 +1644,18 @@ public final class SItem {
 
       //LAB_801094ac
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
-      renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8);
+      menuItem.item_00.renderIcon(x + 4, y + FUN_800fc814(i), 0x8);
+
+      if(menuItem.getMaxSize() > 1) {
+        renderNumber(x + 96, y + FUN_800fc814(i) + 3, menuItem.getSize(), 0x2, 10);
+      }
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {
         renderCharacterPortrait(s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
       } else if((s0 & 0x2000) != 0) {
-        renderItemIcon(ItemIcon.WARNING, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
+        ItemIcon.WARNING.render(x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;
       }
 
       //LAB_801095a4
@@ -1897,7 +1880,7 @@ public final class SItem {
       stats.bodyDefence_6c = statsEvent.bodyDefence;
       stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_80111d20[charId][stats.dlevel_0f];
+      final MagicStuff08 magicStuff = CoreMod.CHARACTER_DATA[charId].dragoonStatsTable[stats.dlevel_0f];
       stats.maxMp_6e = statsEvent.maxMp;
       stats.spellId_70 = statsEvent.spellId;
       stats._71 = magicStuff._03;
@@ -1907,8 +1890,11 @@ public final class SItem {
       stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
 
       final int additionIndex = stats.selectedAddition_35;
+      final int trueAdditionIndex = additionIndex - additionOffsets_8004f5ac[charId];
+      final int additionLevel = gameState_800babc8.charData_32c[charId].additionLevels_1a[additionIndex - additionOffsets_8004f5ac[charId]];
+
       if(additionIndex != -1) {
-        final Addition04 addition = additions_80114070[additionIndex][stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac[charId]]];
+        final Addition04 addition = CoreMod.CHARACTER_DATA[charId].additionsMultiplier.get(trueAdditionIndex)[additionLevel];
 
         stats.addition_00_9c = addition._00;
         stats.additionSpMultiplier_9e = addition.spMultiplier_02;

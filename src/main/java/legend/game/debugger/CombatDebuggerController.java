@@ -25,6 +25,7 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.ui.BattleHud;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptTempParam;
 import legend.lodmod.LodMod;
@@ -126,7 +127,7 @@ public class CombatDebuggerController {
     this.statusCondition.getSelectionModel().select(0);
 
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
-    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
+    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, CoreMod.MAX_DRAGOON_LEVEL));
     this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
     this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE));
     this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
@@ -190,14 +191,14 @@ public class CombatDebuggerController {
     this.spdMod.setText(speedMod < 0 ? Integer.toString(speedMod) : "+" + speedMod);
 
     this.turn.getValueFactory().setValue(bent.turnValue_4c);
-    this.atk.getValueFactory().setValue(bent.attack_34);
-    this.def.getValueFactory().setValue(bent.defence_38);
-    this.matk.getValueFactory().setValue(bent.magicAttack_36);
-    this.mdef.getValueFactory().setValue(bent.magicDefence_3a);
+    this.atk.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_STAT.get()).get());
+    this.def.getValueFactory().setValue(bent.stats.getStat(LodMod.DEFENSE_STAT.get()).get());
+    this.matk.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get());
+    this.mdef.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get());
     this.ahit.getValueFactory().setValue(bent.attackHit_3c);
     this.mhit.getValueFactory().setValue(bent.magicHit_3e);
-    this.aavd.getValueFactory().setValue(bent.attackAvoid_40);
-    this.mavd.getValueFactory().setValue(bent.magicAvoid_42);
+    this.aavd.getValueFactory().setValue(bent.stats.getStat(LodMod.AVOID_STAT.get()).get());
+    this.mavd.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get());
 
     this.statusCondition.getSelectionModel().select(this.getStatusIndexFromFlags(bent.status_0e) + 1);
   }
@@ -261,14 +262,14 @@ public class CombatDebuggerController {
 
     bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
     bent.turnValue_4c = this.turn.getValue().shortValue();
-    bent.attack_34 = this.atk.getValue();
-    bent.defence_38 = this.def.getValue();
-    bent.magicAttack_36 = this.matk.getValue();
-    bent.magicDefence_3a = this.mdef.getValue();
+    bent.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(this.atk.getValue());
+    bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(this.matk.getValue());
+    bent.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(this.def.getValue());
+    bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(this.mdef.getValue());
     bent.attackHit_3c = this.ahit.getValue().shortValue();
     bent.magicHit_3e = this.mhit.getValue().shortValue();
-    bent.attackAvoid_40 = this.aavd.getValue().shortValue();
-    bent.magicAvoid_42 = this.mavd.getValue().shortValue();
+    bent.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(this.aavd.getValue());
+    bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(this.mavd.getValue());
   }
 
   public void getStatusCondition(final ActionEvent event) {

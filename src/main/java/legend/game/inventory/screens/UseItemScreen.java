@@ -6,7 +6,9 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -16,6 +18,7 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -35,7 +38,7 @@ import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.menuItemIconComparator;
 import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
+import static legend.game.Scus94491BpeSegment_8002.takeItemFromSlot;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -87,7 +90,7 @@ public class UseItemScreen extends MenuScreen {
   private Renderable58 charHighlight;
   private final Renderable58[] _8011d718 = new Renderable58[7];
 
-  private final MenuEntries<Item> menuItems = new MenuEntries<>();
+  private final MenuEntries<ItemStack> menuItems = new MenuEntries<>();
 
   public UseItemScreen(final Runnable unload) {
     this.unload = unload;
@@ -178,7 +181,8 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final ItemStack selected = this.menuItems.get(selectedSlot + slotScroll).item_00;
+      renderString(194, 16, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, allocate);
     } else {
       renderString(194, 16, "", allocate);
     }
@@ -215,14 +219,15 @@ public class UseItemScreen extends MenuScreen {
   private int getUsableItemsInMenu() {
     this.menuItems.clear();
 
-    for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-      final Item item = gameState_800babc8.items_2e9.get(i);
+    for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
+      final ItemStack stack = gameState_800babc8.items_2e9.get(i);
 
-      if(item.canBeUsed(Item.UsageLocation.MENU)) {
-        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+      if(stack.canBeUsed(Item.UsageLocation.MENU)) {
+        final MenuEntryStruct04<ItemStack> menuEntry = new MenuEntryStruct04<>(stack);
+        menuEntry.itemSlot_01 = i;
         menuEntry.flags_02 = 0;
 
-        if(!item.canBeUsedNow(Item.UsageLocation.MENU)) {
+        if(!stack.canBeUsedNow(Item.UsageLocation.MENU)) {
           menuEntry.flags_02 = 0x4000;
         }
 
@@ -230,7 +235,7 @@ public class UseItemScreen extends MenuScreen {
       }
     }
 
-    this.menuItems.sort(menuItemIconComparator(List.of(LodMod.ITEM_IDS)));
+    this.menuItems.sort(menuItemIconComparator(List.of(LodMod.ITEM_IDS), stack -> stack.getItem().getRegistryId()));
     return this.menuItems.size();
   }
 
@@ -279,10 +284,10 @@ public class UseItemScreen extends MenuScreen {
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
 
-          final Item item = this.menuItems.get(this.selectedSlot + this.slotScroll).item_00;
-          this.itemTargetAll = item.canTarget(Item.TargetType.ALL);
+          final ItemStack stack = this.menuItems.get(this.selectedSlot + this.slotScroll).item_00;
+          this.itemTargetAll = stack.canTarget(Item.TargetType.ALL);
 
-          if(item.canBeUsed(Item.UsageLocation.MENU) && (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
+          if(stack.canBeUsed(Item.UsageLocation.MENU) && (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
             if(this.itemTargetAll) {
               for(int i = 0; i < 7; i++) {
                 this._8011d718[i] = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(i) - 3, 110);
@@ -325,7 +330,7 @@ public class UseItemScreen extends MenuScreen {
             playMenuSound(40);
           } else {
             playMenuSound(2);
-            takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
+            takeItemFromSlot(this.menuItems.get(this.selectedSlot + this.slotScroll).itemSlot_01, 1);
             this.itemCount = this.getUsableItemsInMenu();
             loadCharacterStats();
             this.getItemResponseText(this.useItemResponse);
@@ -509,10 +514,10 @@ public class UseItemScreen extends MenuScreen {
       return;
     }
 
-    final Item item = this.menuItems.get(this.selectedSlot + this.slotScroll).item_00;
-    this.itemTargetAll = item.canTarget(Item.TargetType.ALL);
+    final ItemStack stack = this.menuItems.get(this.selectedSlot + this.slotScroll).item_00;
+    this.itemTargetAll = stack.canTarget(Item.TargetType.ALL);
 
-    if(!item.canBeUsed(Item.UsageLocation.MENU) || (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) != 0) {
+    if(!stack.canBeUsed(Item.UsageLocation.MENU) || (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) != 0) {
       playMenuSound(40);
       return;
     }
@@ -593,7 +598,7 @@ public class UseItemScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).item_00);
+      takeItemFromSlot(this.menuItems.get(this.selectedSlot + this.slotScroll).itemSlot_01, 1);
       this.itemCount = this.getUsableItemsInMenu();
       loadCharacterStats();
 

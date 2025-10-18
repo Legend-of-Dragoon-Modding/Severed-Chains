@@ -23,7 +23,7 @@ import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
@@ -116,7 +116,7 @@ public class StatusScreen extends MenuScreen {
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
-      for(int i = 0; i < 4; i++) {
+      for(int i = 0; i < 8; i++) {
         if(allocate && i < unlockedSpellCount) {
           renderCharacter(200, 127 + i * 14, i + 1);
         }
@@ -124,10 +124,10 @@ public class StatusScreen extends MenuScreen {
         //LAB_80109370
         final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
-          renderText(spellStats_800fa0b8[spellIndex].name, 210, 125 + i * 14, UI_TEXT);
+          renderText(spellStats_800fa0b8_Player[spellIndex].name, 210, 125 + i * 14, UI_TEXT);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
+            renderThreeDigitNumber(342, 128 + i * 14, spellIndex >= 68 ? 0 : spellMp_80114290[spellIndex]);
           }
         }
       }

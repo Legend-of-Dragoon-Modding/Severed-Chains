@@ -7,7 +7,10 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.events.inventory.DescriptionEvent;
+import legend.game.modding.events.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -17,6 +20,7 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
@@ -76,7 +80,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private Renderable58 renderable_8011e204;
 
   private final MenuEntries<Equipment> equipment = new MenuEntries<>();
-  private final MenuEntries<Item> items = new MenuEntries<>();
+  private final MenuEntries<ItemStack> items = new MenuEntries<>();
   private final MenuEntries<InventoryEntry> droppedItems = new MenuEntries<>();
 
   @Override
@@ -85,12 +89,20 @@ public class TooManyItemsScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
 
-        for(final Item item : itemOverflow) {
-          this.droppedItems.add(MenuEntryStruct04.make(item));
+        // Use a temp inventory to merge stacks where appropriate
+        final Inventory temp = new Inventory();
+        temp.disableEvents();
+
+        for(final ItemStack item : itemOverflow) {
+          temp.give(item);
+        }
+
+        for(final ItemStack item : temp) {
+          this.droppedItems.add(new MenuEntryStruct04<>(item));
         }
 
         for(final Equipment equipment : equipmentOverflow) {
-          this.droppedItems.add(MenuEntryStruct04.make(equipment));
+          this.droppedItems.add(new MenuEntryStruct04<>(equipment));
         }
 
         this.menuState = MenuState.INIT_2;
@@ -135,7 +147,7 @@ public class TooManyItemsScreen extends MenuScreen {
         if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
           slotCount = gameState_800babc8.equipment_1e8.size();
         } else {
-          slotCount = gameState_800babc8.items_2e9.size();
+          slotCount = gameState_800babc8.items_2e9.getSize();
         }
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -204,12 +216,12 @@ public class TooManyItemsScreen extends MenuScreen {
     renderMenuItems(16, 33, this.droppedItems, 0, Math.min(5, this.droppedItems.size()), saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if((a4 & 0x1) != 0 && !allocate) {
-      renderString(16, 164, I18n.translate(inv.getDescriptionTranslationKey()), false);
+      renderString(16, 164, EVENTS.postEvent(new DescriptionEvent(inv.getNameTranslationKey(), I18n.translate(inv.getDescriptionTranslationKey()))).description, false);
     }
 
     renderText(Acquired_item_8011c2f8, 32, 22, UI_TEXT);
 
-    if(inv instanceof Item) {
+    if(inv instanceof ItemStack) {
       renderText(Used_item_8011c32c, 210, 22, UI_TEXT);
 
       if((a4 & 0x1) != 0) {
@@ -218,7 +230,8 @@ public class TooManyItemsScreen extends MenuScreen {
 
       if((a4 & 0x2) != 0) {
         if(slotScroll + slotIndex < this.items.size()) {
-          renderString(194, 164, I18n.translate(this.items.get(slotScroll + slotIndex).getDescriptionTranslationKey()), allocate);
+          final ItemStack selected = this.items.get(slotScroll + slotIndex).item_00;
+          renderString(194, 164, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, allocate);
         }
 
         final Renderable58 renderable = allocateOneFrameGlyph(137, 84, 140);
@@ -378,7 +391,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       slotCount = gameState_800babc8.equipment_1e8.size();
     } else {
-      slotCount = gameState_800babc8.items_2e9.size();
+      slotCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invIndex == 0) {
@@ -396,7 +409,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       slotCount = gameState_800babc8.equipment_1e8.size();
     } else {
-      slotCount = gameState_800babc8.items_2e9.size();
+      slotCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invIndex == 6) {
@@ -414,7 +427,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       slotCount = gameState_800babc8.equipment_1e8.size();
     } else {
-      slotCount = gameState_800babc8.items_2e9.size();
+      slotCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invScroll + this.invIndex > 0 || (slotCount > 1 && this.allowWrapY)) {
@@ -431,7 +444,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       slotCount = gameState_800babc8.equipment_1e8.size();
     } else {
-      slotCount = gameState_800babc8.items_2e9.size();
+      slotCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invScroll + this.invIndex < slotCount - 1 || (slotCount > 1 && this.allowWrapY)) {
@@ -456,7 +469,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       slotCount = gameState_800babc8.equipment_1e8.size();
     } else {
-      slotCount = gameState_800babc8.items_2e9.size();
+      slotCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invIndex != Math.min(6, slotCount - 1)) {
@@ -483,7 +496,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       slotCount = gameState_800babc8.equipment_1e8.size();
     } else {
-      slotCount = gameState_800babc8.items_2e9.size();
+      slotCount = gameState_800babc8.items_2e9.getSize();
     }
 
     if(this.invScroll + 6 < slotCount - 6) {
@@ -507,7 +520,7 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   private void inventoryNavigateEnd() {
-    final int slotCount = gameState_800babc8.items_2e9.size();
+    final int slotCount = gameState_800babc8.items_2e9.getSize();
 
     if(this.invScroll + this.invIndex != slotCount - 1) {
       playMenuSound(1);
@@ -542,7 +555,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
   private void selectMenuState9() {
     final MenuEntryStruct04<InventoryEntry> newItem = this.droppedItems.get(this.dropIndex);
-    final boolean isItem = this.droppedItems.get(this.dropIndex).item_00 instanceof Item;
+    final boolean isItem = this.droppedItems.get(this.dropIndex).item_00 instanceof ItemStack;
 
     if(this.invIndex + this.invScroll > this.items.size() - 1) {
       return;
@@ -553,8 +566,8 @@ public class TooManyItemsScreen extends MenuScreen {
     } else {
       if(isItem) {
         this.droppedItems.set(this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.items.get(this.invIndex + this.invScroll));
-        this.items.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Item>)(MenuEntryStruct04)newItem);
-        setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
+        this.items.set(this.invIndex + this.invScroll, (MenuEntryStruct04<ItemStack>)(MenuEntryStruct04)newItem);
+        setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize());
       } else {
         this.droppedItems.set(this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.equipment.get(this.invIndex + this.invScroll));
         this.equipment.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Equipment>)(MenuEntryStruct04)newItem);
@@ -576,7 +589,7 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.droppedItems.get(this.dropIndex).item_00 instanceof Equipment) {
       sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size(), List.of(LodMod.ITEM_IDS));
     } else {
-      sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size(), List.of(LodMod.EQUIPMENT_IDS));
+      sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize(), List.of(LodMod.EQUIPMENT_IDS));
     }
   }
 
