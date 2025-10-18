@@ -1195,7 +1195,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800239ec
     for(int i = 0; i < count; i++) {
       if((display.get(i).flags_02 & 0x1000) == 0) {
-        out.give(display.get(i).item_00);
+        out.give(display.get(i).item_00, true);
       }
     }
   }

@@ -83,11 +83,22 @@ public class Inventory implements Iterable<ItemStack> {
    * @return Any portion of the stack that couldn't fit into the inventory, or EMPTY if the whole stack was added
    */
   public ItemStack give(final ItemStack stack) {
+    return this.give(stack, false);
+  }
+
+  /**
+   * Adds the item stack to this inventory, merging it into existing item stacks if they have room
+   *
+   * @param force If true, adds the item to this inventory even if this inventory is full (mods can still override this behaviour via the event)
+   *
+   * @return Any portion of the stack that couldn't fit into the inventory, or EMPTY if the whole stack was added
+   */
+  public ItemStack give(final ItemStack stack, final boolean force) {
     if(!this.enableEvents) {
       return this.giveImpl(stack, false);
     }
 
-    final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(this, stack));
+    final GiveItemEvent event = EVENTS.postEvent(new GiveItemEvent(this, stack, force ? OverflowMode.OVERFLOW : OverflowMode.FAIL));
 
     if(event.isCanceled() || event.givenItems.isEmpty()) {
       return stack;
