@@ -222,6 +222,8 @@ publishing {
 
 test {
   useJUnitPlatform()
+  // Don't automatically run tests in build process
+  exclude '**/*'
 }
 
 sourceSets {

@@ -161,10 +161,11 @@ public final class GameEngine {
 
   private static String statusText = "";
 
-  private static boolean loading = true;
+  private static boolean engineLoading = true;
+  private static boolean unpackerLoading = true;
 
   public static boolean isLoading() {
-    return loading;
+    return engineLoading || unpackerLoading;
   }
 
   public static Updater.Release getUpdate() {
@@ -231,6 +232,8 @@ public final class GameEngine {
               statusText = I18n.translate("unpacker.checking_for_updates");
             }
           }
+
+          unpackerLoading = false;
         }
       } catch(final Exception e) {
         throw new RuntimeException(e);
@@ -435,7 +438,7 @@ public final class GameEngine {
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
     onShutdown = RENDERER.events().onClose(Unpacker::stop);
 
-    loading = false;
+    engineLoading = false;
   }
 
   private static void skip() {
@@ -489,7 +492,7 @@ public final class GameEngine {
       if(loadingFade > 1.0f) {
         loadingFade = 1.0f;
       }
-    } else if(!loading) {
+    } else if(!unpackerLoading) {
       synchronized(UPDATER_LOCK) {
         if(UPDATE_CHECK_FINISHED) {
           transitionToGame();
@@ -518,7 +521,7 @@ public final class GameEngine {
       .useTextureAlpha()
     ;
 
-    if(loading) {
+    if(unpackerLoading) {
       // Offset sine wave delta to quickly shift between colours and then wait for a moment before repeating
       eyeColour += Math.max(0.0f, MathHelper.sin(deltaMs / 300.0f % MathHelper.TWO_PI) * 0.75f + 0.25f) / 500.0f;
 
