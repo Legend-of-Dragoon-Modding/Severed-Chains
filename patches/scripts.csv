@@ -98,6 +98,7 @@ diff,SECT/DRGN0.BIN/5572/1,scripts/DRGN0/5572/1.diff,"Urobolus Cutscene, force-l
 diff,SECT/DRGN0.BIN/5606/1,scripts/DRGN0/5606/1.diff,"Zackwell Cutscene, force-load Dart"
 diff,SECT/DRGN0.BIN/5608/1,scripts/DRGN0/5608/1.diff,"Zackwell Cutscene Part 2, force-load"
 diff,SECT/DRGN0.BIN/5610/1,scripts/DRGN0/5610/1.diff,"Zieg Cutscene, force-load Dart"
+diff,SECT/DRGN0.BIN/5644/1,scripts/DRGN0/5644/1.diff,"Melbu second generation - widescreen (GH#2241)"
 diff,SECT/DRGN21.BIN/36/5,scripts/DRGN21/36/5.diff,"Seles Anim Crash, GH#813"
 diff,SECT/DRGN21.BIN/51/1,scripts/DRGN21/51/1.diff,"Hellena Prison Fruegel (I) Cutscenes, flags, widescreen patch"
 diff,SECT/DRGN21.BIN/51/2,scripts/DRGN21/51/2.diff,"Hellena Prison Fruegel (I) Cutscenes, Shana, widescreen patch"
