@@ -108,7 +108,7 @@ public class ItemListMenu extends ListMenu {
     for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.getSize(); itemSlot++) {
       final ItemStack stack = gameState_800babc8.items_2e9.get(itemSlot);
 
-      if(!stack.canBeUsedNow(Item.UsageLocation.BATTLE)) {
+      if(!stack.canBeUsed(Item.UsageLocation.BATTLE)) {
         continue;
       }
 
@@ -146,6 +146,12 @@ public class ItemListMenu extends ListMenu {
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
         renderText(EVENTS.postEvent(new DescriptionEvent(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack().getBattleDescriptionTranslationKey(), I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack().getBattleDescriptionTranslationKey()))).description, 160, 157, this.fontOptions);
+
+        final ItemStack selected = this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack();
+
+        if(!selected.isEmpty()) {
+          renderText(I18n.translate(selected.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
+        }
       }
     }
   }

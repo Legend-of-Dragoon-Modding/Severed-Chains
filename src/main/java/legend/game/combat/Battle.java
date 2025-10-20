@@ -262,6 +262,7 @@ import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -311,6 +312,8 @@ public class Battle extends EngineState {
   public final BattleHud hud = new BattleHud(this);
   public final BattleCamera camera_800c67f0 = new BattleCamera();
   public final ParticleManager particles = new ParticleManager(this.camera_800c67f0);
+
+  private int encounterIntroFinishedTick;
 
   /**
    * <ol start="0">
@@ -1489,6 +1492,7 @@ public class Battle extends EngineState {
       battleFlags_800bc960 |= 0x40;
       setProjectionPlaneDistance(320);
       this.camera_800c67f0.resetCameraMovement();
+      this.encounterIntroFinishedTick = tickCount_800bb0fc + encounter.introWaitTicks;
       pregameLoadingStage_800bb10c++;
     }
 
@@ -1530,6 +1534,10 @@ public class Battle extends EngineState {
 
   @Method(0x800c788cL)
   public void allocateEnemyBattleEntities() {
+    if(tickCount_800bb0fc < this.encounterIntroFinishedTick) {
+      return;
+    }
+
     //LAB_801095a0
     for(final int enemyId : encounter.uniqueIds) {
       final int enemyIndex = enemyId & 0x1ff;

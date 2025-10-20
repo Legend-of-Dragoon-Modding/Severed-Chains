@@ -1903,7 +1903,7 @@ public class BattleHud {
             if(selectedIconFlag == 5) {
               boolean hasUsableItems = false;
               for(int i = 0; i < gameState_800babc8.items_2e9.getSize(); i++) {
-                if(gameState_800babc8.items_2e9.get(i).canBeUsedNow(Item.UsageLocation.BATTLE)) {
+                if(gameState_800babc8.items_2e9.get(i).canBeUsed(Item.UsageLocation.BATTLE)) {
                   hasUsableItems = true;
                   break;
                 }

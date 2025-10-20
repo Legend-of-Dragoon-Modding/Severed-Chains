@@ -15,10 +15,11 @@ public class GiveItemEvent extends InventoryEvent {
   /** The items that were given. Modders may add or remove items from this list to change what items the player receives. */
   public final List<ItemStack> givenItems = new ArrayList<>();
   /** How to handle too many items being given */
-  public OverflowMode overflowMode = OverflowMode.FAIL;
+  public OverflowMode overflowMode;
 
-  public GiveItemEvent(final Inventory inventory, final ItemStack givenItem) {
+  public GiveItemEvent(final Inventory inventory, final ItemStack givenItem, final OverflowMode overflowMode) {
     this.inventory = inventory;
     this.givenItems.add(givenItem);
+    this.overflowMode = overflowMode;
   }
 }

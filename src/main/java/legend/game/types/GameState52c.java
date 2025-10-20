@@ -148,7 +148,7 @@ public class GameState52c {
         continue;
       }
 
-      this.items_2e9.give(new ItemStack(delegate.get(), entry.size, entry.durability));
+      this.items_2e9.give(new ItemStack(delegate.get(), entry.size, entry.durability), true);
     }
   }
 }

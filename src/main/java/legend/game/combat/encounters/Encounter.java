@@ -23,7 +23,13 @@ public class Encounter extends RegistryEntry {
   public final int postCombatSubmapCut;
   public final int postCombatSubmapScene;
 
+  public final int introWaitTicks;
+
   public Encounter(final int musicIndex, final int escapeChance, final int playerOpeningCamera, final int monsterOpeningCamera, final int cameraPosIndex0, final int cameraPosIndex1, final int cameraPosIndex2, final int cameraPosIndex3, final int postCombatSubmapCut, final int postCombatSubmapScene, final Monster... monsters) {
+    this(musicIndex, escapeChance, playerOpeningCamera, monsterOpeningCamera, cameraPosIndex0, cameraPosIndex1, cameraPosIndex2, cameraPosIndex3, postCombatSubmapCut, postCombatSubmapScene, 0, monsters);
+  }
+
+  public Encounter(final int musicIndex, final int escapeChance, final int playerOpeningCamera, final int monsterOpeningCamera, final int cameraPosIndex0, final int cameraPosIndex1, final int cameraPosIndex2, final int cameraPosIndex3, final int postCombatSubmapCut, final int postCombatSubmapScene, final int introWaitTicks, final Monster... monsters) {
     if(monsters.length == 0) {
       throw new IllegalArgumentException("There must be at least one monster");
     }
@@ -38,6 +44,7 @@ public class Encounter extends RegistryEntry {
     this.cameraPosIndices[3] = cameraPosIndex3;
     this.postCombatSubmapCut = postCombatSubmapCut;
     this.postCombatSubmapScene = postCombatSubmapScene;
+    this.introWaitTicks = introWaitTicks;
     this.monsters = List.of(monsters);
 
     final IntSet uniqueIds = new IntOpenHashSet();

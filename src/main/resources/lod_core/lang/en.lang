@@ -60,6 +60,7 @@ lod_core.ui.links.issue=Report an Issue
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
+lod_core.items.nothing.battle_description=Nothing
 
 lod_core.ui.item_list.sort=Sort
 lod_core.ui.item_list.discard=Discard
