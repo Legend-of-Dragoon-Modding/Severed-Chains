@@ -574,7 +574,11 @@ public class Ttle extends EngineState {
         this.renderMenuBackground();
         this.renderMenuOptions();
         this.renderMenuLogo();
-        this.renderMenuLogoFire();
+
+        if(this.renderablesLoaded) {
+          this.renderMenuLogoFire();
+        }
+
         this.renderCopyright();
       }
     }
