@@ -2918,11 +2918,16 @@ gosub inl[:LABEL_348] ; addr
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x0, 0x0, 0x0, inl[:LABEL_352[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x4, 0x0, 0x0, inl[:LABEL_353[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x5, 0x0, 0x0, inl[:LABEL_354[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-gosub inl[:IS_DETONATE_ARROW] ; addr
+gosub inl[:IS_DEFF_ARROW] ; addr
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_321] ; operand, left, right, addr
 mov 0x0, var[45][248] ; source, dest
 mov 0x0, var[45][249] ; source, dest
 call Battle::scriptSetBentStat, stor[0], id[lod:detonate_rock], ITEM_ID ; bentIndex, value, statIndex
+call Battle::scriptGetBentStat, stor[0], SPECIAL_EFFECT_FLAGS, stor[9] ;
+jmp_cmp &, 0x8, stor[9], inl[:DEFF_ARROW_TARGET_ALL] ; operand, left, right, addr
+call Battle::scriptLoadDeff, 0xc3, stor[0], stor[28], 0x0, 0x2000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
+jmp inl[:LABEL_321] ; 
+DEFF_ARROW_TARGET_ALL:
 call Battle::scriptLoadDeff, 0xc1, stor[0], 0xffffffff, 0x1, 0x2000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
 LABEL_321:
 gosub inl[:LABEL_348] ; addr
@@ -2935,7 +2940,7 @@ mov 0x0, stor[11] ; source, dest
 gosub inl[:LABEL_404] ; addr
 mov 0x6, stor[23] ; source, dest
 wait stor[23] ; frames
-gosub inl[:IS_DETONATE_ARROW] ; addr
+gosub inl[:IS_DEFF_ARROW] ; addr
 jmp_cmp !=, 0x0, stor[8], inl[:LABEL_337] ; operand, left, right, addr
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
@@ -3146,9 +3151,8 @@ wait stor[23] ; frames
 deallocate
 
 ; SUBROUTINE
-IS_DETONATE_ARROW:
-call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, reg[0] ; bentIndex, statIndex, value
-call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:equipment], reg[0], 1000, stor[8]
+IS_DEFF_ARROW:
+call Battle::isDeffArrow, stor[0], stor[8] ; bentIndex, value
 return
 
 ; SUBROUTINE
@@ -4722,12 +4726,12 @@ rel :ACTION_NOOP ; no-op
 
 ; SUBROUTINE TABLE
 DRAGOON_ACTIONS:
-rel :ACTION_NOOP ; guard (no-op)
-rel :ACTION_DRAGOON_TRANSFORM ; transform (no-op)
+rel :ACTION_GUARD ; guard
+rel :DETRANSFORM_FROM_DRAGOON ; transform
 rel :ACTION_DRAGOON_MAGIC ; d-magic
 rel :ACTION_DRAGOON_ATTACK ; attack
-rel :ACTION_NOOP ; item (no-op)
-rel :ACTION_NOOP ; run (no-op)
+rel :ACTION_USE_ITEM ; item
+rel :ACTION_RUN_AWAY ; run
 rel :ACTION_NOOP ; special (no-op)
 rel :ACTION_NOOP ; ? (no-op)
 rel :ACTION_DRAGOON_ATTACK ; d-attack
@@ -4770,10 +4774,12 @@ or 0x80, stor[17] ; right, left
 
 LABEL_499:
 mov stor[17], stor[8] ; source, dest
+call Battle::combatMenu, stor[0], stor[8], stor[8] ; bentIndex, menu, override
 return
 
 LABEL_500:
 mov 0x60, stor[8] ; source, dest
+call Battle::combatMenu, stor[0], stor[8], stor[8] ; bentIndex, menu, override
 gosub inl[:IS_DRAGOON] ; addr
 return
 
@@ -4821,6 +4827,7 @@ mov var[46][2], stor[10] ; s10 = encounter escape chance
 jmp_cmp !=, 0x0, stor[10], inl[:LABEL_507] ; escape chance is not 0
 or 0x8, stor[9] ; can't run
 LABEL_507:
+call Battle::combatMenuBlocked, stor[0], stor[9], stor[9] ; bentIndex, menu, override
 return
 
 LABEL_508:
@@ -4884,6 +4891,7 @@ call Battle::scriptGetBentStat2, stor[0], CURRENT_HP, stor[8] ; bentIndex, statI
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[9] ; bentIndex, statIndex, value
 mov stor[8], stor[11] ; source, dest
 div 0xa, stor[9] ; amount, operand
+call Battle::guardAmount, stor[0], stor[9], stor[9] ; bentIndex, amount, value
 add stor[9], stor[11] ; amount, operand
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[10] ; bentIndex, statIndex, value
 jmp_cmp >=, stor[10], stor[11], inl[:LABEL_519] ; operand, left, right, addr
@@ -5481,6 +5489,24 @@ mov 0xffffffff, var[45][76] ; source, dest
 TRANSFORM_OUT_OF_DRAGOON_EXIT:
 return
 
+DETRANSFORM_FROM_DRAGOON:
+call Battle::detransformOptions, stor[8] ; 
+jmp_cmp ==, 0x0, stor[8], inl[:DETRANSFORM_FROM_DRAGOON_EXIT] ; 
+jmp_cmp ==, 0x2, stor[8], inl[:DETRANSFORM_FROM_DRAGOON_AFTER_TURN] ; 
+call Battle::scriptConsumeSp, stor[0], 0x1, 100 ; consume 100 sp
+gosub inl[:SET_MY_ATTACK_TARGETING_BIT] ; addr
+mov stor[0], stor[30] ; source, dest
+gosub inl[:TRANSFORM_OUT_OF_DRAGOON] ; addr
+and 0xfffffffe, var[45][245] ; right, left
+gosub inl[:CLEAR_MY_ATTACK_TARGETING_BIT] ; addr
+return
+DETRANSFORM_FROM_DRAGOON_AFTER_TURN:
+gosub inl[:HANDLE_BATTLE_HUD] ;
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
+add 0x45, stor[8] ; amount, operand
+mov 0x1, var[45][stor[8]] ; source, dest
+DETRANSFORM_FROM_DRAGOON_EXIT:
+return
 
 
 ; SUBROUTINE
@@ -6654,9 +6680,13 @@ consume
 
 ; SUBROUTINE
 HANDLE_REGEN:
+call Battle::getEquipEffectsInDragoon, stor[8]
+jmp_cmp ==, 0x1, stor[8], inl[:HANDLE_REGEN_START] ;
+
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_EXIT] ; is dragoon
 
+HANDLE_REGEN_START:
 mov stor[0], stor[28] ; source, dest
 call Battle::scriptGetBentStat, stor[0], HP_REGEN, stor[9] ; bentIndex, statIndex, value
 gosub inl[:SIGN_HP_REGEN_VALUE] ; addr
@@ -6735,9 +6765,12 @@ return
 ; SUBROUTINE
 GIVE_ON_HIT_VITALS:
 jmp_cmp &, 0x40, stor[7], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dead
+call Battle::getEquipEffectsInDragoon, stor[8]
+jmp_cmp ==, 0x1, stor[8], inl[:GIVE_ON_HIT_VITALS_START] ;
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dragoon
 
+GIVE_ON_HIT_VITALS_START:
 mov stor[0], stor[28] ; source, dest
 gosub inl[:LABEL_605] ; addr
 jmp_cmp !=, 0x0, stor[8], inl[:GIVE_ON_HIT_VITALS_MAGICAL_HIT] ; was magical damage

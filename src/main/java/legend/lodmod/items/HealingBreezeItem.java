@@ -9,6 +9,10 @@ public class HealingBreezeItem extends RecoverHpItem {
     super(ItemIcon.BLUE_POTION, 25, true, 50);
   }
 
+  public HealingBreezeItem(final ItemIcon icon, final int price, final boolean targetAll, final int percentage) {
+    super(icon, price, targetAll, percentage);
+  }
+
   @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;

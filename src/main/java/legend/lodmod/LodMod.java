@@ -29,17 +29,14 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.combat.deff.RegisterDeffsEvent;
+import legend.game.combat.ui.RegisterModMenuEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
-import legend.game.inventory.IconMapEvent;
-import legend.game.inventory.IconSet;
-import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.elements.DarkElement;
 import legend.game.modding.coremod.elements.DivineElement;
 import legend.game.modding.coremod.elements.EarthElement;
@@ -66,10 +63,10 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Map;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
@@ -291,11 +288,18 @@ public class LodMod {
 
   @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
-    for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
-      if(spellStats_800fa0b8[spellId] == null) {
+    for(int spellId = 0; spellId < spellStats_800fa0b8_Player.length; spellId++) {
+      if(spellStats_800fa0b8_Player[spellId] == null) {
         final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
         final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
+        spellStats_800fa0b8_Player[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
+      }
+    }
+    for(int spellId = 0; spellId < spellStats_800fa0b8_Monster.length; spellId++) {
+      if(spellStats_800fa0b8_Monster[spellId] == null) {
+        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
+        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
+        spellStats_800fa0b8_Monster[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }
@@ -456,45 +460,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void createIconMapping(final IconMapEvent event) {
-    if(CONFIG.getConfig(CoreMod.ICON_SET.get()) == IconSet.RETAIL) {
-      // Remap all the expanded icons to retail icons
-      event.addMapping(ItemIcon.AXE, ItemIcon.SWORD);
-      event.addMapping(ItemIcon.HAMMER, ItemIcon.SWORD);
-      event.addMapping(ItemIcon.SPEAR, ItemIcon.SWORD);
-      event.addMapping(ItemIcon.BOW, ItemIcon.SWORD);
-      event.addMapping(ItemIcon.MACE, ItemIcon.SWORD);
-      event.addMapping(ItemIcon.KNUCKLE, ItemIcon.SWORD);
-      event.addMapping(ItemIcon.BOXING_GLOVE, ItemIcon.SWORD);
-
-      event.addMapping(ItemIcon.CLOTHES, ItemIcon.ARMOR);
-      event.addMapping(ItemIcon.ROBE, ItemIcon.ARMOR);
-      event.addMapping(ItemIcon.BREASTPLATE, ItemIcon.ARMOR);
-      event.addMapping(ItemIcon.RED_DRESS, ItemIcon.ARMOR);
-      event.addMapping(ItemIcon.LOINCLOTH, ItemIcon.ARMOR);
-      event.addMapping(ItemIcon.WARRIOR_DRESS, ItemIcon.ARMOR);
-
-      event.addMapping(ItemIcon.CAPE, ItemIcon.HELM);
-      event.addMapping(ItemIcon.CROWN, ItemIcon.HELM);
-      event.addMapping(ItemIcon.HAIRBAND, ItemIcon.HELM);
-      event.addMapping(ItemIcon.BANDANA, ItemIcon.HELM);
-      event.addMapping(ItemIcon.HAT, ItemIcon.HELM);
-
-      event.addMapping(ItemIcon.SHOES, ItemIcon.BOOTS);
-      event.addMapping(ItemIcon.KNEEPIECE, ItemIcon.BOOTS);
-
-      event.addMapping(ItemIcon.BRACELET, ItemIcon.RING);
-      event.addMapping(ItemIcon.AMULET, ItemIcon.RING);
-      event.addMapping(ItemIcon.STONE, ItemIcon.RING);
-      event.addMapping(ItemIcon.JEWELLERY, ItemIcon.RING);
-      event.addMapping(ItemIcon.PIN, ItemIcon.RING);
-      event.addMapping(ItemIcon.BELL, ItemIcon.RING);
-      event.addMapping(ItemIcon.BAG, ItemIcon.RING);
-      event.addMapping(ItemIcon.CLOAK, ItemIcon.RING);
-      event.addMapping(ItemIcon.SCARF, ItemIcon.RING);
-      event.addMapping(ItemIcon.GLOVE, ItemIcon.RING);
-      event.addMapping(ItemIcon.HORN, ItemIcon.RING);
-      event.addMapping(ItemIcon.SHIELD, ItemIcon.RING);
-    }
+  public static void registerModMenu(final RegisterModMenuEvent event) {
+    LodModMenu.register(event);
   }
 }

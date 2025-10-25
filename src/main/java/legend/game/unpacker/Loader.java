@@ -33,6 +33,10 @@ public final class Loader {
     return Unpacker.ROOT.resolve(fixPath(name));
   }
 
+  public static Path resolveMods(final String name) {
+    return Unpacker.MOD_ROOT.resolve(fixPath(name));
+  }
+
   public static FileData loadFile(final Path path) {
     LOGGER.info("Loading file %s", path);
 

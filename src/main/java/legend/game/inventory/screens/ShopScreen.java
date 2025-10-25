@@ -14,6 +14,7 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.modding.events.inventory.ShopContentsEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
@@ -198,7 +199,7 @@ public class ShopScreen extends MenuScreen {
           this.renderNumberOfItems(((ItemStack)entry.item).getItem());
         }
 
-        renderString(16, 122, I18n.translate(entry.item.getDescriptionTranslationKey()), false);
+        renderString(16, 122, EVENTS.postEvent(new DescriptionEvent(entry.item.getDescriptionTranslationKey(), I18n.translate(entry.item.getDescriptionTranslationKey()))).description, false);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -231,7 +232,7 @@ public class ShopScreen extends MenuScreen {
       case BUY_SELECT_CHAR_5 -> {
         final ShopEntry<? extends InventoryEntry> equipment = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
         this.renderEquipmentStatChange((Equipment)equipment.item, characterIndices_800bdbb8[this.equipCharIndex]);
-        renderString(16, 122, I18n.translate(equipment.item.getDescriptionTranslationKey()), false);
+        renderString(16, 122, EVENTS.postEvent(new DescriptionEvent(equipment.item.getDescriptionTranslationKey(), I18n.translate(equipment.item.getDescriptionTranslationKey()))).description, false);
         this.renderMenuEntries(this.inv, this.invScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
         this.renderShopMenu(this.menuIndex_8011e0dc);
       }
@@ -243,14 +244,16 @@ public class ShopScreen extends MenuScreen {
           count = gameState_800babc8.items_2e9.getSize();
 
           if(this.invScroll_8011e0e4 + this.invIndex_8011e0e0 < count) {
-            renderString(193, 122, I18n.translate(gameState_800babc8.items_2e9.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).getDescriptionTranslationKey()), false);
+            final ItemStack selected = gameState_800babc8.items_2e9.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
+            renderString(193, 122, EVENTS.postEvent(new DescriptionEvent(selected.getDescriptionTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, false);
           }
         } else {
           renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, UI_TEXT);
           count = gameState_800babc8.equipment_1e8.size();
 
           if(this.invScroll_8011e0e4 + this.invIndex_8011e0e0 < count) {
-            renderString(193, 122, I18n.translate(gameState_800babc8.equipment_1e8.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).getDescriptionTranslationKey()), false);
+            final Equipment selected = gameState_800babc8.equipment_1e8.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
+            renderString(193, 122, EVENTS.postEvent(new DescriptionEvent(selected.getDescriptionTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, false);
           }
         }
 

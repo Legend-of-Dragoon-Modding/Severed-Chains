@@ -22,7 +22,6 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadAdditions;
@@ -58,7 +57,7 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
@@ -147,7 +146,7 @@ public class PostBattleScreen extends MenuScreen {
 
           //LAB_8010d9d4
           //LAB_8010d9f8
-          for(int secondaryCharSlot = 0; secondaryCharSlot < 9; secondaryCharSlot++) {
+          for(int secondaryCharSlot = 0; secondaryCharSlot < 6; secondaryCharSlot++) {
             final int secondaryCharIndex = secondaryCharIds_800bdbf8[secondaryCharSlot];
 
             if(secondaryCharIndex != -1) {
@@ -471,21 +470,21 @@ public class PostBattleScreen extends MenuScreen {
         gameState_800babc8.charData_32c[charId].xp_00 = xp;
         this.pendingXp_8011e180[charId] -= cappedPendingXp;
 
-        //LAB_8010cd30
-        while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < 60) {
-          gameState_800babc8.charData_32c[charId].level_12++;
+      //LAB_8010cd30
+      while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < CoreMod.MAX_CHARACTER_LEVEL) {
+        gameState_800babc8.charData_32c[charId].level_12++;
 
-          this.levelsGained_8011e1c8[charSlot]++;
-          if(this.additionsUnlocked_8011e1b8[charSlot] == 0) {
-            this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charId, null);
-          }
-
-          //LAB_8010cd9c
+        this.levelsGained_8011e1c8[charSlot]++;
+        if(this.additionsUnlocked_8011e1b8[charSlot] == 0) {
+          this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charId, null);
         }
-      } else {
-        pendingXpCleared++;
+
+        //LAB_8010cd9c
       }
-    }
+        } else {
+          pendingXpCleared++;
+        }
+      }
 
     //LAB_8010cdb0
     //LAB_8010cdcc
@@ -497,13 +496,13 @@ public class PostBattleScreen extends MenuScreen {
     if(charIndex != -1) {
       gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += spGained_800bc950[charSlot];
 
-      if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > 32000) {
-        gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = 32000;
+      if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > CoreMod.MAX_DRAGOON_XP) {
+        gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = CoreMod.MAX_DRAGOON_XP;
       }
 
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1] && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13] && CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13] > 0) {
         loadCharacterStats();
         final int[] spellIndices = new int[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -783,7 +782,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);
 
-      final int dxp = dragoonXpRequirements_800fbbf0[charId][gameState_800babc8.charData_32c[charId].dlevel_13 + 1];
+      final int dxp = CoreMod.CHARACTER_DATA[charId].dxpTable[gameState_800babc8.charData_32c[charId].dlevel_13];
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 52, dxp);
@@ -909,7 +908,7 @@ public class PostBattleScreen extends MenuScreen {
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      renderText(spellStats_800fa0b8[spellIndex].name, x - 4, y + 6, this.fontOptions);
+      renderText(spellStats_800fa0b8_Player[spellIndex].name, x - 4, y + 6, this.fontOptions);
       renderText(SPELL_UNLOCKED, x - 4, y + 20, this.fontOptions);
     }
 

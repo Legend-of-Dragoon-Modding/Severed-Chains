@@ -13,6 +13,10 @@ public class PandemoniumItem extends BattleItem {
     super(ItemIcon.CHARM, 200);
   }
 
+  public PandemoniumItem(final ItemIcon icon, final int price) {
+    super(icon, price);
+  }
+
   @Override
   public int getMaxStackSize(final ItemStack stack) {
     return CONFIG.getConfig(ITEM_STACK_SIZE.get());

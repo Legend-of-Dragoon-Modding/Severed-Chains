@@ -1,5 +1,6 @@
 package legend.game.modding.events.characters;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.CharacterData2c;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
@@ -54,7 +55,7 @@ public class CharacterStatsEvent extends Event {
     this.level = charData.level_12;
     this.dlevel = charData.dlevel_13;
 
-    final LevelStuff08 levelStuff = levelStuff_80111cfc[characterId][this.level];
+    final LevelStuff08 levelStuff = CoreMod.CHARACTER_DATA[characterId].statsTable[this.level];
     this.maxHp = levelStuff.hp_00;
     this.addition = levelStuff.addition_02;
     this.bodySpeed = levelStuff.bodySpeed_03;
@@ -63,7 +64,7 @@ public class CharacterStatsEvent extends Event {
     this.bodyDefence = levelStuff.bodyDefence_06;
     this.bodyMagicDefence = levelStuff.bodyMagicDefence_07;
 
-    final MagicStuff08 magicStuff = magicStuff_80111d20[characterId][this.dlevel];
+    final MagicStuff08 magicStuff = CoreMod.CHARACTER_DATA[characterId].dragoonStatsTable[this.dlevel];
     this.maxMp = magicStuff.mp_00;
     this.spellId = magicStuff.spellIndex_02;
     this.dragoonAttack = magicStuff.dragoonAttack_04;

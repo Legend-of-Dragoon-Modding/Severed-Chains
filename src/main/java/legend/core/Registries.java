@@ -21,6 +21,9 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.encounters.EncounterRegistry;
 import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.ui.ModMenu;
+import legend.game.combat.ui.ModMenuRegistry;
+import legend.game.combat.ui.RegisterModMenuEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistry;
 import legend.game.inventory.EquipmentRegistryEvent;
@@ -58,6 +61,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);
   public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
+  public final Registry<ModMenu> modMenu = this.addRegistry(new ModMenuRegistry(), RegisterModMenuEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

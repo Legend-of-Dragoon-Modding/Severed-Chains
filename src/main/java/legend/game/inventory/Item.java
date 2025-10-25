@@ -3,6 +3,7 @@ package legend.game.inventory;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.modding.events.inventory.IconDisplayEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.registries.RegistryEntry;

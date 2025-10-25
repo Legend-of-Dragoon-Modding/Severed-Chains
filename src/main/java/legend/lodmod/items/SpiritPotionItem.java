@@ -10,6 +10,10 @@ public class SpiritPotionItem extends RecoverHpItem {
     super(ItemIcon.RED_POTION, 10, false, 100);
   }
 
+  public SpiritPotionItem(final ItemIcon icon, final int price, final boolean targetAll, final int percentage) {
+    super(icon, price, targetAll, percentage);
+  }
+
   @Override
   public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
     return location == UsageLocation.BATTLE;

@@ -23,7 +23,7 @@ import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
 
 public class PlayerBattleEntity extends BattleEntity27c {
@@ -173,7 +173,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
     int matk = this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
     if(magicType == 1) {
-      matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
+      matk += spellStats_800fa0b8_Player[this.spellId_4e].multi_04;
     }
 
     //LAB_800f2f04

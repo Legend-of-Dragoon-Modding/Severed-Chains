@@ -9,6 +9,7 @@ import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
 
@@ -144,6 +145,7 @@ public class ItemListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
+        renderText(EVENTS.postEvent(new DescriptionEvent(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack().getBattleDescriptionTranslationKey(), I18n.translate(this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack().getBattleDescriptionTranslationKey()))).description, 160, 157, this.fontOptions);
 
         final ItemStack selected = this.combatItems_800c6988.get(this.listScroll_1e + this.listIndex_24).getStack();
 

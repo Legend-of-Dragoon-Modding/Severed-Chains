@@ -1,6 +1,14 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.game.SItem;
+import legend.game.characters.Addition04;
+import legend.game.combat.SBtld;
+import legend.game.combat.formula.Formula;
+import legend.game.combat.formula.PhysicalDamageFormula;
+import legend.game.combat.types.AdditionHitProperties10;
+import legend.game.combat.types.AdditionHits80;
+import legend.game.modding.coremod.character.CharacterData;
 import legend.core.font.RetailFontConfigEntry;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
@@ -13,8 +21,6 @@ import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
-import legend.game.combat.formula.Formula;
-import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.inventory.IconSetConfigEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortModeConfigEntry;
@@ -30,6 +36,7 @@ import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DeadzoneConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
+import legend.game.modding.coremod.config.DragoonDetransformationConfigEntry;
 import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.FmvVolumeConfigEntry;
@@ -64,11 +71,15 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID, version = "^3.0.0")
@@ -111,6 +122,15 @@ public class CoreMod {
   public static final RegistryDelegate<CreateCrashSaveConfigEntry> CREATE_CRASH_SAVE_CONFIG = CONFIG_REGISTRAR.register("create_crash_save", CreateCrashSaveConfigEntry::new);
   public static final RegistryDelegate<ShowAdvancedOptionsConfigEntry> SHOW_ADVANCED_OPTIONS_CONFIG = CONFIG_REGISTRAR.register("show_advanced_options", ShowAdvancedOptionsConfigEntry::new);
 
+
+  public static int MAX_CHARACTER_LEVEL = 60;
+  public static int MAX_DRAGOON_LEVEL = 5;
+  public static int MAX_ADDITION_LEVEL = 5;
+  public static int ADDITIONS_PER_LEVEL = 20;
+  public static int MAX_DRAGOON_XP = 32000;
+  public static int MAX_ADDITION_XP = 99;
+  public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
+
   // Per-campaign config
   public static final RegistryDelegate<ControllerKeybindsConfigEntry> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
   public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
@@ -135,6 +155,11 @@ public class CoreMod {
   public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_EQUIP_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("dragoon_equip_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_ITEMS_CONFIG = CONFIG_REGISTRAR.register("dragoon_items", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_ESCAPE_CONFIG = CONFIG_REGISTRAR.register("dragoon_escape", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> DRAGOON_GUARD_CONFIG = CONFIG_REGISTRAR.register("dragoon_guard", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<DragoonDetransformationConfigEntry> DRAGOON_DETRANSFORMATION_CONFIG = CONFIG_REGISTRAR.register("detransformation_mode", DragoonDetransformationConfigEntry::new);
   public static final RegistryDelegate<ShowTurnOrderConfig> SHOW_TURN_ORDER = CONFIG_REGISTRAR.register("show_turn_order", ShowTurnOrderConfig::new);
   public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
 
@@ -202,6 +227,51 @@ public class CoreMod {
   @EventListener
   public static void registerConfig(final ConfigRegistryEvent event) {
     CONFIG_REGISTRAR.registryEvent(event);
+  }
+
+  public static void loadCharacterXp(final int charIndex, final String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/xp")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].xpTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].xpTable[i] = file.readInt(i * 4);
+    }
+  }
+
+  public static void loadCharacterStats(final int charIndex)  {
+    System.arraycopy(SItem.levelStuff_80111cfc[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].statsTable, 0, CoreMod.CHARACTER_DATA[charIndex].statsTable.length);
+  }
+
+  public static void loadCharacterDragoonXp(final int charIndex)  {
+    System.arraycopy(SItem.dragoonXpRequirements_800fbbf0[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].dxpTable, 0, CoreMod.CHARACTER_DATA[charIndex].dxpTable.length);
+  }
+
+  public static void loadCharacterDragoonStats(final int charIndex)  {
+    System.arraycopy(SItem.magicStuff_80111d20[charIndex], 0, CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable, 0, CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length);
+  }
+
+  public static void loadCharacterAdditions(final int charIndex, final int additions, final int additionOffset) {
+    CoreMod.CHARACTER_DATA[charIndex].additions.clear();
+    CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.clear();
+    CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.clear();
+
+    if(charIndex != 2 && charIndex != 8) {
+      for(int i = 0; i < additions; i++) {
+        CoreMod.CHARACTER_DATA[charIndex].additions.add(SBtld.additionHits_8010e658[additionOffset + i]);
+        CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(SItem.additions_80114070[additionOffset + i]);
+      }
+    } else {
+      CoreMod.CHARACTER_DATA[charIndex].additions.add(new AdditionHits80(new AdditionHitProperties10[8]));
+      CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(new Addition04[6]);
+    }
+
+    if(charIndex != 2 && charIndex != 8) {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(SBtld.additionHits_8010e658[additions]);
+    } else {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new AdditionHits80(new AdditionHitProperties10[8]));
+    }
+
+    if(charIndex == 0) { //Divine Dragoon Dart has 2x on his hit multipliers
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(SBtld.additionHits_8010e658[42]);
+    }
   }
 
   @EventListener

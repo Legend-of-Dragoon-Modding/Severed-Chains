@@ -5,6 +5,7 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.SaveCard;
+import legend.game.modding.events.gamestate.DeleteSaveEvent;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
@@ -139,6 +141,7 @@ public class SaveGameScreen extends MenuScreen {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
+            EVENTS.postEvent(new DeleteSaveEvent(this.saveList.getSelected().state.campaign, this.saveList.getSelected().fileName));
             this.saveList.getSelected().state.campaign.deleteSave(this.saveList.getSelected().fileName);
             this.saves.removeIf(save -> save.fileName.equals(this.saveList.getSelected().fileName));
             this.saveList.removeEntry(this.saveList.getSelected());

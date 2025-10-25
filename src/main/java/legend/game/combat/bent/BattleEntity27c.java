@@ -45,7 +45,8 @@ import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.Battle.FUN_800ca194;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
@@ -247,6 +248,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
   public final Rect4i scissor = new Rect4i();
   public boolean useScissor;
+
+  public int spellDamageOverride = 0;
 
   public BattleEntity27c(final BattleEntityType type, final String name) {
     super(BattleObject.BOBJ);
@@ -732,11 +735,14 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800f7b8c
     // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
     if(this.spellId_4e != -1 && this.spellId_4e <= 127) {
-      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this.spellId_4e, spellStats_800fa0b8[this.spellId_4e])).spell;
+      if(this instanceof PlayerBattleEntity) {
+        this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this, this.spellId_4e, spellStats_800fa0b8_Player[this.spellId_4e])).spell;
+      } else {
+        this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this, this.spellId_4e, spellStats_800fa0b8_Monster[this.spellId_4e])).spell;
+      }
     } else {
       this.spell_94 = new SpellStats0c();
     }
-
     //LAB_800f7c54
   }
 

@@ -6,7 +6,6 @@ import legend.game.types.UiType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
@@ -70,7 +69,6 @@ public class ItemIcon {
 
   public static void loadIconMap() {
     ICON_MAP.clear();
-    EVENTS.postEvent(new IconMapEvent(ICON_MAP));
   }
 
   public final int icon;

@@ -8,6 +8,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -17,6 +18,7 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -179,7 +181,8 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+      final ItemStack selected = this.menuItems.get(selectedSlot + slotScroll).item_00;
+      renderString(194, 16, EVENTS.postEvent(new DescriptionEvent(selected.getNameTranslationKey(), I18n.translate(selected.getDescriptionTranslationKey()))).description, allocate);
     } else {
       renderString(194, 16, "", allocate);
     }

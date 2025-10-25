@@ -1039,6 +1039,7 @@ public class SMap extends EngineState {
   @Method(0x800d9d60L)
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
+
     if(!divineEvent.bypassOverride) {
       if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
         gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;

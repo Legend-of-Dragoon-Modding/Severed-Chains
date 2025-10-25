@@ -10,6 +10,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.DescriptionEvent;
 import legend.game.modding.events.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -20,6 +21,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -129,7 +131,7 @@ public class ItemListScreen extends MenuScreen {
       return;
     }
 
-    this.description.setText(I18n.translate(item.getDescriptionTranslationKey()));
+    this.description.setText(EVENTS.postEvent(new DescriptionEvent(item.getNameTranslationKey(), I18n.translate(item.getDescriptionTranslationKey()))).description);
   }
 
   @Override

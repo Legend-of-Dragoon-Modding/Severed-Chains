@@ -20,7 +20,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.applyBuffOrDebuff;
 import static legend.game.combat.Battle.applyMagicDamageMultiplier;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
 import static legend.game.combat.SEffe.transformToScreenSpace;
 
 public class MonsterBattleEntity extends BattleEntity27c {
@@ -56,7 +56,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
 
   @Override
   public ElementSet getAttackElements() {
-    return new ElementSet().add(spellStats_800fa0b8[this.spellId_4e].element_08.get());
+    return new ElementSet().add(spellStats_800fa0b8_Monster[this.spellId_4e].element_08.get());
   }
 
   @Override
@@ -85,7 +85,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2d48L)
   public int calculatePhysicalDamage(final BattleEntity27c target) {
-    final int atk = this.stats.getStat(LodMod.ATTACK_STAT.get()).get() + spellStats_800fa0b8[this.spellId_4e].multi_04;
+    final int atk = this.stats.getStat(LodMod.ATTACK_STAT.get()).get() + spellStats_800fa0b8_Monster[this.spellId_4e].multi_04;
 
     //LAB_800f2e28
     //LAB_800f2e88
@@ -100,7 +100,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
     int matk = this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
     if(magicType == 1) {
-      matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
+      matk += spellStats_800fa0b8_Monster[this.spellId_4e].multi_04;
     }
 
     //LAB_800f87d0

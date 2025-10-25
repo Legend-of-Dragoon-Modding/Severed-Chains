@@ -13,6 +13,10 @@ public class AngelsPrayerItem extends BattleItem {
     super(ItemIcon.ANGELS_PRAYER, 15);
   }
 
+  public AngelsPrayerItem(final ItemIcon icon, final int price) {
+    super(icon, price);
+  }
+
   @Override
   public int getMaxStackSize(final ItemStack stack) {
     return CONFIG.getConfig(ITEM_STACK_SIZE.get());

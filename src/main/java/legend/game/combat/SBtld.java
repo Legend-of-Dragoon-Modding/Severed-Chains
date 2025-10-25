@@ -7,11 +7,14 @@ import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
 import legend.game.combat.types.AdditionSound;
 import legend.game.combat.types.StageDeffThing08;
+import legend.game.modding.coremod.CoreMod;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
+import static legend.game.Scus94491BpeSegment.loadFile;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -37,25 +40,25 @@ public final class SBtld {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex >= 0) {
-        int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
-        if(charIndex == 5) { // Albert
-          activeAdditionIndex += 28;
-        }
+        final int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
 
         //LAB_801092dc
         final int activeDragoonAdditionIndex;
         if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
           //LAB_80109308
-          activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[charIndex];
+          activeDragoonAdditionIndex = 0;
         } else {
-          activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[9];
+          activeDragoonAdditionIndex = 1;
+          if(CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.size() == 1) {
+            CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(SBtld.additionHits_8010e658[42]);
+          }
         }
 
         //LAB_80109310
         if(activeAdditionIndex >= 0) {
           //LAB_80109320
-          battlePreloadedEntities_1f8003f4.additionHits_38[charSlot] = additionHits_8010e658[activeAdditionIndex];
-          battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3] = additionHits_8010e658[activeDragoonAdditionIndex];
+          battlePreloadedEntities_1f8003f4.additionHits_38[charSlot] = CoreMod.CHARACTER_DATA[charIndex].additions.get(activeAdditionIndex - additionOffsets_8004f5ac[charIndex]);
+          battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3] = CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(activeDragoonAdditionIndex);
         }
       }
 

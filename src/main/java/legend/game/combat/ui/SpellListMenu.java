@@ -15,7 +15,7 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 
 public class SpellListMenu extends ListMenu {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -65,7 +65,7 @@ public class SpellListMenu extends ListMenu {
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
     this.fontOptions.colour(textColour);
-    renderText(spellStats_800fa0b8[spellId].name, x, y, this.fontOptions);
+    renderText(spellStats_800fa0b8_Player[spellId].name, x, y, this.fontOptions);
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
     this.fontOptions.colour(TextColour.WHITE);
     renderText(String.valueOf(this.player_08.spell_94.mp_06), x + 152, y, this.fontOptions);
@@ -167,7 +167,7 @@ public class SpellListMenu extends ListMenu {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
         final int spellId = this.hud.battle.dragoonSpells_800c6960[this.player_08.charSlot_276].spellIndex_01[this.listScroll_1e + this.listIndex_24];
-        final SpellStats0c spell = EVENTS.postEvent(new SpellStatsEvent(spellId, spellStats_800fa0b8[spellId])).spell;
+        final SpellStats0c spell = EVENTS.postEvent(new SpellStatsEvent(this.player_08, spellId, spellStats_800fa0b8_Player[spellId])).spell;
 
         //Selected item description
         if(this.description == null) {

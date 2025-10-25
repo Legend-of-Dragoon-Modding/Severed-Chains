@@ -15,6 +15,10 @@ public class SachetItem extends BattleItem {
     super(ItemIcon.SACK, 200);
   }
 
+  public SachetItem(final ItemIcon icon, final int price) {
+    super(icon, price);
+  }
+
   @Override
   public int getMaxStackSize(final ItemStack stack) {
     return CONFIG.getConfig(ITEM_STACK_SIZE.get());

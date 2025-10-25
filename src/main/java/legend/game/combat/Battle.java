@@ -90,6 +90,7 @@ import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
+import legend.game.combat.ui.DragoonDetransformationMode;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.Equipment;
@@ -97,11 +98,19 @@ import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.CombatMenuBlockedEvent;
+import legend.game.modding.events.battle.CombatMenuEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DeffArrowEvent;
+import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
+import legend.game.modding.events.battle.GuardHealEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.ScriptLoadDeffEvent;
+import legend.game.modding.events.battle.SetBentStatEvent;
+import legend.game.modding.events.scripting.DrgnFileEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -132,6 +141,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEquipment;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -483,7 +493,8 @@ public class Battle extends EngineState {
   /** Different sets of bents for different target types (chars, monsters, all) */
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
 
-  public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
+  public static final SpellStats0c[] spellStats_800fa0b8_Player = new SpellStats0c[128];
+  public static final SpellStats0c[] spellStats_800fa0b8_Monster = new SpellStats0c[128];
   public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
 
   public static final int[] postBattleCamera_800fa6c4 = {-1, 195, 211, -1, 211, -1};
@@ -1063,6 +1074,15 @@ public class Battle extends EngineState {
 
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
+
+    functions[950] = this::combatMenu;
+    functions[951] = this::combatMenuBlocked;
+    functions[952] = this::detransformOptions;
+    functions[953] = this::getEquipEffectsInDragoon;
+    functions[954] = this::isDeffArrow;
+    functions[955] = this::guardAmount;
+    functions[956] = this::setSpellDamageOverride;
+    functions[957] = this::getSpellDamageOverride;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -1763,6 +1783,7 @@ public class Battle extends EngineState {
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
           EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
+          this.hud.rebuildModMenu();
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
@@ -1772,7 +1793,7 @@ public class Battle extends EngineState {
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
             EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
-
+            this.hud.rebuildModMenu();
             //LAB_800c7d74
           } else { // Monsters dead
             this.endBattle();
@@ -3573,7 +3594,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The number to show")
   @Method(0x800ccb70L)
   public FlowControl scriptAddFloatingNumberForBent(final RunningScript<?> script) {
-    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13);
+    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13, 0);
     return FlowControl.CONTINUE;
   }
 
@@ -3641,7 +3662,7 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].getRegistryId())).registryValue).get());
       default -> {
         int value = script.params_20[1].get();
         if(script.params_20[2].get() == 2 && value < 0) {
@@ -3664,10 +3685,11 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
+    final SetBentStatEvent event = EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].get()));
 
     switch(stat) {
       case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
-      default -> bent.setStat(stat, script.params_20[1].get());
+      default -> bent.setStat(stat, event.value);
     }
 
     return FlowControl.CONTINUE;
@@ -3829,11 +3851,11 @@ public class Battle extends EngineState {
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final int additionXp = Math.min(CoreMod.MAX_ADDITION_XP, charData.additionXp_22[additionIndex] + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
+      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= charData.additionLevels_1a[additionIndex] * CoreMod.ADDITIONS_PER_LEVEL) {
         charData.additionLevels_1a[additionIndex]++;
       }
 
@@ -3844,7 +3866,7 @@ public class Battle extends EngineState {
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
       for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
+        if(charData.additionLevels_1a[additionIndex2] == CoreMod.MAX_ADDITION_LEVEL) {
           nonMaxedAdditions--;
         } else {
           //LAB_800cd308
@@ -6053,7 +6075,7 @@ public class Battle extends EngineState {
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
-    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
+    deffManager_800c693c.flags_20 |= dragoonDeffFlags_800fafec[index >= 84 ? 0 : index] << 16;
     this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
     if((deffManager_800c693c.flags_20 & 0x4_0000) != 0) {
@@ -6072,6 +6094,8 @@ public class Battle extends EngineState {
       Loader.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
       Loader.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
+
+    EVENTS.postEvent(new DragoonDeffEvent((4139 + index * 2)));
   }
 
   @Method(0x800e6844L)
@@ -6151,14 +6175,18 @@ public class Battle extends EngineState {
     this.loadedDeff_800c6938.script_14 = null;
     this.deffLoadingStage_800fafe8 = 1;
 
-    Loader.loadDirectory(tims, this::uploadTims);
-    Loader.loadDirectory(deff.resolve("0"), files -> {
+    final DrgnFileEvent eventTims = EVENTS.postEvent(new DrgnFileEvent(tims));
+    final DrgnFileEvent eventDeff = EVENTS.postEvent(new DrgnFileEvent(deff));
+
+    Loader.loadDirectory(eventTims.path, this::uploadTims);
+    Loader.loadDirectory(eventDeff.path.resolve("0"), files -> {
       this.loadDeffPackage(files, this.loadedDeff_800c6938.managerState_18);
 
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
-      Loader.loadFile(deff.resolve("1"), file -> {
+      Loader.loadFile(eventDeff.path.resolve("1"), file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
+        final DrgnFileEvent eventFile = EVENTS.postEvent(new DrgnFileEvent(eventDeff.path.resolve("1"), file.getBytes()));
+        this.loadedDeff_800c6938.script_14 = new ScriptFile(eventDeff.path.toString(), eventFile.fileData);
       });
     });
   }
@@ -6445,6 +6473,13 @@ public class Battle extends EngineState {
     if(this.deffLoadingStage_800fafe8 != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
+
+    final ScriptLoadDeffEvent event = EVENTS.postEvent(new ScriptLoadDeffEvent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get()));
+    script.params_20[0].set(event.flagsAndIndex);
+    script.params_20[1].set(event.bentIndex);
+    script.params_20[2].set(event.p2);
+    script.params_20[3].set(event.scriptEntrypoint);
+    script.params_20[4].set(event.type);
 
     final int type = script.params_20[4].get();
     if(type == 0x100_0000) {
@@ -7294,6 +7329,82 @@ public class Battle extends EngineState {
     attachment.step_18 = script.params_20[3].get();
     attachment._1c.x = textureInfo2.vramPos_00.x;
     attachment._1c.y = textureInfo2.vramPos_00.y;
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to call an event override for menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
+  public FlowControl combatMenu(final RunningScript<?> script) {
+    int combatIcons = script.params_20[1].get();
+
+    if((combatIcons & (1 << 5)) != 0) {
+      if(CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) {
+        combatIcons = combatIcons | 2;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_ITEMS_CONFIG.get())) {
+        combatIcons = combatIcons | 4;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_ESCAPE_CONFIG.get())) {
+        combatIcons = combatIcons | 8;
+      }
+      if(CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get()) != DragoonDetransformationMode.OFF) {
+        combatIcons = combatIcons | 16;
+      }
+    }
+
+    final CombatMenuEvent bar = EVENTS.postEvent(new CombatMenuEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, combatIcons));
+
+    script.params_20[2].set(bar.combatBar);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to call an event override for blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
+  public FlowControl combatMenuBlocked(final RunningScript<?> script) {
+    final CombatMenuBlockedEvent bar = EVENTS.postEvent(new CombatMenuBlockedEvent((PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, script.params_20[1].get()));
+    script.params_20[2].set(bar.combatBarBlocked);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used for coremod detransform options.")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Transform right away or on turn finish")
+  public FlowControl detransformOptions(final RunningScript<?> script) {
+    final DragoonDetransformationMode detransformOption = CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get());
+    script.params_20[0].set(detransformOption == DragoonDetransformationMode.OFF ? 0 : detransformOption == DragoonDetransformationMode.SKIP_TURN ? 1 : 2);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used for coremod equips effects in dragoon.")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Enable equip effects in dragoon?")
+  public FlowControl getEquipEffectsInDragoon(final RunningScript<?> script) {
+    script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_EQUIP_EFFECTS_CONFIG.get())) ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to determine if an arrow should load a DEFF.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
+  @Method(0x800cce04L)
+  public FlowControl isDeffArrow(final RunningScript<?> script) {
+    final PlayerBattleEntity bent = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final boolean isDeff = bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() == LodEquipment.DETONATE_ARROW.get().getRegistryId();
+    final DeffArrowEvent event = EVENTS.postEvent(new DeffArrowEvent(bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId(), isDeff));
+    script.params_20[1].set(event.isDeff ? 1 : 0);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Used to change the amount guard heals.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The original guard heal amount")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
+  @Method(0x800cce04L)
+  public FlowControl guardAmount(final RunningScript<?> script) {
+    final GuardHealEvent event = EVENTS.postEvent(new GuardHealEvent(script.params_20[0].get(), script.params_20[1].get()));
+    script.params_20[2].set(event.heal);
     return FlowControl.CONTINUE;
   }
 
@@ -8405,7 +8516,17 @@ public class Battle extends EngineState {
   public static int applyMagicDamageMultiplier(final BattleEntity27c attacker, final BattleEntity27c defender, final int damage, final int magicType) {
     final int damageMultiplier;
     if(magicType == 0) {
-      damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
+      if(attacker.spellDamageOverride == 0) {
+        if(attacker instanceof PlayerBattleEntity) {
+          damageMultiplier = spellStats_800fa0b8_Player[attacker.spellId_4e].damageMultiplier_03;
+        } else {
+          damageMultiplier = spellStats_800fa0b8_Monster[attacker.spellId_4e].damageMultiplier_03;
+        }
+      } else {
+        final int damageOverride = (int) Math.floor(damage * (attacker.spellDamageOverride / 100d));
+        attacker.spellDamageOverride = 0;
+        return damageOverride;
+      }
     } else {
       //LAB_800f949c
       damageMultiplier = attacker.item_d4.getAttackDamageMultiplier(attacker, defender);
@@ -8497,6 +8618,22 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets an override for DEFF attacks that use spell stats")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "damage", description = "Spell damage override")
+  public FlowControl setSpellDamageOverride(final RunningScript<?> script) {
+    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).spellDamageOverride = script.params_20[1].get();
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gets the override for DEFF attacks that use spell stats")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "Spell damage override")
+  public FlowControl getSpellDamageOverride(final RunningScript<?> script) {
+    script.params_20[1].set(SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).spellDamageOverride);
+    return FlowControl.CONTINUE;
+  }
+
   @ScriptDescription("Gets a battle entity's position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
@@ -8517,7 +8654,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
   @Method(0x800f9730L)
   public FlowControl scriptAddFloatingNumber(final RunningScript<?> script) {
-    this.hud.addFloatingNumber(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    this.hud.addFloatingNumber(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 0);
     return FlowControl.CONTINUE;
   }
 
@@ -8537,7 +8674,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 0);
     return FlowControl.CONTINUE;
   }
 
