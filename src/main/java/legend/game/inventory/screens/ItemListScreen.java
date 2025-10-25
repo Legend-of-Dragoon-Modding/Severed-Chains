@@ -193,7 +193,7 @@ public class ItemListScreen extends MenuScreen {
     this.itemList.sort(menuItemIconComparator(List.of(LodMod.ITEM_IDS), stack -> stack.getItem().getRegistryId()));
     this.equipmentList.sort(menuEquipmentSlotComparator());
     setInventoryFromDisplay(this.itemList.getItems(), gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize());
-    setInventoryFromDisplay(this.equipmentList.getItems(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
+    setInventoryFromDisplay(this.equipmentList.getItems(), gameState_800babc8.equipment_1e8, this.equipmentList.getItems().size());
     this.itemList.removeIf(MenuEntryStruct04::isEmpty);
     this.equipmentList.removeIf(MenuEntryStruct04::isEmpty);
   }
