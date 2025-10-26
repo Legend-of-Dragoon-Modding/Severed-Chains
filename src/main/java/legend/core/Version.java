@@ -13,5 +13,5 @@ public final class Version {
   public static final String CHANNEL = "CHANNEL";
   public static final String VERSION = MAJOR + '.' + MINOR + '.' + REVISION;
   public static final String FULL_VERSION = VERSION + '-' + BUILD + '-' + CHANNEL;
-  public static final ZonedDateTime TIMESTAMP = ZonedDateTime.now();
+  public static final ZonedDateTime TIMESTAMP = null;
 }

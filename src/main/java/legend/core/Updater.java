@@ -97,8 +97,10 @@ public class Updater {
     final List<Release> releases = new ArrayList<>();
 
     for(int releaseIndex = 0; releaseIndex < releasesJson.length(); releaseIndex++) {
-      final JSONObject release = releasesJson.getJSONObject(releaseIndex);
-      releases.add(new Release(release.getString("tag_name"), release.getString("html_url"), ZonedDateTime.parse(release.getString("updated_at")), release.getBoolean("prerelease")));
+      final JSONObject releaseJson = releasesJson.getJSONObject(releaseIndex);
+      final Release release = new Release(releaseJson.getString("tag_name"), releaseJson.getString("html_url"), ZonedDateTime.parse(releaseJson.getString("updated_at")), releaseJson.getBoolean("prerelease"));
+      releases.add(release);
+      LOGGER.info("Found release %s", release);
     }
 
     return releases;
