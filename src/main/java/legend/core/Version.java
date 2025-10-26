@@ -10,8 +10,8 @@ public final class Version {
   public static final String REVISION = "0";
   public static final String BUILD = "SNAPSHOT";
   public static final String HASH = "COMMIT";
-  public static final boolean PRERELEASE = true;
+  public static final String CHANNEL = "CHANNEL";
   public static final String VERSION = MAJOR + '.' + MINOR + '.' + REVISION;
-  public static final String FULL_VERSION = VERSION + '-' + BUILD + (PRERELEASE ? "-beta" : "");
-  public static final ZonedDateTime TIMESTAMP = null;
+  public static final String FULL_VERSION = VERSION + '-' + BUILD + '-' + CHANNEL;
+  public static final ZonedDateTime TIMESTAMP = ZonedDateTime.now();
 }
