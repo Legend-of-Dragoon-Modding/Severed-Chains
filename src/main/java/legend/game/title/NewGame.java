@@ -15,8 +15,8 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class NewGame extends EngineState {
-  private static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
-  private static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
+  public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
+  public static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
 
   @Method(0x800c7194L)
   private void setUpNewGameData() {
