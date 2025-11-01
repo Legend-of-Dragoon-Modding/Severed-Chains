@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;

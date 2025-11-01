@@ -15,7 +15,7 @@ import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.core.platform.PlatformManager;
 import legend.core.platform.SdlPlatformManager;
 import legend.core.platform.WindowEvents;
@@ -440,7 +440,7 @@ public final class GameEngine {
 
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
-        shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
+        shadowModel_800bda10.modelParts_00[i].tmd_08.getObj().persistent = true;
       }
 
       loadMenuAssets();

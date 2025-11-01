@@ -685,20 +685,18 @@ public abstract class BattleEntity27c extends BattleObject {
         GTE.setTransforms(ls);
         Renderer.renderDobj2(part, true, 0);
 
-        if(model.modelParts_00[i].obj != null) {
-          final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(model.zOffset_a0 * 4)
-            .usePs1Depth(model.usePs1Depth)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+        final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
+          .depthOffset(model.zOffset_a0 * 4)
+          .usePs1Depth(model.usePs1Depth)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-          if(this.useScissor) {
-            queue.scissor(this.scissor);
-          }
+        if(this.useScissor) {
+          queue.scissor(this.scissor);
         }
       }
     }

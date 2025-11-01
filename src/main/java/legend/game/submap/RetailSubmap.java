@@ -13,13 +13,13 @@ import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
@@ -1364,10 +1364,6 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
-    }
-
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
@@ -1393,7 +1389,7 @@ public class RetailSubmap extends Submap {
 
       GsGetLw(dobj2.coord2_04, lw);
 
-      RENDERER.queueModel(dobj2.obj, matrix, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(dobj2.tmd_08.getObj(), matrix, lw, QueuedModelTmd.class)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .depthOffset(model.zOffset_a0 * 4)
         .usePs1Depth(model.usePs1Depth)

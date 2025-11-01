@@ -1,6 +1,7 @@
-package legend.core.gte;
+package legend.game.tmd;
 
 import legend.core.MathHelper;
+import legend.core.opengl.Obj;
 import legend.game.Scus94491BpeSegment_8003;
 import legend.game.unpacker.CtmdTransformer;
 import legend.game.unpacker.FileData;
@@ -21,6 +22,8 @@ public class TmdObjTable1c {
   public final Primitive[] primitives_10;
   public final int n_primitive_14;
   public final int scale_18;
+
+  Obj obj;
 
   public TmdObjTable1c(final String name, final FileData data, final FileData baseOffset) {
     this.name = name;
@@ -71,6 +74,22 @@ public class TmdObjTable1c {
     this.primitives_10 = primitivesList.toArray(Primitive[]::new);
 
     this.scale_18 = data.readInt(0x18);
+  }
+
+  public Obj getObj() {
+    if(this.obj == null) {
+      this.obj = TmdObjLoader.fromObjTable(this.name, this);
+    }
+
+    return this.obj;
+  }
+
+  public void delete() {
+    if(this.obj != null) {
+      this.obj.delete();
+    }
+
+    this.obj = null;
   }
 
   @Override

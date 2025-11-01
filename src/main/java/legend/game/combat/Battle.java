@@ -12,13 +12,13 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.Tmd;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.Tmd;
+import legend.game.tmd.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -1886,10 +1886,7 @@ public class Battle extends EngineState {
 
       if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 != null) {
         for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
-          if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
-            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
-            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
-          }
+          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].tmd_08.delete();
         }
 
         battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 = null;
@@ -7449,10 +7446,6 @@ public class Battle extends EngineState {
       final ModelPart10 part = stage.dobj2s_00[i];
 
       if((partBit & stage.flags_5e4) == 0) {
-        if(stage.tmd_5d0.objTable[i] != null && stage.dobj2s_00[i].obj == null) {
-          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
-        }
-
         final MV ls = new MV();
         final MV lw = new MV();
         GsGetLws(part.coord2_04, lw, ls);
@@ -7460,15 +7453,13 @@ public class Battle extends EngineState {
         GTE.setTransforms(ls);
         Renderer.renderDobj2(part, true, 0);
 
-        if(part.obj != null) {
-          RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(stage.z_5e8 * 4)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .battleColour(this._800c6930.colour_00);
-        }
+        RENDERER.queueModel(part.tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
+          .depthOffset(stage.z_5e8 * 4)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .battleColour(this._800c6930.colour_00);
       }
 
       //LAB_800ec608

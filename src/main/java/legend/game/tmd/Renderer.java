@@ -5,7 +5,6 @@ import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;

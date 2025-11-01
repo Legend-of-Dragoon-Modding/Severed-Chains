@@ -6,7 +6,7 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import org.joml.Math;

@@ -14,13 +14,12 @@ import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
@@ -170,7 +169,6 @@ public class Ttle extends EngineState {
   private VramTexture[] copyrightPalettes;
   private boolean texturesLoaded;
   private boolean fireLoaded;
-  private boolean renderablesLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
   private final int[] menuTextWidth = {407, 257, 227, 169, 141};
@@ -230,7 +228,6 @@ public class Ttle extends EngineState {
 
     this.texturesLoaded = false;
     this.fireLoaded = false;
-    this.renderablesLoaded = false;
 
     this.selectedMenuOption = 0;
 
@@ -441,14 +438,6 @@ public class Ttle extends EngineState {
     this.fireLoaded = true;
   }
 
-  private void prepareRenderables() {
-    for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
-      this._800c66d0.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("Title Screen Fire " + i, this._800c66d0.dobj2s_00[i].tmd_08);
-    }
-
-    this.renderablesLoaded = true;
-  }
-
   private void waitForFilesToLoad() {
     if(this.loadingFiles.isDone()) {
       this.selectedMenuOption = this.hasCampaigns ? 1 : 0;
@@ -574,11 +563,7 @@ public class Ttle extends EngineState {
         this.renderMenuBackground();
         this.renderMenuOptions();
         this.renderMenuLogo();
-
-        if(this.renderablesLoaded) {
-          this.renderMenuLogoFire();
-        }
-
+        this.renderMenuLogoFire();
         this.renderCopyright();
       }
     }
@@ -658,12 +643,8 @@ public class Ttle extends EngineState {
 
   @Method(0x800c8298L)
   private void renderMainMenu() {
-    if(!this.renderablesLoaded) {
-      if(!this.texturesLoaded || !this.fireLoaded) {
-        return;
-      }
-
-      this.prepareRenderables();
+    if(!this.texturesLoaded || !this.fireLoaded) {
+      return;
     }
 
     //LAB_800c83c8
@@ -1347,7 +1328,7 @@ public class Ttle extends EngineState {
       lw.scaleLocal(scale);
       lw.transfer.y -= 250.0f;
 
-      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].tmd_08.getObj(), lw, QueuedModelTmd.class)
         .monochrome(this.flameColour / 128.0f)
         .screenspaceOffset(8.0f, 0.0f)
         .lightDirection(lightDirectionMatrix_800c34e8)

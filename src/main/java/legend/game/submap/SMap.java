@@ -10,13 +10,13 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -1084,7 +1084,7 @@ public class SMap extends EngineState {
     GsGetLw(partCoord, this.smapShadowLw);
 
     RENDERER
-      .queueModel(modelPart.obj, this.smapShadowLw, QueuedModelTmd.class)
+      .queueModel(modelPart.tmd_08.getObj(), this.smapShadowLw, QueuedModelTmd.class)
       .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
       .depthOffset(shadowModel_800bda10.zOffset_a0 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
@@ -1109,7 +1109,7 @@ public class SMap extends EngineState {
 
         GsGetLw(dobj2.coord2_04, this.smapModelLw);
 
-        final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, this.smapModelLw, QueuedModelTmd.class)
+        final QueuedModelTmd queue = RENDERER.queueModel(dobj2.tmd_08.getObj(), this.smapModelLw, QueuedModelTmd.class)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(model.zOffset_a0 * 4)
           .usePs1Depth(model.usePs1Depth)

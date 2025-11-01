@@ -1,13 +1,12 @@
-package legend.core.opengl;
+package legend.game.tmd;
 
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable1c;
-import legend.game.tmd.Polygon;
-import legend.game.tmd.Vertex;
+import legend.core.opengl.Mesh;
+import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
 import org.joml.Vector3f;
@@ -61,7 +60,7 @@ public final class TmdObjLoader {
   public static void fromModel(final String name, final Model124 model, final int textureWidth, final int textureHeight) {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final ModelPart10 part = model.modelParts_00[i];
-      part.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, 0, textureWidth, textureHeight);
+      part.tmd_08.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, 0, textureWidth, textureHeight);
     }
   }
 

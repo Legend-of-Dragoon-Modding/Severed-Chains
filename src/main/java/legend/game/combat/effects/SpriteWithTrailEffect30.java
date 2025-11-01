@@ -88,7 +88,7 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
         }
 
         //LAB_80118f9c
-        renderTmdSpriteEffect(sprite.tmd_08, sprite.obj, manager.params_10, transformMatrix);
+        renderTmdSpriteEffect(sprite.tmd_08, sprite.tmd_08.getObj(), manager.params_10, transformMatrix);
       } else if(type == 0x400_0000) {
         final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)this.subEffect_1c;
         renderBillboardSpriteEffect(sprite.metrics_04, manager.params_10, transformMatrix);
@@ -172,7 +172,7 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)this.subEffect_1c;
-              renderTmdSpriteEffect(subEffect.tmd_08, subEffect.obj, effectParams, transformMatrix);
+              renderTmdSpriteEffect(subEffect.tmd_08, subEffect.tmd_08.getObj(), effectParams, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)this.subEffect_1c;
               renderBillboardSpriteEffect(subEffect.metrics_04, effectParams, transformMatrix);
@@ -196,10 +196,7 @@ public class SpriteWithTrailEffect30 implements Effect<EffectManagerParams.Colou
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.ColourType>> state) {
     if(this.subEffect_1c instanceof final TmdSpriteEffect10 effect) {
-      if(effect.obj != null) {
-        effect.obj.delete();
-        effect.obj = null;
-      }
+      effect.tmd_08.delete();
     }
   }
 

@@ -88,18 +88,15 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        //TODO remove null check
-        if(part.obj != null) {
-          RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(model.zOffset_a0 * 4)
-            .usePs1Depth(model.usePs1Depth)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
-        }
+        RENDERER.queueModel(part.tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
+          .depthOffset(model.zOffset_a0 * 4)
+          .usePs1Depth(model.usePs1Depth)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
         part.attribute_00 = oldAttrib;
       }

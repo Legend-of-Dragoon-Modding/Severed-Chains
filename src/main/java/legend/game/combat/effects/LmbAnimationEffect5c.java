@@ -6,12 +6,10 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
@@ -19,6 +17,7 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
@@ -50,7 +49,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     renderers[0] = LmbAnimationEffect5c::renderLmbSpecial;
     renderers[1] = LmbAnimationEffect5c::renderLmbTmd;
     renderers[2] = LmbAnimationEffect5c::renderLmbPoly;
-  };
+  }
 
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
@@ -87,7 +86,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   public int deffTmdFlags_48;
   public TmdObjTable1c deffTmdObjTable_4c;
-  public Obj obj;
   public int deffSpriteFlags_50;
   public final SpriteMetrics08 metrics_54 = new SpriteMetrics08();
 
@@ -136,16 +134,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       // Cache it
       effect.deffTmdFlags_48 = deffFlags;
       effect.deffTmdObjTable_4c = tmdObjTable;
-
-      if(effect.obj != null) {
-        effect.obj.delete();
-      }
-
-      effect.obj = TmdObjLoader.fromObjTable(manager.name, effect.deffTmdObjTable_4c);
     }
 
     //LAB_80116778
-    renderTmdSpriteEffect(tmdObjTable, effect.obj, manager.params_10, effect.transforms);
+    renderTmdSpriteEffect(tmdObjTable, effect.deffTmdObjTable_4c.getObj(), manager.params_10, effect.transforms);
   }
 
   /**
@@ -903,17 +895,16 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
    */
   private void renderPolyObj() {
     if(this.builder != null) {
-      this.obj = this.builder.build();
+      final Obj obj = this.builder.build();
 
       for(int i = 0; i < this.zDepths.size(); i++) {
         this.transforms.identity();
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
-        RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
           .vertices(i * 6, 6);
       }
 
-      this.obj.delete();
-      this.obj = null;
+      obj.delete();
       this.builder = null;
       this.zDepths.clear();
     }
@@ -921,9 +912,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
+    if(this.deffTmdObjTable_4c != null) {
+      this.deffTmdObjTable_4c.delete();
     }
   }
 }

@@ -4,9 +4,8 @@ import legend.core.QueuedModelBattleTmd;
 import legend.core.RenderEngine;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
 import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
@@ -37,7 +36,6 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
   public int _00;
   public DeffPart.TmdType tmdType_04;
   public TmdObjTable1c tmd_08;
-  public Obj obj;
 
   /** ushort */
   public int tpage_10;
@@ -104,7 +102,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
+        RENDERER.queueModel(this.tmd_08.getObj(), this.glTransforms, QueuedModelBattleTmd.class)
           .depthOffset(manager.params_10.z_22 * 4)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
@@ -114,7 +112,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
       } else {
         //LAB_80118370
-        renderTmdSpriteEffect(this.tmd_08, this.obj, manager.params_10, this.transforms);
+        renderTmdSpriteEffect(this.tmd_08, this.tmd_08.getObj(), manager.params_10, this.transforms);
       }
 
       //LAB_80118380
@@ -131,9 +129,6 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
-    }
+    this.tmd_08.delete();
   }
 }

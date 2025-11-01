@@ -9,7 +9,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.memory.types.IntRef;
@@ -17,7 +17,7 @@ import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -487,7 +487,7 @@ public class WMap extends EngineState {
           screenOffsetY = -8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
-        RENDERER.queueModel(dobj2.obj, this.modelLw, QueuedModelTmd.class)
+        RENDERER.queueModel(dobj2.tmd_08.getObj(), this.modelLw, QueuedModelTmd.class)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -838,7 +838,6 @@ public class WMap extends EngineState {
           for(int i = 0; i < this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
             //LAB_800e3d44
             this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 = this.modelAndAnimData_800c66a8.tmdRendering_08.tmd_14.tmd.objTable[i];
-            this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("WmapModel (obj " + i + ')', this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
           }
 
           this.worldMapState_800c6698 = WorldMapState.INIT_MAP_ANIM_3;
@@ -2153,7 +2152,7 @@ public class WMap extends EngineState {
         this.mapLw.transfer.y += 6.0f;
       }
 
-      final QueuedModelTmd model = RENDERER.queueModel(dobj2.obj, this.mapLw, QueuedModelTmd.class);
+      final QueuedModelTmd model = RENDERER.queueModel(dobj2.tmd_08.getObj(), this.mapLw, QueuedModelTmd.class);
 
       if(i == 0) {
         if(this.mapState_800c6798.continent_00.continentNum < 9) {
@@ -2930,8 +2929,7 @@ public class WMap extends EngineState {
   @Method(0x800dcde8L)
   private void deallocateWorldMap() {
     for(int i = 0; i < this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
-      this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].obj.delete();
-      this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].obj = null;
+      this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08.delete();
     }
   }
 

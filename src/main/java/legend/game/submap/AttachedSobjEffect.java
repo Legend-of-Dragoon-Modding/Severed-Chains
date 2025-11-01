@@ -8,7 +8,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.PoolList;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;

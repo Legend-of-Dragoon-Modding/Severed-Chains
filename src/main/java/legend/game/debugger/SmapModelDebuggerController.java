@@ -17,7 +17,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.RenderEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject;
@@ -200,10 +199,6 @@ public class SmapModelDebuggerController {
       }
 
       if(this.model != null) {
-        if(this.model.modelParts_00[0].obj == null) {
-          TmdObjLoader.fromModel("Animation viewer", this.model);
-        }
-
         animateModel(this.model, 4 / vsyncMode_8007a3b8);
         applyModelRotationAndScale(this.model);
         this.smap.renderSmapModel(this.model, null);
