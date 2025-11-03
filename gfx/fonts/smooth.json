@@ -1189,6 +1189,17 @@
       "texV": 240,
       "y": 0
     },
+    "0x25a1": {
+      "colour": true,
+      "texW": 30,
+      "texH": 30,
+      "w": 10,
+      "texU": 672,
+      "x": 0,
+      "h": 10,
+      "texV": 243,
+      "y": 1
+    },
     "0xe00c": {
       "colour": false,
       "texW": 64,

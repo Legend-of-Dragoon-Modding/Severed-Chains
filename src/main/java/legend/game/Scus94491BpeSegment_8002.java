@@ -10,12 +10,11 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.game.tmd.Tmd;
-import legend.game.tmd.TmdObjTable1c;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
@@ -44,18 +43,21 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
+import legend.game.tmd.Tmd;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.ClutAnimation;
+import legend.game.types.ClutAnimations;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.ClutAnimations;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxBorderMetrics0c;
@@ -64,7 +66,6 @@ import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.ClutAnimation;
 import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -187,7 +188,7 @@ public final class Scus94491BpeSegment_8002 {
   private static Obj textboxSelectionObj;
   private static final MV textboxSelectionTransforms = new MV();
 
-  private static long autoTextDelayStart = 0;
+  private static long autoTextDelayStart;
 
   @Method(0x80020008L)
   public static void sssqResetStuff() {
@@ -2002,6 +2003,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.digitIndex_80 = 0;
 
     textboxText.waitTicks = 0;
+    textboxText.inputActions.clear();
   }
 
   @Method(0x80025a04L)
@@ -2442,6 +2444,7 @@ public final class Scus94491BpeSegment_8002 {
         if(textbox.state_00 == TextboxState.UNINITIALIZED_0) {
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
+          textboxText.inputActions.clear();
         }
       }
 
@@ -3148,8 +3151,25 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         default -> {
-          //LAB_80027be4
-          appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, chr);
+          if((chr >>> 8) != TextboxText84.ACTION) {
+            //LAB_80027be4
+            appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, chr);
+          } else {
+            final StringBuilder builder = new StringBuilder();
+            final int length = str.charAt(textboxText.charIndex_30) & 0xff;
+
+            for(int n = 0; n < length; n++) {
+              builder.append((char)(str.charAt(textboxText.charIndex_30 + 1 + n / 2) >>> (n & 0x1) * 8 & 0xff));
+            }
+
+            textboxText.charIndex_30 += (length + 1) / 2;
+
+            final RegistryId id = new RegistryId(builder.toString());
+            final InputAction action = REGISTRIES.inputActions.getEntry(id).get();
+
+            appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, InputCodepoints.TEXTBOX_INPUT_ACTION | textboxText.inputActions.size());
+            textboxText.inputActions.add(action);
+          }
 
           textboxText.charX_34++;
 
@@ -3325,61 +3345,69 @@ public final class Scus94491BpeSegment_8002 {
         nudgeX = 0;
       }
 
-      final char c = LodString.fromLodChar(chr.char_06);
+      String str = String.valueOf(InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), LodString.fromLodChar(chr.char_06)));
 
-      //LAB_8002835c
-      if(chr.char_06 != 0) {
-        int scrollY = 0;
-        int scrollH = 0;
-        if((textboxText.flags_08 & 0x1) != 0) {
-          if(i >= firstCharInLineIndex && i < lastCharInLineIndex) {
-            final int scroll = Math.round(textboxText.scrollAmount_2c);
-            scrollY = -scroll;
-            scrollH = scroll;
-          }
-
-          //LAB_800283c4
-          if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
-            scrollY = 0;
-            scrollH = 12 - Math.round(textboxText.scrollAmount_2c);
-          }
-        }
-
-        //LAB_8002840c
-        if(scrollH < 13) {
-          final int x = (int)(textboxText._18 - centreScreenX_1f8003dc + nudgeX);
-          final int y;
-
-          // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
-          if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 && i < textboxText.chars_1c) {
-            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY) - 1;
-          } else {
-            y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY - textboxText.scrollAmount_2c) - 1;
-          }
-
-          //LAB_80028544
-          //LAB_80028564
-          final int height = 12 - scrollH;
-
-          textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(GPU.getOffsetX() + x + 1, GPU.getOffsetY() + y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
-          DEFAULT_FONT.queueChar(c, textboxText.transforms)
-            .monochrome(0.0f)
-            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 2, 8, height)
-            .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
-
-          textboxText.transforms.transfer.x--;
-          textboxText.transforms.transfer.y--;
-          textboxText.transforms.transfer.z -= 4.0f;
-
-          DEFAULT_FONT.queueChar(c, textboxText.transforms)
-            .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
-            .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 1, 8, height)
-            .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
-        }
+      if((str.charAt(0) & 0xff00) == InputCodepoints.TEXTBOX_INPUT_ACTION) {
+        str = InputCodepoints.getActionName(textboxText.inputActions.get(str.charAt(0) & 0xff));
       }
 
-      nudgeX += DEFAULT_FONT.charWidth(c) + 1;
+      //LAB_8002835c
+      for(int charIndex = 0; charIndex < str.length(); charIndex++) {
+        final char c = str.charAt(charIndex);
+
+        if(chr.char_06 != 0) {
+          int scrollY = 0;
+          int scrollH = 0;
+          if((textboxText.flags_08 & 0x1) != 0) {
+            if(i >= firstCharInLineIndex && i < lastCharInLineIndex) {
+              final int scroll = Math.round(textboxText.scrollAmount_2c);
+              scrollY = -scroll;
+              scrollH = scroll;
+            }
+
+            //LAB_800283c4
+            if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
+              scrollY = 0;
+              scrollH = 12 - Math.round(textboxText.scrollAmount_2c);
+            }
+          }
+
+          //LAB_8002840c
+          if(scrollH < 13) {
+            final int x = (int)(textboxText._18 - centreScreenX_1f8003dc + nudgeX);
+            final int y;
+
+            // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
+            if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 && i < textboxText.chars_1c) {
+              y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY) - 1;
+            } else {
+              y = (int)(textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de - scrollY - textboxText.scrollAmount_2c) - 1;
+            }
+
+            //LAB_80028544
+            //LAB_80028564
+            final int height = 12 - scrollH;
+
+            textboxText.transforms.identity();
+            textboxText.transforms.transfer.set(GPU.getOffsetX() + x + 1, GPU.getOffsetY() + y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
+            DEFAULT_FONT.queueChar(c, textboxText.transforms)
+              .monochrome(0.0f)
+              .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 2, DEFAULT_FONT.charWidth(c) + 1, height)
+              .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
+
+            textboxText.transforms.transfer.x--;
+            textboxText.transforms.transfer.y--;
+            textboxText.transforms.transfer.z -= 4.0f;
+
+            DEFAULT_FONT.queueChar(c, textboxText.transforms)
+              .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
+              .scissor(GPU.getOffsetX() + x, GPU.getOffsetY() + y + 1, DEFAULT_FONT.charWidth(c) + 1, height)
+              .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
+          }
+        }
+
+        nudgeX += DEFAULT_FONT.charWidth(c) + 1;
+      }
     }
 
     //LAB_800287f8

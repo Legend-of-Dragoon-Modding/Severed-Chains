@@ -1,5 +1,6 @@
 package legend.game.types;
 
+import legend.core.platform.input.InputCodepoints;
 import legend.game.scripting.Param;
 
 public class LodString {
@@ -109,11 +110,15 @@ public class LodString {
   }
 
   public static int toLodChar(final char chr) {
+    if((chr & 0xff00) == InputCodepoints.TEXTBOX_INPUT_ACTION) {
+      return chr;
+    }
+
     return switch(chr) {
       case ' ' -> 0x00;
       case ',' -> 0x01;
       case '.' -> 0x02;
-      case '\u00b7' -> 0x03;
+      case '·' -> 0x03;
       case ':' -> 0x04;
       case '?' -> 0x05;
       case '!' -> 0x06;
@@ -124,13 +129,13 @@ public class LodString {
       case '(' -> 0x0b;
       case ')' -> 0x0c;
       case '-' -> 0x0d;
-      case '\u011d' -> 0x0e;
+      case '`' -> 0x0e;
       case '%' -> 0x0f;
       case '&' -> 0x10;
       case '*' -> 0x11;
-      case '\u011e' -> 0x12;
-      case '\u011f' -> 0x13;
-      case '\u0120' -> 0x14;
+      case '@' -> 0x12;
+      case '+' -> 0x13;
+      case '~' -> 0x14;
       case '0' -> 0x15;
       case '1' -> 0x16;
       case '2' -> 0x17;
@@ -196,17 +201,22 @@ public class LodString {
       case '[' -> 0x53;
       case ']' -> 0x54;
       case ';' -> 0x55;
+      case '□' -> 0x56;
       case '\n' -> 0xa1ff;
       default -> 0x05;
     };
   }
 
   public static char fromLodChar(final int lodChar) {
+    if((lodChar & 0xff00) == InputCodepoints.TEXTBOX_INPUT_ACTION) {
+      return (char)lodChar;
+    }
+
     return switch(lodChar) {
       case 0x00 -> ' ';
       case 0x01 -> ',';
       case 0x02 -> '.';
-      case 0x03 -> '\u00b7';
+      case 0x03 -> '·';
       case 0x04 -> ':';
       case 0x05 -> '?';
       case 0x06 -> '!';
@@ -217,13 +227,13 @@ public class LodString {
       case 0x0b -> '(';
       case 0x0c -> ')';
       case 0x0d -> '-';
-      case 0x0e -> '\u011d';
+      case 0x0e -> '`';
       case 0x0f -> '%';
       case 0x10 -> '&';
       case 0x11 -> '*';
-      case 0x12 -> '\u011e';
-      case 0x13 -> '\u011f';
-      case 0x14 -> '\u0120';
+      case 0x12 -> '@';
+      case 0x13 -> '+';
+      case 0x14 -> '~';
       case 0x15 -> '0';
       case 0x16 -> '1';
       case 0x17 -> '2';
@@ -289,6 +299,7 @@ public class LodString {
       case 0x53 -> '[';
       case 0x54 -> ']';
       case 0x55 -> ';';
+      case 0x56 -> '□';
       case 0xa1ff -> '\n';
       default -> '?';
     };
