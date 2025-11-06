@@ -32,8 +32,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static int pregameLoadingStage_800bb10c;
 
-  public static int drgnBinIndex_800bc058;
-
   public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[108];
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];

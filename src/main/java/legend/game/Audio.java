@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.memory.Method;
@@ -53,11 +54,11 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.DrgnFiles.loadDir;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnFileSync;
+import static legend.game.DrgnFiles.loadDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
-import static legend.game.Scus94491BpeSegment.loadDrgnFiles;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -2239,4 +2240,46 @@ public final class Audio {
 
     //LAB_8004da38
   }
+  private static final int SOUND_TPS = 60;
+  private static final int NANOS_PER_TICK = 1_000_000_000 / SOUND_TPS;
+  private static boolean soundRunning;
+
+  public static void startSound() {
+    soundRunning = true;
+    final Thread sfx = new Thread(Audio::soundLoop);
+    sfx.setName("SFX");
+    sfx.start();
+  }
+
+  public static void stopSound() {
+    soundRunning = false;
+  }
+
+  private static void soundLoop() {
+    long time = System.nanoTime();
+
+    while(soundRunning) {
+      try {
+        SEQUENCER.tick();
+        SPU.tick();
+      } catch(final Throwable t) {
+        LOGGER.error("Sound thread crashed!", t);
+      }
+
+
+      long interval = System.nanoTime() - time;
+
+      // Failsafe if we run too far behind (also applies to pausing in IDE)
+      if(interval >= NANOS_PER_TICK * 3) {
+        LOGGER.debug("Sequencer running behind, skipping ticks to catch up");
+        interval = NANOS_PER_TICK;
+        time = System.nanoTime() - interval;
+      }
+
+      final int toSleep = (int)Math.max(0, NANOS_PER_TICK - interval) / 1_000_000;
+      DebugHelper.sleep(toSleep);
+      time += NANOS_PER_TICK;
+    }
+  }
+
 }

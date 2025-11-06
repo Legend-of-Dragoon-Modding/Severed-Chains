@@ -1,34 +1,10 @@
 package legend.game;
 
 import legend.game.submap.SubmapEnvState;
-import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.AdditionData0e;
 
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
-
-  public static final UvAdjustmentMetrics14[] vramSlots_8005027c = {
-    UvAdjustmentMetrics14.NONE,
-    new UvAdjustmentMetrics14( 1, 320, 496, 320, 256),
-    new UvAdjustmentMetrics14( 2, 384, 496, 384, 256),
-    new UvAdjustmentMetrics14( 3, 448, 496, 448, 256),
-    new UvAdjustmentMetrics14( 4, 512, 496, 512, 256),
-    new UvAdjustmentMetrics14( 5, 576, 496, 576, 256),
-    new UvAdjustmentMetrics14( 6, 640, 496, 640, 256),
-    new UvAdjustmentMetrics14( 7, 576, 496, 576, 256),
-    new UvAdjustmentMetrics14( 8, 640, 496, 640, 256),
-    new UvAdjustmentMetrics14( 9, 704, 496, 704, 256),
-    new UvAdjustmentMetrics14(10, 768, 240, 768,   0),
-    new UvAdjustmentMetrics14(11, 832, 240, 832,   0),
-    new UvAdjustmentMetrics14(12, 896, 240, 896,   0),
-    new UvAdjustmentMetrics14(13, 960, 240, 960,   0),
-    new UvAdjustmentMetrics14(14, 512, 240, 512,   0),
-    new UvAdjustmentMetrics14(15, 576, 240, 576,   0),
-    new UvAdjustmentMetrics14(16, 640, 240, 640,   0),
-    new UvAdjustmentMetrics14(17, 704, 240, 704,   0),
-  };
-
-  public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
 
   public static final String[] spellCombatDescriptions_80052018 = {
     "Fire STR 50% Single", "Fire STR 25% All", "Fire STR 75% Single", "Fire STR 75% All", "STR 150% Single",

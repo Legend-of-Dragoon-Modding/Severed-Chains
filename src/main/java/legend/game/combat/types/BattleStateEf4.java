@@ -14,12 +14,12 @@ import legend.lodmod.LodMod;
 
 import java.util.Arrays;
 
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 
 public class BattleStateEf4 {
   public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];

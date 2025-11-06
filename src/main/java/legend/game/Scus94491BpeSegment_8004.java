@@ -27,7 +27,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[4] = Scus94491BpeSegment::scriptSetGlobalFlag2;
     scriptSubFunctions_8004e29c[5] = Scus94491BpeSegment::scriptReadGlobalFlag2;
     scriptSubFunctions_8004e29c[6] = FullScreenEffects::scriptStartFadeEffect;
-    scriptSubFunctions_8004e29c[7] = Scus94491BpeSegment::scriptWaitForFilesToLoad;
+    scriptSubFunctions_8004e29c[7] = DrgnFiles::scriptWaitForFilesToLoad;
     scriptSubFunctions_8004e29c[8] = Rumble::scriptStartRumbleMode;
     scriptSubFunctions_8004e29c[9] = Scus94491BpeSegment::scriptSetFlag;
     scriptSubFunctions_8004e29c[10] = Scus94491BpeSegment::scriptReadFlag;

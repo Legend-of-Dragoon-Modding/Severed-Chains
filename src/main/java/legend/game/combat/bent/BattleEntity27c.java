@@ -40,7 +40,7 @@ import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.Models.animateModel;
 import static legend.game.Models.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
+import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.combat.Battle.FUN_800ca194;

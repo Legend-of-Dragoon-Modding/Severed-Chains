@@ -2,7 +2,6 @@ package legend.game;
 
 import javafx.application.Platform;
 import legend.core.Config;
-import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.Method;
@@ -20,13 +19,8 @@ import legend.game.types.BattleUiParts;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
-import legend.game.unpacker.FileData;
-import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.DISCORD;
@@ -35,9 +29,8 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.core.GameEngine.SEQUENCER;
-import static legend.core.GameEngine.SPU;
 import static legend.game.Audio.startQueuedSounds;
+import static legend.game.Audio.stopSound;
 import static legend.game.EngineStates.FUN_80020ed8;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineState_8004dd20;
@@ -48,7 +41,6 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Menus.loadAndRenderMenus;
 import static legend.game.Menus.renderUi;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -171,48 +163,6 @@ public final class Scus94491BpeSegment {
     });
   }
 
-  private static final int SOUND_TPS = 60;
-  private static final int NANOS_PER_TICK = 1_000_000_000 / SOUND_TPS;
-  private static boolean soundRunning;
-
-  public static void startSound() {
-    soundRunning = true;
-    final Thread sfx = new Thread(Scus94491BpeSegment::soundLoop);
-    sfx.setName("SFX");
-    sfx.start();
-  }
-
-  private static void stopSound() {
-    soundRunning = false;
-  }
-
-  private static void soundLoop() {
-    long time = System.nanoTime();
-
-    while(soundRunning) {
-      try {
-        SEQUENCER.tick();
-        SPU.tick();
-      } catch(final Throwable t) {
-        LOGGER.error("Sound thread crashed!", t);
-      }
-
-
-      long interval = System.nanoTime() - time;
-
-      // Failsafe if we run too far behind (also applies to pausing in IDE)
-      if(interval >= NANOS_PER_TICK * 3) {
-        LOGGER.debug("Sequencer running behind, skipping ticks to catch up");
-        interval = NANOS_PER_TICK;
-        time = System.nanoTime() - interval;
-      }
-
-      final int toSleep = (int)Math.max(0, NANOS_PER_TICK - interval) / 1_000_000;
-      DebugHelper.sleep(toSleep);
-      time += NANOS_PER_TICK;
-    }
-  }
-
   @Method(0x800133acL)
   public static int simpleRand() {
     final int v1;
@@ -247,118 +197,6 @@ public final class Scus94491BpeSegment {
   @Method(0x800135b8L)
   public static short rcos(final int theta) {
     return (short)(MathHelper.cos(MathHelper.psxDegToRad(theta)) * 0x1000);
-  }
-
-  public static void loadFile(final String file, final Consumer<FileData> onCompletion) {
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
-    LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    Loader.loadFile(file, onCompletion);
-  }
-
-  public static void loadDir(final String dir, final Consumer<List<FileData>> onCompletion) {
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
-    LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    Loader.loadDirectory(dir, onCompletion);
-  }
-
-  public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<FileData>> onCompletion, final String... files) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, String.join(", ", files), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    final String[] paths = new String[files.length];
-    for(int i = 0; i < files.length; i++) {
-      paths[i] = "SECT/DRGN" + drgnBinIndex + ".BIN/" + files[i];
-    }
-
-    Loader.loadFiles(onCompletion, paths);
-  }
-
-  public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
-    loadDrgnFile(drgnBinIndex, String.valueOf(file), onCompletion);
-  }
-
-  public static void loadDrgnFileSync(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
-    loadDrgnFileSync(drgnBinIndex, String.valueOf(file), onCompletion);
-  }
-
-  public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file, onCompletion);
-  }
-
-  public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    onCompletion.accept(Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
-  }
-
-  public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
-  }
-
-  public static void loadDrgnDirSync(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    onCompletion.accept(Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
-  }
-
-  public static void loadDrgnDirSync(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    onCompletion.accept(Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
-  }
-
-  public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
-    if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058;
-    }
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
   }
 
   @ScriptDescription("Does nothing")
@@ -463,20 +301,6 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80017564L)
-  @ScriptDescription("Rewinds if there are files currently loading; pauses otherwise")
-  public static FlowControl scriptWaitForFilesToLoad(final RunningScript<?> script) {
-    final int loadingCount = Loader.getLoadingFileCount();
-
-    if(loadingCount != 0) {
-      LOGGER.info("%d files still loading; pausing and rewinding", loadingCount);
-      return FlowControl.PAUSE_AND_REWIND;
-    }
-
-    LOGGER.info("No files loading");
-    return FlowControl.PAUSE;
-  }
-
   @ScriptDescription("Sets or clears a bit in a flags array")
   @ScriptParam(direction = ScriptParam.Direction.BOTH, type = ScriptParam.Type.INT_ARRAY, name = "flags", description = "The array of flags")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to set")
@@ -537,13 +361,6 @@ public final class Scus94491BpeSegment {
     }
 
     GPU.uploadData15(new Rect4i(x, y, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
-  }
-
-  @Method(0x80018944L)
-  public static void waitForFilesToLoad() {
-    if(Loader.getLoadingFileCount() == 0) {
-      pregameLoadingStage_800bb10c++;
-    }
   }
 
   @Method(0x80018998L)

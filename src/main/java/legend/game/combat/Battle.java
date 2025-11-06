@@ -17,6 +17,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.platform.input.InputAction;
+import legend.game.DrgnFiles;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment;
@@ -178,6 +179,11 @@ import static legend.game.Audio.sssqResetStuff;
 import static legend.game.Audio.startEncounterSounds;
 import static legend.game.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.Audio.stopSoundSequence;
+import static legend.game.DrgnFiles.loadDir;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnDirSync;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.DrgnFiles.loadFile;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -210,16 +216,12 @@ import static legend.game.Models.initObjTable2;
 import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.loadPlayerModelAndAnimation;
 import static legend.game.Models.prepareObjTable2;
+import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -232,7 +234,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
@@ -307,69 +308,69 @@ public class Battle extends EngineState {
 
   /**
    * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #initBattle}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadStageAndControllerScripts}</li>
    *   <li>{@link #initializeViewportAndCamera}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link #battleInitiateAndPreload_800c772c}</li>
    *   <li>{@link #allocateEnemyBattleEntities()}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #allocatePlayerBattleEntities()}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadEncounterAssets}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadHudAndAttackAnimations}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #FUN_800c79f0}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadSEffe}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #calculateInitialTurnValues}</li>
    *   <li>{@link #battleTick}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #performPostBattleAction}</li>
    *   <li>{@link #deallocateCombat}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
-   *   <li>{@link Scus94491BpeSegment#renderPostCombatScreen}</li>
+   *   <li>{@link SBtld#renderPostCombatScreen}</li>
    *   <li>{@link SBtld#transitionBackFromBattle}</li>
    * </ol>
    */
   private final Runnable[] battleLoadingStage_8004f5d4 = {
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::initBattle,
-    Scus94491BpeSegment::waitForFilesToLoad,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadStageAndControllerScripts,
     this::initializeViewportAndCamera,
     Scus94491BpeSegment::nextLoadingStage,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
     this::battleInitiateAndPreload_800c772c,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::allocateEnemyBattleEntities,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::allocatePlayerBattleEntities,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadEncounterAssets,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadHudAndAttackAnimations,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::FUN_800c79f0,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadSEffe,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::calculateInitialTurnValues,
     this::battleTick,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::performPostBattleAction,
     this::deallocateCombat,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
     SBtld::renderPostCombatScreen,
     SBtld::transitionBackFromBattle,

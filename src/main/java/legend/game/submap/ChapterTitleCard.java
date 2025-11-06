@@ -15,8 +15,8 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 
 public class ChapterTitleCard {
   private enum ChapterTitleState {
