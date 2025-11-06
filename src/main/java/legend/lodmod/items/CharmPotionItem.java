@@ -9,7 +9,7 @@ import legend.game.submap.SMap;
 import legend.game.wmap.WMap;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class CharmPotionItem extends BattleItem {

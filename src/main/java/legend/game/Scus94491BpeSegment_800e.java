@@ -13,28 +13,28 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.initSound;
-import static legend.game.Scus94491BpeSegment.loadMenuSounds;
-import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
+import static legend.game.Audio._800bf0cf;
+import static legend.game.Audio.initSound;
+import static legend.game.Audio.loadMenuSounds;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.Graphics.InitGeom;
+import static legend.game.Graphics.ResetGraph;
+import static legend.game.Graphics.clearBlue_800babc0;
+import static legend.game.Graphics.clearGreen_800bb104;
+import static legend.game.Graphics.clearRed_8007a3a8;
+import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.orderingTableSize_1f8003c8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.setDrawOffset;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.zMax_1f8003cc;
+import static legend.game.Graphics.zShift_1f8003c4;
+import static legend.game.Menus.FUN_800e6d60;
+import static legend.game.Models.loadModelAndAnimation;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
-import static legend.game.Scus94491BpeSegment_8002.loadModelAndAnimation;
-import static legend.game.Scus94491BpeSegment_8003.InitGeom;
-import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
-import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
-import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -123,11 +123,6 @@ public final class Scus94491BpeSegment_800e {
     shadowModel_800bda10.coord2_14.transforms.rotate.zero();
     shadowModel_800bda10.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
     shadowModel_800bda10.shadowType_cc = 0;
-  }
-
-  @Method(0x800e6d60L)
-  public static void FUN_800e6d60() {
-    renderablePtr_800bdc5c = null;
   }
 
   @Method(0x800e6e6cL)

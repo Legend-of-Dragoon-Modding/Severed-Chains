@@ -18,7 +18,7 @@ import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
-import legend.game.Scus94491BpeSegment_8002;
+import legend.game.Menus;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -89,59 +89,59 @@ import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
+import static legend.game.Audio.getLoadedAudioFiles;
+import static legend.game.Audio.musicLoaded_800bd782;
+import static legend.game.Audio.stopMusicSequence;
+import static legend.game.Audio.unloadSoundFile;
+import static legend.game.EngineStates.FUN_800218f0;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.GetTPage;
+import static legend.game.Graphics.GsGetLs;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetFlatLight;
+import static legend.game.Graphics.PopMatrix;
+import static legend.game.Graphics.PushMatrix;
+import static legend.game.Graphics.RotTransPers4;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.perspectiveTransform;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Menus.initMenu;
+import static legend.game.Menus.whichMenu_800bdc38;
+import static legend.game.Models.FUN_8002246c;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
+import static legend.game.Models.initObjTable2;
+import static legend.game.Models.loadModelStandardAnimation;
+import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.submapNames_8011c108;
-import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.initMenu;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment_8002.srand;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
-import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
-import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
@@ -152,18 +152,17 @@ import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
-import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.Textboxes.calculateAppropriateTextboxBounds;
 import static legend.game.Textboxes.clearTextbox;
 import static legend.game.Textboxes.clearTextboxText;
+import static legend.game.Textboxes.renderBorder_80052b68;
 import static legend.game.Textboxes.scriptDeallocateAllTextboxes;
 import static legend.game.Textboxes.textboxFits;
+import static legend.game.Textboxes.textboxMode_80052b88;
+import static legend.game.Textboxes.textboxTextType_80052ba8;
+import static legend.game.Textboxes.textboxText_800bdf38;
+import static legend.game.Textboxes.textboxes_800be358;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
@@ -2988,7 +2987,7 @@ public class SMap extends EngineState {
       }
 
       case WAIT_FOR_MUSIC_2 -> {
-        if(musicLoaded_800bd782 && (getLoadedDrgnFiles() & 0x2) == 0) {
+        if(musicLoaded_800bd782 && (getLoadedAudioFiles() & 0x2) == 0) {
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_EFFECT_TEXTURES_3;
         }
       }
@@ -3729,7 +3728,7 @@ public class SMap extends EngineState {
       return;
     }
 
-    if(this.transitioning_800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
+    if(this.transitioning_800f7e4c || (getLoadedAudioFiles() & 0x82) != 0) {
       return;
     }
 
@@ -3813,7 +3812,7 @@ public class SMap extends EngineState {
 
     if(newScene == 0x3ff) {
       submapCutForSave_800cb450 = submapCut_80052c30;
-      this.menuTransition = Scus94491BpeSegment_8002::initInventoryMenu;
+      this.menuTransition = Menus::initInventoryMenu;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }

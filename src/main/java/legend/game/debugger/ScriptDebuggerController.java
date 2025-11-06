@@ -16,11 +16,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.ScriptManager;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
@@ -118,7 +118,7 @@ public class ScriptDebuggerController {
 
   public void scriptLogClick(final ActionEvent event) {
     synchronized(INSTANCES) {
-      Scus94491BpeSegment.scriptLog[this.getSelectedScript()] = this.scriptLog.isSelected();
+      ScriptManager.scriptLog[this.getSelectedScript()] = this.scriptLog.isSelected();
 
       for(final ScriptDebuggerController instance : INSTANCES) {
         if(instance.getSelectedScript() == this.getSelectedScript()) {

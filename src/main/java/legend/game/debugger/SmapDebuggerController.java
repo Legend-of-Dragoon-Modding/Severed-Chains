@@ -20,7 +20,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 
 public class SmapDebuggerController {
   @FXML

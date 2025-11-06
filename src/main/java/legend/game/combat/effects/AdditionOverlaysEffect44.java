@@ -31,7 +31,7 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
+import static legend.game.Graphics.GsGetLw;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;

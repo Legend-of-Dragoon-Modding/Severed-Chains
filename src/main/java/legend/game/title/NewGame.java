@@ -7,11 +7,11 @@ import legend.game.EngineStateEnum;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class NewGame extends EngineState {

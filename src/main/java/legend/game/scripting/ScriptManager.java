@@ -16,6 +16,9 @@ import org.legendofdragoon.scripting.tokens.Script;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Function;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.IoHelper.intsToBytes;
@@ -24,6 +27,137 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
+
+  public static boolean[] scriptLog = new boolean[scriptStatePtrArr_800bc1c0.length];
+
+  public static final Map<OpType, Function<RunningScript<?>, String>> scriptFunctionDescriptions = new EnumMap<>(OpType.class);
+
+  static {
+    scriptFunctionDescriptions.put(OpType.YIELD, r -> "pause;");
+    scriptFunctionDescriptions.put(OpType.REWIND, r -> "rewind;");
+    scriptFunctionDescriptions.put(OpType.WAIT, r -> {
+      final int waitFrames = r.params_20[0].get();
+
+      if(waitFrames != 0) {
+        return "wait %d (p0) frames;".formatted(waitFrames);
+      }
+
+      return "wait complete - continue;";
+    });
+    scriptFunctionDescriptions.put(OpType.WAIT_CMP, r -> {
+      final Param operandA = r.params_20[0];
+      final Param operandB = r.params_20[1];
+      final int op = r.opParam_18;
+
+      return (switch(op) {
+        case 0 -> "if %s (p0) <= %s (p1)? %s;";
+        case 1 -> "if %s (p0) < %s (p1)? %s;";
+        case 2 -> "if %s (p0) == %s (p1)? %s;";
+        case 3 -> "if %s (p0) != %s (p1)? %s;";
+        case 4 -> "if %s (p0) > %s (p1)? %s;";
+        case 5 -> "if %s (p0) >= %s (p1)? %s;";
+        case 6 -> "if %s (p0) & %s (p1)? %s;";
+        case 7 -> "if %s (p0) !& %s (p1)? %s;";
+        default -> "illegal cmp 3";
+      }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - continue" : "no - rewind");
+    });
+    scriptFunctionDescriptions.put(OpType.WAIT_CMP_0, r -> {
+      final Param operandB = r.params_20[0];
+      final int op = r.opParam_18;
+
+      return (switch(op) {
+        case 0 -> "if 0 <= %s (p0)? %s;";
+        case 1 -> "if 0 < %s (p0)? %s;";
+        case 2 -> "if 0 == %s (p0)? %s;";
+        case 3 -> "if 0 != %s (p0)? %s;";
+        case 4 -> "if 0 > %s (p0)? %s;";
+        case 5 -> "if 0 >= %s (p0)? %s;";
+        case 6 -> "if 0 & %s (p0)? %s;";
+        case 7 -> "if 0 !& %s (p0)? %s;";
+        default -> "illegal cmp 4";
+      }).formatted(operandB, r.scriptState_04.scriptCompare(ScriptTempParam.ZERO, operandB, op) ? "yes - continue" : "no - rewind");
+    });
+    scriptFunctionDescriptions.put(OpType.MOV, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SWAP_BROKEN, r -> "tmp = 0x%x (p0); *%s (p1) = tmp; *%s (p0) = tmp; // Broken swap".formatted(r.params_20[0].get(), r.params_20[1], r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.MEMCPY, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.MOV_0, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.AND, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.OR, r -> "*%s (p1) |= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.XOR, r -> "*%s (p1) ^= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.ANDOR, r -> "*%s (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.NOT, r -> "~*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.SHL, r -> "*%s (p1) <<= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SHR, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.ADD, r -> "*%s (p1) += 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SUB, r -> "*%s (p1) -= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SUB_REV, r -> "*%s (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.INCR, r -> "*%s (p0) ++;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.DECR, r -> "*%s (p0) --;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.NEG, r -> "-*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.ABS, r -> "|*%s| (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.MUL, r -> "*%s (p1) *= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.DIV, r -> "*%s (p1) /= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.DIV_REV, r -> "*%s (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.MOD, r -> "*%s (p1) %%= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.MOD_REV, r -> "*%s (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.MOD43, scriptFunctionDescriptions.get(OpType.MOD));
+    scriptFunctionDescriptions.put(OpType.MOD_REV44, scriptFunctionDescriptions.get(OpType.MOD_REV));
+    scriptFunctionDescriptions.put(OpType.SQRT, r -> "*%s (p1) = sqrt(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.SIN_12, r -> "*%s (p1) = sin(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.COS_12, r -> "*%s (p1) = cos(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(OpType.ATAN2_12, r -> "*%s (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(OpType.CALL, r -> "subfunc(%d (pp));".formatted(r.opParam_18));
+    scriptFunctionDescriptions.put(OpType.JMP, r -> "jmp %s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.JMP_CMP, r -> {
+      final Param operandA = r.params_20[0];
+      final Param operandB = r.params_20[1];
+      final int op = r.opParam_18;
+      final Param dest = r.params_20[2];
+
+      return (switch(op) {
+        case 0 -> "if %s (p0) <= %s (p1)? %s;";
+        case 1 -> "if %s (p0) < %s (p1)? %s;";
+        case 2 -> "if %s (p0) == %s (p1)? %s;";
+        case 3 -> "if %s (p0) != %s (p1)? %s;";
+        case 4 -> "if %s (p0) > %s (p1)? %s;";
+        case 5 -> "if %s (p0) >= %s (p1)? %s;";
+        case 6 -> "if %s (p0) & %s (p1)? %s;";
+        case 7 -> "if %s (p0) !& %s (p1)? %s;";
+        default -> "illegal cmp 65";
+      }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
+    });
+    scriptFunctionDescriptions.put(OpType.JMP_CMP_0, r -> {
+      final Param operandB = r.params_20[0];
+      final int op = r.opParam_18;
+      final Param dest = r.params_20[1];
+
+      return (switch(op) {
+        case 0 -> "if 0 <= %s (p0)? %s;";
+        case 1 -> "if 0 < %s (p0)? %s;";
+        case 2 -> "if 0 == %s (p0)? %s;";
+        case 3 -> "if 0 != %s (p0)? %s;";
+        case 4 -> "if 0 > %s (p0)? %s;";
+        case 5 -> "if 0 >= %s (p0)? %s;";
+        case 6 -> "if 0 & %s (p0)? %s;";
+        case 7 -> "if 0 !& %s (p0)? %s;";
+        default -> "illegal cmp 66";
+      }).formatted(operandB, r.scriptState_04.scriptCompare(ScriptTempParam.ZERO, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
+    });
+    scriptFunctionDescriptions.put(OpType.WHILE, r -> "if(--%s (p0) != 0) jmp %s (p1)".formatted(r.params_20[0], r.params_20[1]));
+    scriptFunctionDescriptions.put(OpType.GOSUB, r -> "gosub %s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(OpType.RETURN, r -> "return;");
+    scriptFunctionDescriptions.put(OpType.GOSUB_TABLE, r -> {
+      final Param a = r.params_20[1];
+      final Param b = r.params_20[0];
+      final Param ptr = a.array(a.array(b.get()).get());
+      return "gosub %s (p1[p1[p0]]);".formatted(ptr);
+    });
+
+    scriptFunctionDescriptions.put(OpType.DEALLOCATE, r -> "deallocate; pause; rewind;");
+
+    scriptFunctionDescriptions.put(OpType.DEALLOCATE82, r -> "deallocate children; pause; rewind;");
+    scriptFunctionDescriptions.put(OpType.DEALLOCATE_OTHER, r -> "deallocate %s (p0);%s".formatted(r.params_20[0], r.scriptState_04.index == r.params_20[0].get() ? "; pause; rewind;" : ""));
+  }
 
   private Meta meta;
   private final Compiler compiler = new Compiler();

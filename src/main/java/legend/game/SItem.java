@@ -61,45 +61,45 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.Audio.copyPlayingSounds;
+import static legend.game.Audio.loadedAudioFiles_800bcf78;
+import static legend.game.Audio.musicPackageLoadedCallback;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.Audio.playMusicPackage;
+import static legend.game.Audio.playingSoundsBackup_800bca78;
+import static legend.game.Audio.queuedSounds_800bd110;
+import static legend.game.Audio.sssqResetStuff;
+import static legend.game.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.Audio.stopMusicSequence;
+import static legend.game.Audio.unloadSoundFile;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Menus.allocateRenderable;
+import static legend.game.Menus.loadMenuTexture;
+import static legend.game.Menus.renderablePtr_800bdba4;
+import static legend.game.Menus.renderablePtr_800bdba8;
+import static legend.game.Menus.uiFile_800bdc3c;
+import static legend.game.Menus.unloadRenderable;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
-import static legend.game.Scus94491BpeSegment.musicPackageLoadedCallback;
-import static legend.game.Scus94491BpeSegment.playMusicPackage;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
-import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.loadMenuTexture;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
-import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
-import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -119,6 +119,8 @@ public final class SItem {
   public static final FontOptions UI_WHITE = new FontOptions().colour(TextColour.WHITE);
   public static final FontOptions UI_WHITE_CENTERED = new FontOptions().colour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_WHITE_SMALL = new FontOptions().colour(TextColour.WHITE).size(0.67f);
+
+  public static int shopId_8007a3b4;
 
   public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
   public static final MenuStatus08[] menuStatus_800fba7c = {
@@ -594,7 +596,7 @@ public final class SItem {
       if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
         sssqResetStuff();
         unloadSoundFile(8);
-        loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
+        loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
         loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
       }
     } else {

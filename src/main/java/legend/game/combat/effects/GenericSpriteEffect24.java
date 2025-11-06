@@ -12,8 +12,8 @@ import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 
 public class GenericSpriteEffect24 {
   /** uint */

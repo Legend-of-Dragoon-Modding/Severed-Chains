@@ -13,7 +13,7 @@ import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 
 public class GameVarArrayParam extends Param {

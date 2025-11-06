@@ -20,13 +20,13 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.menuEquipmentSlotComparator;
 import static legend.game.Scus94491BpeSegment_8002.menuItemIconComparator;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;

@@ -6,8 +6,8 @@ import legend.core.memory.Method;
 import legend.game.combat.deff.Anim;
 import legend.game.unpacker.FileData;
 
-import static legend.game.Scus94491BpeSegment_8002.applyKeyframe;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
+import static legend.game.Models.applyKeyframe;
+import static legend.game.Models.loadModelStandardAnimation;
 
 public class TmdAnimationFile extends Anim {
   /** ushort */

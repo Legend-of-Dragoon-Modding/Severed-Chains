@@ -18,12 +18,12 @@ import java.util.List;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Graphics.GsGetLs;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.PopMatrix;
+import static legend.game.Graphics.PushMatrix;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
-import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public class SmokeParticleEffect {
   public enum SmokeCloudState {

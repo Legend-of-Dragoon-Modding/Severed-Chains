@@ -1,45 +1,11 @@
 package legend.game;
 
-import legend.core.gte.MV;
-import legend.game.sound.ReverbConfig;
-import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.submap.SubmapEnvState;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.AdditionData0e;
-import legend.game.types.LodString;
-
-import java.util.Arrays;
 
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
-
-  public static final int[] submapMusic_80050068 = {
-    -1, -1, 23, 28, 44, 20, 22, -1,
-    29, 40, 30, 22, 24, 22, 31, 42,
-    -1, 32, 45, 29, 40, 27, 33, 21,
-    21, -1, 48, 46, -1, 22, 38, -1,
-    33, 23, 36, 49, 28, 39, 50, -1,
-    47, -1, 26, 27, 26, 42, 45, -1,
-    27, 39, 27, 52, -1, 38, 53, 54,
-    55, -1, -1, -1, -1, -1, -1, -1,
-  };
-  public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
-  public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
-
-  public static final int[] charSlotSpuOffsets_80050190 = {0x44250, 0x4b780, 0x52cb0};
-
-  public static final int[] combatSoundEffectsTypes_8005019c = {
-    12, 13, 86, 12, 12, 12, 12, 12,
-    12, 12, 12, 12, 12, 12, 12, 12,
-    14, 15, 88, 90, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-  };
-  public static final int[] combatMusicFileIndices_800501bc = {
-    702, 707, 722, 702, 702, 702, 702, 702,
-    702, 702, 702, 702, 702, 702, 702, 702,
-    712, 717, 727, 732, 712, 712, 712, 712,
-    712, 712, 712, 712, 712, 712, 712, 712,
-  };
 
   public static final UvAdjustmentMetrics14[] vramSlots_8005027c = {
     UvAdjustmentMetrics14.NONE,
@@ -149,11 +115,6 @@ public final class Scus94491BpeSegment_8005 {
     new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
   };
 
-  public static final LodString[] digits_80052b40 = { new LodString("0"), new LodString("1"), new LodString("2"), new LodString("3"), new LodString("4"), new LodString("5"), new LodString("6"), new LodString("7"), new LodString("8"), new LodString("9") };
-  public static final boolean[] renderBorder_80052b68 = {false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-  public static final int[] textboxMode_80052b88 = {0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-  public static final int[] textboxTextType_80052ba8 = {0, 1, 2, 3, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
-
   public static int submapCut_80052c30 = 675;
   public static int submapScene_80052c34 = 4;
   /** The collision primitive index the player is currently collided with */
@@ -164,27 +125,6 @@ public final class Scus94491BpeSegment_8005 {
   /** Something related to submap camera and map transitioning */
   public static boolean shouldRestoreCameraPosition_80052c40;
   public static SubmapEnvState submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
-
-  public static int matrixStackIndex_80054a08;
-  public static final MV[] matrixStack_80054a0c = new MV[20];
-  static {
-    Arrays.setAll(matrixStack_80054a0c, i -> new MV());
-  }
-
-  public static final ReverbConfigAndLocation[] reverbConfigs_80059f7c = {
-    new ReverbConfigAndLocation(0xfb28, new ReverbConfig(125, 91, 28032, 21688, -16688, 0, 0, -17792, 22528, 21248, 1238, 819, 1008, 551, 884, 495, 820, 437, 0, 0, 0, 0, 0, 0, 0, 0, 436, 310, 184, 92, -32768, -32768)),
-    new ReverbConfigAndLocation(0xfc18, new ReverbConfig(51, 37, 28912, 20392, -17184, 17424, -16144, -25600, 21120, 20160, 996, 795, 932, 687, 882, 614, 796, 605, 604, 398, 559, 309, 466, 183, 399, 181, 180, 128, 76, 38, -32768, -32768)),
-    new ReverbConfigAndLocation(0xf6f8, new ReverbConfig(177, 127, 28912, 20392, -17184, 17680, -16656, -19264, 21120, 20160, 2308, 1899, 2084, 1631, 1954, 1558, 1900, 1517, 1516, 1070, 1295, 773, 1122, 695, 1071, 613, 612, 434, 256, 128, -32768, -32768)),
-    new ReverbConfigAndLocation(0xf204, new ReverbConfig(227, 169, 28512, 20392, -17184, 17680, -16656, -22912, 22144, 21184, 3579, 2904, 3337, 2620, 3033, 2419, 2905, 2266, 2265, 1513, 2028, 1200, 1775, 978, 1514, 797, 796, 568, 340, 170, -32768, -32768)),
-    new ReverbConfigAndLocation(0xea44, new ReverbConfig(421, 313, 24576, 20480, 19456, -18432, -17408, -16384, 24576, 23552, 5562, 4539, 5314, 4285, 4540, 3521, 4544, 3523, 3520, 2497, 3012, 1985, 2560, 1741, 2498, 1473, 1472, 1050, 628, 314, -32768, -32768)),
-    new ReverbConfigAndLocation(0xe128, new ReverbConfig(829, 561, 32256, 20480, -19456, -20480, 19456, -20480, 24576, 21504, 7894, 6705, 7444, 6203, 7106, 5810, 6706, 5615, 5614, 4181, 4916, 3885, 4598, 3165, 4182, 2785, 2784, 1954, 1124, 562, -32768, -32768)),
-    new ReverbConfigAndLocation(0xe000, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, -32512, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
-    new ReverbConfigAndLocation(0xe000, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, 0, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
-    new ReverbConfigAndLocation(0xfc8c, new ReverbConfig(23, 19, 28912, 20392, -17184, 17680, -16656, -31488, 24448, 21696, 881, 687, 741, 479, 688, 471, 856, 618, 470, 286, 301, 177, 287, 89, 416, 227, 88, 64, 40, 20, -32768, -32768)),
-  };
-
-  /** short */
-  public static int sssqFadeCurrent_8005a1ce;
 
   public static boolean standingInSavePoint_8005a368;
 }

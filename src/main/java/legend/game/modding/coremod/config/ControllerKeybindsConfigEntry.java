@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.FullScreenEffects.startFadeEffect;
 
 public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDelegate<InputAction>, List<InputActivation>>> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ControllerKeybindsConfigEntry.class);

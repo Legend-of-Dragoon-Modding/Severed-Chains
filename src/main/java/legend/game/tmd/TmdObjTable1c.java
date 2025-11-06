@@ -2,7 +2,6 @@ package legend.game.tmd;
 
 import legend.core.MathHelper;
 import legend.core.opengl.Obj;
-import legend.game.Scus94491BpeSegment_8003;
 import legend.game.unpacker.CtmdTransformer;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
@@ -10,6 +9,8 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static legend.game.Models.updateTmdPacketIlen;
 
 /** 0x1c bytes long */
 public class TmdObjTable1c {
@@ -48,7 +49,7 @@ public class TmdObjTable1c {
     Arrays.setAll(this.normal_top_08, i -> normals.readSvec3_12(i * 0x8, new Vector3f()));
 
     final List<Primitive> primitivesList = new ArrayList<>();
-    Scus94491BpeSegment_8003.updateTmdPacketIlen(primitives, this.n_primitive_14);
+    updateTmdPacketIlen(primitives, this.n_primitive_14);
 
     for(int primitiveIndex = 0; primitiveIndex < this.n_primitive_14; ) {
       final int startOffset = primitivesOffset;

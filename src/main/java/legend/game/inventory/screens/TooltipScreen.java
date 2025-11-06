@@ -4,7 +4,7 @@ import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Panel;
 
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;

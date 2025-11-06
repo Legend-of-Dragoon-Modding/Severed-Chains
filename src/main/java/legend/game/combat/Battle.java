@@ -161,80 +161,86 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.Audio.FUN_80020308;
+import static legend.game.Audio._800bc9a8;
+import static legend.game.Audio.characterSoundFileIndices_800500f8;
+import static legend.game.Audio.getLoadedAudioFiles;
+import static legend.game.Audio.loadDeffSounds;
+import static legend.game.Audio.loadEncounterSoundsAndMusic;
+import static legend.game.Audio.loadMusicPackage;
+import static legend.game.Audio.monsterSoundFileIndices_800500e8;
+import static legend.game.Audio.playSound;
+import static legend.game.Audio.queuedSounds_800bd110;
+import static legend.game.Audio.sequenceData_800c4ac8;
+import static legend.game.Audio.soundFiles_800bcf80;
+import static legend.game.Audio.sssqFadeOut;
+import static legend.game.Audio.sssqResetStuff;
+import static legend.game.Audio.startEncounterSounds;
+import static legend.game.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.Audio.stopSoundSequence;
+import static legend.game.EngineStates.previousEngineState_8004dd28;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.GetTPage;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetFlatLight;
+import static legend.game.Graphics.GsSetLightMatrix;
+import static legend.game.Graphics.centreScreenY_1f8003de;
+import static legend.game.Graphics.clearBlue_800babc0;
+import static legend.game.Graphics.clearGreen_800bb104;
+import static legend.game.Graphics.clearRed_8007a3a8;
+import static legend.game.Graphics.displayHeight_1f8003e4;
+import static legend.game.Graphics.getProjectionPlaneDistance;
+import static legend.game.Graphics.getScreenOffset;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.setDepthResolution;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Menus.whichMenu_800bdc38;
+import static legend.game.Models.adjustModelUvs;
+import static legend.game.Models.initModel;
+import static legend.game.Models.initObjTable2;
+import static legend.game.Models.loadModelStandardAnimation;
+import static legend.game.Models.loadPlayerModelAndAnimation;
+import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDeffSounds;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadEncounterSoundsAndMusic;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
-import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.startEncounterSounds;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
-import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.loadPlayerModelAndAnimation;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
-import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
-import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
-import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
-import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
-import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bc9a8;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
-import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
@@ -245,19 +251,13 @@ import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.Textboxes.scriptDeallocateAllTextboxes;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
@@ -337,7 +337,7 @@ public class Battle extends EngineState {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#renderPostCombatScreen}</li>
-   *   <li>{@link Scus94491BpeSegment#transitionBackFromBattle}</li>
+   *   <li>{@link SBtld#transitionBackFromBattle}</li>
    * </ol>
    */
   private final Runnable[] battleLoadingStage_8004f5d4 = {
@@ -371,8 +371,8 @@ public class Battle extends EngineState {
     this::deallocateCombat,
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
-    Scus94491BpeSegment::renderPostCombatScreen,
-    Scus94491BpeSegment::transitionBackFromBattle,
+    SBtld::renderPostCombatScreen,
+    SBtld::transitionBackFromBattle,
   };
 
   private int currentPostCombatActionFrame_800c6690;
@@ -6317,7 +6317,7 @@ public class Battle extends EngineState {
     if(a0.init_1c && a0.script_14 != null) {
       final DeffManager7cc struct7cc = deffManager_800c693c;
 
-      if((struct7cc.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0) {
+      if((struct7cc.flags_20 & 0x4_0000) == 0 || (getLoadedAudioFiles() & 0x40) == 0) {
         //LAB_800e7154
         if((struct7cc.flags_20 & 0x20_0000) != 0) {
           loadDeffStageEffects(1);
@@ -6483,7 +6483,7 @@ public class Battle extends EngineState {
     final int deffStage = this.deffLoadingStage_800fafe8;
     if(deffStage == 1) {
       //LAB_800e7510
-      if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
+      if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedAudioFiles() & 0x40) == 0)) {
         //LAB_800e756c
         this.deffLoadingStage_800fafe8 = 2;
       }

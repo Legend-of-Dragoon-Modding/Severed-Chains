@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.applyBuffOrDebuff;
 import static legend.game.combat.Battle.applyMagicDamageMultiplier;
 import static legend.game.combat.Battle.spellStats_800fa0b8;

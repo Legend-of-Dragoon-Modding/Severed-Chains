@@ -1,15 +1,19 @@
 package legend.game;
 
+import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
+import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandFillVram;
+import legend.core.gpu.GpuCommandSetMaskBit;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
-import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -19,30 +23,158 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
-import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
-import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
-import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
-import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
-import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 
-public final class Scus94491BpeSegment_8003 {
-  private Scus94491BpeSegment_8003() { }
+public final class Graphics {
+  private Graphics() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8003.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Graphics.class);
+
+  public static int orderingTableBits_1f8003c0;
+  public static int zShift_1f8003c4;
+  public static int orderingTableSize_1f8003c8;
+  public static int zMax_1f8003cc;
+  public static int zMin;
+
+  public static int centreScreenX_1f8003dc;
+  public static int centreScreenY_1f8003de;
+  public static int displayWidth_1f8003e0;
+  public static int displayHeight_1f8003e4;
+  /** Deprecated */
+  public static int zOffset_1f8003e8;
+  public static int tmdGp0Tpage_1f8003ec;
+  public static int tmdGp0CommandId_1f8003ee;
+
+  public static float projectionPlaneDistance_1f8003f8;
+
+  public static int width_8004dd34 = 320;
+  public static int height_8004dd34 = 240;
+  public static EngineState.RenderMode renderMode = EngineState.RenderMode.LEGACY;
+
+  public static int reinitOrderingTableBits_8004dd38 = 14;
+
+  public static Runnable syncFrame_8004dd3c;
+  public static Runnable swapDisplayBuffer_8004dd40;
+
+  private static int matrixStackIndex_80054a08;
+  private static final MV[] matrixStack_80054a0c = new MV[20];
+  static {
+    Arrays.setAll(matrixStack_80054a0c, i -> new MV());
+  }
+
+  /** 60 FPS divisor (e.g. 2 means 30 FPS) */
+  public static int vsyncMode_8007a3b8 = 1;
+
+  // Yes I'm finally grouping these vars up
+  public static int clearRed_8007a3a8;
+  public static int clearGreen_800bb104;
+  public static int clearBlue_800babc0;
+
+  public static final Rect4i displayRect_800c34c8 = new Rect4i();
+  /** Incremented with each frame - overflows to 1 */
+  public static int PSDCNT_800c34d0;
+
+  public static final Matrix3f lightDirectionMatrix_800c34e8 = new Matrix3f();
+  public static final Matrix3f lightColourMatrix_800c3508 = new Matrix3f();
+
+  public static final MV worldToScreenMatrix_800c3548 = new MV();
+  public static final Matrix4f inverseWorldToScreenMatrix = new Matrix4f();
+  /** Includes aspect scale */
+  public static final MV identityAspectMatrix_800c3588 = new MV();
+
+  public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
+
+  @Method(0x80012df8L)
+  public static void endFrame() {
+    GPU.queueCommand(3, new GpuCommandSetMaskBit(false, Gpu.DRAW_PIXELS.ALWAYS));
+    GPU.queueCommand(orderingTableSize_1f8003c8 - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
+
+    //LAB_80012e8c
+    syncFrame_8004dd3c.run();
+    swapDisplayBuffer_8004dd40.run();
+  }
+
+  @Method(0x80012eccL)
+  public static void syncFrame() {
+    // No-op
+  }
+
+  /**
+   * {@link Graphics#syncFrame_8004dd3c} is changed to this for one frame end then switched back when the graphics mode changes
+   */
+  @Method(0x80012f24L)
+  public static void syncFrame_reinit() {
+    //LAB_80012f5c
+    final int orderingTableBits = reinitOrderingTableBits_8004dd38;
+
+    clearBlue_800babc0 = 0;
+    clearGreen_800bb104 = 0;
+    clearRed_8007a3a8 = 0;
+
+    orderingTableBits_1f8003c0 = orderingTableBits;
+    zShift_1f8003c4 = 14 - orderingTableBits;
+    orderingTableSize_1f8003c8 = 1 << orderingTableBits;
+    zMax_1f8003cc = (1 << orderingTableBits) - 2;
+    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8);
+
+    //LAB_80013040
+    GsSetDrawBuffClip();
+    GsSetDrawBuffOffset();
+
+    //LAB_80013060
+    GsInitGraph(width_8004dd34, height_8004dd34);
+    RENDERER.setRenderMode(renderMode);
+
+    //LAB_80013080
+    setDrawOffset();
+    setProjectionPlaneDistance(320);
+
+    syncFrame_8004dd3c = Graphics::syncFrame;
+    swapDisplayBuffer_8004dd40 = Graphics::swapDisplayBuffer;
+  }
+
+  @Method(0x80013148L)
+  public static void swapDisplayBuffer() {
+    GsSwapDispBuff();
+
+    if(RenderEngine.legacyMode == 1) {
+      GsSortClear(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
+    }
+
+    RENDERER.setClearColour(clearRed_8007a3a8 / 255.0f, clearGreen_800bb104 / 255.0f, clearBlue_800babc0 / 255.0f);
+  }
+
+  @Method(0x80013200L)
+  public static void resizeDisplay(final int width, final int height) {
+    if(width != displayWidth_1f8003e0) {
+      final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+      LOGGER.info("Changing resolution to (%d, %d) from %s.%s(%s:%d)", width, height, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
+      // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
+      syncFrame_8004dd3c = Graphics::syncFrame_reinit;
+      width_8004dd34 = width;
+      height_8004dd34 = height;
+
+      if(currentEngineState_8004dd04 != null) {
+        renderMode = currentEngineState_8004dd04.getRenderMode();
+      }
+    }
+  }
+
+  @Method(0x8001324cL)
+  public static void setDepthResolution(final int orderingTableBits) {
+    if(orderingTableBits_1f8003c0 != orderingTableBits) {
+      syncFrame_8004dd3c = Graphics::syncFrame_reinit;
+      reinitOrderingTableBits_8004dd38 = orderingTableBits;
+    }
+
+    //LAB_80013274
+  }
 
   @Method(0x80038190L)
   public static void ResetGraph() {
@@ -111,7 +243,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * <p>GsInitGraph2() is different from {@link Scus94491BpeSegment_8003#GsInitGraph}() in that the GPU is not initialized COLD. This function is useful
+   * <p>GsInitGraph2() is different from {@link Graphics#GsInitGraph}() in that the GPU is not initialized COLD. This function is useful
    * for changing libgs resolution without affecting screen synchronization.</p>
    *
    * <p>Always use GsInitGraph() for the first initialization.</p>
@@ -730,121 +862,6 @@ public final class Scus94491BpeSegment_8003 {
     RENDERER.camera().getView().set(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer);
   }
 
-  /**
-   * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
-   */
-  @Method(0x8003e5d0L)
-  public static void updateTmdPacketIlen(final FileData primitives, final int count) {
-    int primitivesSinceLastChange = 0;
-    int mode = 0;
-    int flag = 0;
-
-    int packetIndex = 0;
-    int packetStartIndex = 0;
-
-    //LAB_8003e638
-    for(int primitiveIndex = 0; primitiveIndex < count; primitiveIndex++) {
-      final int previousMode = mode;
-      final int previousFlag = flag;
-
-      // Primitive: mode, flag, ilen, olen
-      final int primitive = primitives.readInt(packetIndex);
-
-      mode = primitive >>> 24 & 0xff;
-      flag = primitive >>> 16 & 0xff;
-
-      if(previousMode != 0) {
-        if(mode != previousMode || flag != previousFlag) {
-          //LAB_8003e668
-          primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
-          primitivesSinceLastChange = 0;
-          packetStartIndex = packetIndex;
-        }
-      }
-
-      //LAB_8003e674
-      //LAB_8003e678
-      switch(mode & 0xfd) {
-        case 0x20: // setPolyF3
-          if((flag & 0x4) == 0) {
-            packetIndex += 0x10;
-            break;
-          }
-
-        case 0x31:
-        case 0x24: // setPolyFT3
-          packetIndex += 0x18;
-          break;
-
-        case 0x30: // setPolyG3
-          if((flag & 0x4) == 0) {
-            packetIndex += 0x14;
-            break;
-          }
-
-        case 0x34: // setPolyGT3
-        case 0x39:
-        case 0x25:
-          packetIndex += 0x1c;
-          break;
-
-        case 0x28: // setPolyF4
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x14;
-            break;
-          }
-
-        case 0x2d:
-        case 0x2c: // setPolyFT4
-          packetIndex += 0x20;
-          break;
-
-        case 0x29:
-        case 0x21:
-          packetIndex += 0x10;
-          break;
-
-        case 0x3d:
-          packetIndex += 0x2c;
-          break;
-
-        case 0x38: // setPolyG4
-          if((flag & 0x4) == 0) {
-            packetIndex += 0x18;
-            break;
-          }
-
-        case 0x3c: // setPolyGT4
-        case 0x35:
-          packetIndex += 0x24;
-          break;
-
-        case 0x23:
-        case 0x26:
-        case 0x27:
-        case 0x2a:
-        case 0x2b:
-        case 0x2e:
-        case 0x2f:
-        case 0x32:
-        case 0x33:
-        case 0x36:
-        case 0x37:
-        case 0x3a:
-        case 0x3b:
-        case 0x22:
-          LOGGER.error("GPU CODE %02xH not assigned.", mode);
-          break;
-      }
-
-      //LAB_8003e714
-      primitivesSinceLastChange++;
-    }
-
-    //LAB_8003e724
-    primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
-  }
-
   @Method(0x8003e958L)
   public static void InitGeom() {
     setProjectionPlaneDistance(1000);
@@ -898,17 +915,6 @@ public final class Scus94491BpeSegment_8003 {
   public static float perspectiveTransform(final Vector3f worldCoords, final Vector2f screenCoords) {
     GTE.perspectiveTransform(worldCoords);
     screenCoords.set(GTE.getScreenX(2), GTE.getScreenY(2));
-    return GTE.getScreenZ(3) / 4.0f;
-  }
-
-  @Method(0x8003f930L)
-  public static float perspectiveTransformTriple(final Vector3f world0, final Vector3f world1, final Vector3f world2, final Vector2f screen0, final Vector2f screen1, final Vector2f screen2) {
-    GTE.perspectiveTransformTriangle(world0, world1, world2);
-
-    screen0.set(GTE.getScreenX(0), GTE.getScreenY(0));
-    screen1.set(GTE.getScreenX(1), GTE.getScreenY(1));
-    screen2.set(GTE.getScreenX(2), GTE.getScreenY(2));
-
     return GTE.getScreenZ(3) / 4.0f;
   }
 

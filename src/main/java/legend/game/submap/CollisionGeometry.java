@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.MathHelper.flEq;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
+import static legend.game.Graphics.GsInitCoordinate2;
 
 public class CollisionGeometry {
   private static final Logger LOGGER = LogManager.getFormatterLogger(CollisionGeometry.class);

@@ -2,6 +2,9 @@ package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
 
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateUiElement;
@@ -15,11 +18,8 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.spellMp_80114290;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;

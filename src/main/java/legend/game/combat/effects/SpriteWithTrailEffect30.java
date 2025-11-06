@@ -8,8 +8,8 @@ import org.joml.Vector3i;
 
 import java.util.Arrays;
 
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.combat.SEffe.FUN_800e61e4;
 import static legend.game.combat.SEffe.FUN_800e62a8;
 import static legend.game.combat.SEffe.calculateEffectTransforms;

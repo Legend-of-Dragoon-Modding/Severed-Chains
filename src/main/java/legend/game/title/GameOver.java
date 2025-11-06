@@ -9,7 +9,6 @@ import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
 import legend.game.unpacker.FileData;
@@ -18,14 +17,15 @@ import legend.game.unpacker.Loader;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -91,7 +91,7 @@ public class GameOver extends EngineState {
       // Game Over Screen
       case 4 -> {
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-          Scus94491BpeSegment_8002.playMenuSound(2);
+          playMenuSound(2);
           this.loadingStage = 5;
           startFadeEffect(1, 10);
         }

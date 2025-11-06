@@ -5,8 +5,8 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.combat.SEffe.FUN_800e60e0;
 import static legend.game.combat.SEffe.FUN_800e6170;

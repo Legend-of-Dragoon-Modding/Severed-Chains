@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
+import static legend.game.Graphics.GsGetLw;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 

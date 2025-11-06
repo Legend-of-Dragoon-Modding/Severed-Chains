@@ -18,9 +18,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
+import static legend.game.Audio.playMenuSound;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderCharacterPortrait;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;

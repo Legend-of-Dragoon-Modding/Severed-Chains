@@ -35,21 +35,12 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
-import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
-import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
-import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
-import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
-import static legend.game.Scus94491BpeSegment_800b.textboxVariables_800bdf10;
-import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
+import static legend.game.Audio.playSound;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Graphics.centreScreenX_1f8003dc;
+import static legend.game.Graphics.centreScreenY_1f8003de;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -58,6 +49,28 @@ import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public final class Textboxes {
   private Textboxes() { }
+
+  private static final TextboxBorderMetrics0c[] textboxBorderMetrics_800108b0 = {
+    new TextboxBorderMetrics0c(0, 0, 0, 0, 6, 8),
+    new TextboxBorderMetrics0c(1, 1, 48, 0, 6, 8),
+    new TextboxBorderMetrics0c(2, 2, 0, 32, 6, 8),
+    new TextboxBorderMetrics0c(3, 3, 48, 32, 6, 8),
+    new TextboxBorderMetrics0c(0, 1, 16, 0, -4, 8),
+    new TextboxBorderMetrics0c(0, 2, 0, 16, 6, -4),
+    new TextboxBorderMetrics0c(1, 3, 48, 16, 6, -4),
+    new TextboxBorderMetrics0c(2, 3, 16, 32, -4, 8),
+  };
+
+  private static final LodString[] digits_80052b40 = { new LodString("0"), new LodString("1"), new LodString("2"), new LodString("3"), new LodString("4"), new LodString("5"), new LodString("6"), new LodString("7"), new LodString("8"), new LodString("9") };
+  public static final boolean[] renderBorder_80052b68 = {false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+  public static final int[] textboxMode_80052b88 = {0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+  public static final int[] textboxTextType_80052ba8 = {0, 1, 2, 3, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+
+  private static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
+
+  private static final int[] textboxVariables_800bdf10 = new int[10];
+  public static final TextboxText84[] textboxText_800bdf38 = new TextboxText84[8];
+  public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
 
   private static Obj textboxBackgroundObj;
   private static final Obj[] textboxBorderObjs = new Obj[8];
