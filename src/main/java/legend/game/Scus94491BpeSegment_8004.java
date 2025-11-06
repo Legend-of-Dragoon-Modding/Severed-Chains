@@ -146,22 +146,22 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[16] = Scus94491BpeSegment::scriptSetRumbleDampener;
     scriptSubFunctions_8004e29c[17] = Scus94491BpeSegment::scriptResetRumbleDampener;
 
-    scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
-    scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::scriptInitTextbox;
-    scriptSubFunctions_8004e29c[194] = Scus94491BpeSegment_8002::scriptSetTextboxContents;
-    scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::scriptIsTextboxInitialized;
-    scriptSubFunctions_8004e29c[196] = Scus94491BpeSegment_8002::scriptGetTextboxState;
-    scriptSubFunctions_8004e29c[197] = Scus94491BpeSegment_8002::scriptGetTextboxTextState;
+    scriptSubFunctions_8004e29c[192] = Textboxes::scriptGetFreeTextboxIndex;
+    scriptSubFunctions_8004e29c[193] = Textboxes::scriptInitTextbox;
+    scriptSubFunctions_8004e29c[194] = Textboxes::scriptSetTextboxContents;
+    scriptSubFunctions_8004e29c[195] = Textboxes::scriptIsTextboxInitialized;
+    scriptSubFunctions_8004e29c[196] = Textboxes::scriptGetTextboxState;
+    scriptSubFunctions_8004e29c[197] = Textboxes::scriptGetTextboxTextState;
 
-    scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::scriptSetTextboxVariable;
-    scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::scriptAddTextbox;
-    scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::scriptDeallocateTextbox;
-    scriptSubFunctions_8004e29c[202] = Scus94491BpeSegment_8002::scriptDeallocateAllTextboxes;
-    scriptSubFunctions_8004e29c[203] = Scus94491BpeSegment_8002::FUN_80029ecc;
-    scriptSubFunctions_8004e29c[204] = Scus94491BpeSegment_8002::FUN_80028ff8;
-    scriptSubFunctions_8004e29c[205] = Scus94491BpeSegment_8002::scriptGetTextboxSelectionIndex;
-    scriptSubFunctions_8004e29c[206] = Scus94491BpeSegment_8002::scriptGetTextboxElement;
-    scriptSubFunctions_8004e29c[207] = Scus94491BpeSegment_8002::scriptAddSelectionTextbox;
+    scriptSubFunctions_8004e29c[199] = Textboxes::scriptSetTextboxVariable;
+    scriptSubFunctions_8004e29c[200] = Textboxes::scriptAddTextbox;
+    scriptSubFunctions_8004e29c[201] = Textboxes::scriptDeallocateTextbox;
+    scriptSubFunctions_8004e29c[202] = Textboxes::scriptDeallocateAllTextboxes;
+    scriptSubFunctions_8004e29c[203] = Textboxes::FUN_80029ecc;
+    scriptSubFunctions_8004e29c[204] = Textboxes::FUN_80028ff8;
+    scriptSubFunctions_8004e29c[205] = Textboxes::scriptGetTextboxSelectionIndex;
+    scriptSubFunctions_8004e29c[206] = Textboxes::scriptGetTextboxElement;
+    scriptSubFunctions_8004e29c[207] = Textboxes::scriptAddSelectionTextbox;
 
     scriptSubFunctions_8004e29c[224] = Scus94491BpeSegment::scriptLoadMenuSounds;
     scriptSubFunctions_8004e29c[225] = Scus94491BpeSegment::FUN_8001e918;
