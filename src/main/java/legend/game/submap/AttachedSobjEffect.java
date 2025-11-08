@@ -24,6 +24,7 @@ import org.joml.Vector3f;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Graphics.GetTPage;
 import static legend.game.Graphics.GsGetLs;
@@ -38,7 +39,6 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.initModel;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -126,7 +126,7 @@ public class AttachedSobjEffect {
 
     script.params_20[9] = new ScriptStorageParam(state, 0);
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(state.storage_44[0], SubmapObject210.class);
     if(script.params_20[0].get() == 0 || this.lawPodTrailCount_800f9e78 >= 8) {
       //LAB_800f1698
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
@@ -531,7 +531,7 @@ public class AttachedSobjEffect {
 
     if(script.params_20[0].get() == 1) {
       this.deallocateLawPodTrail();
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
+      final SubmapObject210 sobj = SCRIPTS.getObject(state.storage_44[0], SubmapObject210.class);
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
     }
   }

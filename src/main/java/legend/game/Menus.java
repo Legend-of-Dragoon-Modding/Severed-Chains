@@ -35,8 +35,8 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.startMenuMusic;
 import static legend.game.SItem.stopMenuMusic;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Text.textZ_800bdf00;
 import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
 public final class Menus {

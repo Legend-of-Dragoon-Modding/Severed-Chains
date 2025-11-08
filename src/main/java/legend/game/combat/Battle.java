@@ -217,18 +217,18 @@ import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.loadPlayerModelAndAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.Models.vramSlots_8005027c;
+import static legend.game.SItem.getUnlockedDragoonSpells;
+import static legend.game.SItem.giveEquipment;
+import static legend.game.SItem.giveItem;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
+import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
-import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
@@ -252,14 +252,13 @@ import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
-import static legend.game.Textboxes.scriptDeallocateAllTextboxes;
+import static legend.game.Text.scriptDeallocateAllTextboxes;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
@@ -2880,7 +2879,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cb3fcL)
   public FlowControl scriptSetBentPos(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.coord.transfer.x = script.params_20[1].get();
     bent.model_148.coord2_14.coord.transfer.y = script.params_20[2].get();
     bent.model_148.coord2_14.coord.transfer.z = script.params_20[3].get();
@@ -2894,7 +2893,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cb468L)
   public FlowControl scriptGetBentPos(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(Math.round(bent.model_148.coord2_14.coord.transfer.x));
     script.params_20[2].set(Math.round(bent.model_148.coord2_14.coord.transfer.y));
     script.params_20[3].set(Math.round(bent.model_148.coord2_14.coord.transfer.z));
@@ -2908,7 +2907,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800cb4c8L)
   public FlowControl scriptSetBentRotation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
     bent.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
     bent.model_148.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
@@ -2920,7 +2919,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
   @Method(0x800cb534L)
   public FlowControl scriptSetBentRotationY(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
@@ -2932,7 +2931,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800cb578L)
   public FlowControl scriptGetBentRotation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.x));
     script.params_20[2].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.y));
     script.params_20[3].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.z));
@@ -2944,7 +2943,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The status resist flags")
   @Method(0x800cb5d8L)
   public FlowControl scriptGetMonsterStatusResistFlags(final RunningScript<?> script) {
-    final MonsterBattleEntity monster = (MonsterBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final MonsterBattleEntity monster = SCRIPTS.getObject(script.params_20[0].get(), MonsterBattleEntity.class);
     script.params_20[1].set(monster.monsterStatusResistFlag_76);
     return FlowControl.CONTINUE;
   }
@@ -2954,7 +2953,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set the flag, false otherwise")
   @Method(0x800cb618L)
   public FlowControl scriptSetBentHidden(final RunningScript<?> script) {
-    final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final ScriptState<?> a1 = SCRIPTS.getState(script.params_20[0].get());
 
     //LAB_800cb668
     if(script.params_20[1].get() != 0) {
@@ -2972,7 +2971,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to enable interpolation, false otherwise")
   @Method(0x800cb674L)
   public FlowControl scriptSetInterpolationEnabled(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.disableInterpolation_a2 = script.params_20[1].get() == 0;
     return FlowControl.CONTINUE;
   }
@@ -2982,12 +2981,12 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb6bcL)
   public FlowControl FUN_800cb6bc(final RunningScript<?> a0) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(a0.params_20[0].get(), BattleEntity27c.class);
     if((state.storage_44[7] & FLAG_1) != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+    final BattleEntity27c bent = state.innerStruct_00;
     final int animIndex = a0.params_20[1].get();
 
     if(bent.currentAnimIndex_270 < 0) {
@@ -3016,25 +3015,27 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb76cL)
   public FlowControl FUN_800cb76c(final RunningScript<?> a0) {
-    final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
-    if((s2.storage_44[7] & FLAG_1) == 0) {
-      int animIndex = s0.currentAnimIndex_270;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(a0.params_20[0].get(), BattleEntity27c.class);
+    if((state.storage_44[7] & FLAG_1) != 0) {
+      return FlowControl.PAUSE_AND_REWIND;
+    }
 
-      if(animIndex < 0) {
-        animIndex = 0;
-      }
+    final BattleEntity27c bent = state.innerStruct_00;
+    int animIndex = bent.currentAnimIndex_270;
 
-      //LAB_800cb7d0
-      if(s0.combatant_144.isAssetLoaded(animIndex)) {
-        FUN_800ca194(s0.combatant_144.assets_14[s0.loadingAnimIndex_26e]);
-        this.loadAnimationAssetIntoModel(s0.model_148, s0.combatant_144, animIndex);
-        s2.storage_44[7] &= ~(FLAG_ANIMATE_ONCE | FLAG_HIDE);
-        s0.model_148.animationState_9c = 1;
-        s0.loadingAnimIndex_26e = animIndex;
-        s0.currentAnimIndex_270 = -1;
-        return FlowControl.CONTINUE;
-      }
+    if(animIndex < 0) {
+      animIndex = 0;
+    }
+
+    //LAB_800cb7d0
+    if(bent.combatant_144.isAssetLoaded(animIndex)) {
+      FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
+      this.loadAnimationAssetIntoModel(bent.model_148, bent.combatant_144, animIndex);
+      state.storage_44[7] &= ~(FLAG_ANIMATE_ONCE | FLAG_HIDE);
+      bent.model_148.animationState_9c = 1;
+      bent.loadingAnimIndex_26e = animIndex;
+      bent.currentAnimIndex_270 = -1;
+      return FlowControl.CONTINUE;
     }
 
     //LAB_800cb830
@@ -3091,7 +3092,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb95cL)
   public FlowControl FUN_800cb95c(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     this.FUN_800ca26c(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
@@ -3101,7 +3102,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animationIndex", description = "The animation index")
   @Method(0x800cb9b0L)
   public FlowControl scriptGetLoadingBentAnimationIndex(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.loadingAnimIndex_26e);
     return FlowControl.CONTINUE;
   }
@@ -3110,7 +3111,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb9f0L)
   public FlowControl scriptPauseAnimation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.animationState_9c = 2;
     return FlowControl.CONTINUE;
   }
@@ -3119,7 +3120,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cba28L)
   public FlowControl scriptResumeAnimation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.animationState_9c = 1;
     return FlowControl.CONTINUE;
   }
@@ -3131,10 +3132,10 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentAnimationLoopState(final RunningScript<?> script) {
     //LAB_800cbab0
     if(script.params_20[1].get() != 0) {
-      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= ~FLAG_ANIMATE_ONCE;
+      SCRIPTS.getState(script.params_20[0].get()).storage_44[7] &= ~FLAG_ANIMATE_ONCE;
     } else {
       //LAB_800cbaa4
-      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] |= FLAG_ANIMATE_ONCE;
+      SCRIPTS.getState(script.params_20[0].get()).storage_44[7] |= FLAG_ANIMATE_ONCE;
     }
 
     return FlowControl.CONTINUE;
@@ -3145,252 +3146,252 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "finished", description = "True if finished, false otherwise")
   @Method(0x800cbabcL)
   public FlowControl scriptAnimationHasFinished(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.model_148.remainingFrames_9e > 0 ? 0 : 1);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbb00L)
   public FlowControl FUN_800cbb00(final RunningScript<?> script) {
-    final int scriptIndex = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex];
-    final BattleEntity27c v1 = state.innerStruct_00;
+    final int childBentIndex = script.params_20[0].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
 
-    float x = v1.model_148.coord2_14.coord.transfer.x;
-    float y = v1.model_148.coord2_14.coord.transfer.y;
-    float z = v1.model_148.coord2_14.coord.transfer.z;
+    float x = childBent.model_148.coord2_14.coord.transfer.x;
+    float y = childBent.model_148.coord2_14.coord.transfer.y;
+    float z = childBent.model_148.coord2_14.coord.transfer.z;
 
-    final int t0 = script.params_20[1].get();
-    if(t0 >= 0) {
-      v1.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
-      final BattleEntity27c parent = v1.movementParent_c8.innerStruct_00;
-      x -= parent.model_148.coord2_14.coord.transfer.x;
-      y -= parent.model_148.coord2_14.coord.transfer.y;
-      z -= parent.model_148.coord2_14.coord.transfer.z;
+    final int parentBentIndex = script.params_20[1].get();
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      x -= parentBent.model_148.coord2_14.coord.transfer.x;
+      y -= parentBent.model_148.coord2_14.coord.transfer.y;
+      z -= parentBent.model_148.coord2_14.coord.transfer.z;
     } else {
-      v1.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbb98
-    this.FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbc14L)
   public FlowControl FUN_800cbc14(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
-    final int scriptIndex2 = script.params_20[1].get();
+    final int childBentIndex = script.params_20[0].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    final int parentBentIndex = script.params_20[1].get();
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbcc4
     final float x = script.params_20[3].get() - vec.x;
     final float y = script.params_20[4].get() - vec.y;
     final float z = script.params_20[5].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbde0L)
   public FlowControl FUN_800cbde0(final RunningScript<?> script) {
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c bent = state.innerStruct_00;
-    float x = bent.model_148.coord2_14.coord.transfer.x;
-    float y = bent.model_148.coord2_14.coord.transfer.y;
-    float z = bent.model_148.coord2_14.coord.transfer.z;
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    float x = childBent.model_148.coord2_14.coord.transfer.x;
+    float y = childBent.model_148.coord2_14.coord.transfer.y;
+    float z = childBent.model_148.coord2_14.coord.transfer.z;
 
     if(script.params_20[1].get() >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      x -= parent.model_148.coord2_14.coord.transfer.x;
-      y -= parent.model_148.coord2_14.coord.transfer.y;
-      z -= parent.model_148.coord2_14.coord.transfer.z;
+      childBent.movementParent_c8 = SCRIPTS.getState(script.params_20[1].get(), BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      x -= parentBent.model_148.coord2_14.coord.transfer.x;
+      y -= parentBent.model_148.coord2_14.coord.transfer.y;
+      z -= parentBent.model_148.coord2_14.coord.transfer.z;
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbe78
-    this.FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbef8L)
   public FlowControl FUN_800cbef8(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbfa8
     final float x = script.params_20[3].get() - vec.x;
     final float y = script.params_20[4].get() - vec.y;
     final float z = script.params_20[5].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc0c8L)
   public FlowControl FUN_800cc0c8(final RunningScript<?> script) {
-    final int s0 = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[s0];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f translation = new Vector3f(bent.model_148.coord2_14.coord.transfer);
-    final int parentIndex = script.params_20[1].get();
+    final int childBentIndex = script.params_20[0].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c bentState = childState.innerStruct_00;
+    final Vector3f translation = new Vector3f(bentState.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      translation.sub(bent.movementParent_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
+    final int parentBentIndex = script.params_20[1].get();
+    if(parentBentIndex >= 0) {
+      bentState.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      translation.sub(bentState.movementParent_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      bentState.movementParent_c8 = null;
     }
 
     //LAB_800cc160
-    this.FUN_800cdc1c(state, translation.x, translation.y, translation.z, script.params_20[3].get(), translation.y, script.params_20[4].get(), 0, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, translation.x, translation.y, translation.z, script.params_20[3].get(), translation.y, script.params_20[4].get(), 0, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc1ccL)
   public FlowControl FUN_800cc1cc(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int parentIndex = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cc27c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc364L)
   public FlowControl FUN_800cc364(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int parentIndex = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cc3fc
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc46cL)
   public FlowControl FUN_800cc46c(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int parentIndex = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cc51c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3399,8 +3400,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndexTarget", description = "A BattleEntity27c script index to target")
   @Method(0x800cc608L)
   public FlowControl scriptBentLookAtBent(final RunningScript<?> script) {
-    final BattleEntity27c s0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c v0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c s0 = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c v0 = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     s0.model_148.coord2_14.transforms.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.x - s0.model_148.coord2_14.coord.transfer.x, v0.model_148.coord2_14.coord.transfer.z - s0.model_148.coord2_14.coord.transfer.z) + MathHelper.PI;
     return FlowControl.CONTINUE;
@@ -3414,8 +3415,8 @@ public class Battle extends EngineState {
   public FlowControl FUN_800cc698(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final ScriptState<BattleEntity27c> state2 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+    final ScriptState<BattleEntity27c> state1 = SCRIPTS.getState(scriptIndex1, BattleEntity27c.class);
+    final ScriptState<BattleEntity27c> state2 = SCRIPTS.getState(scriptIndex2, BattleEntity27c.class);
     final BattleEntity27c bent1 = state1.innerStruct_00;
     final BattleEntity27c bent2 = state2.innerStruct_00;
     final int ticks = script.params_20[2].get();
@@ -3432,7 +3433,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc784L)
   public FlowControl FUN_800cc784(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     this.FUN_800ca418(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
@@ -3478,7 +3479,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc8f4L)
   public FlowControl scriptLoadAttackAnimations(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     this.loadAttackAnimations(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
@@ -3506,7 +3507,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "enabled", description = "True to enable, false otherwise")
   @Method(0x800cc9d8L)
   public FlowControl scriptEnableBentTextureAnimation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.animateTextures_ec[script.params_20[1].get()] = script.params_20[2].get() > 0;
     return FlowControl.CONTINUE;
   }
@@ -3580,8 +3581,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "isDragoon", description = "Whether or not the battle entity is a dragoon")
   @Method(0x800ccba4L)
   public FlowControl FUN_800ccba4(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c bent = state.innerStruct_00;
     final CombatantStruct1a8 combatant = bent.combatant_144;
 
     if((state.storage_44[7] & FLAG_1) == 0) {
@@ -3622,7 +3623,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "id", description = "The character or monster ID")
   @Method(0x800cccf4L)
   public FlowControl scriptGetCharOrMonsterId(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.charId_272);
     return FlowControl.CONTINUE;
   }
@@ -3635,7 +3636,7 @@ public class Battle extends EngineState {
   @Method(0x800ccd34L)
   public FlowControl scriptSetBentStat(final RunningScript<?> script) {
     //LAB_800ccd8c
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
@@ -3660,7 +3661,7 @@ public class Battle extends EngineState {
   @ScriptEnum(BattleEntityStat.class)
   @Method(0x800ccda0L)
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
@@ -3678,7 +3679,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce04L)
   public FlowControl scriptGetBentStat(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(script.params_20[1].get());
 
     switch(stat) {
@@ -3734,8 +3735,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800ccf2cL)
   public FlowControl scriptSetBentDeadAndDropLoot(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c data = (BattleEntity27c)state.innerStruct_00;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c data = state.innerStruct_00;
 
     int flags = state.storage_44[7];
     if(script.params_20[1].get() != 0) {
@@ -3778,7 +3779,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800cd078L)
   public FlowControl scriptSetBentDead(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final ScriptState<?> state = SCRIPTS.getState(script.params_20[0].get());
 
     //LAB_800cd0d0
     if(script.params_20[1].get() != 0) {
@@ -3799,7 +3800,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The hit property value")
   @Method(0x800cd0ecL)
   public FlowControl scriptGetHitProperty(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[3].set(battlePreloadedEntities_1f8003f4.getHitProperty(
       bent.charSlot_276,
       script.params_20[1].get(),
@@ -3815,7 +3816,7 @@ public class Battle extends EngineState {
   @Method(0x800cd160L)
   public FlowControl scriptLevelUpAddition(final RunningScript<?> script) {
     if(script.params_20[1].get() != 0) {
-      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
@@ -3879,7 +3880,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "visible", description = "True for visible, false otherwise")
   @Method(0x800cd3b4L)
   public FlowControl scriptSetModelPartVisibility(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     if(script.params_20[2].get() != 0) {
       bent.model_148.partInvisible_f4 &= ~(0x1L << script.params_20[1].get());
     } else {
@@ -4056,7 +4057,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
   @Method(0x800cd958L)
   public FlowControl scriptGetCombatantIndex(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.combatantIndex_26c);
     return FlowControl.CONTINUE;
   }
@@ -4067,7 +4068,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "mode", description = "If true, returns character slot, if false returns battle entity slot")
   @Method(0x800cd998L)
   public FlowControl scriptGetBentSlot(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
     if(script.params_20[2].get() != 0) {
       script.params_20[1].set(bent.charSlot_276);
@@ -4085,7 +4086,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count")
   @Method(0x800cd9fcL)
   public FlowControl scriptGetBentNobj(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.model_148.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
@@ -4102,7 +4103,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cda78L)
   public FlowControl FUN_800cda78(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
     if(!bent.combatant_144.isModelLoaded()) {
       return FlowControl.PAUSE_AND_REWIND;
@@ -5386,7 +5387,7 @@ public class Battle extends EngineState {
         this.FUN_800e45c0(rotation, this.lights_800c692c[index - 1].light_00.direction_00);
       } else {
         //LAB_800e49f4
-        final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
+        final BattleEntity27c bent = SCRIPTS.getObject(index, BattleEntity27c.class);
         rotation.x = bent.model_148.coord2_14.transforms.rotate.x;
         rotation.z = bent.model_148.coord2_14.transforms.rotate.z;
       }
@@ -5423,7 +5424,7 @@ public class Battle extends EngineState {
       this.FUN_800e45c0(s0, this.lights_800c692c[s1 - 1].light_00.direction_00);
     } else {
       //LAB_800e4b40
-      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[s1].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(s1, BattleEntity27c.class);
       s0 = bent.model_148.coord2_14.transforms.rotate;
     }
 
@@ -5619,7 +5620,7 @@ public class Battle extends EngineState {
       s0.directionOrColourDest_28.set(sp0x18);
     } else {
       //LAB_800e51e8
-      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[lightOrBentIndex].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(lightOrBentIndex, BattleEntity27c.class);
       s0.directionOrColourDest_28.set(bent.model_148.coord2_14.transforms.rotate);
     }
 
@@ -5675,7 +5676,7 @@ public class Battle extends EngineState {
     a0_0.typeAndFlags_00 = 0x4002;
     light.scriptIndex_48 = bentIndex;
 
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
     a0_0.directionOrColour_04.set(sp0x10).sub(bent.model_148.coord2_14.transforms.rotate);
     a0_0.directionOrColourSpeed_10.zero();
     a0_0.directionOrColourAcceleration_1c.zero();
@@ -5897,7 +5898,7 @@ public class Battle extends EngineState {
         }
       } else if(type == 2) {
         //LAB_800e5bf0
-        final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
+        final BattleEntity27c bent = SCRIPTS.getObject(light.scriptIndex_48, BattleEntity27c.class);
         // Direction is 0..1 but used as a rotation so we have to scale it up to 0..2pi
         final Vector3f sp0x10 = new Vector3f(a2.directionOrColour_04).mul(MathHelper.TWO_PI).add(bent.model_148.coord2_14.transforms.rotate);
         this.FUN_800e4674(light.light_00.direction_00, sp0x10);
@@ -6516,7 +6517,7 @@ public class Battle extends EngineState {
 
   @Method(0x800e9120L)
   public void deallocateLightingControllerAndDeffManager() {
-    scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
+    SCRIPTS.getState(1).deallocateWithChildren();
     deffManager_800c693c.deallocateScriptsArray();
     deffManager_800c693c.scriptState_1c.deallocateWithChildren();
     deffManager_800c693c = null;
@@ -6566,7 +6567,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "-1 = shadow type 2, -2 = shadow type 3, -3 = shadow type 0, all other values are model part index to attach type 2 shadow to")
   @Method(0x800e9798L)
   public FlowControl scriptSetModelShadow(final RunningScript<?> script) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
     if(BattleObject.EM__.equals(bobj.magic_00)) {
@@ -6762,7 +6763,7 @@ public class Battle extends EngineState {
       this.copyBattleStageModel(effect.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
-      this.copyModel(effect.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[id].innerStruct_00).model_148);
+      this.copyModel(effect.model_10, SCRIPTS.getObject(id, BattleEntity27c.class).model_148);
     }
 
     //LAB_800ea04c
@@ -7570,7 +7571,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset")
   @Method(0x800ee2acL)
   public FlowControl scriptSetBentZOffset(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.zOffset_a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
@@ -7580,7 +7581,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The uniform scale (12-bit fixed-point)")
   @Method(0x800ee2e4L)
   public FlowControl scriptSetBentScaleUniform(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final float scale = script.params_20[1].get() / (float)0x1000;
     bent.model_148.coord2_14.transforms.scale.set(scale, scale, scale);
     return FlowControl.CONTINUE;
@@ -7593,7 +7594,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z scale (12-bit fixed-point)")
   @Method(0x800ee324L)
   public FlowControl scriptSetBentScale(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.transforms.scale.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
@@ -7602,7 +7603,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee384L)
   public FlowControl scriptAttachShadowToBottomOfBentModel(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowType_cc = 2;
     bent.model_148.modelPartWithShadowIndex_cd = -1;
     return FlowControl.CONTINUE;
@@ -7613,7 +7614,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartAttachmentIndex", description = "The model part index to attach the shadow to")
   @Method(0x800ee3c0L)
   public FlowControl scriptAttachShadowToBentModelPart(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowType_cc = 3;
     bent.model_148.modelPartWithShadowIndex_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
@@ -7623,7 +7624,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee408L)
   public FlowControl scriptUpdateBentShadowType(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final int index = bent.model_148.modelPartWithShadowIndex_cd;
     if(index == -2) {
       //LAB_800ee450
@@ -7643,7 +7644,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee468L)
   public FlowControl scriptDisableBentShadow(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
@@ -7654,7 +7655,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The shadow's Z size (12-bit fixed-point)")
   @Method(0x800ee49cL)
   public FlowControl scriptSetBentShadowSize(final RunningScript<?> script) {
-    final BattleEntity27c a1 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c a1 = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     a1.model_148.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
     a1.model_148.shadowSize_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
@@ -7667,7 +7668,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The shadow's Z size (12-bit fixed-point)")
   @Method(0x800ee4e8L)
   public FlowControl scriptSetBentShadowOffset(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
@@ -7915,8 +7916,8 @@ public class Battle extends EngineState {
 
   @Method(0x800f1aa8L)
   public boolean checkHit(final int attackerIndex, final int defenderIndex, final AttackType attackType) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerIndex].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[defenderIndex].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(attackerIndex, BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(defenderIndex, BattleEntity27c.class);
     final boolean isMonster = attacker instanceof MonsterBattleEntity;
 
     int effectAccuracy;
@@ -8064,8 +8065,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2500L)
   public FlowControl scriptPhysicalAttack(final RunningScript<?> script) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
@@ -8082,8 +8083,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2694L)
   public FlowControl scriptDragoonMagicStatusItemAttack(final RunningScript<?> script) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     attacker.spellId_4e = script.params_20[2].get();
 
@@ -8118,8 +8119,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2838L)
   public FlowControl scriptItemMagicAttack(final RunningScript<?> script) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     attacker.spell_94 = null;
 
@@ -8496,7 +8497,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f96d4L)
   public FlowControl scriptGetBentPos2(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(java.lang.Math.round(bent.model_148.coord2_14.coord.transfer.x));
     script.params_20[2].set(java.lang.Math.round(bent.model_148.coord2_14.coord.transfer.y));
     script.params_20[3].set(java.lang.Math.round(bent.model_148.coord2_14.coord.transfer.z));
@@ -8728,7 +8729,7 @@ public class Battle extends EngineState {
   @Method(0x800f9d7cL)
   public FlowControl scriptFinishBentTurn(final RunningScript<?> script) {
     final int bentIndex = script.params_20[0].get();
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
 
     bent.turnFinished();
     bent.recalculateSpeedAndPerHitStats();

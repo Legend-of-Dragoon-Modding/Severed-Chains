@@ -8,7 +8,7 @@ import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8002.addSp;
+import static legend.game.SItem.addSp;
 import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class RecoverSpItem extends Item {

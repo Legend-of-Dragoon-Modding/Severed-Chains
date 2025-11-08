@@ -129,12 +129,11 @@ import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.combat.Battle.deffManager_800c693c;
@@ -196,7 +195,7 @@ public final class SEffe {
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(scriptIndex, BattleObject.class);
     posOut.set(bobj.getPosition());
   }
 
@@ -653,7 +652,7 @@ public final class SEffe {
 
     //LAB_800e8604
     while(scriptIndex >= 0) {
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
+      final ScriptState<?> state = SCRIPTS.getState(scriptIndex);
       if(state == null) { // error, parent no longer exists
         manager.params_10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.z = -0x7fff;
@@ -1753,7 +1752,7 @@ public final class SEffe {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[3].get();
 
-    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
+    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)SCRIPTS.getObject(script.params_20[1].get(), EffectManagerData6c.class).effect_44;
     final TmdObjTable1c tmd = v1.tmd_08;
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.FrozenJetType>> state = allocateEffectManager(
@@ -2244,7 +2243,7 @@ public final class SEffe {
   /** Returns reference */
   @Method(0x80110074L)
   public static Vector3f getScriptedObjectRotation(final int scriptIndex) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(scriptIndex, BattleObject.class);
     return bobj.getRotation();
   }
 
@@ -2290,14 +2289,14 @@ public final class SEffe {
   @Method(0x80110488L)
   public static void getEffectTranslationRelativeToParent(final int scriptIndex, final int parentIndex, final Vector3f out) {
     final MV transforms = new MV();
-    calculateEffectTransforms(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00);
+    calculateEffectTransforms(transforms, SCRIPTS.getObject(scriptIndex, EffectManagerData6c.class));
 
     if(parentIndex == -1) {
       out.set(transforms.transfer);
     } else {
       //LAB_80110500
       final MV parentTransforms = new MV();
-      calculateEffectTransforms(parentTransforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00);
+      calculateEffectTransforms(parentTransforms, SCRIPTS.getObject(parentIndex, EffectManagerData6c.class));
       transforms.transfer.sub(parentTransforms.transfer);
 
       parentTransforms.transpose();
@@ -2510,7 +2509,7 @@ public final class SEffe {
     final int bobjIndex1 = script.params_20[0].get();
     final int bobjIndex2 = script.params_20[1].get();
 
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[bobjIndex1].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(bobjIndex1, BattleObject.class);
 
     if(bobjIndex2 == -1) {
       final Vector3f pos = bobj.getPosition();
@@ -2518,7 +2517,7 @@ public final class SEffe {
       script.params_20[3].set(Math.round(pos.y));
       script.params_20[4].set(Math.round(pos.z));
     } else {
-      final BattleObject parent = (BattleObject)scriptStatePtrArr_800bc1c0[bobjIndex2].innerStruct_00;
+      final BattleObject parent = SCRIPTS.getObject(bobjIndex2, BattleObject.class);
       final Vector3f pos = bobj.getRelativePositionFrom(parent, new Vector3f());
       script.params_20[2].set(Math.round(pos.x));
       script.params_20[3].set(Math.round(pos.y));
@@ -2549,7 +2548,7 @@ public final class SEffe {
     final Vector3f trans = new Vector3f();
     final Vector3f scale = new Vector3f();
     final MV transforms = new MV();
-    final BattleObject s0 = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject s0 = SCRIPTS.getObject(scriptIndex, BattleObject.class);
     if(BattleObject.EM__.equals(s0.magic_00)) {
       final EffectManagerData6c<EffectManagerParams.AnimType> effects = (EffectManagerData6c<EffectManagerParams.AnimType>)s0;
 
@@ -2897,7 +2896,7 @@ public final class SEffe {
   /** Sets rotation on script from given vector, adding from second script if one is specified */
   @Method(0x80112530L)
   public static int setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final Vector3f rotation) {
-    final EffectManagerData6c<?> data = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    final EffectManagerData6c<?> data = SCRIPTS.getObject(scriptIndex1, EffectManagerData6c.class);
 
     if(BattleObject.EM__.equals(data.magic_00) && data.hasAttachment(2)) {
       data.removeAttachment(2);
@@ -4416,7 +4415,7 @@ public final class SEffe {
       objTable = battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
     } else {
       //LAB_80118634
-      final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
+      final BattleObject bobj = SCRIPTS.getObject(flags, BattleObject.class);
       if(BattleObject.EM__.equals(bobj.magic_00)) {
         final EffectManagerData6c<?> effects = (EffectManagerData6c<?>)bobj;
         final int v1 = effects.flags_04 & 0xff00_0000;
@@ -4577,7 +4576,7 @@ public final class SEffe {
       manager.params_10.flags_00 = 0x1400_0000;
     } else if(effectType == 0) {
       //LAB_801195a8
-      throw new RuntimeException("The type is " + ((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[effectFlag].innerStruct_00).effect_44.getClass().getSimpleName());
+      throw new RuntimeException("The type is " + SCRIPTS.getObject(effectFlag, EffectManagerData6c.class).effect_44.getClass().getSimpleName());
     }
 
     //LAB_8011967c

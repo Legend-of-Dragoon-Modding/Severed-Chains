@@ -13,7 +13,6 @@ public final class Scus94491BpeSegment_8004 {
   private Scus94491BpeSegment_8004() { }
 
   public static int simpleRandSeed_8004dd44 = 3;
-  public static final int[] _8004dd48 = {0, 1, 2, 1, 2, 1, 2};
 
   public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
   public static Function<RunningScript, FlowControl>[] engineStateFunctions_8004e29c = new Function[1024];
@@ -36,22 +35,22 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[16] = Rumble::scriptSetRumbleDampener;
     scriptSubFunctions_8004e29c[17] = Rumble::scriptResetRumbleDampener;
 
-    scriptSubFunctions_8004e29c[192] = Textboxes::scriptGetFreeTextboxIndex;
-    scriptSubFunctions_8004e29c[193] = Textboxes::scriptInitTextbox;
-    scriptSubFunctions_8004e29c[194] = Textboxes::scriptSetTextboxContents;
-    scriptSubFunctions_8004e29c[195] = Textboxes::scriptIsTextboxInitialized;
-    scriptSubFunctions_8004e29c[196] = Textboxes::scriptGetTextboxState;
-    scriptSubFunctions_8004e29c[197] = Textboxes::scriptGetTextboxTextState;
+    scriptSubFunctions_8004e29c[192] = Text::scriptGetFreeTextboxIndex;
+    scriptSubFunctions_8004e29c[193] = Text::scriptInitTextbox;
+    scriptSubFunctions_8004e29c[194] = Text::scriptSetTextboxContents;
+    scriptSubFunctions_8004e29c[195] = Text::scriptIsTextboxInitialized;
+    scriptSubFunctions_8004e29c[196] = Text::scriptGetTextboxState;
+    scriptSubFunctions_8004e29c[197] = Text::scriptGetTextboxTextState;
 
-    scriptSubFunctions_8004e29c[199] = Textboxes::scriptSetTextboxVariable;
-    scriptSubFunctions_8004e29c[200] = Textboxes::scriptAddTextbox;
-    scriptSubFunctions_8004e29c[201] = Textboxes::scriptDeallocateTextbox;
-    scriptSubFunctions_8004e29c[202] = Textboxes::scriptDeallocateAllTextboxes;
-    scriptSubFunctions_8004e29c[203] = Textboxes::FUN_80029ecc;
-    scriptSubFunctions_8004e29c[204] = Textboxes::FUN_80028ff8;
-    scriptSubFunctions_8004e29c[205] = Textboxes::scriptGetTextboxSelectionIndex;
-    scriptSubFunctions_8004e29c[206] = Textboxes::scriptGetTextboxElement;
-    scriptSubFunctions_8004e29c[207] = Textboxes::scriptAddSelectionTextbox;
+    scriptSubFunctions_8004e29c[199] = Text::scriptSetTextboxVariable;
+    scriptSubFunctions_8004e29c[200] = Text::scriptAddTextbox;
+    scriptSubFunctions_8004e29c[201] = Text::scriptDeallocateTextbox;
+    scriptSubFunctions_8004e29c[202] = Text::scriptDeallocateAllTextboxes;
+    scriptSubFunctions_8004e29c[203] = Text::FUN_80029ecc;
+    scriptSubFunctions_8004e29c[204] = Text::FUN_80028ff8;
+    scriptSubFunctions_8004e29c[205] = Text::scriptGetTextboxSelectionIndex;
+    scriptSubFunctions_8004e29c[206] = Text::scriptGetTextboxElement;
+    scriptSubFunctions_8004e29c[207] = Text::scriptAddSelectionTextbox;
 
     scriptSubFunctions_8004e29c[224] = Audio::scriptLoadMenuSounds;
     scriptSubFunctions_8004e29c[225] = Audio::FUN_8001e918;
@@ -100,11 +99,11 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[717] = Audio::scriptLoadCutsceneSounds;
     scriptSubFunctions_8004e29c[718] = Audio::scriptLoadFinalBattleSounds;
 
-    scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment_8002::scriptGiveChestContents;
-    scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
-    scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment_8002::scriptGiveGold;
+    scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment::scriptGiveChestContents;
+    scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment::scriptTakeItem;
+    scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment::scriptGiveGold;
 
-    scriptSubFunctions_8004e29c[890] = Scus94491BpeSegment_8002::scriptReadRegistryEntryVar;
+    scriptSubFunctions_8004e29c[890] = Scus94491BpeSegment::scriptReadRegistryEntryVar;
 
     scriptSubFunctions_8004e29c[900] = SItem::scriptGetMaxItemCount;
     scriptSubFunctions_8004e29c[901] = SItem::scriptGetMaxEquipmentCount;
@@ -130,8 +129,4 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new byte[] {0x4, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0});
   public static BattleReportOverlayList10 battleReportOverlayLists_8004f658;
-
-  public static int _8004f6e4 = -1;
-
-  public static int battleStartDelayTicks_8004f6ec;
 }

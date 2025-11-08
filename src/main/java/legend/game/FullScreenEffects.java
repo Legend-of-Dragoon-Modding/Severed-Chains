@@ -17,10 +17,11 @@ import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 
 public final class FullScreenEffects {
   private FullScreenEffects() { }
+
+  private static final int[] _8004dd48 = {0, 1, 2, 1, 2, 1, 2};
 
   public static final FullScreenEffect fullScreenEffect_800bb140 = new FullScreenEffect();
 

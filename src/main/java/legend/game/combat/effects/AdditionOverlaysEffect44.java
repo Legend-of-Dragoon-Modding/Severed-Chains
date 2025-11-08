@@ -29,10 +29,10 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Graphics.GsGetLw;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
+import static legend.game.Text.renderText;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
@@ -77,7 +77,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
   @Method(0x801062a8L)
   public AdditionOverlaysEffect44(final int attackerScriptIndex, final int targetScriptIndex, final int autoCompleteType) {
-    final BattleEntity27c s5 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerScriptIndex].innerStruct_00;
+    final BattleEntity27c s5 = SCRIPTS.getObject(attackerScriptIndex, BattleEntity27c.class);
 
     this.reticleBorderShadow = new QuadBuilder("Reticle background")
       .translucency(Translucency.B_MINUS_F)
@@ -229,7 +229,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   private void getBentTranslation(final int scriptIndex, final Vector3f out, final long coordType) {
     final MV transformationMatrix = new MV();
 
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(scriptIndex, BattleEntity27c.class);
 
     final GsCOORDINATE2 coord2;
     if(coordType == 0) {

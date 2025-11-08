@@ -19,9 +19,9 @@ import java.util.Map;
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
@@ -74,8 +74,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public PlayerBattleEntity(final String name, final int scriptIndex, final ScriptFile script) {
     super(LodMod.PLAYER_TYPE.get(), name);
 
-    //noinspection unchecked
-    this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[scriptIndex]);
+    this.scriptState = new Latch<>(() -> SCRIPTS.getState(scriptIndex, PlayerBattleEntity.class));
     this.script = script;
   }
 

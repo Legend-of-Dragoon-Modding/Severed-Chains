@@ -81,7 +81,7 @@ import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.Models.animateModel;
 import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.initModel;
-import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;

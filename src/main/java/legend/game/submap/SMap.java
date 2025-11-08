@@ -131,8 +131,8 @@ import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.submapNames_8011c108;
-import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
-import static legend.game.Scus94491BpeSegment_8002.srand;
+import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
+import static legend.game.Scus94491BpeSegment.srand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
@@ -146,23 +146,22 @@ import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_80
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
-import static legend.game.Textboxes.calculateAppropriateTextboxBounds;
-import static legend.game.Textboxes.clearTextbox;
-import static legend.game.Textboxes.clearTextboxText;
-import static legend.game.Textboxes.renderBorder_80052b68;
-import static legend.game.Textboxes.scriptDeallocateAllTextboxes;
-import static legend.game.Textboxes.textboxFits;
-import static legend.game.Textboxes.textboxMode_80052b88;
-import static legend.game.Textboxes.textboxTextType_80052ba8;
-import static legend.game.Textboxes.textboxText_800bdf38;
-import static legend.game.Textboxes.textboxes_800be358;
+import static legend.game.Text.calculateAppropriateTextboxBounds;
+import static legend.game.Text.clearTextbox;
+import static legend.game.Text.clearTextboxText;
+import static legend.game.Text.renderBorder_80052b68;
+import static legend.game.Text.scriptDeallocateAllTextboxes;
+import static legend.game.Text.textboxFits;
+import static legend.game.Text.textboxMode_80052b88;
+import static legend.game.Text.textboxTextType_80052ba8;
+import static legend.game.Text.textboxText_800bdf38;
+import static legend.game.Text.textboxes_800be358;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
@@ -1312,7 +1311,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicks", description = "The number of frames over which to move")
   @Method(0x800de668L)
   private FlowControl scriptSobjMoveToPosition(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
@@ -1350,7 +1349,7 @@ public class SMap extends EngineState {
   private FlowControl scriptSobjMoveAlongArc(final RunningScript<?> script) {
     final int movementTicks = script.params_20[4].get();
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
@@ -1379,7 +1378,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800deba0L)
   private FlowControl scriptSobjMoveAlongArc2(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
@@ -1544,7 +1543,7 @@ public class SMap extends EngineState {
     final int y = script.params_20[2].get();
     final int z = script.params_20[3].get();
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
@@ -1571,7 +1570,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z coordinate")
   @Method(0x800df2b8L)
   private FlowControl scriptReadModelPosition(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     final Vector3f pos;
     if(sobj.interpMovementTicksTotal != 0) {
@@ -1597,7 +1596,7 @@ public class SMap extends EngineState {
     final float y = MathHelper.psxDegToRad(script.params_20[2].get());
     final float z = MathHelper.psxDegToRad(script.params_20[3].get());
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     if(!flEq(model.coord2_14.transforms.rotate.x, x)) {
@@ -1656,7 +1655,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800df374L)
   private FlowControl scriptReadModelRotate(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
     script.params_20[1].set(MathHelper.radToPsxDeg(model.coord2_14.transforms.rotate.x));
     script.params_20[2].set(MathHelper.radToPsxDeg(model.coord2_14.transforms.rotate.y));
@@ -1794,8 +1793,8 @@ public class SMap extends EngineState {
   @ScriptDescription("Checks to see if the camera is attached to this submap object")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "attached", description = "True if attached, false otherwise")
   @Method(0x800df680L)
-  private FlowControl scriptSelfIsCameraAttached(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
+  private FlowControl scriptSelfIsCameraAttached(final RunningScript<SubmapObject210> script) {
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
     script.params_20[0].set(sobj.cameraAttached_178 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
@@ -1832,7 +1831,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames before the rotation completes")
   @Method(0x800df788L)
   private FlowControl scriptRotateSobj(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     final int frames = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
     sobj.rotationFrames_188 = frames;
@@ -1867,7 +1866,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames before the rotation completes")
   @Method(0x800df890L)
   private FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.finishInterpolatedRotationX();
     sobj.finishInterpolatedRotationY();
@@ -1915,7 +1914,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y1", description = "Screen Y (feet?)")
   @Method(0x800df9a8L)
   private FlowControl FUN_800df9a8(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     final MV ls = new MV();
     GsGetLs(sobj.model_00.coord2_14, ls);
@@ -1980,7 +1979,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z scale (12-bit fixed-point)")
   @Method(0x800dfc00L)
   private FlowControl scriptScaleXyz(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.coord2_14.transforms.scale.set(
@@ -1997,7 +1996,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The new XYZ scale (12-bit fixed-point)")
   @Method(0x800dfc60L)
   private FlowControl scriptScaleUniform(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.coord2_14.transforms.scale.x = script.params_20[1].get() / (float)0x1000;
@@ -2011,7 +2010,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offset", description = "The new Z offset")
   @Method(0x800dfca0L)
   private FlowControl scriptSetModelZOffset(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.zOffset_a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
@@ -2021,7 +2020,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "usePs1Depth", description = "True to use PS1 depth, false to use modern depth")
   @Method(0x800dfca0L)
   private FlowControl scriptSetSobjUsePs1Depth(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.usePs1Depth = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
@@ -2060,7 +2059,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset for the indicator")
   @Method(0x800dfd8cL)
   private FlowControl scriptShowAlertIndicator(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.showAlertIndicator_194 = true;
     sobj.alertIndicatorOffsetY_198 = script.params_20[1].get();
     return FlowControl.CONTINUE;
@@ -2070,7 +2069,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800dfdd8L)
   private FlowControl scriptHideAlertIndicator(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.showAlertIndicator_194 = false;
     return FlowControl.CONTINUE;
   }
@@ -2080,7 +2079,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "objectIndex", description = "The map object index (0-n)")
   @Method(0x800dfe0cL)
   private FlowControl scriptLoadSobjModelAndAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
     model.deleteModelParts(); // Clear old model objs first
 
@@ -2107,7 +2106,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animIndex", description = "The anim index")
   @Method(0x800dfec8L)
   private FlowControl scriptLoadSobjAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.animIndex_132 = script.params_20[1].get();
@@ -2127,7 +2126,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animIndex", description = "The anim index")
   @Method(0x800dff68L)
   private FlowControl scriptGetSobjAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.animIndex_132);
     return FlowControl.CONTINUE;
   }
@@ -2137,7 +2136,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "disabled", description = "Whether or not the animation is disabled")
   @Method(0x800dffa4L)
   private FlowControl scriptToggleAnimationDisabled(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.disableAnimation_12a = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
@@ -2147,7 +2146,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "finished", description = "Whether or not the animation is finished")
   @Method(0x800dffdcL)
   private FlowControl scriptIsAnimationFinished(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.animationFinishedFrames_12c != 0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
@@ -2159,7 +2158,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position to face")
   @Method(0x800e0018L)
   private FlowControl scriptFacePoint(final RunningScript<SubmapObject210> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     final float deltaX = script.params_20[1].get() - model.coord2_14.coord.transfer.x;
@@ -2192,9 +2191,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hidden", description = "True to hide, false otherwise")
   @Method(0x800e0094L)
-  private FlowControl scriptSetSobjHidden(final RunningScript<?> a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.hidden_128 = a0.params_20[1].get() != 0;
+  private FlowControl scriptSetSobjHidden(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+    sobj.hidden_128 = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2203,7 +2202,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index that the submap object is intersecting")
   @Method(0x800e00ccL)
   private FlowControl scriptCheckSobjCollision(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
     final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false, false);
     script.params_20[1].set(collisionPrimitiveIndex);
@@ -2216,7 +2215,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "Return value")
   @Method(0x800e0148L)
   private FlowControl scriptGetSobjIgnoreCollision(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.ignoreCollision_172);
     return FlowControl.CONTINUE;
   }
@@ -2226,7 +2225,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
   @Method(0x800e0184L)
   private FlowControl scriptSetSobjIgnoreCollision(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.ignoreCollision_172 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
@@ -2236,7 +2235,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "clutAnimationIndex", description = "The CLUT animation index")
   @Method(0x800e01bcL)
   private FlowControl scriptResetClutAnimations(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     this.initClutAnimation(sobj.model_00, script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
@@ -2246,7 +2245,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "clutAnimationIndex", description = "The CLUT animation index")
   @Method(0x800e0204L)
   private FlowControl scriptDisableClutAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.clutAnimations_a4.used_04[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
@@ -2256,7 +2255,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
   @Method(0x800e0244L)
   private FlowControl scriptEnableTextureAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.animateTextures_ec[script.params_20[1].get()] = true;
     return FlowControl.CONTINUE;
   }
@@ -2266,7 +2265,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
   @Method(0x800e0284L)
   private FlowControl scriptDisableTextureAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.animateTextures_ec[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
@@ -2276,7 +2275,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x800e02c0L)
   private FlowControl scriptGetSobjMovementType(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.movementType_170);
     return FlowControl.CONTINUE;
   }
@@ -2286,7 +2285,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "attach", description = "True to attach, false to detach")
   @Method(0x800e02fcL)
   private FlowControl scriptAttachCameraToSobj(final RunningScript<?> script) {
-    final SubmapObject210 struct1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 struct1 = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     struct1.cameraAttached_178 = script.params_20[1].get() != 0;
 
@@ -2312,7 +2311,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "numberOfParts", description = "The number of model parts")
   @Method(0x800e03a8L)
   private FlowControl scriptGetSobjNobj(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.model_00.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
@@ -2322,7 +2321,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
   @Method(0x800e03e4L)
   private FlowControl scriptHideModelPart(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     final int shift = script.params_20[1].get();
@@ -2339,7 +2338,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
   @Method(0x800e0448L)
   private FlowControl scriptShowModelPart(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     final int shift = script.params_20[1].get();
@@ -2355,7 +2354,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e04b4L)
   private FlowControl scriptFaceCamera(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(this.cameraPos_800c6aa0.z, this.cameraPos_800c6aa0.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
@@ -2367,7 +2366,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800e0520L)
   private FlowControl scriptSetSobjFlag(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.flags_190 = sobj.flags_190
       & ~(0x1 << script.params_20[1].get())
@@ -2407,7 +2406,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue colour")
   @Method(0x800e0614L)
   private FlowControl scriptEnableSobjFlatLight(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.flatLightingEnabled_1c4 = true;
     sobj.flatLightRed_1c5 = script.params_20[1].get() & 0xff;
     sobj.flatLightGreen_1c6 = script.params_20[2].get() & 0xff;
@@ -2419,7 +2418,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0684L)
   private FlowControl scriptDisableSobjFlatLight(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.flatLightingEnabled_1c4 = false;
     sobj.flatLightRed_1c5 = 0x80;
     sobj.flatLightGreen_1c6 = 0x80;
@@ -2468,7 +2467,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "reach", description = "The collision reach")
   @Method(0x800e0894L)
   private FlowControl scriptSetSobjCollision2(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.collisionSizeHorizontal_1ac = script.params_20[1].get();
     sobj.collisionSizeVertical_1b0 = script.params_20[2].get();
     sobj.collisionReach_1b4 = script.params_20[3].get();
@@ -2480,7 +2479,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collided", description = "True if the submap object is collided")
   @Method(0x800e08f4L)
   private FlowControl scriptGetSobjCollidedWith2(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.collidedWithSobjIndex_1a8);
     return FlowControl.CONTINUE;
   }
@@ -2492,7 +2491,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
   @Method(0x800e0930L)
   private FlowControl scriptSetAmbientColour(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.ambientColourEnabled_1c8 = true;
     sobj.ambientColour_1ca.set(
       (short)script.params_20[1].get() / 4096.0f,
@@ -2506,7 +2505,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e09a0L)
   private FlowControl scriptResetAmbientColour(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.ambientColour_1ca.set(0.5f, 0.5f, 0.5f);
     sobj.ambientColourEnabled_1c8 = false;
     return FlowControl.CONTINUE;
@@ -2516,7 +2515,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e09e0L)
   private FlowControl scriptEnableShadow(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.shadowType_cc = 1;
     return FlowControl.CONTINUE;
   }
@@ -2525,7 +2524,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0a14L)
   private FlowControl scriptDisableShadow(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
@@ -2536,7 +2535,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z size of the shadow")
   @Method(0x800e0a48L)
   private FlowControl scriptSetShadowSize(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
@@ -2551,7 +2550,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset of the shadow")
   @Method(0x800e0a94L)
   private FlowControl scriptSetShadowOffset(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
@@ -2594,7 +2593,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "reach", description = "The collision reach")
   @Method(0x800e0ba0L)
   private FlowControl scriptSetSobjPlayerCollisionMetrics(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.playerCollisionSizeHorizontal_1b8 = script.params_20[1].get();
     sobj.playerCollisionSizeVertical_1bc = script.params_20[2].get();
     sobj.playerCollisionReach_1c0 = script.params_20[3].get();
@@ -4424,7 +4423,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalSize", description = "The vertical collision size")
   @Method(0x800e06c4L)
   private FlowControl scriptSetSobjCollision1(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.collisionSizeHorizontal_1a0 = script.params_20[1].get();
     sobj.collisionSizeVertical_1a4 = script.params_20[2].get();
     return FlowControl.CONTINUE;
@@ -4435,7 +4434,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collided", description = "True if the submap object is collided")
   @Method(0x800e0710L)
   private FlowControl scriptGetSobjCollidedWith1(final RunningScript<?> script) {
-    script.params_20[1].set(((SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).collidedWithSobjIndex_19c);
+    script.params_20[1].set(SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class).collidedWithSobjIndex_19c);
     return FlowControl.CONTINUE;
   }
 
@@ -4876,7 +4875,7 @@ public class SMap extends EngineState {
     final ScriptState<?> sobj1 = script.scriptState_04;
     script.params_20[1] = new ScriptStorageParam(sobj1, 0); // Unused? Why?
 
-    final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00; // Storage 0 is my script index, isn't this just getting the same state?
+    final SubmapObject210 sobj2 = SCRIPTS.getObject(sobj1.storage_44[0], SubmapObject210.class); // Storage 0 is my script index, isn't this just getting the same state?
     if((script.params_20[0].get() == 1 || script.params_20[0].get() == 2)) {
       sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
       sobj2.attachedEffectData_1d0.footprintMode_10 = 0;
@@ -4897,7 +4896,7 @@ public class SMap extends EngineState {
   @Method(0x800f22c4L)
   private FlowControl scriptChangeFootprintsMode(final RunningScript<?> script) {
     script.params_20[2] = new ScriptStorageParam(script.scriptState_04, 0);
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[2].get(), SubmapObject210.class);
 
     final int footprintMode = script.params_20[0].get();
     sobj.attachedEffectData_1d0.footprintMode_10 = footprintMode;
@@ -4939,7 +4938,7 @@ public class SMap extends EngineState {
   private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<?> script) {
     script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.scriptState_04.storage_44[0], SubmapObject210.class);
     sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = Math.max(1, script.params_20[0].get());
 
     //LAB_800f23e4
@@ -4955,7 +4954,7 @@ public class SMap extends EngineState {
   private FlowControl scriptInitOrthoDust(final RunningScript<?> script) {
     script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); // Does nothing, why?
     final int mode = script.params_20[0].get();
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.scriptState_04.storage_44[0], SubmapObject210.class);
 
     if(mode == 1 || mode == 3) {
       //LAB_800f2430

@@ -30,7 +30,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptDebuggerController {
   private static final List<ScriptDebuggerController> INSTANCES = new ArrayList<>();
@@ -70,7 +69,7 @@ public class ScriptDebuggerController {
 
   public void initialize() {
     synchronized(INSTANCES) {
-      for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
+      for(int i = 0; i < SCRIPTS.count(); i++) {
         this.scripts.add(new ListItem(this::getScriptName, i));
       }
 
@@ -152,12 +151,12 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
+    final ScriptState<?> state = SCRIPTS.getState(scriptIndex);
     return state != null ? state.name + " (" + (state.innerStruct_00 != null ? state.innerStruct_00.getClass().getSimpleName() : "empty state") + ')' : "not allocated";
   }
 
   private void updateScriptVars() {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[this.scriptSelector.getValue().index];
+    final ScriptState<?> state = SCRIPTS.getState(this.scriptSelector.getValue().index);
 
     if(state == null) {
       return;
@@ -212,16 +211,18 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
-    if(scriptStatePtrArr_800bc1c0[scriptIndex] == null) {
+    final ScriptState<?> state = SCRIPTS.getState(scriptIndex);
+
+    if(state == null) {
       return "null";
     }
 
-    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[storageIndex];
+    final int val = state.storage_44[storageIndex];
     return "0x%1$x (%1$d)".formatted(val);
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
+    final ScriptState<?> state = SCRIPTS.getState(scriptIndex);
 
     if(state == null || stackIndex >= state.callStackDepth()) {
       return "";
@@ -254,7 +255,7 @@ public class ScriptDebuggerController {
   public void onRender(final RenderEvent event) {
     synchronized(INSTANCES) {
       if(!INSTANCES.isEmpty() && this == INSTANCES.getFirst()) { // we only want it to happen once per frame
-        for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
+        for(int i = 0; i < SCRIPTS.count(); i++) {
           final ScriptState<?> state = SCRIPTS.getState(i);
 
           if(state != null) {

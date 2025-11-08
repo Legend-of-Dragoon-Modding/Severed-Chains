@@ -54,6 +54,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playSound;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
@@ -64,16 +65,15 @@ import static legend.game.SItem.UI_WHITE_CENTERED;
 import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_CANT_TARGET;
@@ -1224,8 +1224,7 @@ public class BattleHud {
       if((num.flags_02 & 0x8000) != 0) {
         if(num.state_00 != 0) {
           if(num.bentIndex_04 != -1) {
-            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[num.bentIndex_04];
-            final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+            final BattleEntity27c bent = SCRIPTS.getObject(num.bentIndex_04, BattleEntity27c.class);
 
             final float x;
             final float y;
@@ -1422,8 +1421,7 @@ public class BattleHud {
 
   @Method(0x800f4268L)
   public void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
-    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
 
     final float x;
     final float y;

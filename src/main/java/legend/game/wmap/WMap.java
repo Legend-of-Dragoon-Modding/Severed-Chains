@@ -101,24 +101,23 @@ import static legend.game.Models.animateModel;
 import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.initModel;
 import static legend.game.Models.loadModelStandardAnimation;
+import static legend.game.Scus94491BpeSegment.rand;
+import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
-import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Textboxes.clearTextbox;
-import static legend.game.Textboxes.initTextbox;
-import static legend.game.Textboxes.isTextboxInState6;
-import static legend.game.Textboxes.setTextAndTextboxesToUninitialized;
-import static legend.game.Textboxes.textboxes_800be358;
+import static legend.game.Text.clearTextbox;
+import static legend.game.Text.initTextbox;
+import static legend.game.Text.isTextboxInState6;
+import static legend.game.Text.renderText;
+import static legend.game.Text.setTextAndTextboxesToUninitialized;
+import static legend.game.Text.textZ_800bdf00;
+import static legend.game.Text.textboxes_800be358;
 import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -5556,7 +5555,7 @@ public class WMap extends EngineState {
                   // Added this check since these pointers can be null
                   if(placeName0 != null && placeName1 != null) {
                     //LAB_800eb5d8
-                    if(strcmp(placeName0, placeName1) == 0) {
+                    if(placeName0.compareToIgnoreCase(placeName1) == 0) {
                       this.checkLocationIsValidAndOptionallySetPathStart(locationIndex1, 1, matchPositions[matchCount]);
 
                       matchCount++;

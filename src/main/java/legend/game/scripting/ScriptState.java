@@ -29,7 +29,6 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.scripting.ScriptManager.scriptFunctionDescriptions;
 import static legend.game.scripting.ScriptManager.scriptLog;
 
@@ -242,7 +241,7 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     //LAB_80015c70
-    scriptStatePtrArr_800bc1c0[this.index] = null;
+    this.manager.deallocate(this.index);
   }
 
   public void deallocateChildren() {
@@ -252,7 +251,7 @@ public class ScriptState<T extends ScriptedObject> {
 
     //LAB_80015cdc
     while(childIndex >= 0) {
-      final ScriptState<?> childState = scriptStatePtrArr_800bc1c0[childIndex];
+      final ScriptState<?> childState = SCRIPTS.getState(childIndex);
       final int childChildIndex = childState.storage_44[6];
       childState.deallocate();
       childIndex = childChildIndex;
@@ -306,11 +305,11 @@ public class ScriptState<T extends ScriptedObject> {
 
     LOGGER.info("Consuming script %d child %d", this.index, childIndex);
 
-    final ScriptState<?> child = scriptStatePtrArr_800bc1c0[childIndex];
+    final ScriptState<?> child = SCRIPTS.getState(childIndex);
     if((child.storage_44[7] & 0x20_0000) != 0) { // Is parent
       this.storage_44[7] |= 0x20_0000;
       this.storage_44[6] = child.storage_44[6];
-      scriptStatePtrArr_800bc1c0[child.storage_44[6]].storage_44[5] = this.index;
+      SCRIPTS.getState(child.storage_44[6]).storage_44[5] = this.index;
     } else {
       //LAB_80015ef0
       this.storage_44[6] = -1;
@@ -456,14 +455,14 @@ public class ScriptState<T extends ScriptedObject> {
 
     if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
       final int otherScriptIndex1 = this.storage_44[cmd0];
-      final int otherScriptIndex2 = scriptStatePtrArr_800bc1c0[otherScriptIndex1].storage_44[cmd1];
-      return new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex2], cmd2);
+      final int otherScriptIndex2 = SCRIPTS.getState(otherScriptIndex1).storage_44[cmd1];
+      return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex2), cmd2);
     }
 
     if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
       final int otherScriptIndex = this.storage_44[cmd0];
       final int storageIndex = cmd1 + this.storage_44[cmd2];
-      return new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex], storageIndex);
+      return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex), storageIndex);
     }
 
     if(paramType == 0x5) { // Push gameVar[cmd0]
@@ -506,7 +505,7 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
-      return new ScriptStorageParam(scriptStatePtrArr_800bc1c0[this.storage_44[cmd0]], cmd1 + cmd2);
+      return new ScriptStorageParam(SCRIPTS.getState(this.storage_44[cmd0]), cmd1 + cmd2);
     }
 
     if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
@@ -1177,7 +1176,7 @@ public class ScriptState<T extends ScriptedObject> {
 
   @Method(0x80017160L)
   public FlowControl scriptDeallocateOther() {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[this.context.params_20[0].get()];
+    final ScriptState<?> state = SCRIPTS.getState(this.context.params_20[0].get());
     state.deallocateWithChildren();
     return state == this.context.scriptState_04 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
@@ -1187,7 +1186,7 @@ public class ScriptState<T extends ScriptedObject> {
   public FlowControl scriptForkAndJump() {
     LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and jumping to %s", this.context.scriptState_04.index, this.context.params_20[0], this.context.params_20[1]);
 
-    final ScriptState<?> stateThatWasForked = scriptStatePtrArr_800bc1c0[this.context.params_20[0].get()];
+    final ScriptState<?> stateThatWasForked = SCRIPTS.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     this.context.params_20[1].jump(stateThatWasForked);
     stateThatWasForked.storage_44[32] = this.context.params_20[2].get();
@@ -1199,7 +1198,7 @@ public class ScriptState<T extends ScriptedObject> {
   public FlowControl scriptForkAndReenter() {
     LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and re-entering at offset %s", this.context.scriptState_04.index, this.context.params_20[0], this.context.params_20[1]);
 
-    final ScriptState<?> stateThatWasForked = scriptStatePtrArr_800bc1c0[this.context.params_20[0].get()];
+    final ScriptState<?> stateThatWasForked = this.manager.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     stateThatWasForked.frame().offset = stateThatWasForked.frame().file.getEntry(this.context.params_20[1].get());
     stateThatWasForked.storage_44[32] = this.context.params_20[2].get();

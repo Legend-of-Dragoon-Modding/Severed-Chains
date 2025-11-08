@@ -50,19 +50,19 @@ import java.util.function.Consumer;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.DrgnFiles.loadDir;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.DrgnFiles.loadDrgnFiles;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public final class Audio {
   private Audio() { }
@@ -661,7 +661,7 @@ public final class Audio {
 
   @Method(0x8001cce8L)
   public static void loadCharAttackSounds(final int bentIndex, final int type) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
 
     //LAB_8001cd3c
     int charSlot;

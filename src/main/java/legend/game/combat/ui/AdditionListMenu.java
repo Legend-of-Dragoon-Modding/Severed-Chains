@@ -18,12 +18,12 @@ import java.util.List;
 import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Text.renderText;
 import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.SBtld.loadAdditions;
 

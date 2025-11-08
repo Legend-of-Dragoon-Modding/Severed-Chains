@@ -25,12 +25,14 @@ import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.resizeDisplay;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
-import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
+import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class GameOver extends EngineState {
+  /** NOTE: same address as previous var */
+  private McqHeader gameOverMcq_800bdc3c;
+
   private int loadingStage;
 
   private Obj background;

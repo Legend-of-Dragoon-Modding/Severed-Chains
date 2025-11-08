@@ -11,7 +11,7 @@ import org.joml.Vector3i;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Text.renderText;
 
 public interface ScriptedObject {
   Vector3f getPosition();

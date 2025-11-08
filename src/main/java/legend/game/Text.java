@@ -1,6 +1,8 @@
 package legend.game;
 
+import legend.core.GameEngine;
 import legend.core.QueuedModelStandard;
+import legend.core.font.Font;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -8,6 +10,7 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
@@ -27,7 +30,9 @@ import legend.game.types.Translucency;
 import org.joml.Math;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DEFAULT_FONT;
@@ -40,6 +45,7 @@ import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
 import static legend.game.Graphics.centreScreenY_1f8003de;
+import static legend.game.Graphics.displayWidth_1f8003e0;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -47,8 +53,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
-public final class Textboxes {
-  private Textboxes() { }
+public final class Text {
+  private Text() { }
 
   private static final TextboxBorderMetrics0c[] textboxBorderMetrics_800108b0 = {
     new TextboxBorderMetrics0c(0, 0, 0, 0, 6, 8),
@@ -67,6 +73,8 @@ public final class Textboxes {
   public static final int[] textboxTextType_80052ba8 = {0, 1, 2, 3, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
   private static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
+
+  public static int textZ_800bdf00;
 
   private static final int[] textboxVariables_800bdf10 = new int[10];
   public static final TextboxText84[] textboxText_800bdf38 = new TextboxText84[8];
@@ -1837,6 +1845,99 @@ public final class Textboxes {
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
     textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c * 4.0f);
     RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms, QueuedModelStandard.class);
+  }
+
+  private static final MV textTransforms = new MV();
+
+  @Method(0x80029300L)
+  public static void renderText(final String text, final float originX, final float originY, final FontOptions options) {
+    renderText(text, originX, originY, options, null);
+  }
+
+  @Method(0x80029300L)
+  public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+    renderText(GameEngine.DEFAULT_FONT, text, originX, originY, options, queueCallback);
+  }
+
+  @Method(0x80029300L)
+  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options) {
+    renderText(font, text, originX, originY, options, null);
+  }
+
+  @Method(0x80029300L)
+  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+    font.init();
+
+    final float height = 12.0f * options.getSize();
+    final float trim = java.lang.Math.clamp(options.getTrim() * options.getSize(), -height, height);
+
+    textTransforms.scaling(options.getSize());
+
+    for(int i = 0; i < (options.hasShadow() ? 4 : 1); i++) {
+      float x = switch(options.getHorizontalAlign()) {
+        case LEFT -> originX;
+        case CENTRE -> originX - font.lineWidth(text) * options.getSize() / 2.0f;
+        case RIGHT -> originX - font.lineWidth(text) * options.getSize();
+      };
+
+      // I adjusted the texture so that glyphs start 1 pixel lower to fix bleeding - subtract 1 here to compensate
+      float y = originY - 1;
+      float glyphNudge = 0.0f;
+
+      for(int charIndex = 0; charIndex < text.length(); charIndex++) {
+        final char c = text.charAt(charIndex);
+
+        if(c != ' ') {
+          if(c == '\n') {
+            x = switch(options.getHorizontalAlign()) {
+              case LEFT -> originX;
+              case CENTRE -> originX - font.lineWidth(text, charIndex + 1) * options.getSize() / 2.0f;
+              case RIGHT -> originX - font.lineWidth(text, charIndex + 1) * options.getSize();
+            };
+
+            glyphNudge = 0.0f;
+            y += height;
+          } else {
+            final float offsetX = (i & 1) * options.getSize();
+            final float offsetY = (i >>> 1) * options.getSize();
+
+            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f);
+
+            if(trim < 0) {
+              textTransforms.transfer.y += trim;
+            }
+
+            if(i == 0 || font.usesColour(c)) {
+              final QueuedModelStandard model = font.queueChar(InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), c), textTransforms);
+
+              if(font.usesColour(c)) {
+                if(i == 0) {
+                  model.colour(options.getRed(), options.getGreen(), options.getBlue());
+                } else if(font.usesColour(c)) {
+                  model.colour(options.getShadowRed(), options.getShadowGreen(), options.getShadowBlue());
+                }
+              }
+
+              if(trim != 0) {
+                if(trim < 0) {
+                  model.scissor(0, (int)y + 1, displayWidth_1f8003e0, (int)(height + trim));
+                } else {
+                  model.scissor(0, (int)(y + 1 - trim), displayWidth_1f8003e0, (int)height);
+                }
+              }
+
+              if(queueCallback != null) {
+                queueCallback.accept(model);
+              }
+            }
+          }
+        }
+
+        if(c != '\n') {
+          glyphNudge += font.charWidth(c) * options.getSize();
+        }
+      }
+    }
   }
 
   @Method(0x80029920L)

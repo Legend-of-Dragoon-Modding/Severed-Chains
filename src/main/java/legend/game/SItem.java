@@ -8,12 +8,17 @@ import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.Item;
+import legend.game.inventory.ItemGroupSortMode;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
+import legend.game.inventory.OverflowMode;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
@@ -26,6 +31,9 @@ import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.modding.events.inventory.GiveEquipmentEvent;
+import legend.game.modding.events.inventory.Inventory;
+import legend.game.modding.events.inventory.TakeEquipmentEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -48,14 +56,21 @@ import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -72,10 +87,10 @@ import static legend.game.Audio.sssqResetStuff;
 import static legend.game.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.Audio.unloadSoundFile;
-import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.renderablePtr_800bdba4;
@@ -83,29 +98,27 @@ import static legend.game.Menus.renderablePtr_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
-import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
-import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
-import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.takeEquipmentId;
-import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
+import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.modding.coremod.CoreMod.ITEM_GROUP_SORT_MODE;
 
 public final class SItem {
   private SItem() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SItem.class);
 
   public static final MenuStack menuStack = new MenuStack();
   private static BackgroundMusic menuMusic;
@@ -516,6 +529,492 @@ public final class SItem {
     final ItemStack selected = items[seed_800fa754.nextInt(items.length)];
     script.params_20[0].set(selected.getItem().getRegistryId());
     return FlowControl.CONTINUE;
+  }
+
+  @Method(0x80022928L)
+  public static int getUnlockedDragoonSpells(final int[] spellIndicesOut, final int charIndex) {
+    //LAB_80022940
+    for(int spellIndex = 0; spellIndex < 8; spellIndex++) {
+      spellIndicesOut[spellIndex] = -1;
+    }
+
+    if(charIndex == -1) {
+      //LAB_80022a08
+      return 0;
+    }
+
+    // Hardcoded Divine Dragoon spells
+    if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+      spellIndicesOut[0] = 9;
+      spellIndicesOut[1] = 4;
+      return 2;
+    }
+
+    //LAB_80022994
+    //LAB_80022998
+    //LAB_800229d0
+    int spellCount = 0;
+    for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
+      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final int spellIndex = spellStuff.spellIndex_02;
+
+      if(spellIndex != -1) {
+        spellIndicesOut[spellCount] = spellIndex;
+        spellCount++;
+      }
+
+      //LAB_800229e8
+    }
+
+    //LAB_80022a00
+    return spellCount;
+  }
+
+  @Method(0x80022a10L)
+  public static int getUnlockedSpellCount(final int charIndex) {
+    if(charIndex == -1) {
+      return 0;
+    }
+
+    //LAB_80022a24
+    // Divine dragoon
+    if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+      return 2;
+    }
+
+    //LAB_80022a4c
+    //LAB_80022a50
+    //LAB_80022a64
+    int unlockedSpells = 0;
+    for(int i = 0; i < 6; i++) {
+      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
+        unlockedSpells++;
+      }
+
+      //LAB_80022a7c
+    }
+
+    return unlockedSpells;
+  }
+
+  /**
+   * @param amount Amount of HP to restore, -1 restores all hP
+   * @return The amount of HP restored, -1 if all HP is restored, or -2 if HP was already full
+   */
+  @Method(0x80022b50L)
+  public static int addHp(final int charIndex, final int amount) {
+    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+
+    if(charData.hp_08 == stats.maxHp_66) {
+      return -2;
+    }
+
+    //LAB_80022bb4
+    final int ret;
+    if(amount == -1) {
+      charData.hp_08 = stats.maxHp_66;
+      ret = -1;
+    } else {
+      //LAB_80022bc8
+      charData.hp_08 += amount;
+
+      if(charData.hp_08 < stats.maxHp_66) {
+        ret = amount;
+      } else {
+        charData.hp_08 = stats.maxHp_66;
+        ret = -1;
+      }
+    }
+
+    //LAB_80022bec
+    loadCharacterStats();
+
+    //LAB_80022bf8
+    return ret;
+  }
+
+  /**
+   * @param amount Amount of MP to restore, -1 restores all MP
+   * @return The amount of MP restored, -1 if all MP is restored, or -2 if MP was already full
+   */
+  @Method(0x80022c08L)
+  public static int addMp(final int charIndex, final int amount) {
+    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+
+    if(stats.maxMp_6e == 0 || charData.mp_0a == stats.maxMp_6e) {
+      return -2;
+    }
+
+    //LAB_80022c78
+    final int ret;
+    if(amount == -1) {
+      charData.mp_0a = stats.maxMp_6e;
+      ret = -1;
+    } else {
+      //LAB_80022c8c
+      charData.mp_0a += amount;
+
+      if(charData.mp_0a < stats.maxMp_6e) {
+        ret = amount;
+      } else {
+        charData.mp_0a = stats.maxMp_6e;
+        ret = -1;
+      }
+    }
+
+    //LAB_80022cb4
+    loadCharacterStats();
+
+    //LAB_80022cc0
+    return ret;
+  }
+
+  @Method(0x80022cd0L)
+  public static int addSp(final int charIndex, final int amount) {
+    assert false;
+    return 0;
+  }
+
+  public static boolean takeItem(final Item item) {
+    return gameState_800babc8.items_2e9.take(item).isEmpty();
+  }
+
+  public static boolean takeItem(final ItemStack stack) {
+    return gameState_800babc8.items_2e9.take(stack).isEmpty();
+  }
+
+  @Method(0x800232dcL)
+  public static boolean takeItemFromSlot(final int itemSlot) {
+    return takeItemFromSlot(itemSlot, gameState_800babc8.items_2e9.get(itemSlot).getSize());
+  }
+
+  @Method(0x800232dcL)
+  public static boolean takeItemFromSlot(final int itemSlot, final int amount) {
+    if(itemSlot >= gameState_800babc8.items_2e9.getSize()) {
+      LOGGER.warn("Tried to take item index %d (out of bounds)", itemSlot);
+      return false;
+    }
+
+    gameState_800babc8.items_2e9.takeFromSlot(itemSlot, amount);
+    return true;
+  }
+
+  public static boolean takeEquipmentId(final Equipment equipment) {
+    final int equipmentSlot = gameState_800babc8.equipment_1e8.indexOf(equipment);
+
+    if(equipmentSlot != -1) {
+      return takeEquipment(equipmentSlot);
+    }
+
+    return false;
+  }
+
+  @Method(0x800233d8L)
+  public static boolean takeEquipment(final int equipmentIndex) {
+    if(equipmentIndex >= gameState_800babc8.equipment_1e8.size()) {
+      LOGGER.warn("Tried to take equipment index %d (out of bounds)", equipmentIndex);
+      return false;
+    }
+
+    final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
+    final TakeEquipmentEvent event = EVENTS.postEvent(new TakeEquipmentEvent(equipment, equipmentIndex));
+
+    if(event.isCanceled()) {
+      return false;
+    }
+
+    gameState_800babc8.equipment_1e8.remove(equipmentIndex);
+    return true;
+  }
+
+  @Method(0x80023484L)
+  public static boolean giveItem(final Item item) {
+    return gameState_800babc8.items_2e9.give(item).isEmpty();
+  }
+
+  /**
+   * Note: does NOT consume the passed in item stack
+   */
+  @Method(0x80023484L)
+  public static boolean giveItem(final ItemStack item) {
+    return gameState_800babc8.items_2e9.give(new ItemStack(item)).isEmpty();
+  }
+
+  @Method(0x80023484L)
+  public static boolean giveEquipment(final Equipment equipment) {
+    final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment, Collections.unmodifiableList(gameState_800babc8.equipment_1e8), 255));
+
+    if(event.isCanceled() || event.givenEquipment.isEmpty()) {
+      return false;
+    }
+
+    final boolean overflowed = event.currentEquipment.size() + event.givenEquipment.size() > event.maxInventorySize;
+
+    if(event.overflowMode == OverflowMode.FAIL && overflowed) {
+      return false;
+    }
+
+    if(event.overflowMode == OverflowMode.TRUNCATE && overflowed) {
+      for(int i = 0; i < event.givenEquipment.size() && event.currentEquipment.size() <= event.maxInventorySize; i++) {
+        gameState_800babc8.equipment_1e8.add(event.givenEquipment.get(i));
+      }
+
+      return true;
+    }
+
+    gameState_800babc8.equipment_1e8.addAll(event.givenEquipment);
+    return true;
+  }
+
+  /**
+   * @param items the items to give
+   * @return the number of items that could not be given
+   */
+  @Method(0x80023544L)
+  public static int giveItems(final List<EnemyDrop> items) {
+    int count = 0;
+
+    //LAB_80023580
+    final Iterator<EnemyDrop> it = items.iterator();
+    while(it.hasNext()) {
+      final EnemyDrop drop = it.next();
+
+      if(!drop.performDrop()) {
+        //LAB_800235a4
+        //LAB_800235c0
+        drop.overflow();
+        it.remove();
+        count++;
+      }
+
+      //LAB_80023604
+    }
+
+    //LAB_80023618
+    return count;
+  }
+
+  @Method(0x8002363cL)
+  public static int addGold(final int amount) {
+    gameState_800babc8.gold_94 += amount;
+
+    if(gameState_800babc8.gold_94 > 99999999) {
+      gameState_800babc8.gold_94 = 99999999;
+    }
+
+    //LAB_8002366c
+    return 0;
+  }
+
+  /**
+   * @param part 0: second, 1: minute, 2: hour
+   */
+  @Method(0x80023674L)
+  public static int getTimestampPart(int timestamp, final long part) {
+    if(timestamp >= 216000000) { // Clamp to 1000 hours
+      timestamp = 215999999;
+    }
+
+    // Hours
+    if(part == 0) {
+      return timestamp / 216000 % 1000;
+    }
+
+    // Minutes
+    if(part == 1) {
+      return timestamp / 3600 % 60;
+    }
+
+    // Seconds
+    if(part == 2) {
+      return timestamp / 60 % 60;
+    }
+
+    return 0;
+  }
+
+  @Method(0x800239e0L)
+  public static <T extends InventoryEntry> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
+    out.clear();
+
+    //LAB_800239ec
+    for(int i = 0; i < count; i++) {
+      if((display.get(i).flags_02 & 0x1000) == 0) {
+        out.add(display.get(i).item_00);
+      }
+    }
+  }
+
+  @Method(0x800239e0L)
+  public static void setInventoryFromDisplay(final List<MenuEntryStruct04<ItemStack>> display, final Inventory out, final int count) {
+    out.clear();
+
+    //LAB_800239ec
+    for(int i = 0; i < count; i++) {
+      if((display.get(i).flags_02 & 0x1000) == 0) {
+        out.give(display.get(i).item_00, true);
+      }
+    }
+  }
+
+  @Method(0x80023a2cL)
+  public static <T extends InventoryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
+    display.sort(menuItemIconComparator(retailSorting, InventoryEntry::getRegistryId));
+    setInventoryFromDisplay(display, items, count);
+  }
+
+  @Method(0x80023a2cL)
+  public static void sortItems(final List<MenuEntryStruct04<ItemStack>> display, final Inventory items, final int count, final List<String> retailSorting) {
+    display.sort(menuItemIconComparator(retailSorting, stack -> stack.getItem().getRegistryId()));
+    setInventoryFromDisplay(display, items, count);
+  }
+
+  public static <T extends InventoryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
+    final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
+
+    Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.item_00.getIcon().resolve().icon);
+
+    if(retail) {
+      comparator = comparator.thenComparingInt(item -> {
+        final RegistryId id = idExtractor.apply(item.item_00);
+
+        if(!LodMod.MOD_ID.equals(id.modId()) || !retailSorting.contains(id.entryId())) {
+          return Integer.MAX_VALUE;
+        }
+
+        return retailSorting.indexOf(id.entryId());
+      });
+
+      comparator = comparator.thenComparing(item -> {
+        final RegistryId id = idExtractor.apply(item.item_00);
+
+        if(LodMod.MOD_ID.equals(id.modId()) && retailSorting.contains(id.entryId())) {
+          return "";
+        }
+
+        return I18n.translate(item.getNameTranslationKey());
+      });
+    } else {
+      comparator = comparator.thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+    }
+
+    return comparator;
+  }
+
+  public static Comparator<MenuEntryStruct04<Equipment>> menuEquipmentSlotComparator() {
+    return Comparator
+      .comparingInt((MenuEntryStruct04<Equipment> equipment) -> equipment.item_00.slot.ordinal())
+      .thenComparing(equipment -> I18n.translate(equipment.getNameTranslationKey()));
+  }
+
+  @Method(0x80023a88L)
+  public static void sortItems() {
+    final List<MenuEntryStruct04<ItemStack>> items = new ArrayList<>();
+
+    for(final ItemStack stack : gameState_800babc8.items_2e9) {
+      items.add(new MenuEntryStruct04<>(stack));
+    }
+
+    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize(), List.of(LodMod.ITEM_IDS));
+  }
+
+  @Method(0x8002a6fcL)
+  public static void clearCharacterStats() {
+    //LAB_8002a730
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+
+      stats.xp_00 = 0;
+      stats.hp_04 = 0;
+      stats.mp_06 = 0;
+      stats.sp_08 = 0;
+      stats.dxp_0a = 0;
+      stats.flags_0c = 0;
+      stats.level_0e = 0;
+      stats.dlevel_0f = 0;
+      stats.equipment_30.clear();
+      stats.selectedAddition_35 = 0;
+
+      //LAB_8002a780;
+      for(int i = 0; i < 8; i++) {
+        stats.additionLevels_36[i] = 0;
+        stats.additionXp_3e[i] = 0;
+      }
+
+      stats.equipmentPhysicalImmunity_46 = false;
+      stats.equipmentMagicalImmunity_48 = false;
+      stats.equipmentPhysicalResistance_4a = false;
+      stats.equipmentSpMultiplier_4c = 0;
+      stats.equipmentSpPerPhysicalHit_4e = 0;
+      stats.equipmentMpPerPhysicalHit_50 = 0;
+      stats.equipmentSpPerMagicalHit_52 = 0;
+      stats.equipmentMpPerMagicalHit_54 = 0;
+      stats.equipmentEscapeBonus_56 = 0;
+      stats.equipmentHpRegen_58 = 0;
+      stats.equipmentMpRegen_5a = 0;
+      stats.equipmentSpRegen_5c = 0;
+      stats.equipmentRevive_5e = 0;
+      stats.equipmentMagicalResistance_60 = false;
+      stats.equipmentHpMulti_62 = 0;
+      stats.equipmentMpMulti_64 = 0;
+      stats.maxHp_66 = 0;
+      stats.addition_68 = 0;
+      stats.bodySpeed_69 = 0;
+      stats.bodyAttack_6a = 0;
+      stats.bodyMagicAttack_6b = 0;
+      stats.bodyDefence_6c = 0;
+      stats.bodyMagicDefence_6d = 0;
+      stats.maxMp_6e = 0;
+      stats.spellId_70 = 0;
+      stats._71 = 0;
+      stats.dragoonAttack_72 = 0;
+      stats.dragoonMagicAttack_73 = 0;
+      stats.dragoonDefence_74 = 0;
+      stats.dragoonMagicDefence_75 = 0;
+
+      clearEquipmentStats(charIndex);
+
+      stats.addition_00_9c = 0;
+      stats.additionSpMultiplier_9e = 0;
+      stats.additionDamageMultiplier_9f = 0;
+    }
+
+    characterStatsLoaded_800be5d0 = false;
+  }
+
+  @Method(0x8002a86cL)
+  public static void clearEquipmentStats(final int charIndex) {
+    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+
+    stats.specialEffectFlag_76 = 0;
+//    stats.equipmentType_77 = 0;
+    stats.equipment_02_78 = 0;
+    stats.equipmentEquipableFlags_79 = 0;
+    stats.equipmentAttackElements_7a.clear();
+    stats.equipment_05_7b = 0;
+    stats.equipmentElementalResistance_7c.clear();
+    stats.equipmentElementalImmunity_7d.clear();
+    stats.equipmentStatusResist_7e = 0;
+    stats.equipment_09_7f = 0;
+    stats.equipmentAttack1_80 = 0;
+    stats._83 = 0;
+    stats.equipmentIcon_84 = 0;
+
+    stats.equipmentSpeed_86 = 0;
+    stats.equipmentAttack_88 = 0;
+    stats.equipmentMagicAttack_8a = 0;
+    stats.equipmentDefence_8c = 0;
+    stats.equipmentMagicDefence_8e = 0;
+    stats.equipmentAttackHit_90 = 0;
+    stats.equipmentMagicHit_92 = 0;
+    stats.equipmentAttackAvoid_94 = 0;
+    stats.equipmentMagicAvoid_96 = 0;
+    stats.equipmentOnHitStatusChance_98 = 0;
+    stats.equipment_19_99 = 0;
+    stats.equipment_1a_9a = 0;
+    stats.equipmentOnHitStatus_9b = 0;
   }
 
   @Method(0x800fc698L)

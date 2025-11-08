@@ -4,15 +4,12 @@ import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
-import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
-import legend.game.scripting.ScriptState;
 import legend.game.submap.SobjPos14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import org.joml.Vector2f;
 
@@ -31,8 +28,6 @@ public final class Scus94491BpeSegment_800b {
   public static int tickCount_800bb0fc;
 
   public static int pregameLoadingStage_800bb10c;
-
-  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[108];
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
   public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
@@ -73,13 +68,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static int livingCharCount_800bc97c;
 
-  public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
-  public static int dissolveRowCount_800bd710;
-  public static int dissolveIterationsPerformed_800bd714;
-  public static int battleDissolveTicks;
-
-  public static int _800bd740;
-
   public static boolean _800bd7ac;
   public static int _800bd7b0;
   public static boolean submapFullyLoaded_800bd7b4;
@@ -104,11 +92,6 @@ public final class Scus94491BpeSegment_800b {
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
   public static boolean loadingNewGameState_800bdc34;
-
-  /** NOTE: same address as previous var */
-  public static McqHeader gameOverMcq_800bdc3c;
-
-  public static int textZ_800bdf00;
 
   public static boolean characterStatsLoaded_800be5d0;
 

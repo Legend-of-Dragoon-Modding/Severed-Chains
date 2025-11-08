@@ -16,19 +16,19 @@ import org.legendofdragoon.scripting.tokens.Script;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.IoHelper.intsToBytes;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static boolean[] scriptLog = new boolean[scriptStatePtrArr_800bc1c0.length];
+  public static boolean[] scriptLog = new boolean[108];
 
   public static final Map<OpType, Function<RunningScript<?>, String>> scriptFunctionDescriptions = new EnumMap<>(OpType.class);
 
@@ -171,6 +171,8 @@ public class ScriptManager {
   private int framesPerTick;
   private int currentTicks;
 
+  private final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[108];
+
   public ScriptManager(final Path patchDir) {
     this.patchDir = patchDir;
   }
@@ -225,22 +227,20 @@ public class ScriptManager {
   }
 
   public void clear() {
-    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
-      scriptStatePtrArr_800bc1c0[i] = null;
-    }
+    Arrays.fill(this.scriptStatePtrArr_800bc1c0, null);
   }
 
   private int findFreeScriptState() {
     this.upperBound++;
 
-    if(this.upperBound >= scriptStatePtrArr_800bc1c0.length) {
+    if(this.upperBound >= this.scriptStatePtrArr_800bc1c0.length) {
       this.upperBound = 9;
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = this.upperBound; i < scriptStatePtrArr_800bc1c0.length; i++) {
-      if(scriptStatePtrArr_800bc1c0[i] == null) {
+    for(int i = this.upperBound; i < this.scriptStatePtrArr_800bc1c0.length; i++) {
+      if(this.scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
         this.upperBound = i;
         return i;
@@ -250,7 +250,7 @@ public class ScriptManager {
     //LAB_8001586c
     //LAB_80015898
     for(int i = 9; i < this.upperBound; i++) {
-      if(scriptStatePtrArr_800bc1c0[i] == null) {
+      if(this.scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
         this.upperBound = i;
         return i;
@@ -266,7 +266,7 @@ public class ScriptManager {
       return null;
     }
 
-    return scriptStatePtrArr_800bc1c0[index];
+    return this.scriptStatePtrArr_800bc1c0[index];
   }
 
   public <T extends ScriptedObject> ScriptState<T> getState(final int index, final Class<T> type) {
@@ -274,15 +274,19 @@ public class ScriptManager {
       return null;
     }
 
-    return ScriptState.classFor(type).cast(scriptStatePtrArr_800bc1c0[index]);
+    return ScriptState.classFor(type).cast(this.scriptStatePtrArr_800bc1c0[index]);
   }
 
   public <T> T getObject(final int index, final Class<T> type) {
-    if(index < 0 || scriptStatePtrArr_800bc1c0[index] == null) {
+    if(index < 0 || this.scriptStatePtrArr_800bc1c0[index] == null) {
       return null;
     }
 
-    return type.cast(scriptStatePtrArr_800bc1c0[index].innerStruct_00);
+    return type.cast(this.scriptStatePtrArr_800bc1c0[index].innerStruct_00);
+  }
+
+  public int count() {
+    return this.scriptStatePtrArr_800bc1c0.length;
   }
 
   public <T extends ScriptedObject> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
@@ -293,7 +297,7 @@ public class ScriptManager {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, name);
 
     final ScriptState<T> scriptState = new ScriptState<>(this, index, name, type);
-    scriptStatePtrArr_800bc1c0[index] = scriptState;
+    this.scriptStatePtrArr_800bc1c0[index] = scriptState;
 
     //LAB_800159c0
     for(int i = 1; i < 33; i++) {
@@ -309,14 +313,18 @@ public class ScriptManager {
     return scriptState;
   }
 
+  void deallocate(final int index) {
+    this.scriptStatePtrArr_800bc1c0[index] = null;
+  }
+
   private void executeScriptFrame() {
     if(this.paused || this.stopped) {
       return;
     }
 
     //LAB_80015fd8
-    for(int index = 0; index < scriptStatePtrArr_800bc1c0.length; index++) {
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
+    for(int index = 0; index < this.scriptStatePtrArr_800bc1c0.length; index++) {
+      final ScriptState<?> state = this.scriptStatePtrArr_800bc1c0[index];
 
       if(state != null) {
         try {
@@ -340,8 +348,8 @@ public class ScriptManager {
     }
 
     //LAB_80017750
-    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
-      final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
+    for(int i = 0; i < this.scriptStatePtrArr_800bc1c0.length; i++) {
+      final ScriptState<?> scriptState = this.scriptStatePtrArr_800bc1c0[i];
       // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
       // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
@@ -356,8 +364,8 @@ public class ScriptManager {
     }
 
     //LAB_800177ac
-    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
-      final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
+    for(int i = 0; i < this.scriptStatePtrArr_800bc1c0.length; i++) {
+      final ScriptState<?> scriptState = this.scriptStatePtrArr_800bc1c0[i];
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {
         try {
           scriptState.tempTick();
@@ -376,8 +384,8 @@ public class ScriptManager {
     }
 
     //LAB_80017854
-    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
-      final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
+    for(int i = 0; i < this.scriptStatePtrArr_800bc1c0.length; i++) {
+      final ScriptState<?> scriptState = this.scriptStatePtrArr_800bc1c0[i];
       // hasExecuted - script has already had a chance to run some of its code, so we can start ticking/rendering
       // isScriptFrame - some effects allocate other effects and expect them to tick/render once they finish (#1530)
       if(scriptState != null && (scriptState.hasExecuted() || isScriptFrame)) {

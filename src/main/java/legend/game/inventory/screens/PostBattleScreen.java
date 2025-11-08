@@ -34,14 +34,13 @@ import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
+import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.getXpToNextLevel;
+import static legend.game.SItem.giveItems;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.giveItems;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -52,9 +51,10 @@ import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SBtld.FUN_80019470;
 import static legend.game.combat.SBtld.addLevelUpOverlay;
@@ -909,7 +909,7 @@ public class PostBattleScreen extends MenuScreen {
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      renderText(spellStats_800fa0b8[spellIndex].name, x - 4, y + 6, this.fontOptions);
+      renderText(I18n.translate(spellStats_800fa0b8[spellIndex]), x - 4, y + 6, this.fontOptions);
       renderText(SPELL_UNLOCKED, x - 4, y + 20, this.fontOptions);
     }
 

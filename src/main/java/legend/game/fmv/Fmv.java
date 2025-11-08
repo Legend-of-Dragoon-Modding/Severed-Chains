@@ -44,8 +44,8 @@ import static legend.game.Rumble.adjustRumbleOverTime;
 import static legend.game.Rumble.startRumbleIntensity;
 import static legend.game.Rumble.stopRumble;
 import static legend.game.SItem.UI_WHITE;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FMV_SKIP;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 

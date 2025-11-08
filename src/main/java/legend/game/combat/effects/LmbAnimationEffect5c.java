@@ -28,13 +28,13 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Graphics.perspectiveTransform;
 import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.FUN_800e61e4;
 import static legend.game.combat.SEffe.FUN_800e62a8;
@@ -91,7 +91,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   private static void renderLmbSpecial(final LmbAnimationEffect5c effect, final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final int objectIndex) {
     //LAB_80116790
-    final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
+    final ScriptState<EffectManagerData6c> state = SCRIPTS.getState(deffFlags, EffectManagerData6c.class);
     final EffectManagerData6c<?> manager2 = state.innerStruct_00;
     manager.params_10.trans_04.set(effect.transforms.transfer);
     getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, effect.transforms);

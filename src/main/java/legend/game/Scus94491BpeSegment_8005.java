@@ -6,45 +6,6 @@ import legend.game.types.AdditionData0e;
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
-  public static final String[] spellCombatDescriptions_80052018 = {
-    "Fire STR 50% Single", "Fire STR 25% All", "Fire STR 75% Single", "Fire STR 75% All", "STR 150% Single",
-    "Wind STR 25% All", "Wind STR 75% Single", "Damage Resist 50% 3 Turns", "Wind STR 75% All", "STR 100% All",
-    "Light STR 25% All", "Ally 50% Rev, 100% Rec, Cure", "Ally All 50% Rev & Rec, Cure", "Light STR 75% & Allies 100% Rec", "Wind STR 25% All",
-    "Dark STR 50% Single & HP", "Dark STR 25% All & Fear", "Wind STR 75% Single", "Drags minor enemies to Hell", "Dark STR 100% Single",
-    "Thunder STR 25% Single", "Thunder STR 50% Single & Stun", "Thunder STR 75% Single", "Thunder STR 100% Single", "Water STR 50% Single",
-    "Ally All 50% Rec, Cure", "Damage Resist 50% 3 Turns", "Water STR 50% All", "Water STR 100% Single", "Earth STR 37.5% All",
-    "Earth STR 50% All", "Earth STR 75% All", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "Light STR 25% All", "Ally 50% Rev, 100% Rec, Cure", "Ally All 50% Rev & Rec, Cure", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "",
-  };
-
-  public static final String[] spells_80052734 = {
-    "Flameshot", "Explosion", "Final Burst", "Red-Eyed Dragon", "Divine DG Cannon",
-    "Wing Blaster", "Gaspless", "Blossom Storm", "Jade Dragon", "Divine DG Ball",
-    "Star Children", "Moon Light", "Gates of Heaven", "W Silver Dragon", "Wing Blaster",
-    "Astral Drain", "Death Dimension", "Gaspless", "Demon's Gate", "Dark Dragon",
-    "Atomic Mind", "Thunder Kid", "Thunder God", "Violet Dragon", "Freezing Ring",
-    "Rainbow Breath", "Rose Storm", "Diamond Dust", "Blue Sea Dragon", "Grand Stream",
-    "Meteor Strike", "Golden Dragon", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "Star Children", "Moon Light", "Gates of Heaven", "", "",
-    "", "", "", "", "",
-    "", "", "", "", "",
-    "", "", "", "",
-  };
   public static final AdditionData0e[] additionData_80052884 = {
     new AdditionData0e(1, 1, new int[] {35, 35, 35, 35, 35}, 150),
     new AdditionData0e(2, 3, new int[] {20, 24, 28, 32, 36}, 200),

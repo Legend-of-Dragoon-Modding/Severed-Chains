@@ -13,6 +13,7 @@ import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
 import legend.game.combat.types.AdditionSound;
 import legend.game.combat.types.StageDeffThing08;
+import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.BattleReportOverlay0e;
 import legend.game.types.BattleReportOverlayList10;
@@ -36,18 +37,11 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
 import static legend.game.Scus94491BpeSegment_8004.battleReportOverlayLists_8004f658;
-import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6ec;
-import static legend.game.Scus94491BpeSegment_800b._800bd740;
-import static legend.game.Scus94491BpeSegment_800b.battleDissolveTicks;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.dissolveDarkening_800bd700;
-import static legend.game.Scus94491BpeSegment_800b.dissolveIterationsPerformed_800bd714;
-import static legend.game.Scus94491BpeSegment_800b.dissolveRowCount_800bd710;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
@@ -58,6 +52,17 @@ import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public final class SBtld {
   private SBtld() { }
+
+  private static int _8004f6e4 = -1;
+
+  private static int battleStartDelayTicks_8004f6ec;
+
+  private static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
+  private static int dissolveRowCount_800bd710;
+  private static int dissolveIterationsPerformed_800bd714;
+  private static int battleDissolveTicks;
+
+  private static int _800bd740;
 
   public static void startLegacyEncounter(final int encounterId, final int stageId) {
     startEncounter(REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get(), stageId);
