@@ -192,7 +192,12 @@ public class LodMod {
     "spell56", "spell57", "spell58", "spell59", "spell60", "spell61", "spell62", "spell63",
     "spell64", "star_children", "moon_light", "gates_of_heaven", "spell68", "spell69", "spell70", "spell71",
     "spell72", "spell73", "spell74", "spell75", "spell76", "spell77", "spell78", "spell79",
-    "spell80", "spell81", "spell82", "spell83",
+    "spell80", "spell81", "spell82", "spell83", "spell84", "spell85", "spell86", "spell87",
+    "spell88", "spell89", "spell90", "spell91", "spell92", "spell93", "spell94", "spell95",
+    "spell96", "spell97", "spell98", "spell99", "spell100", "spell101", "spell102", "spell103",
+    "spell104", "spell105", "spell106", "spell107", "spell108", "spell109", "spell110", "spell111",
+    "spell112", "spell113", "spell114", "spell115", "spell116", "spell117", "spell118", "spell119",
+    "spell120", "spell121", "spell122", "spell123", "spell124", "spell125", "spell126", "spell127",
   };
 
   public static final String[] SHOP_IDS = {
