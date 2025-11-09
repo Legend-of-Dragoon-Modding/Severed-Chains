@@ -6,7 +6,6 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Response;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,9 +75,8 @@ public class Updater {
   private void onCheckComplete(final Response response, final Consumer<Release> onComplete) {
     final Release release = this.parseReleases(new JSONArray(response.getResponseBody()))
       .stream()
-      .filter(r -> r.prerelease == Version.PRERELEASE)
+      .filter(r -> r.tag.startsWith(Version.CHANNEL) && r.timestamp.isAfter(Version.TIMESTAMP))
       .sorted()
-      .filter(r -> r.timestamp.isAfter(Version.TIMESTAMP))
       .findFirst()
       .orElse(null);
 
@@ -99,8 +97,10 @@ public class Updater {
     final List<Release> releases = new ArrayList<>();
 
     for(int releaseIndex = 0; releaseIndex < releasesJson.length(); releaseIndex++) {
-      final JSONObject release = releasesJson.getJSONObject(releaseIndex);
-      releases.add(new Release(release.getString("tag_name"), release.getString("html_url"), ZonedDateTime.parse(release.getString("published_at")), release.getBoolean("prerelease")));
+      final JSONObject releaseJson = releasesJson.getJSONObject(releaseIndex);
+      final Release release = new Release(releaseJson.getString("tag_name"), releaseJson.getString("html_url"), ZonedDateTime.parse(releaseJson.getString("updated_at")), releaseJson.getBoolean("prerelease"));
+      releases.add(release);
+      LOGGER.info("Found release %s", release);
     }
 
     return releases;
@@ -167,7 +167,7 @@ public class Updater {
     }
 
     @Override
-    public int compareTo(@NotNull final Updater.Release o) {
+    public int compareTo(final Updater.Release o) {
       return -this.timestamp.compareTo(o.timestamp);
     }
 

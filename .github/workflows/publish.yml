@@ -29,6 +29,9 @@ jobs:
     - name: Replace commit hash
       run: sed -i "s/COMMIT/${{ github.sha }}/g" ./src/main/java/legend/core/Version.java
 
+    - name: Replace channel
+      run: sed -i "s/\"CHANNEL\"/\"devbuild\"/g" ./src/main/java/legend/core/Version.java
+
     - name: Replace build time
       run: sed -i "s/TIMESTAMP = null/TIMESTAMP = ZonedDateTime.parse(\"$(date --date="+5 minutes" -Iseconds -u)\")/g" ./src/main/java/legend/core/Version.java
 
