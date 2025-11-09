@@ -26,6 +26,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import org.joml.Vector2i;
+import org.joml.Vector3i;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -40,6 +41,9 @@ import static legend.game.Audio.sssqResetStuff;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Graphics.clearBlue_800babc0;
+import static legend.game.Graphics.clearGreen_800bb104;
+import static legend.game.Graphics.clearRed_8007a3a8;
 import static legend.game.Rumble.adjustRumbleOverTime;
 import static legend.game.Rumble.startRumbleIntensity;
 import static legend.game.Rumble.stopRumble;
@@ -231,6 +235,7 @@ public final class Fmv {
   private static Texture displayTexture;
   private static final Vector2i oldProjectionSize = new Vector2i();
   private static EngineState.RenderMode oldRenderMode;
+  private static final Vector3i oldClearColour = new Vector3i();
 
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
@@ -318,8 +323,10 @@ public final class Fmv {
     oldFps = RENDERER.window().getFpsLimit();
     oldProjectionSize.set(RENDERER.getNativeWidth(), RENDERER.getNativeHeight());
     oldRenderMode = RENDERER.getRenderMode();
+    oldClearColour.set(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
+    RENDERER.setClearColour(0.0f, 0.0f, 0.0f);
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
     volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
@@ -649,6 +656,10 @@ public final class Fmv {
       PLATFORM.setInputTickRate(oldFps);
       RENDERER.setRenderMode(oldRenderMode);
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
+      clearRed_8007a3a8 = oldClearColour.x;
+      clearGreen_800bb104 = oldClearColour.y;
+      clearBlue_800babc0 = oldClearColour.z;
+
       oldRenderer = null;
 
       AUDIO_THREAD.removeSource(source);
