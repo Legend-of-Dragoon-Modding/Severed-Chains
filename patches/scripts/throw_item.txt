@@ -25,7 +25,7 @@ gosub inl[:LABEL_124] ; addr
 
 ; pull element colour out of element registry
 call Battle::scriptGetBentStat, stor[0], ITEM_ELEMENT, reg[1] ; r1 = item element
-call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:elements], reg[1], 0, stor[8] ; s8 = packed element rgb
+call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:elements], reg[1], 0, stor[8] ; s8 = packed element rgb
 
 gosub inl[:THROW_ATTACK_ITEM] ; addr
 call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
@@ -151,7 +151,7 @@ USE_MAGIC_SHIELD:
 gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
 or 0xc, var[128 + stor[8]][7] ; right, left
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:ALLOCATE_MAGICAL_SHIELD_EFFECT] ; addr
 mov 0x18, stor[23] ; source, dest
 wait stor[23] ; frames
@@ -164,7 +164,7 @@ USE_MATERIAL_SHIELD:
 gosub inl[:THROW_SHIELD_BUFF_PURIFIER] ; addr
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
 or 0x3, var[128 + stor[8]][7] ; right, left
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:ALLOCATE_MATERIAL_SHIELD_EFFECT] ; addr
 mov 0x18, stor[23] ; source, dest
 wait stor[23] ; frames
@@ -176,9 +176,9 @@ return
 USE_SMOKE_BALL:
 mov 0xcd, stor[8] ; source, dest
 gosub inl[:LOAD_SOUNDS] ; addr
-call Scus94491BpeSegment::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:ALLOCATE_SMOKE_BALL_PARTICLES] ; addr
-call Scus94491BpeSegment::scriptUnloadSoundFile, 0x6 ; soundType
+call Audio::scriptUnloadSoundFile, 0x6 ; soundType
 mov 0x20, stor[23] ; source, dest
 wait stor[23] ; frames
 jmp_cmp ==, 0x0, var[46][2], inl[:SMOKE_BALL_NO_ESCAPE_CHANCE] ; operand, left, right, addr
@@ -294,7 +294,7 @@ return
 THROW_ATTACK_ITEM:
 gosub inl[:SET_ATTACK_ITEM_TARGETING_INFO] ; addr
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x7 ; bentIndex, animIndex
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 
 mov 0x10, stor[23] ; source, dest
 wait stor[23] ; frames
