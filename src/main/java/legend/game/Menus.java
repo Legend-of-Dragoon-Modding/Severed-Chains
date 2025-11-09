@@ -220,7 +220,7 @@ public final class Menus {
       final UiPart[] entries = renderable.uiType_20.entries_08;
 
       if((renderable.flags_00 & Renderable58.FLAG_NO_ANIMATION) == 0) {
-        if(tickCount_800bb0fc % org.joml.Math.max(1, 3 - vsyncMode_8007a3b8) == 0) {
+        if(tickCount_800bb0fc % Math.max(1, 3 - vsyncMode_8007a3b8) == 0) {
           renderable.ticksPerFrame_08--;
         }
 
@@ -302,7 +302,7 @@ public final class Menus {
         final RenderableMetrics14[] metricses = entries[renderable.glyph_04].metrics_00();
 
         //LAB_80023e94
-        for(int metricsIndex = org.joml.Math.min(metricses.length, renderable.metricsCount) - 1; metricsIndex >= 0; metricsIndex--) {
+        for(int metricsIndex = Math.min(metricses.length, renderable.metricsCount) - 1; metricsIndex >= 0; metricsIndex--) {
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
           final float x1;
@@ -322,7 +322,7 @@ public final class Menus {
 
             //LAB_80023f4c
             //LAB_80023f68
-            final float scaledWidth = org.joml.Math.abs(metrics.width_08 * widthScale);
+            final float scaledWidth = Math.abs(metrics.width_08 * widthScale);
             if(metrics.widthScale_10 < 0) {
               width = -scaledWidth;
               x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f + scaledWidth;
@@ -388,12 +388,13 @@ public final class Menus {
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride(clutX, clut >>> 6)
               .colour(renderable.colour)
-              ;
+              .translucentDepthComparator(GL_LEQUAL)
+              .opaqueDepthComparator(GL_LEQUAL)
+            ;
 
             if((metrics.clut_04 & 0x8000) != 0) {
               model
                 .translucency(Translucency.of(tpage >>> 5 & 0b11))
-                .translucentDepthComparator(GL_LEQUAL)
               ;
             }
 

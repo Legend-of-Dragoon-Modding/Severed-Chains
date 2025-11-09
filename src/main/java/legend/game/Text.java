@@ -1901,7 +1901,7 @@ public final class Text {
             final float offsetX = (i & 1) * options.getSize();
             final float offsetY = (i >>> 1) * options.getSize();
 
-            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f);
+            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f + i * 0.1f);
 
             if(trim < 0) {
               textTransforms.transfer.y += trim;

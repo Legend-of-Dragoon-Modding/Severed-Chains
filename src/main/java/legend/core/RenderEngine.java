@@ -1018,8 +1018,20 @@ public class RenderEngine {
     this.transformsUniform.set(this.transformsBuffer);
   }
 
-  private final Comparator<QueuedModel<?, ?>> perspectiveTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.modelView.m32() + model.screenspaceOffset.z).reversed();
-  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.transforms.m32() + model.screenspaceOffset.z).reversed();
+  private final Comparator<QueuedModel<?, ?>> perspectiveTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.modelView.m32() + model.screenspaceOffset.z).reversed().thenComparingInt(model -> model.sequence);
+  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.transforms.m32() + model.screenspaceOffset.z).reversed().thenComparingInt(model -> model.sequence);
+  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter1 = (a, b) -> {
+    final float depthA = a.transforms.m32() + a.screenspaceOffset.z;
+    final float depthB = b.transforms.m32() + b.screenspaceOffset.z;
+
+    final int depthComparison = Float.compare(depthB, depthA);
+
+    if(depthComparison == 0) {
+      return Integer.compare(b.sequence, a.sequence);
+    }
+
+    return depthComparison;
+  };
 
   private void sortPerspectivePool(final QueuePool<QueuedModel<?, ?>> pool) {
     // Cache modelview for sorting
@@ -1032,7 +1044,7 @@ public class RenderEngine {
   }
 
   private void sortOrthoPool(final QueuePool<QueuedModel<?, ?>> pool) {
-    pool.sort(this.orthoTranslucencySorter);
+    pool.sort(this.orthoTranslucencySorter1);
   }
 
   public <T extends QueuedModel<?, ?>> T queueModel(final Obj obj, final Class<T> type) {
