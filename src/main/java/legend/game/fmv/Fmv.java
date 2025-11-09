@@ -38,7 +38,6 @@ import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Audio.sssqResetStuff;
-import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.clearBlue_800babc0;
@@ -56,12 +55,11 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 public final class Fmv {
   private Fmv() { }
 
-  private static final int[] _80052d6c = {0, 4, 7, 15};
-  private static final String[][] diskFmvs_80052d7c = {
-    {"\\STR\\DEMOH.IKI", "\\STR\\DEMO2.IKI", "\\STR\\OPENH.IKI", "\\STR\\WAR1H.IKI"},
-    {"\\STR\\TVRH.IKI", "\\STR\\GOAST.IKI", "\\STR\\ROZEH.IKI"},
-    {"\\STR\\TREEH.IKI", "\\STR\\WAR2H.IKI", "\\STR\\BLACKH.IKI", "\\STR\\DRAGON1.IKI", "\\STR\\DENIN.IKI", "\\STR\\DENIN2.IKI", "\\STR\\DRAGON2.IKI", "\\STR\\DEIASH.IKI"},
-    {"\\STR\\MOONH.IKI", "\\STR\\ENDING1H.IKI", "\\STR\\ENDING2H.IKI"}
+  private static final String[] diskFmvs_80052d7c = {
+    "STR/DEMOH.IKI", "STR/DEMO2.IKI", "STR/OPENH.IKI", "STR/WAR1H.IKI",
+    "STR/TVRH.IKI", "STR/GOAST.IKI", "STR/ROZEH.IKI",
+    "STR/TREEH.IKI", "STR/WAR2H.IKI", "STR/BLACKH.IKI", "STR/DRAGON1.IKI", "STR/DENIN.IKI", "STR/DENIN2.IKI", "STR/DRAGON2.IKI", "STR/DEIASH.IKI",
+    "STR/MOONH.IKI", "STR/ENDING1H.IKI", "STR/ENDING2H.IKI",
   };
 
   private static final ZeroRunLengthAc ESCAPE_CODE = new ZeroRunLengthAc(BitStreamCode._000001___________, true, false);
@@ -260,7 +258,8 @@ public final class Fmv {
     rumbleFrames = 0;
 
     isPlaying = true;
-    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
+    Fmv.play(diskFmvs_80052d7c[fmvIndex], true);
+
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 

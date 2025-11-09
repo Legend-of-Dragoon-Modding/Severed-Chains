@@ -246,7 +246,7 @@ public final class Loader {
       name = name.substring(0, name.lastIndexOf(';'));
     }
 
-    if(name.startsWith("\\")) {
+    if(name.startsWith("\\") || name.startsWith("/")) {
       name = name.substring(1);
     }
 
