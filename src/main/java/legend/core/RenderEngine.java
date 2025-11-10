@@ -613,7 +613,7 @@ public class RenderEngine {
 
           this.scissorStack.reset();
         } else {
-          this.renderCallback.run();
+          this.renderFrame();
         }
       }
 
@@ -626,7 +626,7 @@ public class RenderEngine {
 
         this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
         this.resetBatches();
-        this.renderCallback.run();
+        this.renderFrame();
 
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
@@ -652,15 +652,7 @@ public class RenderEngine {
           this.mainBatch.orthoPool.ignoreQueues = true;
         }
 
-        // Reset CLUT animations
-        this.clutAnimationBufferIndex = 0;
-
-        // Run game callback
-        this.renderCallback.run();
-
-        // Upload CLUT animations
-        this.clutAnimationBuffer.put(this.clutAnimationBufferIndex, -1);
-        this.clutAnimationUniform.set(this.clutAnimationBuffer);
+        this.renderFrame();
       }
 
       if(legacyMode == 0) {
@@ -756,6 +748,18 @@ public class RenderEngine {
 
       this.handleMovement();
     });
+  }
+
+  private void renderFrame() {
+    // Reset CLUT animations
+    this.clutAnimationBufferIndex = 0;
+
+    // Run game callback
+    this.renderCallback.run();
+
+    // Upload CLUT animations
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex, -1);
+    this.clutAnimationUniform.set(this.clutAnimationBuffer);
   }
 
   private void renderBatch(final RenderBatch batch) {
