@@ -7,9 +7,17 @@ public abstract class Param {
   public abstract Param set(final int val);
   public abstract Param array(final int index);
 
-//  public abstract float getFloat();
-//  public abstract Param set(final float val);
-//  public abstract boolean isFloat();
+  public float getFloat() {
+    return this.get();
+  }
+
+  public Param set(final float val) {
+    return this.set(Math.round(val));
+  }
+
+  public boolean isFloat() {
+    return false;
+  }
 
   public void jump(final RunningScript<?> script) {
     throw new IllegalStateException("Can't jump to non-script param");
@@ -36,23 +44,103 @@ public abstract class Param {
   }
 
   public Param add(final int amount) {
+    if(this.isFloat()) {
+      return this.set(this.getFloat() + amount);
+    }
+
     return this.set(this.get() + amount);
   }
 
+  public Param add(final float amount) {
+    return this.set(this.getFloat() + amount);
+  }
+
+  public Param add(final Param amount) {
+    if(this.isFloat() || amount.isFloat()) {
+      return this.add(amount.getFloat());
+    }
+
+    return this.add(amount.get());
+  }
+
   public Param sub(final int amount) {
+    if(this.isFloat()) {
+      return this.set(this.getFloat() - amount);
+    }
+
     return this.set(this.get() - amount);
   }
 
+  public Param sub(final float amount) {
+    return this.set(this.getFloat() - amount);
+  }
+
+  public Param sub(final Param amount) {
+    if(this.isFloat() || amount.isFloat()) {
+      return this.sub(amount.getFloat());
+    }
+
+    return this.sub(amount.get());
+  }
+
   public Param mul(final int amount) {
+    if(this.isFloat()) {
+      return this.set(this.getFloat() * amount);
+    }
+
     return this.set(this.get() * amount);
   }
 
+  public Param mul(final float amount) {
+    return this.set(this.getFloat() * amount);
+  }
+
+  public Param mul(final Param amount) {
+    if(this.isFloat() || amount.isFloat()) {
+      return this.mul(amount.getFloat());
+    }
+
+    return this.mul(amount.get());
+  }
+
   public Param div(final int amount) {
+    if(this.isFloat()) {
+      return this.set(this.getFloat() / amount);
+    }
+
     return this.set(this.get() / amount);
   }
 
+  public Param div(final float amount) {
+    return this.set(this.getFloat() / amount);
+  }
+
+  public Param div(final Param amount) {
+    if(this.isFloat() || amount.isFloat()) {
+      return this.div(amount.getFloat());
+    }
+
+    return this.div(amount.get());
+  }
+
   public Param mod(final int amount) {
+    if(this.isFloat()) {
+      return this.set(this.getFloat() % amount);
+    }
+
     return this.set(this.get() % amount);
+  }
+
+  public Param mod(final float amount) {
+    return this.set(this.getFloat() % amount);
+  }
+
+  public Param mod(final Param amount) {
+    if(this.isFloat() || amount.isFloat()) {
+      return this.mod(amount.getFloat());
+    }
+
+    return this.mod(amount.get());
   }
 
   public Param incr() {

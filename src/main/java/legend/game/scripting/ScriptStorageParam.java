@@ -26,6 +26,22 @@ public class ScriptStorageParam extends Param {
   }
 
   @Override
+  public float getFloat() {
+    return this.state.getStorFloat(this.index);
+  }
+
+  @Override
+  public Param set(final float val) {
+    this.state.setStor(this.index, val);
+    return this;
+  }
+
+  @Override
+  public boolean isFloat() {
+    return this.state.isStorFloat(this.index);
+  }
+
+  @Override
   public String toString() {
     return "script[%d].stor[%d] 0x%x".formatted(this.state.index, this.index, this.get());
   }

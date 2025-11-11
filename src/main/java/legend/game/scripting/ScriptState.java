@@ -134,9 +134,10 @@ public class ScriptState<T extends ScriptedObject> {
    *   <li>9 - is dragoon</li>
    * </ul>
    */
-  public final int[] storage_44 = new int[STORAGE_COUNT];
+  private final int[] storage_44 = new int[STORAGE_COUNT];
   /** Float version of storage */
-  public final float[] storagef_44 = new float[STORAGE_COUNT];
+  private final float[] storagef_44 = new float[STORAGE_COUNT];
+  private final boolean[] isFloat = new boolean[STORAGE_COUNT];
   public final RegistryId[] registryIds = new RegistryId[REGISTRY_ID_COUNT];
 
   private boolean paused;
@@ -212,6 +213,15 @@ public class ScriptState<T extends ScriptedObject> {
 
   public ScriptState<T> setStor(final int index, final int val) {
     this.storage_44[index] = val;
+    this.storagef_44[index] = val;
+    this.isFloat[index] = false;
+    return this;
+  }
+
+  public ScriptState<T> setStor(final int index, final float val) {
+    this.storage_44[index] = Math.round(val);
+    this.storagef_44[index] = val;
+    this.isFloat[index] = true;
     return this;
   }
 
@@ -219,13 +229,25 @@ public class ScriptState<T extends ScriptedObject> {
     return this.storage_44[index];
   }
 
+  public float getStorFloat(final int index) {
+    return this.storagef_44[index];
+  }
+
+  public boolean isStorFloat(final int index) {
+    return this.isFloat[index];
+  }
+
   public ScriptState<T> setFlag(final int flag) {
     this.storage_44[7] |= flag;
+    this.storagef_44[7] = this.storage_44[7];
+    this.isFloat[7] = false;
     return this;
   }
 
   public ScriptState<T> clearFlag(final int flag) {
     this.storage_44[7] &= ~flag;
+    this.storagef_44[7] = this.storage_44[7];
+    this.isFloat[7] = false;
     return this;
   }
 
@@ -297,18 +319,18 @@ public class ScriptState<T extends ScriptedObject> {
   public void deallocateChildren() {
     LOGGER.info(SCRIPT_MARKER, "Deallocating script %d children", this.index);
 
-    int childIndex = this.storage_44[6];
+    int childIndex = this.getStor(6);
 
     //LAB_80015cdc
     while(childIndex >= 0) {
       final ScriptState<?> childState = SCRIPTS.getState(childIndex);
-      final int childChildIndex = childState.storage_44[6];
+      final int childChildIndex = childState.getStor(6);
       childState.deallocate();
       childIndex = childChildIndex;
     }
 
     //LAB_80015d04
-    this.storage_44[6] = -1;
+    this.setStor(6, -1);
     this.clearFlag(FLAG_PARENT_SCRIPT);
   }
 
@@ -326,16 +348,18 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     //LAB_80015ddc
-    childScript.storage_44[7] = this.storage_44[7] | 0x10_0000; // Child
+    childScript.setStor(7, this.getStor(7) | FLAG_CHILD_SCRIPT); // Child
     this.setFlag(FLAG_PARENT_SCRIPT); // Parent
 
     //LAB_80015e0c
-    System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, 25);
-    System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, childScript.registryIds.length);
+    System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(this.storagef_44, 8, childScript.storagef_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(this.isFloat, 0, childScript.isFloat, 0, STORAGE_COUNT);
+    System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, REGISTRY_ID_COUNT);
 
-    childScript.storage_44[5] = this.index;
-    childScript.storage_44[6] = this.storage_44[6];
-    this.storage_44[6] = childScript.index;
+    childScript.setStor(5, this.index);
+    childScript.setStor(6, this.getStor(6));
+    this.setStor(6, childScript.index);
 
     childScript.callStack.clear();
     for(int i = this.callStack.size() - 1; i >= 0; i--) {
@@ -348,7 +372,7 @@ public class ScriptState<T extends ScriptedObject> {
 
   /** Deallocates child and assumes its identity? */
   public int consumeChild() {
-    final int childIndex = this.storage_44[6];
+    final int childIndex = this.getStor(6);
     if(childIndex < 0) {
       throw new RuntimeException("Null command");
     }
@@ -358,17 +382,20 @@ public class ScriptState<T extends ScriptedObject> {
     final ScriptState<?> child = SCRIPTS.getState(childIndex);
     if(child.hasFlag(FLAG_PARENT_SCRIPT)) { // Is parent
       this.setFlag(FLAG_PARENT_SCRIPT);
-      this.storage_44[6] = child.storage_44[6];
-      SCRIPTS.getState(child.storage_44[6]).storage_44[5] = this.index;
+      this.setStor(6, child.getStor(6));
+      SCRIPTS.getState(child.getStor(6)).setStor(5, this.index);
     } else {
       //LAB_80015ef0
-      this.storage_44[6] = -1;
+      this.setStor(6, -1);
       this.clearFlag(FLAG_PARENT_SCRIPT);
     }
 
     //LAB_80015f08
     //LAB_80015f14
-    System.arraycopy(child.storage_44, 8, this.storage_44, 8, 25);
+    System.arraycopy(child.storage_44, 8, this.storage_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(child.storagef_44, 8, this.storagef_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(child.isFloat, 0, this.isFloat, 0, STORAGE_COUNT);
+    System.arraycopy(child.registryIds, 0, this.registryIds, 0, REGISTRY_ID_COUNT);
 
     this.callStack.clear();
     this.callStack.addAll(child.callStack);
@@ -504,14 +531,14 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
-      final int otherScriptIndex1 = this.storage_44[cmd0];
-      final int otherScriptIndex2 = SCRIPTS.getState(otherScriptIndex1).storage_44[cmd1];
+      final int otherScriptIndex1 = this.getStor(cmd0);
+      final int otherScriptIndex2 = SCRIPTS.getState(otherScriptIndex1).getStor(cmd1);
       return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex2), cmd2);
     }
 
     if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
-      final int otherScriptIndex = this.storage_44[cmd0];
-      final int storageIndex = cmd1 + this.storage_44[cmd2];
+      final int otherScriptIndex = this.getStor(cmd0);
+      final int storageIndex = cmd1 + this.getStor(cmd2);
       return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex), storageIndex);
     }
 
@@ -520,17 +547,17 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
-      return new GameVarParam(cmd0 + this.storage_44[cmd1]);
+      return new GameVarParam(cmd0 + this.getStor(cmd1));
     }
 
     if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
-      final int arrIndex = this.storage_44[cmd1];
+      final int arrIndex = this.getStor(cmd1);
       return new GameVarArrayParam(cmd0, arrIndex);
     }
 
     if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
-      final int storage1 = this.storage_44[cmd1];
-      final int storage2 = this.storage_44[cmd2];
+      final int storage1 = this.getStor(cmd1);
+      final int storage2 = this.getStor(cmd2);
       return new GameVarArrayParam(cmd0 + storage1, storage2);
     }
 
@@ -539,23 +566,23 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
-      final int storage = this.storage_44[cmd2];
+      final int storage = this.getStor(cmd2);
       return new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
     }
 
     if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
-      final int storage = this.storage_44[cmd2];
+      final int storage = this.getStor(cmd2);
       return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
     }
 
     if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
-      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + this.storage_44[cmd1]);
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.getStor(cmd0)).get() + this.getStor(cmd1));
       this.context.commandOffset_0c++;
       return param;
     }
 
     if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
-      return new ScriptStorageParam(SCRIPTS.getState(this.storage_44[cmd0]), cmd1 + cmd2);
+      return new ScriptStorageParam(SCRIPTS.getState(this.getStor(cmd0)), cmd1 + cmd2);
     }
 
     if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
@@ -566,11 +593,11 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
-      return new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
+      return new GameVarArrayParam(cmd0 + this.getStor(cmd1), cmd2);
     }
 
     if(paramType == 0x11) {
-      return new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
+      return new GameVarArrayParam(cmd0 + cmd1, this.getStor(cmd2)); // Haven't verified this, afaik it's never used
     }
 
     if(paramType == 0x12) {
@@ -586,13 +613,13 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x15) {
-      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + cmd1);
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.getStor(cmd0)).get() + cmd1);
       this.context.commandOffset_0c++;
       return param;
     }
 
     if(paramType == 0x16) {
-      final Param param = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.storage_44[cmd1]);
+      final Param param = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.getStor(cmd1));
       this.context.commandOffset_0c++;
       return param;
     }
@@ -1239,7 +1266,7 @@ public class ScriptState<T extends ScriptedObject> {
     final ScriptState<?> stateThatWasForked = SCRIPTS.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     this.context.params_20[1].jump(stateThatWasForked);
-    stateThatWasForked.storage_44[32] = this.context.params_20[2].get();
+    stateThatWasForked.setStor(32, this.context.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1251,7 +1278,7 @@ public class ScriptState<T extends ScriptedObject> {
     final ScriptState<?> stateThatWasForked = this.manager.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     stateThatWasForked.frame().offset = stateThatWasForked.frame().file.getEntry(this.context.params_20[1].get());
-    stateThatWasForked.storage_44[32] = this.context.params_20[2].get();
+    stateThatWasForked.setStor(32, this.context.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1293,12 +1320,12 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     LOGGER.error("Storage:");
-    for(int i = 0; i < this.storage_44.length; i++) {
-      LOGGER.error("  %d: 0x%x", i, this.storage_44[i]);
+    for(int i = 0; i < STORAGE_COUNT; i++) {
+      LOGGER.error("  %d: 0x%x", i, this.getStor(i));
     }
 
     LOGGER.error("Registry IDs:");
-    for(int i = 0; i < this.registryIds.length; i++) {
+    for(int i = 0; i < REGISTRY_ID_COUNT; i++) {
       if(this.registryIds[i] != null) {
         LOGGER.error("  %d: %s", i, this.registryIds[i]);
       }

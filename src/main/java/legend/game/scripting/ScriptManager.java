@@ -310,7 +310,7 @@ public class ScriptManager {
     }
 
     scriptState.setStor(0, index);
-    scriptState.setFlag(FLAG_1_0000 | FLAG_FILE_NOT_SET | FLAG_TICKER_NOT_SET | FLAG_RENDERER_NOT_SET | FLAG_DESTRUCTOR_NOT_SET);
+    scriptState.setStor(7, FLAG_1_0000 | FLAG_FILE_NOT_SET | FLAG_TICKER_NOT_SET | FLAG_RENDERER_NOT_SET | FLAG_DESTRUCTOR_NOT_SET);
 
     EVENTS.postEvent(new ScriptAllocatedEvent(index));
 

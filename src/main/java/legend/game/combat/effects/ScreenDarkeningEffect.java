@@ -20,10 +20,10 @@ public class ScreenDarkeningEffect implements Effect<EffectManagerParams.VoidTyp
 
       //LAB_80115bd4
       if(currentVal > targetVal) {
-        state.storage_44[8]--;
+        state.setStor(8, state.getStor(8) - 1);
       } else {
         //LAB_80115bb4
-        state.storage_44[8]++;
+        state.setStor(8, state.getStor(8) + 1);
       }
     }
 
