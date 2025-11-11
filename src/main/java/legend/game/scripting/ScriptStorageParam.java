@@ -11,12 +11,12 @@ public class ScriptStorageParam extends Param {
 
   @Override
   public int get() {
-    return this.state.storage_44[this.index];
+    return this.state.getStor(this.index);
   }
 
   @Override
   public Param set(final int val) {
-    this.state.storage_44[this.index] = val;
+    this.state.setStor(this.index, val);
     return this;
   }
 

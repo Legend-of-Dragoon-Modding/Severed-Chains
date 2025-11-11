@@ -9,8 +9,8 @@ public class ScreenDarkeningEffect implements Effect<EffectManagerParams.VoidTyp
   @Override
   @Method(0x80115b2cL)
   public void tick(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-    final int currentVal = state.storage_44[8];
-    final int targetVal = state.storage_44[9];
+    final int currentVal = state.getStor(8);
+    final int targetVal = state.getStor(9);
 
     if(currentVal == targetVal) {
       state.deallocateWithChildren();
@@ -38,6 +38,6 @@ public class ScreenDarkeningEffect implements Effect<EffectManagerParams.VoidTyp
   @Override
   @Method(0x80115bf0L)
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-    applyScreenDarkening(state.storage_44[9]);
+    applyScreenDarkening(state.getStor(9));
   }
 }

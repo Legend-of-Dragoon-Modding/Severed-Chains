@@ -1539,14 +1539,30 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z coordinate")
   @Method(0x800df258L)
   private FlowControl scriptSetModelPosition(final RunningScript<SubmapObject210> script) {
-    final int x = script.params_20[1].get();
-    final int y = script.params_20[2].get();
-    final int z = script.params_20[3].get();
+    float x = script.params_20[1].get();
+    float y = script.params_20[2].get();
+    float z = script.params_20[3].get();
 
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
+
+    // A lot of scripts read position values and then immediately set the position to the value that was read. Because the script engine doesn't support
+    // floats, this will truncate the positions to int. We've had to fix numerous issues caused by this. Check if we're trying to set the position to
+    // the truncated current position, and if so, use the current position instead of the truncated value being passed in.
+    final Vector3f pos = model.coord2_14.coord.transfer;
+    if((int)x == pos.x) {
+      x = pos.x;
+    }
+
+    if((int)y == pos.y) {
+      y = pos.y;
+    }
+
+    if((int)z == pos.z) {
+      z = pos.z;
+    }
 
     // Don't apply interpolation if the last movement was more than one script engine tick ago, or if movement is more than 256 units away
     if(sobj.lastMovementTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || model.coord2_14.coord.transfer.distanceSquared(x, y, z) > 65536.0f) {
@@ -4597,7 +4613,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b")
   @Method(0x800f1634L)
-  private FlowControl scriptInitLawPodTrail(final RunningScript<?> script) {
+  private FlowControl scriptInitLawPodTrail(final RunningScript<SubmapObject210> script) {
     this.attachedSobjEffect.initLawPodTrail(script);
 
     //LAB_800f1784
@@ -4871,11 +4887,10 @@ public class SMap extends EngineState {
   @ScriptDescription("Initializes footprints attached sobj effect when param 0 is 1 or 2.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldRender", description = "Whether effect should initialize/render (occurs on 1 or 2).")
   @Method(0x800f2264L)
-  private FlowControl scriptInitFootprints(final RunningScript<?> script) {
-    final ScriptState<?> sobj1 = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(sobj1, 0); // Unused? Why?
+  private FlowControl scriptInitFootprints(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> sobj1 = script.scriptState_04;
+    final SubmapObject210 sobj2 = sobj1.innerStruct_00;
 
-    final SubmapObject210 sobj2 = SCRIPTS.getObject(sobj1.storage_44[0], SubmapObject210.class); // Storage 0 is my script index, isn't this just getting the same state?
     if((script.params_20[0].get() == 1 || script.params_20[0].get() == 2)) {
       sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
       sobj2.attachedEffectData_1d0.footprintMode_10 = 0;
@@ -4935,10 +4950,8 @@ public class SMap extends EngineState {
   @ScriptDescription("Sets the frequency of footprint attached sobj effect particle instantiation.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationInterval", description = "Frequency of instantiating new particles.")
   @Method(0x800f23a0L)
-  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<?> script) {
-    script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
-
-    final SubmapObject210 sobj = SCRIPTS.getObject(script.scriptState_04.storage_44[0], SubmapObject210.class);
+  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<SubmapObject210> script) {
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
     sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = Math.max(1, script.params_20[0].get());
 
     //LAB_800f23e4
@@ -4951,10 +4964,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTicks", description = "Number of ticks for which particle exists.")
   @Method(0x800f23ecL)
-  private FlowControl scriptInitOrthoDust(final RunningScript<?> script) {
-    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); // Does nothing, why?
+  private FlowControl scriptInitOrthoDust(final RunningScript<SubmapObject210> script) {
     final int mode = script.params_20[0].get();
-    final SubmapObject210 sobj = SCRIPTS.getObject(script.scriptState_04.storage_44[0], SubmapObject210.class);
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
 
     if(mode == 1 || mode == 3) {
       //LAB_800f2430
@@ -5016,7 +5028,7 @@ public class SMap extends EngineState {
   @ScriptDescription("If param 0 is 1, deallocate the Zenebatos law pod trail effect.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
   @Method(0x800f25a8L)
-  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<?> script) {
+  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<SubmapObject210> script) {
     this.attachedSobjEffect.deallocateLawPodTrail(script);
 
     //LAB_800f2604

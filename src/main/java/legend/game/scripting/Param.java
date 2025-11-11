@@ -7,6 +7,10 @@ public abstract class Param {
   public abstract Param set(final int val);
   public abstract Param array(final int index);
 
+//  public abstract float getFloat();
+//  public abstract Param set(final float val);
+//  public abstract boolean isFloat();
+
   public void jump(final RunningScript<?> script) {
     throw new IllegalStateException("Can't jump to non-script param");
   }

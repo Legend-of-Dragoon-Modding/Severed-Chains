@@ -11,7 +11,6 @@ import legend.core.opengl.QuadBuilder;
 import legend.game.PoolList;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
-import legend.game.scripting.ScriptStorageParam;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
@@ -24,7 +23,6 @@ import org.joml.Vector3f;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Graphics.GetTPage;
 import static legend.game.Graphics.GsGetLs;
@@ -121,12 +119,10 @@ public class AttachedSobjEffect {
   }
 
   /** Script method to initialize law pod trail. */
-  public void initLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
+  public void initLawPodTrail(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> state = script.scriptState_04;
 
-    script.params_20[9] = new ScriptStorageParam(state, 0);
-
-    final SubmapObject210 sobj = SCRIPTS.getObject(state.storage_44[0], SubmapObject210.class);
+    final SubmapObject210 sobj = state.innerStruct_00;
     if(script.params_20[0].get() == 0 || this.lawPodTrailCount_800f9e78 >= 8) {
       //LAB_800f1698
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
@@ -525,13 +521,12 @@ public class AttachedSobjEffect {
   }
 
   /** Script method to deallocate law pod trail individually. */
-  public void deallocateLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(state, 0);
+  public void deallocateLawPodTrail(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> state = script.scriptState_04;
 
     if(script.params_20[0].get() == 1) {
       this.deallocateLawPodTrail();
-      final SubmapObject210 sobj = SCRIPTS.getObject(state.storage_44[0], SubmapObject210.class);
+      final SubmapObject210 sobj = state.innerStruct_00;
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
     }
   }

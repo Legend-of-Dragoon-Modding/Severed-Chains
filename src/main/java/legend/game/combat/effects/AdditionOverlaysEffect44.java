@@ -580,9 +580,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           if(hitNum < this.count_30) {
             final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
 
-            if(state.storage_44[8] != 0) {
+            if(state.getStor(8) != 0) {
               hitOverlay.isCounter_1c = true;
-              state.storage_44[8] = 0;
+              state.setStor(8, 0);
             }
 
             //LAB_801075e8

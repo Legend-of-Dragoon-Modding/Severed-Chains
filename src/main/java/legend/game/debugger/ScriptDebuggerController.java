@@ -88,7 +88,7 @@ public class ScriptDebuggerController {
       this.scriptSelector.setValue(this.scripts.getFirst());
       this.scriptSelector.onActionProperty().set(event -> this.updateScriptVars());
 
-      for(int i = 0; i < 33; i++) {
+      for(int i = 0; i < ScriptState.STORAGE_COUNT; i++) {
         this.storage.add(new ListItem(paramIndex -> this.getScriptStorage(this.scriptSelector.getValue().index, paramIndex), i));
       }
 
@@ -162,7 +162,7 @@ public class ScriptDebuggerController {
       return;
     }
 
-    for(int storageIndex = 0; storageIndex < 33; storageIndex++) {
+    for(int storageIndex = 0; storageIndex < ScriptState.STORAGE_COUNT; storageIndex++) {
       this.storage.get(storageIndex).update();
     }
 
@@ -206,8 +206,8 @@ public class ScriptDebuggerController {
     } else {
       this.filePtr.setText("<none>");
     }
-    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5]));
-    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6]));
+    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.getStor(5)));
+    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.getStor(6)));
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
@@ -217,7 +217,7 @@ public class ScriptDebuggerController {
       return "null";
     }
 
-    final int val = state.storage_44[storageIndex];
+    final int val = state.getStor(storageIndex);
     return "0x%1$x (%1$d)".formatted(val);
   }
 
