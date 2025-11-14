@@ -28,6 +28,10 @@ public abstract class Param {
   }
 
   public Param set(final Param other) {
+    if(other.isFloat()) {
+      return this.set(other.getFloat());
+    }
+
     return this.set(other.get());
   }
 
@@ -156,6 +160,10 @@ public abstract class Param {
   }
 
   public Param neg() {
+    if(this.isFloat()) {
+      return this.set(-this.getFloat());
+    }
+
     return this.set(-this.get());
   }
 
@@ -184,6 +192,10 @@ public abstract class Param {
   }
 
   public Param abs() {
+    if(this.isFloat()) {
+      return this.set(Math.abs(this.getFloat()));
+    }
+
     return this.set(Math.abs(this.get()));
   }
 }

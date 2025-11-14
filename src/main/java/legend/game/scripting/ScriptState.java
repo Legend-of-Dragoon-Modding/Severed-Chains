@@ -757,6 +757,21 @@ public class ScriptState<T extends ScriptedObject> {
       };
     }
 
+    // Float compare
+    if(operandA.isFloat() || operandB.isFloat()) {
+      return switch(op) {
+        case 0 -> operandA.getFloat() < operandB.getFloat() || MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
+        case 1 -> operandA.getFloat() < operandB.getFloat() && !MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
+        case 2 -> MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
+        case 3 -> !MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
+        case 4 -> operandA.getFloat() > operandB.getFloat() && !MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
+        case 5 -> operandA.getFloat() > operandB.getFloat() || MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
+        case 6 -> (operandA.get() & operandB.get()) != 0;
+        case 7 -> (operandA.get() & operandB.get()) == 0;
+        default -> false;
+      };
+    }
+
     // Standard compare
     return switch(op) {
       case 0 -> operandA.get() <= operandB.get();
@@ -842,9 +857,16 @@ public class ScriptState<T extends ScriptedObject> {
   /** Pretty sure this is _supposed_ to be a swap */
   @Method(0x80016790L)
   public FlowControl FUN_80016790() {
-    final int v1 = this.context.params_20[0].get();
-    this.context.params_20[1].set(v1);
-    this.context.params_20[0].set(v1);
+    if(this.context.params_20[0].isFloat()) {
+      final float v1 = this.context.params_20[0].getFloat();
+      this.context.params_20[1].set(v1);
+      this.context.params_20[0].set(v1);
+    } else {
+      final int v1 = this.context.params_20[0].get();
+      this.context.params_20[1].set(v1);
+      this.context.params_20[0].set(v1);
+    }
+
     return FlowControl.CONTINUE;
   }
 
@@ -931,7 +953,7 @@ public class ScriptState<T extends ScriptedObject> {
    */
   @Method(0x80016968L)
   public FlowControl scriptAdd() {
-    this.context.params_20[1].add(this.context.params_20[0].get());
+    this.context.params_20[1].add(this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 
@@ -940,13 +962,18 @@ public class ScriptState<T extends ScriptedObject> {
    */
   @Method(0x8001698cL)
   public FlowControl scriptSubtract() {
-    this.context.params_20[1].sub(this.context.params_20[0].get());
+    this.context.params_20[1].sub(this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800169b0L)
   public FlowControl scriptSubtract2() {
-    this.context.params_20[1].set(this.context.params_20[0].get() - this.context.params_20[1].get());
+    if(this.context.params_20[0].isFloat() || this.context.params_20[1].isFloat()) {
+      this.context.params_20[1].set(this.context.params_20[0].getFloat() - this.context.params_20[1].getFloat());
+    } else {
+      this.context.params_20[1].set(this.context.params_20[0].get() - this.context.params_20[1].get());
+    }
+
     return FlowControl.CONTINUE;
   }
 
@@ -988,7 +1015,7 @@ public class ScriptState<T extends ScriptedObject> {
    */
   @Method(0x80016a5cL)
   public FlowControl scriptMultiply() {
-    this.context.params_20[1].mul(this.context.params_20[0].get());
+    this.context.params_20[1].mul(this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 
@@ -1009,25 +1036,34 @@ public class ScriptState<T extends ScriptedObject> {
       return FlowControl.CONTINUE;
     }
 
-    this.context.params_20[1].div(divisor);
+    this.context.params_20[1].div(this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80016ab0L)
   public FlowControl scriptDivide2() {
-    this.context.params_20[1].set(MathHelper.safeDiv(this.context.params_20[0].get(), this.context.params_20[1].get()));
+    if(this.context.params_20[0].isFloat() || this.context.params_20[1].isFloat()) {
+      this.context.params_20[1].set(MathHelper.safeDiv(this.context.params_20[0].getFloat(), this.context.params_20[1].getFloat()));
+    } else {
+      this.context.params_20[1].set(MathHelper.safeDiv(this.context.params_20[0].get(), this.context.params_20[1].get()));
+    }
+
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80016adcL)
   public FlowControl scriptMod() {
-    this.context.params_20[1].mod(this.context.params_20[0].get());
+    this.context.params_20[1].mod(this.context.params_20[0]);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80016b04L)
   public FlowControl scriptMod2() {
-    this.context.params_20[1].set(this.context.params_20[0].get() % this.context.params_20[1].get());
+    if(this.context.params_20[0].isFloat() || this.context.params_20[1].isFloat()) {
+      this.context.params_20[1].set(this.context.params_20[0].getFloat() % this.context.params_20[1].getFloat());
+    } else {
+      this.context.params_20[1].set(this.context.params_20[0].get() % this.context.params_20[1].get());
+    }
     return FlowControl.CONTINUE;
   }
 
@@ -1067,7 +1103,12 @@ public class ScriptState<T extends ScriptedObject> {
    */
   @Method(0x80016bbcL)
   public FlowControl scriptSquareRoot() {
-    this.context.params_20[1].set((int)Math.sqrt(this.context.params_20[0].get()));
+    if(this.context.params_20[0].isFloat()) {
+      this.context.params_20[1].set((float)Math.sqrt(this.context.params_20[0].get()));
+    } else {
+      this.context.params_20[1].set((int)Math.sqrt(this.context.params_20[0].get()));
+    }
+
     return FlowControl.CONTINUE;
   }
 
@@ -1321,7 +1362,11 @@ public class ScriptState<T extends ScriptedObject> {
 
     LOGGER.error("Storage:");
     for(int i = 0; i < STORAGE_COUNT; i++) {
-      LOGGER.error("  %d: 0x%x", i, this.getStor(i));
+      if(this.isStorFloat(i)) {
+        LOGGER.error("  %d: %.2f", i, this.getStorFloat(i));
+      } else {
+        LOGGER.error("  %d: 0x%x", i, this.getStor(i));
+      }
     }
 
     LOGGER.error("Registry IDs:");
@@ -1373,7 +1418,7 @@ public class ScriptState<T extends ScriptedObject> {
 
   public void renderDebugInfo() {
     if(this.innerStruct_00 != null) {
-      this.innerStruct_00.renderScriptDebug((ScriptState<ScriptedObject>)this);
+      this.innerStruct_00.renderScriptDebug(this);
     }
   }
 
