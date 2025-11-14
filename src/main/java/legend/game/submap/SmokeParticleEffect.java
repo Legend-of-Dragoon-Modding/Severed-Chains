@@ -128,12 +128,12 @@ public class SmokeParticleEffect {
 
       //LAB_800f154c
       inst.countTicksParticleLifecycle_06 = script.params_20[2].get();
-      inst.offsetBaseX_1c = script.params_20[3].get();
-      inst.offsetBaseY_20 = script.params_20[4].get();
+      inst.offsetBaseX_1c = script.params_20[3].getFloat();
+      inst.offsetBaseY_20 = script.params_20[4].getFloat();
       inst.offsetRandomX_18 = script.params_20[5].get();
-      inst.stepOffsetY_0c = (float)script.params_20[6].get() / (float)script.params_20[2].get();
-      inst.size_10 = script.params_20[7].get();
-      inst.stepSize_14 = (float)script.params_20[8].get() / (float)script.params_20[2].get();
+      inst.stepOffsetY_0c = script.params_20[6].getFloat() / script.params_20[2].get();
+      inst.size_10 = script.params_20[7].getFloat();
+      inst.stepSize_14 = script.params_20[8].getFloat() / script.params_20[2].get();
 
       this.smokeEffectData.add(inst);
 
@@ -161,7 +161,7 @@ public class SmokeParticleEffect {
     final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
     GsInitCoordinate2(null, coord2);
 
-    coord2.coord.transfer.set(script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
+    coord2.coord.transfer.set(script.params_20[3].getFloat(), script.params_20[4].getFloat(), script.params_20[5].getFloat());
     final MV transforms = new MV();
     GsGetLs(coord2, transforms);
 

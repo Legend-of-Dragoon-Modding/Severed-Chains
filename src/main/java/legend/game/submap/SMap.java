@@ -1305,9 +1305,9 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Moves a sobj to a position over a number of frames")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicks", description = "The number of frames over which to move")
   @Method(0x800de668L)
   private FlowControl scriptSobjMoveToPosition(final RunningScript<?> script) {
@@ -1315,7 +1315,7 @@ public class SMap extends EngineState {
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
-    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementDestination_138.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
     sobj.movementType_170 = 1;
@@ -1341,9 +1341,9 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Something to do with forced movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
   @Method(0x800de944L)
   private FlowControl scriptSobjMoveAlongArc(final RunningScript<?> script) {
@@ -1353,7 +1353,7 @@ public class SMap extends EngineState {
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
-    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementDestination_138.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     sobj.movementTicks_144 = movementTicks * (3 - vsyncMode_8007a3b8);
 
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
@@ -1371,19 +1371,19 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Something to do with forced movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800deba0L)
   private FlowControl scriptSobjMoveAlongArc2(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.finishInterpolatedMovement();
-    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementDestination_138.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
-    sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
+    sobj.movementStepAccelerationY_18c = (script.params_20[5].getFloat() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
@@ -1534,14 +1534,14 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Set a submap object's position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The new X coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The new X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The new Y coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The new Z coordinate")
   @Method(0x800df258L)
   private FlowControl scriptSetModelPosition(final RunningScript<SubmapObject210> script) {
-    final int x = script.params_20[1].get();
-    final int y = script.params_20[2].get();
-    final int z = script.params_20[3].get();
+    final float x = script.params_20[1].getFloat();
+    final float y = script.params_20[2].getFloat();
+    final float z = script.params_20[3].getFloat();
 
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
@@ -1565,9 +1565,9 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Get a submap object's position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z coordinate")
   @Method(0x800df2b8L)
   private FlowControl scriptReadModelPosition(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
@@ -1579,9 +1579,9 @@ public class SMap extends EngineState {
       pos = sobj.model_00.coord2_14.coord.transfer;
     }
 
-    script.params_20[1].set(Math.round(pos.x));
-    script.params_20[2].set(Math.round(pos.y));
-    script.params_20[3].set(Math.round(pos.z));
+    script.params_20[1].set(pos.x);
+    script.params_20[2].set(pos.y);
+    script.params_20[3].set(pos.z);
     return FlowControl.CONTINUE;
   }
 
@@ -2153,16 +2153,16 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Rotates a submap object to face a point in 3D space")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position to face")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position to face (unused)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position to face")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The X position to face")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y position to face (unused)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z position to face")
   @Method(0x800e0018L)
   private FlowControl scriptFacePoint(final RunningScript<SubmapObject210> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
-    final float deltaX = script.params_20[1].get() - model.coord2_14.coord.transfer.x;
-    final float deltaZ = script.params_20[3].get() - model.coord2_14.coord.transfer.z;
+    final float deltaX = script.params_20[1].getFloat() - model.coord2_14.coord.transfer.x;
+    final float deltaZ = script.params_20[3].getFloat() - model.coord2_14.coord.transfer.z;
 
     if(deltaX != 0.0f || deltaZ != 0.0f) {
       final float destAngle = MathHelper.positiveAtan2(deltaZ, deltaX);
@@ -2545,27 +2545,27 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Sets the shadow offset of a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X offset of the shadow")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset of the shadow")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The X offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z offset of the shadow")
   @Method(0x800e0a94L)
   private FlowControl scriptSetShadowOffset(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
-    model.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    model.shadowOffset_118.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Gets the movement vector of the player submap object")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X movement")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y movement")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The X movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z movement")
   @Method(0x800e0af4L)
   private FlowControl scriptGetPlayerMovement(final RunningScript<?> script) {
-    script.params_20[0].set(Math.round(this.caches_800c68e8.playerMovement_0c.x));
-    script.params_20[1].set(Math.round(this.caches_800c68e8.playerMovement_0c.y));
-    script.params_20[2].set(Math.round(this.caches_800c68e8.playerMovement_0c.z));
+    script.params_20[0].set(this.caches_800c68e8.playerMovement_0c.x);
+    script.params_20[1].set(this.caches_800c68e8.playerMovement_0c.y);
+    script.params_20[2].set(this.caches_800c68e8.playerMovement_0c.z);
     return FlowControl.CONTINUE;
   }
 
@@ -4219,22 +4219,22 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Gets the camera offset")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set((int)this.screenOffsetDest.x);
-    script.params_20[1].set((int)this.screenOffsetDest.y);
+    script.params_20[0].set(this.screenOffsetDest.x);
+    script.params_20[1].set(this.screenOffsetDest.y);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Sets the camera offset (mode is based on the last call to scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The camera Y offset")
   @Method(0x800e6904L)
   private FlowControl scriptSetCameraOffset(final RunningScript<?> script) {
-    final int x = script.params_20[0].get();
-    final int y = script.params_20[1].get();
+    final float x = script.params_20[0].getFloat();
+    final float y = script.params_20[1].getFloat();
     final int mode = this.scriptSetOffsetMode_800f7e50;
 
     if(mode == 1 || mode == 2) {
@@ -4325,18 +4325,18 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Gets the middle of a collision primitive")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z position")
   @Method(0x800e6b64L)
   private FlowControl scriptGetCollisionPrimitivePos(final RunningScript<?> script) {
     if(script.params_20[0].get() >= 0) {
       final Vector3f pos = new Vector3f();
       this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
 
-      script.params_20[1].set(Math.round(pos.x));
-      script.params_20[2].set(Math.round(pos.y));
-      script.params_20[3].set(Math.round(pos.z));
+      script.params_20[1].set(pos.x);
+      script.params_20[2].set(pos.y);
+      script.params_20[3].set(pos.z);
     }
 
     //LAB_800e6bc8
@@ -4351,11 +4351,11 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Unknown usage, I think this calculates a Z sorting value for a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The calculated Z value")
   @Method(0x800e6be0L)
   private FlowControl FUN_800e6be0(final RunningScript<?> script) {
     final MV coord = this.sobjs_800c6880[script.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
-    script.params_20[1].set(Math.round((worldToScreenMatrix_800c3548.m02 * coord.transfer.x + worldToScreenMatrix_800c3548.m12 * coord.transfer.y + worldToScreenMatrix_800c3548.m22 * coord.transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0)));
+    script.params_20[1].set((worldToScreenMatrix_800c3548.m02 * coord.transfer.x + worldToScreenMatrix_800c3548.m12 * coord.transfer.y + worldToScreenMatrix_800c3548.m22 * coord.transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0));
     return FlowControl.CONTINUE;
   }
 
@@ -4554,9 +4554,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lifecycleTicks", description = "Number of ticks an individual particle exists for.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "delayTicks", description = "Number of ticks to delay beginning particle instantiation.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "X-coordinate of particle.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Y-coordinate of particle.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Z-coordinate of particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "X-coordinate of particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Y-coordinate of particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Z-coordinate of particle.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalDistance", description = "Distance particle instance travels over lifecycle.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetRandomX", description = "Multiplication factor of randomized component of particle x-offset.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size", description = "Size of the particle.")
@@ -4572,12 +4572,12 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectState")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lifecycleTicks", description = "Number of ticks an individual particle exists for.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetBaseX", description = "Static base x-offset of particle instance.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetY", description = "Y-offset of particle instance.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "offsetBaseX", description = "Static base x-offset of particle instance.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "offsetY", description = "Y-offset of particle instance.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetRandomX", description = "Multiplication factor of randomized component of particle x-offset.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalDistance", description = "Distance particle instance travels over lifecycle.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size", description = "Size of the particle instance.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sizeChange", description = "Amount the size of the particle instance changes over lifecycle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "totalDistance", description = "Distance particle instance travels over lifecycle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "size", description = "Size of the particle instance.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "sizeChange", description = "Amount the size of the particle instance changes over lifecycle.")
   @Method(0x800f14f0L)
   private FlowControl scriptAllocateSmokeCloudData(final RunningScript<?> script) {
     this.smokeCloudEffect_800d4f50.allocateSmokeCloudEffect(script, this.texPages_800d6050[6], this.cluts_800d6068[6]);
@@ -4597,7 +4597,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b")
   @Method(0x800f1634L)
-  private FlowControl scriptInitLawPodTrail(final RunningScript<?> script) {
+  private FlowControl scriptInitLawPodTrail(final RunningScript<SubmapObject210> script) {
     this.attachedSobjEffect.initLawPodTrail(script);
 
     //LAB_800f1784
@@ -4606,9 +4606,9 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Adds a save point to the map")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hasSavePoint", description = "True to add a savepoint, false otherwise")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z position")
   @Method(0x800f179cL)
   private FlowControl scriptAddSavePoint(final RunningScript<?> script) {
     final Vector2f sp0x48 = new Vector2f();
@@ -4625,7 +4625,7 @@ public class SMap extends EngineState {
     this.hasSavePoint_800d5620 = script.params_20[0].get() != 0;
     GsInitCoordinate2(null, coord2);
 
-    coord2.coord.transfer.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    coord2.coord.transfer.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     this.savePointPos_800d5622.set(coord2.coord.transfer);
 
     final MV screenMatrix = new MV();
@@ -4739,8 +4739,8 @@ public class SMap extends EngineState {
   @ScriptDescription("Unknown, adds a triangle indicator (possibly for a door)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y")
   @Method(0x800f1d0cL)
   private FlowControl FUN_800f1d0c(final RunningScript<?> script) {
     final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
@@ -4764,8 +4764,8 @@ public class SMap extends EngineState {
 
       if(indicator.indicatorType_18[i] == -1) {
         indicator.indicatorType_18[i] = (short)script.params_20[1].get();
-        indicator.x_40[i] = sx + script.params_20[2].get();
-        indicator.y_68[i] = sy + script.params_20[3].get();
+        indicator.x_40[i] = sx + script.params_20[2].getFloat();
+        indicator.y_68[i] = sy + script.params_20[3].getFloat();
         indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
         indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
         break;
@@ -4871,11 +4871,10 @@ public class SMap extends EngineState {
   @ScriptDescription("Initializes footprints attached sobj effect when param 0 is 1 or 2.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldRender", description = "Whether effect should initialize/render (occurs on 1 or 2).")
   @Method(0x800f2264L)
-  private FlowControl scriptInitFootprints(final RunningScript<?> script) {
-    final ScriptState<?> sobj1 = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(sobj1, 0); // Unused? Why?
+  private FlowControl scriptInitFootprints(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> sobj1 = script.scriptState_04;
+    final SubmapObject210 sobj2 = sobj1.innerStruct_00;
 
-    final SubmapObject210 sobj2 = SCRIPTS.getObject(sobj1.storage_44[0], SubmapObject210.class); // Storage 0 is my script index, isn't this just getting the same state?
     if((script.params_20[0].get() == 1 || script.params_20[0].get() == 2)) {
       sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
       sobj2.attachedEffectData_1d0.footprintMode_10 = 0;
@@ -4935,10 +4934,8 @@ public class SMap extends EngineState {
   @ScriptDescription("Sets the frequency of footprint attached sobj effect particle instantiation.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationInterval", description = "Frequency of instantiating new particles.")
   @Method(0x800f23a0L)
-  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<?> script) {
-    script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
-
-    final SubmapObject210 sobj = SCRIPTS.getObject(script.scriptState_04.storage_44[0], SubmapObject210.class);
+  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<SubmapObject210> script) {
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
     sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = Math.max(1, script.params_20[0].get());
 
     //LAB_800f23e4
@@ -4951,10 +4948,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTicks", description = "Number of ticks for which particle exists.")
   @Method(0x800f23ecL)
-  private FlowControl scriptInitOrthoDust(final RunningScript<?> script) {
-    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); // Does nothing, why?
+  private FlowControl scriptInitOrthoDust(final RunningScript<SubmapObject210> script) {
     final int mode = script.params_20[0].get();
-    final SubmapObject210 sobj = SCRIPTS.getObject(script.scriptState_04.storage_44[0], SubmapObject210.class);
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
 
     if(mode == 1 || mode == 3) {
       //LAB_800f2430
@@ -5016,7 +5012,7 @@ public class SMap extends EngineState {
   @ScriptDescription("If param 0 is 1, deallocate the Zenebatos law pod trail effect.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
   @Method(0x800f25a8L)
-  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<?> script) {
+  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<SubmapObject210> script) {
     this.attachedSobjEffect.deallocateLawPodTrail(script);
 
     //LAB_800f2604

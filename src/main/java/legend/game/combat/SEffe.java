@@ -1189,7 +1189,7 @@ public final class SEffe {
   @Method(0x801077e8L)
   public static FlowControl scriptAllocateAdditionOverlaysEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Addition overlays", script.scriptState_04, new AdditionOverlaysEffect44(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
-    state.storage_44[8] = 0; // Storage for counterattack state
+    state.setStor(8, 0); // Storage for counterattack state
     script.params_20[4].set(state.index);
     additionOverlayActive_80119f41 = 1;
     return FlowControl.CONTINUE;
@@ -4111,8 +4111,8 @@ public final class SEffe {
   @Method(0x80115c2cL)
   public static void allocateScreenDarkeningEffect(final int startVal, final int targetVal) {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen darkening", deffManager_800c693c.scriptState_1c, new ScreenDarkeningEffect());
-    state.storage_44[8] = startVal;
-    state.storage_44[9] = targetVal;
+    state.setStor(8, startVal);
+    state.setStor(9, targetVal);
   }
 
   @Method(0x80115cacL)

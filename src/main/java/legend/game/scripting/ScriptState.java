@@ -37,6 +37,22 @@ public class ScriptState<T extends ScriptedObject> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
+  public static final int STORAGE_COUNT = 33;
+  public static final int REGISTRY_ID_COUNT = 100;
+
+  public static final int FLAG_1_0000 = 0x1_0000;
+  public static final int FLAG_FILE_NOT_SET = 0x2_0000;
+  public static final int FLAG_TICKER_NOT_SET = 0x4_0000;
+  public static final int FLAG_RENDERER_NOT_SET = 0x8_0000;
+  public static final int FLAG_CHILD_SCRIPT = 0x10_0000;
+  public static final int FLAG_PARENT_SCRIPT = 0x20_0000;
+  public static final int FLAG_40_0000 = 0x40_0000;
+  public static final int FLAG_80_0000 = 0x80_0000;
+  public static final int FLAG_100_0000 = 0x100_0000;
+  public static final int FLAG_200_0000 = 0x200_0000;
+  public static final int FLAG_TEMP_TICKER_SET = 0x400_0000;
+  public static final int FLAG_DESTRUCTOR_NOT_SET = 0x800_0000;
+
   private final ScriptManager manager;
   public final RunningScript<T> context = new RunningScript<>(this);
 
@@ -59,13 +75,18 @@ public class ScriptState<T extends ScriptedObject> {
    *     <p>7 - flags bit set - which of the pointers at the start of the struct are set</p>
    *
    *     <ul>
-   *       <li>Bit 17 - {@link ScriptState#callStack}.{@link ScriptStackFrame#file} is unset</li>
-   *       <li>Bit 18 - {@link ScriptState#ticker_04} is unset</li>
-   *       <li>Bit 19 - {@link ScriptState#renderer_08} is unset</li>
-   *       <li>Bit 20 - Child script</li>
-   *       <li>Bit 21 - Parent script</li>
-   *       <li>Bit 26 - {@link ScriptState#tempTicker_10} is set (note: not sure why this is backwards from the others)</li>
-   *       <li>Bit 27 - {@link ScriptState#destructor_0c} is unset</li>
+   *       <li>Bit 16 {@link #FLAG_1_0000} - ?</li>
+   *       <li>Bit 17 {@link #FLAG_FILE_NOT_SET} - {@link ScriptState#callStack}.{@link ScriptStackFrame#file} is unset</li>
+   *       <li>Bit 18 {@link #FLAG_TICKER_NOT_SET} - {@link ScriptState#ticker_04} is unset</li>
+   *       <li>Bit 19 {@link #FLAG_RENDERER_NOT_SET} - {@link ScriptState#renderer_08} is unset</li>
+   *       <li>Bit 20 {@link #FLAG_CHILD_SCRIPT} - Child script</li>
+   *       <li>Bit 21 {@link #FLAG_PARENT_SCRIPT} - Parent script</li>
+   *       <li>Bit 22 {@link #FLAG_40_0000} - ?</li>
+   *       <li>Bit 23 {@link #FLAG_80_0000} - ?</li>
+   *       <li>Bit 24 {@link #FLAG_100_0000} - ?</li>
+   *       <li>Bit 25 {@link #FLAG_200_0000} - ?</li>
+   *       <li>Bit 26 {@link #FLAG_TEMP_TICKER_SET} - {@link ScriptState#tempTicker_10} is set (note: not sure why this is backwards from the others)</li>
+   *       <li>Bit 27 {@link #FLAG_DESTRUCTOR_NOT_SET} - {@link ScriptState#destructor_0c} is unset</li>
    *     </ul>
    *
    *     <ul>
@@ -113,8 +134,11 @@ public class ScriptState<T extends ScriptedObject> {
    *   <li>9 - is dragoon</li>
    * </ul>
    */
-  public final int[] storage_44 = new int[33];
-  public final RegistryId[] registryIds = new RegistryId[100];
+  private final int[] storage_44 = new int[STORAGE_COUNT];
+  /** Float version of storage */
+  private final float[] storagef_44 = new float[STORAGE_COUNT];
+  private final boolean[] isFloat = new boolean[STORAGE_COUNT];
+  public final RegistryId[] registryIds = new RegistryId[REGISTRY_ID_COUNT];
 
   private boolean paused;
   private int ticks;
@@ -133,40 +157,40 @@ public class ScriptState<T extends ScriptedObject> {
   public void setTicker(@Nullable final BiConsumer<ScriptState<T>, T> callback) {
     if(callback == null) {
       this.ticker_04 = null;
-      this.storage_44[7] |= 0x4_0000;
+      this.setFlag(FLAG_TICKER_NOT_SET);
     } else {
       this.ticker_04 = callback;
-      this.storage_44[7] &= ~0x4_0000;
+      this.clearFlag(FLAG_TICKER_NOT_SET);
     }
   }
 
   public void setRenderer(@Nullable final BiConsumer<ScriptState<T>, T> callback) {
     if(callback == null) {
       this.renderer_08 = null;
-      this.storage_44[7] |= 0x8_0000;
+      this.setFlag(FLAG_RENDERER_NOT_SET);
     } else {
       this.renderer_08 = callback;
-      this.storage_44[7] &= ~0x8_0000;
+      this.clearFlag(FLAG_RENDERER_NOT_SET);
     }
   }
 
   public void setDestructor(@Nullable final BiConsumer<ScriptState<T>, T> callback) {
     if(callback == null) {
       this.destructor_0c = null;
-      this.storage_44[7] |= 0x800_0000;
+      this.setFlag(FLAG_DESTRUCTOR_NOT_SET);
     } else {
       this.destructor_0c = callback;
-      this.storage_44[7] &= ~0x800_0000;
+      this.clearFlag(FLAG_DESTRUCTOR_NOT_SET);
     }
   }
 
   public void setTempTicker(@Nullable final TempTicker<T> callback) {
     if(callback == null) {
       this.tempTicker_10 = null;
-      this.storage_44[7] &= ~0x400_0000;
+      this.clearFlag(FLAG_TEMP_TICKER_SET);
     } else {
       this.tempTicker_10 = callback;
-      this.storage_44[7] |= 0x400_0000;
+      this.setFlag(FLAG_TEMP_TICKER_SET);
     }
   }
 
@@ -187,14 +211,62 @@ public class ScriptState<T extends ScriptedObject> {
     return this.ticks != 0;
   }
 
+  public ScriptState<T> setStor(final int index, final int val) {
+    this.storage_44[index] = val;
+    this.storagef_44[index] = val;
+    this.isFloat[index] = false;
+    return this;
+  }
+
+  public ScriptState<T> setStor(final int index, final float val) {
+    this.storage_44[index] = Math.round(val);
+    this.storagef_44[index] = val;
+    this.isFloat[index] = true;
+    return this;
+  }
+
+  public int getStor(final int index) {
+    return this.storage_44[index];
+  }
+
+  public float getStorFloat(final int index) {
+    return this.storagef_44[index];
+  }
+
+  public boolean isStorFloat(final int index) {
+    return this.isFloat[index];
+  }
+
+  public ScriptState<T> setFlag(final int flag) {
+    this.storage_44[7] |= flag;
+    this.storagef_44[7] = this.storage_44[7];
+    this.isFloat[7] = false;
+    return this;
+  }
+
+  public ScriptState<T> clearFlag(final int flag) {
+    this.storage_44[7] &= ~flag;
+    this.storagef_44[7] = this.storage_44[7];
+    this.isFloat[7] = false;
+    return this;
+  }
+
+  public boolean hasFlag(final int flag) {
+    return (this.storage_44[7] & flag) == flag;
+  }
+
+  public boolean hasAnyFlag(final int flag) {
+    return (this.storage_44[7] & flag) != 0;
+  }
+
   void tick() {
-    if((this.storage_44[7] & 0x14_0000) == 0) {
+    if(!this.hasAnyFlag(FLAG_TICKER_NOT_SET | FLAG_CHILD_SCRIPT)) {
       this.ticker_04.accept(this, this.innerStruct_00);
     }
   }
 
   void tempTick() {
-    if((this.storage_44[7] & 0x410_0000) == 0x400_0000) {
+    if(this.hasFlag(FLAG_TEMP_TICKER_SET) && !this.hasFlag(FLAG_CHILD_SCRIPT)) {
       if(this.tempTicker_10.run(this, this.innerStruct_00)) {
         this.setTempTicker(null);
       }
@@ -202,7 +274,7 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   void render() {
-    if((this.storage_44[7] & 0x18_0000) == 0) {
+    if(!this.hasAnyFlag(FLAG_RENDERER_NOT_SET | FLAG_CHILD_SCRIPT)) {
       this.renderer_08.accept(this, this.innerStruct_00);
     }
   }
@@ -217,12 +289,12 @@ public class ScriptState<T extends ScriptedObject> {
 
       this.callStack.clear();
       this.pushFrame(new ScriptStackFrame(script, script.getEntry(entrypointIndex)));
-      this.storage_44[7] &= ~0x2_0000;
+      this.clearFlag(FLAG_FILE_NOT_SET);
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
 
       this.callStack.clear();
-      this.storage_44[7] |= 0x2_0000;
+      this.setFlag(FLAG_FILE_NOT_SET);
     }
   }
 
@@ -231,7 +303,7 @@ public class ScriptState<T extends ScriptedObject> {
 
     EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
 
-    if((this.storage_44[7] & 0x810_0000) == 0) {
+    if(!this.hasAnyFlag(FLAG_DESTRUCTOR_NOT_SET | FLAG_CHILD_SCRIPT)) {
       try {
         this.destructor_0c.accept(this, this.innerStruct_00);
       } catch(final NullPointerException e) {
@@ -247,19 +319,19 @@ public class ScriptState<T extends ScriptedObject> {
   public void deallocateChildren() {
     LOGGER.info(SCRIPT_MARKER, "Deallocating script %d children", this.index);
 
-    int childIndex = this.storage_44[6];
+    int childIndex = this.getStor(6);
 
     //LAB_80015cdc
     while(childIndex >= 0) {
       final ScriptState<?> childState = SCRIPTS.getState(childIndex);
-      final int childChildIndex = childState.storage_44[6];
+      final int childChildIndex = childState.getStor(6);
       childState.deallocate();
       childIndex = childChildIndex;
     }
 
     //LAB_80015d04
-    this.storage_44[6] = -1;
-    this.storage_44[7] &= ~0x20_0000;
+    this.setStor(6, -1);
+    this.clearFlag(FLAG_PARENT_SCRIPT);
   }
 
   public void deallocateWithChildren() {
@@ -276,16 +348,18 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     //LAB_80015ddc
-    childScript.storage_44[7] = this.storage_44[7] | 0x10_0000; // Child
-    this.storage_44[7] |= 0x20_0000; // Parent
+    childScript.setStor(7, this.getStor(7) | FLAG_CHILD_SCRIPT); // Child
+    this.setFlag(FLAG_PARENT_SCRIPT); // Parent
 
     //LAB_80015e0c
-    System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, 25);
-    System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, childScript.registryIds.length);
+    System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(this.storagef_44, 8, childScript.storagef_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(this.isFloat, 0, childScript.isFloat, 0, STORAGE_COUNT);
+    System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, REGISTRY_ID_COUNT);
 
-    childScript.storage_44[5] = this.index;
-    childScript.storage_44[6] = this.storage_44[6];
-    this.storage_44[6] = childScript.index;
+    childScript.setStor(5, this.index);
+    childScript.setStor(6, this.getStor(6));
+    this.setStor(6, childScript.index);
 
     childScript.callStack.clear();
     for(int i = this.callStack.size() - 1; i >= 0; i--) {
@@ -298,7 +372,7 @@ public class ScriptState<T extends ScriptedObject> {
 
   /** Deallocates child and assumes its identity? */
   public int consumeChild() {
-    final int childIndex = this.storage_44[6];
+    final int childIndex = this.getStor(6);
     if(childIndex < 0) {
       throw new RuntimeException("Null command");
     }
@@ -306,19 +380,22 @@ public class ScriptState<T extends ScriptedObject> {
     LOGGER.info("Consuming script %d child %d", this.index, childIndex);
 
     final ScriptState<?> child = SCRIPTS.getState(childIndex);
-    if((child.storage_44[7] & 0x20_0000) != 0) { // Is parent
-      this.storage_44[7] |= 0x20_0000;
-      this.storage_44[6] = child.storage_44[6];
-      SCRIPTS.getState(child.storage_44[6]).storage_44[5] = this.index;
+    if(child.hasFlag(FLAG_PARENT_SCRIPT)) { // Is parent
+      this.setFlag(FLAG_PARENT_SCRIPT);
+      this.setStor(6, child.getStor(6));
+      SCRIPTS.getState(child.getStor(6)).setStor(5, this.index);
     } else {
       //LAB_80015ef0
-      this.storage_44[6] = -1;
-      this.storage_44[7] &= ~0x20_0000;
+      this.setStor(6, -1);
+      this.clearFlag(FLAG_PARENT_SCRIPT);
     }
 
     //LAB_80015f08
     //LAB_80015f14
-    System.arraycopy(child.storage_44, 8, this.storage_44, 8, 25);
+    System.arraycopy(child.storage_44, 8, this.storage_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(child.storagef_44, 8, this.storagef_44, 8, STORAGE_COUNT - 8);
+    System.arraycopy(child.isFloat, 0, this.isFloat, 0, STORAGE_COUNT);
+    System.arraycopy(child.registryIds, 0, this.registryIds, 0, REGISTRY_ID_COUNT);
 
     this.callStack.clear();
     this.callStack.addAll(child.callStack);
@@ -362,7 +439,7 @@ public class ScriptState<T extends ScriptedObject> {
   void executeFrame() {
     this.ticks++;
 
-    if((this.storage_44[7] & 0x12_0000) == 0 && !this.paused) {
+    if(!this.hasAnyFlag(FLAG_FILE_NOT_SET | FLAG_CHILD_SCRIPT) && !this.paused) {
       this.context.commandOffset_0c = this.frame().offset;
       this.context.opOffset_08 = this.context.commandOffset_0c;
 
@@ -454,14 +531,14 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
-      final int otherScriptIndex1 = this.storage_44[cmd0];
-      final int otherScriptIndex2 = SCRIPTS.getState(otherScriptIndex1).storage_44[cmd1];
+      final int otherScriptIndex1 = this.getStor(cmd0);
+      final int otherScriptIndex2 = SCRIPTS.getState(otherScriptIndex1).getStor(cmd1);
       return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex2), cmd2);
     }
 
     if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
-      final int otherScriptIndex = this.storage_44[cmd0];
-      final int storageIndex = cmd1 + this.storage_44[cmd2];
+      final int otherScriptIndex = this.getStor(cmd0);
+      final int storageIndex = cmd1 + this.getStor(cmd2);
       return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex), storageIndex);
     }
 
@@ -470,17 +547,17 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
-      return new GameVarParam(cmd0 + this.storage_44[cmd1]);
+      return new GameVarParam(cmd0 + this.getStor(cmd1));
     }
 
     if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
-      final int arrIndex = this.storage_44[cmd1];
+      final int arrIndex = this.getStor(cmd1);
       return new GameVarArrayParam(cmd0, arrIndex);
     }
 
     if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
-      final int storage1 = this.storage_44[cmd1];
-      final int storage2 = this.storage_44[cmd2];
+      final int storage1 = this.getStor(cmd1);
+      final int storage2 = this.getStor(cmd2);
       return new GameVarArrayParam(cmd0 + storage1, storage2);
     }
 
@@ -489,23 +566,23 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
-      final int storage = this.storage_44[cmd2];
+      final int storage = this.getStor(cmd2);
       return new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
     }
 
     if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
-      final int storage = this.storage_44[cmd2];
+      final int storage = this.getStor(cmd2);
       return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
     }
 
     if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
-      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + this.storage_44[cmd1]);
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.getStor(cmd0)).get() + this.getStor(cmd1));
       this.context.commandOffset_0c++;
       return param;
     }
 
     if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
-      return new ScriptStorageParam(SCRIPTS.getState(this.storage_44[cmd0]), cmd1 + cmd2);
+      return new ScriptStorageParam(SCRIPTS.getState(this.getStor(cmd0)), cmd1 + cmd2);
     }
 
     if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
@@ -516,11 +593,11 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
-      return new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
+      return new GameVarArrayParam(cmd0 + this.getStor(cmd1), cmd2);
     }
 
     if(paramType == 0x11) {
-      return new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
+      return new GameVarArrayParam(cmd0 + cmd1, this.getStor(cmd2)); // Haven't verified this, afaik it's never used
     }
 
     if(paramType == 0x12) {
@@ -536,13 +613,13 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     if(paramType == 0x15) {
-      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + cmd1);
+      final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.getStor(cmd0)).get() + cmd1);
       this.context.commandOffset_0c++;
       return param;
     }
 
     if(paramType == 0x16) {
-      final Param param = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.storage_44[cmd1]);
+      final Param param = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.getStor(cmd1));
       this.context.commandOffset_0c++;
       return param;
     }
@@ -1189,7 +1266,7 @@ public class ScriptState<T extends ScriptedObject> {
     final ScriptState<?> stateThatWasForked = SCRIPTS.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     this.context.params_20[1].jump(stateThatWasForked);
-    stateThatWasForked.storage_44[32] = this.context.params_20[2].get();
+    stateThatWasForked.setStor(32, this.context.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1201,7 +1278,7 @@ public class ScriptState<T extends ScriptedObject> {
     final ScriptState<?> stateThatWasForked = this.manager.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     stateThatWasForked.frame().offset = stateThatWasForked.frame().file.getEntry(this.context.params_20[1].get());
-    stateThatWasForked.storage_44[32] = this.context.params_20[2].get();
+    stateThatWasForked.setStor(32, this.context.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1243,12 +1320,12 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     LOGGER.error("Storage:");
-    for(int i = 0; i < this.storage_44.length; i++) {
-      LOGGER.error("  %d: 0x%x", i, this.storage_44[i]);
+    for(int i = 0; i < STORAGE_COUNT; i++) {
+      LOGGER.error("  %d: 0x%x", i, this.getStor(i));
     }
 
     LOGGER.error("Registry IDs:");
-    for(int i = 0; i < this.registryIds.length; i++) {
+    for(int i = 0; i < REGISTRY_ID_COUNT; i++) {
       if(this.registryIds[i] != null) {
         LOGGER.error("  %d: %s", i, this.registryIds[i]);
       }

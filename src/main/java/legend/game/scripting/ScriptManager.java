@@ -23,6 +23,11 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.IoHelper.intsToBytes;
+import static legend.game.scripting.ScriptState.FLAG_1_0000;
+import static legend.game.scripting.ScriptState.FLAG_FILE_NOT_SET;
+import static legend.game.scripting.ScriptState.FLAG_TICKER_NOT_SET;
+import static legend.game.scripting.ScriptState.FLAG_DESTRUCTOR_NOT_SET;
+import static legend.game.scripting.ScriptState.FLAG_RENDERER_NOT_SET;
 
 public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
@@ -300,12 +305,12 @@ public class ScriptManager {
     this.scriptStatePtrArr_800bc1c0[index] = scriptState;
 
     //LAB_800159c0
-    for(int i = 1; i < 33; i++) {
-      scriptState.storage_44[i] = -1;
+    for(int i = 1; i < ScriptState.STORAGE_COUNT; i++) {
+      scriptState.setStor(i, -1);
     }
 
-    scriptState.storage_44[0] = index;
-    scriptState.storage_44[7] = 0x80f_0000;
+    scriptState.setStor(0, index);
+    scriptState.setStor(7, FLAG_1_0000 | FLAG_FILE_NOT_SET | FLAG_TICKER_NOT_SET | FLAG_RENDERER_NOT_SET | FLAG_DESTRUCTOR_NOT_SET);
 
     EVENTS.postEvent(new ScriptAllocatedEvent(index));
 

@@ -589,7 +589,7 @@ public abstract class BattleEntity27c extends BattleObject {
     this._278 = 0;
 
     final int v1;
-    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
+    if(state.hasFlag(FLAG_MONSTER)) {
       v1 = battleFlags_800bc960 & 0x110;
     } else {
       //LAB_800cae94
@@ -605,7 +605,7 @@ public abstract class BattleEntity27c extends BattleObject {
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
-        if((state.storage_44[7] & FLAG_NO_SCRIPT) == 0) {
+        if(!state.hasFlag(FLAG_NO_SCRIPT)) {
           //LAB_800caf20
           state.loadScriptFile(this.getScript());
         }
@@ -629,10 +629,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cafb4L)
   protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
+    if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
       applyModelRotationAndScale(this.model_148);
 
-      if((state.storage_44[7] & FLAG_ANIMATE_ONCE) == 0 || this.model_148.remainingFrames_9e != 0) {
+      if(!state.hasFlag(FLAG_ANIMATE_ONCE) || this.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
         animateModel(this.model_148);
       }
@@ -643,7 +643,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
+    if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
       this.renderBttlModel(this.model_148);
     }
 
@@ -656,7 +656,7 @@ public abstract class BattleEntity27c extends BattleObject {
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
     //LAB_800cb11c
-    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
+    if(state.hasFlag(FLAG_MONSTER)) {
       battleState_8006e398.removeMonster((MonsterBattleEntity)this);
     } else {
       battleState_8006e398.removePlayer((PlayerBattleEntity)this);

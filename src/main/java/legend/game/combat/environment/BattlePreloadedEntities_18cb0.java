@@ -34,7 +34,7 @@ public class BattlePreloadedEntities_18cb0 {
 
   @Method(0x800c7488L)
   public int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex) {
-    if((battleState_8006e398.playerBents_e40[charSlot].storage_44[7] & FLAG_DRAGOON) != 0) { // Is dragoon
+    if(battleState_8006e398.playerBents_e40[charSlot].hasFlag(FLAG_DRAGOON)) { // Is dragoon
       return this.additionHits_38[charSlot + 3].hits_00[hitNum].get(hitPropertyIndex);
     }
 
