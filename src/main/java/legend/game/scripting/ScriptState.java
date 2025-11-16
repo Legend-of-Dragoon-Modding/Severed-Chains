@@ -758,7 +758,7 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     // Float compare
-    if(operandA.isFloat() || operandB.isFloat()) {
+    if(operandA.isFloat() && operandB.isFloat()) {
       return switch(op) {
         case 0 -> operandA.getFloat() < operandB.getFloat() || MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
         case 1 -> operandA.getFloat() < operandB.getFloat() && !MathHelper.flEq(operandA.getFloat(), operandB.getFloat());

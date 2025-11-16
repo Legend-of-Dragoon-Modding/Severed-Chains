@@ -3858,9 +3858,9 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect's translucency flags (0x3000_0000, bits 28-29) and then sets or unsets flag 0x1000_0000 (bit 28)")
+  @ScriptDescription("Clears an effect's translucency flags (0x3000_0000, bits 28-29) and then sets or unsets flags 0x3000_0000 (bit 28-29)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (B+F), false otherwise (B/2+F/2)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "0 = (B+F)/2, 1 = B+F, 2 = B-F")
   @Method(0x801153e4L)
   public static FlowControl scriptSetEffectTranslucencyModeFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);

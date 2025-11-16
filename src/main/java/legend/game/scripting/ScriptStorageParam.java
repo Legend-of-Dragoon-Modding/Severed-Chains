@@ -43,6 +43,10 @@ public class ScriptStorageParam extends Param {
 
   @Override
   public String toString() {
+    if(this.isFloat()) {
+      return "script[%d].stor[%d] %.2f".formatted(this.state.index, this.index, this.getFloat());
+    }
+
     return "script[%d].stor[%d] 0x%x".formatted(this.state.index, this.index, this.get());
   }
 }
