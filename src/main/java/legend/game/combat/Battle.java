@@ -98,6 +98,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.scripting.FlowControl;
@@ -2404,6 +2405,8 @@ public class Battle extends EngineState {
     }
 
     TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
+
+    EVENTS.postEvent(new CombatantModelLoadedEvent(combatant, model));
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
