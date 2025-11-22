@@ -1,6 +1,6 @@
 package legend.game.types;
 
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdWithId;
 import legend.game.unpacker.FileData;
 
 /**

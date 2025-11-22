@@ -1,6 +1,6 @@
 ; SUBROUTINE
 ALLOCATE_THROW_POTION_EFFECT:
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x15, 0x0, 0x0, 0xf, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 call Battle::scriptGetCharOrMonsterId, stor[30], stor[22] ; bentIndex, id
 call Battle::scriptSetLoadingBentAnimationIndex, stor[30], 0x3 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[30], 0x0 ; bentIndex, loop
@@ -103,7 +103,7 @@ rewind
 
 ; SUBROUTINE
 ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT:
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x2c, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x2c, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 call SEffe::scriptAddLifespanAttachment, stor[18], 0x21 ; effectIndex, ticks
 mov stor[8], stor[stor[stor[0], 18], 8] ; source, dest

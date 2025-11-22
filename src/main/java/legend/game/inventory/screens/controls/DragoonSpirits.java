@@ -4,9 +4,9 @@ import legend.game.inventory.screens.Control;
 import legend.game.types.MenuGlyph06;
 import legend.game.types.Renderable58;
 
+import static legend.game.Menus.allocateManualRenderable;
+import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.initGlyph;
-import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 
 public class DragoonSpirits extends Control {
   private static final int[] dragoonSpiritGoodsBits_800fbabc = {0, 2, 5, 6, 4, 1, 3, 7};

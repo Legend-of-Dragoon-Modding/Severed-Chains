@@ -33,7 +33,7 @@ public class AdditionExtra04 {
     if(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC) {
       final ScriptState<? extends BattleEntity27c> combatant = battleState_8006e398.allBents_e0c[this.index];
 
-      if(combatant != null && (combatant.storage_44[7] & FLAG_MONSTER) == 0) {
+      if(combatant != null && !combatant.hasFlag(FLAG_MONSTER)) {
         boolean enemyAlive = false;
         for(int i = 0; i < battleState_8006e398.aliveMonsterBents_ebc.length; i++) {
           if(battleState_8006e398.aliveMonsterBents_ebc[i] != null && battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00 != null && battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00.stats.getStat(LodMod.HP_STAT.get()).getCurrent() != 0) {

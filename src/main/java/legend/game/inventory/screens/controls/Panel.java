@@ -7,10 +7,10 @@ import legend.game.types.RenderableMetrics14;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 
+import static legend.game.Menus.allocateManualRenderable;
+import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.buildUiRenderable;
 import static legend.game.SItem.initGlyph;
-import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 
 public class Panel extends Control {
   public static Panel panel() {

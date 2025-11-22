@@ -12,7 +12,7 @@ import legend.game.types.Translucency;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.sin;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 
 public class SnowEffect {
   private final Random rand = new Random();

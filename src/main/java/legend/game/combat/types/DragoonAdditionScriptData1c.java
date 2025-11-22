@@ -29,7 +29,7 @@ public class DragoonAdditionScriptData1c implements ScriptedObject {
   }
 
   @Override
-  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+  public void renderScriptDebug(final ScriptState<? extends ScriptedObject> state) {
 
   }
 }

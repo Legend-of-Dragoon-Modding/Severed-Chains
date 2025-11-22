@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment.rand;
 
 public class StarChildrenMeteorEffect10 implements Effect<EffectManagerParams.VoidType> {
   public final int count_00;

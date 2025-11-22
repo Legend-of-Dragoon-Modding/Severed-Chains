@@ -11,7 +11,7 @@ import org.joml.Vector3i;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Text.renderText;
 
 public interface ScriptedObject {
   Vector3f getPosition();
@@ -23,7 +23,7 @@ public interface ScriptedObject {
     return GREY;
   }
 
-  default void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+  default void renderScriptDebug(final ScriptState<? extends ScriptedObject> state) {
     final Vector2f viewspace = new Vector2f();
     Transformations.toScreenspace(this.getPosition(), new MV(), viewspace);
     renderScriptDebug(viewspace, this.getColour());
@@ -40,7 +40,7 @@ public interface ScriptedObject {
       .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
   }
 
-  static void renderScriptDebugText(final ScriptState<ScriptedObject> state, final float x, final float y) {
+  static void renderScriptDebugText(final ScriptState<? extends ScriptedObject> state, final float x, final float y) {
     renderText("Script " + state.index, x, y, FONT);
     renderText(state.innerStruct_00.getClass().getSimpleName(), x, y + 3.0f, FONT);
     renderText(state.name, x, y + 6.0f, FONT);

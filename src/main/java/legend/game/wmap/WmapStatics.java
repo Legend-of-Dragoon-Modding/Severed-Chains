@@ -7,7 +7,7 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.Arrays;
 
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;

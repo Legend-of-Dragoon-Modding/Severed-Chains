@@ -9,7 +9,7 @@ import legend.game.submap.SMap;
 import legend.game.wmap.WMap;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
 public class CharmPotionItem extends BattleItem {
@@ -72,8 +72,8 @@ public class CharmPotionItem extends BattleItem {
 
   @Override
   protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
-    user.storage_44[8] = 0xffffff; // Colour
-    user.storage_44[28] = targetBentIndex;
-    user.storage_44[30] = user.index;
+    user.setStor(8, 0xffffff); // Colour
+    user.setStor(28, targetBentIndex);
+    user.setStor(30, user.index);
   }
 }

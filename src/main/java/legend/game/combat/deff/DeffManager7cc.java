@@ -1,8 +1,7 @@
 package legend.game.combat.deff;
 
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.SpriteMetrics08;

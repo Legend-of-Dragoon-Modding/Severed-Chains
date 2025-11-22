@@ -41,6 +41,8 @@ public final class InputCodepoints {
   public static final char PS_BUTTON_SQUARE = 0xe202;
   public static final char PS_BUTTON_TRIANGLE = 0xe203;
 
+  public static final char TEXTBOX_INPUT_ACTION = 0xef00;
+
   /** Adjusts codepoints for the given controller (e.g. converts A->cross for PS controllers) */
   public static char getCodepoint(final InputGamepadType type, final InputButton button) {
     return getCodepoint(type, button.codepoint);

@@ -11,11 +11,11 @@ import javax.annotation.Nullable;
 
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.chapterNames_80114248;
+import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
-import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Text.renderText;
 
 public class SaveCard extends Control {
   final CharacterPortrait[] portraits = new CharacterPortrait[3];

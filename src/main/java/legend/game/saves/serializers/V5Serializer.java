@@ -18,10 +18,10 @@ import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class V5Serializer {
   private V5Serializer() { }

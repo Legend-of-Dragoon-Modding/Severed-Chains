@@ -6,14 +6,14 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
-import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
-import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
-import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
-import static legend.core.opengl.TmdObjLoader.POS_SIZE;
-import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
-import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
-import static legend.core.opengl.TmdObjLoader.UV_SIZE;
+import static legend.game.tmd.TmdObjLoader.CLUT_SIZE;
+import static legend.game.tmd.TmdObjLoader.COLOUR_SIZE;
+import static legend.game.tmd.TmdObjLoader.FLAGS_SIZE;
+import static legend.game.tmd.TmdObjLoader.NORM_SIZE;
+import static legend.game.tmd.TmdObjLoader.POS_SIZE;
+import static legend.game.tmd.TmdObjLoader.TPAGE_SIZE;
+import static legend.game.tmd.TmdObjLoader.TRANSLUCENT_FLAG;
+import static legend.game.tmd.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_LINE_LOOP;
 import static org.lwjgl.opengl.GL11C.GL_LINE_STRIP;
 

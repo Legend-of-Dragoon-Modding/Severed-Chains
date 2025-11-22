@@ -1,9 +1,11 @@
 package legend.game.scripting;
 
 import legend.game.EngineStateEnum;
-import legend.game.Scus94491BpeSegment_8004;
+import legend.game.EngineStates;
+import legend.game.FullScreenEffects;
+import legend.game.Graphics;
+import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_8005;
-import legend.game.Scus94491BpeSegment_8007;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
@@ -20,12 +22,12 @@ import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.SBtld.startLegacyEncounter;
 
 public class GameVarParam extends Param {
@@ -38,23 +40,23 @@ public class GameVarParam extends Param {
   @Override
   public int get() {
     return switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
+      case 0 -> EngineStates.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier();
       case 3 -> currentEngineState_8004dd04.getInputsHeld();
       case 4 -> currentEngineState_8004dd04.getInputsPressed();
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0];
-      case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8;
-      case 8 -> Scus94491BpeSegment_800b.clearGreen_800bb104;
-      case 9 -> Scus94491BpeSegment_800b.clearBlue_800babc0;
-      case 10 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.currentColour_28;
-      case 11 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.red0_20;
-      case 12 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.green0_1c;
-      case 13 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.blue0_14;
-      case 14 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.red1_18;
-      case 15 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.green1_10;
-      case 16 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.blue1_0c;
+      case 7 -> Graphics.clearRed_8007a3a8;
+      case 8 -> Graphics.clearGreen_800bb104;
+      case 9 -> Graphics.clearBlue_800babc0;
+      case 10 -> FullScreenEffects.fullScreenEffect_800bb140.currentColour_28;
+      case 11 -> FullScreenEffects.fullScreenEffect_800bb140.red0_20;
+      case 12 -> FullScreenEffects.fullScreenEffect_800bb140.green0_1c;
+      case 13 -> FullScreenEffects.fullScreenEffect_800bb140.blue0_14;
+      case 14 -> FullScreenEffects.fullScreenEffect_800bb140.red1_18;
+      case 15 -> FullScreenEffects.fullScreenEffect_800bb140.green1_10;
+      case 16 -> FullScreenEffects.fullScreenEffect_800bb140.blue1_0c;
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0];
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c;
@@ -62,7 +64,7 @@ public class GameVarParam extends Param {
       case 21, 23 -> Scus94491BpeSegment_800b.gameState_800babc8.submapScene_a4;
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0;
-      case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+      case 25 -> Graphics.vsyncMode_8007a3b8;
       case 26 -> currentEngineState_8004dd04.getInputsRepeat();
       case 27 -> currentEngineState_8004dd04.getAnalogueMagnitude() != 0.0f ? 1 : 0;
       case 28 -> Math.floorMod((int)(currentEngineState_8004dd04.getAnalogueAngle() * 0x800 / Math.PI) + 0x400, 0x1000); // 0..0x1000, clockwise, up=0;
@@ -148,7 +150,7 @@ public class GameVarParam extends Param {
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04;
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368 ? 1 : 0;
-      case 125 -> Scus94491BpeSegment_8007.shopId_8007a3b4;
+      case 125 -> SItem.shopId_8007a3b4;
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0];
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.get();
@@ -171,21 +173,21 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineStateEnum.values()[val];
+      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94 = val;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0] = val;
-      case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8 = val;
-      case 8 -> Scus94491BpeSegment_800b.clearGreen_800bb104 = val;
-      case 9 -> Scus94491BpeSegment_800b.clearBlue_800babc0 = val;
-      case 10 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.currentColour_28 = val;
-      case 11 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.red0_20 = val;
-      case 12 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.green0_1c = val;
-      case 13 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.blue0_14 = val;
-      case 14 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.red1_18 = val;
-      case 15 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.green1_10 = val;
-      case 16 -> Scus94491BpeSegment_800b.fullScreenEffect_800bb140.blue1_0c = val;
+      case 7 -> Graphics.clearRed_8007a3a8 = val;
+      case 8 -> Graphics.clearGreen_800bb104 = val;
+      case 9 -> Graphics.clearBlue_800babc0 = val;
+      case 10 -> FullScreenEffects.fullScreenEffect_800bb140.currentColour_28 = val;
+      case 11 -> FullScreenEffects.fullScreenEffect_800bb140.red0_20 = val;
+      case 12 -> FullScreenEffects.fullScreenEffect_800bb140.green0_1c = val;
+      case 13 -> FullScreenEffects.fullScreenEffect_800bb140.blue0_14 = val;
+      case 14 -> FullScreenEffects.fullScreenEffect_800bb140.red1_18 = val;
+      case 15 -> FullScreenEffects.fullScreenEffect_800bb140.green1_10 = val;
+      case 16 -> FullScreenEffects.fullScreenEffect_800bb140.blue1_0c = val;
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0] = val;
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98 = val;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c = val;
@@ -193,14 +195,14 @@ public class GameVarParam extends Param {
       case 21, 23 -> Scus94491BpeSegment_800b.gameState_800babc8.submapScene_a4 = val;
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8 = val;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0 = val;
-      case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8 = val;
+      case 25 -> Graphics.vsyncMode_8007a3b8 = val;
       case 29 -> Scus94491BpeSegment_800b._800beea4 = val;
       case 30 -> Scus94491BpeSegment_800b._800beeac = val;
-      case 32 -> battleState_8006e398.allBents_e0c[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 32 -> battleState_8006e398.allBents_e0c[0] = SCRIPTS.getState(val, BattleEntity27c.class);
 //      case 33 -> battleState_8006e398.allBentCount_800c66d0 = val;
-      case 34 -> battleState_8006e398.playerBents_e40[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+      case 34 -> battleState_8006e398.playerBents_e40[0] = SCRIPTS.getState(val, PlayerBattleEntity.class);
 //      case 35 -> battleState_8006e398.playerCount_800c677c = val;
-      case 36 -> battleState_8006e398.monsterBents_e50[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+      case 36 -> battleState_8006e398.monsterBents_e50[0] = SCRIPTS.getState(val, MonsterBattleEntity.class);
 //      case 37 -> battleState_8006e398.monsterCount_800c6768 = val;
       case 38 -> CONFIG.setConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.values()[val]);
       case 39 -> battleState_8006e398.battlePhase_eec = val;
@@ -218,29 +220,29 @@ public class GameVarParam extends Param {
           itemOverflow.add(item);
         }
       }
-      case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = SCRIPTS.getState(val, BattleEntity27c.class);
       case 43 -> startLegacyEncounter(val, battleStage_800bb0f4);
       case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4 = val;
-      case 48 -> battleState_8006e398.aliveBents_e78[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 48 -> battleState_8006e398.aliveBents_e78[0] = SCRIPTS.getState(val, BattleEntity27c.class);
 //      case 49 -> battleState_8006e398.aliveBentCount_800c669c = val;
-      case 50 -> battleState_8006e398.alivePlayerBents_eac[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+      case 50 -> battleState_8006e398.alivePlayerBents_eac[0] = SCRIPTS.getState(val, PlayerBattleEntity.class);
 //      case 51 -> battleState_8006e398.alivePlayerCount_800c6760 = val;
-      case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+      case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = SCRIPTS.getState(val, MonsterBattleEntity.class);
 //      case 53 -> battleState_8006e398.aliveMonsterCount_800c6758 = val;
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = val;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
-      case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = SCRIPTS.getState(val, BattleEntity27c.class);
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920 = val;
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c = val;
 
-      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
-      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = (ScriptState<ScriptedObject>)scriptStatePtrArr_800bc1c0[val];
+      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0] = SCRIPTS.getState(val, SubmapObject210.class);
+      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = SCRIPTS.getState(val, ScriptedObject.class);
 //      case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730 = val;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0 = val;
       case 68 -> Scus94491BpeSegment_800b.previousSubmapCut_800bda08 = val;
@@ -252,7 +254,7 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 = SCRIPTS.getState(val, BattleEntity27c.class);
       case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918 = val;
       case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8 = val;
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc = val;
@@ -287,7 +289,7 @@ public class GameVarParam extends Param {
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04 = val;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04 = val;
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368 = val != 0;
-      case 125 -> Scus94491BpeSegment_8007.shopId_8007a3b4 = val;
+      case 125 -> SItem.shopId_8007a3b4 = val;
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0] = val;
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.set(val);

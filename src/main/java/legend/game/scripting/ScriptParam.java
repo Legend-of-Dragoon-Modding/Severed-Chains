@@ -23,6 +23,7 @@ public @interface ScriptParam {
   enum Type {
     INT,
     INT_ARRAY,
+    FLOAT,
     BOOL,
     BOOL_ARRAY,
     /** Lower 5 bits are what bit to set (i.e. 1 << n), upper 3 bits is the index into flags array */

@@ -17,7 +17,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.RenderEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject;
@@ -29,14 +28,14 @@ import legend.game.types.TmdAnimationFile;
 import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
-import static legend.game.Scus94491BpeSegment_8002.applyKeyframe;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyInterpolationFrame;
+import static legend.game.Models.applyKeyframe;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
+import static legend.game.Models.loadModelStandardAnimation;
 
 public class SmapModelDebuggerController {
   @FXML
@@ -200,10 +199,6 @@ public class SmapModelDebuggerController {
       }
 
       if(this.model != null) {
-        if(this.model.modelParts_00[0].obj == null) {
-          TmdObjLoader.fromModel("Animation viewer", this.model);
-        }
-
         animateModel(this.model, 4 / vsyncMode_8007a3b8);
         applyModelRotationAndScale(this.model);
         this.smap.renderSmapModel(this.model, null);

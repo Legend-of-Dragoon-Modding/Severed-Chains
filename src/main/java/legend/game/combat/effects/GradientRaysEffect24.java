@@ -15,8 +15,8 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.RotTransPers4;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 

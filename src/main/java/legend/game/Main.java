@@ -14,8 +14,8 @@ import java.util.Locale;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.lastSavableEngineState;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;

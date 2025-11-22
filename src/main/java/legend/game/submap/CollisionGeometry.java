@@ -4,8 +4,8 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdObjTable1c;
+import legend.game.tmd.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.game.unpacker.FileData;
@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.MathHelper.flEq;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
+import static legend.game.Graphics.GsInitCoordinate2;
 
 public class CollisionGeometry {
   private static final Logger LOGGER = LogManager.getFormatterLogger(CollisionGeometry.class);

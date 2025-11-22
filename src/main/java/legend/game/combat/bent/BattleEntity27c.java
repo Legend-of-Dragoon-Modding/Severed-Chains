@@ -31,18 +31,18 @@ import java.util.Set;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsSetLightMatrix;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.Battle.FUN_800ca194;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
 import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
@@ -592,7 +592,7 @@ public abstract class BattleEntity27c extends BattleObject {
     this._278 = 0;
 
     final int v1;
-    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
+    if(state.hasFlag(FLAG_MONSTER)) {
       v1 = battleFlags_800bc960 & 0x110;
     } else {
       //LAB_800cae94
@@ -608,7 +608,7 @@ public abstract class BattleEntity27c extends BattleObject {
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
-        if((state.storage_44[7] & FLAG_NO_SCRIPT) == 0) {
+        if(!state.hasFlag(FLAG_NO_SCRIPT)) {
           //LAB_800caf20
           state.loadScriptFile(this.getScript());
         }
@@ -632,10 +632,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cafb4L)
   protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
+    if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
       applyModelRotationAndScale(this.model_148);
 
-      if((state.storage_44[7] & FLAG_ANIMATE_ONCE) == 0 || this.model_148.remainingFrames_9e != 0) {
+      if(!state.hasFlag(FLAG_ANIMATE_ONCE) || this.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
         animateModel(this.model_148);
       }
@@ -646,7 +646,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
+    if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
       this.renderBttlModel(this.model_148);
     }
 
@@ -659,7 +659,7 @@ public abstract class BattleEntity27c extends BattleObject {
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
     //LAB_800cb11c
-    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
+    if(state.hasFlag(FLAG_MONSTER)) {
       battleState_8006e398.removeMonster((MonsterBattleEntity)this);
     } else {
       battleState_8006e398.removePlayer((PlayerBattleEntity)this);
@@ -688,20 +688,18 @@ public abstract class BattleEntity27c extends BattleObject {
         GTE.setTransforms(ls);
         Renderer.renderDobj2(part, true, 0);
 
-        if(model.modelParts_00[i].obj != null) {
-          final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(model.zOffset_a0 * 4)
-            .usePs1Depth(model.usePs1Depth)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+        final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
+          .depthOffset(model.zOffset_a0 * 4)
+          .usePs1Depth(model.usePs1Depth)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-          if(this.useScissor) {
-            queue.scissor(this.scissor);
-          }
+        if(this.useScissor) {
+          queue.scissor(this.scissor);
         }
       }
     }

@@ -4,7 +4,7 @@ import legend.game.characters.Element;
 import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.adjustDamageForPower;
 
 public final class PhysicalDamageFormula {

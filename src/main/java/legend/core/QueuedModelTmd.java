@@ -60,8 +60,8 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
   }
 
   @Override
-  void acquire(final Obj obj) {
-    super.acquire(obj);
+  void acquire(final Obj obj, final int sequence) {
+    super.acquire(obj, sequence);
 
     this.lightTransforms.set(this.transforms);
     this.lightUsed = false;

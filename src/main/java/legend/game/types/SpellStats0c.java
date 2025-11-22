@@ -4,10 +4,33 @@ import legend.game.characters.Element;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
-public class SpellStats0c {
-  public final String name;
-  public final String battleDescription;
+//TODO not actually in a registry yet, just prepping
+public class SpellStats0c extends RegistryEntry {
+  //TODO remove these
+  private final RegistryId id;
+
+  @Override
+  public RegistryId getRegistryId() {
+    return this.id;
+  }
+
+  @Override
+  public String getTranslationKey() {
+    return this.getTranslationKey("name");
+  }
+
+  @Override
+  public String getTranslationKey(final String type) {
+    return this.id.modId() + ".spells." + this.id.entryId() + '.' + type;
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ' ' + this.id;
+  }
 
   /**
    * <ul>
@@ -33,7 +56,7 @@ public class SpellStats0c {
   public final int buffType_0a;
   public final int _0b;
 
-  public static SpellStats0c fromFile(final String name, final String battleDescription, final FileData data) {
+  public static SpellStats0c fromFile(final RegistryId id, final FileData data) {
     final int targetType_00 = data.readUByte(0x0);
     final int flags_01 = data.readUByte(0x1);
     final int specialEffect_02 = data.readUByte(0x2);
@@ -47,12 +70,11 @@ public class SpellStats0c {
     final int buffType_0a = data.readUByte(0xa);
     final int _0b = data.readUByte(0xb);
 
-    return new SpellStats0c(name, battleDescription, targetType_00, flags_01, specialEffect_02, damage_03, multi_04, accuracy_05, mp_06, statusChance_07, element_08, statusType_09, buffType_0a, _0b);
+    return new SpellStats0c(id, targetType_00, flags_01, specialEffect_02, damage_03, multi_04, accuracy_05, mp_06, statusChance_07, element_08, statusType_09, buffType_0a, _0b);
   }
 
   public SpellStats0c() {
-    this.name = "";
-    this.battleDescription = "";
+    this.id = null;
     this.targetType_00 = 0;
     this.flags_01 = 0;
     this.specialEffect_02 = 0;
@@ -67,9 +89,8 @@ public class SpellStats0c {
     this._0b = 0;
   }
 
-  public SpellStats0c(final String name, final String battleDescription, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b) {
-    this.name = name;
-    this.battleDescription = battleDescription;
+  public SpellStats0c(final RegistryId id, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b) {
+    this.id = id;
     this.targetType_00 = targetType;
     this.flags_01 = flags;
     this.specialEffect_02 = specialEffect;

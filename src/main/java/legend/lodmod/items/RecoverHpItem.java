@@ -1,7 +1,6 @@
 package legend.lodmod.items;
 
 import legend.core.memory.Method;
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
@@ -9,6 +8,7 @@ import legend.game.inventory.UseItemResponse;
 import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.SItem.addHp;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -67,7 +67,7 @@ public class RecoverHpItem extends BattleItem {
   }
 
   protected int recover(final int charId,final int amount) {
-    return Scus94491BpeSegment_8002.addHp(charId, amount);
+    return addHp(charId, amount);
   }
 
   @Override

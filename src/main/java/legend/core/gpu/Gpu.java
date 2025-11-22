@@ -23,7 +23,7 @@ import java.util.List;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
+import static legend.game.Graphics.orderingTableSize_1f8003c8;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;

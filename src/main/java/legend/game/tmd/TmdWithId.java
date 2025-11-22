@@ -1,5 +1,6 @@
-package legend.core.gte;
+package legend.game.tmd;
 
+import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.unpacker.FileData;
 

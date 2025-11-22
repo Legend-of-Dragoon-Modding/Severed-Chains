@@ -3,8 +3,8 @@ package legend.game.combat.effects;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.game.Graphics.displayHeight_1f8003e4;
+import static legend.game.Graphics.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class ShirleyTransformWipeEffect implements Effect<EffectManagerParams.ShirleyType> {

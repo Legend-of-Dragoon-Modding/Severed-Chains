@@ -6,8 +6,8 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.Graphics.displayHeight_1f8003e4;
 
 public class FullScreenOverlayEffect0e implements Effect<EffectManagerParams.VoidType> {
   private int r_00;

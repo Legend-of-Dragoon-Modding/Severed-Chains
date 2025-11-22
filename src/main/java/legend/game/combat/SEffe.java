@@ -10,15 +10,11 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -84,6 +80,10 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.Tmd;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdObjTable1c;
+import legend.game.tmd.TmdWithId;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
@@ -107,36 +107,35 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.Audio._800bf0cf;
+import static legend.game.Audio.playSound;
+import static legend.game.Audio.playXaAudio;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.GetClut;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetFlatLight;
+import static legend.game.Graphics.GsSetLightMatrix;
+import static legend.game.Graphics.getProjectionPlaneDistance;
+import static legend.game.Graphics.inverseWorldToScreenMatrix;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zMax_1f8003cc;
+import static legend.game.Graphics.zMin;
+import static legend.game.Graphics.zShift_1f8003c4;
+import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
-import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
-import static legend.game.Scus94491BpeSegment.zMin;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
-import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8003.GetClut;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
-import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
@@ -196,7 +195,7 @@ public final class SEffe {
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(scriptIndex, BattleObject.class);
     posOut.set(bobj.getPosition());
   }
 
@@ -653,7 +652,7 @@ public final class SEffe {
 
     //LAB_800e8604
     while(scriptIndex >= 0) {
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
+      final ScriptState<?> state = SCRIPTS.getState(scriptIndex);
       if(state == null) { // error, parent no longer exists
         manager.params_10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.z = -0x7fff;
@@ -823,7 +822,7 @@ public final class SEffe {
     GsGetLw(shadow.modelParts_00[0].coord2_04, lw);
 
     RENDERER
-      .queueModel(shadow.modelParts_00[0].obj, lw, QueuedModelTmd.class)
+      .queueModel(shadow.modelParts_00[0].tmd_08.getObj(), lw, QueuedModelTmd.class)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -1190,7 +1189,7 @@ public final class SEffe {
   @Method(0x801077e8L)
   public static FlowControl scriptAllocateAdditionOverlaysEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Addition overlays", script.scriptState_04, new AdditionOverlaysEffect44(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
-    state.storage_44[8] = 0; // Storage for counterattack state
+    state.setStor(8, 0); // Storage for counterattack state
     script.params_20[4].set(state.index);
     additionOverlayActive_80119f41 = 1;
     return FlowControl.CONTINUE;
@@ -1711,7 +1710,6 @@ public final class SEffe {
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
-    animation.obj = source.obj;
     animation.tmd = sourceModel;
     animation.ticksRemaining_00 = ticks;
     animation.embiggener_04 = embiggener;
@@ -1754,7 +1752,7 @@ public final class SEffe {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[3].get();
 
-    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
+    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)SCRIPTS.getObject(script.params_20[1].get(), EffectManagerData6c.class).effect_44;
     final TmdObjTable1c tmd = v1.tmd_08;
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.FrozenJetType>> state = allocateEffectManager(
@@ -2245,7 +2243,7 @@ public final class SEffe {
   /** Returns reference */
   @Method(0x80110074L)
   public static Vector3f getScriptedObjectRotation(final int scriptIndex) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(scriptIndex, BattleObject.class);
     return bobj.getRotation();
   }
 
@@ -2291,14 +2289,14 @@ public final class SEffe {
   @Method(0x80110488L)
   public static void getEffectTranslationRelativeToParent(final int scriptIndex, final int parentIndex, final Vector3f out) {
     final MV transforms = new MV();
-    calculateEffectTransforms(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00);
+    calculateEffectTransforms(transforms, SCRIPTS.getObject(scriptIndex, EffectManagerData6c.class));
 
     if(parentIndex == -1) {
       out.set(transforms.transfer);
     } else {
       //LAB_80110500
       final MV parentTransforms = new MV();
-      calculateEffectTransforms(parentTransforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00);
+      calculateEffectTransforms(parentTransforms, SCRIPTS.getObject(parentIndex, EffectManagerData6c.class));
       transforms.transfer.sub(parentTransforms.transfer);
 
       parentTransforms.transpose();
@@ -2511,7 +2509,7 @@ public final class SEffe {
     final int bobjIndex1 = script.params_20[0].get();
     final int bobjIndex2 = script.params_20[1].get();
 
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[bobjIndex1].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(bobjIndex1, BattleObject.class);
 
     if(bobjIndex2 == -1) {
       final Vector3f pos = bobj.getPosition();
@@ -2519,7 +2517,7 @@ public final class SEffe {
       script.params_20[3].set(Math.round(pos.y));
       script.params_20[4].set(Math.round(pos.z));
     } else {
-      final BattleObject parent = (BattleObject)scriptStatePtrArr_800bc1c0[bobjIndex2].innerStruct_00;
+      final BattleObject parent = SCRIPTS.getObject(bobjIndex2, BattleObject.class);
       final Vector3f pos = bobj.getRelativePositionFrom(parent, new Vector3f());
       script.params_20[2].set(Math.round(pos.x));
       script.params_20[3].set(Math.round(pos.y));
@@ -2550,7 +2548,7 @@ public final class SEffe {
     final Vector3f trans = new Vector3f();
     final Vector3f scale = new Vector3f();
     final MV transforms = new MV();
-    final BattleObject s0 = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject s0 = SCRIPTS.getObject(scriptIndex, BattleObject.class);
     if(BattleObject.EM__.equals(s0.magic_00)) {
       final EffectManagerData6c<EffectManagerParams.AnimType> effects = (EffectManagerData6c<EffectManagerParams.AnimType>)s0;
 
@@ -2898,7 +2896,7 @@ public final class SEffe {
   /** Sets rotation on script from given vector, adding from second script if one is specified */
   @Method(0x80112530L)
   public static int setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final Vector3f rotation) {
-    final EffectManagerData6c<?> data = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    final EffectManagerData6c<?> data = SCRIPTS.getObject(scriptIndex1, EffectManagerData6c.class);
 
     if(BattleObject.EM__.equals(data.magic_00) && data.hasAttachment(2)) {
       data.removeAttachment(2);
@@ -3860,9 +3858,9 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears an effect's translucency flags (0x3000_0000, bits 28-29) and then sets or unsets flag 0x1000_0000 (bit 28)")
+  @ScriptDescription("Clears an effect's translucency flags (0x3000_0000, bits 28-29) and then sets or unsets flags 0x3000_0000 (bit 28-29)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set (B+F), false otherwise (B/2+F/2)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "0 = (B+F)/2, 1 = B+F, 2 = B-F")
   @Method(0x801153e4L)
   public static FlowControl scriptSetEffectTranslucencyModeFlag(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -4113,8 +4111,8 @@ public final class SEffe {
   @Method(0x80115c2cL)
   public static void allocateScreenDarkeningEffect(final int startVal, final int targetVal) {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("Screen darkening", deffManager_800c693c.scriptState_1c, new ScreenDarkeningEffect());
-    state.storage_44[8] = startVal;
-    state.storage_44[9] = targetVal;
+    state.setStor(8, startVal);
+    state.setStor(9, targetVal);
   }
 
   @Method(0x80115cacL)
@@ -4384,8 +4382,6 @@ public final class SEffe {
       effect.tpage_10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     }
 
-    effect.obj = TmdObjLoader.fromObjTable(state.name, effect.tmd_08);
-
     //LAB_801184ac
     manager.params_10.flags_00 = 0x1400_0000;
     script.params_20[0].set(state.index);
@@ -4419,7 +4415,7 @@ public final class SEffe {
       objTable = battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
     } else {
       //LAB_80118634
-      final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
+      final BattleObject bobj = SCRIPTS.getObject(flags, BattleObject.class);
       if(BattleObject.EM__.equals(bobj.magic_00)) {
         final EffectManagerData6c<?> effects = (EffectManagerData6c<?>)bobj;
         final int v1 = effects.flags_04 & 0xff00_0000;
@@ -4451,8 +4447,6 @@ public final class SEffe {
     s0._00 = 0x300_0000;
     s0.tmdType_04 = null;
     s0.tmd_08 = objTable;
-
-    s0.obj = TmdObjLoader.fromObjTable(state.name, s0.tmd_08);
 
     //LAB_801186bc
     //LAB_801186c0
@@ -4579,11 +4573,10 @@ public final class SEffe {
       final TmdSpriteEffect10 subEffect = new TmdSpriteEffect10();
       effect.subEffect_1c = subEffect;
       getSpriteTmdFromSource(subEffect, effectFlag);
-      subEffect.obj = TmdObjLoader.fromObjTable(state.name, subEffect.tmd_08);
       manager.params_10.flags_00 = 0x1400_0000;
     } else if(effectType == 0) {
       //LAB_801195a8
-      throw new RuntimeException("The type is " + ((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[effectFlag].innerStruct_00).effect_44.getClass().getSimpleName());
+      throw new RuntimeException("The type is " + SCRIPTS.getObject(effectFlag, EffectManagerData6c.class).effect_44.getClass().getSimpleName());
     }
 
     //LAB_8011967c

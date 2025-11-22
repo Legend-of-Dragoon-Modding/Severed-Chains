@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 
 public class KeybindScreen extends InputBoxScreen {
   private static final long TIMEOUT = 4_000_000_000L;

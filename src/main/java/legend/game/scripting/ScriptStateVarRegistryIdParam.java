@@ -46,12 +46,12 @@ public class ScriptStateVarRegistryIdParam extends Param {
 
   @Override
   public RegistryId getRegistryId() {
-    return this.state.registryIds[this.state.storage_44[this.storIndex]];
+    return this.state.registryIds[this.state.getStor(this.storIndex)];
   }
 
   @Override
   public Param set(final RegistryId id) {
-    this.state.registryIds[this.state.storage_44[this.storIndex]] = id;
+    this.state.registryIds[this.state.getStor(this.storIndex)] = id;
     return this;
   }
 

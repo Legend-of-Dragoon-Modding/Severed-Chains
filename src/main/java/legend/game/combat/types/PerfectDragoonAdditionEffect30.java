@@ -19,7 +19,7 @@ public class PerfectDragoonAdditionEffect30 implements ScriptedObject {
   }
 
   @Override
-  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+  public void renderScriptDebug(final ScriptState<? extends ScriptedObject> state) {
 
   }
 }

@@ -1,4 +1,4 @@
-package legend.core.gte;
+package legend.game.tmd;
 
 import legend.game.unpacker.FileData;
 

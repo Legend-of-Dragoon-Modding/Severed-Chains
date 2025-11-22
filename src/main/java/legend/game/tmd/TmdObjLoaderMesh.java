@@ -1,4 +1,4 @@
-package legend.core.opengl;
+package legend.game.tmd;
 
 import legend.game.types.Translucency;
 

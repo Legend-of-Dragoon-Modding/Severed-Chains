@@ -1,6 +1,6 @@
 package legend.game.combat.encounters;
 
-import static legend.game.Scus94491BpeSegment.loadBattlePhaseSounds;
+import static legend.game.Audio.loadBattlePhaseSounds;
 
 public class PhasedEncounter extends Encounter {
   public final String phaseDirectoryName;

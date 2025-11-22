@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.applyBuffOrDebuff;
 import static legend.game.combat.Battle.applyMagicDamageMultiplier;
 import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
@@ -112,7 +112,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     super.bentRenderer(state, bent);
 
-    if((state.storage_44[7] & (FLAG_NO_SCRIPT | FLAG_HIDE | FLAG_1)) == 0 && CONFIG.getConfig(CoreMod.ENEMY_HP_BARS_CONFIG.get())) {
+    if(!state.hasAnyFlag(FLAG_NO_SCRIPT | FLAG_HIDE | FLAG_1) && CONFIG.getConfig(CoreMod.ENEMY_HP_BARS_CONFIG.get())) {
       final VitalsStat stat = bent.stats.getStat(LodMod.HP_STAT.get());
       final float hp = (float)stat.getCurrent() / stat.getMax();
 

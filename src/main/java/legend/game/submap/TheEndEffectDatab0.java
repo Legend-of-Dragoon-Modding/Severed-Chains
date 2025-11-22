@@ -14,7 +14,7 @@ import org.joml.Vector2i;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 
 public class TheEndEffectDatab0 {
   private final FileData clutData_800d4bd4;

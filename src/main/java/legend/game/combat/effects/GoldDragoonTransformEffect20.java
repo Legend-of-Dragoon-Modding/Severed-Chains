@@ -12,9 +12,9 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zOffset_1f8003e8;
 
 public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.VoidType> {
   // public int count_00;

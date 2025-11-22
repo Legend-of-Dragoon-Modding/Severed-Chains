@@ -6,11 +6,11 @@ import legend.game.types.Renderable58;
 import legend.game.types.UiType;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.Menus.allocateManualRenderable;
+import static legend.game.Menus.uiFile_800bdc3c;
+import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.initGlyph;
-import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class Glyph extends Control {

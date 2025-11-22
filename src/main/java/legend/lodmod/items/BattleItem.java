@@ -20,7 +20,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.nio.file.Path;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.deffManager_800c693c;
 
 /** Convenience class for easily using vanilla item effects */

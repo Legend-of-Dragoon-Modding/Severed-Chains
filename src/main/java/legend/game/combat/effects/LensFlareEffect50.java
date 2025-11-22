@@ -22,9 +22,9 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Graphics.displayHeight_1f8003e4;
+import static legend.game.Graphics.displayWidth_1f8003e0;
+import static legend.game.Scus94491BpeSegment.rand;
 
 public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
   // /** Set to 5 and never used */

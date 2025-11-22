@@ -35,6 +35,7 @@ public class RenderBatch {
   public int expectedWidth = 320;
 
   public boolean needsSorting;
+  private int sequence;
 
   public final Matrix4f perspectiveProjection = new Matrix4f();
   public final Matrix4f orthographicProjection = new Matrix4f();
@@ -73,6 +74,7 @@ public class RenderBatch {
   void reset() {
     this.modelPool.reset();
     this.orthoPool.reset();
+    this.sequence = 0;
   }
 
   public void setRenderMode(final EngineState.RenderMode renderMode) {
@@ -167,7 +169,7 @@ public class RenderBatch {
     this.temp.identity();
 
     final T entry = this.modelPool.acquire(type);
-    entry.acquire(obj, this.temp);
+    entry.acquire(obj, this.sequence++, this.temp);
     return entry;
   }
 
@@ -181,7 +183,7 @@ public class RenderBatch {
     }
 
     final T entry = this.modelPool.acquire(type);
-    entry.acquire(obj, mv);
+    entry.acquire(obj, this.sequence++, mv);
     return entry;
   }
 
@@ -195,7 +197,7 @@ public class RenderBatch {
     }
 
     final T entry = this.modelPool.acquire(type);
-    entry.acquire(obj, mv);
+    entry.acquire(obj, this.sequence++, mv);
     entry.setLightTransforms(lightMv);
     return entry;
   }
@@ -210,7 +212,7 @@ public class RenderBatch {
     }
 
     final T entry = this.modelPool.acquire(type);
-    entry.acquire(obj, mv);
+    entry.acquire(obj, this.sequence++, mv);
     return entry;
   }
 
@@ -224,7 +226,7 @@ public class RenderBatch {
     }
 
     final T entry = this.modelPool.acquire(type);
-    entry.acquire(obj, mv);
+    entry.acquire(obj, this.sequence++, mv);
     entry.setLightTransforms(lightMv);
     return entry;
   }
@@ -243,7 +245,7 @@ public class RenderBatch {
     this.temp.identity().setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
 
     final T entry = this.orthoPool.acquire(type);
-    entry.acquire(obj, this.temp);
+    entry.acquire(obj, this.sequence++, this.temp);
     return entry;
   }
 
@@ -259,7 +261,7 @@ public class RenderBatch {
     this.temp.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
 
     final T entry = this.orthoPool.acquire(type);
-    entry.acquire(obj, this.temp);
+    entry.acquire(obj, this.sequence++, this.temp);
     return entry;
   }
 
@@ -274,7 +276,7 @@ public class RenderBatch {
     }
 
     final T entry = this.orthoPool.acquire(type);
-    entry.acquire(obj, transforms);
+    entry.acquire(obj, this.sequence++, transforms);
     return entry;
   }
 }

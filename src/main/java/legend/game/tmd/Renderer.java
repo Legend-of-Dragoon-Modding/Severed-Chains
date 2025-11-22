@@ -5,7 +5,6 @@ import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
@@ -13,13 +12,13 @@ import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
-import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
-import static legend.game.Scus94491BpeSegment.zMin;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.tmdGp0CommandId_1f8003ee;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zMax_1f8003cc;
+import static legend.game.Graphics.zMin;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Graphics.zShift_1f8003c4;
 
 public final class Renderer {
   private Renderer() { }

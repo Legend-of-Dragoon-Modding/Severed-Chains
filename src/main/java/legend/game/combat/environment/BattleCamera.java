@@ -18,8 +18,8 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.GTE;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Graphics.GsSetRefView2L;
+import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.ZERO;
 
