@@ -3,11 +3,11 @@ package legend.game.inventory.screens.controls;
 import legend.game.inventory.screens.Control;
 import legend.game.types.Renderable58;
 
+import static legend.game.Menus.allocateManualRenderable;
+import static legend.game.Menus.uiFile_800bdc3c;
+import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
-import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public class CharacterPortrait extends Control {
   private final Renderable58 renderable;

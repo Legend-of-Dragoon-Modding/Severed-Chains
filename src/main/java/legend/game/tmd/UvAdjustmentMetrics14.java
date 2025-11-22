@@ -1,7 +1,6 @@
 package legend.game.tmd;
 
 import legend.core.MathHelper;
-import legend.core.gte.TmdObjTable1c;
 
 public class UvAdjustmentMetrics14 {
   public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0, 0, 0, 0) {

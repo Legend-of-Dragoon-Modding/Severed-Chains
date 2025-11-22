@@ -58,7 +58,11 @@ public class Font {
     final Glyph glyph = this.glyphs.get(chr);
 
     if(glyph == null) {
-      return RENDERER.queueOrthoModel(RENDERER.lineBox, transforms, QueuedModelStandard.class);
+      final MV mv = new MV(transforms);
+      mv.scale(5.0f, 5.0f, 1.0f);
+      mv.transfer.x += 5.0f;
+      mv.transfer.y += 5.0f;
+      return RENDERER.queueOrthoModel(RENDERER.lineBox, mv, QueuedModelStandard.class);
     }
 
     return RENDERER.queueOrthoModel(this.obj, transforms, QueuedModelStandard.class)

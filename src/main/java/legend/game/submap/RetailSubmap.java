@@ -13,19 +13,19 @@ import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdWithId;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsRVIEW2;
@@ -57,42 +57,40 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
-import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Audio.loadMusicPackage;
+import static legend.game.Audio.loadSubmapSounds;
+import static legend.game.Audio.musicLoaded_800bd782;
+import static legend.game.Audio.soundFiles_800bcf80;
+import static legend.game.Audio.startCurrentMusicSequence;
+import static legend.game.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.Audio.stopCurrentMusicSequence;
+import static legend.game.Audio.unloadSoundFile;
+import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsSetSmapRefView2L;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
-import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
-import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
-import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
@@ -107,6 +105,19 @@ public class RetailSubmap extends Submap {
   private final CollisionGeometry collisionGeometry;
 
   private final List<Tim> pxls = new ArrayList<>();
+
+  private static final int[] submapMusic_80050068 = {
+    -1, -1, 23, 28, 44, 20, 22, -1,
+    29, 40, 30, 22, 24, 22, 31, 42,
+    -1, 32, 45, 29, 40, 27, 33, 21,
+    21, -1, 48, 46, -1, 22, 38, -1,
+    33, 23, 36, 49, 28, 39, 50, -1,
+    47, -1, 26, 27, 26, 42, 45, -1,
+    27, 39, 27, 52, -1, 38, 53, 54,
+    55, -1, -1, -1, -1, -1, -1, -1,
+  };
+
+  private int projectionPlaneDistance_800bd810;
 
   private final boolean hasRenderer_800c6968;
 
@@ -181,7 +192,7 @@ public class RetailSubmap extends Submap {
 
     drgnBinIndex_800bc058 = drgnIndex.get();
     loadDrgnDir(2, fileIndex.get(), files -> {
-      this.loadBackground("DRGN2" + drgnIndex.get() + "/" + fileIndex.get(), files);
+      this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files);
       onLoaded.run();
     });
   }
@@ -625,9 +636,8 @@ public class RetailSubmap extends Submap {
         }
 
         throw new RuntimeException("Failed to find available texture slot for sobj texture " + pxlIndex);
-      } else {
-        this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
+      this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
     }
   }
 
@@ -992,7 +1002,7 @@ public class RetailSubmap extends Submap {
 
   @Method(0x800e7328L)
   private void updateCamera() {
-    setProjectionPlaneDistance(projectionPlaneDistance_800bd810);
+    setProjectionPlaneDistance(this.projectionPlaneDistance_800bd810);
     GsSetSmapRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     rview2_800bd7e8.set(this.rview2_800cbd10);
@@ -1004,7 +1014,7 @@ public class RetailSubmap extends Submap {
     this.rview2_800cbd10.refpoint_0c.set(refpoint);
     this.rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
     this.rview2_800cbd10.super_1c = null;
-    projectionPlaneDistance_800bd810 = projectionDistance;
+    this.projectionPlaneDistance_800bd810 = projectionDistance;
 
     this.updateCamera();
   }
@@ -1364,10 +1374,6 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
-    }
-
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
@@ -1393,7 +1399,7 @@ public class RetailSubmap extends Submap {
 
       GsGetLw(dobj2.coord2_04, lw);
 
-      RENDERER.queueModel(dobj2.obj, matrix, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(dobj2.tmd_08.getObj(), matrix, lw, QueuedModelTmd.class)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .depthOffset(model.zOffset_a0 * 4)
         .usePs1Depth(model.usePs1Depth)

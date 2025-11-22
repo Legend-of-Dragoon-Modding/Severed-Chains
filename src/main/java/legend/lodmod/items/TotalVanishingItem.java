@@ -53,7 +53,7 @@ public class TotalVanishingItem extends BattleItem {
 
   @Override
   protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
-    user.storage_44[28] = targetBentIndex;
-    user.storage_44[30] = user.index;
+    user.setStor(28, targetBentIndex);
+    user.setStor(30, user.index);
   }
 }

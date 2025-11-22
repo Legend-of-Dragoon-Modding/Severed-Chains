@@ -1,11 +1,10 @@
 package legend.game.combat.types;
 
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptedObject;
 import org.joml.Vector3f;
@@ -19,7 +18,6 @@ public class VertexDifferenceAnimation18 implements ScriptedObject {
   public Vector3f[] current_14;
 
   public TmdObjTable1c tmd;
-  public Obj obj;
 
   @Method(0x80109b44L)
   public static void applyVertexDifferenceAnimation(final ScriptState<VertexDifferenceAnimation18> state, final VertexDifferenceAnimation18 animation) {
@@ -40,13 +38,13 @@ public class VertexDifferenceAnimation18 implements ScriptedObject {
       current.add(step);
       source.set(current);
 
-      step.x += step.x * animation.embiggener_04;
-      step.y += step.y * animation.embiggener_04;
-      step.z += step.z * animation.embiggener_04;
+      step.x = Math.fma(animation.embiggener_04, step.x, step.x);
+      step.y = Math.fma(animation.embiggener_04, step.y, step.y);
+      step.z = Math.fma(animation.embiggener_04, step.z, step.z);
     }
 
     //LAB_80109ce0
-    final MeshObj obj = (MeshObj)animation.obj;
+    final MeshObj obj = (MeshObj)animation.tmd.getObj();
 
     for(final Mesh mesh : obj.meshes) {
       for(int offset = 0; offset < mesh.vertexData.length; offset += TmdObjLoader.VERTEX_SIZE) {
@@ -67,7 +65,7 @@ public class VertexDifferenceAnimation18 implements ScriptedObject {
   }
 
   @Override
-  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+  public void renderScriptDebug(final ScriptState<? extends ScriptedObject> state) {
 
   }
 }

@@ -2,7 +2,7 @@ package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdWithId;
 import org.joml.Vector3f;
 
 public class WMapTmdRenderingData18 {

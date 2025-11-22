@@ -70,9 +70,9 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_OPEN_DEBUGGER;
@@ -615,7 +615,7 @@ public class RenderEngine {
 
           this.scissorStack.reset();
         } else {
-          this.renderCallback.run();
+          this.renderFrame();
         }
       }
 
@@ -628,7 +628,7 @@ public class RenderEngine {
 
         this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
         this.resetBatches();
-        this.renderCallback.run();
+        this.renderFrame();
 
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
@@ -654,15 +654,7 @@ public class RenderEngine {
           this.mainBatch.orthoPool.ignoreQueues = true;
         }
 
-        // Reset CLUT animations
-        this.clutAnimationBufferIndex = 0;
-
-        // Run game callback
-        this.renderCallback.run();
-
-        // Upload CLUT animations
-        this.clutAnimationBuffer.put(this.clutAnimationBufferIndex, -1);
-        this.clutAnimationUniform.set(this.clutAnimationBuffer);
+        this.renderFrame();
       }
 
       if(legacyMode == 0) {
@@ -758,6 +750,18 @@ public class RenderEngine {
 
       this.handleMovement();
     });
+  }
+
+  private void renderFrame() {
+    // Reset CLUT animations
+    this.clutAnimationBufferIndex = 0;
+
+    // Run game callback
+    this.renderCallback.run();
+
+    // Upload CLUT animations
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex, -1);
+    this.clutAnimationUniform.set(this.clutAnimationBuffer);
   }
 
   private void renderBatch(final RenderBatch batch) {
@@ -1020,8 +1024,20 @@ public class RenderEngine {
     this.transformsUniform.set(this.transformsBuffer);
   }
 
-  private final Comparator<QueuedModel<?, ?>> perspectiveTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.modelView.m32() + model.screenspaceOffset.z).reversed();
-  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.transforms.m32() + model.screenspaceOffset.z).reversed();
+  private final Comparator<QueuedModel<?, ?>> perspectiveTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.modelView.m32() + model.screenspaceOffset.z).reversed().thenComparingInt(model -> model.sequence);
+  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.transforms.m32() + model.screenspaceOffset.z).reversed().thenComparingInt(model -> model.sequence);
+  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter1 = (a, b) -> {
+    final float depthA = a.transforms.m32() + a.screenspaceOffset.z;
+    final float depthB = b.transforms.m32() + b.screenspaceOffset.z;
+
+    final int depthComparison = Float.compare(depthB, depthA);
+
+    if(depthComparison == 0) {
+      return Integer.compare(b.sequence, a.sequence);
+    }
+
+    return depthComparison;
+  };
 
   private void sortPerspectivePool(final QueuePool<QueuedModel<?, ?>> pool) {
     // Cache modelview for sorting
@@ -1034,7 +1050,7 @@ public class RenderEngine {
   }
 
   private void sortOrthoPool(final QueuePool<QueuedModel<?, ?>> pool) {
-    pool.sort(this.orthoTranslucencySorter);
+    pool.sort(this.orthoTranslucencySorter1);
   }
 
   public <T extends QueuedModel<?, ?>> T queueModel(final Obj obj, final Class<T> type) {

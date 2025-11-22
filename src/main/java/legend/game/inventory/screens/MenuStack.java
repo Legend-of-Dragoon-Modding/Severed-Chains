@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
+import static legend.game.Menus.uploadRenderables;
 
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();

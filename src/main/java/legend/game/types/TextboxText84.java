@@ -1,7 +1,11 @@
 package legend.game.types;
 
 import legend.core.gte.MV;
+import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.TextColour;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextboxText84 {
   public static final int END = 0xa0;
@@ -19,6 +23,7 @@ public class TextboxText84 {
   public static final int SAUTO = 0xb0;
   public static final int ELEMENT = 0xb1;
   public static final int ARROW = 0xb2;
+  public static final int ACTION = 0xc0;
 
   public static final int SHOW_VAR = 0x10;
   public static final int NO_INPUT = 0x20;
@@ -110,6 +115,8 @@ public class TextboxText84 {
   public final MV transforms = new MV();
 
   public int waitTicks;
+
+  public final List<InputAction> inputActions = new ArrayList<>();
 
   public void delete() {
     this.chars_58 = null;

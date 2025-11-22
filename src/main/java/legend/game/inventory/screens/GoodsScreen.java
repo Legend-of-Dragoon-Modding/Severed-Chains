@@ -12,11 +12,11 @@ import legend.game.types.MenuEntryStruct04;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.IoHelper.getPackedFlag;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.goodsDescriptions_8011b75c;
 import static legend.game.SItem.goodsItemNames_8011c008;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;

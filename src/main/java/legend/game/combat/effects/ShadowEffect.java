@@ -5,8 +5,8 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.combat.SEffe.FUN_800e60e0;
 import static legend.game.combat.SEffe.FUN_800e6170;
@@ -45,7 +45,7 @@ public class ShadowEffect implements Effect<EffectManagerParams.VoidType> {
       tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
       zOffset_1f8003e8 = manager.params_10.z_22;
       FUN_800e60e0((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
-      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager.params_10, transforms);
+      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].tmd_08.getObj(), manager.params_10, transforms);
       FUN_800e6170();
     }
 

@@ -12,9 +12,9 @@ import org.joml.Vector4f;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsMulCoord2;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsMulCoord2;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 
 public final class Transformations {
   private Transformations() { }

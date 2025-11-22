@@ -4,6 +4,7 @@ diff,SECT/DRGN1.BIN/20,scripts/DRGN1/20.diff,"Lizardman deallocate leaked script
 diff,SECT/DRGN1.BIN/40,scripts/DRGN1/40.diff,"Spring Hitter steal item registry"
 diff,SECT/DRGN1.BIN/84,scripts/DRGN1/84.diff,"Crafty Thief steal item registry and return stolen gold instead of Bastard Sword"
 diff,SECT/DRGN1.BIN/254,scripts/DRGN1/254.diff,"Item tutorial item registry"
+diff,SECT/DRGN1.BIN/255,scripts/DRGN1/255.diff,"Battle tutorial input buttons"
 diff,SECT/DRGN1.BIN/263,scripts/DRGN1/263.diff,"Fruegel II, Fix for finisher crash"
 diff,SECT/DRGN1.BIN/266,scripts/DRGN1/266.diff,"Kongol I, Fix for failed addition counter crash when below 3 characters"
 diff,SECT/DRGN1.BIN/284,scripts/DRGN1/284.diff,"Divine Dragon, Load Dart if not in party"

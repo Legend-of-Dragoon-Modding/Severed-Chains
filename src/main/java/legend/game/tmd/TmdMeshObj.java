@@ -1,5 +1,7 @@
-package legend.core.opengl;
+package legend.game.tmd;
 
+import legend.core.opengl.Mesh;
+import legend.core.opengl.MeshObj;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;

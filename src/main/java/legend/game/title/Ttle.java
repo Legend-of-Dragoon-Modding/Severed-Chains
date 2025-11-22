@@ -14,13 +14,11 @@ import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
@@ -46,6 +44,7 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
 import legend.game.tim.Tim;
+import legend.game.tmd.TmdWithId;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Translucency;
@@ -77,27 +76,27 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
+import static legend.game.Audio.playSound;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetRefView2L;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Menus.initMenu;
+import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.initMenu;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
@@ -170,7 +169,6 @@ public class Ttle extends EngineState {
   private VramTexture[] copyrightPalettes;
   private boolean texturesLoaded;
   private boolean fireLoaded;
-  private boolean renderablesLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
   private final int[] menuTextWidth = {407, 257, 227, 169, 141};
@@ -230,7 +228,6 @@ public class Ttle extends EngineState {
 
     this.texturesLoaded = false;
     this.fireLoaded = false;
-    this.renderablesLoaded = false;
 
     this.selectedMenuOption = 0;
 
@@ -441,14 +438,6 @@ public class Ttle extends EngineState {
     this.fireLoaded = true;
   }
 
-  private void prepareRenderables() {
-    for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
-      this._800c66d0.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("Title Screen Fire " + i, this._800c66d0.dobj2s_00[i].tmd_08);
-    }
-
-    this.renderablesLoaded = true;
-  }
-
   private void waitForFilesToLoad() {
     if(this.loadingFiles.isDone()) {
       this.selectedMenuOption = this.hasCampaigns ? 1 : 0;
@@ -574,11 +563,7 @@ public class Ttle extends EngineState {
         this.renderMenuBackground();
         this.renderMenuOptions();
         this.renderMenuLogo();
-
-        if(this.renderablesLoaded) {
-          this.renderMenuLogoFire();
-        }
-
+        this.renderMenuLogoFire();
         this.renderCopyright();
       }
     }
@@ -658,12 +643,8 @@ public class Ttle extends EngineState {
 
   @Method(0x800c8298L)
   private void renderMainMenu() {
-    if(!this.renderablesLoaded) {
-      if(!this.texturesLoaded || !this.fireLoaded) {
-        return;
-      }
-
-      this.prepareRenderables();
+    if(!this.texturesLoaded || !this.fireLoaded) {
+      return;
     }
 
     //LAB_800c83c8
@@ -1347,7 +1328,7 @@ public class Ttle extends EngineState {
       lw.scaleLocal(scale);
       lw.transfer.y -= 250.0f;
 
-      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].tmd_08.getObj(), lw, QueuedModelTmd.class)
         .monochrome(this.flameColour / 128.0f)
         .screenspaceOffset(8.0f, 0.0f)
         .lightDirection(lightDirectionMatrix_800c34e8)

@@ -63,8 +63,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Map;
 
-import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
-import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
 import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
 
@@ -180,6 +178,25 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
+  public static final String[] SPELL_IDS = {
+    "flameshot", "explosion", "final_burst", "red_eyed_dragon", "divine_dg_cannon", "wing_blaster", "gaspless", "blossom_storm",
+    "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "w_silver_dragon", "wing_blaster", "astral_drain",
+    "death_dimension", "gaspless", "demons_gate", "dark_dragon", "atomic_mind", "thunder_kid", "thunder_god", "violet_dragon",
+    "freezing_ring", "rainbow_breath", "rose_storm", "diamond_dust", "blue_sea_dragon", "grand_stream", "meteor_strike", "golden_dragon",
+    "spell32", "spell33", "spell34", "spell35", "spell36", "spell37", "spell38", "spell39",
+    "spell40", "spell41", "spell42", "spell43", "spell44", "spell45", "spell46", "spell47",
+    "spell48", "spell49", "spell50", "spell51", "spell52", "spell53", "spell54", "spell55",
+    "spell56", "spell57", "spell58", "spell59", "spell60", "spell61", "spell62", "spell63",
+    "spell64", "star_children", "moon_light", "gates_of_heaven", "spell68", "spell69", "spell70", "spell71",
+    "spell72", "spell73", "spell74", "spell75", "spell76", "spell77", "spell78", "spell79",
+    "spell80", "spell81", "spell82", "spell83", "spell84", "spell85", "spell86", "spell87",
+    "spell88", "spell89", "spell90", "spell91", "spell92", "spell93", "spell94", "spell95",
+    "spell96", "spell97", "spell98", "spell99", "spell100", "spell101", "spell102", "spell103",
+    "spell104", "spell105", "spell106", "spell107", "spell108", "spell109", "spell110", "spell111",
+    "spell112", "spell113", "spell114", "spell115", "spell116", "spell117", "spell118", "spell119",
+    "spell120", "spell121", "spell122", "spell123", "spell124", "spell125", "spell126", "spell127",
+  };
+
   public static final String[] SHOP_IDS = {
     "bale_equipment_shop", "serdio_item_shop", "lohan_equipment_shop", "lohan_item_shop",
     "kazas_equipment_shop", "kazas_fort_item_shop", "fletz_equipment_shop", "fletz_item_shop",
@@ -290,16 +307,7 @@ public class LodMod {
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8_Player.length; spellId++) {
       if(spellStats_800fa0b8_Player[spellId] == null) {
-        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
-        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
-        spellStats_800fa0b8_Player[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
-      }
-    }
-    for(int spellId = 0; spellId < spellStats_800fa0b8_Monster.length; spellId++) {
-      if(spellStats_800fa0b8_Monster[spellId] == null) {
-        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
-        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
-        spellStats_800fa0b8_Monster[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
+        spellStats_800fa0b8_Player[spellId] = SpellStats0c.fromFile(id(SPELL_IDS[spellId]), Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }

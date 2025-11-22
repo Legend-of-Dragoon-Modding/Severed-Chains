@@ -15,7 +15,6 @@ import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.PlatformManager;
 import legend.core.platform.SdlPlatformManager;
 import legend.core.platform.WindowEvents;
@@ -23,10 +22,9 @@ import legend.core.platform.input.InputBindings;
 import legend.core.spu.Spu;
 import legend.game.EngineStateEnum;
 import legend.game.Main;
-import legend.game.Scus94491BpeSegment_8002;
+import legend.game.Scus94491BpeSegment;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
-import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -43,6 +41,7 @@ import legend.game.saves.serializers.V4Serializer;
 import legend.game.saves.serializers.V5Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -60,17 +59,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import static legend.game.SItem.loadMenuAssets;
+import static legend.game.Audio.startSound;
 import static legend.game.SItem.UI_WHITE;
+import static legend.game.SItem.loadMenuAssets;
 import static legend.game.SItem.renderMenuCentredText;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
-import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.startSound;
-import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment.bindRendererEvents;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.Text.initTextboxGeometry;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -392,18 +391,18 @@ public final class GameEngine {
     openalThread.start();
 
     synchronized(INIT_LOCK) {
-      Scus94491BpeSegment_8002.start();
+      Scus94491BpeSegment.main();
 
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
-        shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
+        shadowModel_800bda10.modelParts_00[i].tmd_08.getObj().persistent = true;
       }
 
       loadMenuAssets();
       initTextboxGeometry();
       battleUiParts.init();
       startSound();
-      gameLoop();
+      bindRendererEvents();
       Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
     }
   }

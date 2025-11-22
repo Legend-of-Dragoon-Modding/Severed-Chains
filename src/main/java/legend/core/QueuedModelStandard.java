@@ -57,8 +57,8 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
-  void acquire(final Obj obj) {
-    super.acquire(obj);
+  void acquire(final Obj obj, final int sequence) {
+    super.acquire(obj, sequence);
     this.hasTranslucencyOverride = false;
     this.alpha = -1.0f;
     this.useTextureAlpha = false;

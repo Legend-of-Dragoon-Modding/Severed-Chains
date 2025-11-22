@@ -9,7 +9,7 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.List;
 
-import static legend.game.Scus94491BpeSegment.loadEncounterSounds;
+import static legend.game.Audio.loadEncounterSounds;
 
 public class Encounter extends RegistryEntry {
   public final List<Monster> monsters;

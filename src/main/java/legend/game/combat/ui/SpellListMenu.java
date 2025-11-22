@@ -4,6 +4,7 @@ import legend.core.Config;
 import legend.core.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
@@ -14,8 +15,8 @@ import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
+import static legend.game.Text.renderText;
 
 public class SpellListMenu extends ListMenu {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -65,7 +66,7 @@ public class SpellListMenu extends ListMenu {
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
     this.fontOptions.colour(textColour);
-    renderText(spellStats_800fa0b8_Player[spellId].name, x, y, this.fontOptions);
+    renderText(I18n.translate(spellStats_800fa0b8_Player[spellId]), x, y, this.fontOptions);
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
     this.fontOptions.colour(TextColour.WHITE);
     renderText(String.valueOf(this.player_08.spell_94.mp_06), x + 152, y, this.fontOptions);
@@ -178,7 +179,7 @@ public class SpellListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText(spell.battleDescription, 160, 157, this.fontOptions);
+        renderText(I18n.translate(spell.getTranslationKey("description")), 160, 157, this.fontOptions);
       }
     }
   }

@@ -27,6 +27,7 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
   final Matrix4f modelView = new Matrix4f();
 
   Obj obj;
+  int sequence;
   final Matrix4f transforms = new Matrix4f();
   final Vector3f screenspaceOffset = new Vector3f();
   final Vector3f colour = new Vector3f();
@@ -158,18 +159,19 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     return (T)this;
   }
 
-  void acquire(final Obj obj, final MV transforms) {
+  void acquire(final Obj obj, final int sequence, final MV transforms) {
     this.transforms.set(transforms).setTranslation(transforms.transfer);
-    this.acquire(obj);
+    this.acquire(obj, sequence);
   }
 
-  void acquire(final Obj obj, final Matrix4f transforms) {
+  void acquire(final Obj obj, final int sequence, final Matrix4f transforms) {
     this.transforms.set(transforms);
-    this.acquire(obj);
+    this.acquire(obj, sequence);
   }
 
-  void acquire(final Obj obj) {
+  void acquire(final Obj obj, final int sequence) {
     this.obj = obj;
+    this.sequence = sequence;
     this.screenspaceOffset.zero();
     this.colour.set(1.0f, 1.0f, 1.0f);
     this.clutOverride.zero();
