@@ -24,6 +24,9 @@ import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistry;
 import legend.game.inventory.EquipmentRegistryEvent;
+import legend.game.inventory.Good;
+import legend.game.inventory.GoodsRegistry;
+import legend.game.inventory.GoodsRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistry;
 import legend.game.inventory.ItemRegistryEvent;
@@ -53,6 +56,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<BattleEntityType> battleEntityTypes = this.addRegistry(new BattleEntityTypeRegistry(), BattleEntityTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
+  public final Registry<Good> goods = this.addRegistry(new GoodsRegistry(), GoodsRegistryEvent::new);
   public final Registry<Shop> shop = this.addRegistry(new ShopRegistry(), ShopRegistryEvent::new);
   public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);

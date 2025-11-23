@@ -1,5 +1,6 @@
 package legend.game.inventory.screens.controls;
 
+import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.saves.SavedGame;
@@ -29,7 +30,7 @@ public class SaveCard extends Control {
     this.addControl(Glyph.uiElement(76, 76)).setPos(0, 0);
     this.addControl(Glyph.uiElement(77, 77)).setPos(176, 0);
 
-    this.dragoonSpirits = this.addControl(new DragoonSpirits(0));
+    this.dragoonSpirits = this.addControl(new DragoonSpirits(new GoodsInventory()));
     this.dragoonSpirits.setPos(205, 27);
 
     for(int i = 0; i < 3; i++) {
@@ -48,7 +49,7 @@ public class SaveCard extends Control {
 
     if(saveData != null && saveData.isValid()) {
       this.invalidSave.setVisibility(false);
-      this.dragoonSpirits.setSpirits(saveData.state.goods_19c[0]);
+      this.dragoonSpirits.setSpirits(saveData.state.goods_19c);
 
       for(int i = 0; i < 3; i++) {
         this.portraits[i].setCharId(saveData.state.charIds_88[i]);
@@ -56,7 +57,7 @@ public class SaveCard extends Control {
     } else {
       this.invalidSave.setVisibility(saveData != null);
 
-      this.dragoonSpirits.setSpirits(0);
+      this.dragoonSpirits.setSpirits(new GoodsInventory());
 
       for(int i = 0; i < 3; i++) {
         this.portraits[i].setCharId(-1);

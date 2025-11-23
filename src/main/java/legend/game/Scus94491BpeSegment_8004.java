@@ -119,6 +119,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[911] = SItem::scriptTakeEquipment;
     scriptSubFunctions_8004e29c[912] = SItem::scriptGenerateAttackItem;
     scriptSubFunctions_8004e29c[913] = SItem::scriptGenerateRecoveryItem;
+    scriptSubFunctions_8004e29c[914] = SItem::scriptHasGood;
+    scriptSubFunctions_8004e29c[915] = SItem::scriptGiveGood;
+    scriptSubFunctions_8004e29c[916] = SItem::scriptTakeGood;
 
     scriptSubFunctions_8004e29c[960] = RenderEngine::scriptGetRenderAspectMultiplier;
   }

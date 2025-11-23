@@ -1,5 +1,6 @@
 package legend.game.saves.serializers;
 
+import legend.core.GameEngine;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -101,9 +102,15 @@ public final class V3Serializer {
       offset += 4;
     }
 
-    for(int i = 0; i < state.goods_19c.length; i++) {
-      state.goods_19c[i] = data.readInt(offset);
+    for(int i = 0; i < 2; i++) {
+      final int packed = data.readInt(offset);
       offset += 4;
+
+      for(int bit = 0; bit < 32; bit++) {
+        if((packed & (1 << bit)) != 0) {
+          state.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(LodMod.id(LodMod.GOODS_IDS[i * 32 + bit])));
+        }
+      }
     }
 
     for(int i = 0; i < state._1a4.length; i++) {

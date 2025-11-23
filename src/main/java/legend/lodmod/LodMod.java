@@ -32,6 +32,7 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
+import legend.game.inventory.GoodsRegistryEvent;
 import legend.game.inventory.IconMapEvent;
 import legend.game.inventory.IconSet;
 import legend.game.inventory.ItemIcon;
@@ -181,6 +182,18 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
+  public static final String[] GOODS_IDS = {
+    "red_dragoon_spirit", "blue_dragoon_spirit", "jade_dragoon_spirit", "gold_dragoon_spirit", "violet_dragoon_spirit",
+    "silver_dragoon_spirit", "dark_dragoon_spirit", "divine_dragoon_spirit", "war_bulletin", "fathers_stone",
+    "prison_key", "axe_from_shack", "good_spirits", "shiny_bag", "water_bottle",
+    "life_water", "magic_oil", "yellow_stone", "blue_stone", "red_stone",
+    "letter_from_lynn", "pass_for_valley", "kates_bouquet", "key_to_ship", "boat_license",
+    "dragon_blocker", "moon_gem", "moon_dagger", "moon_mirror", "omega_bomb",
+    "omega_master", "law_maker", "law_output", "gold_dragoon_spirit_2", "magic_shiny_bag",
+    "vanishing_stone", "lavitzs_picture",
+  };
+
+
   public static final String[] SPELL_IDS = {
     "flameshot", "explosion", "final_burst", "red_eyed_dragon", "divine_dg_cannon", "wing_blaster", "gaspless", "blossom_storm",
     "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "w_silver_dragon", "wing_blaster", "astral_drain",
@@ -294,6 +307,11 @@ public class LodMod {
   @EventListener
   public static void registerEquipment(final EquipmentRegistryEvent event) {
     LodEquipment.register(event);
+  }
+
+  @EventListener
+  public static void registerGoods(final GoodsRegistryEvent event) {
+    LodGoods.register(event);
   }
 
   @EventListener

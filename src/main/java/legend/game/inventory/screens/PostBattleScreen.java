@@ -770,7 +770,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawTwoDigitNumber(x + 108, y + 16, gameState_800babc8.charData_32c[charId].level_12);
 
       final int dlevel;
-      if(!hasDragoon(gameState_800babc8.goods_19c[0], charId)) {
+      if(!hasDragoon(gameState_800babc8.goods_19c, charId)) {
         dlevel = 0;
       } else {
         dlevel = gameState_800babc8.charData_32c[charId].dlevel_13;

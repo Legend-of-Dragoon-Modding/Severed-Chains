@@ -388,12 +388,12 @@ public class GameStateEditorController {
 
   @FXML
   public void getGoods() {
-    this.textGoods.setText(String.format("%#x", gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()]));
+    this.textGoods.setText(String.format("%#x", gameState_800babc8.goods_19c.pack(this.getGoods.getSelectionModel().getSelectedIndex())));
   }
 
   @FXML
   public void setGoods() {
-    gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textGoods.getText(), gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()]);
+    gameState_800babc8.goods_19c.unpack(this.getGoods.getSelectionModel().getSelectedIndex(), this.parseHexOrDec(this.textGoods.getText(), gameState_800babc8.goods_19c.pack(this.getGoods.getSelectionModel().getSelectedIndex())));
   }
 
   @FXML

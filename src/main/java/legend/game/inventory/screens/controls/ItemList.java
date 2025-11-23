@@ -118,6 +118,10 @@ public class ItemList<T extends InventoryEntry> extends Control {
     this.items.removeIf(predicate);
   }
 
+  public int getCount() {
+    return this.items.getCount();
+  }
+
   public void clear() {
     this.items.clear();
   }

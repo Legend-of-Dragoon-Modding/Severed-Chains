@@ -39,6 +39,7 @@ import legend.game.saves.serializers.V2Serializer;
 import legend.game.saves.serializers.V3Serializer;
 import legend.game.saves.serializers.V4Serializer;
 import legend.game.saves.serializers.V5Serializer;
+import legend.game.saves.serializers.V6Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.tmd.TmdObjLoader;
@@ -105,7 +106,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V5Serializer.MAGIC_V5, V5Serializer::toV5);
+  public static final SaveManager SAVES = new SaveManager(V6Serializer.MAGIC_V6, V6Serializer::toV6);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
@@ -208,6 +209,7 @@ public final class GameEngine {
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
         SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
         SAVES.registerDeserializer(V5Serializer::fromV5Matcher, V5Serializer::fromV5);
+        SAVES.registerDeserializer(V6Serializer::fromV6Matcher, V6Serializer::fromV6);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);
@@ -323,6 +325,9 @@ public final class GameEngine {
     // Initialize config and input registries
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
+
+    // We need to boot the goods registry for save cards on the title screen
+    REGISTRY_ACCESS.initialize(REGISTRIES.goods);
 
     MOD_ACCESS.loadingComplete();
 

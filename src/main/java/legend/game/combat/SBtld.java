@@ -49,6 +49,7 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class SBtld {
   private SBtld() { }
@@ -486,7 +487,7 @@ public final class SBtld {
 
         //LAB_801092dc
         final int activeDragoonAdditionIndex;
-        if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+        if(charIndex != 0 || gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           //LAB_80109308
           activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[charIndex];
         } else {

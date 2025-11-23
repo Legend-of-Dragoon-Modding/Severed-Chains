@@ -218,6 +218,7 @@ import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.loadPlayerModelAndAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.Models.vramSlots_8005027c;
+import static legend.game.SItem.characterDragoonIndices_800c6e68;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.giveItem;
@@ -289,6 +290,7 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
@@ -471,7 +473,6 @@ public class Battle extends EngineState {
   };
   /** Note: retail overlay doesn't have the last two elements, but the method that uses this copies the array and adds new elements */
   public static final int[] battleHudTextureVramXOffsets_800c6e60 = {0, 0x10, 0x20, 0x30, 0, 0x10};
-  public static final int[] characterDragoonIndices_800c6e68 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
 
   public static final int[] melbuMonsterNameIndices_800c6e90 = {395, 396, 397};
 
@@ -2317,7 +2318,7 @@ public class Battle extends EngineState {
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
-              if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+              if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
                 charIndex = 10; // Divine dragoon
               }
 
@@ -2434,7 +2435,7 @@ public class Battle extends EngineState {
             // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
             fileIndex = 4031 + charId * 8;
           }
-        } else if(charId != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+        } else if(charId != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           // Dragoon addition
           fileIndex = 4103 + charId;
         } else { // Divine dragoon
@@ -2721,7 +2722,7 @@ public class Battle extends EngineState {
       int fileIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
-        if(fileIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+        if(fileIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           fileIndex = 10;
         }
 
@@ -7789,12 +7790,12 @@ public class Battle extends EngineState {
       //LAB_800eec10
       charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(LodMod.HP_STAT.get()).getCurrent());
 
-      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[bent.charId_272]) != 0) {
+      if((gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[bent.charId_272]))) {
         charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eec78
-      if(bent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[9]) != 0) {
+      if(bent.charId_272 == 0 && gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[9])) {
         charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
       }
 

@@ -13,6 +13,8 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.Good;
+import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
@@ -59,6 +61,7 @@ import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -114,6 +117,14 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.ITEM_GROUP_SORT_MODE;
+import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.DARK_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.GOLD_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
+import static legend.lodmod.LodGoods.VIOLET_DRAGOON_SPIRIT;
 
 public final class SItem {
   private SItem() { }
@@ -135,7 +146,20 @@ public final class SItem {
 
   public static int shopId_8007a3b4;
 
-  public static final int[] charDragoonSpiritIndices_800fba58 = {0, 2, 5, 6, 4, 2, 1, 3, 5};
+  public static final RegistryDelegate<Good>[] characterDragoonIndices_800c6e68 = new RegistryDelegate[10];
+  static {
+    characterDragoonIndices_800c6e68[0] = RED_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[1] = JADE_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[2] = SILVER_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[3] = DARK_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[4] = VIOLET_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[5] = JADE_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[6] = BLUE_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[7] = GOLD_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[8] = SILVER_DRAGOON_SPIRIT;
+    characterDragoonIndices_800c6e68[9] = DIVINE_DRAGOON_SPIRIT;
+  }
+
   public static final MenuStatus08[] menuStatus_800fba7c = {
     new MenuStatus08("Petrify", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
     new MenuStatus08("Charmed", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
@@ -344,36 +368,6 @@ public final class SItem {
     "Flower Storm", "Dragoon Attack", "Dragoon Attack",
   };
 
-  public static final String[] goodsDescriptions_8011b75c = {
-    "Dragoon Spirit \nhis father left \nhim. Fire-based.", "Dragoon Spirit \nfrom Lenus \nWater-based.", "Dragoon Spirit \nfrom Greham\nWind-based.", "Dragoon Spirit \nfound in Lohan\nEarth-based.", "Dragoon Spirit \nfrom Doel\nThunder-based.",
-    "Dragoon Spirit\nfrom Shirley\nLight-based.", "Dragoon Spirit \nof mysterious Rose\nDarkness-based.", "Dragoon Spirit \nof Divine Dragon.", "Special Edition \nshows tension among\nSandora & Serdio.", "A mysterious stone \nfrom Dart's Father\nGlows when held.",
-    "Key to the second \nprison tower where\nShana is held.", "An axe left in a\nshack in a field.\nIt's well-worn.", "Good spirit that\npleases the \nman in Bale.", "Dabas forced him. \nSeems useless, but\nkept as a memento.", "A bottle acquired\nin Lohan to hold\n\"Life Water\".",
-    "Life water from\na monster plant.\nRefreshes power.", "Fuel to light an\nelevator switch.", "Yellow Stone \nhidden in the \nBlack Castle.", "Blue Stone held by\nthe Spell Master \nMagi.", "Red Stone kept by\nthe janitor of the\nBlack Castle.",
-    "Letter that tells \nof going alone to \nthe Gehrich Gang.", "A pass for\nZero Gravity \nValley.", "Good luck bouquet\nthrown by Kate at\nthe wedding.", "Key from the \nPhantom Ship \nCaptain.", "License to use a\nboat in Furni.\nIt's a must.",
-    "A staff to confine\nDivine Dragon. \nRestrains Dragons.", "Family treasure \nof Serdio. Has\nenormous power.", "Family treasure \nof Tiberoa. Taken\naway.", "Family treasure \nof Mille Seseau.\nHidden by Flamvel.", "Attacking spell \nprepared by Savan\nof Aglis.",
-    "Ultimate attack \nspell given by \nSavan for Rose.", "A certificate of\nlaw production\nin Zenebatos.", "A certificate of\nlaw enactment\nin Zenebatos.", "Dragoon Spirit \nIndora gave Kongol\nEarth-based.", "Dabas' magical\nbag. Items are \nteleported to bag.",
-    "A mysterious stone \nfrom Martel for\ngetting Stardust.", "Lavitz's portrait\ndrawn in Bale. It\nlooks so real.", "Temporary event \nitem description37", "Temporary event \nitem description38", "Temporary event \nitem description39",
-    "Temporary event \nitem description40", "Temporary event \nitem description41", "Temporary event \nitem description42", "Temporary event \nitem description43", "Temporary event \nitem description44",
-    "Temporary event \nitem description45", "Temporary event \nitem description46", "Temporary event \nitem description47", "Temporary event \nitem description48", "Temporary event \nitem description49",
-    "Temporary event \nitem description50", "Temporary event \nitem description51", "Temporary event \nitem description52", "Temporary event \nitem description53", "Temporary event \nitem description54",
-    "Temporary event \nitem description55", "Temporary event \nitem description56", "Temporary event \nitem description57", "Temporary event \nitem description58", "Temporary event \nitem description59",
-    "Temporary event \nitem description60", "Temporary event \nitem description61", "Temporary event \nitem description62", "Temporary event \nitem description63",
-  };
-  public static final String[] goodsItemNames_8011c008 = {
-    "Red Dragon DS", "Blue Dragon DS", "Jade Dragon DS", "Gold Dragon DS", "Violet Dragon DS",
-    "Silver Dragon DS", "Dark Dragon DS", "Divine Dragon DS", "War Bulletin", "Father's Stone",
-    "Prison Key", "Axe From the Shack", "Good Spirits", "Shiny Bag", "Water Bottle",
-    "Life Water", "Magic Oil", "Yellow Stone", "Blue Stone", "Red Stone",
-    "Letter From Lynn", "Pass For Valley", "Kate's Bouquet", "Key to Ship", "Boat License",
-    "Dragon Blocker", "Moon Gem", "Moon Dagger", "Moon Mirror", "Omega Bomb",
-    "Omega Master", "Law Maker", "Law Output", "Gold Dragon DS", "Magic Shiny Bag",
-    "Vanishing Stone", "Lavitz's Picture", "Temporary37", "Temporary38", "Temporary39",
-    "Temporary40", "Temporary41", "Temporary42", "Temporary43", "Temporary44",
-    "Temporary45", "Temporary46", "Temporary47", "Temporary48", "Temporary49",
-    "Temporary50", "Temporary51", "Temporary52", "Temporary53", "Temporary54",
-    "Temporary55", "Temporary56", "Temporary57", "Temporary58", "Temporary59",
-    "Temporary60", "Temporary61", "Temporary62", "Temporary63",
-  };
   public static final String[] submapNames_8011c108 = {
     "", "Forest", "Forest", "Seles", "Hellena Prison",
     "Prairie", "Cave", "", "Bale", "Indels Castle",
@@ -531,6 +525,31 @@ public final class SItem {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Check if the player has the specified good")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "has")
+  public static FlowControl scriptHasGood(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    script.params_20[1].set(gameState_800babc8.goods_19c.has(REGISTRIES.goods.getEntry(id)));
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Gives a good to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptGiveGood(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    gameState_800babc8.goods_19c.give(REGISTRIES.goods.getEntry(id));
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Takes a good from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
+  public static FlowControl scriptTakeGood(final RunningScript<?> script) {
+    final RegistryId id = script.params_20[0].getRegistryId();
+    gameState_800babc8.goods_19c.take(REGISTRIES.goods.getEntry(id));
+    return FlowControl.CONTINUE;
+  }
+
   @Method(0x80022928L)
   public static int getUnlockedDragoonSpells(final int[] spellIndicesOut, final int charIndex) {
     //LAB_80022940
@@ -544,7 +563,7 @@ public final class SItem {
     }
 
     // Hardcoded Divine Dragoon spells
-    if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+    if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       spellIndicesOut[0] = 9;
       spellIndicesOut[1] = 4;
       return 2;
@@ -578,7 +597,7 @@ public final class SItem {
 
     //LAB_80022a24
     // Divine dragoon
-    if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+    if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       return 2;
     }
 
@@ -1473,20 +1492,20 @@ public final class SItem {
   }
 
   @Method(0x80104b7cL)
-  public static boolean hasDragoon(final int dragoons, final int charIndex) {
+  public static boolean hasDragoon(final GoodsInventory dragoons, final int charIndex) {
     //LAB_80104b94
     if(charIndex == -1) {
       return false;
     }
 
     //LAB_80104be0
-    if(charIndex == 0 && (dragoons & 0xff) >>> 7 != 0) { // Divine
+    if(charIndex == 0 && dragoons.has(DIVINE_DRAGOON_SPIRIT)) { // Divine
       return true;
     }
 
     //LAB_80104c24
     //LAB_80104c28
-    return (dragoons & 0x1 << charDragoonSpiritIndices_800fba58[charIndex]) != 0;
+    return dragoons.has(characterDragoonIndices_800c6e68[charIndex]);
   }
 
   @Method(0x80104c30L)
@@ -2042,7 +2061,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 116, stats.equipmentAttack_88, statsTmp.equipmentAttack_88);
       renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a + stats.equipmentAttack_88, statsTmp.bodyAttack_6a + statsTmp.equipmentAttack_88);
 
-      if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
+      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
         renderThreeDigitNumberComparisonWithPercent(159, 116, stats.dragoonAttack_72, statsTmp.dragoonAttack_72);
       }
 
@@ -2051,7 +2070,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 128, stats.equipmentDefence_8c, statsTmp.equipmentDefence_8c);
       renderThreeDigitNumberComparison(122, 128, stats.bodyDefence_6c + stats.equipmentDefence_8c, statsTmp.bodyDefence_6c + statsTmp.equipmentDefence_8c);
 
-      if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
+      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
         renderThreeDigitNumberComparisonWithPercent(159, 128, stats.dragoonDefence_74, statsTmp.dragoonDefence_74);
       }
 
@@ -2060,7 +2079,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 140, stats.equipmentMagicAttack_8a, statsTmp.equipmentMagicAttack_8a);
       renderThreeDigitNumberComparison(122, 140, stats.bodyMagicAttack_6b + stats.equipmentMagicAttack_8a, statsTmp.bodyMagicAttack_6b + statsTmp.equipmentMagicAttack_8a);
 
-      if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
+      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
         renderThreeDigitNumberComparisonWithPercent(159, 140, stats.dragoonMagicAttack_73, statsTmp.dragoonMagicAttack_73);
       }
 
@@ -2069,7 +2088,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 152, stats.equipmentMagicDefence_8e, statsTmp.equipmentMagicDefence_8e);
       renderThreeDigitNumberComparison(122, 152, stats.bodyMagicDefence_6d + stats.equipmentMagicDefence_8e, statsTmp.bodyMagicDefence_6d + statsTmp.equipmentMagicDefence_8e);
 
-      if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
+      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
         renderThreeDigitNumberComparisonWithPercent(159, 152, stats.dragoonMagicDefence_75, statsTmp.dragoonMagicDefence_75);
       }
 
@@ -2416,7 +2435,7 @@ public final class SItem {
       applyEquipmentStats(charId);
 
       final int v0 = dragoonGoodsBits_800fbd08[charId];
-      if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
+      if(hasDragoon(gameState_800babc8.goods_19c, charId)) {
         stats.flags_0c |= 0x2000;
 
         if((gameState_800babc8.characterInitialized_4e6 & 0x1 << v0) == 0) {
@@ -2433,7 +2452,7 @@ public final class SItem {
       }
 
       //LAB_801104f8
-      if(charId == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << dragoonGoodsBits_800fbd08[9]) != 0) {
+      if(charId == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         stats.flags_0c |= 0x6000;
 
         stats.dlevel_0f = gameState_800babc8.charData_32c[0].dlevel_13;

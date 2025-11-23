@@ -25,6 +25,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
@@ -117,7 +118,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   @Override
   public Element getElement() {
-    if(this.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && this.isDragoon()) { // Dart Divine Dragoon
+    if(this.charId_272 == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT) && this.isDragoon()) { // Dart Divine Dragoon
       return LodMod.DIVINE_ELEMENT.get();
     }
 

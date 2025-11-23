@@ -63,6 +63,7 @@ import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Audio {
   private Audio() { }
@@ -686,7 +687,7 @@ public final class Audio {
       //LAB_8001ce44
       fileIndex = 1298 + bent.charId_272;
       soundName = "Char slot %d attack sounds".formatted(bent.charId_272);
-    } else if(bent.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+    } else if(bent.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       //LAB_8001ce18
       fileIndex = 1307 + bent.charId_272;
       soundName = "Char slot %d dragoon attack sounds".formatted(bent.charId_272);
@@ -732,7 +733,7 @@ public final class Audio {
     if(type == 0) {
       //LAB_8001d0e0
       loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x40);
-      if(bent.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+      if(bent.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         //LAB_8001d134
         // Regular dragoons
         loadDrgnDir(0, 1317 + bent.charId_272, files -> FUN_8001e98c(files, "%s dragoon transformation sounds (file %d)".formatted(getCharacterName(bent.charId_272), 1317 + bent.charId_272)));

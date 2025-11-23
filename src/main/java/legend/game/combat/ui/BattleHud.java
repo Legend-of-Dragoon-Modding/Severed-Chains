@@ -85,6 +85,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ADDITIONS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ESCAPE;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_GUARD;
@@ -1972,7 +1973,7 @@ public class BattleHud {
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionIconObjOffset + iconId * 12 + iconState * 4, 4)
             .translucency(Translucency.of(battleMenuIconMetrics_800fb674[iconId].translucencyMode_06));
-        } else if(this.battleMenu_800c6c34.player_04.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+        } else if(this.battleMenu_800c6c34.player_04.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionDragoonIconObjOffset + this.battleMenu_800c6c34.player_04.charId_272 * 12 + iconState * 4, 4)
             .translucency(Translucency.of(battleMenuIconMetrics_800fb674[1].translucencyMode_06));

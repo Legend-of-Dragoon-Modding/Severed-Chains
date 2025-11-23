@@ -103,6 +103,7 @@ import static legend.game.Text.initTextboxes;
 import static legend.game.Text.renderTextboxes;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.SBtld.tickAndRenderTransitionIntoBattle;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -328,7 +329,7 @@ public final class Scus94491BpeSegment {
     gameState_800babc8.scriptFlags2_bc.set(script.params_20[0].get(), script.params_20[1].get() != 0);
 
     //LAB_800174a4
-    if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+    if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
       if(!divineEvent.bypassOverride) {
         final CharacterData2c charData = gameState_800babc8.charData_32c[0];
@@ -378,7 +379,7 @@ public final class Scus94491BpeSegment {
     //LAB_80017614
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
-      if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+      if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         gameState_800babc8.charData_32c[0].dlevel_13 = 5;
         gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
       }
