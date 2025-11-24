@@ -2,16 +2,22 @@ package legend.game.debugger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
-import legend.game.modding.coremod.CoreMod;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import legend.game.i18n.I18n;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Good;
+import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
-import static legend.core.GameEngine.CONFIG;
+import java.util.Comparator;
+
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
@@ -66,9 +72,7 @@ public class GameStateEditorController {
   @FXML
   public TextField textData3;
   @FXML
-  public ComboBox<Integer> getGoods;
-  @FXML
-  public TextField textGoods;
+  public ComboBox<Good> goodsList;
   @FXML
   public ComboBox<Integer> getData4;
   @FXML
@@ -78,13 +82,9 @@ public class GameStateEditorController {
   @FXML
   public TextField textChestFlags;
   @FXML
-  public Spinner<Integer> getEquipment;
+  public ComboBox<Equipment> equipmentList;
   @FXML
-  public TextField textEquipment;
-  @FXML
-  public Spinner<Integer> getItems;
-  @FXML
-  public TextField textItems;
+  public ComboBox<Item> itemList;
   @FXML
   public ComboBox<String> getCharacter;
   @FXML
@@ -151,10 +151,17 @@ public class GameStateEditorController {
     this.getData3.getSelectionModel().select(0);
     this.getData3();
 
-    this.getGoods.getItems().add(0);
-    this.getGoods.getItems().add(1);
-    this.getGoods.getSelectionModel().select(0);
-    this.getGoods();
+    this.goodsList.setConverter(new RegistryEntryConverter<>());
+
+    for(final Good good : gameState_800babc8.goods_19c) {
+      this.goodsList.getItems().add(good);
+    }
+
+    this.goodsList.getItems().sort(Comparator.comparing(e -> e.getRegistryId().toString()));
+
+    if(!this.goodsList.getItems().isEmpty()) {
+      this.goodsList.getSelectionModel().select(0);
+    }
 
     for(int i = 0; i < 8; i++) {
       this.getData4.getItems().add(i);
@@ -168,21 +175,25 @@ public class GameStateEditorController {
     this.getChestFlags.getSelectionModel().select(0);
     this.getChestFlags();
 
-    this.getEquipment.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 254, 0));
-    this.getEquipment.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if(!oldValue.equals(newValue)) {
-        this.getEquipment();
-      }
-    });
-    this.getEquipment();
+    this.equipmentList.setConverter(new RegistryEntryConverter<>());
 
-    this.getItems.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0));
-    this.getItems.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if(!oldValue.equals(newValue)) {
-        this.getItems();
-      }
-    });
-    this.getItems();
+    for(final Equipment equipment : gameState_800babc8.equipment_1e8) {
+      this.equipmentList.getItems().add(equipment);
+    }
+
+    if(!this.equipmentList.getItems().isEmpty()) {
+      this.equipmentList.getSelectionModel().select(0);
+    }
+
+    this.itemList.setConverter(new RegistryEntryConverter<>());
+
+    for(final ItemStack item : gameState_800babc8.items_2e9) {
+      this.itemList.getItems().add(item.getItem());
+    }
+
+    if(!this.itemList.getItems().isEmpty()) {
+      this.itemList.getSelectionModel().select(0);
+    }
 
     for(final String character : this.characters) {
       this.getCharacter.getItems().add(character);
@@ -387,13 +398,31 @@ public class GameStateEditorController {
   }
 
   @FXML
-  public void getGoods() {
-    this.textGoods.setText(String.format("%#x", gameState_800babc8.goods_19c.pack(this.getGoods.getSelectionModel().getSelectedIndex())));
+  public void giveGood() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.goods, this::goodSelectorOnSelect, this::goodSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  private void goodSelectorOnSelect(final Good good) {
+    gameState_800babc8.goods_19c.give(good);
+
+    if(!this.goodsList.getItems().contains(good)) {
+      this.goodsList.getItems().add(good);
+    }
+
+    this.goodsList.getItems().sort(Comparator.comparing(e -> e.getRegistryId().toString()));
+    this.goodsList.getSelectionModel().select(good);
+  }
+
+  private void goodSelectorOnCancel() {
+
   }
 
   @FXML
-  public void setGoods() {
-    gameState_800babc8.goods_19c.unpack(this.getGoods.getSelectionModel().getSelectedIndex(), this.parseHexOrDec(this.textGoods.getText(), gameState_800babc8.goods_19c.pack(this.getGoods.getSelectionModel().getSelectedIndex())));
+  public void takeGood() {
+    final Good good = this.goodsList.getValue();
+    gameState_800babc8.goods_19c.take(good);
+    this.goodsList.getItems().remove(good);
   }
 
   @FXML
@@ -416,38 +445,50 @@ public class GameStateEditorController {
     gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textChestFlags.getText(), gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()]);
   }
 
-  public void getEquipment() {
-    if(!gameState_800babc8.equipment_1e8.isEmpty()) {
-      this.textEquipment.setText(gameState_800babc8.equipment_1e8.get(this.getEquipment.getValue()).getRegistryId().toString());
-    } else {
-      this.textEquipment.clear();
-    }
+  @FXML
+  public void giveEquipment() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.equipment, this::equipmentSelectorOnSelect, this::equipmentSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  private void equipmentSelectorOnSelect(final Equipment equipment) {
+    gameState_800babc8.equipment_1e8.add(equipment);
+    this.equipmentList.getItems().add(equipment);
+    this.equipmentList.getSelectionModel().select(this.equipmentList.getItems().size() - 1);
+  }
+
+  private void equipmentSelectorOnCancel() {
+
   }
 
   @FXML
-  public void setEquipment() {
-    if(this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
-      gameState_800babc8.equipment_1e8.add(REGISTRIES.equipment.getEntry(this.textEquipment.getText()).get());
-    } else {
-      gameState_800babc8.equipment_1e8.set(this.getEquipment.getValue(), REGISTRIES.equipment.getEntry(this.textEquipment.getText()).get());
-    }
-  }
-
-  public void getItems() {
-    if(!gameState_800babc8.items_2e9.isEmpty()) {
-      this.textItems.setText(gameState_800babc8.items_2e9.get(this.getItems.getValue()).getItem().getRegistryId().toString());
-    } else {
-      this.textEquipment.clear();
-    }
+  public void takeEquipment() {
+    final int index = this.equipmentList.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.equipment_1e8.remove(index);
+    this.equipmentList.getItems().remove(index);
   }
 
   @FXML
-  public void setItems() {
-    if(this.getItems.getValue() >= gameState_800babc8.items_2e9.getSize()) {
-      gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(this.textItems.getText()).get());
-    } else {
-      gameState_800babc8.items_2e9.set(this.getItems.getValue(), REGISTRIES.items.getEntry(this.textItems.getText()).get());
-    }
+  public void giveItem() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.items, this::itemSelectorOnSelect, this::itemSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  private void itemSelectorOnSelect(final Item item) {
+    gameState_800babc8.items_2e9.give(new ItemStack(item), true);
+    this.itemList.getItems().add(item);
+    this.itemList.getSelectionModel().select(this.itemList.getItems().size() - 1);
+  }
+
+  private void itemSelectorOnCancel() {
+
+  }
+
+  @FXML
+  public void takeItem() {
+    final int index = this.itemList.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.items_2e9.takeFromSlot(index, gameState_800babc8.items_2e9.get(index).getSize());
+    this.itemList.getItems().remove(index);
   }
 
   @FXML
@@ -546,5 +587,17 @@ public class GameStateEditorController {
   @FXML
   public void setAreaIndex() {
     gameState_800babc8.directionalPathIndex_4de = this.parseHexOrDec(this.textAreaIndex.getText(), gameState_800babc8.directionalPathIndex_4de);
+  }
+
+  private static class RegistryEntryConverter<T extends RegistryEntry> extends StringConverter<T> {
+    @Override
+    public String toString(final T t) {
+      return t.getRegistryId() + " - " + I18n.translate(t);
+    }
+
+    @Override
+    public T fromString(final String s) {
+      return null;
+    }
   }
 }
