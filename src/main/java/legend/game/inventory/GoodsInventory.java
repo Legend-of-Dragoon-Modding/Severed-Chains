@@ -70,7 +70,7 @@ public class GoodsInventory implements Iterable<Good> {
    * Unpacks retail goods, leaving mod goods as-is
    */
   public void unpack(final int index, final int packed) {
-    for(int bit = 0; bit < 32; bit++) {
+    for(int bit = 0; bit < 32 && index * 32 + bit < GOODS_IDS.length; bit++) {
       final RegistryId id = id(GOODS_IDS[index * 32 + bit]);
       final RegistryDelegate<Good> good = REGISTRIES.goods.getEntry(id);
       final boolean set = (packed & 1 << bit) != 0;
@@ -91,7 +91,7 @@ public class GoodsInventory implements Iterable<Good> {
 
     for(final Good good : this) {
       if(good.getRegistryId().modId().equals(LodMod.MOD_ID)) {
-        for(int bit = 0; bit < 32; bit++) {
+        for(int bit = 0; bit < 32 && index * 32 + bit < GOODS_IDS.length; bit++) {
           final String bitName = GOODS_IDS[index * 32 + bit];
 
           if(good.getRegistryId().entryId().equals(bitName)) {
