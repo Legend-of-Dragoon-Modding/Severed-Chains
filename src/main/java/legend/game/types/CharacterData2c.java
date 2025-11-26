@@ -2,10 +2,12 @@ package legend.game.types;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.inventory.Equipment;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CharacterData2c {
@@ -32,9 +34,10 @@ public class CharacterData2c {
   /** Only used during loading */
   public final Map<EquipmentSlot, RegistryId> equipmentRegistryIds_14 = new EnumMap<>(EquipmentSlot.class);
   public final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
-  public int selectedAddition_19;
-  public final int[] additionLevels_1a = new int[8];
-  public final int[] additionXp_22 = new int[8];
+  public RegistryId selectedAddition_19;
+  public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
+//  public final int[] additionLevels_1a = new int[8];
+//  public final int[] additionXp_22 = new int[8];
 
   public void set(final CharacterData2c other) {
     this.xp_00 = other.xp_00;
@@ -49,7 +52,9 @@ public class CharacterData2c {
     this.equipment_14.clear();
     this.equipment_14.putAll(other.equipment_14);
     this.selectedAddition_19 = other.selectedAddition_19;
-    System.arraycopy(other.additionLevels_1a, 0, this.additionLevels_1a, 0, this.additionLevels_1a.length);
-    System.arraycopy(other.additionXp_22, 0, this.additionXp_22, 0, this.additionXp_22.length);
+    this.additionStats.clear();
+    this.additionStats.putAll(other.additionStats);
+//    System.arraycopy(other.additionLevels_1a, 0, this.additionLevels_1a, 0, this.additionLevels_1a.length);
+//    System.arraycopy(other.additionXp_22, 0, this.additionXp_22, 0, this.additionXp_22.length);
   }
 }

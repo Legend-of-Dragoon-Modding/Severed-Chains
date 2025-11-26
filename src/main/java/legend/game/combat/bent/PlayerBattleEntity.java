@@ -12,6 +12,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.lodmod.LodMod;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public final ElementSet equipmentAttackElements_1c = new ElementSet();
 
   public int additionHits_56;
-  public int selectedAddition_58;
+  public RegistryId selectedAddition_58;
 
   public int dragoonAttack_ac;
   public int dragoonMagic_ae;
@@ -52,7 +53,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int tempMpPerMagicalHit_d2;
   public int tempMpPerMagicalHitTurns_d3;
 
-  public int _118;
+//  public int _118;
   public int additionSpMultiplier_11a;
   public int additionDamageMultiplier_11c;
   public final Map<EquipmentSlot, Equipment> equipment_11e = new EnumMap<>(EquipmentSlot.class);
@@ -131,7 +132,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
     int attack = this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
     int attackMultiplier = 100;
 
-    if(this.selectedAddition_58 == -1) { // No addition (Shana/???)
+    if(this.selectedAddition_58 == null) { // No addition (Shana/???)
       //LAB_800f2c24
       if(this.isDragoon()) {
         //LAB_800f2c4c
@@ -399,6 +400,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
     return sp;
   }
 
+  protected int getAdditionHitCount() {
+    return battlePreloadedEntities_1f8003f4.getHitCount(this.charSlot_276);
+  }
+
   @Override
   public int getStat(final BattleEntityStat statIndex) {
     int disableStatusFlag = 0x0;
@@ -423,7 +428,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 | disableStatusFlag;
 
       case ADDITION_HITS -> this.additionHits_56;
-      case SELECTED_ADDITION -> this.selectedAddition_58;
+//      case SELECTED_ADDITION -> this.selectedAddition_58;
 
       case DRAGOON_ATTACK -> this.dragoonAttack_ac;
       case DRAGOON_MAGIC -> this.dragoonMagic_ae;
@@ -435,7 +440,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case TEMP_SP_PER_MAGICAL_HIT -> (this.tempSpPerMagicalHitTurns_d1 & 0xff) << 8 | this.tempSpPerMagicalHit_d0 & 0xff;
       case TEMP_MP_PER_MAGICAL_HIT -> (this.tempMpPerMagicalHitTurns_d3 & 0xff) << 8 | this.tempMpPerMagicalHit_d2 & 0xff;
 
-      case _138 -> this._118;
+//      case _138 -> this._118;
       case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a;
       case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c;
 
@@ -464,6 +469,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case DRAGOON_ATTACK_DEFF -> this.getDragoonAttackDeff();
       case DRAGOON_ATTACK_SOUNDS -> this.getDragoonAttackSounds();
       case ARCHER_SP -> this.getArcherSp();
+      case ADDITION_HIT_COUNT -> this.getAdditionHitCount();
 
       default -> super.getStat(statIndex);
     };
@@ -479,7 +485,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case CURRENT_MP -> this.stats.getStat(LodMod.MP_STAT.get()).setCurrent(value);
 
       case ADDITION_HITS -> this.additionHits_56 = value;
-      case SELECTED_ADDITION -> this.selectedAddition_58 = value;
+//      case SELECTED_ADDITION -> this.selectedAddition_58 = value;
 
       case DRAGOON_ATTACK -> this.dragoonAttack_ac = value;
       case DRAGOON_MAGIC -> this.dragoonMagic_ae = value;
@@ -503,7 +509,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
         this.tempMpPerMagicalHitTurns_d3 = value >>> 8 & 0xff;
       }
 
-      case _138 -> this._118 = value;
+//      case _138 -> this._118 = value;
       case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a = value;
       case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c = value;
 //      case 141, 142, 143, 144, 145 -> this.equipment_11e.put(EquipmentSlot.fromLegacy(statIndex - 141), value); //TODO

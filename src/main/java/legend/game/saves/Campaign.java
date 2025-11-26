@@ -115,6 +115,7 @@ public final class Campaign {
       try {
         saves.add(this.loadGame(name));
       } catch(final InvalidSaveException e) {
+        LOGGER.warn("Failed to load save " + filename, e);
         saves.add(SavedGame.invalid(name));
       }
     }

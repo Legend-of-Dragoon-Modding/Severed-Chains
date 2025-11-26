@@ -10,11 +10,13 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
+import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Comparator;
 
@@ -502,40 +504,44 @@ public class GameStateEditorController {
   }
 
   public String getCharacterStats() {
+    final CharacterData2c charData = gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()];
+
     return switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00);
-      case 1 -> String.format("%#x", gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-      case 2 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08);
-      case 3 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a);
-      case 4 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c);
-      case 5 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e);
-      case 6 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10);
-      case 7 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12);
-      case 8 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13);
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.get(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9)).getRegistryId().toString();
-      case 14 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19);
-      case 15, 16, 17, 18, 19, 20, 21, 22 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15]);
-      case 23, 24, 25, 26, 27, 28, 29, 30 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23]);
+      case 0 -> String.valueOf(charData.xp_00);
+      case 1 -> String.format("%#x", charData.partyFlags_04);
+      case 2 -> String.valueOf(charData.hp_08);
+      case 3 -> String.valueOf(charData.mp_0a);
+      case 4 -> String.valueOf(charData.sp_0c);
+      case 5 -> String.valueOf(charData.dlevelXp_0e);
+      case 6 -> String.valueOf(charData.status_10);
+      case 7 -> String.valueOf(charData.level_12);
+      case 8 -> String.valueOf(charData.dlevel_13);
+      case 9, 10, 11, 12, 13 -> charData.equipment_14.get(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9)).getRegistryId().toString();
+      case 14 -> charData.selectedAddition_19 != null ? charData.selectedAddition_19.toString() : "";
+      case 15, 16, 17, 18, 19, 20, 21, 22 -> charData.selectedAddition_19 != null ? String.valueOf(charData.additionStats.get(charData.selectedAddition_19).level) : "";
+      case 23, 24, 25, 26, 27, 28, 29, 30 -> charData.selectedAddition_19 != null ? String.valueOf(charData.additionStats.get(charData.selectedAddition_19).xp) : "";
       default -> "";
     };
   }
 
   @FXML
   public void setCharacterData() {
+    final CharacterData2c charData = gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()];
+
     switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00 = Integer.parseInt(this.textCharacterData.getText());
-      case 1 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = this.parseHexOrDec(this.textCharacterData.getText(), gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-      case 2 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08 = Integer.parseInt(this.textCharacterData.getText());
-      case 3 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a = Integer.parseInt(this.textCharacterData.getText());
-      case 4 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c = Integer.parseInt(this.textCharacterData.getText());
-      case 5 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e = Integer.parseInt(this.textCharacterData.getText());
-      case 6 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10 = Integer.parseInt(this.textCharacterData.getText());
-      case 7 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12 = Integer.parseInt(this.textCharacterData.getText());
-      case 8 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13 = Integer.parseInt(this.textCharacterData.getText());
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.put(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9), REGISTRIES.equipment.getEntry(this.textCharacterData.getText()).get());
-      case 14 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19 = Integer.parseInt(this.textCharacterData.getText());
-      case 15, 16, 17, 18, 19, 20, 21, 22 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15] = Integer.parseInt(this.textCharacterData.getText());
-      case 23, 24, 25, 26, 27, 28, 29, 30 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23] = Integer.parseInt(this.textCharacterData.getText());
+      case 0 -> charData.xp_00 = Integer.parseInt(this.textCharacterData.getText());
+      case 1 -> charData.partyFlags_04 = this.parseHexOrDec(this.textCharacterData.getText(), charData.partyFlags_04);
+      case 2 -> charData.hp_08 = Integer.parseInt(this.textCharacterData.getText());
+      case 3 -> charData.mp_0a = Integer.parseInt(this.textCharacterData.getText());
+      case 4 -> charData.sp_0c = Integer.parseInt(this.textCharacterData.getText());
+      case 5 -> charData.dlevelXp_0e = Integer.parseInt(this.textCharacterData.getText());
+      case 6 -> charData.status_10 = Integer.parseInt(this.textCharacterData.getText());
+      case 7 -> charData.level_12 = Integer.parseInt(this.textCharacterData.getText());
+      case 8 -> charData.dlevel_13 = Integer.parseInt(this.textCharacterData.getText());
+      case 9, 10, 11, 12, 13 -> charData.equipment_14.put(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9), REGISTRIES.equipment.getEntry(this.textCharacterData.getText()).get());
+      case 14 -> charData.selectedAddition_19 = new RegistryId(this.textCharacterData.getText());
+      case 15, 16, 17, 18, 19, 20, 21, 22 -> charData.additionStats.get(charData.selectedAddition_19).level = Integer.parseInt(this.textCharacterData.getText());
+      case 23, 24, 25, 26, 27, 28, 29, 30 -> charData.additionStats.get(charData.selectedAddition_19).xp = Integer.parseInt(this.textCharacterData.getText());
     }
   }
 
@@ -592,6 +598,10 @@ public class GameStateEditorController {
   private static class RegistryEntryConverter<T extends RegistryEntry> extends StringConverter<T> {
     @Override
     public String toString(final T t) {
+      if(t == null) {
+        return "";
+      }
+
       return t.getRegistryId() + " - " + I18n.translate(t);
     }
 

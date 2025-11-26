@@ -494,10 +494,10 @@ public class RetailSubmap extends Submap {
       this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
 
       final SubmapObject obj = new SubmapObject();
-      obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
+      obj.script = new ScriptFile("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
 
       if(submapModel.hasVirtualSize() && submapModel.real()) {
-        obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
+        obj.model = new CContainer("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
       } else {
         obj.model = null;
       }

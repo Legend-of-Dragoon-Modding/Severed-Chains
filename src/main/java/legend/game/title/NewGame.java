@@ -4,19 +4,38 @@ import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
+import legend.game.additions.Addition;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
-import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.lodmod.LodAdditions.ALBERT_HARPOON;
+import static legend.lodmod.LodAdditions.COOL_BOOGIE;
+import static legend.lodmod.LodAdditions.DOUBLE_PUNCH;
+import static legend.lodmod.LodAdditions.DOUBLE_SLASH;
+import static legend.lodmod.LodAdditions.DOUBLE_SMACK;
+import static legend.lodmod.LodAdditions.HARPOON;
+import static legend.lodmod.LodAdditions.WHIP_SMACK;
 
 public class NewGame extends EngineState {
   public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
-  public static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
+  @SuppressWarnings("unchecked")
+  public static final RegistryDelegate<Addition>[] startingAddition_800ce758 = new RegistryDelegate[] {
+    DOUBLE_SLASH,
+    HARPOON,
+    null,
+    WHIP_SMACK,
+    DOUBLE_PUNCH,
+    ALBERT_HARPOON,
+    DOUBLE_SMACK,
+    COOL_BOOGIE,
+    null,
+  };
 
   @Method(0x800c7194L)
   private void setUpNewGameData() {
@@ -37,28 +56,8 @@ public class NewGame extends EngineState {
       charData.level_12 = level;
       charData.dlevel_13 = 1;
 
-      //LAB_800c7294
-      for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
-        charData.additionLevels_1a[additionIndex] = 0;
-        charData.additionXp_22[additionIndex] = 0;
-      }
-
-      charData.additionLevels_1a[0] = 1;
-
-      //LAB_800c72d4
-      for(int i = 1; i < level; i++) {
-        final int index = levelStuff_80111cfc[charIndex][i].addition_02;
-
-        if(index != -1) {
-          final int offset = additionOffsets_8004f5ac[charIndex];
-          charData.additionLevels_1a[index - offset] = 1;
-        }
-
-        //LAB_800c72fc
-      }
-
       //LAB_800c730c
-      charData.selectedAddition_19 = startingAddition_800ce758[charIndex];
+      charData.selectedAddition_19 = startingAddition_800ce758[charIndex].getId();
     }
 
     gameState_800babc8.charData_32c[0].partyFlags_04 = 0x3;

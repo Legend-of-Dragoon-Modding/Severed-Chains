@@ -982,7 +982,7 @@ mov 0x0, var[45][181] ; source, dest
 mov 0x0, stor[15] ; source, dest
 incr stor[15] ; operand
 mov 0x18, var[45][106] ; source, dest
-gosub inl[:LABEL_216] ; addr
+gosub inl[:GET_PLAYER_ADDITION_HIT_COUNT] ; addr
 mov stor[9], var[45][89] ; source, dest
 fork_reenter stor[28], 0x5, stor[0] ; index, entrypoint, p2
 LABEL_148:
@@ -1049,8 +1049,8 @@ jmp_cmp ==, 0x0, var[45][99], inl[:LABEL_157] ; operand, left, right, addr
 mov stor[14], stor[9] ; source, dest
 decr stor[9] ; operand
 call Battle::scriptGetHitProperty, stor[0], stor[9], 0xe, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
-jmp_cmp ==, 0x0, inl[:LABEL_162[stor[8]]], inl[:LABEL_157] ; operand, left, right, addr
-call Battle::scriptSetLoadingBentAnimationIndex, stor[0], inl[:LABEL_162[stor[8]]] ; bentIndex, animIndex
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_157] ; operand, left, right, addr
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], stor[8] ; bentIndex, animIndex
 LABEL_156:
 yield
 call Battle::scriptAnimationHasFinished, stor[0], stor[8] ; bentIndex, finished
@@ -1087,31 +1087,10 @@ call Battle::scriptAllocateSpTextEffect, 0xffffffff, 0x0 ; p0, p1
 LABEL_161:
 call Battle::scriptLevelUpAddition, stor[0], 0x0 ; bentIndex, doIt
 return
-LABEL_162:
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x18
-data 0x19
 
 ; SUBROUTINE
 JMP_3128_0:
-gosub inl[:LABEL_219] ; addr
+gosub inl[:CACHE_ADDITION_TIMINGS] ; addr
 gosub inl[:ALLOCATE_WEAPON_TRAIL_EFFECT] ; addr
 mov 0x10, stor[8] ; source, dest
 add stor[14], stor[8] ; amount, operand
@@ -1486,18 +1465,12 @@ LABEL_215:
 return
 
 ; SUBROUTINE
-LABEL_216:
-mov 0x0, stor[9] ; source, dest
-LABEL_217:
-call Battle::scriptGetHitProperty, stor[0], stor[9], 0x1, stor[10] ; bentIndex, hitNum, hitPropertyIndex, value
-jmp_cmp ==, 0x0, stor[10], inl[:LABEL_218] ; operand, left, right, addr
-incr stor[9] ; operand
-jmp_cmp !=, 0x8, stor[9], inl[:LABEL_217] ; operand, left, right, addr
-LABEL_218:
+GET_PLAYER_ADDITION_HIT_COUNT:
+call Battle::scriptGetBentStat, stor[0], ADDITION_HIT_COUNT, stor[9]
 return
 
 ; SUBROUTINE
-LABEL_219:
+CACHE_ADDITION_TIMINGS:
 mov 0x56, stor[11] ; source, dest
 mov 0x1, stor[10] ; source, dest
 mov 0x3, stor[12] ; source, dest
