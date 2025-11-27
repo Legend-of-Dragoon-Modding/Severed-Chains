@@ -34,12 +34,12 @@ import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.cacheCharacterSlots;
+import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.giveItems;
 import static legend.game.SItem.hasDragoon;
-import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
@@ -477,7 +477,7 @@ public class PostBattleScreen extends MenuScreen {
 
           this.levelsGained_8011e1c8[charSlot]++;
           if(this.additionsUnlocked_8011e1b8[charSlot] == null) {
-            this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charId, null);
+            this.additionsUnlocked_8011e1b8[charSlot] = checkForNewlyUnlockedAddition(charId);
           }
 
           //LAB_8010cd9c

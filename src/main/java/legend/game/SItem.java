@@ -1352,39 +1352,50 @@ public final class SItem {
     }
   }
 
-  public static Addition loadAdditions(final int charId, @Nullable final List<Addition> additions) {
-    if(additions != null) {
-      additions.clear();
+  public static void loadAdditions(final int charId, final List<Addition> additions) {
+    additions.clear();
+
+    if(charId == -1) {
+      return;
     }
 
+    checkForNewlyUnlockedAddition(charId);
+
+    final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+
+    for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
+      final Addition addition = additionDelegate.get();
+      final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
+
+      if(additionStats.unlocked) {
+        additions.add(addition);
+      }
+    }
+  }
+
+  public static Addition checkForNewlyUnlockedAddition(final int charId) {
     if(charId == -1) {
       return null;
     }
 
     final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+    Addition newlyUnlocked = null;
 
-    Addition unlockedIndex = null;
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
       final Addition addition = additionDelegate.get();
       final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
-
       final boolean wasUnlocked = additionStats.unlocked;
+
       additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(charData, additionStats);
 
       EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
 
-      if(additionStats.unlocked) {
-        if(additions != null) {
-          additions.add(addition);
-        }
-
-        if(!wasUnlocked) {
-          unlockedIndex = addition;
-        }
+      if(additionStats.unlocked && !wasUnlocked) {
+        newlyUnlocked = addition;
       }
     }
 
-    return unlockedIndex;
+    return newlyUnlocked;
   }
 
   @Method(0x80104b1cL)

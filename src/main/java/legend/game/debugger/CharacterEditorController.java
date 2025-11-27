@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.characterNames_801142dc;
-import static legend.game.SItem.loadAdditions;
+import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 
 public class CharacterEditorController {
@@ -71,7 +71,7 @@ public class CharacterEditorController {
   }
 
   private void refresh() {
-    loadAdditions(this.charId, null);
+    checkForNewlyUnlockedAddition(this.charId);
 
     this.selectedAddition.getItems().clear();
     this.additionList.getItems().clear();
