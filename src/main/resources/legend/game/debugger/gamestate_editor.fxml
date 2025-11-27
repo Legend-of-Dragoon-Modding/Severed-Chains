@@ -76,8 +76,8 @@
       <TextField fx:id="textData1" GridPane.columnIndex="1" />
       <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
-            <ComboBox fx:id="getScriptData" onAction="#getScriptData" />
-            <TextField fx:id="textScriptData" prefWidth="999999.0" />
+            <ComboBox fx:id="getScriptData" onAction="#getScriptData" prefWidth="70.0" />
+            <TextField fx:id="textScriptData" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -85,8 +85,8 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
-            <ComboBox fx:id="getParty" onAction="#getParty" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textParty" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getParty" onAction="#getParty" prefWidth="70.0" />
+            <TextField fx:id="textParty" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -103,8 +103,8 @@
       <TextField fx:id="textScriptEngine3" GridPane.columnIndex="1" GridPane.rowIndex="11" />
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
          <children>
-            <ComboBox fx:id="getScriptFlags1" onAction="#getScriptFlags1" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textScriptFlags1" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getScriptFlags1" onAction="#getScriptFlags1" prefWidth="70.0" />
+            <TextField fx:id="textScriptFlags1" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -112,8 +112,8 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
          <children>
-            <ComboBox fx:id="getScriptFlags2" onAction="#getScriptFlags2" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textScriptFlags2" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getScriptFlags2" onAction="#getScriptFlags2" prefWidth="70.0" />
+            <TextField fx:id="textScriptFlags2" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -121,8 +121,8 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
          <children>
-            <ComboBox fx:id="getData2" onAction="#getData2" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textData2" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getData2" onAction="#getData2" prefWidth="70.0" />
+            <TextField fx:id="textData2" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -130,8 +130,8 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
          <children>
-            <ComboBox fx:id="getData3" onAction="#getData3" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textData3" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getData3" onAction="#getData3" prefWidth="70.0" />
+            <TextField fx:id="textData3" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -139,8 +139,8 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="17">
          <children>
-            <ComboBox fx:id="getData4" onAction="#getData4" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textData4" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getData4" onAction="#getData4" prefWidth="70.0" />
+            <TextField fx:id="textData4" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -148,8 +148,8 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
          <children>
-            <ComboBox fx:id="getChestFlags" onAction="#getChestFlags" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textChestFlags" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getChestFlags" onAction="#getChestFlags" prefWidth="70.0" />
+            <TextField fx:id="textChestFlags" HBox.hgrow="ALWAYS" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -157,9 +157,7 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
          <children>
-            <ComboBox fx:id="getCharacter" onAction="#getCharacter" prefHeight="25.0" prefWidth="200.0" />
-            <ComboBox fx:id="getCharacterData" onAction="#getCharacterData" prefHeight="25.0" prefWidth="200.0" />
-            <TextField fx:id="textCharacterData" prefHeight="25.0" prefWidth="999999.0" />
+            <ComboBox fx:id="getCharacter" prefWidth="999999.0" />
          </children>
          <GridPane.margin>
             <Insets top="2.0" />
@@ -356,7 +354,7 @@
             <Insets top="2.0" />
          </GridPane.margin>
          <children>
-            <Button fx:id="setCharacterData" onAction="#setCharacterData" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+            <Button fx:id="editCharacter" onAction="#editCharacter" prefHeight="25.0" prefWidth="999999.0" text="Edit" />
          </children>
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="22">
@@ -404,9 +402,9 @@
             <Button fx:id="setAreaIndex" onAction="#setAreaIndex" prefHeight="25.0" prefWidth="999999.0" text="Set" />
          </children>
       </HBox>
-      <ComboBox fx:id="equipmentList" onAction="#getChestFlags" prefHeight="25.0" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="19" />
-      <ComboBox fx:id="itemList" onAction="#getChestFlags" prefHeight="25.0" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="20" />
-      <ComboBox fx:id="goodsList" onAction="#getChestFlags" prefHeight="25.0" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+      <ComboBox fx:id="equipmentList" onAction="#getChestFlags" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="19" />
+      <ComboBox fx:id="itemList" onAction="#getChestFlags" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="20" />
+      <ComboBox fx:id="goodsList" onAction="#getChestFlags" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

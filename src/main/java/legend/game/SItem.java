@@ -1368,15 +1368,17 @@ public final class SItem {
       final Addition addition = additionDelegate.get();
       final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
 
-      final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
+      final boolean wasUnlocked = additionStats.unlocked;
+      additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(charData, additionStats);
 
-      if(event.unlocked) {
+      EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
+
+      if(additionStats.unlocked) {
         if(additions != null) {
           additions.add(addition);
         }
 
-        if(!additionStats.unlocked) {
-          additionStats.unlocked = true;
+        if(!wasUnlocked) {
           unlockedIndex = addition;
         }
       }

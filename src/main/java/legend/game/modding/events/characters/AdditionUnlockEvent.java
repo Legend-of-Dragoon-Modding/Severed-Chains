@@ -10,13 +10,9 @@ public class AdditionUnlockEvent extends Event {
   public final CharacterAdditionStats additionStats;
   public final Addition addition;
 
-  public boolean unlocked;
-
   public AdditionUnlockEvent(final CharacterData2c charData, final CharacterAdditionStats additionStats, final Addition addition) {
     this.charData = charData;
     this.additionStats = additionStats;
     this.addition = addition;
-
-    this.unlocked = addition.isUnlocked(charData, additionStats);
   }
 }
