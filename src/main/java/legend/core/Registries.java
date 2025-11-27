@@ -3,6 +3,9 @@ package legend.core;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActionRegistry;
 import legend.core.platform.input.InputActionRegistryEvent;
+import legend.game.additions.Addition;
+import legend.game.additions.AdditionRegistry;
+import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
@@ -62,6 +65,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);
   public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
+  public final Registry<Addition> additions = this.addRegistry(new AdditionRegistry(), AdditionRegistryEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

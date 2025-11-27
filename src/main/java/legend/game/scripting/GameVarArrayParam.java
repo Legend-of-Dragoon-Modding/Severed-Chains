@@ -198,9 +198,9 @@ public class GameVarArrayParam extends Param {
       case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc;
       case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0;
       case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4;
-      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398._2d8;
-      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398._2dc;
-      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398._2e0;
+      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalFrames_2d8;
+      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398.additionOverlayHitFrameOffset_2dc;
+      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalSuccessFrames_2e0;
       case 89 -> Scus94491BpeSegment_8006.battleState_8006e398._2e4;
       case 90 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[0];
       case 91 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[1];
@@ -461,9 +461,9 @@ public class GameVarArrayParam extends Param {
       case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc = val;
       case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0 = val;
       case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4 = val;
-      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398._2d8 = val;
-      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398._2dc = val;
-      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398._2e0 = val;
+      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalFrames_2d8 = val;
+      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398.additionOverlayHitFrameOffset_2dc = val;
+      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalSuccessFrames_2e0 = val;
       case 89 -> Scus94491BpeSegment_8006.battleState_8006e398._2e4 = val;
       case 90 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[0] = val;
       case 91 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[1] = val;

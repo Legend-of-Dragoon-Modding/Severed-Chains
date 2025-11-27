@@ -65,7 +65,7 @@ import static legend.game.SItem.UI_WHITE_CENTERED;
 import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
@@ -1705,7 +1705,7 @@ public class BattleHud {
         }
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ADDITIONS.get())) {
-          if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
+          if(CHARACTER_ADDITIONS[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272].length != 0) {
             playSound(0, 2, (short)0, (short)0);
             this.initListMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
           } else {

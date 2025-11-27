@@ -1016,16 +1016,17 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Set a character's addition")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "additionId", description = "The addition ID")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "additionId", description = "The addition ID")
   @Method(0x800d9ce4L)
   private FlowControl scriptSetCharAddition(final RunningScript<?> script) {
-    gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19 = script.params_20[1].get();
+    final int charId = script.params_20[0].get();
+    gameState_800babc8.charData_32c[charId].selectedAddition_19 = script.params_20[1].getRegistryId();
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Get a character's addition")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "additionId", description = "The addition ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "additionId", description = "The addition ID")
   @Method(0x800d9d20L)
   private FlowControl scriptGetCharAddition(final RunningScript<?> script) {
     script.params_20[1].set(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19);

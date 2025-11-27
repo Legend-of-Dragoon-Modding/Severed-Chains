@@ -1,6 +1,8 @@
 package legend.game.saves.serializers;
 
 import legend.core.GameEngine;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.InventoryEntry;
 import legend.game.saves.SavedGame;
@@ -11,9 +13,12 @@ import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 
 public final class RetailSerializer {
   private RetailSerializer() { }
@@ -148,11 +153,23 @@ public final class RetailSerializer {
         charData.equipmentIds_14.put(EquipmentSlot.fromLegacy(i), charSlice.readUByte(0x14 + i));
       }
 
-      charData.selectedAddition_19 = charSlice.readByte(0x19);
+      final int oldAdditionIndex = data.readByte(0x19) - additionOffsets_8004f5ac[charSlot];
+
+      if(oldAdditionIndex >= 0 && CHARACTER_ADDITIONS[charSlot].length != 0) {
+        charData.selectedAddition_19 = CHARACTER_ADDITIONS[charSlot][oldAdditionIndex].getId();
+      }
 
       for(int i = 0; i < 8; i++) {
-        charData.additionLevels_1a[i] = charSlice.readUByte(0x1a + i);
-        charData.additionXp_22[i] = charSlice.readUByte(0x22 + i);
+        final int level = charSlice.readUByte(0x1a + i);
+        final int xp = charSlice.readUByte(0x22 + i);
+
+        if(i < CHARACTER_ADDITIONS[charSlot].length) {
+          final RegistryDelegate<Addition> addition = CHARACTER_ADDITIONS[charSlot][i];
+          final CharacterAdditionStats stats = new CharacterAdditionStats();
+          stats.level = Math.max(0, level - 1);
+          stats.xp = xp;
+          charData.additionStats.put(addition.getId(), stats);
+        }
       }
     }
 

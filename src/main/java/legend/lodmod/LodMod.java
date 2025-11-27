@@ -11,6 +11,7 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.FractionalStat;
@@ -374,6 +375,11 @@ public class LodMod {
   @EventListener
   public static void registerDeffs(final RegisterDeffsEvent event) {
     LodDeffs.register(event);
+  }
+
+  @EventListener
+  public static void registerAdditions(final AdditionRegistryEvent event) {
+    LodAdditions.register(event);
   }
 
   @EventListener

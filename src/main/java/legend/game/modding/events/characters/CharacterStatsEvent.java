@@ -24,8 +24,6 @@ public class CharacterStatsEvent extends Event {
 
   // Current level stats
   public int maxHp;
-  /** The addition that unlocks at this level, if there is one */
-  public int addition;
   public int bodySpeed;
   public int bodyAttack;
   public int bodyMagicAttack;
@@ -56,7 +54,6 @@ public class CharacterStatsEvent extends Event {
 
     final LevelStuff08 levelStuff = levelStuff_80111cfc[characterId][this.level];
     this.maxHp = levelStuff.hp_00;
-    this.addition = levelStuff.addition_02;
     this.bodySpeed = levelStuff.bodySpeed_03;
     this.bodyAttack = levelStuff.bodyAttack_04;
     this.bodyMagicAttack = levelStuff.bodyMagicAttack_05;

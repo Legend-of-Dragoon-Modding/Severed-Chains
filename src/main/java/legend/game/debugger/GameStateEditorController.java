@@ -1,6 +1,7 @@
 package legend.game.debugger;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -10,7 +11,6 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
-import legend.game.types.EquipmentSlot;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,8 +25,7 @@ public class GameStateEditorController {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(GameStateEditorController.class);
 
-  String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
-  String[] characterData = {"EXP", "Party Flags", "HP", "MP", "SP", "Dragoon EXP", "Status", "Level", "Dragoon Level", "Equipment Slot 1", "Equipment Slot 2", "Equipment Slot 3", "Equipment Slot 4", "Equipment Slot 5", "Addition", "Addition Level Slot 1", "Addition Level Slot 2", "Addition Level Slot 3", "Addition Level Slot 4", "Addition Level Slot 5", "Addition Level Slot 6", "Addition Level Slot 7", "Addition Level Slot 8", "Addition EXP Slot 1", "Addition EXP Slot 2", "Addition EXP Slot 3", "Addition EXP Slot 4", "Addition EXP Slot 5", "Addition EXP Slot 6", "Addition EXP Slot 7", "Addition EXP Slot 8"};
+  private final String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
   @FXML
   public TextField textData1;
   @FXML
@@ -88,10 +87,6 @@ public class GameStateEditorController {
   @FXML
   public ComboBox<String> getCharacter;
   @FXML
-  public ComboBox<String> getCharacterData;
-  @FXML
-  public TextField textCharacterData;
-  @FXML
   public TextField textPathIndex;
   @FXML
   public TextField textDotIndex;
@@ -101,6 +96,7 @@ public class GameStateEditorController {
   public TextField textFacing;
   @FXML
   public TextField textAreaIndex;
+  public Button editCharacter;
 
   public void initialize() {
     this.textData1.setText(String.format("%#x", gameState_800babc8._04));
@@ -199,12 +195,6 @@ public class GameStateEditorController {
       this.getCharacter.getItems().add(character);
     }
     this.getCharacter.getSelectionModel().select(0);
-
-    for(final String characterDatum : this.characterData) {
-      this.getCharacterData.getItems().add(characterDatum);
-    }
-    this.getCharacterData.getSelectionModel().select(0);
-    this.getCharacter();
 
     this.textPathIndex.setText(String.format("%#x", gameState_800babc8.pathIndex_4d8));
     this.textDotIndex.setText(String.format("%#x", gameState_800babc8.dotIndex_4da));
@@ -492,51 +482,10 @@ public class GameStateEditorController {
   }
 
   @FXML
-  public void getCharacter() {
-    this.textCharacterData.setText(this.getCharacterStats());
-  }
-
-  @FXML
-  public void getCharacterData() {
-    this.textCharacterData.setText(this.getCharacterStats());
-  }
-
-  public String getCharacterStats() {
-    return switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00);
-      case 1 -> String.format("%#x", gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-      case 2 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08);
-      case 3 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a);
-      case 4 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c);
-      case 5 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e);
-      case 6 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10);
-      case 7 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12);
-      case 8 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13);
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.get(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9)).getRegistryId().toString();
-      case 14 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19);
-      case 15, 16, 17, 18, 19, 20, 21, 22 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15]);
-      case 23, 24, 25, 26, 27, 28, 29, 30 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23]);
-      default -> "";
-    };
-  }
-
-  @FXML
-  public void setCharacterData() {
-    switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00 = Integer.parseInt(this.textCharacterData.getText());
-      case 1 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = this.parseHexOrDec(this.textCharacterData.getText(), gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-      case 2 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08 = Integer.parseInt(this.textCharacterData.getText());
-      case 3 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a = Integer.parseInt(this.textCharacterData.getText());
-      case 4 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c = Integer.parseInt(this.textCharacterData.getText());
-      case 5 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e = Integer.parseInt(this.textCharacterData.getText());
-      case 6 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10 = Integer.parseInt(this.textCharacterData.getText());
-      case 7 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12 = Integer.parseInt(this.textCharacterData.getText());
-      case 8 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13 = Integer.parseInt(this.textCharacterData.getText());
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.put(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9), REGISTRIES.equipment.getEntry(this.textCharacterData.getText()).get());
-      case 14 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19 = Integer.parseInt(this.textCharacterData.getText());
-      case 15, 16, 17, 18, 19, 20, 21, 22 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15] = Integer.parseInt(this.textCharacterData.getText());
-      case 23, 24, 25, 26, 27, 28, 29, 30 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23] = Integer.parseInt(this.textCharacterData.getText());
-    }
+  public void editCharacter() throws Exception {
+    final int id = this.getCharacter.getSelectionModel().getSelectedIndex();
+    final CharacterEditor charEditor = new CharacterEditor(id, gameState_800babc8.charData_32c[id]);
+    charEditor.start(new Stage());
   }
 
   @FXML
@@ -592,6 +541,10 @@ public class GameStateEditorController {
   private static class RegistryEntryConverter<T extends RegistryEntry> extends StringConverter<T> {
     @Override
     public String toString(final T t) {
+      if(t == null) {
+        return "";
+      }
+
       return t.getRegistryId() + " - " + I18n.translate(t);
     }
 

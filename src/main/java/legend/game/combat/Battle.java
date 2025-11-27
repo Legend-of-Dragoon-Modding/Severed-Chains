@@ -21,6 +21,8 @@ import legend.game.DrgnFiles;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.characters.Element;
 import legend.game.characters.Stat;
 import legend.game.characters.StatMod;
@@ -90,6 +92,7 @@ import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
@@ -231,8 +234,7 @@ import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
-import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -2430,11 +2432,13 @@ public class Battle extends EngineState {
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
-            fileIndex = 4031 + gameState_800babc8.charData_32c[charId].selectedAddition_19 + charId * 8 - additionOffsets_8004f5ac[charId];
-          } else {
-            // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
-            fileIndex = 4031 + charId * 8;
+            final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            return;
           }
+
+          // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
+          fileIndex = 4031 + charId * 8;
         } else if(charId != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           // Dragoon addition
           fileIndex = 4103 + charId;
@@ -3823,33 +3827,29 @@ public class Battle extends EngineState {
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
-      final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac[charIndex];
-      if(charIndex == 2 || charIndex == 8 || additionIndex < 0) {
+      if(charIndex == 2 || charIndex == 8 || charData.selectedAddition_19 == null) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
+      final int additionXp = Math.min(99, additionStats.xp + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
-        charData.additionLevels_1a[additionIndex]++;
+      while(additionStats.level < 4 && additionXp >= (additionStats.level + 1) * 20) {
+        additionStats.level++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
-      int lastNonMaxAdditionIndex = -1;
+      int nonMaxedAdditions = CHARACTER_ADDITIONS[charIndex].length;
 
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
+      for(int additionIndex2 = 0; additionIndex2 < CHARACTER_ADDITIONS[charIndex].length; additionIndex2++) {
+        if(charData.additionStats.get(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 4) {
           nonMaxedAdditions--;
-        } else {
-          //LAB_800cd308
-          lastNonMaxAdditionIndex = additionIndex2;
         }
 
         //LAB_800cd30c
@@ -3859,17 +3859,11 @@ public class Battle extends EngineState {
       //LAB_800cd31c
       if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
         charData.partyFlags_04 |= 0x40;
-
-        if(lastNonMaxAdditionIndex >= 0) {
-          charData.additionLevels_1a[lastNonMaxAdditionIndex] = 1;
-        }
-
-        //LAB_800cd36c
         unlockedUltimateAddition_800bc910[bent.charSlot_276] = true;
       }
 
       //LAB_800cd390
-      charData.additionXp_22[additionIndex] = additionXp;
+      additionStats.xp = additionXp;
     }
 
     //LAB_800cd3ac
@@ -4610,9 +4604,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800d3968L)
-  public int[] setAdditionNameDisplayCoords(final int addition) {
-    final String additionName = additionNames_800fa8d4[addition];
-
+  public int[] setAdditionNameDisplayCoords(final String additionName) {
     int additionDisplayWidth = 0;
     //LAB_800d39b8
     for(int i = 0; i < additionName.length(); i++) {
@@ -4633,15 +4625,15 @@ public class Battle extends EngineState {
     } else {
       //LAB_800d3dc0
       final AdditionNameTextEffect1c additionStruct = new AdditionNameTextEffect1c();
-      final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
+      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19).get();
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
-      final String additionName = additionNames_800fa8d4[addition];
+      final String additionName = I18n.translate(addition);
 
       //LAB_800d3e5c
       //LAB_800d3e7c
-      additionStruct.additionId_02 = addition;
+      additionStruct.additionName_02 = additionName;
       additionStruct.length_08 = additionName.length();
       additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = additionStruct::renderAdditionNameChar;
@@ -4649,7 +4641,7 @@ public class Battle extends EngineState {
       Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
       this._800faa9d = 1;
 
-      final int[] displayOffset = this.setAdditionNameDisplayCoords(addition);
+      final int[] displayOffset = this.setAdditionNameDisplayCoords(additionName);
       int charPosition = -160;
       int displayOffsetX = displayOffset[0];
       final int displayOffsetY = displayOffset[1];
@@ -7893,7 +7885,7 @@ public class Battle extends EngineState {
       player.magicalImmunity_112 = stats.equipmentMagicalImmunity_48;
       player.physicalResistance_114 = stats.equipmentPhysicalResistance_4a;
       player.magicalResistance_116 = stats.equipmentMagicalResistance_60;
-      player._118 = stats.addition_00_9c;
+//      player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
       player.equipment_11e.clear();

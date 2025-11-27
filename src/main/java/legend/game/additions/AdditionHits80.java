@@ -1,4 +1,4 @@
-package legend.game.combat.types;
+package legend.game.additions;
 
 public class AdditionHits80 {
   public final AdditionHitProperties10[] hits_00;

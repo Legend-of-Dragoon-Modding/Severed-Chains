@@ -11,8 +11,8 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.combat.types.AdditionHitProperties10;
-import legend.game.combat.types.AdditionSound;
+import legend.game.additions.AdditionHitProperties10;
+import legend.game.additions.AdditionSound;
 import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
@@ -90,16 +90,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       .build();
 
     //LAB_8010633c
-    int hitNum;
-    for(hitNum = 0; hitNum < 8; hitNum++) {
-      // Number of hits calculated by counting to first hit with 0 total frames
-      if((this.getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff) == 0) {
-        break;
-      }
-    }
-
     //LAB_80106374
-    final int hitCount = hitNum - 1;
+    final int hitCount = this.getHitCount(s5.charSlot_276, autoCompleteType) - 1;
     this.count_30 = hitCount;
     this.attackerScriptIndex_00 = attackerScriptIndex;
     this.targetScriptIndex_04 = targetScriptIndex;
@@ -116,7 +108,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     this.unused_36 = overlayDisplayDelay;
 
     //LAB_801063f0
-    for(hitNum = 0; hitNum < this.count_30; hitNum++) {
+    for(int hitNum = 0; hitNum < this.count_30; hitNum++) {
       final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
       hitOverlay.unused_00 = 1;
       hitOverlay.hitSuccessful_01 = false;
@@ -262,6 +254,14 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     }
   }
 
+  private int getHitCount(final int charSlot, final int autoCompleteType) {
+    if(autoCompleteType == 1 || autoCompleteType == 3) {
+      return additionTutorialExampleHits_800fb7c0.length;
+    }
+
+    return battlePreloadedEntities_1f8003f4.getHitCount(charSlot);
+  }
+
   /**
    * Selects where to get hit property from based on auto-complete type. 1 and 3 use a mysterious global 2-hit array,
    * which may be unused testing code.
@@ -272,10 +272,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final int hitPropertyValue;
     if(autoCompleteType == 1 || autoCompleteType == 3) {
       //LAB_80106274
-      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].get(hitPropertyIndex);
+      hitPropertyValue = additionTutorialExampleHits_800fb7c0[hitNum].get(hitPropertyIndex);
     } else {
       //LAB_8010628c
-      hitPropertyValue = battlePreloadedEntities_1f8003f4.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
+      hitPropertyValue = battlePreloadedEntities_1f8003f4.getHit(charSlot, hitNum).get(hitPropertyIndex) & 0xff;
     }
 
     //LAB_80106298
@@ -698,12 +698,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     this.reticleBorderShadow.delete();
   }
 
-  private static final byte[] additionButtonRenderCallbackIndices_800fb7bc = {35, 40, 33, 38};
-
   /** Some kind of mysterious global 2-hit addition array. Should probably be yeeted, but need to be sure. */
-  private static final AdditionHitProperties10[] staticTestAdditionHitProperties_800fb7c0 = {
+  private static final AdditionHitProperties10[] additionTutorialExampleHits_800fb7c0 = {
     new AdditionHitProperties10(0xc0, 13, 9, 2, 50, 20, 2, 0, 0, 0, 8, 5, 8, 32, 0, 11, new AdditionSound(4, 9)),
     new AdditionHitProperties10(0xc0, 33, 27, 1, 30, 10, 0, 0, 0, 25, 2, 1, 8, 32, 0, 0, new AdditionSound(0, 7)),
-    new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(-1, 0)),
   };
 }

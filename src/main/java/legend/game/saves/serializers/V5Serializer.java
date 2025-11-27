@@ -2,6 +2,8 @@ package legend.game.saves.serializers;
 
 import legend.core.GameEngine;
 import legend.core.memory.types.IntRef;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -12,7 +14,11 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 
 public final class V5Serializer {
   private V5Serializer() { }
@@ -114,7 +120,8 @@ public final class V5Serializer {
 
     final int charDataCount = data.readUShort(offset); // Not yet used
 
-    for(final CharacterData2c charData : state.charData_32c) {
+    for(int charIndex = 0; charIndex < state.charData_32c.length; charIndex++) {
+      final CharacterData2c charData = state.charData_32c[charIndex];
       charData.xp_00 = data.readInt(offset);
       charData.partyFlags_04 = data.readInt(offset);
       charData.hp_08 = data.readInt(offset);
@@ -135,13 +142,25 @@ public final class V5Serializer {
         charData.equipmentRegistryIds_14.put(slot, equipmentId);
       }
 
-      charData.selectedAddition_19 = data.readShort(offset);
+      final int oldAdditionIndex = data.readShort(offset) - additionOffsets_8004f5ac[charIndex];
+
+      if(oldAdditionIndex >= 0 && CHARACTER_ADDITIONS[charIndex].length != 0) {
+        charData.selectedAddition_19 = CHARACTER_ADDITIONS[charIndex][oldAdditionIndex].getId();
+      }
 
       final int additionCount = data.readShort(offset); // Not yet used
 
-      for(int additionSlot = 0; additionSlot < charData.additionLevels_1a.length; additionSlot++) {
-        charData.additionLevels_1a[additionSlot] = data.readShort(offset);
-        charData.additionXp_22[additionSlot] = data.readInt(offset);
+      for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
+        final int level = data.readShort(offset);
+        final int xp = data.readInt(offset);
+
+        if(additionIndex < CHARACTER_ADDITIONS[charIndex].length) {
+          final RegistryDelegate<Addition> addition = CHARACTER_ADDITIONS[charIndex][additionIndex];
+          final CharacterAdditionStats stats = new CharacterAdditionStats();
+          stats.level = Math.max(0, level - 1);
+          stats.xp = xp;
+          charData.additionStats.put(addition.getId(), stats);
+        }
       }
     }
 
