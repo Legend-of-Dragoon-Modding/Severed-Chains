@@ -3838,7 +3838,7 @@ public class Battle extends EngineState {
 
       //LAB_800cd240
       //LAB_800cd288
-      while(additionStats.level < 5 && additionXp >= additionStats.level * 20) {
+      while(additionStats.level < 4 && additionXp >= (additionStats.level + 1) * 20) {
         additionStats.level++;
       }
 
@@ -3848,7 +3848,7 @@ public class Battle extends EngineState {
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
       for(int additionIndex2 = 0; additionIndex2 < CHARACTER_ADDITIONS[charIndex].length; additionIndex2++) {
-        if(charData.additionStats.get(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 5) {
+        if(charData.additionStats.get(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 4) {
           nonMaxedAdditions--;
         }
 

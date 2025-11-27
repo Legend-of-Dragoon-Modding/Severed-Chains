@@ -2329,8 +2329,8 @@ public final class SItem {
 //        stats.addition_00_9c = addition._00;
 
         final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(charData, additionStats, addition));
-        stats.additionSpMultiplier_9e = Math.round(event.additionSpMulti * 100);
-        stats.additionDamageMultiplier_9f = Math.round(event.additionDmgMulti * 100);
+        stats.additionSpMultiplier_9e = Math.round(event.additionSpMulti * 100) - 100;
+        stats.additionDamageMultiplier_9f = Math.round(event.additionDmgMulti * 100) - 100;
       } else {
         stats.additionDamageMultiplier_9f = 0;
       }

@@ -489,7 +489,7 @@ public final class SBtld {
 
         //LAB_801092dc
         final int activeDragoonAdditionIndex;
-        if(charIndex != 0 || gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+        if(charIndex != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           //LAB_80109308
           activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[charIndex];
         } else {
