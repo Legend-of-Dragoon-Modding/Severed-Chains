@@ -19,6 +19,7 @@ import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Menus;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -133,6 +134,7 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.srand;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
@@ -1008,8 +1010,27 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destCharId", description = "The destination character")
   @Method(0x800d9c1cL)
   private FlowControl scriptCloneCharacterData(final RunningScript<?> script) {
+    final int id0 = script.params_20[0].get();
+    final int id1 = script.params_20[1].get();
+    final CharacterData2c char0 = gameState_800babc8.charData_32c[id0];
+    final CharacterData2c char1 = gameState_800babc8.charData_32c[id1];
+
     //LAB_800d9c78
-    gameState_800babc8.charData_32c[script.params_20[1].get()].set(gameState_800babc8.charData_32c[script.params_20[0].get()]);
+    char1.set(char0);
+
+    // When cloning Albert -> Lavitz we need to swap addition IDs
+    if(id0 == 1 && id1 == 5) {
+      char1.additionStats.clear();
+
+      for(int i = 0; i < CHARACTER_ADDITIONS[id0].length; i++) {
+        char1.additionStats.put(CHARACTER_ADDITIONS[id1][i].getId(), new CharacterAdditionStats(char0.additionStats.get(CHARACTER_ADDITIONS[id0][i].getId())));
+
+        if(char1.selectedAddition_19.equals(CHARACTER_ADDITIONS[id0][i].getId())) {
+          char1.selectedAddition_19 = CHARACTER_ADDITIONS[id1][i].getId();
+        }
+      }
+    }
+
     this.restoreCharDataVitals(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }

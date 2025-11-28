@@ -53,7 +53,11 @@ public class CharacterData2c {
     this.equipment_14.putAll(other.equipment_14);
     this.selectedAddition_19 = other.selectedAddition_19;
     this.additionStats.clear();
-    this.additionStats.putAll(other.additionStats);
+
+    for(final var entry : other.additionStats.entrySet()) {
+      this.additionStats.put(entry.getKey(), new CharacterAdditionStats(entry.getValue()));
+    }
+
 //    System.arraycopy(other.additionLevels_1a, 0, this.additionLevels_1a, 0, this.additionLevels_1a.length);
 //    System.arraycopy(other.additionXp_22, 0, this.additionXp_22, 0, this.additionXp_22.length);
   }

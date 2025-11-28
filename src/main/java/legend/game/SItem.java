@@ -1383,7 +1383,7 @@ public final class SItem {
 
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
       final Addition addition = additionDelegate.get();
-      final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
+      final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(addition.getRegistryId(), k -> new CharacterAdditionStats());
       final boolean wasUnlocked = additionStats.unlocked;
 
       additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(charData, additionStats);
@@ -2337,7 +2337,7 @@ public final class SItem {
 
       if(stats.selectedAddition_35 != null) {
         final Addition addition = REGISTRIES.additions.getEntry(stats.selectedAddition_35).get();
-        final CharacterAdditionStats additionStats = charData.additionStats.get(stats.selectedAddition_35);
+        final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(stats.selectedAddition_35, k -> new CharacterAdditionStats());
 
 //        stats.addition_00_9c = addition._00;
 
