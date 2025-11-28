@@ -5,6 +5,7 @@ import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
@@ -13,13 +14,14 @@ import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.lodmod.LodAdditions.ALBERT_HARPOON;
-import static legend.lodmod.LodAdditions.COOL_BOOGIE;
 import static legend.lodmod.LodAdditions.DOUBLE_PUNCH;
 import static legend.lodmod.LodAdditions.DOUBLE_SLASH;
 import static legend.lodmod.LodAdditions.DOUBLE_SMACK;
 import static legend.lodmod.LodAdditions.HARPOON;
+import static legend.lodmod.LodAdditions.PURSUIT;
 import static legend.lodmod.LodAdditions.WHIP_SMACK;
 
 public class NewGame extends EngineState {
@@ -33,7 +35,7 @@ public class NewGame extends EngineState {
     DOUBLE_PUNCH,
     ALBERT_HARPOON,
     DOUBLE_SMACK,
-    COOL_BOOGIE,
+    PURSUIT,
     null,
   };
 
@@ -59,6 +61,10 @@ public class NewGame extends EngineState {
       //LAB_800c730c
       if(startingAddition_800ce758[charIndex] != null) {
         charData.selectedAddition_19 = startingAddition_800ce758[charIndex].getId();
+      }
+
+      for(final RegistryDelegate<Addition> additions : CHARACTER_ADDITIONS[charIndex]) {
+        charData.additionStats.put(additions.getId(), new CharacterAdditionStats());
       }
     }
 

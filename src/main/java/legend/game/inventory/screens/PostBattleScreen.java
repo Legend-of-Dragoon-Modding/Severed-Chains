@@ -77,7 +77,7 @@ public class PostBattleScreen extends MenuScreen {
   private int soundTick_8011e17c;
   private final int[] pendingXp_8011e180 = new int[10];
   private final int[] spellsUnlocked_8011e1a8 = new int[12];
-  private final Addition[] additionsUnlocked_8011e1b8 = new Addition[3];
+  private final Addition[] additionsUnlocked_8011e1b8 = new Addition[12];
   private final int[] levelsGained_8011e1c8 = new int[12];
   private final int[] dragoonLevelsGained_8011e1d8 = new int[12];
 
