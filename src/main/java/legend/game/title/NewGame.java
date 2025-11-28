@@ -57,7 +57,9 @@ public class NewGame extends EngineState {
       charData.dlevel_13 = 1;
 
       //LAB_800c730c
-      charData.selectedAddition_19 = startingAddition_800ce758[charIndex].getId();
+      if(startingAddition_800ce758[charIndex] != null) {
+        charData.selectedAddition_19 = startingAddition_800ce758[charIndex].getId();
+      }
     }
 
     gameState_800babc8.charData_32c[0].partyFlags_04 = 0x3;
