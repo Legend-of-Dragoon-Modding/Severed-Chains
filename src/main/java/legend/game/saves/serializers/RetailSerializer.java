@@ -155,8 +155,12 @@ public final class RetailSerializer {
 
       final int oldAdditionIndex = data.readByte(0x19) - additionOffsets_8004f5ac[charSlot];
 
-      if(oldAdditionIndex >= 0 && CHARACTER_ADDITIONS[charSlot].length != 0) {
-        charData.selectedAddition_19 = CHARACTER_ADDITIONS[charSlot][oldAdditionIndex].getId();
+      if(CHARACTER_ADDITIONS[charSlot].length != 0) {
+        if(oldAdditionIndex >= 0) {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charSlot][oldAdditionIndex].getId();
+        } else {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charSlot][0].getId();
+        }
       }
 
       for(int i = 0; i < 8; i++) {

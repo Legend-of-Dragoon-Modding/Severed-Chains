@@ -192,8 +192,12 @@ public final class V3Serializer {
       final int oldAdditionIndex = data.readShort(offset) - additionOffsets_8004f5ac[charIndex];
       offset += 2;
 
-      if(oldAdditionIndex >= 0 && CHARACTER_ADDITIONS[charIndex].length != 0) {
-        charData.selectedAddition_19 = CHARACTER_ADDITIONS[charIndex][oldAdditionIndex].getId();
+      if(CHARACTER_ADDITIONS[charIndex].length != 0) {
+        if(oldAdditionIndex >= 0) {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charIndex][oldAdditionIndex].getId();
+        } else {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charIndex][0].getId();
+        }
       }
 
       final int additionCount = data.readShort(offset); // Not yet used
