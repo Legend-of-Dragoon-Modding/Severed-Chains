@@ -1247,12 +1247,12 @@ public final class SItem {
   }
 
   @Method(0x80103e90L)
-  public static void renderMenuCentredText(final Font font, final String text, final int x, final int y, final int maxWidth, final FontOptions options) {
-    renderMenuCentredText(font, text, x, y, maxWidth, options, null);
+  public static float renderMenuCentredText(final Font font, final String text, final float x, final float y, final int maxWidth, final FontOptions options) {
+    return renderMenuCentredText(font, text, x, y, maxWidth, options, null);
   }
 
   @Method(0x80103e90L)
-  public static void renderMenuCentredText(final Font font, final String text, final int x, int y, final int maxWidth, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+  public static float renderMenuCentredText(final Font font, final String text, final float x, final float y, final int maxWidth, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
     final String[] split;
     if(font.textWidth(text) * options.getSize() <= maxWidth) {
       split = new String[] {text};
@@ -1294,11 +1294,15 @@ public final class SItem {
       split = temp.toArray(String[]::new);
     }
 
+    float height = 0.0f;
+
     for(int i = 0; i < split.length; i++) {
       final String str = split[i];
-      renderText(str, x - font.textWidth(str) * options.getSize() / 2.0f, y, options, queueCallback);
-      y += font.textHeight(str);
+      renderText(str, x - font.textWidth(str) * options.getSize() / 2.0f, y + height, options, queueCallback);
+      height += font.textHeight(str) * options.getSize();
     }
+
+    return height;
   }
 
   @Method(0x801038d4L)
