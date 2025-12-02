@@ -1,6 +1,5 @@
 package legend.core;
 
-import com.github.difflib.patch.PatchFailedException;
 import discord.DiscordRichPresence;
 import legend.core.audio.AudioThread;
 import legend.core.audio.EffectsOverTimeGranularity;
@@ -231,7 +230,7 @@ public final class GameEngine {
           statusText = I18n.translate("unpacker.patching_scripts");
           try {
             new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
-          } catch(final PatchFailedException e) {
+          } catch(final Exception e) {
             statusText = I18n.translate("unpacker.patching_failed");
             throw e;
           }
