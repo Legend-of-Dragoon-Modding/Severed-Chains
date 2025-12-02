@@ -41,7 +41,6 @@ import static org.lwjgl.opengles.GLES20.glTexImage2D;
 import static org.lwjgl.opengles.GLES20.glTexParameteri;
 import static org.lwjgl.opengles.GLES20.glTexSubImage2D;
 import static org.lwjgl.opengles.GLES30.GL_TEXTURE_MAX_LEVEL;
-import static org.lwjgl.opengles.GLES30.GL_UNSIGNED_INT_24_8;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -82,7 +81,7 @@ public final class Texture {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_24_8);
+      builder.dataType(GL_UNSIGNED_BYTE);
       builder.minFilter(GL_NEAREST);
       builder.magFilter(GL_NEAREST);
       builder.png(path);
@@ -93,7 +92,7 @@ public final class Texture {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_24_8);
+      builder.dataType(GL_UNSIGNED_BYTE);
       builder.minFilter(GL_LINEAR);
       builder.magFilter(GL_LINEAR);
       builder.png(path);
@@ -123,16 +122,46 @@ public final class Texture {
   private boolean deleted;
 
   private Texture(@Nullable final TriConsumer<Integer, Integer, Integer> texImage2d, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
+    int error1 = glGetError();
+    if(error1 != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error1, 16));
+    }
+
     this.id = glGenTextures();
     this.width = w;
     this.height = h;
     this.dataFormat = dataFormat;
     this.use();
 
+    error1 = glGetError();
+    if(error1 != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error1, 16));
+    }
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    error1 = glGetError();
+    if(error1 != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error1, 16));
+    }
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+    error1 = glGetError();
+    if(error1 != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error1, 16));
+    }
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+    error1 = glGetError();
+    if(error1 != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error1, 16));
+    }
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+    error1 = glGetError();
+    if(error1 != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error1, 16));
+    }
+
 
     if(texImage2d != null) {
       texImage2d.accept(internalFormat, dataFormat, dataType);
@@ -167,7 +196,7 @@ public final class Texture {
 
   public void data(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_24_8, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_BYTE, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {

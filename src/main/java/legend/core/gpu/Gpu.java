@@ -29,11 +29,11 @@ import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static org.lwjgl.opengles.GLES20.GL_BLEND;
 import static org.lwjgl.opengles.GLES20.GL_RGBA;
 import static org.lwjgl.opengles.GLES20.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengles.GLES20.GL_UNSIGNED_INT;
 import static org.lwjgl.opengles.GLES20.glDisable;
 import static org.lwjgl.opengles.GLES30.GL_R32UI;
 import static org.lwjgl.opengles.GLES30.GL_RED_INTEGER;
-import static org.lwjgl.opengles.GLES30.GL_UNSIGNED_INT_24_8;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
@@ -110,7 +110,7 @@ public class Gpu {
       builder.size(1024, 512);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_24_8);
+      builder.dataType(GL_UNSIGNED_BYTE);
     });
 
     this.displaySize(320, 240);

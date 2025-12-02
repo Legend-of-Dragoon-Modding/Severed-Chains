@@ -40,6 +40,7 @@ import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_FLAGS;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_MAJOR_VERSION;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_MINOR_VERSION;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_PROFILE_CORE;
+import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_PROFILE_ES;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_PROFILE_MASK;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CreateContext;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_DestroyContext;
@@ -103,8 +104,9 @@ public class SdlWindow extends Window {
     }
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 
     if("true".equals(System.getenv("opengl_debug"))) {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);

@@ -1,10 +1,10 @@
-#version 330 core
+#version 310 es
 
 // shader inputs
-smooth in vec2 vertUv;
+smooth in highp vec2 vertUv;
 
 // shader outputs
-layout(location = 0) out vec4 frag;
+layout(location = 0) out highp vec4 frag;
 
 // screen image
 uniform sampler2D screen;

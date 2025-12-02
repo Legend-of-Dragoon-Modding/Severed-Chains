@@ -1,13 +1,15 @@
-#version 330 core
+#version 310 es
+#extension GL_EXT_geometry_shader : enable
+#extension GL_OES_shader_io_blocks : require
 layout (triangles_adjacency) in;
 layout (triangle_strip, max_vertices = 3) out;
 
 in VS_OUT {
-  smooth vec2 vertUv;
-  flat vec2 vertTpage;
-  flat vec2 vertClut;
+  smooth highp vec2 vertUv;
+  flat highp vec2 vertTpage;
+  flat highp vec2 vertClut;
   flat int vertBpp;
-  smooth vec4 vertColour;
+  smooth highp vec4 vertColour;
   flat int vertFlags;
 
   flat int translucency;
@@ -24,11 +26,11 @@ in VS_OUT {
 } vs_out[];
 
 out GS_OUT {
-  smooth vec2 vertUv;
-  flat vec2 vertTpage;
-  flat vec2 vertClut;
+  smooth highp vec2 vertUv;
+  flat highp vec2 vertTpage;
+  flat highp vec2 vertClut;
   flat int vertBpp;
-  smooth vec4 vertColour;
+  smooth highp vec4 vertColour;
   flat int vertFlags;
 
   flat int translucency;

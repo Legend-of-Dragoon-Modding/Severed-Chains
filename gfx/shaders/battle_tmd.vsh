@@ -1,19 +1,20 @@
-#version 330 core
+#version 310 es
+#extension GL_OES_shader_io_blocks : require
 
-layout(location = 0) in vec4 inPos; // w is vertex index
-layout(location = 1) in vec3 inNorm;
-layout(location = 2) in vec2 inUv;
+layout(location = 0) in highp vec4 inPos; // w is vertex index
+layout(location = 1) in highp vec3 inNorm;
+layout(location = 2) in highp vec2 inUv;
 layout(location = 3) in float inTpage;
 layout(location = 4) in float inClut;
-layout(location = 5) in vec4 inColour;
+layout(location = 5) in highp vec4 inColour;
 layout(location = 6) in float inFlags;
 
 out VS_OUT {
-  smooth vec2 vertUv;
-  flat vec2 vertTpage;
-  flat vec2 vertClut;
+  smooth highp vec2 vertUv;
+  flat highp vec2 vertTpage;
+  flat highp vec2 vertClut;
   flat int vertBpp;
-  smooth vec4 vertColour;
+  smooth highp vec4 vertColour;
   flat int vertFlags;
 
   flat int translucency;
@@ -29,23 +30,23 @@ out VS_OUT {
   smooth float depthOffset;
 } vs_out;
 
-uniform vec2 clutOverride;
-uniform vec2 tpageOverride;
+uniform highp vec2 clutOverride;
+uniform highp vec2 tpageOverride;
 uniform float modelIndex;
-uniform int ctmdFlags;
-uniform vec3 battleColour;
+uniform highp int ctmdFlags;
+uniform highp vec3 battleColour;
 
 uniform int useVdf;
 
 struct ModelTransforms {
   mat4 model;
-  vec4 screenOffset;
+  highp vec4 screenOffset;
 };
 
 struct Light {
   mat4 lightDirection;
   mat3 lightColour;
-  vec4 backgroundColour;
+  highp vec4 backgroundColour;
 };
 
 layout(std140) uniform transforms {
@@ -73,11 +74,11 @@ layout(std140) uniform projectionInfo {
 };
 
 layout(std140) uniform vdf {
-  vec4[1024] vertices;
+  highp vec4[1024] vertices;
 };
 
 void main() {
-  vec4 pos;
+  highp vec4 pos;
 
   if(useVdf == 0) {
     pos = vec4(inPos.xyz, 1.0f);
@@ -118,13 +119,13 @@ void main() {
   vs_out.translucency = intTpage >> 5 & 0x3;
 
   if(textured) {
-    if(tpageOverride.x == 0) {
+    if(tpageOverride.x == 0.0) {
       vs_out.vertTpage = vec2((intTpage & 0xf) * 64, (intTpage & 0x10) != 0 ? 256 : 0);
     } else {
       vs_out.vertTpage = tpageOverride;
     }
 
-    if(clutOverride.x == 0) {
+    if(clutOverride.x == 0.0) {
       int intClut = int(inClut);
       vs_out.vertClut = vec2((intClut & 0x3f) * 16, intClut >> 6);
     } else {
@@ -133,27 +134,27 @@ void main() {
 
     if(vs_out.vertBpp == 0 || vs_out.vertBpp == 1) {
       int widthDivisor = 1 << 2 - vs_out.vertBpp;
-      vs_out.widthMultiplier = 1.0 / widthDivisor;
+      vs_out.widthMultiplier = 1.0 / float(widthDivisor);
       vs_out.widthMask = widthDivisor - 1;
       vs_out.indexShift = vs_out.vertBpp + 2;
-      vs_out.indexMask = int(pow(16, vs_out.vertBpp + 1) - 1);
+      vs_out.indexMask = int(pow(16.0, float(vs_out.vertBpp + 1)) - 1.0);
     }
   }
 
   gl_Position = camera * t.model * pos;
   vs_out.viewspaceZ = gl_Position.z;
 
-  if(projectionMode == 1) { // Low quality submap projection
+  if(projectionMode == 1.0) { // Low quality submap projection
     // Projection plane division
-    float z = clamp(gl_Position.z, 0, 65536);
-    if(z != 0) {
+    float z = clamp(gl_Position.z, 0.0, 65536.0);
+    if(z != 0.0) {
       gl_Position.xy *= zfar / z;
     }
   }
 
-  if(projectionMode == 2) { // High quality projection
+  if(projectionMode == 2.0) { // High quality projection
     vs_out.depthOffset = t.screenOffset.z * zdiffInv; // Depth is computed in the fragment shader
-  } else if(t.screenOffset.z != 0) {
+  } else if(t.screenOffset.z != 0.0) {
     gl_Position.z += t.screenOffset.z;
   }
 
