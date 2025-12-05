@@ -6,6 +6,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
+import legend.core.opengl.CopyShaderOptions;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
@@ -102,6 +103,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_RGBA16;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.GL_VENDOR;
 import static org.lwjgl.opengl.GL11C.GL_VERSION;
@@ -153,6 +155,14 @@ public class RenderEngine {
       final Shader<SimpleShaderOptions>.UniformVec2 shiftUv = shader.new UniformVec2("shiftUv");
       final Shader<SimpleShaderOptions>.UniformVec4 recolour = shader.new UniformVec4("recolour");
       return () -> new SimpleShaderOptions(shiftUv, recolour);
+    }
+  );
+
+  public static final ShaderType<CopyShaderOptions> COPY_SHADER = new ShaderType<>(
+    options -> loadShader("copy", "copy", options),
+    shader -> {
+      final Shader<CopyShaderOptions>.UniformMat4 projection = shader.new UniformMat4("projection");
+      return () -> new CopyShaderOptions(projection);
     }
   );
 
@@ -484,6 +494,7 @@ public class RenderEngine {
     this.window.events().onInputActionReleased(this::onInputActionReleased);
 
     ShaderManager.addShader(SIMPLE_SHADER);
+    ShaderManager.addShader(COPY_SHADER);
     final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
     this.standardShader = ShaderManager.addShader(STANDARD_SHADER);
     this.standardShaderOptions = this.standardShader.makeOptions();
@@ -912,6 +923,44 @@ public class RenderEngine {
     this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, originalY);
     this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, replacementX);
     this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, replacementY);
+  }
+
+  /** Duplicates the passed in texture into a new texture. New texture must be deleted by the caller. Can only be called on the render thread. */
+  public Texture copyTexture(final Texture texture) {
+    final Texture copy = Texture.copyAttributesFrom(texture);
+    final FrameBuffer buffer = FrameBuffer.create(builder -> builder.attachment(copy, GL_COLOR_ATTACHMENT0));
+    final Shader<CopyShaderOptions> shader = ShaderManager.getShader(COPY_SHADER);
+    final CopyShaderOptions options = shader.makeOptions();
+
+    final int w = texture.width;
+    final int h = texture.height;
+
+    glDepthMask(false);
+    glDisable(GL_BLEND);
+    this.state.backfaceCulling(false);
+    this.state.disableDepthTest();
+
+    buffer.bind();
+    texture.use();
+
+    glViewport(0, 0, w, h);
+    options.projection.ortho2DLH(0.0f, w, 0.0f, h);
+    shader.use();
+    options.apply();
+
+    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+      0, 0, 0, 0,
+      0, h, 0, 1,
+      w, 0, 1, 0,
+      w, h, 1, 1,
+    }, 4);
+    mesh.attribute(0, 0L, 2, 4);
+    mesh.attribute(1, 2L, 2, 4);
+    mesh.draw();
+    mesh.delete();
+    buffer.delete();
+
+    return copy;
   }
 
   private void handleMovement() {

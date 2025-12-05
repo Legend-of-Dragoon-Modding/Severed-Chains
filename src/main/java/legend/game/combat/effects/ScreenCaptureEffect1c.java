@@ -13,9 +13,7 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.lwjgl.BufferUtils;
 
-import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.GTE;
@@ -23,11 +21,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
-import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL31C.GL_RGBA16_SNORM;
 
 public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidType> {
   public final ScreenCaptureEffectMetrics8 metrics_00 = new ScreenCaptureEffectMetrics8();
@@ -56,27 +49,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     this.captureH_08 = captureH;
     this.rendererIndex_0c = rendererIndex;
 
-    final int w = RENDERER.getRenderWidth();
-    final int h = RENDERER.getRenderHeight();
-
-    this.texture = Texture.create(builder -> {
-      builder.size(w, h);
-      builder.internalFormat(GL_RGBA16_SNORM);
-      builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_BYTE);
-      builder.magFilter(GL_NEAREST);
-      builder.minFilter(GL_LINEAR);
-    });
-
-    final ByteBuffer data = BufferUtils.createByteBuffer(w * h * 4);
-    RENDERER.getLastFrame().getData(data);
-
-    // Set the m bit of each pixel so that the full black parts don't get culled
-    for(int i = 0; i < data.capacity(); i += 0x4) {
-      data.put(i + 0x3, (byte)0xff);
-    }
-
-    this.texture.data(0, 0, w, h, data.flip());
+    this.texture = RENDERER.copyTexture(RENDERER.getLastFrame());
 
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
     final float normalizedCaptureW = (float)captureW / RENDERER.getNativeWidth() / widthFactor;
