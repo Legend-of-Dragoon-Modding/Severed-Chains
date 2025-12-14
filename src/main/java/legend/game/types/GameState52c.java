@@ -5,7 +5,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
-import legend.game.modding.events.inventory.Inventory;
+import legend.game.inventory.Inventory;
 import legend.game.saves.Campaign;
 import legend.game.saves.InventoryEntry;
 import legend.lodmod.LodMod;

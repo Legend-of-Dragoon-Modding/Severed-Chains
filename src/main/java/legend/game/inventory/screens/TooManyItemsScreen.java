@@ -8,7 +8,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.events.inventory.Inventory;
+import legend.game.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;

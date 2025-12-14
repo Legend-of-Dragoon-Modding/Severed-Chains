@@ -1,5 +1,7 @@
 package legend.game.inventory;
 
+import legend.game.modding.events.inventory.GiveGoodsEvent;
+import legend.game.modding.events.inventory.TakeGoodsEvent;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +14,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.lodmod.LodMod.GOODS_IDS;
 import static legend.lodmod.LodMod.id;
@@ -22,7 +25,12 @@ public class GoodsInventory implements Iterable<Good> {
   private final Set<Good> goods = new HashSet<>();
 
   public Good give(final Good good) {
-    this.goods.add(good);
+    final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
+
+    if(!event.isCanceled()) {
+      this.goods.addAll(event.givenGoods);
+    }
+
     return good;
   }
 
@@ -32,12 +40,16 @@ public class GoodsInventory implements Iterable<Good> {
       return null;
     }
 
-    this.goods.add(good.get());
+    this.give(good.get());
     return good;
   }
 
   public void take(final Good good) {
-    this.goods.remove(good);
+    final TakeGoodsEvent event = EVENTS.postEvent(new TakeGoodsEvent(this, good));
+
+    if(!event.isCanceled()) {
+      event.takenGoods.forEach(this.goods::remove);
+    }
   }
 
   public void take(final RegistryDelegate<Good> good) {
@@ -46,7 +58,7 @@ public class GoodsInventory implements Iterable<Good> {
       return;
     }
 
-    this.goods.remove(good.get());
+    this.take(good.get());
   }
 
   public boolean has(final Good good) {

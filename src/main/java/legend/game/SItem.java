@@ -35,7 +35,7 @@ import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
-import legend.game.modding.events.inventory.Inventory;
+import legend.game.inventory.Inventory;
 import legend.game.modding.events.inventory.TakeEquipmentEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;

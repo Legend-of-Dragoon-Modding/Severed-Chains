@@ -104,6 +104,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -1949,7 +1950,8 @@ public class Battle extends EngineState {
         case 2 -> {
           if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
             //LAB_800c8514
-            gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
+            final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(0x3bb, true)).set;
+            gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
           } else {
             //LAB_800c8534
             postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
