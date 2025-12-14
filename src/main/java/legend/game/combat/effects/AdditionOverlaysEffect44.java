@@ -289,7 +289,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       if(multiplier != 1.0f) {
         final int originalValue = hitPropertyValue;
         hitPropertyValue = (int)(hitPropertyValue * multiplier);
-        LOGGER.info("Addition timing window: original=%d frames, modified=%d frameffffffs (multiplier=%.1f)", originalValue, hitPropertyValue, multiplier);
+        LOGGER.info("Addition timing window: original=%d frames, modified=%d frames (multiplier=%.1f)", originalValue, hitPropertyValue, multiplier);
       }
     }
 
