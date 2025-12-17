@@ -5,7 +5,7 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
-public class SpiritPotionItem extends RecoverHpItem {
+public class SpiritPotionItem extends RecoverSpItem {
   public SpiritPotionItem() {
     super(ItemIcon.RED_POTION, 10, false, 100);
   }
