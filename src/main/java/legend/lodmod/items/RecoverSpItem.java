@@ -2,7 +2,6 @@ package legend.lodmod.items;
 
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
