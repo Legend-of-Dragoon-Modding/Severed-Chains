@@ -639,7 +639,7 @@ public final class SItem {
     final int responseType = amount == -1 || spToAdd < amount ? -1 : amount;
 
     charData.sp_0c += spToAdd;
-    gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += spToAdd;
+    gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += amount;
 
     if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > 32000) {
       gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = 32000;

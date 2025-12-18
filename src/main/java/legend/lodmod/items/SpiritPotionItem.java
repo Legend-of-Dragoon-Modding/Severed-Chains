@@ -11,11 +11,6 @@ public class SpiritPotionItem extends RecoverSpItem {
   }
 
   @Override
-  public boolean canBeUsed(final ItemStack stack, final UsageLocation location) {
-    return location == UsageLocation.BATTLE;
-  }
-
-  @Override
   protected int getUseItemScriptEntrypoint() {
     return 2;
   }
