@@ -35,16 +35,14 @@ public class RecoverMpItem extends BattleItem {
   }
 
   @Override
-  public boolean canBeUsedNow(final ItemStack stack,final UsageLocation location) {
-    boolean canRecover = false;
+  public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
       if((gameState_800babc8.charData_32c[i].partyFlags_04 & 0x3) != 0 && stats_800be5f8[i].maxMp_6e > stats_800be5f8[i].mp_06) {
-        canRecover = true;
-        break;
+        return true;
       }
     }
 
-    return canRecover;
+    return false;
   }
 
   @Override

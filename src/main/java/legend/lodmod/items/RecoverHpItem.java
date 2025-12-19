@@ -36,15 +36,13 @@ public class RecoverHpItem extends BattleItem {
 
   @Override
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
-    boolean canRecover = false;
     for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
       if((gameState_800babc8.charData_32c[i].partyFlags_04 & 0x3) != 0 && stats_800be5f8[i].maxHp_66 > stats_800be5f8[i].hp_04) {
-        canRecover = true;
-        break;
+        return true;
       }
     }
 
-    return canRecover;
+    return false;
   }
 
   @Override
