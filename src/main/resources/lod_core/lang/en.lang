@@ -161,6 +161,8 @@ lod_core.config.addition_overlay_mode.PARTIAL=No reticule
 lod_core.config.addition_overlay_mode.OFF=No HUD
 lod_core.config.addition_overlay_size.label=Addition Overlay Size
 lod_core.config.addition_overlay_size.help=Adjusts the size of the attack quick time event reticule.\nNote: players tend to find additions easier with larger reticules.
+lod_core.config.addition_timing_window.label=Addition Timing Window
+lod_core.config.addition_timing_window.help=Adjusts the timing window for addition button presses.\n100%% = original difficulty, 200%% = double the window (easier), etc.
 lod_core.config.transformation_mode.label=Dragoon Transformation Mode
 lod_core.config.transformation_mode.NORMAL=Normal
 lod_core.config.transformation_mode.SHORT=Short
