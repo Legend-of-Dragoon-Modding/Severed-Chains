@@ -1097,6 +1097,8 @@ public class Battle extends EngineState {
 
     functions[1010] = this::scriptUseItem;
     functions[1011] = this::scriptApplyEquipmentEffect;
+    functions[1012] = this::scriptPrepareAttack;
+    functions[1013] = this::scriptAttack;
 
     functions[1020] = this::scriptSetCombatantVramSlot;
     return functions;
@@ -1223,6 +1225,19 @@ public class Battle extends EngineState {
     final BattleEntity27c wearer = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     equipment.applyEffect(wearer);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Calls prepareAttack on the player's weapon")
+  private FlowControl scriptPrepareAttack(final RunningScript<PlayerBattleEntity> script) {
+    script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON).prepareAttack(script.scriptState_04);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Calls attack on the player's weapon")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "type", description = "The EquipmentAttackType")
+  private FlowControl scriptAttack(final RunningScript<PlayerBattleEntity> script) {
+    script.params_20[0].set(script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON).attack(script.scriptState_04).ordinal());
     return FlowControl.CONTINUE;
   }
 

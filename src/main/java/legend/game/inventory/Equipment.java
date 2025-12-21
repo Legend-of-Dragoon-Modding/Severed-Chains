@@ -3,8 +3,9 @@ package legend.game.inventory;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.scripting.Param;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.scripting.ScriptReadable;
+import legend.game.scripting.ScriptState;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
@@ -158,11 +159,11 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
     return 0;
   }
 
-  @Override
-  public void read(final int index, final Param out) {
-    switch(index) {
-      case 1000 -> out.set(0); //TODO temporary - is detonate arrow
-      default -> throw new RuntimeException("Invalid equipment read");
-    }
+  public void prepareAttack(final ScriptState<PlayerBattleEntity> player) {
+
+  }
+
+  public EquipmentAttackType attack(final ScriptState<PlayerBattleEntity> player) {
+    return EquipmentAttackType.NORMAL;
   }
 }
