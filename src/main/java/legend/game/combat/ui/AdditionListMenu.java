@@ -66,7 +66,7 @@ public class AdditionListMenu extends ListMenu {
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
-    final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
+    final CharacterAdditionStats additionStats = charData.additionStats.get(CHARACTER_ADDITIONS[this.player_08.charId_272][index].getId());
 
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
