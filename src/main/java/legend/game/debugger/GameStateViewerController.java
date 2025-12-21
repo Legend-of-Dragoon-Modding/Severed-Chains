@@ -371,8 +371,8 @@ public class GameStateViewerController {
           GameStateViewerController.this.dataIII5.setText(String.format("%#x", gameState_800babc8.visitedLocations_17c.getRaw(5)));
           GameStateViewerController.this.dataIII6.setText(String.format("%#x", gameState_800babc8.visitedLocations_17c.getRaw(6)));
           GameStateViewerController.this.dataIII7.setText(String.format("%#x", gameState_800babc8.visitedLocations_17c.getRaw(7)));
-          GameStateViewerController.this.goodsI.setText(String.format("%#x", gameState_800babc8.goods_19c[0]));
-          GameStateViewerController.this.goodsII.setText(String.format("%#x", gameState_800babc8.goods_19c[1]));
+          GameStateViewerController.this.goodsI.setText(String.format("%#x", gameState_800babc8.goods_19c.pack(0)));
+          GameStateViewerController.this.goodsII.setText(String.format("%#x", gameState_800babc8.goods_19c.pack(1)));
           GameStateViewerController.this.dataIV0.setText(String.format("%#x", gameState_800babc8._1a4[0]));
           GameStateViewerController.this.dataIV1.setText(String.format("%#x", gameState_800babc8._1a4[1]));
           GameStateViewerController.this.dataIV2.setText(String.format("%#x", gameState_800babc8._1a4[2]));

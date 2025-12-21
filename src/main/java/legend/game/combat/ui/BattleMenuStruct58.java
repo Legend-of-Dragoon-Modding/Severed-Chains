@@ -11,7 +11,10 @@ import legend.game.combat.environment.BattleMenuHighlightMetrics12;
 import legend.game.combat.environment.BattleMenuIconMetrics08;
 import legend.game.combat.environment.BattleMenuTextMetrics08;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
 
@@ -81,14 +84,16 @@ public class BattleMenuStruct58 {
   public short y_08;
   public short xShiftOffset_0a;
 
-  public short iconCount_0e;
+//  public short iconCount_0e;
   /**
    * <ul>
    *   <li>Lower 4 bits are selected action - defend, transform, d-magic, attack, item, run, special, ?, d-attack</li>
    *   <li>0x80 - disabled</li>
    * </ul>
    */
-  public final int[] iconFlags_10 = new int[9];
+//  public final int[] iconFlags_10 = new int[9];
+  public final List<BattleAction> actions = new ArrayList<>();
+  public final Set<BattleAction> disabledActions = new HashSet<>();
   public short selectedIcon_22;
   public short currentIconStateTick_24;
   public short iconStateIndex_26;
@@ -137,7 +142,6 @@ public class BattleMenuStruct58 {
     this.x_06 = 0;
     this.y_08 = 0;
     this.xShiftOffset_0a = 0;
-    this.iconCount_0e = 0;
     this.selectedIcon_22 = 0;
     this.currentIconStateTick_24 = 0;
     this.iconStateIndex_26 = 0;
@@ -146,9 +150,8 @@ public class BattleMenuStruct58 {
     this.colour_2c = 0;
 
     //LAB_800f60fc
-    for(int i = 0; i < 9; i++) {
-      this.iconFlags_10[i] = -1;
-    }
+    this.actions.clear();
+    this.disabledActions.clear();
 
     //LAB_800f611c
     this.countHighlightMovementStep_30 = 0;
@@ -304,15 +307,7 @@ public class BattleMenuStruct58 {
     }
   }
 
-  public boolean isIconEnabled(final int value) {
-    return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
-      .anyMatch(i -> i == value);
-  }
-
-  public int retrieveIconEnabled(final int... values) {
-    return Arrays.stream(this.iconFlags_10, 0, this.iconFlags_10.length)
-      .filter(i -> Arrays.stream(values).anyMatch(value -> value == i))
-      .findFirst()
-      .orElse(0);
+  public boolean isIconEnabled(final BattleAction action) {
+    return this.actions.contains(action) && !this.disabledActions.contains(action);
   }
 }

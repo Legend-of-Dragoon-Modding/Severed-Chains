@@ -27,7 +27,7 @@ public class ScriptStateRegistryIdParam extends Param {
 
   @Override
   public Param array(final int index) {
-    throw new IllegalStateException(this.getClass().getSimpleName() + " can only store registry IDs");
+    return new ScriptStateRegistryIdParam(this.state, this.index + index);
   }
 
   @Override

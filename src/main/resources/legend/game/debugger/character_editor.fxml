@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="729.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.CharacterEditorController">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="6.0" prefWidth="600.0">
+         <children>
+            <Label fx:id="name" text="Character Name" />
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button onAction="#onRefreshClick" text="Refresh" />
+                  <Button onAction="#onSaveClick" text="Save" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
+      </HBox>
+      <Separator prefWidth="200.0" />
+      <FlowPane prefHeight="22.0" prefWidth="600.0">
+         <children>
+            <CheckBox fx:id="inParty" mnemonicParsing="false" text="In party">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="canBeInParty" mnemonicParsing="false" text="Can be put in party">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="cantRemove" mnemonicParsing="false" text="Can't remove from party">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="hasUltimate" mnemonicParsing="false" text="Has ultimate addition" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+      </FlowPane>
+      <Separator prefWidth="200.0" />
+      <FlowPane alignment="CENTER_LEFT" prefHeight="16.0" prefWidth="644.0">
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+         <children>
+            <Label text="HP">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="hp">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </TextField>
+            <Label text="MP">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="mp">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </TextField>
+            <Label text="SP">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="sp" />
+         </children>
+      </FlowPane>
+      <Separator prefWidth="200.0" />
+      <FlowPane prefHeight="21.0" prefWidth="644.0">
+         <VBox.margin>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+         <children>
+            <Label prefWidth="50.0" text="Level" />
+            <TextField fx:id="level">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </TextField>
+            <Label prefWidth="36.0" text="XP" />
+            <TextField fx:id="xp" />
+         </children>
+      </FlowPane>
+      <FlowPane prefHeight="21.0" prefWidth="644.0">
+         <children>
+            <Label prefWidth="50.0" text="D'Level" />
+            <TextField fx:id="dlevel">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </TextField>
+            <Label prefWidth="36.0" text="D'XP" />
+            <TextField fx:id="dxp" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="4.0" />
+         </VBox.margin>
+      </FlowPane>
+      <Separator prefWidth="200.0" />
+      <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <CheckBox fx:id="petrified" mnemonicParsing="false" text="Petrified" />
+            <CheckBox fx:id="bewitched" mnemonicParsing="false" text="Bewitched" GridPane.columnIndex="1" />
+            <CheckBox fx:id="confused" mnemonicParsing="false" text="Confused" GridPane.columnIndex="2" />
+            <CheckBox fx:id="fearful" mnemonicParsing="false" text="Fearful" GridPane.columnIndex="3" />
+            <CheckBox fx:id="stunned" mnemonicParsing="false" text="Stunned" GridPane.rowIndex="1" />
+            <CheckBox fx:id="weaponBlocked" mnemonicParsing="false" text="Weapon blocked" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <CheckBox fx:id="dispirited" mnemonicParsing="false" text="Dispirited" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <CheckBox fx:id="poisoned" mnemonicParsing="false" text="Poisoned" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+      </GridPane>
+      <Separator prefWidth="200.0" />
+      <HBox alignment="CENTER_LEFT" prefHeight="16.0" prefWidth="713.0">
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+         <children>
+            <Label text="Equipment">
+               <HBox.margin>
+                  <Insets right="8.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="equipmentSlots" onAction="#onEquipmentSlotSelect" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets right="8.0" />
+               </HBox.margin>
+            </ComboBox>
+            <Label fx:id="equipmentName" text="&lt;none&gt;">
+               <HBox.margin>
+                  <Insets right="8.0" />
+               </HBox.margin>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#onEquipmentSelectClick" text="Select" />
+            <Button mnemonicParsing="false" onAction="#onEquipmentClearClick" text="Clear" />
+         </children>
+      </HBox>
+      <Separator prefWidth="200.0" />
+      <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="713.0">
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+         <children>
+            <Label text="Selected addition">
+               <HBox.margin>
+                  <Insets right="8.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="selectedAddition" prefHeight="26.0" prefWidth="236.0" />
+         </children>
+      </HBox>
+      <Separator prefWidth="200.0" />
+      <VBox prefHeight="28.0" prefWidth="713.0">
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+         <children>
+            <FlowPane alignment="CENTER_LEFT" prefHeight="15.0" prefWidth="713.0">
+               <children>
+                  <Label text="Addition">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <ComboBox fx:id="additionList" onAction="#onAdditionSelect" prefHeight="26.0" prefWidth="236.0">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </ComboBox>
+                  <CheckBox fx:id="additionUnlocked" mnemonicParsing="false" text="Unlocked">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </CheckBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="4.0" />
+               </VBox.margin>
+            </FlowPane>
+            <FlowPane prefHeight="14.0" prefWidth="713.0">
+               <VBox.margin>
+                  <Insets top="4.0" />
+               </VBox.margin>
+               <children>
+                  <Label text="Level">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField fx:id="additionLevel">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </TextField>
+                  <Label text="XP">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField fx:id="additionXp" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+   </children>
+</VBox>

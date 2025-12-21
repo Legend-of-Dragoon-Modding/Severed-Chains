@@ -1,8 +1,7 @@
-package legend.game.modding.events.inventory;
+package legend.game.inventory;
 
-import legend.game.inventory.Item;
-import legend.game.inventory.ItemStack;
-import legend.game.inventory.OverflowMode;
+import legend.game.modding.events.inventory.GiveItemEvent;
+import legend.game.modding.events.inventory.TakeItemEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

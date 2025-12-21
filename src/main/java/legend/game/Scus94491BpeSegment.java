@@ -12,8 +12,8 @@ import legend.game.combat.Battle;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.characters.DivineDragoonEvent;
-import legend.game.modding.events.scripting.DrgnFileEvent;
-import legend.game.modding.events.engine.EngineStateChangeEvent;
+import legend.game.modding.events.inventory.ScriptFlags1ChangedEvent;
+import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
 import legend.game.scripting.RunningScript;
@@ -105,6 +105,7 @@ import static legend.game.Text.initTextboxes;
 import static legend.game.Text.renderTextboxes;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.SBtld.tickAndRenderTransitionIntoBattle;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -286,11 +287,15 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "True to set the flag, false to unset")
   @Method(0x80017390L)
   public static FlowControl scriptSetGlobalFlag1(final RunningScript<?> script) {
-    final int shift = script.params_20[0].get() & 0x1f;
-    final int index = script.params_20[0].get() >>> 5;
+    final int packedIndex = script.params_20[0].get();
+    boolean set = script.params_20[1].get() != 0;
+
+    final int shift = packedIndex & 0x1f;
+    final int index = packedIndex >>> 5;
 
     final Flags flags;
     if(index < 8) {
+      set = EVENTS.postEvent(new ScriptFlags1ChangedEvent(packedIndex, set)).set;
       flags = gameState_800babc8.scriptFlags1_13c;
     } else if(index < 16) {
       flags = gameState_800babc8.wmapFlags_15c;
@@ -298,7 +303,7 @@ public final class Scus94491BpeSegment {
       throw new RuntimeException("Are there more flags?");
     }
 
-    flags.set(index % 8, shift, script.params_20[1].get() != 0);
+    flags.set(index % 8, shift, set);
 
     //LAB_800173f4
     return FlowControl.CONTINUE;
@@ -327,10 +332,13 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "True to set the flag, false to unset")
   @Method(0x80017440L)
   public static FlowControl scriptSetGlobalFlag2(final RunningScript<?> script) {
-    gameState_800babc8.scriptFlags2_bc.set(script.params_20[0].get(), script.params_20[1].get() != 0);
+    final int packedIndex = script.params_20[0].get();
+    final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(packedIndex, script.params_20[1].get() != 0)).set;
+
+    gameState_800babc8.scriptFlags2_bc.set(packedIndex, set);
 
     //LAB_800174a4
-    if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+    if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
       if(!divineEvent.bypassOverride) {
         final CharacterData2c charData = gameState_800babc8.charData_32c[0];
@@ -380,7 +388,7 @@ public final class Scus94491BpeSegment {
     //LAB_80017614
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
-      if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+      if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         gameState_800babc8.charData_32c[0].dlevel_13 = 5;
         gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
       }

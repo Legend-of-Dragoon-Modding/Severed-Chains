@@ -111,7 +111,7 @@ public class ScriptState<T extends ScriptedObject> {
    *       <li>0x200 - {@link BattleEntity27c#FLAG_200}</li>
    *       <li>0x400 - {@link BattleEntity27c#FLAG_400}</li>
    *       <li>0x800 - {@link BattleEntity27c#FLAG_NO_SCRIPT}</li>
-   *       <li>0x1000 - {@link BattleEntity27c#FLAG_1000}</li>
+   *       <li>0x1000 - {@link BattleEntity27c#FLAG_RELOAD_BATTLE_ACTIONS}</li>
    *       <li>0x2000 - {@link BattleEntity27c#FLAG_NO_LOOT}</li>
    *       <li>0x4000 - {@link BattleEntity27c#FLAG_CANT_TARGET}</li>
    *       <li>0x8000 - {@link BattleEntity27c#FLAG_8000}</li>

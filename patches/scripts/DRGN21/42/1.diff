@@ -1,0 +1,54 @@
+--- original
++++ modified
+@@ -1924,24 +1924,18 @@
+ gosub inl[:LABEL_40]
+ call 0, 0x1
+ call 4, 0xf3, 0x1
+-call 18, 0x0, stor[24]
+-jmp_cmp ==, 0x0, stor[24], inl[:LABEL_146]
+-call 2, 0xf1, 0x1
+-call 15, 0x0, 0x1
+-call 256, 0xffffffff, 0x1c2
+-rewind
+-LABEL_146:
++call 2, 0xf0, 0x0
++call 18, 0x0, reg[0]
++jmp_cmp !=, id[lod:double_slash], reg[0], inl[:LABEL_146]
+ call 2, 0xf0, 0x1
+-call 15, 0x0, 0x1
++call 15, 0x0, id[lod:volcano]
++LABEL_146:
+ call 256, 0xffffffff, 0x1c2
+ rewind
+ LABEL_147:
+ call 3, 0xf0, stor[24]
+-jmp_cmp ==, 0x0, stor[24], inl[:LABEL_148]
+-call 15, 0x0, 0x0
+-jmp inl[:LABEL_149]
+-LABEL_148:
+-call 15, 0x0, 0x1
++jmp_cmp ==, 0x0, stor[24], inl[:LABEL_149]
++call 15, 0x0, id[lod:double_slash]
+ LABEL_149:
+ call 2, 0xf0, 0x0
+ call 2, 0xf1, 0x0
+@@ -2061,15 +2055,11 @@
+ gosub inl[:LABEL_24]
+ gosub inl[:LABEL_40]
+ call 0, 0x1
+-call 18, 0x0, stor[24]
+-jmp_cmp ==, 0x0, stor[24], inl[:LABEL_154]
+-call 2, 0xf1, 0x1
+-call 15, 0x0, 0x1
+-call 256, 0xffffffff, 0x1c2
+-rewind
+-LABEL_154:
++call 18, 0x0, reg[0]
++jmp_cmp !=, id[lod:double_slash], reg[0], inl[:LABEL_154]
+ call 2, 0xf0, 0x1
+-call 15, 0x0, 0x1
++call 15, 0x0, id[lod:volcano]
++LABEL_154:
+ call 256, 0xffffffff, 0x1c2
+ rewind
+ JMP_3450_2:

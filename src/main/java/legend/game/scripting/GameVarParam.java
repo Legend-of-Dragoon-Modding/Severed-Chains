@@ -139,7 +139,7 @@ public class GameVarParam extends Param {
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(0);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.getRaw(0);
-      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[0];
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c.pack(0);
       case 115 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[0].partyFlags_04;
       case 116 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[1].partyFlags_04;
       case 117 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[2].partyFlags_04;
@@ -278,7 +278,7 @@ public class GameVarParam extends Param {
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(0, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.setRaw(0, val);
-      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[0] = val;
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c.unpack(0, val);
       case 115 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[0].partyFlags_04 = val;
       case 116 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[1].partyFlags_04 = val;
       case 117 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[2].partyFlags_04 = val;

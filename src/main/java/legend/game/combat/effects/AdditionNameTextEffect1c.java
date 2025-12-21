@@ -11,14 +11,13 @@ import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
-import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.asciiTable_800fa788;
 
 public class AdditionNameTextEffect1c implements ScriptedObject {
   /** ushort */
   public int _00;
   /** ushort */
-  public int additionId_02;
+  public String additionName_02;
   public int ticks_04;
   public int length_08;
   /** ubyte */
@@ -40,7 +39,7 @@ public class AdditionNameTextEffect1c implements ScriptedObject {
   }
 
   @Method(0x800d37dcL)
-  private void renderAdditionNameChar(final int x, final int y, final int additionId, final int charOffset, final int brightness) {
+  private void renderAdditionNameChar(final int x, final int y, final String additionName, final int charOffset, final int brightness) {
     int charIndex = 0;
 
     //LAB_800d3838
@@ -48,9 +47,11 @@ public class AdditionNameTextEffect1c implements ScriptedObject {
     while(true) {
       chr = asciiTable_800fa788[charIndex];
 
-      if(additionNames_800fa8d4[additionId].charAt(charOffset) == chr) {
+      if(additionName.charAt(charOffset) == chr) {
         break;
-      } else if(chr == 0) {
+      }
+
+      if(chr == 0) {
         //LAB_800d3860
         charIndex = 91;
         break;
@@ -65,7 +66,7 @@ public class AdditionNameTextEffect1c implements ScriptedObject {
 
   @Method(0x800d3a20L)
   public void renderAdditionNameChar(final AdditionCharEffectData0c charStruct, final int brightness, final int charIndex) {
-    this.renderAdditionNameChar(charStruct.position_04, charStruct.offsetY_06, this.additionId_02, charIndex, brightness);
+    this.renderAdditionNameChar(charStruct.position_04, charStruct.offsetY_06, this.additionName_02, charIndex, brightness);
   }
 
   @Method(0x800d3a64L)

@@ -1,5 +1,6 @@
 package legend.game.modding.events.inventory;
 
+import legend.game.inventory.Inventory;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.OverflowMode;
 

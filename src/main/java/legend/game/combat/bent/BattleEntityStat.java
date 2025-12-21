@@ -175,6 +175,11 @@ public enum BattleEntityStat {
   DRAGOON_ATTACK_DEFF,
   DRAGOON_ATTACK_SOUNDS,
   ARCHER_SP,
+  ADDITION_HIT_COUNT,
+  /** The total guard heal % including mods (get only) */
+  GUARD_HEAL,
+  /** The raw guard heal % excluding mods (get or set) */
+  GUARD_HEAL_RAW,
   ;
 
   public static BattleEntityStat fromLegacy(final int statIndex) {

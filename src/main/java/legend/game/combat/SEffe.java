@@ -556,7 +556,7 @@ public final class SEffe {
 
   @Method(0x800e80c4L)
   public static <T extends EffectManagerParams<T>> ScriptState<EffectManagerData6c<T>> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleObject> parentState, @Nullable final Effect<T> effect, final T inner) {
-    final ScriptState<EffectManagerData6c<T>> state = SCRIPTS.allocateScriptState(name, new EffectManagerData6c<>(name, inner));
+    final ScriptState<EffectManagerData6c<T>> state = SCRIPTS.allocateScriptState(name, new EffectManagerData6c<>((Battle)currentEngineState_8004dd04, name, inner));
     final EffectManagerData6c<T> manager = state.innerStruct_00;
 
     state.loadScriptFile(doNothingScript_8004f650);
@@ -4021,7 +4021,7 @@ public final class SEffe {
       sp0x30.set(sp0x10);
     } else {
       //LAB_8011588c
-      final EffectManagerData6c<EffectManagerParams.VoidType> sp0x50 = new EffectManagerData6c<>("Temp", new EffectManagerParams.VoidType());
+      final EffectManagerData6c<EffectManagerParams.VoidType> sp0x50 = new EffectManagerData6c<>((Battle)currentEngineState_8004dd04, "Temp", new EffectManagerParams.VoidType());
 
       sp0x50.params_10.trans_04.zero();
       sp0x50.params_10.rot_10.zero();

@@ -1,5 +1,6 @@
 package legend.game.modding.events.battle;
 
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEvent;
 import legend.game.inventory.Item;
 
@@ -11,7 +12,8 @@ public class SelectedItemEvent extends BattleEvent {
   public short itemId;
   public Item item;
 
-  public SelectedItemEvent(final short itemId, final Item item) {
+  public SelectedItemEvent(final Battle battle, final short itemId, final Item item) {
+    super(battle);
     this.itemId = itemId;
     this.item = item;
   }

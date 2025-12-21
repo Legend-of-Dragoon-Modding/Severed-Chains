@@ -1,5 +1,6 @@
 package legend.game.modding.events.battle;
 
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEvent;
 
 public class ScriptLoadDeffEvent extends BattleEvent {
@@ -9,7 +10,8 @@ public class ScriptLoadDeffEvent extends BattleEvent {
   public int scriptEntrypoint;
   public int type;
 
-  public ScriptLoadDeffEvent(final int flagsAndIndex, final int bentIndex, final int p2, final int scriptEntrypoint, final int type) {
+  public ScriptLoadDeffEvent(final Battle battle, final int flagsAndIndex, final int bentIndex, final int p2, final int scriptEntrypoint, final int type) {
+    super(battle);
     this.flagsAndIndex = flagsAndIndex;
     this.bentIndex = bentIndex;
     this.p2 = p2;

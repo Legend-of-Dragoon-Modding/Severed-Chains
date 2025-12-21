@@ -1,4 +1,4 @@
-package legend.game.combat.types;
+package legend.game.additions;
 
 /** Same as AdditionHitProperties20 in BattlePreloadedEntities_18cb0, except fields are bytes */
 public class AdditionHitProperties10 {
@@ -9,37 +9,37 @@ public class AdditionHitProperties10 {
   public int overlayHitFrameOffset_02;
   public int totalSuccessFrames_03;
   public int damageMultiplier_04;
-  public int spValue_05;
+  public int sp_05;
   public int audioFile_06;
   public int isFinalHit_07;
-  public int panDistance_08; // related to camera or voice? index into array?
-  public int _09; // related to camera or voice? index into array?
-  public int _0a; // related to camera? index into array?
+  public int cameraMovementX_08;
+  public int cameraMovementZ_09;
+  public int cameraMovementTicks_0a;
   public int hitDistanceFromTarget_0b;
   public int framesToHitPosition_0c;
-  public int _0d; // always 32 (except for a few for Haschel), could be length of properties array
-  /** Used in player_combat_script as an index into an animation table, 18 -> 24, 19 -> 25, all other values are 0 */
-  public int _0e;
+  public int _0d; // always 32 (except for a few for Haschel), not used in PCS
+  /** If non-zero, this animation will be used if this hit is missed */
+  public int additionFailAnimationIndex_0e;
   public int overlayStartingFrameOffset_0f;
 
   public final AdditionSound[] sounds;
 
-  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int panDistance, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int _0e, final int overlayStartingFrameOffset, final AdditionSound... sounds) {
+  public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int sp, final int audioFile, final int isFinalHit, final int cameraMovementX, final int cameraMovementZ, final int cameraMovementTicks, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int additionFailAnimationIndex, final int overlayStartingFrameOffset, final AdditionSound... sounds) {
     this.flags_00 = flags;
     this.totalFrames_01 = totalFrames;
     this.overlayHitFrameOffset_02 = overlayHitFrameOffset;
     this.totalSuccessFrames_03 = totalSuccessFrames;
     this.damageMultiplier_04 = damageMultiplier;
-    this.spValue_05 = spValue;
+    this.sp_05 = sp;
     this.audioFile_06 = audioFile;
     this.isFinalHit_07 = isFinalHit;
-    this.panDistance_08 = panDistance;
-    this._09 = _09;
-    this._0a = _0a;
+    this.cameraMovementX_08 = cameraMovementX;
+    this.cameraMovementZ_09 = cameraMovementZ;
+    this.cameraMovementTicks_0a = cameraMovementTicks;
     this.hitDistanceFromTarget_0b = hitDistanceFromTarget;
     this.framesToHitPosition_0c = framesToHitPosition;
     this._0d = _0d;
-    this._0e = _0e;
+    this.additionFailAnimationIndex_0e = additionFailAnimationIndex;
     this.overlayStartingFrameOffset_0f = overlayStartingFrameOffset;
     this.sounds = sounds;
   }
@@ -68,16 +68,16 @@ public class AdditionHitProperties10 {
       case 2 -> this.overlayHitFrameOffset_02;
       case 3 -> this.totalSuccessFrames_03;
       case 4 -> this.damageMultiplier_04;
-      case 5 -> this.spValue_05;
+      case 5 -> this.sp_05;
       case 6 -> this.audioFile_06;
       case 7 -> this.isFinalHit_07;
-      case 8 -> this.panDistance_08;
-      case 9 -> this._09;
-      case 10 -> this._0a;
+      case 8 -> this.cameraMovementX_08;
+      case 9 -> this.cameraMovementZ_09;
+      case 10 -> this.cameraMovementTicks_0a;
       case 11 -> this.hitDistanceFromTarget_0b;
       case 12 -> this.framesToHitPosition_0c;
       case 13 -> this._0d;
-      case 14 -> this._0e;
+      case 14 -> this.additionFailAnimationIndex_0e;
       case 15 -> this.overlayStartingFrameOffset_0f;
       default -> throw new IllegalArgumentException("Invalid property index " + index);
     };

@@ -7,6 +7,10 @@ public abstract class Param {
   public abstract Param set(final int val);
   public abstract Param array(final int index);
 
+  public Param set(final boolean val) {
+    return this.set(val ? 1 : 0);
+  }
+
   public float getFloat() {
     return this.get();
   }

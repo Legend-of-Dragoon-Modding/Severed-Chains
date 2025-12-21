@@ -2,9 +2,10 @@ package legend.game.types;
 
 import legend.core.GameEngine;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
-import legend.game.modding.events.inventory.Inventory;
+import legend.game.inventory.Inventory;
 import legend.game.saves.Campaign;
 import legend.game.saves.InventoryEntry;
 import legend.lodmod.LodMod;
@@ -56,7 +57,7 @@ public class GameState52c {
   public final Flags scriptFlags1_13c = new Flags(8);
   public final Flags wmapFlags_15c = new Flags(8);
   public final Flags visitedLocations_17c = new Flags(8);
-  public final int[] goods_19c = new int[2];
+  public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];
   /** Note: I'm not _100%_ sure this is only chest flags */

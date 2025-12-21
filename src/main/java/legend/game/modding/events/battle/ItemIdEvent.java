@@ -1,5 +1,6 @@
 package legend.game.modding.events.battle;
 
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEvent;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -11,7 +12,8 @@ public class ItemIdEvent extends BattleEvent {
   public int itemId;
   public RegistryId registryId;
 
-  public ItemIdEvent(final int itemId, final RegistryId registryId) {
+  public ItemIdEvent(final Battle battle, final int itemId, final RegistryId registryId) {
+    super(battle);
     this.itemId = itemId;
     this.registryId = registryId;
   }

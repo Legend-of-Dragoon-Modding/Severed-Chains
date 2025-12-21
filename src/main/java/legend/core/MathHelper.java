@@ -298,4 +298,8 @@ public final class MathHelper {
     out.set(org.joml.Math.lerp(1.0f, out.x, s), org.joml.Math.lerp(1.0f, out.y, s), org.joml.Math.lerp(1.0f, out.z, s));
     out.mul(v);
   }
+
+  public static float brightness(final Vector3f colour) {
+    return 0.2126f * colour.x + 0.7152f * colour.y + 0.0722f * colour.z;
+  }
 }

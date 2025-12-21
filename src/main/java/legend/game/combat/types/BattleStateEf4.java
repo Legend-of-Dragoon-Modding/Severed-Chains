@@ -161,9 +161,9 @@ public class BattleStateEf4 {
   public int additionHitIndex_2cc;
   public int _2d0;
   public int _2d4;
-  public int _2d8;
-  public int _2dc;
-  public int _2e0;
+  public int additionTotalFrames_2d8;
+  public int additionOverlayHitFrameOffset_2dc;
+  public int additionTotalSuccessFrames_2e0;
   public int _2e4;
   /** Indexed by char slot */
   public final int[] _2e8 = new int[3];

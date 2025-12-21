@@ -1,7 +1,10 @@
 package legend.game.combat.ui;
 
 import legend.core.Config;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
@@ -9,19 +12,17 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.RunningScript;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
-import legend.game.types.MenuAdditionInfo;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
-import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Text.renderText;
-import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.SBtld.loadAdditions;
 
 public class AdditionListMenu extends ListMenu {
@@ -29,19 +30,23 @@ public class AdditionListMenu extends ListMenu {
 
   private UiBox description;
 
-  private final List<String> additions = new ArrayList<>();
-  private final MenuAdditionInfo[] menuAdditions = new MenuAdditionInfo[9];
+  private final List<Addition> menuAdditions = new ArrayList<>();
 
   public AdditionListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
     super(hud, activePlayer, 186, modifyLastPosition(activePlayer, lastPosition), onClose);
-    this.prepareAdditionList(activePlayer.charId_272);
-    Arrays.setAll(this.menuAdditions, i -> new MenuAdditionInfo());
     loadAdditions(activePlayer.charId_272, this.menuAdditions);
   }
 
   private static ListPosition modifyLastPosition(final PlayerBattleEntity player, final ListPosition lastPosition) {
     final CharacterData2c charData = gameState_800babc8.charData_32c[player.charId_272];
-    final int index = charData.selectedAddition_19 - additionOffsets_8004f5ac[player.charId_272];
+
+    int index = 0;
+    for(int i = 0; i < CHARACTER_ADDITIONS[player.charId_272].length; i++) {
+      final RegistryDelegate<Addition> additionDelegate = CHARACTER_ADDITIONS[player.charId_272][i];
+      if(additionDelegate.getId().equals(charData.selectedAddition_19)) {
+        index = i;
+      }
+    }
 
     if(index > 6) {
       lastPosition.lastListIndex_26 = 6;
@@ -56,24 +61,25 @@ public class AdditionListMenu extends ListMenu {
 
   @Override
   protected int getListCount() {
-    return this.additions.size();
+    return this.menuAdditions.size();
   }
 
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
+    final CharacterAdditionStats additionStats = charData.additionStats.get(CHARACTER_ADDITIONS[this.player_08.charId_272][index].getId());
 
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
-    renderText(this.additions.get(index), x, y, this.fontOptions);
+    renderText(I18n.translate(this.menuAdditions.get(index)), x, y, this.fontOptions);
     renderText("/", x + 146, y, this.fontOptions);
 
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
-    renderText(String.valueOf(charData.additionXp_22[index]), x + 145, y, this.fontOptions);
+    renderText(String.valueOf(additionStats.xp), x + 145, y, this.fontOptions);
 
     final String max;
-    if(charData.additionLevels_1a[index] < CoreMod.MAX_ADDITION_LEVEL) {
-      max = String.valueOf(charData.additionLevels_1a[index] * CoreMod.ADDITIONS_PER_LEVEL);
+    if(additionStats.level < CoreMod.MAX_ADDITION_LEVEL) {
+      max = String.valueOf((additionStats.level + 1) * CoreMod.ADDITIONS_PER_LEVEL);
     } else {
       max = "-";
     }
@@ -91,7 +97,7 @@ public class AdditionListMenu extends ListMenu {
     final ActiveStatsa0 stats = stats_800be5f8[this.player_08.charId_272];
     final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
     this.player_08.combatant_144.mrg_04 = null;
-    charData.selectedAddition_19 = additionOffsets_8004f5ac[this.player_08.charId_272] + index;
+    charData.selectedAddition_19 = CHARACTER_ADDITIONS[this.player_08.charId_272][index].getId();
     loadCharacterStats();
     this.player_08.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
     this.player_08.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
@@ -116,30 +122,6 @@ public class AdditionListMenu extends ListMenu {
 
   }
 
-  private void prepareAdditionList(final int charId) {
-    //LAB_800f83dc
-    this.additions.clear();
-
-    //LAB_800f8420
-    for(int additionSlot = 0; additionSlot < additionCounts_8004f5c0[charId]; additionSlot++) {
-      final int additionOffset = additionOffsets_8004f5ac[charId];
-
-      final int level = additionData_80052884[additionOffset + additionSlot].level_00;
-
-      if(level == -1 && (gameState_800babc8.charData_32c[charId].partyFlags_04 & 0x40) != 0) {
-        final String additionName = additionNames_800fa8d4[additionOffset + additionSlot];
-        this.additions.add(additionName);
-      } else if(level > 0 && level <= gameState_800babc8.charData_32c[charId].level_12) {
-        final String additionName = additionNames_800fa8d4[additionOffset + additionSlot];
-        this.additions.add(additionName);
-
-        if(gameState_800babc8.charData_32c[charId].additionLevels_1a[additionSlot] == 0) {
-          gameState_800babc8.charData_32c[charId].additionLevels_1a[additionSlot] = 1;
-        }
-      }
-    }
-  }
-
   @Override
   public void draw() {
     super.draw();
@@ -148,13 +130,11 @@ public class AdditionListMenu extends ListMenu {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
         final int listIndex = this.listScroll_1e + this.listIndex_24;
-        final int offset = this.menuAdditions[listIndex].offset_00;
-        final int index = this.menuAdditions[listIndex].index_01;
+        final Addition addition = this.menuAdditions.get(listIndex);
         final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
-        final int level = charData.additionLevels_1a[index];
-        final int hits = CoreMod.CHARACTER_DATA[this.player_08.charId_272].getAdditionHitCount(listIndex);
-        final int damage = CoreMod.CHARACTER_DATA[this.player_08.charId_272].getAdditionDamage(listIndex, level);
-        final int sp = CoreMod.CHARACTER_DATA[this.player_08.charId_272].getAdditionLevelSp(listIndex, level);
+        final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
+        final int damage = addition.getDamage(charData, additionStats);
+        final int sp = addition.getSp(charData, additionStats);
 
         //Selected item description
         if(this.description == null) {
@@ -165,7 +145,7 @@ public class AdditionListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText("Hits: " + hits + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
+        renderText("Hits: " + addition.getHitCount(charData, additionStats) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
     }
   }

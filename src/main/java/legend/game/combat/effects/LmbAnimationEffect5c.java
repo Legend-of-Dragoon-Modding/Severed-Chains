@@ -309,7 +309,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
       //LAB_80117ac0
       //LAB_80117acc
-      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>("Temp 2", new EffectManagerParams.AnimType());
+      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>(manager.battle, "Temp 2", new EffectManagerParams.AnimType());
       anim.set(manager);
 
       final MV managerTransforms = new MV();

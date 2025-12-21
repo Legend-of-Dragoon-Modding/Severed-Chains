@@ -86,7 +86,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addControl(Glyph.glyph(75)).setPos(194,  83); // Line between char 0 and 1
     this.addControl(Glyph.glyph(75)).setPos(194, 155); // Line between char 1 and 2
 
-    this.addControl(new DragoonSpirits(gameState_800babc8.goods_19c[0])).setPos(40, 197); // Dragoon spirits
+    this.addControl(new DragoonSpirits(gameState_800babc8.goods_19c)).setPos(40, 197); // Dragoon spirits
 
     this.addButton("Use Item", this::showUseItemScreen);
     this.addButton("Equipment", this::showEquipmentScreen);

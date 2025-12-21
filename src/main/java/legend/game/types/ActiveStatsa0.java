@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.game.characters.ElementSet;
 import legend.game.inventory.Equipment;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -26,11 +27,11 @@ public class ActiveStatsa0 {
   /** ubyte */
   public final Map<EquipmentSlot, Equipment> equipment_30 = new EnumMap<>(EquipmentSlot.class);
   /** Absolute addition index into the table of every addition for every character (byte) */
-  public int selectedAddition_35;
+  public RegistryId selectedAddition_35;
   /** ubyte */
-  public final int[] additionLevels_36 = new int[8];
+//  public final int[] additionLevels_36 = new int[8];
   /** ubyte */
-  public final int[] additionXp_3e = new int[8];
+//  public final int[] additionXp_3e = new int[8];
   /** ushort */
   public boolean equipmentPhysicalImmunity_46;
   /** ushort */
@@ -64,7 +65,7 @@ public class ActiveStatsa0 {
   /** ushort */
   public int maxHp_66;
   /** byte */
-  public int addition_68;
+//  public int addition_68;
   /** ubyte */
   public int bodySpeed_69;
   /** ubyte */
@@ -142,8 +143,10 @@ public class ActiveStatsa0 {
   public int equipment_1a_9a;
   /** ubyte */
   public int equipmentOnHitStatus_9b;
-  /** ushort */
-  public int addition_00_9c;
+  /** Integer percentage - e.g. 10 = 10% */
+  public int equipmentGuardHeal;
+//  /** ushort */
+//  public int addition_00_9c;
   /** ubyte */
   public int additionSpMultiplier_9e;
   /** ubyte */
@@ -165,8 +168,6 @@ public class ActiveStatsa0 {
     this.equipment_30.clear();
     this.equipment_30.putAll(other.equipment_30);
     this.selectedAddition_35 = other.selectedAddition_35;
-    System.arraycopy(other.additionLevels_36, 0, this.additionLevels_36, 0, this.additionLevels_36.length);
-    System.arraycopy(other.additionXp_3e, 0, this.additionXp_3e, 0, this.additionXp_3e.length);
     this.equipmentPhysicalImmunity_46 = other.equipmentPhysicalImmunity_46;
     this.equipmentMagicalImmunity_48 = other.equipmentMagicalImmunity_48;
     this.equipmentPhysicalResistance_4a = other.equipmentPhysicalResistance_4a;
@@ -184,7 +185,7 @@ public class ActiveStatsa0 {
     this.equipmentHpMulti_62 = other.equipmentHpMulti_62;
     this.equipmentMpMulti_64 = other.equipmentMpMulti_64;
     this.maxHp_66 = other.maxHp_66;
-    this.addition_68 = other.addition_68;
+//    this.addition_68 = other.addition_68;
     this.bodySpeed_69 = other.bodySpeed_69;
     this.bodyAttack_6a = other.bodyAttack_6a;
     this.bodyMagicAttack_6b = other.bodyMagicAttack_6b;
@@ -221,7 +222,8 @@ public class ActiveStatsa0 {
     this.equipment_19_99 = other.equipment_19_99;
     this.equipment_1a_9a = other.equipment_1a_9a;
     this.equipmentOnHitStatus_9b = other.equipmentOnHitStatus_9b;
-    this.addition_00_9c = other.addition_00_9c;
+    this.equipmentGuardHeal = other.equipmentGuardHeal;
+//    this.addition_00_9c = other.addition_00_9c;
     this.additionSpMultiplier_9e = other.additionSpMultiplier_9e;
     this.additionDamageMultiplier_9f = other.additionDamageMultiplier_9f;
   }
