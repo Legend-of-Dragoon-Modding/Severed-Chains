@@ -20,6 +20,8 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Vector3f;
 
@@ -37,11 +39,13 @@ import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
+import static legend.game.modding.coremod.CoreMod.ADDITION_TIMING_WINDOW_CONFIG;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
 public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.VoidType> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(AdditionOverlaysEffect44.class);
   private static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
 
   public int attackerScriptIndex_00;
@@ -269,7 +273,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   @Method(0x801061bcL)
   private int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex, final int autoCompleteType) {
     //LAB_80106264
-    final int hitPropertyValue;
+    int hitPropertyValue;
     if(autoCompleteType == 1 || autoCompleteType == 3) {
       //LAB_80106274
       hitPropertyValue = additionTutorialExampleHits_800fb7c0[hitNum].get(hitPropertyIndex);
@@ -279,6 +283,16 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     }
 
     //LAB_80106298
+    // Increase timing window for additions (hitPropertyIndex 3 is totalSuccessFrames)
+    if(hitPropertyIndex == 3 && hitPropertyValue > 0) {
+      final float multiplier = CONFIG.getConfig(ADDITION_TIMING_WINDOW_CONFIG.get());
+      if(multiplier != 1.0f) {
+        final int originalValue = hitPropertyValue;
+        hitPropertyValue = (int)(hitPropertyValue * multiplier);
+        LOGGER.info("Addition timing window: original=%d frames, modified=%d frames (multiplier=%.1f)", originalValue, hitPropertyValue, multiplier);
+      }
+    }
+
     return hitPropertyValue;
   }
 
