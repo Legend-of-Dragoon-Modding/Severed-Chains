@@ -74,8 +74,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public static final int FLAG_400 = 0x400;
   /** Don't load script (used by cutscene bents controlled by other scripts) */
   public static final int FLAG_NO_SCRIPT = 0x800;
-  /** Unknown */
-  public static final int FLAG_1000 = 0x1000;
+  /** When set, the battle actions menu will be refreshed */
+  public static final int FLAG_RELOAD_BATTLE_ACTIONS = 0x1000;
   /** Don't drop loot (set when monster has died to prevent duplicate drops) */
   public static final int FLAG_NO_LOOT = 0x2000;
   /** Bent cannot be targeted */
@@ -251,8 +251,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
   public int spellDamageOverride = 0;
 
-  public BattleEntity27c(final BattleEntityType type, final String name) {
-    super(BattleObject.BOBJ);
+  public BattleEntity27c(final BattleEntityType type, final Battle battle, final String name) {
+    super(battle, BattleObject.BOBJ);
     this.type = type;
     this.model_148 = new Model124(name);
 
@@ -741,6 +741,7 @@ public abstract class BattleEntity27c extends BattleObject {
     } else {
       this.spell_94 = new SpellStats0c();
     }
+
     //LAB_800f7c54
   }
 

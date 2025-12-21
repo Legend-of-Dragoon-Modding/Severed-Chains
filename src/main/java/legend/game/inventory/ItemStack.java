@@ -22,11 +22,12 @@ public class ItemStack implements InventoryEntry {
   public ItemStack(final Item item, final int size, final int durability) {
     this.item = item;
     this.size = size;
-    this.durability = durability;
+    this.durability = durability >= 0 ? durability : item.getMaxDurability(this);
   }
 
   public ItemStack(final Item item, final int size) {
-    this(item, size, Integer.MAX_VALUE);
+    // -1 will get replaced with item's max durability
+    this(item, size, -1);
   }
 
   public ItemStack(final Item item) {

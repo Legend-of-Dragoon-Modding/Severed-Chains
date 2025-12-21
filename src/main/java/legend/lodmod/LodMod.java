@@ -11,6 +11,7 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.FractionalStat;
@@ -26,13 +27,19 @@ import legend.game.characters.UnaryStatMod;
 import legend.game.characters.UnaryStatModConfig;
 import legend.game.characters.UnaryStatModType;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.RegisterDeffsEvent;
-import legend.game.combat.ui.RegisterModMenuEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.ui.BattleAction;
+import legend.game.combat.ui.GatherBattleActionsEvent;
+import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
+import legend.game.inventory.GoodsRegistryEvent;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.ShopRegistryEvent;
@@ -52,6 +59,7 @@ import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.saves.ConfigRegistryEvent;
+import legend.game.scripting.ScriptState;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Loader;
@@ -62,9 +70,14 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Map;
+import java.util.Set;
 
 import static legend.game.combat.Battle.spellStats_800fa0b8_Monster;
 import static legend.game.combat.Battle.spellStats_800fa0b8_Player;
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
@@ -106,6 +119,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ESCAPE = INPUT_ACTION_REGISTRAR.register("bttl_escape", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_GUARD = INPUT_ACTION_REGISTRAR.register("bttl_guard", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ITEMS = INPUT_ACTION_REGISTRAR.register("bttl_items", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPELLS = INPUT_ACTION_REGISTRAR.register("bttl_spells", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_OPTIONS = INPUT_ACTION_REGISTRAR.register("bttl_options", InputAction::editable);
 
   private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
@@ -120,6 +134,7 @@ public class LodMod {
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", () -> new StatType<>(UnaryStat::new));
   public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", () -> new StatType<>(UnaryStat::new));
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", () -> new StatType<>(UnaryStat::new));
 
   private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statModTypes, MOD_ID);
   public static final RegistryDelegate<StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig>> UNARY_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("unary", UnaryStatModType::new);
@@ -178,6 +193,18 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
+  public static final String[] GOODS_IDS = {
+    "red_dragoon_spirit", "blue_dragoon_spirit", "jade_dragoon_spirit", "gold_dragoon_spirit", "violet_dragoon_spirit",
+    "silver_dragoon_spirit", "dark_dragoon_spirit", "divine_dragoon_spirit", "war_bulletin", "fathers_stone",
+    "prison_key", "axe_from_shack", "good_spirits", "shiny_bag", "water_bottle",
+    "life_water", "magic_oil", "yellow_stone", "blue_stone", "red_stone",
+    "letter_from_lynn", "pass_for_valley", "kates_bouquet", "key_to_ship", "boat_license",
+    "dragon_blocker", "moon_gem", "moon_dagger", "moon_mirror", "omega_bomb",
+    "omega_master", "law_maker", "law_output", "gold_dragoon_spirit_2", "magic_shiny_bag",
+    "vanishing_stone", "lavitzs_picture",
+  };
+
+
   public static final String[] SPELL_IDS = {
     "flameshot", "explosion", "final_burst", "red_eyed_dragon", "divine_dg_cannon", "wing_blaster", "gaspless", "blossom_storm",
     "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "w_silver_dragon", "wing_blaster", "astral_drain",
@@ -211,6 +238,17 @@ public class LodMod {
     , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop"
     , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
     "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
+  };
+
+  private static final RegistryDelegate<BattleAction>[] RETAIL_MENU_BLOCKS = new RegistryDelegate[] {
+    LodBattleActions.ATTACK,
+    LodBattleActions.GUARD,
+    LodBattleActions.ITEMS,
+    LodBattleActions.ESCAPE,
+    LodBattleActions.TRANSFORM,
+    LodBattleActions.D_ATTACK,
+    LodBattleActions.SPELLS,
+    LodBattleActions.SPECIAL,
   };
 
   @EventListener
@@ -294,6 +332,11 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerGoods(final GoodsRegistryEvent event) {
+    LodGoods.register(event);
+  }
+
+  @EventListener
   public static void registerShops(final ShopRegistryEvent event) {
     LodShops.register(event);
   }
@@ -308,6 +351,7 @@ public class LodMod {
     for(int spellId = 0; spellId < spellStats_800fa0b8_Player.length; spellId++) {
       if(spellStats_800fa0b8_Player[spellId] == null) {
         spellStats_800fa0b8_Player[spellId] = SpellStats0c.fromFile(id(SPELL_IDS[spellId]), Loader.loadFile("spells/" + spellId + ".dspl"));
+        spellStats_800fa0b8_Monster[spellId] = SpellStats0c.fromFile(id(SPELL_IDS[spellId]), Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }
@@ -339,6 +383,7 @@ public class LodMod {
     if(event.type == PLAYER_TYPE.get()) {
       event.addStat(MP_STAT.get());
       event.addStat(SP_STAT.get());
+      event.addStat(GUARD_HEAL_STAT.get());
     }
 
     event.addStat(SPEED_STAT.get());
@@ -353,6 +398,149 @@ public class LodMod {
   @EventListener
   public static void registerDeffs(final RegisterDeffsEvent event) {
     LodDeffs.register(event);
+  }
+
+  @EventListener
+  public static void registerAdditions(final AdditionRegistryEvent event) {
+    LodAdditions.register(event);
+  }
+
+  @EventListener
+  public static void registerBattleActions(final RegisterBattleActionsEvent event) {
+    LodBattleActions.register(event);
+  }
+
+  @EventListener
+  public static void gatherBattleActions(final GatherBattleActionsEvent event) {
+    final PlayerBattleEntity player = event.player;
+    int sort = 100;
+
+    if(player.isDragoon()) {
+      event.actions.put(LodBattleActions.D_ATTACK.get(), sort);
+    } else {
+      event.actions.put(LodBattleActions.ATTACK.get(), sort);
+    }
+
+    sort += 100;
+
+    if(!player.isDragoon() || CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {
+      event.actions.put(LodBattleActions.GUARD.get(), sort);
+      sort += 100;
+      event.actions.put(LodBattleActions.ITEMS.get(), sort);
+      sort += 100;
+      event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
+      sort += 100;
+    }
+
+    if(player.isDragoon()) {
+      event.actions.put(LodBattleActions.SPELLS.get(), sort);
+      sort += 100;
+    }
+
+    if(!player.isDragoon() || CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {
+      event.actions.put(LodBattleActions.ESCAPE.get(), sort);
+      sort += 100;
+    }
+
+    if(!player.isDragoon() && player.stats.getStat(SP_STAT.get()).getCurrent() >= 100 && player.canBecomeDragoon()) {
+      event.actions.put(LodBattleActions.TRANSFORM.get(), sort);
+      sort += 100;
+
+      if(canSpecialTransform()) {
+        event.actions.put(LodBattleActions.SPECIAL.get(), sort);
+      }
+    }
+
+    final int legacyFlags = battleState_8006e398.statusConditions_00[player.bentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
+    disableRetailBattleActions(legacyFlags, event.disabledActions);
+
+    if((player.status_0e & 0x20) != 0) {
+      event.disabledActions.add(LodBattleActions.ATTACK.get());
+    }
+
+    if(encounter.escapeChance == 0) {
+      event.disabledActions.add(LodBattleActions.ESCAPE.get());
+    }
+
+    // This seems to be for the tutorial fights - disables all actions except for one
+    if(battleState_8006e398._54c != 0) {
+      for(final RegistryId id : REGISTRIES.battleActions) {
+        event.disabledActions.add(REGISTRIES.battleActions.getEntry(id).get());
+      }
+
+      final ScriptState<MonsterBattleEntity> tutorialEnemy = battleState_8006e398.monsterBents_e50[0];
+
+      if(battleState_8006e398._548 == 0) {
+        event.disabledActions.remove(LodBattleActions.ATTACK.get());
+        tutorialEnemy.setFlag(BattleEntity27c.FLAG_TAKE_FORCED_TURN);
+        battleState_8006e398._54c++;
+      } else if(battleState_8006e398._548 == 1) {
+        event.disabledActions.remove(LodBattleActions.ITEMS.get());
+        tutorialEnemy.setFlag(BattleEntity27c.FLAG_TAKE_FORCED_TURN);
+        battleState_8006e398._54c++;
+      } else if(battleState_8006e398._54c == 3) {
+        event.disabledActions.remove(LodBattleActions.ATTACK.get());
+      } else {
+        if((battleState_8006e398._54c == 5 || battleState_8006e398._54c == 9) || battleState_8006e398._54c == 16) {
+          event.disabledActions.remove(LodBattleActions.TRANSFORM.get());
+        } else if(battleState_8006e398._54c == 12) {
+          event.disabledActions.remove(LodBattleActions.D_ATTACK.get());
+        } else {
+          event.disabledActions.remove(LodBattleActions.SPELLS.get());
+        }
+
+        tutorialEnemy.setFlag(BattleEntity27c.FLAG_TAKE_FORCED_TURN);
+        battleState_8006e398._54c++;
+      }
+    }
+  }
+
+  public static void disableRetailBattleActions(final int packedActions, final Set<BattleAction> disabled) {
+    for(int i = 0; i < RETAIL_MENU_BLOCKS.length; i++) {
+      if((packedActions & 0x1 << i) != 0) {
+        disabled.add(RETAIL_MENU_BLOCKS[i].get());
+      }
+    }
+  }
+
+  private static boolean canSpecialTransform() {
+    if(battleState_8006e398.getPlayerCount() < 3) {
+      return false;
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+
+      // not dead or petrified
+      if(player.hasFlag(BattleEntity27c.FLAG_DEAD) && (player.innerStruct_00.status_0e & 0x1) != 0) {
+        return false;
+      }
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+      final int sp = player.innerStruct_00.stats.getStat(SP_STAT.get()).getCurrent();
+      final int dlevel = player.innerStruct_00.dlevel_06;
+
+      if(dlevel == 0 || sp < dlevel * 100) {
+        return false;
+      }
+
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      if(battleState_8006e398.playerBents_e40[i].innerStruct_00.isDragoon()) {
+        return false;
+      }
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      if(!battleState_8006e398.playerBents_e40[i].innerStruct_00.canBecomeDragoon()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   @EventListener
@@ -465,10 +653,5 @@ public class LodMod {
     miranda.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
     event.gameState.gold_94 = 20;
-  }
-
-  @EventListener
-  public static void registerModMenu(final RegisterModMenuEvent event) {
-    LodModMenu.register(event);
   }
 }

@@ -21,6 +21,8 @@ import legend.game.DrgnFiles;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.characters.Element;
 import legend.game.characters.Stat;
 import legend.game.characters.StatMod;
@@ -86,29 +88,28 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
+import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.DragoonDetransformationMode;
 import legend.game.combat.ui.UiBox;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.battle.CombatMenuBlockedEvent;
-import legend.game.modding.events.battle.CombatMenuEvent;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
-import legend.game.modding.events.battle.DeffArrowEvent;
 import legend.game.modding.events.battle.DragoonDeffEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
-import legend.game.modding.events.battle.GuardHealEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.battle.ScriptLoadDeffEvent;
 import legend.game.modding.events.battle.SetBentStatEvent;
+import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.modding.events.scripting.DrgnFileEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -143,8 +144,6 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
-import legend.lodmod.LodEquipment;
-import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -195,6 +194,7 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnDirSync;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.DrgnFiles.loadFile;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -228,6 +228,7 @@ import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.loadPlayerModelAndAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.Models.vramSlots_8005027c;
+import static legend.game.SItem.characterDragoonIndices_800c6e68;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.giveItem;
@@ -240,8 +241,7 @@ import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
-import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -282,7 +282,6 @@ import static legend.game.combat.SEffe.loadDeffStageEffects;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_1;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_1000;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_ANIMATE_ONCE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
@@ -292,6 +291,7 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_HIDE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_RELOAD_BATTLE_ACTIONS;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
@@ -299,8 +299,29 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.AVOID_STAT;
+import static legend.lodmod.LodMod.DARK_ELEMENT;
+import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.DIVINE_ELEMENT;
+import static legend.lodmod.LodMod.EARTH_ELEMENT;
+import static legend.lodmod.LodMod.FIRE_ELEMENT;
+import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
+import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
+import static legend.lodmod.LodMod.LIGHT_ELEMENT;
+import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
+import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
+import static legend.lodmod.LodMod.THUNDER_ELEMENT;
+import static legend.lodmod.LodMod.WATER_ELEMENT;
+import static legend.lodmod.LodMod.WIND_ELEMENT;
+import static legend.lodmod.LodMod.disableRetailBattleActions;
 
 public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
@@ -422,8 +443,6 @@ public class Battle extends EngineState {
 
   public boolean shouldRenderStage_800c6754;
 
-  private int currentDisplayableIconsBitset_800c675c;
-
   public boolean shouldRenderMcq_800c6764;
 
   public int mcqStepX_800c676c;
@@ -481,7 +500,6 @@ public class Battle extends EngineState {
   };
   /** Note: retail overlay doesn't have the last two elements, but the method that uses this copies the array and adds new elements */
   public static final int[] battleHudTextureVramXOffsets_800c6e60 = {0, 0x10, 0x20, 0x30, 0, 0x10};
-  public static final int[] characterDragoonIndices_800c6e68 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
 
   public static final int[] melbuMonsterNameIndices_800c6e90 = {395, 396, 397};
 
@@ -489,7 +507,7 @@ public class Battle extends EngineState {
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
 
   @SuppressWarnings("unchecked")
-  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {LodMod.FIRE_ELEMENT, LodMod.WIND_ELEMENT, LodMod.LIGHT_ELEMENT, LodMod.DARK_ELEMENT, LodMod.THUNDER_ELEMENT, LodMod.WIND_ELEMENT, LodMod.WATER_ELEMENT, LodMod.EARTH_ELEMENT, LodMod.LIGHT_ELEMENT};
+  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {FIRE_ELEMENT, WIND_ELEMENT, LIGHT_ELEMENT, DARK_ELEMENT, THUNDER_ELEMENT, WIND_ELEMENT, WATER_ELEMENT, EARTH_ELEMENT, LIGHT_ELEMENT};
 
   /** Different sets of bents for different target types (chars, monsters, all) */
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
@@ -1076,14 +1094,14 @@ public class Battle extends EngineState {
     functions[896] = SEffe::scriptAllocateGradientRaysEffect;
     functions[897] = SEffe::scriptAllocateScreenCaptureEffect;
 
-    functions[950] = this::combatMenu;
-    functions[951] = this::combatMenuBlocked;
-    functions[952] = this::detransformOptions;
-    functions[953] = this::getEquipEffectsInDragoon;
-    functions[954] = this::isDeffArrow;
-    functions[955] = this::guardAmount;
-    functions[956] = this::setSpellDamageOverride;
-    functions[957] = this::getSpellDamageOverride;
+    //functions[950] = this::combatMenu;
+    //functions[951] = this::combatMenuBlocked;
+    //functions[952] = this::detransformOptions;
+    //functions[953] = this::getEquipEffectsInDragoon;
+    //functions[954] = this::isDeffArrow;
+    //functions[955] = this::guardAmount;
+    functions[950] = this::setSpellDamageOverride;
+    functions[951] = this::getSpellDamageOverride;
 
     functions[1000] = this::scriptHasStatMod;
     functions[1001] = this::scriptAddStatMod;
@@ -1472,7 +1490,7 @@ public class Battle extends EngineState {
 
     //LAB_800c760c
     this.allocateStageDarkeningStorage();
-    loadEncounterSoundsAndMusic();
+    loadEncounterSoundsAndMusic(this);
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1516,7 +1534,6 @@ public class Battle extends EngineState {
     battleState_8006e398.battlePhase_eec = 0;
 
     this.clearCombatants();
-    this.clearCurrentDisplayableItems();
 
     battleState_8006e398.clear();
 
@@ -1553,7 +1570,7 @@ public class Battle extends EngineState {
 
       final int combatantIndex = this.getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+      final MonsterBattleEntity bent = new MonsterBattleEntity(this, name);
       final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
@@ -1593,7 +1610,7 @@ public class Battle extends EngineState {
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
       final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
-      final PlayerBattleEntity bent = new PlayerBattleEntity(name, charSlot + 6, this.playerBattleScript_800c66fc);
+      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charSlot + 6, this.playerBattleScript_800c66fc);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
@@ -1741,7 +1758,7 @@ public class Battle extends EngineState {
     this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
     this.hud.FUN_800f417c();
 
-    EVENTS.postEvent(new BattleStartedEvent());
+    EVENTS.postEvent(new BattleStartedEvent(this));
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1772,29 +1789,29 @@ public class Battle extends EngineState {
     if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
-      this.currentTurnBent_800c66c8.clearFlag(FLAG_1000);
+      this.currentTurnBent_800c66c8.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
 
       if(battleState_8006e398.hasAlivePlayers()) {
         //LAB_800c7c98
         this.forcedTurnBent_800c66bc = battleState_8006e398.getForcedTurnBent();
 
         if(this.forcedTurnBent_800c66bc != null) { // A bent has a forced turn
-          this.forcedTurnBent_800c66bc.clearFlag(FLAG_TAKE_FORCED_TURN).setFlag(FLAG_1000).setFlag(FLAG_CURRENT_TURN);
+          this.forcedTurnBent_800c66bc.clearFlag(FLAG_TAKE_FORCED_TURN).setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-          EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
-          this.hud.rebuildModMenu();
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
             //LAB_800c7d3c
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
-            this.currentTurnBent_800c66c8.setFlag(FLAG_1000).setFlag(FLAG_CURRENT_TURN);
+            this.currentTurnBent_800c66c8.setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-            EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
-            this.hud.rebuildModMenu();
+
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.currentTurnBent_800c66c8));
+
             //LAB_800c7d74
           } else { // Monsters dead
             this.endBattle();
@@ -1846,7 +1863,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c8068L)
   public void performPostBattleAction() {
-    EVENTS.postEvent(new BattleEndedEvent());
+    EVENTS.postEvent(new BattleEndedEvent(this));
 
     final int postBattleAction = postBattleAction_800bc974;
 
@@ -1967,7 +1984,8 @@ public class Battle extends EngineState {
         case 2 -> {
           if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
             //LAB_800c8514
-            gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
+            final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(0x3bb, true)).set;
+            gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
           } else {
             //LAB_800c8534
             postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
@@ -2338,7 +2356,7 @@ public class Battle extends EngineState {
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
-              if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+              if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
                 charIndex = 10; // Divine dragoon
               }
 
@@ -2427,7 +2445,7 @@ public class Battle extends EngineState {
 
     TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
 
-    EVENTS.postEvent(new CombatantModelLoadedEvent(combatant, model));
+    EVENTS.postEvent(new CombatantModelLoadedEvent((Battle)currentEngineState_8004dd04, combatant, model));
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
@@ -2450,12 +2468,14 @@ public class Battle extends EngineState {
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
-            fileIndex = 4031 + gameState_800babc8.charData_32c[charId].selectedAddition_19 + charId * 8 - additionOffsets_8004f5ac[charId];
-          } else {
-            // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
-            fileIndex = 4031 + charId * 8;
+            final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            return;
           }
-        } else if(charId != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+
+          // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
+          fileIndex = 4031 + charId * 8;
+        } else if(charId != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           // Dragoon addition
           fileIndex = 4103 + charId;
         } else { // Divine dragoon
@@ -2742,7 +2762,7 @@ public class Battle extends EngineState {
       int fileIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
-        if(fileIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+        if(fileIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           fileIndex = 10;
         }
 
@@ -2839,11 +2859,6 @@ public class Battle extends EngineState {
     synchronized(this.usedMonsterTextureSlotsLock) {
       this.usedMonsterTextureSlots_800c66c4 &= ~(0x1 << shift);
     }
-  }
-
-  @Method(0x800cae44L)
-  public void clearCurrentDisplayableItems() {
-    this.currentDisplayableIconsBitset_800c675c = 0;
   }
 
   @Method(0x800cb250L)
@@ -3537,8 +3552,6 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "displayableIconsBitset", description = "A bitset of which icons are displayed")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "disabledIconsBitset", description = "A bitset of which icons are disabled")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
@@ -3546,37 +3559,23 @@ public class Battle extends EngineState {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final int displayableIconsBitset = script.params_20[0].get();
-
-    if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || script.scriptState_04.hasFlag(FLAG_1000)) {
-      //LAB_800cca7c
-      final int disabledIconsBitset;
-
-      if(script.paramCount_14 == 2) {
-        disabledIconsBitset = 0;
-      } else {
-        //LAB_800ccaa0
-        disabledIconsBitset = script.params_20[1].get();
-      }
-
+    if(script.scriptState_04.hasFlag(FLAG_RELOAD_BATTLE_ACTIONS)) {
       //LAB_800ccab4
-      this.hud.initializeMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
-
-      script.scriptState_04.clearFlag(FLAG_1000);
-      this.currentDisplayableIconsBitset_800c675c = displayableIconsBitset;
+      this.hud.initializeMenuIcons(script.scriptState_04);
+      script.scriptState_04.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
     }
 
     //LAB_800ccaec
     this.hud.toggleHighlight(true);
 
-    final int selectedAction = this.hud.tickAndRender();
-    if(selectedAction == 0) {
+    final BattleAction selectedAction = this.hud.tickAndRender();
+    if(selectedAction == null) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     this.hud.toggleHighlight(false);
-    script.params_20[2].set(selectedAction - 1);
+    script.params_20[0].set(selectedAction.getRegistryId());
 
     //LAB_800ccb28
     return FlowControl.CONTINUE;
@@ -3664,7 +3663,7 @@ public class Battle extends EngineState {
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].getRegistryId())).registryValue).get());
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(EVENTS.postEvent(new SetBentStatEvent(this, bent, stat, script.params_20[1].getRegistryId())).registryValue).get());
       default -> {
         int value = script.params_20[1].get();
         if(script.params_20[2].get() == 2 && value < 0) {
@@ -3687,7 +3686,7 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-    final SetBentStatEvent event = EVENTS.postEvent(new SetBentStatEvent(bent, stat, script.params_20[1].get()));
+    final SetBentStatEvent event = EVENTS.postEvent(new SetBentStatEvent(this, bent, stat, script.params_20[1].get()));
 
     switch(stat) {
       case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
@@ -3844,33 +3843,29 @@ public class Battle extends EngineState {
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
-      final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac[charIndex];
-      if(charIndex == 2 || charIndex == 8 || additionIndex < 0) {
+      if(charIndex == 2 || charIndex == 8 || charData.selectedAddition_19 == null) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(CoreMod.MAX_ADDITION_XP, charData.additionXp_22[additionIndex] + 1);
+      final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
+      final int additionXp = Math.min(CoreMod.MAX_ADDITION_XP, additionStats.xp + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= charData.additionLevels_1a[additionIndex] * CoreMod.ADDITIONS_PER_LEVEL) {
-        charData.additionLevels_1a[additionIndex]++;
+      while(additionStats.level < CoreMod.MAX_ADDITION_LEVEL && additionXp >= (additionStats.level + 1) * CoreMod.ADDITIONS_PER_LEVEL) {
+        additionStats.level++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
-      int lastNonMaxAdditionIndex = -1;
+      int nonMaxedAdditions = CHARACTER_ADDITIONS[charIndex].length;
 
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == CoreMod.MAX_ADDITION_LEVEL) {
+      for(int additionIndex2 = 0; additionIndex2 < CHARACTER_ADDITIONS[charIndex].length; additionIndex2++) {
+        if(charData.additionStats.get(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == CoreMod.MAX_ADDITION_LEVEL) {
           nonMaxedAdditions--;
-        } else {
-          //LAB_800cd308
-          lastNonMaxAdditionIndex = additionIndex2;
         }
 
         //LAB_800cd30c
@@ -3880,17 +3875,11 @@ public class Battle extends EngineState {
       //LAB_800cd31c
       if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
         charData.partyFlags_04 |= 0x40;
-
-        if(lastNonMaxAdditionIndex >= 0) {
-          charData.additionLevels_1a[lastNonMaxAdditionIndex] = 1;
-        }
-
-        //LAB_800cd36c
         unlockedUltimateAddition_800bc910[bent.charSlot_276] = true;
       }
 
       //LAB_800cd390
-      charData.additionXp_22[additionIndex] = additionXp;
+      additionStats.xp = additionXp;
     }
 
     //LAB_800cd3ac
@@ -3966,7 +3955,7 @@ public class Battle extends EngineState {
   @Method(0x800cd5b4L)
   public FlowControl scriptAllocateBent(final RunningScript<?> script) {
     final String name = "Bent allocated by script " + script.scriptState_04.index;
-    final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+    final MonsterBattleEntity bent = new MonsterBattleEntity(this, name);
     final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
     script.params_20[2].set(state.index);
     state.setTicker(bent::bentLoadingTicker);
@@ -4631,9 +4620,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800d3968L)
-  public int[] setAdditionNameDisplayCoords(final int addition) {
-    final String additionName = additionNames_800fa8d4[addition];
-
+  public int[] setAdditionNameDisplayCoords(final String additionName) {
     int additionDisplayWidth = 0;
     //LAB_800d39b8
     for(int i = 0; i < additionName.length(); i++) {
@@ -4654,15 +4641,15 @@ public class Battle extends EngineState {
     } else {
       //LAB_800d3dc0
       final AdditionNameTextEffect1c additionStruct = new AdditionNameTextEffect1c();
-      final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
+      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19).get();
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
-      final String additionName = additionNames_800fa8d4[addition];
+      final String additionName = I18n.translate(addition);
 
       //LAB_800d3e5c
       //LAB_800d3e7c
-      additionStruct.additionId_02 = addition;
+      additionStruct.additionName_02 = additionName;
       additionStruct.length_08 = additionName.length();
       additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = additionStruct::renderAdditionNameChar;
@@ -4670,7 +4657,7 @@ public class Battle extends EngineState {
       Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
       this._800faa9d = 1;
 
-      final int[] displayOffset = this.setAdditionNameDisplayCoords(addition);
+      final int[] displayOffset = this.setAdditionNameDisplayCoords(additionName);
       int charPosition = -160;
       int displayOffsetX = displayOffset[0];
       final int displayOffsetY = displayOffset[1];
@@ -6095,7 +6082,7 @@ public class Battle extends EngineState {
       Loader.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
 
-    EVENTS.postEvent(new DragoonDeffEvent((4139 + index * 2)));
+    EVENTS.postEvent(new DragoonDeffEvent(this, (4139 + index * 2)));
   }
 
   @Method(0x800e6844L)
@@ -6474,7 +6461,7 @@ public class Battle extends EngineState {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final ScriptLoadDeffEvent event = EVENTS.postEvent(new ScriptLoadDeffEvent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get()));
+    final ScriptLoadDeffEvent event = EVENTS.postEvent(new ScriptLoadDeffEvent(this, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get()));
     script.params_20[0].set(event.flagsAndIndex);
     script.params_20[1].set(event.bentIndex);
     script.params_20[2].set(event.p2);
@@ -7332,82 +7319,6 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Used to call an event override for menu icons")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Menu icons")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override icons")
-  public FlowControl combatMenu(final RunningScript<?> script) {
-    int combatIcons = script.params_20[1].get();
-
-    if((combatIcons & (1 << 5)) != 0) {
-      if(CONFIG.getConfig(CoreMod.DRAGOON_GUARD_CONFIG.get())) {
-        combatIcons = combatIcons | 2;
-      }
-      if(CONFIG.getConfig(CoreMod.DRAGOON_ITEMS_CONFIG.get())) {
-        combatIcons = combatIcons | 4;
-      }
-      if(CONFIG.getConfig(CoreMod.DRAGOON_ESCAPE_CONFIG.get())) {
-        combatIcons = combatIcons | 8;
-      }
-      if(CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get()) != DragoonDetransformationMode.OFF) {
-        combatIcons = combatIcons | 16;
-      }
-    }
-
-    final CombatMenuEvent bar = EVENTS.postEvent(new CombatMenuEvent((PlayerBattleEntity)currentTurnBent_800c66c8.innerStruct_00, combatIcons));
-
-    script.params_20[2].set(bar.combatBar);
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Used to call an event override for blocked menu icons")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menu", description = "Blocked menu icons")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "override", description = "Event override blocked icons")
-  public FlowControl combatMenuBlocked(final RunningScript<?> script) {
-    final CombatMenuBlockedEvent bar = EVENTS.postEvent(new CombatMenuBlockedEvent((PlayerBattleEntity)currentTurnBent_800c66c8.innerStruct_00, script.params_20[1].get()));
-    script.params_20[2].set(bar.combatBarBlocked);
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Used for coremod detransform options.")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Transform right away or on turn finish")
-  public FlowControl detransformOptions(final RunningScript<?> script) {
-    final DragoonDetransformationMode detransformOption = CONFIG.getConfig(CoreMod.DRAGOON_DETRANSFORMATION_CONFIG.get());
-    script.params_20[0].set(detransformOption == DragoonDetransformationMode.OFF ? 0 : detransformOption == DragoonDetransformationMode.SKIP_TURN ? 1 : 2);
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Used for coremod equips effects in dragoon.")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "option", description = "Enable equip effects in dragoon?")
-  public FlowControl getEquipEffectsInDragoon(final RunningScript<?> script) {
-    script.params_20[0].set((CONFIG.getConfig(CoreMod.DRAGOON_EQUIP_EFFECTS_CONFIG.get())) ? 1 : 0);
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Used to determine if an arrow should load a DEFF.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
-  @Method(0x800cce04L)
-  public FlowControl isDeffArrow(final RunningScript<?> script) {
-    final PlayerBattleEntity bent = (PlayerBattleEntity)currentTurnBent_800c66c8.innerStruct_00;
-    final boolean isDeff = bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() == LodEquipment.DETONATE_ARROW.get().getRegistryId();
-    final DeffArrowEvent event = EVENTS.postEvent(new DeffArrowEvent(bent.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId(), isDeff));
-    script.params_20[1].set(event.isDeff ? 1 : 0);
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Used to change the amount guard heals.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The original guard heal amount")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
-  @Method(0x800cce04L)
-  public FlowControl guardAmount(final RunningScript<?> script) {
-    final GuardHealEvent event = EVENTS.postEvent(new GuardHealEvent(script.params_20[0].get(), script.params_20[1].get()));
-    script.params_20[2].set(event.heal);
-    return FlowControl.CONTINUE;
-  }
-
   @Method(0x800eb9acL)
   public void loadStageTmd(final BattleStage stage, final CContainer extTmd, final TmdAnimationFile tmdAnim) {
     final float x = stage.coord2_558.coord.transfer.x;
@@ -7898,20 +7809,20 @@ public class Battle extends EngineState {
       final CharacterData2c charData = gameState_800babc8.charData_32c[bent.charId_272];
 
       //LAB_800eec10
-      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(LodMod.HP_STAT.get()).getCurrent());
+      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent());
 
-      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[bent.charId_272]) != 0) {
-        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+      if((gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[bent.charId_272]))) {
+        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eec78
-      if(bent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[9]) != 0) {
-        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+      if(bent.charId_272 == 0 && gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[9])) {
+        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eecb8
       charData.status_10 = bent.status_0e & 0xc8;
-      charData.sp_0c = bent.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
+      charData.sp_0c = bent.stats.getStat(SP_STAT.get()).getCurrent();
     }
 
     //LAB_800eed78
@@ -7953,9 +7864,9 @@ public class Battle extends EngineState {
       System.arraycopy(spellIndices, 0, this.dragoonSpells_800c6960[charSlot].spellIndex_01, 0, 8);
 
       //LAB_800ef400
-      final VitalsStat playerHp = player.stats.getStat(LodMod.HP_STAT.get());
-      final VitalsStat playerMp = player.stats.getStat(LodMod.MP_STAT.get());
-      final VitalsStat playerSp = player.stats.getStat(LodMod.SP_STAT.get());
+      final VitalsStat playerHp = player.stats.getStat(HP_STAT.get());
+      final VitalsStat playerMp = player.stats.getStat(MP_STAT.get());
+      final VitalsStat playerSp = player.stats.getStat(SP_STAT.get());
 
       final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
       player.level_04 = stats.level_0e;
@@ -7980,15 +7891,16 @@ public class Battle extends EngineState {
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
-      player.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
-      player.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
-      player.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
-      player.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
-      player.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
+      player.stats.getStat(SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
+      player.stats.getStat(ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
+      player.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
+      player.stats.getStat(DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
+      player.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
       player.attackHit_3c = stats.equipmentAttackHit_90;
       player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
-      player.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
+      player.stats.getStat(AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
+      player.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
+      player.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10 + stats.equipmentGuardHeal);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
       player.equipment_19_46 = stats.equipment_19_99;
       player.equipment_1a_48 = stats.equipment_1a_9a;
@@ -8003,7 +7915,7 @@ public class Battle extends EngineState {
       player.magicalImmunity_112 = stats.equipmentMagicalImmunity_48;
       player.physicalResistance_114 = stats.equipmentPhysicalResistance_4a;
       player.magicalResistance_116 = stats.equipmentMagicalResistance_60;
-      player._118 = stats.addition_00_9c;
+//      player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
       player.equipment_11e.clear();
@@ -8057,10 +7969,10 @@ public class Battle extends EngineState {
 
     final int avoidChance;
     if(attackType == AttackType.PHYSICAL) {
-      avoidChance = defender.stats.getStat(LodMod.AVOID_STAT.get()).get();
+      avoidChance = defender.stats.getStat(AVOID_STAT.get()).get();
     } else {
       //LAB_800f1c9c
-      avoidChance = defender.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
+      avoidChance = defender.stats.getStat(MAGIC_AVOID_STAT.get()).get();
     }
 
     boolean effectHit = false;
@@ -8123,7 +8035,7 @@ public class Battle extends EngineState {
     //LAB_800f2140
     int damage;
     if(attacker.spell_94 != null && (attacker.spell_94.flags_01 & 0x4) != 0) {
-      damage = defender.stats.getStat(LodMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
+      damage = defender.stats.getStat(HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
 
       final List<BattleEntity27c> targets = new ArrayList<>();
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
@@ -8180,7 +8092,7 @@ public class Battle extends EngineState {
     final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
-    final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
+    final int damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
@@ -8215,7 +8127,7 @@ public class Battle extends EngineState {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08.get());
     }
 
-    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
+    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
 
     //LAB_800f27ec
     script.params_20[3].set(damage);
@@ -8248,7 +8160,7 @@ public class Battle extends EngineState {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.item_d4.getAttackElement());
     }
 
-    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
+    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
 
     //LAB_800f2970
     script.params_20[3].set(damage);
@@ -8267,7 +8179,7 @@ public class Battle extends EngineState {
     //LAB_800f4410
     //LAB_800f4430
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
     spGained_800bc950[player.charSlot_276] += script.params_20[1].get();
@@ -8287,7 +8199,7 @@ public class Battle extends EngineState {
     //LAB_800f454c
     //LAB_800f456c
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
@@ -8430,7 +8342,7 @@ public class Battle extends EngineState {
 
     final MonsterStatsEvent statsEvent = EVENTS.postEvent(new MonsterStatsEvent(monster.charId_272));
 
-    final VitalsStat monsterHp = monster.stats.getStat(LodMod.HP_STAT.get());
+    final VitalsStat monsterHp = monster.stats.getStat(HP_STAT.get());
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
@@ -8445,15 +8357,15 @@ public class Battle extends EngineState {
     monster.equipmentAttack1_28 = 0;
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
-    monster.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
-    monster.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(statsEvent.attack);
-    monster.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
-    monster.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(statsEvent.defence);
-    monster.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
+    monster.stats.getStat(SPEED_STAT.get()).setRaw(statsEvent.speed);
+    monster.stats.getStat(ATTACK_STAT.get()).setRaw(statsEvent.attack);
+    monster.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
+    monster.stats.getStat(DEFENSE_STAT.get()).setRaw(statsEvent.defence);
+    monster.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
-    monster.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
+    monster.stats.getStat(AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
+    monster.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
     monster.equipment_19_46 = 0;
     monster.equipment_1a_48 = 0;
@@ -8784,7 +8696,7 @@ public class Battle extends EngineState {
 
     if(characterId != -1) {
       if(characterId == 9) { //TODO stupid special case handling for DD Dart
-        this.dragoonSpaceElement_800c6b64 = LodMod.DIVINE_ELEMENT.get();
+        this.dragoonSpaceElement_800c6b64 = DIVINE_ELEMENT.get();
       } else {
         this.dragoonSpaceElement_800c6b64 = battleState_8006e398.getPlayerById(characterId).element;
       }
@@ -8858,7 +8770,7 @@ public class Battle extends EngineState {
   @Method(0x800f9cacL)
   public FlowControl scriptSetDisabledMenuIcons(final RunningScript<?> script) {
     final int disabledIconsBitset = script.params_20[0].get();
-    this.hud.setDisabledIcons(disabledIconsBitset);
+    disableRetailBattleActions(disabledIconsBitset, this.hud.battleMenu_800c6c34.disabledActions);
     return FlowControl.CONTINUE;
   }
 

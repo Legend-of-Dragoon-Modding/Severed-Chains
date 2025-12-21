@@ -1,6 +1,5 @@
 package legend.core;
 
-import com.github.difflib.patch.PatchFailedException;
 import discord.DiscordRichPresence;
 import legend.core.audio.AudioThread;
 import legend.core.audio.EffectsOverTimeGranularity;
@@ -39,6 +38,8 @@ import legend.game.saves.serializers.V2Serializer;
 import legend.game.saves.serializers.V3Serializer;
 import legend.game.saves.serializers.V4Serializer;
 import legend.game.saves.serializers.V5Serializer;
+import legend.game.saves.serializers.V6Serializer;
+import legend.game.saves.serializers.V7Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.tmd.TmdObjLoader;
@@ -95,7 +96,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V5Serializer.MAGIC_V5, V5Serializer::toV5);
+  public static final SaveManager SAVES = new SaveManager(V7Serializer.MAGIC_V7, V7Serializer::toV7);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
@@ -198,6 +199,8 @@ public final class GameEngine {
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
         SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
         SAVES.registerDeserializer(V5Serializer::fromV5Matcher, V5Serializer::fromV5);
+        SAVES.registerDeserializer(V6Serializer::fromV6Matcher, V6Serializer::fromV6);
+        SAVES.registerDeserializer(V7Serializer::fromV7Matcher, V7Serializer::fromV7);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);
@@ -217,7 +220,7 @@ public final class GameEngine {
           statusText = I18n.translate("unpacker.patching_scripts");
           try {
             new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
-          } catch(final PatchFailedException e) {
+          } catch(final Exception e) {
             statusText = I18n.translate("unpacker.patching_failed");
             throw e;
           }
@@ -313,6 +316,9 @@ public final class GameEngine {
     // Initialize config and input registries
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
+
+    // We need to boot the goods registry for save cards on the title screen
+    REGISTRY_ACCESS.initialize(REGISTRIES.goods);
 
     MOD_ACCESS.loadingComplete();
 
@@ -537,11 +543,11 @@ public final class GameEngine {
         .colour(colour)
       ;
 
-      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     if(!statusText.isBlank() && loadingFade != 0.0f) {
-      renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     textZ_800bdf00 = oldTextZ;

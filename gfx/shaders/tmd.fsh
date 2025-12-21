@@ -76,17 +76,17 @@ void main() {
 
       // Pull actual pixel colour from CLUT
       uint pixel = texelFetch(tex15, ivec2(vertClut.x + p, vertClut.y), 0).r;
-      texColour.a = (pixel >> 15 & 0x1fu) / 31.0;
-      texColour.b = (pixel >> 10 & 0x1fu) / 31.0;
-      texColour.g = (pixel >>  5 & 0x1fu) / 31.0;
-      texColour.r = (pixel       & 0x1fu) / 31.0;
+      texColour.a = float(pixel >> 15 & 0x1fu) / 31.0;
+      texColour.b = float(pixel >> 10 & 0x1fu) / 31.0;
+      texColour.g = float(pixel >>  5 & 0x1fu) / 31.0;
+      texColour.r = float(pixel       & 0x1fu) / 31.0;
     } else if(vertBpp == 2) {
       ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
       uint pixel = texelFetch(tex15, uv, 0).r;
-      texColour.a = (pixel >> 15 & 0x1fu) / 31.0;
-      texColour.b = (pixel >> 10 & 0x1fu) / 31.0;
-      texColour.g = (pixel >>  5 & 0x1fu) / 31.0;
-      texColour.r = (pixel       & 0x1fu) / 31.0;
+      texColour.a = float(pixel >> 15 & 0x1fu) / 31.0;
+      texColour.b = float(pixel >> 10 & 0x1fu) / 31.0;
+      texColour.g = float(pixel >>  5 & 0x1fu) / 31.0;
+      texColour.r = float(pixel       & 0x1fu) / 31.0;
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }

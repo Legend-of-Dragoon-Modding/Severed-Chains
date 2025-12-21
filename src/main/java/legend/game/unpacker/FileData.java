@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -333,12 +334,12 @@ public class FileData {
     return read;
   }
 
-  public void writeRegistryId(final int offset, final RegistryId id) {
-    this.writeAscii(offset, id.toString());
+  public void writeRegistryId(final int offset, @Nullable final RegistryId id) {
+    this.writeAscii(offset, id != null ? id.toString() : "");
   }
 
-  public void writeRegistryId(final IntRef offset, final RegistryId id) {
-    this.writeAscii(offset, id.toString());
+  public void writeRegistryId(final IntRef offset, @Nullable final RegistryId id) {
+    this.writeAscii(offset, id != null ? id.toString() : "");
   }
 
   public RegistryId readRegistryId(final int offset) {
@@ -347,7 +348,13 @@ public class FileData {
   }
 
   public RegistryId readRegistryId(final IntRef offset) {
-    return new RegistryId(this.readAscii(offset));
+    final String id = this.readAscii(offset);
+
+    if(id.isEmpty()) {
+      return null;
+    }
+
+    return new RegistryId(id);
   }
 
   public Rect4i readRect(final int offset, final Rect4i rect) {

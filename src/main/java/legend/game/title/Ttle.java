@@ -1179,7 +1179,7 @@ public class Ttle extends EngineState {
       renderText(I18n.translate("lod_core.ui.title.hotkey", InputCodepoints.getActionName(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get())), 115.0f, y + 3.0f, UI_WHITE_SMALL);
     }
 
-    renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, model -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
+    renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, (model, shadow) -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
 
     //LAB_800c9390
     //LAB_800c939c

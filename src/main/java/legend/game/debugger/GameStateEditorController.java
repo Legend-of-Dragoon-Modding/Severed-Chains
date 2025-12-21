@@ -1,17 +1,23 @@
 package legend.game.debugger;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
-import legend.game.modding.coremod.CoreMod;
-import legend.game.types.EquipmentSlot;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import legend.game.i18n.I18n;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Good;
+import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
-import static legend.core.GameEngine.CONFIG;
+import java.util.Comparator;
+
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
@@ -19,8 +25,7 @@ public class GameStateEditorController {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(GameStateEditorController.class);
 
-  String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
-  String[] characterData = {"EXP", "Party Flags", "HP", "MP", "SP", "Dragoon EXP", "Status", "Level", "Dragoon Level", "Equipment Slot 1", "Equipment Slot 2", "Equipment Slot 3", "Equipment Slot 4", "Equipment Slot 5", "Addition", "Addition Level Slot 1", "Addition Level Slot 2", "Addition Level Slot 3", "Addition Level Slot 4", "Addition Level Slot 5", "Addition Level Slot 6", "Addition Level Slot 7", "Addition Level Slot 8", "Addition EXP Slot 1", "Addition EXP Slot 2", "Addition EXP Slot 3", "Addition EXP Slot 4", "Addition EXP Slot 5", "Addition EXP Slot 6", "Addition EXP Slot 7", "Addition EXP Slot 8"};
+  private final String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
   @FXML
   public TextField textData1;
   @FXML
@@ -66,9 +71,7 @@ public class GameStateEditorController {
   @FXML
   public TextField textData3;
   @FXML
-  public ComboBox<Integer> getGoods;
-  @FXML
-  public TextField textGoods;
+  public ComboBox<Good> goodsList;
   @FXML
   public ComboBox<Integer> getData4;
   @FXML
@@ -78,19 +81,11 @@ public class GameStateEditorController {
   @FXML
   public TextField textChestFlags;
   @FXML
-  public Spinner<Integer> getEquipment;
+  public ComboBox<Equipment> equipmentList;
   @FXML
-  public TextField textEquipment;
-  @FXML
-  public Spinner<Integer> getItems;
-  @FXML
-  public TextField textItems;
+  public ComboBox<Item> itemList;
   @FXML
   public ComboBox<String> getCharacter;
-  @FXML
-  public ComboBox<String> getCharacterData;
-  @FXML
-  public TextField textCharacterData;
   @FXML
   public TextField textPathIndex;
   @FXML
@@ -101,6 +96,7 @@ public class GameStateEditorController {
   public TextField textFacing;
   @FXML
   public TextField textAreaIndex;
+  public Button editCharacter;
 
   public void initialize() {
     this.textData1.setText(String.format("%#x", gameState_800babc8._04));
@@ -151,10 +147,17 @@ public class GameStateEditorController {
     this.getData3.getSelectionModel().select(0);
     this.getData3();
 
-    this.getGoods.getItems().add(0);
-    this.getGoods.getItems().add(1);
-    this.getGoods.getSelectionModel().select(0);
-    this.getGoods();
+    this.goodsList.setConverter(new RegistryEntryConverter<>());
+
+    for(final Good good : gameState_800babc8.goods_19c) {
+      this.goodsList.getItems().add(good);
+    }
+
+    this.goodsList.getItems().sort(Comparator.comparing(e -> e.getRegistryId().toString()));
+
+    if(!this.goodsList.getItems().isEmpty()) {
+      this.goodsList.getSelectionModel().select(0);
+    }
 
     for(int i = 0; i < 8; i++) {
       this.getData4.getItems().add(i);
@@ -168,32 +171,30 @@ public class GameStateEditorController {
     this.getChestFlags.getSelectionModel().select(0);
     this.getChestFlags();
 
-    this.getEquipment.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 254, 0));
-    this.getEquipment.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if(!oldValue.equals(newValue)) {
-        this.getEquipment();
-      }
-    });
-    this.getEquipment();
+    this.equipmentList.setConverter(new RegistryEntryConverter<>());
 
-    this.getItems.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0));
-    this.getItems.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if(!oldValue.equals(newValue)) {
-        this.getItems();
-      }
-    });
-    this.getItems();
+    for(final Equipment equipment : gameState_800babc8.equipment_1e8) {
+      this.equipmentList.getItems().add(equipment);
+    }
+
+    if(!this.equipmentList.getItems().isEmpty()) {
+      this.equipmentList.getSelectionModel().select(0);
+    }
+
+    this.itemList.setConverter(new RegistryEntryConverter<>());
+
+    for(final ItemStack item : gameState_800babc8.items_2e9) {
+      this.itemList.getItems().add(item.getItem());
+    }
+
+    if(!this.itemList.getItems().isEmpty()) {
+      this.itemList.getSelectionModel().select(0);
+    }
 
     for(final String character : this.characters) {
       this.getCharacter.getItems().add(character);
     }
     this.getCharacter.getSelectionModel().select(0);
-
-    for(final String characterDatum : this.characterData) {
-      this.getCharacterData.getItems().add(characterDatum);
-    }
-    this.getCharacterData.getSelectionModel().select(0);
-    this.getCharacter();
 
     this.textPathIndex.setText(String.format("%#x", gameState_800babc8.pathIndex_4d8));
     this.textDotIndex.setText(String.format("%#x", gameState_800babc8.dotIndex_4da));
@@ -387,13 +388,31 @@ public class GameStateEditorController {
   }
 
   @FXML
-  public void getGoods() {
-    this.textGoods.setText(String.format("%#x", gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()]));
+  public void giveGood() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.goods, this::goodSelectorOnSelect, this::goodSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  private void goodSelectorOnSelect(final Good good) {
+    gameState_800babc8.goods_19c.give(good);
+
+    if(!this.goodsList.getItems().contains(good)) {
+      this.goodsList.getItems().add(good);
+    }
+
+    this.goodsList.getItems().sort(Comparator.comparing(e -> e.getRegistryId().toString()));
+    this.goodsList.getSelectionModel().select(good);
+  }
+
+  private void goodSelectorOnCancel() {
+
   }
 
   @FXML
-  public void setGoods() {
-    gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textGoods.getText(), gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()]);
+  public void takeGood() {
+    final Good good = this.goodsList.getValue();
+    gameState_800babc8.goods_19c.take(good);
+    this.goodsList.getItems().remove(good);
   }
 
   @FXML
@@ -416,86 +435,57 @@ public class GameStateEditorController {
     gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textChestFlags.getText(), gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()]);
   }
 
-  public void getEquipment() {
-    if(!gameState_800babc8.equipment_1e8.isEmpty()) {
-      this.textEquipment.setText(gameState_800babc8.equipment_1e8.get(this.getEquipment.getValue()).getRegistryId().toString());
-    } else {
-      this.textEquipment.clear();
-    }
+  @FXML
+  public void giveEquipment() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.equipment, this::equipmentSelectorOnSelect, this::equipmentSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  private void equipmentSelectorOnSelect(final Equipment equipment) {
+    gameState_800babc8.equipment_1e8.add(equipment);
+    this.equipmentList.getItems().add(equipment);
+    this.equipmentList.getSelectionModel().select(this.equipmentList.getItems().size() - 1);
+  }
+
+  private void equipmentSelectorOnCancel() {
+
   }
 
   @FXML
-  public void setEquipment() {
-    if(this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
-      gameState_800babc8.equipment_1e8.add(REGISTRIES.equipment.getEntry(this.textEquipment.getText()).get());
-    } else {
-      gameState_800babc8.equipment_1e8.set(this.getEquipment.getValue(), REGISTRIES.equipment.getEntry(this.textEquipment.getText()).get());
-    }
-  }
-
-  public void getItems() {
-    if(!gameState_800babc8.items_2e9.isEmpty()) {
-      this.textItems.setText(gameState_800babc8.items_2e9.get(this.getItems.getValue()).getItem().getRegistryId().toString());
-    } else {
-      this.textEquipment.clear();
-    }
+  public void takeEquipment() {
+    final int index = this.equipmentList.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.equipment_1e8.remove(index);
+    this.equipmentList.getItems().remove(index);
   }
 
   @FXML
-  public void setItems() {
-    if(this.getItems.getValue() >= gameState_800babc8.items_2e9.getSize()) {
-      gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(this.textItems.getText()).get());
-    } else {
-      gameState_800babc8.items_2e9.set(this.getItems.getValue(), REGISTRIES.items.getEntry(this.textItems.getText()).get());
-    }
+  public void giveItem() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.items, this::itemSelectorOnSelect, this::itemSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  private void itemSelectorOnSelect(final Item item) {
+    gameState_800babc8.items_2e9.give(new ItemStack(item), true);
+    this.itemList.getItems().add(item);
+    this.itemList.getSelectionModel().select(this.itemList.getItems().size() - 1);
+  }
+
+  private void itemSelectorOnCancel() {
+
   }
 
   @FXML
-  public void getCharacter() {
-    this.textCharacterData.setText(this.getCharacterStats());
+  public void takeItem() {
+    final int index = this.itemList.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.items_2e9.takeFromSlot(index, gameState_800babc8.items_2e9.get(index).getSize());
+    this.itemList.getItems().remove(index);
   }
 
   @FXML
-  public void getCharacterData() {
-    this.textCharacterData.setText(this.getCharacterStats());
-  }
-
-  public String getCharacterStats() {
-    return switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00);
-      case 1 -> String.format("%#x", gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-      case 2 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08);
-      case 3 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a);
-      case 4 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c);
-      case 5 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e);
-      case 6 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10);
-      case 7 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12);
-      case 8 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13);
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.get(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9)).getRegistryId().toString();
-      case 14 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19);
-      case 15, 16, 17, 18, 19, 20, 21, 22 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15]);
-      case 23, 24, 25, 26, 27, 28, 29, 30 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23]);
-      default -> "";
-    };
-  }
-
-  @FXML
-  public void setCharacterData() {
-    switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00 = Integer.parseInt(this.textCharacterData.getText());
-      case 1 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = this.parseHexOrDec(this.textCharacterData.getText(), gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-      case 2 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08 = Integer.parseInt(this.textCharacterData.getText());
-      case 3 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a = Integer.parseInt(this.textCharacterData.getText());
-      case 4 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c = Integer.parseInt(this.textCharacterData.getText());
-      case 5 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e = Integer.parseInt(this.textCharacterData.getText());
-      case 6 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10 = Integer.parseInt(this.textCharacterData.getText());
-      case 7 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12 = Integer.parseInt(this.textCharacterData.getText());
-      case 8 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13 = Integer.parseInt(this.textCharacterData.getText());
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.put(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9), REGISTRIES.equipment.getEntry(this.textCharacterData.getText()).get());
-      case 14 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19 = Integer.parseInt(this.textCharacterData.getText());
-      case 15, 16, 17, 18, 19, 20, 21, 22 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15] = Integer.parseInt(this.textCharacterData.getText());
-      case 23, 24, 25, 26, 27, 28, 29, 30 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23] = Integer.parseInt(this.textCharacterData.getText());
-    }
+  public void editCharacter() throws Exception {
+    final int id = this.getCharacter.getSelectionModel().getSelectedIndex();
+    final CharacterEditor charEditor = new CharacterEditor(id, gameState_800babc8.charData_32c[id]);
+    charEditor.start(new Stage());
   }
 
   @FXML
@@ -546,5 +536,21 @@ public class GameStateEditorController {
   @FXML
   public void setAreaIndex() {
     gameState_800babc8.directionalPathIndex_4de = this.parseHexOrDec(this.textAreaIndex.getText(), gameState_800babc8.directionalPathIndex_4de);
+  }
+
+  private static class RegistryEntryConverter<T extends RegistryEntry> extends StringConverter<T> {
+    @Override
+    public String toString(final T t) {
+      if(t == null) {
+        return "";
+      }
+
+      return t.getRegistryId() + " - " + I18n.translate(t);
+    }
+
+    @Override
+    public T fromString(final String s) {
+      return null;
+    }
   }
 }

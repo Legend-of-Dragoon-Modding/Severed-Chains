@@ -1,5 +1,6 @@
 package legend.game.modding.events.battle;
 
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.BattleEvent;
@@ -11,13 +12,15 @@ public class SetBentStatEvent extends BattleEvent {
   public int value;
   public RegistryId registryValue;
 
-  public SetBentStatEvent(final BattleEntity27c bent, final BattleEntityStat stat, final int value) {
+  public SetBentStatEvent(final Battle battle, final BattleEntity27c bent, final BattleEntityStat stat, final int value) {
+    super(battle);
     this.bent = bent;
     this.stat = stat;
     this.value = value;
   }
 
-  public SetBentStatEvent(final BattleEntity27c bent, final BattleEntityStat stat, final RegistryId registryValue) {
+  public SetBentStatEvent(final Battle battle, final BattleEntity27c bent, final BattleEntityStat stat, final RegistryId registryValue) {
+    super(battle);
     this.bent = bent;
     this.stat = stat;
     this.registryValue = registryValue;

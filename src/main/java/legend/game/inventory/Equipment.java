@@ -157,6 +157,10 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
 
   }
 
+  public int getGuardHealBonus() {
+    return 0;
+  }
+
   @Override
   public void read(final int index, final Param out) {
     switch(index) {

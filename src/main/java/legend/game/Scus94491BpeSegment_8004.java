@@ -1,13 +1,51 @@
 package legend.game;
 
 import legend.core.RenderEngine;
+import legend.game.additions.Addition;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.types.BattleReportOverlayList10;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.Arrays;
 import java.util.function.Function;
+
+import static legend.lodmod.LodAdditions.ALBERT_FLOWER_STORM;
+import static legend.lodmod.LodAdditions.ALBERT_GUST_OF_WIND_DANCE;
+import static legend.lodmod.LodAdditions.ALBERT_HARPOON;
+import static legend.lodmod.LodAdditions.ALBERT_ROD_TYPHOON;
+import static legend.lodmod.LodAdditions.ALBERT_SPINNING_CANE;
+import static legend.lodmod.LodAdditions.BLAZING_DYNAMO;
+import static legend.lodmod.LodAdditions.BONE_CRUSH;
+import static legend.lodmod.LodAdditions.BURNING_RUSH;
+import static legend.lodmod.LodAdditions.CATS_CRADLE;
+import static legend.lodmod.LodAdditions.COOL_BOOGIE;
+import static legend.lodmod.LodAdditions.CRUSH_DANCE;
+import static legend.lodmod.LodAdditions.DEMONS_DANCE;
+import static legend.lodmod.LodAdditions.DOUBLE_PUNCH;
+import static legend.lodmod.LodAdditions.DOUBLE_SLASH;
+import static legend.lodmod.LodAdditions.DOUBLE_SMACK;
+import static legend.lodmod.LodAdditions.FERRY_OF_STYX;
+import static legend.lodmod.LodAdditions.FIVE_RING_SHATTERING;
+import static legend.lodmod.LodAdditions.FLOWER_STORM;
+import static legend.lodmod.LodAdditions.GUST_OF_WIND_DANCE;
+import static legend.lodmod.LodAdditions.HAMMER_SPIN;
+import static legend.lodmod.LodAdditions.HARD_BLADE;
+import static legend.lodmod.LodAdditions.HARPOON;
+import static legend.lodmod.LodAdditions.HEX_HAMMER;
+import static legend.lodmod.LodAdditions.INFERNO;
+import static legend.lodmod.LodAdditions.MADNESS_HERO;
+import static legend.lodmod.LodAdditions.MOON_STRIKE;
+import static legend.lodmod.LodAdditions.MORE_MORE;
+import static legend.lodmod.LodAdditions.OMNI_SWEEP;
+import static legend.lodmod.LodAdditions.PERKY_STEP;
+import static legend.lodmod.LodAdditions.PURSUIT;
+import static legend.lodmod.LodAdditions.ROD_TYPHOON;
+import static legend.lodmod.LodAdditions.SPINNING_CANE;
+import static legend.lodmod.LodAdditions.SUMMON_4_GODS;
+import static legend.lodmod.LodAdditions.VOLCANO;
+import static legend.lodmod.LodAdditions.WHIP_SMACK;
 
 public final class Scus94491BpeSegment_8004 {
   private Scus94491BpeSegment_8004() { }
@@ -119,13 +157,29 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[911] = SItem::scriptTakeEquipment;
     scriptSubFunctions_8004e29c[912] = SItem::scriptGenerateAttackItem;
     scriptSubFunctions_8004e29c[913] = SItem::scriptGenerateRecoveryItem;
+    scriptSubFunctions_8004e29c[914] = SItem::scriptHasGood;
+    scriptSubFunctions_8004e29c[915] = SItem::scriptGiveGood;
+    scriptSubFunctions_8004e29c[916] = SItem::scriptTakeGood;
 
     scriptSubFunctions_8004e29c[960] = RenderEngine::scriptGetRenderAspectMultiplier;
   }
   // 8004f29c end of jump table
 
+  // Dart, Lavitz, Shana, Rose, Haschel, Albert, Meru, Kongol, Miranda, DD
   public static final int[] additionOffsets_8004f5ac = {0, 8, -1, 14, 29, 8, 23, 19, -1, 0};
-  public static final int[] additionCounts_8004f5c0 = {7, 5, 0, 4, 6, 5, 5, 3, 0, 0};
+
+  @SuppressWarnings("unchecked")
+  public static final RegistryDelegate<Addition>[][] CHARACTER_ADDITIONS = new RegistryDelegate[][] {
+    {DOUBLE_SLASH, VOLCANO, BURNING_RUSH, CRUSH_DANCE, MADNESS_HERO, MOON_STRIKE, BLAZING_DYNAMO},
+    {HARPOON, SPINNING_CANE, ROD_TYPHOON, GUST_OF_WIND_DANCE, FLOWER_STORM},
+    {},
+    {WHIP_SMACK, MORE_MORE, HARD_BLADE, DEMONS_DANCE},
+    {DOUBLE_PUNCH, FERRY_OF_STYX, SUMMON_4_GODS, FIVE_RING_SHATTERING, HEX_HAMMER, OMNI_SWEEP},
+    {ALBERT_HARPOON, ALBERT_SPINNING_CANE, ALBERT_ROD_TYPHOON, ALBERT_GUST_OF_WIND_DANCE, ALBERT_FLOWER_STORM},
+    {DOUBLE_SMACK, HAMMER_SPIN, COOL_BOOGIE, CATS_CRADLE, PERKY_STEP},
+    {PURSUIT, INFERNO, BONE_CRUSH},
+    {},
+  };
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new byte[] {0x4, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0});
   public static BattleReportOverlayList10 battleReportOverlayLists_8004f658;
