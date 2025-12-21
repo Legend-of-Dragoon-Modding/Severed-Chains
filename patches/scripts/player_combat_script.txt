@@ -4736,6 +4736,9 @@ return
 ACTION_NOOP:
 return
 
+GUARD_HEAL_PERCENT:
+data 0
+
 ; SUBROUTINE
 ACTION_GUARD:
 mov 0x0, stor[8] ; source, dest
@@ -4748,8 +4751,10 @@ call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 LABEL_518:
 call Battle::scriptGetBentStat2, stor[0], CURRENT_HP, stor[8] ; bentIndex, statIndex, value
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[9] ; bentIndex, statIndex, value
+call Battle::scriptGetBentStat2, stor[0], GUARD_HEAL, inl[:GUARD_HEAL_PERCENT] ; bentIndex, statIndex, value
 mov stor[8], stor[11] ; source, dest
-div 0xa, stor[9] ; amount, operand
+mul inl[:GUARD_HEAL_PERCENT], stor[9]
+div 100, stor[9] ; amount, operand
 add stor[9], stor[11] ; amount, operand
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[10] ; bentIndex, statIndex, value
 jmp_cmp >=, stor[10], stor[11], inl[:LABEL_519] ; operand, left, right, addr

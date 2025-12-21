@@ -28,6 +28,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
@@ -476,6 +477,9 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case ARCHER_SP -> this.getArcherSp();
       case ADDITION_HIT_COUNT -> this.getAdditionHitCount();
 
+      case GUARD_HEAL -> this.stats.getStat(GUARD_HEAL_STAT.get()).get();
+      case GUARD_HEAL_RAW -> this.stats.getStat(GUARD_HEAL_STAT.get()).getRaw();
+
       default -> super.getStat(statIndex);
     };
   }
@@ -530,6 +534,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case REVIVE -> this.revive_13a = value;
       case HP_MULTI -> this.hpMulti_13c = value;
       case MP_MULTI -> this.mpMulti_13e = value;
+
+      case GUARD_HEAL_RAW -> this.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(value);
 
       default -> super.setStat(statIndex, value);
     }

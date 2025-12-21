@@ -2489,6 +2489,7 @@ public final class SItem {
         characterStats.equipmentMpRegen_5a += event.mpRegen;
         characterStats.equipmentSpRegen_5c += event.spRegen;
         characterStats.equipmentEscapeBonus_56 += event.escapeBonus;
+        characterStats.equipmentGuardHeal += event.guardHealBonus;
       }
     }
   }

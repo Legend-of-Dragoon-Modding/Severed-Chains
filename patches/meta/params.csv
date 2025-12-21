@@ -269,8 +269,6 @@
 "Battle::FUN_800cc698","in","int","ticks","","none"
 "Battle::FUN_800cc784","in","int","bentIndex","The BattleEntity27c script index","none"
 "Battle::scriptLoadAttackAnimations","in","int","bentIndex","The BattleEntity27c script index","none"
-"Battle::scriptSetUpAndHandleCombatMenu","in","int","displayableIconsBitset","A bitset of which icons are displayed","none"
-"Battle::scriptSetUpAndHandleCombatMenu","in","int","disabledIconsBitset","A bitset of which icons are disabled","none"
 "Battle::scriptSetUpAndHandleCombatMenu","out","int","selectedAction","The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)","none"
 "Battle::scriptRenderDamage","in","int","bentIndex","The BattleEntity27c script index","none"
 "Battle::scriptRenderDamage","in","int","damage","The amount of damage done","none"

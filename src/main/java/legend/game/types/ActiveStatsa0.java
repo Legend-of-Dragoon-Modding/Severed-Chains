@@ -65,7 +65,7 @@ public class ActiveStatsa0 {
   /** ushort */
   public int maxHp_66;
   /** byte */
-  public int addition_68;
+//  public int addition_68;
   /** ubyte */
   public int bodySpeed_69;
   /** ubyte */
@@ -143,6 +143,8 @@ public class ActiveStatsa0 {
   public int equipment_1a_9a;
   /** ubyte */
   public int equipmentOnHitStatus_9b;
+  /** Integer percentage - e.g. 10 = 10% */
+  public int equipmentGuardHeal;
 //  /** ushort */
 //  public int addition_00_9c;
   /** ubyte */
@@ -220,6 +222,7 @@ public class ActiveStatsa0 {
     this.equipment_19_99 = other.equipment_19_99;
     this.equipment_1a_9a = other.equipment_1a_9a;
     this.equipmentOnHitStatus_9b = other.equipmentOnHitStatus_9b;
+    this.equipmentGuardHeal = other.equipmentGuardHeal;
 //    this.addition_00_9c = other.addition_00_9c;
     this.additionSpMultiplier_9e = other.additionSpMultiplier_9e;
     this.additionDamageMultiplier_9f = other.additionDamageMultiplier_9f;
