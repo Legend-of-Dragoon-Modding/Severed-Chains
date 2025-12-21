@@ -316,6 +316,7 @@ public class LodMod {
       .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ScancodeInputActivation(InputKey.ESCAPE))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ButtonInputActivation(InputButton.START))
+      .add(INPUT_ACTION_BTTL_GUARD.get(), new ScancodeInputActivation(InputKey.G))
     ;
   }
 
