@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
@@ -16,6 +15,7 @@ import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.GoodsInventory;
+import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
@@ -35,7 +35,6 @@ import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
-import legend.game.inventory.Inventory;
 import legend.game.modding.events.inventory.TakeEquipmentEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -72,7 +71,6 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -1252,7 +1250,7 @@ public final class SItem {
   }
 
   @Method(0x80103e90L)
-  public static float renderMenuCentredText(final Font font, final String text, final float x, final float y, final int maxWidth, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+  public static float renderMenuCentredText(final Font font, final String text, final float x, final float y, final int maxWidth, final FontOptions options, @Nullable final Text.QueueCallback queueCallback) {
     final String[] split;
     if(font.textWidth(text) * options.getSize() <= maxWidth) {
       split = new String[] {text};

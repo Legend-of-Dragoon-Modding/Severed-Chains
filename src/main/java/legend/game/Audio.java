@@ -5,6 +5,7 @@ import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.modding.events.battle.BattleMusicEvent;
@@ -918,7 +919,7 @@ public final class Audio {
   }
 
   @Method(0x8001de84L)
-  public static void loadEncounterSoundsAndMusic() {
+  public static void loadEncounterSoundsAndMusic(final Battle battle) {
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -943,7 +944,7 @@ public final class Audio {
         default -> parseMelbuVictory(encounter.musicIndex & 0x1f);
       };
 
-      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(victoryType, musicIndex, encounter));
+      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(battle, victoryType, musicIndex, encounter));
 
       loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x4000);
 

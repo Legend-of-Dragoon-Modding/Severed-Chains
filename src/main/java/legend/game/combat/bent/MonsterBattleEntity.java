@@ -39,8 +39,8 @@ public class MonsterBattleEntity extends BattleEntity27c {
   public int monsterStatusResistFlag_76;
   public final Vector3f targetArrowPos_78 = new Vector3f();
 
-  public MonsterBattleEntity(final String name) {
-    super(LodMod.MONSTER_TYPE.get(), name);
+  public MonsterBattleEntity(final Battle battle, final String name) {
+    super(LodMod.MONSTER_TYPE.get(), battle, name);
   }
 
   @Override

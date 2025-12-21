@@ -88,6 +88,7 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
+import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.UiBox;
@@ -189,6 +190,7 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnDirSync;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.DrgnFiles.loadFile;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -276,7 +278,6 @@ import static legend.game.combat.SEffe.loadDeffStageEffects;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_1;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_1000;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_ANIMATE_ONCE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
@@ -286,6 +287,7 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_HIDE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_RELOAD_BATTLE_ACTIONS;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
@@ -294,6 +296,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.*;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
@@ -417,8 +420,6 @@ public class Battle extends EngineState {
 
   public boolean shouldRenderStage_800c6754;
 
-  private int currentDisplayableIconsBitset_800c675c;
-
   public boolean shouldRenderMcq_800c6764;
 
   public int mcqStepX_800c676c;
@@ -483,7 +484,7 @@ public class Battle extends EngineState {
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
 
   @SuppressWarnings("unchecked")
-  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {LodMod.FIRE_ELEMENT, LodMod.WIND_ELEMENT, LodMod.LIGHT_ELEMENT, LodMod.DARK_ELEMENT, LodMod.THUNDER_ELEMENT, LodMod.WIND_ELEMENT, LodMod.WATER_ELEMENT, LodMod.EARTH_ELEMENT, LodMod.LIGHT_ELEMENT};
+  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {FIRE_ELEMENT, WIND_ELEMENT, LIGHT_ELEMENT, DARK_ELEMENT, THUNDER_ELEMENT, WIND_ELEMENT, WATER_ELEMENT, EARTH_ELEMENT, LIGHT_ELEMENT};
 
   /** Different sets of bents for different target types (chars, monsters, all) */
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
@@ -1456,7 +1457,7 @@ public class Battle extends EngineState {
 
     //LAB_800c760c
     this.allocateStageDarkeningStorage();
-    loadEncounterSoundsAndMusic();
+    loadEncounterSoundsAndMusic(this);
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1500,7 +1501,6 @@ public class Battle extends EngineState {
     battleState_8006e398.battlePhase_eec = 0;
 
     this.clearCombatants();
-    this.clearCurrentDisplayableItems();
 
     battleState_8006e398.clear();
 
@@ -1537,7 +1537,7 @@ public class Battle extends EngineState {
 
       final int combatantIndex = this.getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+      final MonsterBattleEntity bent = new MonsterBattleEntity(this, name);
       final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
@@ -1577,7 +1577,7 @@ public class Battle extends EngineState {
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
       final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
-      final PlayerBattleEntity bent = new PlayerBattleEntity(name, charSlot + 6, this.playerBattleScript_800c66fc);
+      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charSlot + 6, this.playerBattleScript_800c66fc);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
@@ -1725,7 +1725,7 @@ public class Battle extends EngineState {
     this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
     this.hud.FUN_800f417c();
 
-    EVENTS.postEvent(new BattleStartedEvent());
+    EVENTS.postEvent(new BattleStartedEvent(this));
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1756,27 +1756,27 @@ public class Battle extends EngineState {
     if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
-      this.currentTurnBent_800c66c8.clearFlag(FLAG_1000);
+      this.currentTurnBent_800c66c8.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
 
       if(battleState_8006e398.hasAlivePlayers()) {
         //LAB_800c7c98
         this.forcedTurnBent_800c66bc = battleState_8006e398.getForcedTurnBent();
 
         if(this.forcedTurnBent_800c66bc != null) { // A bent has a forced turn
-          this.forcedTurnBent_800c66bc.clearFlag(FLAG_TAKE_FORCED_TURN).setFlag(FLAG_1000).setFlag(FLAG_CURRENT_TURN);
+          this.forcedTurnBent_800c66bc.clearFlag(FLAG_TAKE_FORCED_TURN).setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-          EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
             //LAB_800c7d3c
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
-            this.currentTurnBent_800c66c8.setFlag(FLAG_1000).setFlag(FLAG_CURRENT_TURN);
+            this.currentTurnBent_800c66c8.setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-            EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.currentTurnBent_800c66c8));
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -1829,7 +1829,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c8068L)
   public void performPostBattleAction() {
-    EVENTS.postEvent(new BattleEndedEvent());
+    EVENTS.postEvent(new BattleEndedEvent(this));
 
     final int postBattleAction = postBattleAction_800bc974;
 
@@ -2411,7 +2411,7 @@ public class Battle extends EngineState {
 
     TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
 
-    EVENTS.postEvent(new CombatantModelLoadedEvent(combatant, model));
+    EVENTS.postEvent(new CombatantModelLoadedEvent((Battle)currentEngineState_8004dd04, combatant, model));
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
@@ -2825,11 +2825,6 @@ public class Battle extends EngineState {
     synchronized(this.usedMonsterTextureSlotsLock) {
       this.usedMonsterTextureSlots_800c66c4 &= ~(0x1 << shift);
     }
-  }
-
-  @Method(0x800cae44L)
-  public void clearCurrentDisplayableItems() {
-    this.currentDisplayableIconsBitset_800c675c = 0;
   }
 
   @Method(0x800cb250L)
@@ -3523,8 +3518,6 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "displayableIconsBitset", description = "A bitset of which icons are displayed")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "disabledIconsBitset", description = "A bitset of which icons are disabled")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
@@ -3532,37 +3525,23 @@ public class Battle extends EngineState {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final int displayableIconsBitset = script.params_20[0].get();
-
-    if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || script.scriptState_04.hasFlag(FLAG_1000)) {
-      //LAB_800cca7c
-      final int disabledIconsBitset;
-
-      if(script.paramCount_14 == 2) {
-        disabledIconsBitset = 0;
-      } else {
-        //LAB_800ccaa0
-        disabledIconsBitset = script.params_20[1].get();
-      }
-
+    if(script.scriptState_04.hasFlag(FLAG_RELOAD_BATTLE_ACTIONS)) {
       //LAB_800ccab4
-      this.hud.initializeMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
-
-      script.scriptState_04.clearFlag(FLAG_1000);
-      this.currentDisplayableIconsBitset_800c675c = displayableIconsBitset;
+      this.hud.initializeMenuIcons(script.scriptState_04);
+      script.scriptState_04.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
     }
 
     //LAB_800ccaec
     this.hud.toggleHighlight(true);
 
-    final int selectedAction = this.hud.tickAndRender();
-    if(selectedAction == 0) {
+    final BattleAction selectedAction = this.hud.tickAndRender();
+    if(selectedAction == null) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     this.hud.toggleHighlight(false);
-    script.params_20[2].set(selectedAction - 1);
+    script.params_20[0].set(selectedAction.getRegistryId());
 
     //LAB_800ccb28
     return FlowControl.CONTINUE;
@@ -3941,7 +3920,7 @@ public class Battle extends EngineState {
   @Method(0x800cd5b4L)
   public FlowControl scriptAllocateBent(final RunningScript<?> script) {
     final String name = "Bent allocated by script " + script.scriptState_04.index;
-    final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+    final MonsterBattleEntity bent = new MonsterBattleEntity(this, name);
     final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
     script.params_20[2].set(state.index);
     state.setTicker(bent::bentLoadingTicker);
@@ -7782,20 +7761,20 @@ public class Battle extends EngineState {
       final CharacterData2c charData = gameState_800babc8.charData_32c[bent.charId_272];
 
       //LAB_800eec10
-      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(LodMod.HP_STAT.get()).getCurrent());
+      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent());
 
       if((gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[bent.charId_272]))) {
-        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eec78
       if(bent.charId_272 == 0 && gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[9])) {
-        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eecb8
       charData.status_10 = bent.status_0e & 0xc8;
-      charData.sp_0c = bent.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
+      charData.sp_0c = bent.stats.getStat(SP_STAT.get()).getCurrent();
     }
 
     //LAB_800eed78
@@ -7837,9 +7816,9 @@ public class Battle extends EngineState {
       System.arraycopy(spellIndices, 0, this.dragoonSpells_800c6960[charSlot].spellIndex_01, 0, 8);
 
       //LAB_800ef400
-      final VitalsStat playerHp = player.stats.getStat(LodMod.HP_STAT.get());
-      final VitalsStat playerMp = player.stats.getStat(LodMod.MP_STAT.get());
-      final VitalsStat playerSp = player.stats.getStat(LodMod.SP_STAT.get());
+      final VitalsStat playerHp = player.stats.getStat(HP_STAT.get());
+      final VitalsStat playerMp = player.stats.getStat(MP_STAT.get());
+      final VitalsStat playerSp = player.stats.getStat(SP_STAT.get());
 
       final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
       player.level_04 = stats.level_0e;
@@ -7864,15 +7843,15 @@ public class Battle extends EngineState {
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
-      player.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
-      player.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
-      player.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
-      player.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
-      player.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
+      player.stats.getStat(SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
+      player.stats.getStat(ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
+      player.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
+      player.stats.getStat(DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
+      player.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
       player.attackHit_3c = stats.equipmentAttackHit_90;
       player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
-      player.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
+      player.stats.getStat(AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
+      player.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
       player.equipment_19_46 = stats.equipment_19_99;
       player.equipment_1a_48 = stats.equipment_1a_9a;
@@ -7941,10 +7920,10 @@ public class Battle extends EngineState {
 
     final int avoidChance;
     if(attackType == AttackType.PHYSICAL) {
-      avoidChance = defender.stats.getStat(LodMod.AVOID_STAT.get()).get();
+      avoidChance = defender.stats.getStat(AVOID_STAT.get()).get();
     } else {
       //LAB_800f1c9c
-      avoidChance = defender.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
+      avoidChance = defender.stats.getStat(MAGIC_AVOID_STAT.get()).get();
     }
 
     boolean effectHit = false;
@@ -8007,7 +7986,7 @@ public class Battle extends EngineState {
     //LAB_800f2140
     int damage;
     if(attacker.spell_94 != null && (attacker.spell_94.flags_01 & 0x4) != 0) {
-      damage = defender.stats.getStat(LodMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
+      damage = defender.stats.getStat(HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
 
       final List<BattleEntity27c> targets = new ArrayList<>();
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
@@ -8064,7 +8043,7 @@ public class Battle extends EngineState {
     final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
-    final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
+    final int damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
@@ -8099,7 +8078,7 @@ public class Battle extends EngineState {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08.get());
     }
 
-    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
+    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
 
     //LAB_800f27ec
     script.params_20[3].set(damage);
@@ -8132,7 +8111,7 @@ public class Battle extends EngineState {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.item_d4.getAttackElement());
     }
 
-    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
+    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
 
     //LAB_800f2970
     script.params_20[3].set(damage);
@@ -8151,7 +8130,7 @@ public class Battle extends EngineState {
     //LAB_800f4410
     //LAB_800f4430
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
     spGained_800bc950[player.charSlot_276] += script.params_20[1].get();
@@ -8171,7 +8150,7 @@ public class Battle extends EngineState {
     //LAB_800f454c
     //LAB_800f456c
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
@@ -8314,7 +8293,7 @@ public class Battle extends EngineState {
 
     final MonsterStatsEvent statsEvent = EVENTS.postEvent(new MonsterStatsEvent(monster.charId_272));
 
-    final VitalsStat monsterHp = monster.stats.getStat(LodMod.HP_STAT.get());
+    final VitalsStat monsterHp = monster.stats.getStat(HP_STAT.get());
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
@@ -8329,15 +8308,15 @@ public class Battle extends EngineState {
     monster.equipmentAttack1_28 = 0;
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
-    monster.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
-    monster.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(statsEvent.attack);
-    monster.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
-    monster.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(statsEvent.defence);
-    monster.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
+    monster.stats.getStat(SPEED_STAT.get()).setRaw(statsEvent.speed);
+    monster.stats.getStat(ATTACK_STAT.get()).setRaw(statsEvent.attack);
+    monster.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
+    monster.stats.getStat(DEFENSE_STAT.get()).setRaw(statsEvent.defence);
+    monster.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
-    monster.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
+    monster.stats.getStat(AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
+    monster.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
     monster.equipment_19_46 = 0;
     monster.equipment_1a_48 = 0;
@@ -8642,7 +8621,7 @@ public class Battle extends EngineState {
 
     if(characterId != -1) {
       if(characterId == 9) { //TODO stupid special case handling for DD Dart
-        this.dragoonSpaceElement_800c6b64 = LodMod.DIVINE_ELEMENT.get();
+        this.dragoonSpaceElement_800c6b64 = DIVINE_ELEMENT.get();
       } else {
         this.dragoonSpaceElement_800c6b64 = battleState_8006e398.getPlayerById(characterId).element;
       }
@@ -8716,7 +8695,7 @@ public class Battle extends EngineState {
   @Method(0x800f9cacL)
   public FlowControl scriptSetDisabledMenuIcons(final RunningScript<?> script) {
     final int disabledIconsBitset = script.params_20[0].get();
-    this.hud.setDisabledIcons(disabledIconsBitset);
+    disableRetailBattleActions(disabledIconsBitset, this.hud.battleMenu_800c6c34.disabledActions);
     return FlowControl.CONTINUE;
   }
 

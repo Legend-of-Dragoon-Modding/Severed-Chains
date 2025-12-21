@@ -2,6 +2,7 @@ package legend.game.scripting;
 
 import legend.game.Scus94491BpeSegment_8006;
 import legend.game.Scus94491BpeSegment_800b;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -622,9 +623,9 @@ public class GameVarArrayParam extends Param {
       case 244 -> {
         Scus94491BpeSegment_8006.battleState_8006e398.fieldFlags_550 = val;
         if (val == 1) {
-          EVENTS.postEvent(new DragonBlockStaffOnEvent());
+          EVENTS.postEvent(new DragonBlockStaffOnEvent((Battle)currentEngineState_8004dd04));
         } else {
-          EVENTS.postEvent(new DragonBlockStaffOffEvent());
+          EVENTS.postEvent(new DragonBlockStaffOffEvent((Battle)currentEngineState_8004dd04));
         }
       }
       case 245 -> Scus94491BpeSegment_8006.battleState_8006e398._554 = val;

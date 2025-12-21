@@ -4,6 +4,7 @@ import legend.core.Latch;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.combat.Battle;
 import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.ArcherSpEvent;
@@ -73,8 +74,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   private final ScriptFile script;
 
-  public PlayerBattleEntity(final String name, final int scriptIndex, final ScriptFile script) {
-    super(LodMod.PLAYER_TYPE.get(), name);
+  public PlayerBattleEntity(final Battle battle, final String name, final int scriptIndex, final ScriptFile script) {
+    super(LodMod.PLAYER_TYPE.get(), battle, name);
 
     this.scriptState = new Latch<>(() -> SCRIPTS.getState(scriptIndex, PlayerBattleEntity.class));
     this.script = script;
@@ -92,6 +93,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   public boolean isDragoon() {
     return this.scriptState.get().hasFlag(FLAG_DRAGOON);
+  }
+
+  public boolean canBecomeDragoon() {
+    return (this.status_0e & 0x2000) != 0;
   }
 
   @Override
@@ -396,7 +401,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case 5 -> sp = 150;
       default -> sp = 0;
     }
-    sp = EVENTS.postEvent(new ArcherSpEvent(this, sp)).sp;
+    sp = EVENTS.postEvent(new ArcherSpEvent(this.battle, this, sp)).sp;
     return sp;
   }
 

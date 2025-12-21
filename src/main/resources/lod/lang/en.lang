@@ -3,6 +3,8 @@ lod.name=Legend of Dragoon
 
 # Config
 lod.config.item_stack_size.label=Item Stack Size
+lod.config.extended_dragoon_actions.label=Extended dragoon actions
+lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
 
 # Equipment
 lod.equipment.broad_sword.name=Broad Sword
@@ -641,6 +643,17 @@ lod.additions.pursuit.name=Pursuit
 lod.additions.inferno.name=Inferno
 lod.additions.bone_crush.name=Bone Crush
 
+# Battle actions
+lod.battle_actions.attack.name=Attack
+lod.battle_actions.guard.name=Guard
+lod.battle_actions.items.name=Items
+lod.battle_actions.spells.name=Spells
+lod.battle_actions.escape.name=Escape
+lod.battle_actions.transform.name=Transform
+lod.battle_actions.special.name=Special
+lod.battle_actions.d_attack.name=Attack
+lod.battle_actions.additions.name=Change Addition
+
 lod.input_actions.general_open_inventory.name=General: open inventory
 lod.input_actions.general_move_up.name=General: move up
 lod.input_actions.general_move_down.name=General: move down
@@ -667,5 +680,6 @@ lod.input_actions.bttl_transform.name=Battle: transform
 lod.input_actions.bttl_special.name=Battle: special
 lod.input_actions.bttl_escape.name=Battle: escape
 lod.input_actions.bttl_guard.name=Battle: guard
-lod.input_actions.bttl_items.name=Battle: items/spells
+lod.input_actions.bttl_items.name=Battle: items
+lod.input_actions.bttl_spells.name=Battle: spells
 lod.input_actions.bttl_options.name=Battle: options

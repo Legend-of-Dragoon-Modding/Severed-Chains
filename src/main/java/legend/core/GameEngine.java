@@ -588,11 +588,11 @@ public final class GameEngine {
         .colour(colour)
       ;
 
-      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     if(!statusText.isBlank() && loadingFade != 0.0f) {
-      renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     textZ_800bdf00 = oldTextZ;

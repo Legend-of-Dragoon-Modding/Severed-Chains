@@ -4637,7 +4637,7 @@ data 0x0  ; poisoned
 ; @param int s30 status affliction action
 RUN_STATUS_AFFLICTION_ACTION:
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
-gosub_table stor[30], inl[:ACTION_TABLES + inl[:ACTION_TABLES + 0x0]] ; index, table
+gosub_table stor[30], inl[:ACTION_HANDLERS] ; index, table
 return
 
 
@@ -4648,12 +4648,39 @@ call Battle::scriptSetBattleHudVisibility, 0x1 ; visible
 LABEL_495:
 gosub inl[:LABEL_63] ; addr
 gosub inl[:IS_DRAGOON] ; s31 = is dragoon
-gosub inl[:GET_USABLE_MENU_ICONS] ; s8 = menu icons
-gosub inl[:GET_DISABLED_MENU_ICONS] ; s9 = disabled menu items
-gosub inl[:APPLY_MENU_BLOCKS] ; addr
-call Battle::scriptSetUpAndHandleCombatMenu, stor[8], stor[9], stor[30] ; displayableIconsBitset, disabledIconsBitset, selectedAction
+call Battle::scriptSetUpAndHandleCombatMenu, reg[0] ; selectedAction
 yield
-gosub_table stor[30], inl[:ACTION_TABLES[:ACTION_TABLES[stor[31]]]] ; index, table
+
+mov 9, stor[30] ; default to no-op
+
+;TODO maybe rework this, but maybe it's fine
+;TODO new actions can be done in code instead of here?
+jmp_cmp !=, reg[0], id[lod:attack], inl[:NOT_ACTION_ATTACK]
+mov 3, stor[30]
+NOT_ACTION_ATTACK:
+jmp_cmp !=, reg[0], id[lod:guard], inl[:NOT_ACTION_GUARD]
+mov 0, stor[30]
+NOT_ACTION_GUARD:
+jmp_cmp !=, reg[0], id[lod:items], inl[:NOT_ACTION_ITEMS]
+mov 4, stor[30]
+NOT_ACTION_ITEMS:
+jmp_cmp !=, reg[0], id[lod:spells], inl[:NOT_ACTION_SPELLS]
+mov 2, stor[30]
+NOT_ACTION_SPELLS:
+jmp_cmp !=, reg[0], id[lod:escape], inl[:NOT_ACTION_ESCAPE]
+mov 5, stor[30]
+NOT_ACTION_ESCAPE:
+jmp_cmp !=, reg[0], id[lod:transform], inl[:NOT_ACTION_TRANSFORM]
+mov 1, stor[30]
+NOT_ACTION_TRANSFORM:
+jmp_cmp !=, reg[0], id[lod:special], inl[:NOT_ACTION_SPECIAL]
+mov 6, stor[30]
+NOT_ACTION_SPECIAL:
+jmp_cmp !=, reg[0], id[lod:d_attack], inl[:NOT_ACTION_D_ATTACK]
+mov 8, stor[30]
+NOT_ACTION_D_ATTACK:
+
+gosub_table stor[30], inl[:ACTION_HANDLERS] ; index, table
 gosub inl[:LABEL_515] ; addr
 jmp_cmp !=, 0x0, var[45][253], inl[:LABEL_495] ; operand, left, right, addr
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
@@ -4662,21 +4689,16 @@ return
 
 
 ; SUBROUTINE TABLE
-ACTION_TABLES:
-rel :HUMAN_ACTIONS
-rel :DRAGOON_ACTIONS
-
-; SUBROUTINE TABLE
-HUMAN_ACTIONS:
+ACTION_HANDLERS:
 rel :ACTION_GUARD ; guard
 rel :ACTION_TRANSFORM ; transform
-rel :ACTION_NOOP ; d-magic (no-op)
+rel :ACTION_DRAGOON_MAGIC ; d-magic
 rel :ACTION_ATTACK ; attack
 rel :ACTION_USE_ITEM ; item
 rel :ACTION_RUN_AWAY ; run
 rel :ACTION_SPECIAL ; special
 rel :ACTION_NOOP ; ? (no-op)
-rel :ACTION_ATTACK ; d-attack
+rel :ACTION_DRAGOON_ATTACK ; d-attack
 rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
@@ -4693,136 +4715,7 @@ rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
 
-; SUBROUTINE TABLE
-DRAGOON_ACTIONS:
-rel :ACTION_NOOP ; guard (no-op)
-rel :ACTION_DRAGOON_TRANSFORM ; transform (no-op)
-rel :ACTION_DRAGOON_MAGIC ; d-magic
-rel :ACTION_DRAGOON_ATTACK ; attack
-rel :ACTION_NOOP ; item (no-op)
-rel :ACTION_NOOP ; run (no-op)
-rel :ACTION_NOOP ; special (no-op)
-rel :ACTION_NOOP ; ? (no-op)
-rel :ACTION_DRAGOON_ATTACK ; d-attack
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :JMP_c400_15 ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
 
-; SUBROUTINE
-; @param bool s31 is dragoon
-; @return int s8 packed icons, 0xf = not already dragoon, 0x10 = can become dragoon, 0x60 = already dragoon, 0x80 = can use special
-GET_USABLE_MENU_ICONS:
-jmp_cmp !=, 0x0, stor[31], inl[:LABEL_500] ; if dragoon
-
-mov 0xf, stor[8] ; source, dest
-
-call Battle::scriptGiveSp, stor[0], 0x0, stor[9] ; s9 = my sp
-jmp_cmp >, 100, stor[9], inl[:LABEL_498] ; less than 100 sp
-
-gosub inl[:CAN_BECOME_DRAGOON] ; s10 = can become dragoon
-jmp_cmp ==, 0x0, stor[10], inl[:LABEL_498] ; can't become dragoon
-or 0x10, stor[8] ; right, left
-
-LABEL_498:
-mov stor[8], stor[17] ; source, dest
-gosub inl[:CAN_USE_SPECIAL_TRANSFORM] ; s8 = can use special transform
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_499] ; can't use special transform
-or 0x80, stor[17] ; right, left
-
-LABEL_499:
-mov stor[17], stor[8] ; source, dest
-return
-
-LABEL_500:
-mov 0x60, stor[8] ; source, dest
-gosub inl[:IS_DRAGOON] ; addr
-return
-
-
-
-; SUBROUTINE
-; @param int s9 current disabled menu items
-; @return int s9 adjusted disabled menu items
-APPLY_MENU_BLOCKS:
-call Battle::scriptGetBentSlot, stor[0], stor[10], 0x0 ; s10 = my bent slot
-mov var[128 + stor[10]][6], stor[10] ; s10 = my menu blocks
-or stor[10], stor[9] ; s9 |= my menu blocks
-call Battle::scriptGetBentStat, stor[0], STATUS, stor[10] ; s10 = my status
-jmp_cmp !&, 0x20, stor[10], inl[:APPLY_MENU_BLOCKS_NOT_ARM_BLOCKED] ; not weapon blocked
-or 0x1, stor[9] ; disable attacking
-APPLY_MENU_BLOCKS_NOT_ARM_BLOCKED:
-or var[45][228], stor[9] ; s9 |= global menu blocks
-return
-
-
-
-; SUBROUTINE
-; @return int s9 disabled menu items, 0x8 = can't escape, ...
-GET_DISABLED_MENU_ICONS:
-mov 0x0, stor[9] ; source, dest
-
-jmp_cmp ==, 0x0, var[45][243], inl[:LABEL_506] ; operand, left, right, addr
-
-mov var[36][0], stor[28] ; s28 = monster bent slot 0 bent id
-
-jmp_cmp !=, 0x0, var[45][242], inl[:LABEL_508] ; operand, left, right, addr
-
-or 0x1, stor[9] ; can't attack
-
-LABEL_504:
-or 0x20, stor[stor[stor[0], 28], 7] ; monster has forced turn
-incr var[45][243] ; operand
-
-LABEL_505:
-neg stor[9] ; operand
-decr stor[9] ; operand
-
-LABEL_506:
-mov var[46][2], stor[10] ; s10 = encounter escape chance
-jmp_cmp !=, 0x0, stor[10], inl[:LABEL_507] ; escape chance is not 0
-or 0x8, stor[9] ; can't run
-LABEL_507:
-return
-
-LABEL_508:
-jmp_cmp ==, 0x1, var[45][242], inl[:LABEL_514] ; operand, left, right, addr
-jmp_cmp !=, 0x3, var[45][243], inl[:LABEL_509] ; operand, left, right, addr
-or 0x1, stor[9] ; can't attack
-jmp inl[:LABEL_505] ; addr
-LABEL_509:
-jmp_cmp !=, 0x5, var[45][243], inl[:LABEL_510] ; operand, left, right, addr
-or 0x10, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_510:
-jmp_cmp !=, 0x9, var[45][243], inl[:LABEL_511] ; operand, left, right, addr
-or 0x10, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_511:
-jmp_cmp !=, 0xc, var[45][243], inl[:LABEL_512] ; operand, left, right, addr
-or 0x20, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_512:
-jmp_cmp !=, 0x10, var[45][243], inl[:LABEL_513] ; operand, left, right, addr
-or 0x10, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_513:
-or 0x40, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_514:
-or 0x4, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
 
 ; SUBROUTINE
 LABEL_515:
@@ -4889,8 +4782,8 @@ div 0x64, stor[8] ; amount, operand
 call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:LABEL_670] ; addr
 or 0x2, var[45][245] ; right, left
-gosub inl[:LABEL_527] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_521] ; operand, left, right, addr
+gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_521] ; don't need to change stages
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 LABEL_521:
 call Battle::scriptLoadDeff, stor[29], stor[0], stor[28], 0x0, 0x1000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
@@ -4902,8 +4795,8 @@ jmp_cmp !=, 0x2, var[45][248], inl[:LABEL_522] ; operand, left, right, addr
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
 call DrgnFiles::scriptWaitForFilesToLoad ; index
-gosub inl[:LABEL_527] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_525] ; operand, left, right, addr
+gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_525] ; don't need to change stages
 mov var[45][76], stor[8] ; source, dest
 jmp_cmp >, 0x0, stor[8], inl[:LABEL_523] ; operand, left, right, addr
 mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[8] ; source, dest
@@ -4925,16 +4818,20 @@ return
 data 0x49
 
 ; SUBROUTINE
-LABEL_527:
+; If the spell is a dragon summon spell, returns the special stage to switch to
+; @param int stor[29] spell id
+; @return int stor[8] the special stage to switch to if any, or 0 if not a dragon summon or already on that stage
+GET_DRAGON_SUMMON_SPECIAL_STAGE:
 mov 0x0, stor[23] ; source, dest
 gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp !=, stor[29], inl[:LABEL_529[stor[8]]], inl[:LABEL_528] ; operand, left, right, addr
+jmp_cmp !=, stor[29], inl[:DRAGON_SUMMON_SPELL_INDICES[stor[8]]], inl[:LABEL_528] ; operand, left, right, addr
 jmp_cmp ==, stor[8], var[45][76], inl[:LABEL_528] ; operand, left, right, addr
 mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[23] ; source, dest
 LABEL_528:
 mov stor[23], stor[8] ; source, dest
 return
-LABEL_529:
+
+DRAGON_SUMMON_SPELL_INDICES:
 data 0x3
 data 0x8
 data 0xd
@@ -5056,10 +4953,6 @@ return
 
 
 ; SUBROUTINE
-ACTION_DRAGOON_TRANSFORM:
-return
-
-; SUBROUTINE
 ACTION_SPECIAL:
 gosub inl[:GET_MY_CHAR_ID] ; addr
 mov stor[8], var[45][76] ; source, dest
@@ -5082,6 +4975,7 @@ jmp_cmp !=, stor[8], var[35], inl[:LABEL_538] ; operand, left, right, addr
 mov 0xc, stor[23] ; source, dest
 wait stor[23] ; frames
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
+or 0x1000, stor[7] ; mark battle menu for reload
 gosub inl[:LABEL_471] ; addr
 yield
 gosub inl[:CLEAR_MY_STATUS] ; addr
@@ -5188,6 +5082,7 @@ call Battle::scriptConsumeSp, stor[0], 0x1, stor[10] ; bentIndex, unused, amount
 mov 0xc, stor[23] ; source, dest
 wait stor[23] ; frames
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
+or 0x1000, stor[7] ; mark battle menu for reload
 gosub inl[:LABEL_471] ; addr
 yield
 gosub inl[:CLEAR_MY_STATUS] ; addr
@@ -5196,8 +5091,8 @@ mul 0x41, stor[8] ; amount, operand
 div 0x64, stor[8] ; amount, operand
 call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:GET_MY_CHAR_ID] ; addr
-gosub inl[:LABEL_571] ; addr
-jmp_cmp !=, 0x0, stor[31], inl[:LABEL_547] ; operand, left, right, addr
+gosub inl[:GET_TRANSFORM_MODE] ; addr
+jmp_cmp !=, 0x0, stor[31], inl[:LABEL_547] ; is short transform
 call Battle::scriptGetBentStat, stor[0], DRAGOON_TRANSFORM_DEFF, stor[27]
 call Battle::scriptLoadDragoonDeffSync, stor[27], stor[0], 0x0, stor[9] ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
 jmp inl[:LABEL_548] ; addr
@@ -5218,80 +5113,6 @@ jmp_cmp ==, 0x2, var[45][242], inl[:LABEL_550] ; operand, left, right, addr
 gosub inl[:LABEL_64] ; addr
 gosub inl[:LABEL_436] ; addr
 LABEL_550:
-return
-
-
-
-; SUBROUTINE
-; @return bool s8 can use special transform
-CAN_USE_SPECIAL_TRANSFORM:
-jmp_cmp !=, 0x3, var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; not 3 players
-
-mov 0x0, stor[8] ; loop counter, bent slot
-mov 0x0, stor[11] ; number of characters who are dead
-
-CAN_USE_SPECIAL_TRANSFORM_DEAD_LOOP:
-mov var[34][stor[8]], stor[28] ; s28 = bent id for bent slot s8
-call Battle::scriptGetBentStat, stor[28], STATUS, stor[9] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x40, stor[stor[stor[0], 28], 7], inl[:LABEL_553] ; bent s28 is not dead
-jmp_cmp &, 0x1, stor[9], inl[:LABEL_553] ; bent s28 is petrified
-incr stor[11] ; increment dead characters
-LABEL_553:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_DEAD_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character is dead
-
-mov 0x0, stor[8] ; loop counter
-mov 0x0, stor[10] ; number of characters whose sp is not full
-
-CAN_USE_SPECIAL_TRANSFORM_SP_LOOP:
-call Battle::scriptGiveSp, var[34][stor[8]], 0x0, stor[9] ; s9 = bent slot s8 sp
-mov var[34][stor[8]], stor[11] ; s11 = bent slot s8 id
-call Battle::scriptGetBentStat, stor[11], DLEVEL, stor[11] ; s11 = bent id s11 dlevel
-jmp_cmp ==, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; dlevel is 0
-mul 100, stor[11] ; max sp, dlevel * 100
-jmp_cmp <=, stor[11], stor[9], inl[:LABEL_555] ; sp is full
-incr stor[10] ; increment characters whose sp is not full
-LABEL_555:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_SP_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[10], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character's sp is not full
-
-mov 0x0, stor[8] ; loop counter, bent slot
-mov 0x0, stor[11] ; number of characters who are dragoon
-
-CAN_USE_SPECIAL_TRANSFORM_DRAGOON_LOOP:
-mov var[34][stor[8]], stor[28] ; s28 = bent slot s8 id
-gosub inl[:IS_BENT_DRAGOON] ; addr
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_557] ; bent is not dragoon
-incr stor[11] ; increment number of characters who are dragoon
-LABEL_557:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_DRAGOON_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character is dragoon
-
-mov 0x0, stor[8] ; loop counter, bent slot
-mov 0x0, stor[11] ; number of characters who can't become dragoon
-
-CAN_USE_SPECIAL_TRANSFORM_CANT_DRAGOON_LOOP:
-mov var[34][stor[8]], stor[28] ; s28 = bent slot s8 id
-gosub inl[:CAN_BENT_BECOME_DRAGOON] ; addr
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_559] ; TODO retail bug, this should be checking s10
-incr stor[11] ; increment characters who can't become dragoon
-LABEL_559:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_CANT_DRAGOON_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character can't become dragoon
-
-mov 0x1, stor[8] ; source, dest
-return
-
-CAN_USE_SPECIAL_TRANSFORM_NOPE:
-mov 0x0, stor[8] ; source, dest
 return
 
 
@@ -5387,19 +5208,23 @@ return
 
 
 ; SUBROUTINE
-LABEL_571:
+; @param int stor[8] char id
+; @return bool stor[9] has transformed before (and not divine dragoon)
+; @return bool stor[31] use short transform
+GET_TRANSFORM_MODE:
 mov 0x0, stor[9] ; source, dest
-call Scus94491BpeSegment::scriptReadGlobalFlag2, inl[:LABEL_574[stor[8]]], stor[31] ; flag, value
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; operand, left, right, addr
-jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; operand, left, right, addr
+call Scus94491BpeSegment::scriptReadGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], stor[31] ; flag, value
+jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; has not transformed before
+jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; short transform mode
 mov 0x0, stor[31] ; source, dest
-jmp_cmp !=, 0x9, stor[8], inl[:LABEL_572] ; operand, left, right, addr
+jmp_cmp !=, 0x9, stor[8], inl[:LABEL_572] ; not divine dragoon
 mov 0x1, stor[9] ; source, dest
 LABEL_572:
-call Scus94491BpeSegment::scriptSetGlobalFlag2, inl[:LABEL_574[stor[8]]], 0x1 ; flag, value
+call Scus94491BpeSegment::scriptSetGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], 0x1 ; flag, value
 LABEL_573:
 return
-LABEL_574:
+
+CHAR_HAS_TRANSFORMED_BEFORE_FLAGS:
 data 0x1b8
 data 0x1ba
 data 0x1b9

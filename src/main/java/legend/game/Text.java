@@ -32,7 +32,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DEFAULT_FONT;
@@ -1854,8 +1853,12 @@ public final class Text {
     renderText(text, originX, originY, options, null);
   }
 
+  public interface QueueCallback {
+    void run(final QueuedModelStandard model, final boolean shadow);
+  }
+
   @Method(0x80029300L)
-  public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+  public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final QueueCallback queueCallback) {
     renderText(GameEngine.DEFAULT_FONT, text, originX, originY, options, queueCallback);
   }
 
@@ -1865,7 +1868,7 @@ public final class Text {
   }
 
   @Method(0x80029300L)
-  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options, @Nullable final Consumer<QueuedModelStandard> queueCallback) {
+  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options, @Nullable final QueueCallback queueCallback) {
     font.init();
 
     final float height = 12.0f * options.getSize();
@@ -1927,7 +1930,7 @@ public final class Text {
               }
 
               if(queueCallback != null) {
-                queueCallback.accept(model);
+                queueCallback.run(model, i != 0);
               }
             }
           }
