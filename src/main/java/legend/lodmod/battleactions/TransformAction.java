@@ -1,5 +1,6 @@
 package legend.lodmod.battleactions;
 
+import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.game.combat.Battle;
 import legend.game.combat.ui.BattleMenuStruct58;
@@ -19,7 +20,7 @@ import static legend.game.combat.ui.BattleMenuStruct58.battleMenuIconMetrics_800
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public class TransformAction extends RetailBattleAction {
-  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
 
   public TransformAction() {
     super(2);
@@ -44,6 +45,13 @@ public class TransformAction extends RetailBattleAction {
 
     if(selected && menu.renderSelectedIconText_40) {
       FONT.colour(menu.player_04.getElement().colour);
+
+      final float brightness = MathHelper.brightness(menu.player_04.getElement().colour);
+      if(brightness > 0.5f) {
+        FONT.shadowColour(TextColour.BLACK);
+      } else {
+        FONT.shadowColour(TextColour.WHITE);
+      }
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = 124;
