@@ -5070,6 +5070,11 @@ data 0
 
 ; SUBROUTINE
 ACTION_TRANSFORM:
+
+; if we're already dragoon, we're detransforming
+gosub inl[:IS_DRAGOON] ; addr
+jmp_cmp !=, 0, stor[31], inl[:ACTION_DETRANSFORM]
+
 call Battle::scriptGiveSp, stor[0], 0x0, stor[9] ; bentIndex, amount, total
 mov stor[9], stor[10] ; source, dest
 div 0x64, stor[9] ; amount, operand
@@ -5113,6 +5118,30 @@ jmp_cmp ==, 0x2, var[45][242], inl[:LABEL_550] ; operand, left, right, addr
 gosub inl[:LABEL_64] ; addr
 gosub inl[:LABEL_436] ; addr
 LABEL_550:
+return
+
+
+
+; SUBROUTINE
+ACTION_DETRANSFORM:
+call Battle::scriptGetBentStat, stor[0], DETRANSFORMATION_MODE, stor[8]
+jmp_cmp ==, 1, stor[8], inl[:DETRANSFORM_FROM_DRAGOON_AFTER_TURN] ;
+
+call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
+call Battle::scriptConsumeSp, stor[0], 1, 100 ; consume 100 sp
+gosub inl[:SET_MY_ATTACK_TARGETING_BIT] ; addr
+mov stor[0], stor[30] ; source, dest
+gosub inl[:TRANSFORM_OUT_OF_DRAGOON] ; addr
+and 0xfffffffe, var[45][245] ; right, left
+gosub inl[:CLEAR_MY_ATTACK_TARGETING_BIT] ; addr
+return
+
+DETRANSFORM_FROM_DRAGOON_AFTER_TURN:
+gosub inl[:HANDLE_BATTLE_HUD] ;
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
+add 0x45, stor[8] ; amount, operand
+mov 0x1, var[45][stor[8]] ; source, dest
+DETRANSFORM_FROM_DRAGOON_EXIT:
 return
 
 

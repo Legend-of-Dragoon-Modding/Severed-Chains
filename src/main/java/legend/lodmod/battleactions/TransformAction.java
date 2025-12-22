@@ -3,6 +3,7 @@ package legend.lodmod.battleactions;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.game.combat.Battle;
+import legend.game.combat.bent.DetransformationMode;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
@@ -10,6 +11,7 @@ import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.types.Translucency;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
@@ -17,6 +19,8 @@ import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.ui.BattleHud.ICON_SIZE;
 import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
 import static legend.game.combat.ui.BattleMenuStruct58.battleMenuIconMetrics_800fb674;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public class TransformAction extends RetailBattleAction {
@@ -44,6 +48,12 @@ public class TransformAction extends RetailBattleAction {
     final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc[iconId][iconState];
 
     if(selected && menu.renderSelectedIconText_40) {
+      if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_UP.get())) {
+        menu.player_04.detransformationMode = DetransformationMode.values()[Math.floorMod(menu.player_04.detransformationMode.ordinal() - 1, DetransformationMode.values().length)];
+      } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_DOWN.get())) {
+        menu.player_04.detransformationMode = DetransformationMode.values()[Math.floorMod(menu.player_04.detransformationMode.ordinal() + 1, DetransformationMode.values().length)];
+      }
+
       FONT.colour(menu.player_04.getElement().colour);
 
       final float brightness = MathHelper.brightness(menu.player_04.getElement().colour);
@@ -53,14 +63,35 @@ public class TransformAction extends RetailBattleAction {
         FONT.shadowColour(TextColour.WHITE);
       }
 
+      final String translationKey;
+      if(!menu.player_04.isDragoon()) {
+        translationKey = this.getTranslationKey();
+      } else {
+        translationKey = this.getTranslationKey() + '.' + menu.player_04.detransformationMode.ordinal();
+
+        final int iconIndex = 1;
+        final int iconStride = battle.hud.battleIconsTexture.width / 16;
+        final float iconU = iconIndex % iconStride * ICON_SIZE / (float)battle.hud.battleIconsTexture.width;
+        final float iconV = iconIndex / iconStride * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
+
+        menu.transforms.scaling(16.0f, 16.0f, 1.0f);
+        menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 10.0f);
+
+        RENDERER.queueOrthoModel(battle.hud.battleIconQuad, menu.transforms, QueuedModelStandard.class)
+          .uvOffset(iconU, iconV)
+          .texture(battle.hud.battleIconsTexture)
+          .useTextureAlpha();
+      }
+
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = 124;
-      renderText(I18n.translate(this), menuElementBaseX + ICON_SIZE / 2.0f, menu.y_08 - 24.0f, FONT);
+      renderText(I18n.translate(translationKey), menuElementBaseX + ICON_SIZE / 2.0f, menu.y_08 - 24.0f, FONT);
       textZ_800bdf00 = oldZ;
     }
 
     // Combat menu icons
     //LAB_800f6d70
+    menu.transforms.identity();
     menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.8f);
 
     final QueuedModelStandard model = RENDERER.queueOrthoModel(menu.menuObj, menu.transforms, QueuedModelStandard.class)

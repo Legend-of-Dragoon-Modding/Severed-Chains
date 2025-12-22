@@ -73,6 +73,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int hpMulti_13c;
   public int mpMulti_13e;
 
+  public DetransformationMode detransformationMode = DetransformationMode.NOW;
+
   private final ScriptFile script;
 
   public PlayerBattleEntity(final Battle battle, final String name, final int scriptIndex, final ScriptFile script) {
@@ -479,6 +481,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
       case GUARD_HEAL -> this.stats.getStat(GUARD_HEAL_STAT.get()).get();
       case GUARD_HEAL_RAW -> this.stats.getStat(GUARD_HEAL_STAT.get()).getRaw();
+
+      case DETRANSFORMATION_MODE -> this.detransformationMode.ordinal();
 
       default -> super.getStat(statIndex);
     };

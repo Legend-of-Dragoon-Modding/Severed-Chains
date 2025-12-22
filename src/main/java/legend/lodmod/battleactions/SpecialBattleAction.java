@@ -47,6 +47,7 @@ public class SpecialBattleAction extends BattleAction {
     final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc[iconId][iconState];
 
     //LAB_800f6d70
+    menu.transforms.identity();
     menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.8f);
 
     RENDERER.queueOrthoModel(menu.menuObj, menu.transforms, QueuedModelStandard.class)

@@ -438,6 +438,11 @@ public class LodMod {
     if(player.isDragoon()) {
       event.actions.put(LodBattleActions.SPELLS.get(), sort);
       sort += 100;
+
+      if(CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {
+        event.actions.put(LodBattleActions.TRANSFORM.get(), sort);
+        sort += 100;
+      }
     }
 
     if(!player.isDragoon() || CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {

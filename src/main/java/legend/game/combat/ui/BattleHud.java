@@ -591,7 +591,7 @@ public class BattleHud {
         this.battleIconQuad = new QuadBuilder("battle icon")
           .bpp(Bpp.BITS_24)
           .size(1.0f, 1.0f)
-          .uv((float)ICON_SIZE / this.battleIconsTexture.width, (float)ICON_SIZE / this.battleIconsTexture.height)
+          .uvSize((float)ICON_SIZE / this.battleIconsTexture.width, (float)ICON_SIZE / this.battleIconsTexture.height)
           .build()
         ;
       }

@@ -3,11 +3,11 @@ package legend.lodmod;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.lodmod.battleactions.ChangeAdditionBattleAction;
-import legend.lodmod.battleactions.SpecialBattleAction;
-import legend.lodmod.battleactions.TransformAction;
 import legend.lodmod.battleactions.ItemBattleAction;
 import legend.lodmod.battleactions.RetailBattleAction;
+import legend.lodmod.battleactions.SpecialBattleAction;
 import legend.lodmod.battleactions.SpellBattleAction;
+import legend.lodmod.battleactions.TransformAction;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 

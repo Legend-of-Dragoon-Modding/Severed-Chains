@@ -180,6 +180,8 @@ public enum BattleEntityStat {
   GUARD_HEAL,
   /** The raw guard heal % excluding mods (get or set) */
   GUARD_HEAL_RAW,
+  /** See {@link DetransformationMode} */
+  DETRANSFORMATION_MODE,
   ;
 
   public static BattleEntityStat fromLegacy(final int statIndex) {
