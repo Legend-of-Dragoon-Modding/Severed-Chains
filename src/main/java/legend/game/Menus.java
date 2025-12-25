@@ -42,8 +42,8 @@ import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 public final class Menus {
   private Menus() { }
 
-  public static Renderable58 saveListUpArrow_800bdb94;
-  public static Renderable58 saveListDownArrow_800bdb98;
+  public static Renderable58 upArrow_800bdb94;
+  public static Renderable58 downArrow_800bdb98;
 
   public static Renderable58 renderablePtr_800bdba4;
   public static Renderable58 renderablePtr_800bdba8;
@@ -485,8 +485,8 @@ public final class Menus {
 
       //LAB_800243fc
       if(a0 != 0) {
-        saveListUpArrow_800bdb94 = null;
-        saveListDownArrow_800bdb98 = null;
+        upArrow_800bdb94 = null;
+        downArrow_800bdb98 = null;
         renderablePtr_800bdba4 = null;
         renderablePtr_800bdba8 = null;
       }

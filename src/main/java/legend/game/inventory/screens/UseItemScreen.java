@@ -21,8 +21,8 @@ import static legend.game.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.Menus.saveListDownArrow_800bdb98;
-import static legend.game.Menus.saveListUpArrow_800bdb94;
+import static legend.game.Menus.downArrow_800bdb98;
+import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.SItem.FUN_80104b60;
@@ -147,8 +147,8 @@ public class UseItemScreen extends MenuScreen {
       // Fade out
       case 100 -> {
         this.renderUseItemMenu(this.selectedSlot, this.slotScroll, 0);
-        saveListDownArrow_800bdb98 = null;
-        saveListUpArrow_800bdb94 = null;
+        downArrow_800bdb98 = null;
+        upArrow_800bdb94 = null;
         this.unload.run();
       }
     }
@@ -171,12 +171,12 @@ public class UseItemScreen extends MenuScreen {
     //LAB_80102e88
     if(allocate) {
       allocateUiElement(84, 84, 16, 16);
-      saveListUpArrow_800bdb94 = allocateUiElement(61, 68, 180, this.getItemSlotY(0) + 2);
-      saveListDownArrow_800bdb98 = allocateUiElement(53, 60, 180, this.getItemSlotY(4) + 2);
+      upArrow_800bdb94 = allocateUiElement(61, 68, 180, this.getItemSlotY(0) + 2);
+      downArrow_800bdb98 = allocateUiElement(53, 60, 180, this.getItemSlotY(4) + 2);
     }
 
     //LAB_80102ee8
-    renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
+    renderMenuItems(16, 10, this.menuItems, slotScroll, 5, upArrow_800bdb94, downArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
       renderString(194, 16, I18n.translate(this.menuItems.get(selectedSlot + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
