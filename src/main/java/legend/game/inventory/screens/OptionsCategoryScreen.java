@@ -5,6 +5,7 @@ import legend.game.SItem;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
@@ -45,6 +46,13 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
 
         this.addRow(I18n.translate(CoreMod.MOD_ID + ".config.category." + category.name().toLowerCase(Locale.US) + ".label"), button);
       }
+    }
+
+    if(!validLocations.contains(ConfigStorageLocation.CAMPAIGN)) {
+      final Label label = this.addControl(new Label(I18n.translate("lod_core.ui.options_category.some_options_not_available")));
+      label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
+      label.setPos(0, 150);
+      label.setWidth(this.getWidth());
     }
 
     this.addHotkey(I18n.translate("lod_core.ui.options_category.back"), INPUT_ACTION_MENU_BACK, this::back);
