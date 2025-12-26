@@ -520,7 +520,7 @@ public class LodMod {
       final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
 
       // not dead or petrified
-      if(player.hasFlag(BattleEntity27c.FLAG_DEAD) && (player.innerStruct_00.status_0e & 0x1) != 0) {
+      if(player.hasFlag(BattleEntity27c.FLAG_DEAD) || (player.innerStruct_00.status_0e & 0x1) != 0) {
         return false;
       }
     }
