@@ -88,7 +88,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private final MenuEntries<InventoryEntry> droppedItems = new MenuEntries<>();
 
   public TooManyItemsScreen() {
-    this.addHotkey(I18n.translate("lod_core.ui.too_many_items.sort"), INPUT_ACTION_MENU_SORT, this::sortMenuState9);
+    this.addHotkey(I18n.translate(SORT), INPUT_ACTION_MENU_SORT, this::sortMenuState9);
   }
 
   @Override
@@ -133,7 +133,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       case RENDER_4 -> {
-        menuStack.pushScreen(new MessageBoxScreen("Too many items. Replace?", 2, result -> this.menuState = result == MessageBoxResult.YES ? MenuState.RENDER_6 : MenuState.DISCARD_10));
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(TOO_MANY_ITEMS_CONFIRM), 2, result -> this.menuState = result == MessageBoxResult.YES ? MenuState.RENDER_6 : MenuState.DISCARD_10));
         this.menuState = MenuState.REPLACE_5;
       }
 
@@ -203,7 +203,7 @@ public class TooManyItemsScreen extends MenuScreen {
       case DISCARD_10 -> {
         this.renderItemLists(false, this.droppedItems.get(this.dropScroll + this.dropIndex).item_00, 0);
 
-        menuStack.pushScreen(new MessageBoxScreen("Discard extra items?", 2, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(DISCARD_ITEMS_CONFIRM), 2, result -> {
           if(result == MessageBoxResult.YES) {
             for(final MenuEntryStruct04<InventoryEntry> item : this.droppedItems) {
               if(item.item_00 instanceof final Equipment equipment && !equipment.canBeDiscarded()) {
