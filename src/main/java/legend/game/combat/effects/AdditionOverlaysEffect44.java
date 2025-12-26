@@ -360,7 +360,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         this.transforms
           .scaling(borderOverlay.size_08, borderOverlay.size_08, 1.0f)
           .rotateZ(borderOverlay.angleModifier_02);
-        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
+
+        // There can be multiple reticles drawn to the screen at once. We want the current hit to be drawn on top
+        // of the next hit, so push the reticles away from the camera by a small margin based on hitNum
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f + hitNum * 0.1f);
 
         final QueuedModelStandard model;
 
