@@ -44,7 +44,7 @@ lod_core.ui.options.locked=Locked
 lod_core.ui.options.locked_by=Locked by %s
 
 lod_core.ui.options_category.back=Back
-lod_core.ui.options_category.some_options_not_available=Note: many options will only appear once in-game
+lod_core.ui.options_category.some_options_not_available=Note: many options will only appear while in-game
 
 lod_core.ui.links.click_on_any_link_to_open=Click on any link to open it
 lod_core.ui.links.view_link=View Link
