@@ -381,7 +381,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private void handleDroppedScrollDown() {
     final int slotCount = this.droppedItems.size();
 
-    if(this.dropIndex == DROPPED_ITEM_LIST_SIZE - 1) {
+    if(this.dropIndex == Math.min(slotCount, DROPPED_ITEM_LIST_SIZE) - 1) {
       if(this.dropScroll + this.dropIndex < slotCount - 1) {
         this.dropScroll++;
       } else if(this.dropScroll + this.dropIndex == slotCount - 1 || (this.dropScroll < 1 && this.dropIndex >= slotCount)) {
@@ -411,7 +411,7 @@ public class TooManyItemsScreen extends MenuScreen {
       this.handleDroppedScrollDown();
     }
 
-    this.dropIndex = Math.min(this.dropIndex + 1, DROPPED_ITEM_LIST_SIZE - 1);
+    this.dropIndex = Math.min(this.dropIndex + 1, Math.min(dropCount, DROPPED_ITEM_LIST_SIZE) - 1);
     this.renderable_8011e200.y_44 = this.getSlotY(this.dropIndex);
   }
 
@@ -447,7 +447,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private void handleInventoryScrollDown() {
     final int slotCount = this.getInventoryCount();
 
-    if(this.invIndex == INVENTORY_ITEM_LIST_SIZE - 1) {
+    if(this.invIndex == Math.min(slotCount, INVENTORY_ITEM_LIST_SIZE) - 1) {
       if(this.invScroll + this.invIndex < slotCount - 1) {
         this.invScroll++;
       } else if(this.invScroll + this.invIndex == slotCount - 1 || (this.invScroll < 1 && this.invIndex >= slotCount)) {
@@ -477,7 +477,7 @@ public class TooManyItemsScreen extends MenuScreen {
       this.handleInventoryScrollDown();
     }
 
-    this.invIndex = Math.min(this.invIndex + 1, INVENTORY_ITEM_LIST_SIZE - 1);
+    this.invIndex = Math.min(this.invIndex + 1, Math.min(slotCount, INVENTORY_ITEM_LIST_SIZE) - 1);
     this.renderable_8011e204.y_44 = this.getSlotY(this.invIndex);
   }
 
