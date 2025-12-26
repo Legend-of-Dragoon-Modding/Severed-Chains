@@ -1915,6 +1915,7 @@ public class BattleHud {
 
         if(!this.battleMenu_800c6c34.isIconEnabled(action)) {
           final int menuElementBaseX = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + iconIndex * 19;
+          this.battleMenu_800c6c34.transforms.identity();
           this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 123.7f);
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionDisabledObjOffset, 4);
