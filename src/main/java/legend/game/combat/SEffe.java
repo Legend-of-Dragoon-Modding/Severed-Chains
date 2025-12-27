@@ -143,7 +143,8 @@ import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
-import static legend.game.wmap.WMap.UI_WHITE_SHADOWED;
+import static legend.game.SItem.UI_WHITE_SHADOWED;
+
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
