@@ -16,7 +16,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
-import static legend.game.wmap.WMap.UI_WHITE_SHADOWED;
+import static legend.game.SItem.UI_WHITE_SHADOWED;
 
 public class WmapPromptPopup {
   public enum ObjFields {
