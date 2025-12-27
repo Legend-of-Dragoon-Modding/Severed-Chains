@@ -11,10 +11,11 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.SItem.UI_WHITE_SHADOWED_RIGHT;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
-import static legend.game.wmap.WMap.UI_WHITE_SHADOWED_RIGHT;
+
 
 public class CoolonQueenFuryOverlay {
   /** Wmap.coolonIconStateIndices_800ef154 */
