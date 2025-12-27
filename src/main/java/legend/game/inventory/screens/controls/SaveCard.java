@@ -49,7 +49,7 @@ public class SaveCard extends Control {
 
     if(saveData != null && saveData.isValid()) {
       this.invalidSave.setVisibility(false);
-      this.dragoonSpirits.setSpirits(saveData.state.goods_19c);
+      this.dragoonSpirits.setGoods(saveData.state.goods_19c);
 
       for(int i = 0; i < 3; i++) {
         this.portraits[i].setCharId(saveData.state.charIds_88[i]);
@@ -57,7 +57,7 @@ public class SaveCard extends Control {
     } else {
       this.invalidSave.setVisibility(saveData != null);
 
-      this.dragoonSpirits.setSpirits(new GoodsInventory());
+      this.dragoonSpirits.setGoods(new GoodsInventory());
 
       for(int i = 0; i < 3; i++) {
         this.portraits[i].setCharId(-1);
