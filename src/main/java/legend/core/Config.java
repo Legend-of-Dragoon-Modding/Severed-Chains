@@ -30,7 +30,6 @@ public final class Config {
   private static final SortedStoreProperties properties = new SortedStoreProperties();
 
   private static final Vector3f uiColour = new Vector3f();
-  public static final Vector3f defaultUiColour = new Vector3f(0.0f, 0x29 / 255.0f, 0x9f / 255.0f);
 
   static {
     properties.setProperty("low_memory_unpacker", "false");
@@ -98,14 +97,6 @@ public final class Config {
     return readInt("window_height", 480, 1, Integer.MAX_VALUE);
   }
 
-  public static boolean changeBattleRgb() {
-    return readBool("battle_ui_colour_change", false);
-  }
-
-  public static void toggleBattleUiColour() {
-    properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRgb()));
-  }
-
   public static boolean changeAdditionOverlayRgb() {
     return readBool("addition_overlay_colour_change", false);
   }
@@ -147,25 +138,19 @@ public final class Config {
     loadedGameSpeedMultiplier = multiplier;
   }
 
-  public static Vector3f getBattleRgb() {
-    final int r = readInt("battle_ui_r", 0, 0, 255);
-    final int g = readInt("battle_ui_g", 0, 0, 255);
-    final int b = readInt("battle_ui_b", 0, 0, 255);
+  public static Vector3f getUiRgb() {
+    final int r = readInt("ui_r",   0, 0, 255);
+    final int g = readInt("ui_g",  41, 0, 255);
+    final int b = readInt("ui_b", 159, 0, 255);
 
     return uiColour.set(r / 255.0f, g / 255.0f, b / 255.0f);
   }
 
-  public static void setBattleRgb(final int rgb) {
-    final int[] rgbArray = {
-      ((rgb >> 16) & 0xff),
-      ((rgb >> 8) & 0xff),
-      (rgb & 0xff)
-    };
-
-    properties.setProperty("battle_ui_r", String.valueOf(rgbArray[2]));
-    properties.setProperty("battle_ui_g", String.valueOf(rgbArray[1]));
-    properties.setProperty("battle_ui_b", String.valueOf(rgbArray[0]));
-    properties.setProperty("battle_ui_colour_change", "true");
+  public static void setUiRgb(final int r, final int g, final int b) {
+    uiColour.set(r / 255.0f, g / 255.0f, b / 255.0f);
+    properties.setProperty("ui_r", String.valueOf(r));
+    properties.setProperty("ui_g", String.valueOf(g));
+    properties.setProperty("ui_b", String.valueOf(b));
   }
 
   public static int getAdditionOverlayRgb() {
@@ -228,64 +213,11 @@ public final class Config {
     properties.setProperty("addition_overlay_colour_change", "true");
   }
 
-  public static boolean textBoxColour() {
-    return readBool("textbox_colour", false);
-  }
-
-  public static void toggleTextBoxColour() {
-    properties.setProperty("textbox_colour", String.valueOf(!textBoxColour()));
-  }
-
-  public static int getTextBoxColourMode() {
-    return readInt("textbox_colour_mode", 0, 0, 2);
-  }
-
-  public static void setTextBoxColourMode(final int value) {
-    properties.setProperty("textbox_colour_mode", String.valueOf(value));
-  }
-
   public static void switchFullScreen() {
     final BoolConfigEntry fullScreenConfigEntry = CoreMod.FULLSCREEN_CONFIG.get();
     final boolean isFullScreen = CONFIG.getConfig(fullScreenConfigEntry);
     CONFIG.setConfig(fullScreenConfigEntry, !isFullScreen);
     ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-  }
-
-  public static int getTextBoxRgb(final int textbox) {
-    final int[] rgbArray = {
-      readInt("textbox_colour" + textbox + "_r", 0, 0, 255),
-      readInt("textbox_colour" + textbox + "_g", 0, 0, 255),
-      readInt("textbox_colour" + textbox + "_b", 0, 0, 255),
-      0x00,
-    };
-
-    return (
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8  |
-        0xff & rgbArray[0]
-    );
-  }
-
-  public static void setTextBoxRgb(final int textbox, final int rgb) {
-    final int[] rgbArray = {
-      ((rgb >> 24) & 0xff),
-      ((rgb >> 16) & 0xff),
-      ((rgb >> 8) & 0xff),
-      (rgb & 0xff)
-    };
-
-    properties.setProperty("textbox_colour" + textbox + "_r", String.valueOf(rgbArray[3]));
-    properties.setProperty("textbox_colour" + textbox + "_g", String.valueOf(rgbArray[2]));
-    properties.setProperty("textbox_colour" + textbox + "_b", String.valueOf(rgbArray[1]));
-  }
-
-  public static int getTextBoxTransparencyMode() {
-    return readInt("textbox_transparency_mode", 0, 0, 10);
-  }
-
-  public static void setTextBoxTransparencyMode(final int value) {
-    properties.setProperty("textbox_transparency_mode", String.valueOf(value));
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

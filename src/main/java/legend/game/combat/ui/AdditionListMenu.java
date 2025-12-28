@@ -11,6 +11,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.scripting.RunningScript;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
+import legend.game.ui.UiBox;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
@@ -140,7 +141,7 @@ public class AdditionListMenu extends ListMenu {
           this.description = new UiBox("Battle UI Addition Description", 44, 156, 232, 14);
         }
 
-        this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.description.render(Config.getUiRgb());
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);

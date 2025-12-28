@@ -33,6 +33,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
+import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -603,7 +604,7 @@ public class BattleHud {
           this.battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198[this.battleHudYOffsetIndex_800c6c38] - 26, 288, 40);
         }
 
-        this.battleUiBackground.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.battleUiBackground.render(Config.getUiRgb());
       }
 
       //LAB_800f0000

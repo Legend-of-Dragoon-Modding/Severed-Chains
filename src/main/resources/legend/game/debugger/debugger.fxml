@@ -7,13 +7,12 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.DebuggerController">
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.DebuggerController">
    <MenuBar VBox.vgrow="NEVER">
       <Menu mnemonicParsing="false" text="Debuggers">
          <MenuItem fx:id="menuDebuggersScript" mnemonicParsing="false" onAction="#showScriptDebugger" text="Script" />
@@ -24,7 +23,7 @@
       </Menu>
    </MenuBar>
    <AnchorPane VBox.vgrow="ALWAYS">
-      <HBox prefWidth="785.0">
+      <HBox prefHeight="386.0" prefWidth="785.0">
          <VBox prefWidth="180.0">
             <padding>
                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -87,13 +86,12 @@
          </VBox>
          <VBox prefHeight="400.0" prefWidth="300.0">
             <children>
-               <Label text="Battle" textFill="RED" />
-               <CheckBox fx:id="battleUiColour" mnemonicParsing="false" onAction="#toggleBattleUiColour" text="UI Colour" />
+               <Label text="UI" textFill="RED" />
                <HBox>
                   <children>
-                     <Spinner fx:id="battleUiColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUiColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUiColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="uiColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="uiColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="uiColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set" />
                   </children>
                </HBox>
@@ -144,95 +142,6 @@
                   </children>
                </VBox>
             </children>
-         </VBox>
-         <VBox prefHeight="374.0" prefWidth="300.0">
-            <padding>
-               <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-            </padding>
-            <Label text="Text Box" textFill="RED" />
-            <CheckBox fx:id="textBoxColour" mnemonicParsing="false" onAction="#toggleTextBoxColour" text="Text Box Colour" />
-            <RadioButton fx:id="textBoxBase" mnemonicParsing="false" onAction="#setTextBoxRadio" text="Base (1 Box)" />
-            <RadioButton fx:id="textBoxHorizontal" mnemonicParsing="false" onAction="#setTextBoxRadio" text="Horizontal (Box 1 - Left / Box 2 - Right)" />
-            <RadioButton fx:id="textBoxVertical" mnemonicParsing="false" onAction="#setTextBoxRadio" text="Vertical (Box 1 - Top / Box 2 - Bottom)" />
-            <Label text="Box 1-1 (Top Left)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox1R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox1G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox1B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox1" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 1-2 (Top Right)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox2R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox2G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox2B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox2" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 1-3 (Bottom Left)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox3R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox3G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox3B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox3" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 1-4 (Bottom Right)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox4R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox4G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox4B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox4" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 2-1 (Top Left)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox5R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox5G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox5B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox5" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 2-2 (Top Right)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox6R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox6G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox6B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox6" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 2-3 (Bottom Left)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox7R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox7G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox7B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox7" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Box 2-4 (Bottom Right)" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBox8R" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox8G" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Spinner fx:id="textBox8B" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBox8" text="Set" />
-               </children>
-            </HBox>
-            <Label text="Textbox Transparency Mode" />
-            <HBox>
-               <children>
-                  <Spinner fx:id="textBoxTransparencyMode" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                  <Button mnemonicParsing="false" onAction="#setTextBoxTransparencyMode" text="Set" />
-               </children>
-            </HBox>
          </VBox>
       </HBox>
    </AnchorPane>

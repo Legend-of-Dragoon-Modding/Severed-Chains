@@ -11,6 +11,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.RunningScript;
 import legend.game.types.SpellStats0c;
+import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.EVENTS;
@@ -175,7 +176,7 @@ public class SpellListMenu extends ListMenu {
           this.description = new UiBox("Battle UI Spell Description", 44, 156, 232, 14);
         }
 
-        this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.description.render(Config.getUiRgb());
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);

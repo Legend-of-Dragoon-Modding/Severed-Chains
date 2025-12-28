@@ -226,7 +226,7 @@ public final class Text {
       .translucency(Translucency.HALF_B_PLUS_HALF_F)
       .pos(-1.0f, -1.0f, 0.0f)
       .size(2.0f, 2.0f)
-      .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
+      .rgb(1.0f, 1.0f, 1.0f)
       .monochrome(0, 0.0f)
       .monochrome(3, 0.0f)
       .build();
@@ -277,69 +277,21 @@ public final class Text {
 
     //LAB_80025824
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
-
-    textbox.state_00 = TextboxState._1;
-    textbox.renderBorder_06 = false;
-    textbox.flags_08 = 0;
-    textbox.z_0c = 14;
-    textbox.currentTicks_10 = 0;
-    textbox.width_1c = 0;
-    textbox.height_1e = 0;
-    textbox.animationWidth_20 = 0x1000;
-    textbox.animationHeight_22 = 0x1000;
-    textbox.animationTicks_24 = 0;
-    textbox.currentX_28 = 0;
-    textbox.currentY_2c = 0;
-    textbox.stepX_30 = 0;
-    textbox.stepY_34 = 0;
-    textbox._38 = 0;
-    textbox._3c = 0;
+    textbox.clear();
   }
 
   @Method(0x800258a8L)
-  public static void clearTextboxText(final int a0) {
-    final TextboxText84 textboxText = textboxText_800bdf38[a0];
-    textboxText.state_00 = TextboxTextState._1;
-    textboxText.flags_08 = 0;
-    textboxText.z_0c = 13;
-    textboxText.textColour_28 = TextColour.WHITE;
-    textboxText.scrollSpeed_2a = 2.0f / currentEngineState_8004dd04.tickMultiplier();
-    textboxText.scrollAmount_2c = 0.0f;
-    textboxText.charIndex_30 = 0;
-    textboxText.charX_34 = 0;
-    textboxText.charY_36 = 0;
-    textboxText.linesScrolled_3a = 0;
-    textboxText._3e = 1;
-    textboxText._40 = 0;
-    textboxText.pauseTimer_44 = 0;
+  public static void clearTextboxText(final int textboxIndex) {
+    final TextboxText84 text = textboxText_800bdf38[textboxIndex];
+    text.clear();
 
-    final Textbox4c struct4c = textboxes_800be358[a0];
-    textboxText.x_14 = struct4c.x_14;
-    textboxText.y_16 = struct4c.y_16;
-    textboxText.chars_1c = struct4c.chars_18 - 1;
-    textboxText.lines_1e = struct4c.lines_1a - 1;
-    textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-    textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-
-    //LAB_800259b4
-    for(int i = 0; i < 8; i++) {
-      textboxText.digits_46[i] = 0;
-    }
-
-    //LAB_800259e4
-    textboxText._5c = TextboxTextState.UNINITIALIZED_0;
-    textboxText.selectionLine_60 = 0;
-    textboxText.ticksUntilStateTransition_64 = 0;
-    textboxText.selectionLine_68 = 0;
-    textboxText.selectionIndex_6c = 0;
-    textboxText.maxSelectionLine_70 = 0;
-    textboxText.minSelectionLine_72 = 0;
-    textboxText.stateAfterTransition_78 = TextboxTextState.UNINITIALIZED_0;
-    textboxText.element_7c = 0;
-    textboxText.digitIndex_80 = 0;
-
-    textboxText.waitTicks = 0;
-    textboxText.inputActions.clear();
+    final Textbox4c textbox = textboxes_800be358[textboxIndex];
+    text.x_14 = textbox.x_14;
+    text.y_16 = textbox.y_16;
+    text.chars_1c = textbox.chars_18 - 1;
+    text.lines_1e = textbox.lines_1a - 1;
+    text._18 = text.x_14 - text.chars_1c * 9 / 2;
+    text._1a = text.y_16 - text.lines_1e * 6;
   }
 
   @Method(0x80025a04L)
@@ -479,10 +431,8 @@ public final class Text {
   }
 
   @Method(0x80025f4cL)
-  public static void renderTextboxBackground(final int textboxIndex) {
+  public static void renderTextboxBackground(final Textbox4c textbox) {
     //LAB_80025f7c
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
-
     if(textbox.backgroundType_04 != BackgroundType.NO_BACKGROUND) {
       if(textbox.state_00 != TextboxState._1) {
         if(textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
@@ -497,10 +447,11 @@ public final class Text {
         }
 
         RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms, QueuedModelStandard.class)
+          .colour(textbox.colour)
           .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
 
         if(textbox.renderBorder_06) {
-          renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
+          renderTextboxBorder(textbox, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
         }
       }
     }
@@ -509,7 +460,7 @@ public final class Text {
   }
 
   @Method(0x800261c0L)
-  public static void renderTextboxBorder(final int textboxIndex, final float boxLeft, final float boxTop, final float boxRight, final float boxBottom) {
+  public static void renderTextboxBorder(final Textbox4c textbox, final float boxLeft, final float boxTop, final float boxRight, final float boxBottom) {
     final float[] xs = {
       boxLeft + 4,
       boxRight - 4,
@@ -523,8 +474,6 @@ public final class Text {
       boxBottom - 5,
       boxBottom - 5,
     };
-
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
 
     if(textbox.animationWidth_20 != textbox.oldScaleW || textbox.animationHeight_22 != textbox.oldScaleH) {
       textbox.updateBorder = true;
@@ -1657,9 +1606,7 @@ public final class Text {
   }
 
   @Method(0x800282acL)
-  public static void renderTextboxText(final int textboxIndex) {
-    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-
+  public static void renderTextboxText(final TextboxText84 textboxText) {
     final int firstCharInLineIndex;
     final int lastCharInLineIndex;
     if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0) {
@@ -1835,8 +1782,7 @@ public final class Text {
 
   /** The purple bar used in inn dialogs, etc. */
   @Method(0x80029140L)
-  public static void renderTextboxSelection(final int textboxIndex, final int selectionLine) {
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
+  public static void renderTextboxSelection(final Textbox4c textbox, final int selectionLine) {
     final int width = (textbox.chars_18 - 1) * 9;
     final float x = textbox.x_14;
     final float y = textbox.y_16 + selectionLine * 12 - (textbox.lines_1a - 1) * 6;
@@ -1962,11 +1908,8 @@ public final class Text {
   }
 
   @Method(0x800299d4L)
-  public static void renderTextboxArrow(final int textboxIndex) {
-    final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
-
+  public static void renderTextboxArrow(final TextboxText84 textboxText, final TextboxArrow0c arrow) {
     if((arrow.flags_00 & TextboxArrow0c.ARROW_VISIBLE) != 0) {
-      final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
         textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c * 4.0f);
@@ -2149,33 +2092,32 @@ public final class Text {
   public static void renderTextboxes() {
     for(int i = 0; i < 8; i++) {
       //LAB_8002a10c
-      final Textbox4c textbox4c = textboxes_800be358[i];
-      if(textbox4c.state_00 != TextboxState.UNINITIALIZED_0 && (textbox4c.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
-        renderTextboxBackground(i);
+      final Textbox4c textbox = textboxes_800be358[i];
+      if(textbox.state_00 != TextboxState.UNINITIALIZED_0 && (textbox.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
+        renderTextboxBackground(textbox);
       }
 
       if(!currentEngineState_8004dd04.renderTextOnTopOfAllBoxes()) {
-        renderTextboxOverlays(i);
+        renderTextboxOverlays(textboxes_800be358[i], textboxText_800bdf38[i], textboxArrows_800bdea0[i]);
       }
     }
 
     if(currentEngineState_8004dd04.renderTextOnTopOfAllBoxes()) {
       for(int i = 0; i < 8; i++) {
-        renderTextboxOverlays(i);
+        renderTextboxOverlays(textboxes_800be358[i], textboxText_800bdf38[i], textboxArrows_800bdea0[i]);
       }
     }
   }
 
-  private static void renderTextboxOverlays(final int textboxIndex) {
-    final TextboxText84 text = textboxText_800bdf38[textboxIndex];
+  private static void renderTextboxOverlays(final Textbox4c textbox, final TextboxText84 text, final TextboxArrow0c arrow) {
     if(text.state_00 != TextboxTextState.UNINITIALIZED_0) {
       switch(text.state_00) {
-        case _18 -> renderTextboxSelection(textboxIndex, text.selectionLine_60);
-        case _19, SELECTION_22 -> renderTextboxSelection(textboxIndex, text.selectionLine_68);
+        case _18 -> renderTextboxSelection(textbox, text.selectionLine_60);
+        case _19, SELECTION_22 -> renderTextboxSelection(textbox, text.selectionLine_68);
       }
 
-      renderTextboxText(textboxIndex);
-      renderTextboxArrow(textboxIndex);
+      renderTextboxText(text);
+      renderTextboxArrow(text, arrow);
     }
   }
 
@@ -2216,18 +2158,15 @@ public final class Text {
   }
 
   @Method(0x8002a32cL)
-  public static void initTextbox(final int textboxIndex, final boolean animateInOut, final float x, final float y, final int chars, final int lines) {
-    clearTextbox(textboxIndex);
+  public static void initTextbox(final Textbox4c textbox, final boolean animateInOut, final float x, final float y, final int chars, final int lines) {
+    textbox.backgroundType_04 = animateInOut ? BackgroundType.ANIMATE_IN_OUT : BackgroundType.NORMAL;
+    textbox.renderBorder_06 = true;
+    textbox.flags_08 |= Textbox4c.NO_ANIMATE_OUT;
 
-    final Textbox4c struct = textboxes_800be358[textboxIndex];
-    struct.backgroundType_04 = animateInOut ? BackgroundType.ANIMATE_IN_OUT : BackgroundType.NORMAL;
-    struct.renderBorder_06 = true;
-    struct.flags_08 |= Textbox4c.NO_ANIMATE_OUT;
-
-    struct.x_14 = x;
-    struct.y_16 = y;
-    struct.chars_18 = chars + 1;
-    struct.lines_1a = lines + 1;
+    textbox.x_14 = x;
+    textbox.y_16 = y;
+    textbox.chars_18 = chars + 1;
+    textbox.lines_1a = lines + 1;
   }
 
   @Method(0x8002a3ecL)

@@ -10,6 +10,7 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.scripting.RunningScript;
 import legend.game.types.Translucency;
+import legend.game.ui.UiBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -431,7 +432,7 @@ public abstract class ListMenu {
           this.battleUiList = new UiBox("Battle UI List", this.x_04 - w / 2, this.y_06 - h, w, h);
         }
 
-        this.battleUiList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.battleUiList.render(Config.getUiRgb());
 
         this.drawList();
 

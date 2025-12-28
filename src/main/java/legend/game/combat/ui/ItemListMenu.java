@@ -11,6 +11,7 @@ import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
+import legend.game.ui.UiBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +141,7 @@ public class ItemListMenu extends ListMenu {
           this.description = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
         }
 
-        this.description.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.description.render(Config.getUiRgb());
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);

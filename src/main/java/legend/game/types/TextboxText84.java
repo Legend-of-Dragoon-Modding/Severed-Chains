@@ -7,6 +7,8 @@ import legend.game.inventory.screens.TextColour;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+
 public class TextboxText84 {
   public static final int END = 0xa0;
   public static final int LINE = 0xa1;
@@ -117,6 +119,42 @@ public class TextboxText84 {
   public int waitTicks;
 
   public final List<InputAction> inputActions = new ArrayList<>();
+
+  public void clear() {
+    this.state_00 = TextboxTextState._1;
+    this.flags_08 = 0;
+    this.z_0c = 13;
+    this.textColour_28 = TextColour.WHITE;
+    this.scrollSpeed_2a = 2.0f / currentEngineState_8004dd04.tickMultiplier();
+    this.scrollAmount_2c = 0.0f;
+    this.charIndex_30 = 0;
+    this.charX_34 = 0;
+    this.charY_36 = 0;
+    this.linesScrolled_3a = 0;
+    this._3e = 1;
+    this._40 = 0;
+    this.pauseTimer_44 = 0;
+
+    //LAB_800259b4
+    for(int i = 0; i < 8; i++) {
+      this.digits_46[i] = 0;
+    }
+
+    //LAB_800259e4
+    this._5c = TextboxTextState.UNINITIALIZED_0;
+    this.selectionLine_60 = 0;
+    this.ticksUntilStateTransition_64 = 0;
+    this.selectionLine_68 = 0;
+    this.selectionIndex_6c = 0;
+    this.maxSelectionLine_70 = 0;
+    this.minSelectionLine_72 = 0;
+    this.stateAfterTransition_78 = TextboxTextState.UNINITIALIZED_0;
+    this.element_7c = 0;
+    this.digitIndex_80 = 0;
+
+    this.waitTicks = 0;
+    this.inputActions.clear();
+  }
 
   public void delete() {
     this.chars_58 = null;
