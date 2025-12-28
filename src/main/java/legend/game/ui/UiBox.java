@@ -32,6 +32,15 @@ public class UiBox {
     this.textbox.backgroundType_04 = BackgroundType.NORMAL;
     this.textbox.renderBorder_06 = true;
     this.textbox.flags_08 |= Textbox4c.NO_ANIMATE_OUT;
+
+    final int w = width / 2;
+    final int h = height / 2;
+
+    this.textbox.x_14 = x + w;
+    this.textbox.y_16 = y + h + 1;
+    this.textbox.width_1c = w;
+    this.textbox.height_1e = h + 1;
+    this.textbox.z_0c = 31;
   }
 
   public void setZ(final float z) {
