@@ -58,19 +58,6 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class UseItemScreen extends MenuScreen {
-  private static final String HP_recovered_for_all_8011cfcc = "HP recovered for all";
-  private static final String MP_recovered_for_all_8011cff8 = "MP recovered for all";
-  private static final String Completely_recovered_8011d534 = "completely recovered";
-  private static final String Recovered_8011d560 = "Recovered";
-  private static final String HP_8011d57c = " HP ";
-  private static final String MP_8011d584 = " MP ";
-  private static final String SP_8011d58c = " SP ";
-  private static final String Encounter_risk_reduced_8011d594 = "Encounter risk reduced";
-  private static final String Detoxified_8011d5c8 = "Detoxified";
-  private static final String Spirit_recovered_8011d5e0 = "Spirit recovered";
-  private static final String Fear_gone_8011d604 = "Fear gone";
-  private static final String Nothing_happened_8011d618 = "Nothing happened";
-
   private int loadingStage;
   private double scrollAccumulator;
   private final Runnable unload;
@@ -102,8 +89,7 @@ public class UseItemScreen extends MenuScreen {
         this.charSlot = 0;
         this.slotScroll = 0;
         this.selectedSlot = 0;
-        this.useItemResponse._00 = 0;
-        this.useItemResponse.value_04 = 0;
+        this.useItemResponse.success = false;
         this.loadingStage++;
       }
 
@@ -280,129 +266,20 @@ public class UseItemScreen extends MenuScreen {
         if(MathHelper.inBox(x, y, 33, this.getItemSlotY(slot), 136, 17)) {
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
-
-          final ItemStack stack = this.menuItems.get(this.selectedSlot + this.slotScroll).item_00;
-          this.itemTargetAll = stack.canTarget(Item.TargetType.ALL);
-
-          if(stack.canBeUsed(Item.UsageLocation.MENU) && (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
-            if(this.itemTargetAll) {
-              for(int i = 0; i < 7; i++) {
-                this._8011d718[i] = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(i) - 3, 110);
-                FUN_80104b60(this._8011d718[i]);
-              }
-            } else {
-              this.charHighlight = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(this.charSlot) - 3, 110);
-              FUN_80104b60(this.charHighlight);
-            }
-
-            playMenuSound(2);
-            this.loadingStage = 3;
-          } else {
-            playMenuSound(40);
-          }
-
+          this.menuStage2Select();
           return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3) {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
         if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
-          if(!this.itemTargetAll) {
-            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
-          } else {
-            int responseValue = -2;
-
-            for(int i = 0; i < characterCount_8011d7c4; i++) {
-              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
-
-              if(this.useItemResponse.value_04 != -2) {
-                responseValue = 0;
-              }
-            }
-
-            this.useItemResponse.value_04 = responseValue;
-          }
-
-          if(this.useItemResponse.value_04 == -2) {
-            playMenuSound(40);
-          } else {
-            playMenuSound(2);
-            takeItemFromSlot(this.menuItems.get(this.selectedSlot + this.slotScroll).itemSlot_01, 1);
-            this.itemCount = this.getUsableItemsInMenu();
-            loadCharacterStats();
-            this.getItemResponseText(this.useItemResponse);
-            menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
-            this.loadingStage = 1;
-          }
-
+          this.menuStage3Select();
           return InputPropagation.HANDLED;
         }
       }
     }
 
     return InputPropagation.PROPAGATE;
-  }
-
-  private void getItemResponseText(final UseItemResponse response) {
-    switch(response._00) {
-      case 2:
-        this.getRecoveryResponseText(HP_8011d57c, response);
-        break;
-
-      case 3:
-        this.getRecoveryResponseText(HP_recovered_for_all_8011cfcc, response);
-        break;
-
-      case 4:
-        this.getRecoveryResponseText(MP_8011d584, response);
-        break;
-
-      case 5:
-        this.getRecoveryResponseText(MP_recovered_for_all_8011cff8, response);
-        break;
-
-      case 6:
-        this.getRecoveryResponseText(SP_8011d58c, response);
-        break;
-
-      case 8:
-        response.string_08 = Encounter_risk_reduced_8011d594;
-        break;
-
-      case 7:
-        final int value = response.value_04;
-
-        if((value & 0x80) != 0) {
-          response.string_08 = Detoxified_8011d5c8;
-          break;
-        }
-
-        if((value & 0x40) != 0) {
-          response.string_08 = Spirit_recovered_8011d5e0;
-          break;
-        }
-
-        if((value & 0x8) != 0) {
-          response.string_08 = Fear_gone_8011d604;
-          break;
-        }
-
-      case 9:
-        response.string_08 = Nothing_happened_8011d618;
-        break;
-    }
-  }
-
-  private void getRecoveryResponseText(final String baseString, final UseItemResponse response) {
-    if(response.value_04 == -2) {
-      response.string_08 = Nothing_happened_8011d618;
-    } else if(response.value_04 == -1) {
-      response.string_08 = baseString + Completely_recovered_8011d534;
-    } else if(response.value_04 != 0) {
-      response.string_08 = response.value_04 + baseString + Recovered_8011d560;
-    } else {
-      response.string_08 = baseString;
-    }
   }
 
   @Override
@@ -578,35 +455,41 @@ public class UseItemScreen extends MenuScreen {
     if(!this.itemTargetAll) {
       this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
     } else {
-      int responseValue = -2;
+      boolean success = false;
 
       for(int i = 0; i < characterCount_8011d7c4; i++) {
         this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
 
-        if(this.useItemResponse.value_04 != -2) {
-          responseValue = 0;
+        if(this.useItemResponse.success) {
+          success = true;
         }
       }
 
-      this.useItemResponse.value_04 = responseValue;
+      this.useItemResponse.success = success;
     }
 
-    if(this.useItemResponse.value_04 == -2) {
+    if(!this.useItemResponse.success) {
       playMenuSound(40);
-    } else {
-      playMenuSound(2);
-      takeItemFromSlot(this.menuItems.get(this.selectedSlot + this.slotScroll).itemSlot_01, 1);
-      this.itemCount = this.getUsableItemsInMenu();
-      loadCharacterStats();
-
-      if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
-        this.selectedSlot = Math.max(0, --this.selectedSlot);
-      }
-
-      this.getItemResponseText(this.useItemResponse);
-      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {})));
-      this.loadingStage = 1;
+      return;
     }
+
+    playMenuSound(2);
+    takeItemFromSlot(this.menuItems.get(this.selectedSlot + this.slotScroll).itemSlot_01, 1);
+    this.itemCount = this.getUsableItemsInMenu();
+    loadCharacterStats();
+
+    if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
+      this.selectedSlot = Math.max(0, --this.selectedSlot);
+    }
+
+    if(this.useItemResponse.text != null) {
+      final String text = this.useItemResponse.text;
+      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(text, 0, result -> {})));
+    }
+
+    this.useItemResponse.success = false;
+    this.useItemResponse.text = null;
+    this.loadingStage = 1;
   }
 
   @Override

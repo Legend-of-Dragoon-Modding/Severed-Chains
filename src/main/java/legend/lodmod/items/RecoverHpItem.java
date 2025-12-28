@@ -60,8 +60,8 @@ public class RecoverHpItem extends BattleItem {
       amount = stats_800be5f8[charId].maxHp_66 * this.percentage / 100;
     }
 
-    response._00 = this.canTarget(stack, TargetType.ALL) ? 3 : 2;
-    response.value_04 = this.recover(charId, amount);
+    this.recover(charId, amount);
+    response.success();
   }
 
   protected int recover(final int charId,final int amount) {
