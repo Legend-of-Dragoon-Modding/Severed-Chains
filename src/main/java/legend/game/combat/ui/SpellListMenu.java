@@ -1,6 +1,5 @@
 package legend.game.combat.ui;
 
-import legend.core.Config;
 import legend.core.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -14,10 +13,12 @@ import legend.game.types.SpellStats0c;
 import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderText;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.lodmod.LodConfig.UI_COLOUR;
 
 public class SpellListMenu extends ListMenu {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -176,7 +177,7 @@ public class SpellListMenu extends ListMenu {
           this.description = new UiBox("Battle UI Spell Description", 44, 156, 232, 14);
         }
 
-        this.description.render(Config.getUiRgb());
+        this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);

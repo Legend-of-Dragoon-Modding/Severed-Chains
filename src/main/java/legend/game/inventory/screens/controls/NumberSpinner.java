@@ -72,7 +72,7 @@ public class NumberSpinner<T extends Number> extends Control {
     this.highlight = this.addControl(new Brackets());
     this.highlight.setHeight(16);
     this.highlight.ignoreInput();
-    this.highlight.hide();
+    this.hideHighlight();
 
     this.add = add;
     this.subtract = subtract;
@@ -124,6 +124,18 @@ public class NumberSpinner<T extends Number> extends Control {
     return this.bigStep;
   }
 
+  public void showHighlight() {
+    this.highlight.show();
+  }
+
+  public void hideHighlight() {
+    this.highlight.hide();
+  }
+
+  public boolean isHighlightVisible() {
+    return this.highlight.isVisible();
+  }
+
   @Override
   public void setScale(final float scale) {
     super.setScale(scale);
@@ -149,7 +161,7 @@ public class NumberSpinner<T extends Number> extends Control {
   @Override
   protected void lostFocus() {
     super.lostFocus();
-    this.highlight.hide();
+    this.hideHighlight();
   }
 
   @Override
@@ -174,7 +186,7 @@ public class NumberSpinner<T extends Number> extends Control {
 
     if(button == PLATFORM.getMouseButton(0) && mods.isEmpty() && !this.highlight.isVisible()) {
       playMenuSound(2);
-      this.highlight.show();
+      this.showHighlight();
     }
 
     return InputPropagation.HANDLED;
@@ -209,12 +221,12 @@ public class NumberSpinner<T extends Number> extends Control {
 
       if((action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
         playMenuSound(2);
-        this.highlight.hide();
+        this.hideHighlight();
         return InputPropagation.HANDLED;
       }
     } else if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       playMenuSound(2);
-      this.highlight.show();
+      this.showHighlight();
     }
 
     return InputPropagation.PROPAGATE;

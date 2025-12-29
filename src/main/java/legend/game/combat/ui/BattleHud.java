@@ -3,7 +3,6 @@ package legend.game.combat.ui;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.Transformations;
@@ -94,6 +93,7 @@ import static legend.lodmod.LodBattleActions.ITEMS;
 import static legend.lodmod.LodBattleActions.SPECIAL;
 import static legend.lodmod.LodBattleActions.SPELLS;
 import static legend.lodmod.LodBattleActions.TRANSFORM;
+import static legend.lodmod.LodConfig.UI_COLOUR;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ADDITIONS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ESCAPE;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_GUARD;
@@ -604,7 +604,7 @@ public class BattleHud {
           this.battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198[this.battleHudYOffsetIndex_800c6c38] - 26, 288, 40);
         }
 
-        this.battleUiBackground.render(Config.getUiRgb());
+        this.battleUiBackground.render(CONFIG.getConfig(UI_COLOUR.get()));
       }
 
       //LAB_800f0000

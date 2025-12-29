@@ -76,12 +76,6 @@ public class DebuggerController {
   public Button setGameSpeedMultiplier;
 
   @FXML
-  public Spinner<Integer> uiColourR;
-  @FXML
-  public Spinner<Integer> uiColourG;
-  @FXML
-  public Spinner<Integer> uiColourB;
-  @FXML
   public CheckBox additionOverlayColour;
   @FXML
   public Spinner<Integer> additionOverlayR;
@@ -131,9 +125,6 @@ public class DebuggerController {
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-    this.uiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getUiRgb().x * 255)));
-    this.uiColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getUiRgb().y * 255)));
-    this.uiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getUiRgb().z * 255)));
     this.additionOverlayColour.setSelected(Config.changeAdditionOverlayRgb());
     this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRgb() & 0xff)));
     this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 8) & 0xff)));
@@ -290,11 +281,6 @@ public class DebuggerController {
   @FXML
   private void toggleSaveAnywhere(final ActionEvent event) {
     CONFIG.setConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get(), !CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-  }
-
-  @FXML
-  private void setBattleUiRgb(final ActionEvent event) {
-    Config.setUiRgb(this.uiColourR.getValueFactory().getValue().byteValue(), this.uiColourG.getValueFactory().getValue().byteValue(), this.uiColourB.getValueFactory().getValue().byteValue());
   }
 
   @FXML

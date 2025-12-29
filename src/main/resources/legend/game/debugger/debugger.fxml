@@ -87,14 +87,6 @@
          <VBox prefHeight="400.0" prefWidth="300.0">
             <children>
                <Label text="UI" textFill="RED" />
-               <HBox>
-                  <children>
-                     <Spinner fx:id="uiColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="uiColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="uiColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set" />
-                  </children>
-               </HBox>
                <CheckBox fx:id="additionOverlayColour" mnemonicParsing="false" onAction="#toggleAdditionOverlayColour" text="Addition Overlay Colour" />
                <Label text="Normal" />
                <HBox>

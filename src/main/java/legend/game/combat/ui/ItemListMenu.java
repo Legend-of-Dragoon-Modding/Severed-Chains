@@ -1,6 +1,5 @@
 package legend.game.combat.ui;
 
-import legend.core.Config;
 import legend.core.memory.Method;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.i18n.I18n;
@@ -16,9 +15,11 @@ import legend.game.ui.UiBox;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
+import static legend.lodmod.LodConfig.UI_COLOUR;
 
 public class ItemListMenu extends ListMenu {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -141,7 +142,7 @@ public class ItemListMenu extends ListMenu {
           this.description = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
         }
 
-        this.description.render(Config.getUiRgb());
+        this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
