@@ -1,5 +1,6 @@
 package legend.game.ui;
 
+import legend.core.Config;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -48,7 +49,7 @@ public class UiBox {
   }
 
   public void render() {
-    this.render(1.0f, 1.0f, 1.0f);
+    this.render(Config.getUiRgb());
   }
 
   public void render(final Vector3f colour) {
