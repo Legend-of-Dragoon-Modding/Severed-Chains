@@ -48,17 +48,13 @@ public class CharmPotionItem extends BattleItem {
   public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
     if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       //LAB_80022e40
-      response._00 = 8;
       wmap.encounterAccumulator_800c6ae8 = 0;
     } else if(currentEngineState_8004dd04 instanceof final SMap smap && smap.submap.hasEncounters()) {
-      response._00 = 8;
       smap.encounterAccumulator_800c6ae8 = 0;
-    } else {
-      //LAB_80022e50
-      response._00 = 9;
     }
 
-    response.value_04 = 0;
+    response.success = true;
+    response.text = this.getTranslationKey("use");
   }
 
   @Override

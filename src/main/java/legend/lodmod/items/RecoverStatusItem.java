@@ -2,10 +2,14 @@ package legend.lodmod.items;
 
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.i18n.I18n;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -56,12 +60,48 @@ public class RecoverStatusItem extends BattleItem {
   public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
     final int status = gameState_800babc8.charData_32c[charId].status_10;
 
-    if((this.status & status) != 0) {
-      response.value_04 = status;
-      gameState_800babc8.charData_32c[charId].status_10 &= ~status;
+    if((this.status & status) == 0) {
+      response.failure();
+      return;
     }
 
-    response._00 = 7;
+    gameState_800babc8.charData_32c[charId].status_10 &= ~status;
+
+    final List<String> cured = new ArrayList<>();
+
+    if((status & 0x80) != 0) {
+      cured.add(I18n.translate("lod.status.poison.name"));
+    }
+
+    if((status & 0x40) != 0) {
+      cured.add(I18n.translate("lod.status.dispirit.name"));
+    }
+
+    if((status & 0x20) != 0) {
+      cured.add(I18n.translate("lod.status.weapon_block.name"));
+    }
+
+    if((status & 0x10) != 0) {
+      cured.add(I18n.translate("lod.status.stun.name"));
+    }
+
+    if((status & 0x8) != 0) {
+      cured.add(I18n.translate("lod.status.fear.name"));
+    }
+
+    if((status & 0x4) != 0) {
+      cured.add(I18n.translate("lod.status.confuse.name"));
+    }
+
+    if((status & 0x2) != 0) {
+      cured.add(I18n.translate("lod.status.bewitch.name"));
+    }
+
+    if((status & 0x1) != 0) {
+      cured.add(I18n.translate("lod.status.petrify.name"));
+    }
+
+    response.success(I18n.translate(this.getTranslationKey("use"), String.join(", ", cured)));
   }
 
   @Override

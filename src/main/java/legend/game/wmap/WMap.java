@@ -32,6 +32,7 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
+import legend.game.types.Textbox4c;
 import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -512,19 +513,19 @@ public class WMap extends EngineState {
         if(this.startLocationLabelsActive_800c68a8 && this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.WORLD_3) {
           for(int i = 0; i < 8; i++) {
             if(this.startLabelNames[i] != null) {
-              textZ_800bdf00 = textboxes_800be358[i].z_0c - 1;
+              textZ_800bdf00 = (int)(textboxes_800be358[i].z_0c - 1);
               renderText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], UI_WHITE_SHADOWED);
             }
           }
         }
 
         if(this.destLabelName != null) {
-          textZ_800bdf00 = textboxes_800be358[7].z_0c - 1;
+          textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
           renderText(this.destLabelName, this.destLabelX, this.destLabelY, UI_WHITE_SHADOWED);
         }
 
         if(this.coolonWarpDestLabelName != null && this.destinationLabelStage_800c86f0 != 0) {
-          textZ_800bdf00 = textboxes_800be358[7].z_0c - 1;
+          textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
           renderText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, UI_WHITE_SHADOWED);
         }
 
@@ -1479,12 +1480,16 @@ public class WMap extends EngineState {
           this.measureText(placeName, width, lines);
 
           final int labelStage = this.destinationLabelStage_800c86f0;
-          textboxes_800be358[7].chars_18 = Math.max(width.get(), 4);
-          textboxes_800be358[7].lines_1a = lines.get();
+
+          final Textbox4c textbox = textboxes_800be358[7];
+          textbox.chars_18 = Math.max(width.get(), 4);
+          textbox.lines_1a = lines.get();
+
           //LAB_800d4974
           if(labelStage == 0) {
             //LAB_800d4988
-            initTextbox(7, false, textboxX, textboxY, width.get() - 1, lines.get() - 1);
+            clearTextbox(7);
+            initTextbox(textbox, false, textboxX, textboxY, width.get() - 1, lines.get() - 1);
 
             //LAB_800d49e4
             this.destinationLabelStage_800c86f0 = 2;
@@ -1494,14 +1499,14 @@ public class WMap extends EngineState {
           } else if(labelStage == 2) {
             //LAB_800d4a40
             //LAB_800d4a6c
-            textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
-            textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6 + 4;
-            textboxes_800be358[7].x_14 = textboxX;
-            textboxes_800be358[7].y_16 = textboxY - 4;
+            textbox.width_1c = textbox.chars_18 * 9 / 2;
+            textbox.height_1e = textbox.lines_1a * 6 + 4;
+            textbox.x_14 = textboxX;
+            textbox.y_16 = textboxY - 4;
           }
 
           //LAB_800d4aec
-          textboxes_800be358[7].z_0c = 27;
+          textbox.z_0c = 27;
 
           if(this.shouldSetDestLabelMetrics) {
             this.shouldSetDestLabelMetrics = false;
@@ -2595,7 +2600,8 @@ public class WMap extends EngineState {
         //LAB_800db00c
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           playSound(0, 2, (short)0, (short)0);
-          initTextbox(6, true, 240, 64, 9, 4);
+          clearTextbox(6);
+          initTextbox(textboxes_800be358[6], true, 240, 64, 9, 4);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_PROMPT_4;
         }
 
@@ -2881,36 +2887,40 @@ public class WMap extends EngineState {
       final int lines = linesRef.get();
 
       final int destStage = this.destinationLabelStage_800c86f0;
+      final Textbox4c textbox = textboxes_800be358[7];
+
       if(destStage == 0) {
         //LAB_800dc9e4
-        initTextbox(7, false, x, y, width - 1, lines - 1);
+        clearTextbox(7);
+        initTextbox(textbox, false, x, y, width - 1, lines - 1);
         this.destinationLabelStage_800c86f0 = 1;
 
         //LAB_800dca40
         textZ_800bdf00 = 14;
-        textboxes_800be358[7].z_0c = 14;
-        textboxes_800be358[7].chars_18 = Math.max(width, 4);
-        textboxes_800be358[7].lines_1a = lines;
+        textbox.z_0c = 14;
+        textbox.chars_18 = Math.max(width, 4);
+        textbox.lines_1a = lines;
         this.destinationLabelStage_800c86f0 = 2;
       } else if(destStage == 1) {
         textZ_800bdf00 = 14;
-        textboxes_800be358[7].z_0c = 14;
-        textboxes_800be358[7].chars_18 = Math.max(width, 4);
-        textboxes_800be358[7].lines_1a = lines;
+        textbox.z_0c = 14;
+        textbox.chars_18 = Math.max(width, 4);
+        textbox.lines_1a = lines;
         this.destinationLabelStage_800c86f0 = 2;
         //LAB_800dc9d0
       } else if(destStage == 2) {
         //LAB_800dca9c
-        textboxes_800be358[7].chars_18 = Math.max(width, 4);
-        textboxes_800be358[7].lines_1a = lines;
-        textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
-        textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6 + 4;
-        textboxes_800be358[7].x_14 = x;
-        textboxes_800be358[7].y_16 = y - 4;
+        textbox.chars_18 = Math.max(width, 4);
+        textbox.lines_1a = lines;
+        textbox.width_1c = textbox.chars_18 * 9 / 2;
+        textbox.height_1e = textbox.lines_1a * 6 + 4;
+        textbox.x_14 = x;
+        textbox.y_16 = y - 4;
       }
 
       //LAB_800dcb48
-      textboxes_800be358[7].z_0c = 19;
+      textbox.z_0c = 19;
+
       if(this.shouldSetCoolonWarpDestLabelMetrics) {
         this.coolonWarpDestLabelName = coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].placeName_1c;
         this.coolonWarpDestLabelX = x;
@@ -4078,7 +4088,8 @@ public class WMap extends EngineState {
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
         loadDrgnFileSync(0, 5655 + places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].fileIndex_04, data -> this.loadLocationThumbnailImage(new Tim(data)));
-        initTextbox(6, true, 240, 120, 14, 16);
+        clearTextbox(6);
+        initTextbox(textboxes_800be358[6], true, 240, 120, 14, 16);
 
         this.mapTransitionState_800c68a4 = MapTransitionState.BUILD_PROMPT_2;
 
@@ -4101,7 +4112,8 @@ public class WMap extends EngineState {
 
       case BUILD_PROMPT_2:
         if(isTextboxInState6(6) && (this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
-          initTextbox(7, false, 240, 71, 13, 7);
+          clearTextbox(7);
+          initTextbox(textboxes_800be358[7], false, 240, 71, 13, 7);
           this.mapTransitionState_800c68a4 = MapTransitionState.MAIN_LOOP_3;
 
           // Build Objs
@@ -4517,6 +4529,7 @@ public class WMap extends EngineState {
     //LAB_800e6fa0
     int i;
     for(i = 0; i < Math.min(7, labelList.size()); i++) {
+      final Textbox4c textbox = textboxes_800be358[i];
       final WmapLocationLabelMetrics0c label = labelList.get(i);
 
       //LAB_800e6fec
@@ -4537,27 +4550,28 @@ public class WMap extends EngineState {
         final int labelStage = this.startButtonLabelStages_800c86d4[i];
         if(labelStage == 0) {
           //LAB_800e7168
-          initTextbox(i, false, x, y, width.get() - 1, lines.get() - 1);
+          clearTextbox(i);
+          initTextbox(textbox, false, x, y, width.get() - 1, lines.get() - 1);
 
           //LAB_800e71d8
-          textboxes_800be358[i].z_0c = i + 14;
+          textbox.z_0c = i + 14;
           this.startButtonLabelStages_800c86d4[i] = 1;
         } else if(labelStage == 1) {
           //LAB_800e71d8
-          textboxes_800be358[i].z_0c = i + 14;
+          textbox.z_0c = i + 14;
           this.startButtonLabelStages_800c86d4[i] = 2;
         }
 
         //LAB_800e72e8
-        textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
-        textboxes_800be358[i].lines_1a = lines.get();
-        textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
-        textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6 + 4;
-        textboxes_800be358[i].x_14 = x;
-        textboxes_800be358[i].y_16 = y - 2;
+        textbox.chars_18 = Math.max(width.get(), 4);
+        textbox.lines_1a = lines.get();
+        textbox.width_1c = textbox.chars_18 * 9 / 2;
+        textbox.height_1e = textbox.lines_1a * 6 + 4;
+        textbox.x_14 = x;
+        textbox.y_16 = y - 2;
 
         //LAB_800e74d8
-        textboxes_800be358[i].z_0c = i + 120;
+        textbox.z_0c = i + 120;
 
         if(this.startLocationLabelsActive_800c68a8) {
           this.startLabelNames[i] = placeName;

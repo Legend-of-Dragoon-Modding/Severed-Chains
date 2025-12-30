@@ -1,6 +1,5 @@
 package legend.game.combat.ui;
 
-import legend.core.Config;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -10,11 +9,13 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.scripting.RunningScript;
 import legend.game.types.Translucency;
+import legend.game.ui.UiBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Audio.playMenuSound;
@@ -27,6 +28,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.lodmod.LodConfig.UI_COLOUR;
 
 public abstract class ListMenu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ListMenu.class);
@@ -431,7 +433,7 @@ public abstract class ListMenu {
           this.battleUiList = new UiBox("Battle UI List", this.x_04 - w / 2, this.y_06 - h, w, h);
         }
 
-        this.battleUiList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.battleUiList.render(CONFIG.getConfig(UI_COLOUR.get()));
 
         this.drawList();
 

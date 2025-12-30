@@ -44,6 +44,10 @@ public abstract class Control extends ControlHost {
 
   void setScreen(final MenuScreen screen) {
     this.screen = screen;
+
+    for(final Control control : this.getControls()) {
+      control.setScreen(screen);
+    }
   }
 
   void setParent(final ControlHost parent) {
@@ -176,7 +180,11 @@ public abstract class Control extends ControlHost {
   }
 
   public void unfocus() {
-    this.screen.setFocus(null);
+    if(this.screen.getFocus() == this) {
+      this.screen.setFocus(null);
+    } else {
+      this.lostFocus();
+    }
   }
 
   protected void onResize() {

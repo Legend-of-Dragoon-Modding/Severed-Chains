@@ -38,4 +38,9 @@ public class MenuEntryStruct04<T extends InventoryEntry> {
   public boolean isEmpty() {
     return this.item_00.isEmpty();
   }
+
+  @Override
+  public String toString() {
+    return this.item_00.toString();
+  }
 }

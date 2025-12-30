@@ -22,6 +22,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
 
 public class GoodsScreen extends MenuScreen {
   private final Runnable unload;
@@ -38,11 +39,11 @@ public class GoodsScreen extends MenuScreen {
 
     final ListBox.Highlight<MenuEntryStruct04<GoodsEntry>> description = item -> this.description.setText(item == null ? "" : I18n.translate(item.getDescriptionTranslationKey()));
 
-    this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null, null);
+    this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, this::renderIcon, null, null, null);
     this.leftList.setPos(8, 15);
     this.leftList.setTitle("Goods");
 
-    this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null, null);
+    this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, this::renderIcon, null, null, null);
     this.rightList.setPos(188, 15);
     this.rightList.setTitle("Goods");
 
@@ -107,6 +108,10 @@ public class GoodsScreen extends MenuScreen {
     description.highlight(this.leftList.getSelectedItem());
   }
 
+  private void renderIcon(final MenuEntryStruct04<GoodsEntry> entry, final int x, final int y, final int flags) {
+    entry.item_00.renderIcon(x, y, flags | FLAG_DELETE_AFTER_RENDER);
+  }
+
   @Override
   protected void render() {
 
@@ -145,7 +150,7 @@ public class GoodsScreen extends MenuScreen {
 
     @Override
     public ItemIcon getIcon() {
-      return null;
+      return this.good.getIcon();
     }
 
     @Override
@@ -176,6 +181,11 @@ public class GoodsScreen extends MenuScreen {
     @Override
     public boolean isEmpty() {
       return false;
+    }
+
+    @Override
+    public String toString() {
+      return this.good.toString();
     }
   }
 }

@@ -60,8 +60,8 @@ public class RecoverMpItem extends BattleItem {
       amount = stats_800be5f8[charId].maxMp_6e * this.percentage / 100;
     }
 
-    response._00 = this.canTarget(stack, TargetType.ALL) ? 5 : 4;
-    response.value_04 = this.recover(charId, amount);
+    this.recover(charId, amount);
+    response.success();
   }
 
   protected int recover(final int charId,final int amount) {

@@ -14,6 +14,22 @@ public interface InventoryEntry {
   boolean isEmpty();
 
   default Renderable58 renderIcon(final int x, final int y, final int flags) {
-    return this.getIcon().render(x, y, flags);
+    final ItemIcon icon = this.getIcon();
+
+    if(icon == null) {
+      return null;
+    }
+
+    return icon.render(x, y, flags);
+  }
+
+  default Renderable58 renderIconManual(final int x, final int y, final int flags) {
+    final ItemIcon icon = this.getIcon();
+
+    if(icon == null) {
+      return null;
+    }
+
+    return icon.renderManual(x, y, flags);
   }
 }

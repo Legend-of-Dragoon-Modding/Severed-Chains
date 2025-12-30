@@ -5,6 +5,7 @@ lod.name=Legend of Dragoon
 lod.config.item_stack_size.label=Item Stack Size
 lod.config.extended_dragoon_actions.label=Extended dragoon actions
 lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
+lod.config.ui_colour.label=UI Colour
 
 # Equipment
 lod.equipment.broad_sword.name=Broad Sword
@@ -336,14 +337,16 @@ lod.items.healing_potion.name=Healing Potion
 lod.items.healing_potion.description=Recovers half of\nmaximum value\nof HP.
 lod.items.healing_potion.battle_description=Recovers 1/2 of max HP.
 lod.items.depetrifier.name=Depetrifier
-lod.items.depetrifier.description=Dissolves\npetrification.
-lod.items.depetrifier.battle_description=Dissolves petrification.
+lod.items.depetrifier.description=Heals\npetrification.
+lod.items.depetrifier.battle_description=Heals petrification.
 lod.items.mind_purifier.name=Mind Purifier
-lod.items.mind_purifier.description=Dissolves fear,\nbewitchment, \nconfusion dispirit.
-lod.items.mind_purifier.battle_description=Dissolves B, C, F, D.
+lod.items.mind_purifier.description=Heals fear,\nbewitchment, \nconfusion, dispirit.
+lod.items.mind_purifier.battle_description=Heals B, C, F, D.
+lod.items.mind_purifier.use=%s healed
 lod.items.body_purifier.name=Body Purifier
-lod.items.body_purifier.description=Nullifies poison/\nstunning/arm \nblocking.
-lod.items.body_purifier.battle_description=Dissolves P, S, A-block.
+lod.items.body_purifier.description=Heals poison/\nstunning/arm \nblocking.
+lod.items.body_purifier.battle_description=Heals P, S, A-block.
+lod.items.body_purifier.use=%s healed
 lod.items.thunderbolt.name=Thunderbolt
 lod.items.thunderbolt.description=Thunder-based\nattack for all\n(multi).
 lod.items.thunderbolt.battle_description=A attack(thndr, multi).
@@ -389,6 +392,7 @@ lod.items.angels_prayer.battle_description=Revitalize & Recover 1/2HP.
 lod.items.charm_potion.name=Charm Potion
 lod.items.charm_potion.description=Reduces risk of\nencounter.
 lod.items.charm_potion.battle_description=Avoids minor enemy 3x.
+lod.items.charm_potion.use=Encounter risk reduced
 lod.items.pandemonium.name=Pandemonium
 lod.items.pandemonium.description=Minor enemy only\nattacks one ally\n3 turns (repeat).
 lod.items.pandemonium.battle_description=Allow minor enemy attack 3x.
@@ -404,6 +408,7 @@ lod.items.material_shield.battle_description=Nullify phys attack 3x.
 lod.items.sun_rhapsody.name=Sun Rhapsody
 lod.items.sun_rhapsody.description=Completely\nrecovers MP.
 lod.items.sun_rhapsody.battle_description=Completely recovers MP.
+lod.items.sun_rhapsody.use=Completely recovers MP.
 lod.items.smoke_ball.name=Smoke Ball
 lod.items.smoke_ball.description=100%% sure escape \nfrom minor enemy\n(repeat).
 lod.items.smoke_ball.battle_description=Escape a minor enemy.
@@ -656,6 +661,17 @@ lod.battle_actions.special.name=Special
 lod.battle_actions.d_attack.name=Attack
 lod.battle_actions.additions.name=Change Addition
 
+# Statuses
+lod.status.poison.name=Poison
+lod.status.dispirit.name=Dispirit
+lod.status.weapon_block.name=Weapon Block
+lod.status.stun.name=Stun
+lod.status.fear.name=Fear
+lod.status.confuse.name=Confusion
+lod.status.bewitch.name=Bewitchment
+lod.status.petrify.name=Petrification
+
+# Keybinds
 lod.input_actions.general_open_inventory.name=General: open inventory
 lod.input_actions.general_move_up.name=General: move up
 lod.input_actions.general_move_down.name=General: move down

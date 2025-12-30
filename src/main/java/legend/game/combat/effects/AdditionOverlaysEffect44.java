@@ -3,16 +3,15 @@ package legend.game.combat.effects;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
-import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
-import legend.game.combat.bent.BattleEntity27c;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionSound;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
@@ -23,7 +22,6 @@ import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
-import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -32,7 +30,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Graphics.GsGetLw;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Text.renderText;
 import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
@@ -50,9 +47,6 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
   public int attackerScriptIndex_00;
   public int targetScriptIndex_04;
-
-  public final Vector3f attackerStartingPosition_10 = new Vector3f();
-  public final Vector3f distancePerFrame_20 = new Vector3f();
 
   /** ubyte */
   public int count_30;
@@ -191,18 +185,6 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         val++;
       }
     }
-
-    // These fields are not used for anything
-    //LAB_801066c8
-    this.getBentTranslation(this.attackerScriptIndex_00, this.attackerStartingPosition_10, 0);
-
-    final Vector3f targetStartingPosition = new Vector3f();
-    this.getBentTranslation(this.targetScriptIndex_04, targetStartingPosition, 1);
-
-    final int firstHitSuccessLowerBound = this.hitOverlays_40[0].frameSuccessLowerBound_10;
-    this.distancePerFrame_20.x = (targetStartingPosition.x - this.attackerStartingPosition_10.x) / firstHitSuccessLowerBound;
-    this.distancePerFrame_20.y = (targetStartingPosition.y - this.attackerStartingPosition_10.y) / firstHitSuccessLowerBound;
-    this.distancePerFrame_20.z = (targetStartingPosition.z - this.attackerStartingPosition_10.z) / firstHitSuccessLowerBound;
   }
 
   public void setContinuationState(final int continuationState) {
@@ -215,30 +197,6 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       hitArray[hitNum].frameSuccessUpperBound_12 = 0;
       additionHitCompletionState_8011a014[hitNum] = -1;
     }
-  }
-
-  /**
-   * Used to calculate unused vectors on AdditionOverlaysEffect. Gets translation of attacker or target at start of
-   * addition, and for some reason does a meaningless 0 rotation.
-   */
-  @Method(0x80105f98L)
-  private void getBentTranslation(final int scriptIndex, final Vector3f out, final long coordType) {
-    final MV transformationMatrix = new MV();
-
-    final BattleEntity27c bent = SCRIPTS.getObject(scriptIndex, BattleEntity27c.class);
-
-    final GsCOORDINATE2 coord2;
-    if(coordType == 0) {
-      coord2 = bent.model_148.modelParts_00[1].coord2_04;
-    } else {
-      //LAB_80105fe4
-      coord2 = bent.model_148.coord2_14;
-    }
-
-    //LAB_80105fec
-    GsGetLw(coord2, transformationMatrix);
-    // Does nothing? Changed line below to set //ApplyMatrixLV(transformationMatrix, zeroVec, out);
-    out.set(transformationMatrix.transfer);
   }
 
   /** Runs callbacks to render correct button icon effects during addition */
@@ -402,7 +360,10 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         this.transforms
           .scaling(borderOverlay.size_08, borderOverlay.size_08, 1.0f)
           .rotateZ(borderOverlay.angleModifier_02);
-        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
+
+        // There can be multiple reticles drawn to the screen at once. We want the current hit to be drawn on top
+        // of the next hit, so push the reticles away from the camera by a small margin based on hitNum
+        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f + hitNum * 0.1f);
 
         final QueuedModelStandard model;
 
@@ -444,7 +405,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   }
 
   @Method(0x80107088L)
-  private int tickBorderDisplay(final int a0, final int hitNum, final AdditionOverlaysHit20[] hitArray) {
+  private int tickBorderDisplay(final int hitNum, final AdditionOverlaysHit20[] hitArray) {
     // Darken shadow color of innermost border of current hit
     final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
     if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 - 0x11) {
@@ -565,7 +526,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
       //LAB_801074d0
       for(hitNum = 0; hitNum < this.count_30; hitNum++) {
-        numberBordersRendering += this.tickBorderDisplay(hitArray[hitNum].borderColoursArrayIndex_02, hitNum, hitArray);
+        numberBordersRendering += this.tickBorderDisplay(hitNum, hitArray);
       }
 
       //LAB_80107500

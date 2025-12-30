@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
@@ -77,14 +76,6 @@ public class DebuggerController {
   public Button setGameSpeedMultiplier;
 
   @FXML
-  public CheckBox battleUiColour;
-  @FXML
-  public Spinner<Integer> battleUiColourR;
-  @FXML
-  public Spinner<Integer> battleUiColourG;
-  @FXML
-  public Spinner<Integer> battleUiColourB;
-  @FXML
   public CheckBox additionOverlayColour;
   @FXML
   public Spinner<Integer> additionOverlayR;
@@ -114,64 +105,6 @@ public class DebuggerController {
   public CheckBox fastTextSpeed;
   @FXML
   public CheckBox autoAdvanceText;
-  @FXML
-  public CheckBox textBoxColour;
-  @FXML
-  public RadioButton textBoxBase;
-  @FXML
-  public RadioButton textBoxHorizontal;
-  @FXML
-  public RadioButton textBoxVertical;
-  @FXML
-  public Spinner<Integer> textBox1R;
-  @FXML
-  public Spinner<Integer> textBox1G;
-  @FXML
-  public Spinner<Integer> textBox1B;
-  @FXML
-  public Spinner<Integer> textBox2R;
-  @FXML
-  public Spinner<Integer> textBox2G;
-  @FXML
-  public Spinner<Integer> textBox2B;
-  @FXML
-  public Spinner<Integer> textBox3R;
-  @FXML
-  public Spinner<Integer> textBox3G;
-  @FXML
-  public Spinner<Integer> textBox3B;
-  @FXML
-  public Spinner<Integer> textBox4R;
-  @FXML
-  public Spinner<Integer> textBox4G;
-  @FXML
-  public Spinner<Integer> textBox4B;
-  @FXML
-  public Spinner<Integer> textBox5R;
-  @FXML
-  public Spinner<Integer> textBox5G;
-  @FXML
-  public Spinner<Integer> textBox5B;
-  @FXML
-  public Spinner<Integer> textBox6R;
-  @FXML
-  public Spinner<Integer> textBox6G;
-  @FXML
-  public Spinner<Integer> textBox6B;
-  @FXML
-  public Spinner<Integer> textBox7R;
-  @FXML
-  public Spinner<Integer> textBox7G;
-  @FXML
-  public Spinner<Integer> textBox7B;
-  @FXML
-  public Spinner<Integer> textBox8R;
-  @FXML
-  public Spinner<Integer> textBox8G;
-  @FXML
-  public Spinner<Integer> textBox8B;
-  @FXML
-  public Spinner<Integer> textBoxTransparencyMode;
 
   @FXML
   public Spinner<Double> viewpointX;
@@ -191,11 +124,7 @@ public class DebuggerController {
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
-    this.battleUiColour.setSelected(Config.changeBattleRgb());
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-    this.battleUiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().x * 255)));
-    this.battleUiColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().y * 255)));
-    this.battleUiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().z * 255)));
     this.additionOverlayColour.setSelected(Config.changeAdditionOverlayRgb());
     this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRgb() & 0xff)));
     this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 8) & 0xff)));
@@ -210,32 +139,6 @@ public class DebuggerController {
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
     this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
     this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
-    this.textBoxColour.setSelected(Config.textBoxColour());
-    this.textBox1R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(0) & 0xff)));
-    this.textBox1G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(0) >> 8) & 0xff)));
-    this.textBox1B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(0) >> 16) & 0xff)));
-    this.textBox2R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(1) & 0xff)));
-    this.textBox2G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(1) >> 8) & 0xff)));
-    this.textBox2B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(1) >> 16) & 0xff)));
-    this.textBox3R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(2) & 0xff)));
-    this.textBox3G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(2) >> 8) & 0xff)));
-    this.textBox3B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(2) >> 16) & 0xff)));
-    this.textBox4R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(3) & 0xff)));
-    this.textBox4G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(3) >> 8) & 0xff)));
-    this.textBox4B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(3) >> 16) & 0xff)));
-    this.textBox5R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(4) & 0xff)));
-    this.textBox5G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(4) >> 8) & 0xff)));
-    this.textBox5B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(4) >> 16) & 0xff)));
-    this.textBox6R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(5) & 0xff)));
-    this.textBox6G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(5) >> 8) & 0xff)));
-    this.textBox6B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(5) >> 16) & 0xff)));
-    this.textBox7R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(6) & 0xff)));
-    this.textBox7G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(6) >> 8) & 0xff)));
-    this.textBox7B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(6) >> 16) & 0xff)));
-    this.textBox8R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(7) & 0xff)));
-    this.textBox8G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 8) & 0xff)));
-    this.textBox8B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 16) & 0xff)));
-    this.textBoxTransparencyMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, Config.getTextBoxTransparencyMode()));
 
     this.viewpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
     this.viewpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
@@ -243,20 +146,6 @@ public class DebuggerController {
     this.refpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
     this.refpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
     this.refpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
-
-    if(Config.getTextBoxColourMode() == 0) {
-      this.textBoxBase.setSelected(true);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(false);
-    } else if(Config.getTextBoxColourMode() == 1) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(true);
-      this.textBoxVertical.setSelected(false);
-    } else if(Config.getTextBoxColourMode() == 2) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(true);
-    }
 
     EVENTS.register(this);
   }
@@ -395,21 +284,6 @@ public class DebuggerController {
   }
 
   @FXML
-  private void toggleBattleUiColour(final ActionEvent event) {
-    Config.toggleBattleUiColour();
-  }
-
-  @FXML
-  private void setBattleUiRgb(final ActionEvent event) {
-    final int rgb = ((this.battleUiColourR.getValueFactory().getValue().byteValue() & 0xff) << 16) |
-      ((this.battleUiColourG.getValueFactory().getValue().byteValue() & 0xff) << 8) |
-      ((this.battleUiColourB.getValueFactory().getValue().byteValue() & 0xff));
-
-    Config.setBattleRgb(rgb);
-    this.battleUiColour.setSelected(true);
-  }
-
-  @FXML
   private void toggleAdditionOverlayColour() {
     Config.toggleAdditionOverlayColour();
   }
@@ -507,180 +381,6 @@ public class DebuggerController {
   @FXML
   private void toggleAutoAdvanceText(final ActionEvent event) {
     CONFIG.setConfig(CoreMod.AUTO_TEXT_CONFIG.get(), !CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
-  }
-
-  @FXML
-  private void toggleTextBoxColour(final ActionEvent event) {
-    Config.toggleTextBoxColour();
-  }
-
-  @FXML
-  private void setTextBoxRadio(final ActionEvent event) {
-    if((event.toString().contains("textBoxBase"))) {
-      this.textBoxBase.setSelected(true);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(false);
-      Config.setTextBoxColourMode(0);
-    } else if (event.toString().contains("textBoxHorizontal")) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(true);
-      this.textBoxVertical.setSelected(false);
-      Config.setTextBoxColourMode(1);
-    } else if (event.toString().contains("textBoxVertical")) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(true);
-      Config.setTextBoxColourMode(2);
-    }
-  }
-
-  @FXML
-  private void setTextBox1() {
-    final byte[] rgbArray = {
-      this.textBox1R.getValueFactory().getValue().byteValue(),
-      this.textBox1G.getValueFactory().getValue().byteValue(),
-      this.textBox1B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(0, rgb);
-  }
-
-  @FXML
-  private void setTextBox2() {
-    final byte[] rgbArray = {
-      this.textBox2R.getValueFactory().getValue().byteValue(),
-      this.textBox2G.getValueFactory().getValue().byteValue(),
-      this.textBox2B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(1, rgb);
-  }
-
-  @FXML
-  private void setTextBox3() {
-    final byte[] rgbArray = {
-      this.textBox3R.getValueFactory().getValue().byteValue(),
-      this.textBox3G.getValueFactory().getValue().byteValue(),
-      this.textBox3B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(2, rgb);
-  }
-
-  @FXML
-  private void setTextBox4() {
-    final byte[] rgbArray = {
-      this.textBox4R.getValueFactory().getValue().byteValue(),
-      this.textBox4G.getValueFactory().getValue().byteValue(),
-      this.textBox4B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(3, rgb);
-  }
-
-  @FXML
-  private void setTextBox5() {
-    final byte[] rgbArray = {
-      this.textBox5R.getValueFactory().getValue().byteValue(),
-      this.textBox5G.getValueFactory().getValue().byteValue(),
-      this.textBox5B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(4, rgb);
-  }
-
-  @FXML
-  private void setTextBox6() {
-    final byte[] rgbArray = {
-      this.textBox6R.getValueFactory().getValue().byteValue(),
-      this.textBox6G.getValueFactory().getValue().byteValue(),
-      this.textBox6B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(5, rgb);
-  }
-
-  @FXML
-  private void setTextBox7() {
-    final byte[] rgbArray = {
-      this.textBox7R.getValueFactory().getValue().byteValue(),
-      this.textBox7G.getValueFactory().getValue().byteValue(),
-      this.textBox7B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(6, rgb);
-  }
-
-  @FXML
-  private void setTextBox8() {
-    final byte[] rgbArray = {
-      this.textBox8R.getValueFactory().getValue().byteValue(),
-      this.textBox8G.getValueFactory().getValue().byteValue(),
-      this.textBox8B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(7, rgb);
-  }
-
-  @FXML
-  private void setTextBoxTransparencyMode() {
-    Config.setTextBoxTransparencyMode(this.textBoxTransparencyMode.getValue());
   }
 
   @FXML

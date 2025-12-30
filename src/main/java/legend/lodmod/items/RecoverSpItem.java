@@ -59,8 +59,8 @@ public class RecoverSpItem extends BattleItem {
       amount = this.percentage;
     }
 
-    response._00 = 6;
-    response.value_04 = addSp(charId, amount);
+    addSp(charId, amount);
+    response.success();
   }
 
   @Override

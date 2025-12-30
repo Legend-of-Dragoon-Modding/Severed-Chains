@@ -3,7 +3,6 @@ package legend.game.combat.ui;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.Transformations;
@@ -33,6 +32,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
+import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,6 +93,7 @@ import static legend.lodmod.LodBattleActions.ITEMS;
 import static legend.lodmod.LodBattleActions.SPECIAL;
 import static legend.lodmod.LodBattleActions.SPELLS;
 import static legend.lodmod.LodBattleActions.TRANSFORM;
+import static legend.lodmod.LodConfig.UI_COLOUR;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ADDITIONS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ESCAPE;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_GUARD;
@@ -603,7 +604,7 @@ public class BattleHud {
           this.battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198[this.battleHudYOffsetIndex_800c6c38] - 26, 288, 40);
         }
 
-        this.battleUiBackground.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.battleUiBackground.render(CONFIG.getConfig(UI_COLOUR.get()));
       }
 
       //LAB_800f0000
@@ -825,7 +826,7 @@ public class BattleHud {
                   .build();
               }
 
-              this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f);
+              this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f + i * 0.1f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
               RENDERER.queueOrthoModel(this.spBars, this.spBarTransforms, QueuedModelStandard.class).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
@@ -1915,6 +1916,7 @@ public class BattleHud {
 
         if(!this.battleMenu_800c6c34.isIconEnabled(action)) {
           final int menuElementBaseX = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + iconIndex * 19;
+          this.battleMenu_800c6c34.transforms.identity();
           this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 123.7f);
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
             .vertices(this.battleMenu_800c6c34.actionDisabledObjOffset, 4);
