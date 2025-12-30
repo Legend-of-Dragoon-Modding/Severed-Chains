@@ -1,5 +1,6 @@
 package legend.game.inventory.screens.controls;
 
+import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.saves.SavedGame;
@@ -11,11 +12,11 @@ import javax.annotation.Nullable;
 
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.chapterNames_80114248;
+import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
-import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Text.renderText;
 
 public class SaveCard extends Control {
   final CharacterPortrait[] portraits = new CharacterPortrait[3];
@@ -29,7 +30,7 @@ public class SaveCard extends Control {
     this.addControl(Glyph.uiElement(76, 76)).setPos(0, 0);
     this.addControl(Glyph.uiElement(77, 77)).setPos(176, 0);
 
-    this.dragoonSpirits = this.addControl(new DragoonSpirits(0));
+    this.dragoonSpirits = this.addControl(new DragoonSpirits(new GoodsInventory()));
     this.dragoonSpirits.setPos(205, 27);
 
     for(int i = 0; i < 3; i++) {
@@ -48,7 +49,7 @@ public class SaveCard extends Control {
 
     if(saveData != null && saveData.isValid()) {
       this.invalidSave.setVisibility(false);
-      this.dragoonSpirits.setSpirits(saveData.state.goods_19c[0]);
+      this.dragoonSpirits.setGoods(saveData.state.goods_19c);
 
       for(int i = 0; i < 3; i++) {
         this.portraits[i].setCharId(saveData.state.charIds_88[i]);
@@ -56,7 +57,7 @@ public class SaveCard extends Control {
     } else {
       this.invalidSave.setVisibility(saveData != null);
 
-      this.dragoonSpirits.setSpirits(0);
+      this.dragoonSpirits.setGoods(new GoodsInventory());
 
       for(int i = 0; i < 3; i++) {
         this.portraits[i].setCharId(-1);

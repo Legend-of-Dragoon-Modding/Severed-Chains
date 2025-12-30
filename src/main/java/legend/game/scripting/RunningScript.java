@@ -19,4 +19,9 @@ public class RunningScript<T extends ScriptedObject> {
   public int getOp() {
     return this.scriptState_04.frame().file.getOp(this.commandOffset_0c);
   }
+
+  @Override
+  public String toString() {
+    return this.scriptState_04.toString();
+  }
 }

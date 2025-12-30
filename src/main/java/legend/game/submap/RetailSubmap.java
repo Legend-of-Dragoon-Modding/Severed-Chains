@@ -13,19 +13,19 @@ import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdWithId;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsRVIEW2;
@@ -57,43 +57,41 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
-import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Audio.loadMusicPackage;
+import static legend.game.Audio.loadSubmapSounds;
+import static legend.game.Audio.musicLoaded_800bd782;
+import static legend.game.Audio.soundFiles_800bcf80;
+import static legend.game.Audio.startCurrentMusicSequence;
+import static legend.game.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.Audio.stopCurrentMusicSequence;
+import static legend.game.Audio.unloadSoundFile;
+import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsSetSmapRefView2L;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
-import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
-import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
-import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
@@ -107,6 +105,19 @@ public class RetailSubmap extends Submap {
   private final CollisionGeometry collisionGeometry;
 
   private final List<Tim> pxls = new ArrayList<>();
+
+  private static final int[] submapMusic_80050068 = {
+    -1, -1, 23, 28, 44, 20, 22, -1,
+    29, 40, 30, 22, 24, 22, 31, 42,
+    -1, 32, 45, 29, 40, 27, 33, 21,
+    21, -1, 48, 46, -1, 22, 38, -1,
+    33, 23, 36, 49, 28, 39, 50, -1,
+    47, -1, 26, 27, 26, 42, 45, -1,
+    27, 39, 27, 52, -1, 38, 53, 54,
+    55, -1, -1, -1, -1, -1, -1, -1,
+  };
+
+  private int projectionPlaneDistance_800bd810;
 
   private final boolean hasRenderer_800c6968;
 
@@ -181,7 +192,7 @@ public class RetailSubmap extends Submap {
 
     drgnBinIndex_800bc058 = drgnIndex.get();
     loadDrgnDir(2, fileIndex.get(), files -> {
-      this.loadBackground("DRGN2" + drgnIndex.get() + "/" + fileIndex.get(), files);
+      this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files);
       onLoaded.run();
     });
   }
@@ -356,6 +367,7 @@ public class RetailSubmap extends Submap {
     38, // Prairie path near ocean - softlock
     47, // Cave stepping stones - softlock
     110, // Marshlands boat screen - boat is invisible
+    327, // First map after starting chapter 3 - screen is black on load (GH#2204)
     381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
     580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
   );
@@ -440,8 +452,7 @@ public class RetailSubmap extends Submap {
     final var battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
     final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
-    encounterId_800bb0f8 = generateEncounterEvent.encounterId;
-    battleStage_800bb0f4 = generateEncounterEvent.battleStageId;
+    startLegacyEncounter(generateEncounterEvent.encounterId, generateEncounterEvent.battleStageId);
 
     if(Config.combatStage()) {
       battleStage_800bb0f4 = Config.getCombatStage();
@@ -483,10 +494,10 @@ public class RetailSubmap extends Submap {
       this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
 
       final SubmapObject obj = new SubmapObject();
-      obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
+      obj.script = new ScriptFile("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
 
       if(submapModel.hasVirtualSize() && submapModel.real()) {
-        obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
+        obj.model = new CContainer("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
       } else {
         obj.model = null;
       }
@@ -555,7 +566,7 @@ public class RetailSubmap extends Submap {
       .set(submapCutMatrix).setTranslation(submapCutMatrix.transfer)
       .mulLocal(inverseW2s);
 
-    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256, true);
+    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256);
     initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
   }
 
@@ -585,7 +596,7 @@ public class RetailSubmap extends Submap {
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
       // sobj 16 uses the submap overlay texture
       if(pxlIndex == 16) {
-        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256, true));
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256));
         continue;
       }
 
@@ -617,7 +628,7 @@ public class RetailSubmap extends Submap {
             if(this.sobjTextureOverrides.containsKey(pxlIndex)) {
               this.uvAdjustments.add(UvAdjustmentMetrics14.PNG);
             } else {
-              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y, pxlIndex != 17 && pxlIndex != 18));
+              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
             }
 
             continue outer;
@@ -625,9 +636,8 @@ public class RetailSubmap extends Submap {
         }
 
         throw new RuntimeException("Failed to find available texture slot for sobj texture " + pxlIndex);
-      } else {
-        this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
+      this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
     }
   }
 
@@ -942,6 +952,26 @@ public class RetailSubmap extends Submap {
       renderPacket.offsetX_1c = envTexture.textureOffsetX_10;
       renderPacket.offsetY_1e = envTexture.textureOffsetY_12;
 
+      // Fix misaligned cutout in marshlands boat area (GH#1201)
+      if(this.cut == 111 && i == 8) {
+        renderPacket.offsetY_1e++;
+      }
+
+      // Fix misaligned cutout on ghost ship (GH#2210)
+      if(this.cut == 288 && i == 17) {
+        renderPacket.offsetY_1e++;
+      }
+
+      // Fix misaligned cutout in Rouge training area (GH#2291)
+      if(this.cut == 595 && i == 5) {
+        renderPacket.offsetY_1e++;
+      }
+
+      // Fix misaligned cutout in Hellena (GH#2203)
+      if(this.cut == 642 && i == 2) {
+        renderPacket.w_18--;
+      }
+
       //LAB_800e7210
       renderPacket.zFlags_22 &= 0x3fff;
     }
@@ -965,9 +995,14 @@ public class RetailSubmap extends Submap {
     }
   }
 
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.rview2_800cbd10;
+  }
+
   @Method(0x800e7328L)
   private void updateCamera() {
-    setProjectionPlaneDistance(projectionPlaneDistance_800bd810);
+    setProjectionPlaneDistance(this.projectionPlaneDistance_800bd810);
     GsSetSmapRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     rview2_800bd7e8.set(this.rview2_800cbd10);
@@ -979,7 +1014,7 @@ public class RetailSubmap extends Submap {
     this.rview2_800cbd10.refpoint_0c.set(refpoint);
     this.rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
     this.rview2_800cbd10.super_1c = null;
-    projectionPlaneDistance_800bd810 = projectionDistance;
+    this.projectionPlaneDistance_800bd810 = projectionDistance;
 
     this.updateCamera();
   }
@@ -1339,10 +1374,6 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
-    }
-
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
@@ -1368,9 +1399,10 @@ public class RetailSubmap extends Submap {
 
       GsGetLw(dobj2.coord2_04, lw);
 
-      RENDERER.queueModel(dobj2.obj, matrix, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(dobj2.tmd_08.getObj(), matrix, lw, QueuedModelTmd.class)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .depthOffset(model.zOffset_a0 * 4)
+        .usePs1Depth(model.usePs1Depth)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
@@ -1397,30 +1429,29 @@ public class RetailSubmap extends Submap {
     jmp_8001c7a0:
     {
       //LAB_8001c63c
-      SubmapMusic08 a2;
-      int a3;
-      for(a3 = 0, a2 = _8004fb00[a3]; a2.submapId_00 != 99 || a2.musicIndex_02 != 99; a3++, a2 = _8004fb00[a3]) { // I think 99 is just a sentinel value that means "end of list"
+      for(int submapMusicIndex = 0; submapMusicIndex < _8004fb00.length; submapMusicIndex++) {
+        final SubmapMusic08 music = _8004fb00[submapMusicIndex];
         final int submapId = submapId_800bd808;
 
-        if(submapId == a2.submapId_00) {
+        if(submapId == music.submapId_00) {
           //LAB_8001c680
-          for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
+          for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
             if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
-              if(a2.submapCuts_04[v1] != this.cut) {
+              if(music.submapCuts_04[cutIndex] != this.cut) {
                 continue;
               }
 
               if((gameState_800babc8._1a4[0] & 0x1) == 0) {
                 //LAB_8001c7cc
-                musicIndex = a2.musicIndex_02;
+                musicIndex = music.musicIndex_02;
                 break jmp_8001c7a0;
               }
             }
 
             //LAB_8001c6ac
-            if(a2.submapCuts_04[v1] == this.cut && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
+            if(music.submapCuts_04[cutIndex] == this.cut && (gameState_800babc8._1a4[submapMusicIndex >>> 5] & 0x1 << (submapMusicIndex & 0x1f)) != 0) {
               //LAB_8001c7c0
-              musicIndex = a2.musicIndex_02;
+              musicIndex = music.musicIndex_02;
               break jmp_8001c7a0;
             }
 
@@ -1432,14 +1463,14 @@ public class RetailSubmap extends Submap {
       }
 
       //LAB_8001c728
-      SubmapMusic08 a0;
-      for(a3 = 0, a0 = _8004fa98[a3]; a0.submapId_00 != 99 || a0.musicIndex_02 != 99; a3++, a0 = _8004fa98[a3]) {
-        if(submapId_800bd808 == a0.submapId_00) {
+      for(int submapMusicIndex = 0; submapMusicIndex < _8004fa98.length; submapMusicIndex++) {
+        final SubmapMusic08 music = _8004fa98[submapMusicIndex];
+        if(submapId_800bd808 == music.submapId_00) {
           //LAB_8001c748
-          for(int v1 = 0; v1 < a0.submapCuts_04.length; v1++) {
-            if(a0.submapCuts_04[v1] == this.cut) {
+          for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
+            if(music.submapCuts_04[cutIndex] == this.cut) {
               //LAB_8001c7d8
-              return this.FUN_8001c84c(soundCharId, a0.musicIndex_02);
+              return this.FUN_8001c84c(soundCharId, music.musicIndex_02);
             }
           }
         }

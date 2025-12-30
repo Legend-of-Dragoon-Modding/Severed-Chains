@@ -18,8 +18,8 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.GTE;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Graphics.GsSetRefView2L;
+import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.ZERO;
 
@@ -161,7 +161,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d47dcL)
-  public void FUN_800d47dc(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveViewpointFromScriptTranslation(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.viewpointBaseTranslation_94.set(this.rview2_00.viewpoint_00);
 
     if(a5 == 0) {
@@ -184,7 +184,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d496cL)
-  public void FUN_800d496c(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveViewpointFromScriptAngle(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.viewpointAngleX_ac = this.calculateCameraValue(false, 1, 0, null); // Angle from 0 to viewpoint X
     this.viewpointAngleY_b8 = this.calculateCameraValue(false, 1, 1, null); // Angle from 0 to viewpoint Y
     this.viewpointDeltaMagnitude_a0 = this.calculateCameraValue(false, 1, 2, null); // Angle from 0 to viewpoint Z
@@ -275,7 +275,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d4fbcL)
-  public void FUN_800d4fbc(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveViewpointFromScriptTranslationRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.viewpointBobj_f4 = bobj;
     this.viewpointBaseTranslation_94.x = this.calculateCameraValue(false, 6, 0, bobj);
     this.viewpointBaseTranslation_94.y = this.calculateCameraValue(false, 6, 1, bobj);
@@ -325,7 +325,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d519cL)
-  public void FUN_800d519c(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveViewpointFromScriptAngleRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.viewpointBobj_f4 = bobj;
     this.viewpointAngleX_ac = this.calculateCameraValue(false, 7, 0, bobj);
     this.viewpointAngleY_b8 = this.calculateCameraValue(false, 7, 1, bobj);
@@ -382,7 +382,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d5ec8L)
-  public void FUN_800d5ec8(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateViewpointFromScriptTranslation(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     final float dx = x - this.rview2_00.viewpoint_00.x;
     final float dy = y - this.rview2_00.viewpoint_00.y;
     final float dz = z - this.rview2_00.viewpoint_00.z;
@@ -410,7 +410,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d60b0L)
-  public void FUN_800d60b0(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateViewpointFromScriptAngle(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     this.viewpointAngleX_ac = this.calculateCameraValue(false, 1, 0, null);
     this.viewpointAngleY_b8 = this.calculateCameraValue(false, 1, 1, null);
     this.viewpointDeltaMagnitude_a0 = this.calculateCameraValue(false, 1, 2, null);
@@ -499,7 +499,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d670cL)
-  public void FUN_800d670c(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateViewpointFromScriptTranslationRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     this.viewpointBobj_f4 = bobj;
     this.viewpointBaseTranslation_94.x = this.calculateCameraValue(false, 6, 0, bobj);
     this.viewpointBaseTranslation_94.y = this.calculateCameraValue(false, 6, 1, bobj);
@@ -531,7 +531,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d6960L)
-  public void FUN_800d6960(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateViewpointFromScriptAngleRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     this.viewpointBobj_f4 = bobj;
     this.viewpointAngleX_ac = this.calculateCameraValue(false, 7, 0, bobj);
     this.viewpointAngleY_b8 = this.calculateCameraValue(false, 7, 1, bobj);
@@ -562,7 +562,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d6b90L)
-  public void FUN_800d6b90(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveRefpointFromScriptTranslation(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.refpointBaseTranslation_20.set(this.rview2_00.refpoint_0c);
 
     if(a5 == 0) {
@@ -595,7 +595,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d6d18L)
-  public void FUN_800d6d18(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveRefpointFromScriptAngle(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.refpointAngleX_38 = this.calculateCameraValue(true, 1, 0, null);
     this.refpointAngleY_44 = this.calculateCameraValue(true, 1, 1, null);
     this.refpointDeltaMagnitude_2c = this.calculateCameraValue(true, 1, 2, null);
@@ -688,7 +688,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d7368L)
-  public void FUN_800d7368(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveRefpointFromScriptTranslationRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.refpointBobj_80 = bobj;
     this.refpointBaseTranslation_20.x = this.calculateCameraValue(true, 6, 0, bobj);
     this.refpointBaseTranslation_20.y = this.calculateCameraValue(true, 6, 1, bobj);
@@ -716,7 +716,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d7548L)
-  public void FUN_800d7548(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
+  public void moveRefpointFromScriptAngleRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepType, final int a5, final BattleObject bobj) {
     this.refpointBobj_80 = bobj;
     this.refpointAngleX_38 = this.calculateCameraValue(true, 7, 0, bobj);
     this.refpointAngleY_44 = this.calculateCameraValue(true, 7, 1, bobj);
@@ -865,7 +865,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8274L)
-  public void FUN_800d8274(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateRefpointFromScriptTranslation(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     final float dx = x - this.rview2_00.refpoint_0c.x;
     final float dy = y - this.rview2_00.refpoint_0c.y;
     final float dz = z - this.rview2_00.refpoint_0c.z;
@@ -889,7 +889,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8424L)
-  public void FUN_800d8424(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateRefpointFromScriptAngle(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     this.refpointAngleX_38 = this.calculateCameraValue(true, 1, 0, null);
     this.refpointAngleY_44 = this.calculateCameraValue(true, 1, 1, null);
     this.refpointDeltaMagnitude_2c = this.calculateCameraValue(true, 1, 2, null);
@@ -970,7 +970,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d89f8L)
-  public void FUN_800d89f8(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateRefpointFromScriptTranslationRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     this.refpointBobj_80 = bobj;
     this.refpointBaseTranslation_20.x = this.calculateCameraValue(true, 6, 0, bobj);
     this.refpointBaseTranslation_20.y = this.calculateCameraValue(true, 6, 1, bobj);
@@ -998,7 +998,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8bf4L)
-  public void FUN_800d8bf4(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void accelerateRefpointFromScriptAngleRelativeToObject(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     this.refpointBobj_80 = bobj;
     this.refpointAngleX_38 = this.calculateCameraValue(true, 7, 0, bobj);
     this.refpointAngleY_44 = this.calculateCameraValue(true, 7, 1, bobj);
@@ -1650,7 +1650,7 @@ public class BattleCamera {
   }
 
   @Method(0x800dac70L)
-  public void FUN_800dac70(final int index, final float x, final float y, final float z, final BattleObject bobj) {
+  public void cameraSetViewpoint(final int index, final float x, final float y, final float z, final BattleObject bobj) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fabbc, FUN index=%d, x=%f, y=%f, z=%f, bobj=%s", index, x, y, z, bobj);
     this.viewpointSetFromScriptMethods_800fabbc[index].accept(x, y, z, bobj);
     this.viewpointCallbackIndex_fc = index;
@@ -1789,7 +1789,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db084L)
-  public void FUN_800db084(final int index, final float x, final float y, final float z, final BattleObject bobj) {
+  public void cameraSetRefpoint(final int index, final float x, final float y, final float z, final BattleObject bobj) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fabdc, FUN index=%d, x=%f, y=%f, z=%f, bobj=%s", index, x, y, z, bobj);
     this.refpointSetFromScriptMethods_800fabdc[index].accept(x, y, z, bobj);
     this.refpointCallbackIndex_88 = index;
@@ -1923,9 +1923,9 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db4ecL)
-  public void FUN_800db4ec(final int callbackIndex, final float x, final float y, final float z, final int a4, final int ticks, final int stepType, final BattleObject bobj) {
+  public void cameraMoveViewpoint(final int callbackIndex, final float x, final float y, final float z, final int a4, final int ticks, final int stepType, final BattleObject bobj) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fabfc, FUN index=%d, x=%f, y=%f, z=%f, a4=%d, ticks=%d, stepType=%d, bobj=%s", callbackIndex, x, y, z, a4, ticks, stepType, bobj);
-    this._800fabfc[callbackIndex].accept(x, y, z, ticks, stepType, a4, bobj);
+    this.viewpointMoveFromScriptMethods_800fabfc[callbackIndex].accept(x, y, z, ticks, stepType, a4, bobj);
     this.viewpointCallbackIndex_fc = callbackIndex;
     this.viewpointMoving_122 = true;
   }
@@ -1951,9 +1951,9 @@ public class BattleCamera {
   }
 
   @Method(0x800db600L)
-  public void FUN_800db600(final int callbackIndex, final float x, final float y, final float z, final int a4, final int ticks, final int stepType, final BattleObject bobj) {
+  public void cameraMoveRefpoint(final int callbackIndex, final float x, final float y, final float z, final int a4, final int ticks, final int stepType, final BattleObject bobj) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac5c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, stepType=%d, a4=%d, bobj=%s", callbackIndex, x, y, z, ticks, stepType, a4, bobj);
-    this._800fac5c[callbackIndex].accept(x, y, z, ticks, stepType, a4, bobj);
+    this.refpointMoveFromScriptMethods_800fac5c[callbackIndex].accept(x, y, z, ticks, stepType, a4, bobj);
     this.refpointCallbackIndex_88 = callbackIndex;
     this.refpointMoving_123 = true;
   }
@@ -2010,9 +2010,9 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db950L)
-  public void FUN_800db950(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void cameraAccelerateViewpoint(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, stepSmoothingMode=%d, stepZ=%f, stepType=%d, bobj=%s", callbackIndex, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, bobj);
-    this._800fac3c[callbackIndex].accept(x, y, z, ticks, stepSmoothingMode, stepZ, stepType, bobj);
+    this.viewpointAccelerateFromScriptMethods_800fac3c[callbackIndex].accept(x, y, z, ticks, stepSmoothingMode, stepZ, stepType, bobj);
     this.viewpointCallbackIndex_fc = callbackIndex;
     this.viewpointMoving_122 = true;
   }
@@ -2038,9 +2038,9 @@ public class BattleCamera {
   }
 
   @Method(0x800dba80L)
-  public void FUN_800dba80(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
+  public void cameraAccelerateRefpoint(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, stepSmoothingMode=%d, stepZ=%f, stepType=%d, bobj=%s", callbackIndex, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, bobj);
-    this._800fac9c[callbackIndex].accept(x, y, z, ticks, stepSmoothingMode, stepZ, stepType, bobj);
+    this.refpointAccelerateFromScriptMethods_800fac9c[callbackIndex].accept(x, y, z, ticks, stepSmoothingMode, stepZ, stepType, bobj);
     this.refpointCallbackIndex_88 = callbackIndex;
     this.refpointMoving_123 = true;
   }
@@ -2616,26 +2616,26 @@ public class BattleCamera {
   }
   /**
    * <ol start="0">
-   *   <li>{@link #FUN_800d47dc}</li>
-   *   <li>{@link #FUN_800d496c}</li>
+   *   <li>{@link #moveViewpointFromScriptTranslation}</li>
+   *   <li>{@link #moveViewpointFromScriptAngle}</li>
    *   <li>{@link #FUN_800db564}</li>
    *   <li>{@link #FUN_800db56c}</li>
    *   <li>{@link #FUN_800d4bac}</li>
    *   <li>{@link #FUN_800d4d7c}</li>
-   *   <li>{@link #FUN_800d4fbc}</li>
-   *   <li>{@link #FUN_800d519c}</li>
+   *   <li>{@link #moveViewpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link #moveViewpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  private final CameraSeptParamCallback[] _800fabfc = new CameraSeptParamCallback[8];
+  private final CameraSeptParamCallback[] viewpointMoveFromScriptMethods_800fabfc = new CameraSeptParamCallback[8];
   {
-    this._800fabfc[0] = this::FUN_800d47dc;
-    this._800fabfc[1] = this::FUN_800d496c;
-    this._800fabfc[2] = this::FUN_800db564;
-    this._800fabfc[3] = this::FUN_800db56c;
-    this._800fabfc[4] = this::FUN_800d4bac;
-    this._800fabfc[5] = this::FUN_800d4d7c;
-    this._800fabfc[6] = this::FUN_800d4fbc;
-    this._800fabfc[7] = this::FUN_800d519c;
+    this.viewpointMoveFromScriptMethods_800fabfc[0] = this::moveViewpointFromScriptTranslation;
+    this.viewpointMoveFromScriptMethods_800fabfc[1] = this::moveViewpointFromScriptAngle;
+    this.viewpointMoveFromScriptMethods_800fabfc[2] = this::FUN_800db564;
+    this.viewpointMoveFromScriptMethods_800fabfc[3] = this::FUN_800db56c;
+    this.viewpointMoveFromScriptMethods_800fabfc[4] = this::FUN_800d4bac;
+    this.viewpointMoveFromScriptMethods_800fabfc[5] = this::FUN_800d4d7c;
+    this.viewpointMoveFromScriptMethods_800fabfc[6] = this::moveViewpointFromScriptTranslationRelativeToObject;
+    this.viewpointMoveFromScriptMethods_800fabfc[7] = this::moveViewpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">
@@ -2662,49 +2662,49 @@ public class BattleCamera {
   }
   /**
    * <ol start="0">
-   *   <li>{@link #FUN_800d5ec8}</li>
-   *   <li>{@link #FUN_800d60b0}</li>
+   *   <li>{@link #accelerateViewpointFromScriptTranslation}</li>
+   *   <li>{@link #accelerateViewpointFromScriptAngle}</li>
    *   <li>{@link #FUN_800db9d0}</li>
    *   <li>{@link #FUN_800db9d8}</li>
    *   <li>{@link #FUN_800d62d8}</li>
    *   <li>{@link #FUN_800d64e4}</li>
-   *   <li>{@link #FUN_800d670c}</li>
-   *   <li>{@link #FUN_800d6960}</li>
+   *   <li>{@link #accelerateViewpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link #accelerateViewpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  private final CameraOctParamCallback[] _800fac3c = new CameraOctParamCallback[8];
+  private final CameraOctParamCallback[] viewpointAccelerateFromScriptMethods_800fac3c = new CameraOctParamCallback[8];
   {
-    this._800fac3c[0] = this::FUN_800d5ec8;
-    this._800fac3c[1] = this::FUN_800d60b0;
-    this._800fac3c[2] = this::FUN_800db9d0;
-    this._800fac3c[3] = this::FUN_800db9d8;
-    this._800fac3c[4] = this::FUN_800d62d8;
-    this._800fac3c[5] = this::FUN_800d64e4;
-    this._800fac3c[6] = this::FUN_800d670c;
-    this._800fac3c[7] = this::FUN_800d6960;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[0] = this::accelerateViewpointFromScriptTranslation;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[1] = this::accelerateViewpointFromScriptAngle;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[2] = this::FUN_800db9d0;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[3] = this::FUN_800db9d8;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[4] = this::FUN_800d62d8;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[5] = this::FUN_800d64e4;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[6] = this::accelerateViewpointFromScriptTranslationRelativeToObject;
+    this.viewpointAccelerateFromScriptMethods_800fac3c[7] = this::accelerateViewpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">
-   *   <li>{@link #FUN_800d6b90}</li>
-   *   <li>{@link #FUN_800d6d18}</li>
+   *   <li>{@link #moveRefpointFromScriptTranslation}</li>
+   *   <li>{@link #moveRefpointFromScriptAngle}</li>
    *   <li>{@link #FUN_800d6f58}</li>
    *   <li>{@link #FUN_800d7128}</li>
    *   <li>{@link #FUN_800db678}</li>
    *   <li>{@link #FUN_800db680}</li>
-   *   <li>{@link #FUN_800d7368}</li>
-   *   <li>{@link #FUN_800d7548}</li>
+   *   <li>{@link #moveRefpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link #moveRefpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  private final CameraSeptParamCallback[] _800fac5c = new CameraSeptParamCallback[8];
+  private final CameraSeptParamCallback[] refpointMoveFromScriptMethods_800fac5c = new CameraSeptParamCallback[8];
   {
-    this._800fac5c[0] = this::FUN_800d6b90;
-    this._800fac5c[1] = this::FUN_800d6d18;
-    this._800fac5c[2] = this::FUN_800d6f58;
-    this._800fac5c[3] = this::FUN_800d7128;
-    this._800fac5c[4] = this::FUN_800db678;
-    this._800fac5c[5] = this::FUN_800db680;
-    this._800fac5c[6] = this::FUN_800d7368;
-    this._800fac5c[7] = this::FUN_800d7548;
+    this.refpointMoveFromScriptMethods_800fac5c[0] = this::moveRefpointFromScriptTranslation;
+    this.refpointMoveFromScriptMethods_800fac5c[1] = this::moveRefpointFromScriptAngle;
+    this.refpointMoveFromScriptMethods_800fac5c[2] = this::FUN_800d6f58;
+    this.refpointMoveFromScriptMethods_800fac5c[3] = this::FUN_800d7128;
+    this.refpointMoveFromScriptMethods_800fac5c[4] = this::FUN_800db678;
+    this.refpointMoveFromScriptMethods_800fac5c[5] = this::FUN_800db680;
+    this.refpointMoveFromScriptMethods_800fac5c[6] = this::moveRefpointFromScriptTranslationRelativeToObject;
+    this.refpointMoveFromScriptMethods_800fac5c[7] = this::moveRefpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">
@@ -2731,26 +2731,26 @@ public class BattleCamera {
   }
   /**
    * <ol start="0">
-   *   <li>{@link #FUN_800d8274}</li>
-   *   <li>{@link #FUN_800d8424}</li>
+   *   <li>{@link #accelerateRefpointFromScriptTranslation}</li>
+   *   <li>{@link #accelerateRefpointFromScriptAngle}</li>
    *   <li>{@link #FUN_800d8614}</li>
    *   <li>{@link #FUN_800d8808}</li>
    *   <li>{@link #FUN_800dbb00}</li>
    *   <li>{@link #FUN_800dbb08}</li>
-   *   <li>{@link #FUN_800d89f8}</li>
-   *   <li>{@link #FUN_800d8bf4}</li>
+   *   <li>{@link #accelerateRefpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link #accelerateRefpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  private final CameraOctParamCallback[] _800fac9c = new CameraOctParamCallback[8];
+  private final CameraOctParamCallback[] refpointAccelerateFromScriptMethods_800fac9c = new CameraOctParamCallback[8];
   {
-    this._800fac9c[0] = this::FUN_800d8274;
-    this._800fac9c[1] = this::FUN_800d8424;
-    this._800fac9c[2] = this::FUN_800d8614;
-    this._800fac9c[3] = this::FUN_800d8808;
-    this._800fac9c[4] = this::FUN_800dbb00;
-    this._800fac9c[5] = this::FUN_800dbb08;
-    this._800fac9c[6] = this::FUN_800d89f8;
-    this._800fac9c[7] = this::FUN_800d8bf4;
+    this.refpointAccelerateFromScriptMethods_800fac9c[0] = this::accelerateRefpointFromScriptTranslation;
+    this.refpointAccelerateFromScriptMethods_800fac9c[1] = this::accelerateRefpointFromScriptAngle;
+    this.refpointAccelerateFromScriptMethods_800fac9c[2] = this::FUN_800d8614;
+    this.refpointAccelerateFromScriptMethods_800fac9c[3] = this::FUN_800d8808;
+    this.refpointAccelerateFromScriptMethods_800fac9c[4] = this::FUN_800dbb00;
+    this.refpointAccelerateFromScriptMethods_800fac9c[5] = this::FUN_800dbb08;
+    this.refpointAccelerateFromScriptMethods_800fac9c[6] = this::accelerateRefpointFromScriptTranslationRelativeToObject;
+    this.refpointAccelerateFromScriptMethods_800fac9c[7] = this::accelerateRefpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">

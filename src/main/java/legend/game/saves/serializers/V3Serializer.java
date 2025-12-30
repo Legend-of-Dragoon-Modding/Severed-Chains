@@ -1,16 +1,29 @@
 package legend.game.saves.serializers;
 
+import legend.core.GameEngine;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.saves.InventoryEntry;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
+
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 
 public final class V3Serializer {
   private V3Serializer() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSerializer.class);
 
   public static final int MAGIC_V3 = 0x33615344; // DSa3
 
@@ -95,9 +108,15 @@ public final class V3Serializer {
       offset += 4;
     }
 
-    for(int i = 0; i < state.goods_19c.length; i++) {
-      state.goods_19c[i] = data.readInt(offset);
+    for(int i = 0; i < 2; i++) {
+      final int packed = data.readInt(offset);
       offset += 4;
+
+      for(int bit = 0; bit < 32; bit++) {
+        if((packed & (1 << bit)) != 0) {
+          state.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(LodMod.id(LodMod.GOODS_IDS[i * 32 + bit])));
+        }
+      }
     }
 
     for(int i = 0; i < state._1a4.length; i++) {
@@ -116,19 +135,36 @@ public final class V3Serializer {
     offset += 2;
 
     for(int i = 0; i < equipmentCount; i++) {
-      state.equipmentIds_1e8.add(data.readUByte(offset));
+      final int id = data.readUByte(offset);
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown equipment ID %#x", id);
+        continue;
+      }
+
+      state.equipmentRegistryIds_1e8.add(LodMod.id(idStr));
       offset++;
     }
 
     for(int i = 0; i < itemCount; i++) {
-      state.itemIds_2e9.add(data.readUByte(offset));
+      final int id = data.readUByte(offset);
+      final String idStr = LodMod.ITEM_IDS[id - 192];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown item ID %#x", id);
+        continue;
+      }
+
+      state.itemRegistryIds_2e9.add(new InventoryEntry(LodMod.id(idStr), 1, 1));
       offset++;
     }
 
     final int charDataCount = data.readUShort(offset); // Not yet used
     offset += 2;
 
-    for(final CharacterData2c charData : state.charData_32c) {
+    for(int charIndex = 0; charIndex < state.charData_32c.length; charIndex++) {
+      final CharacterData2c charData = state.charData_32c[charIndex];
       charData.xp_00 = data.readInt(offset);
       offset += 4;
       charData.partyFlags_04 = data.readInt(offset);
@@ -153,17 +189,33 @@ public final class V3Serializer {
         offset++;
       }
 
-      charData.selectedAddition_19 = data.readShort(offset);
+      final int oldAdditionIndex = data.readShort(offset) - additionOffsets_8004f5ac[charIndex];
       offset += 2;
+
+      if(CHARACTER_ADDITIONS[charIndex].length != 0) {
+        if(oldAdditionIndex >= 0) {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charIndex][oldAdditionIndex].getId();
+        } else {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charIndex][0].getId();
+        }
+      }
 
       final int additionCount = data.readShort(offset); // Not yet used
       offset += 2;
 
-      for(int additionSlot = 0; additionSlot < charData.additionLevels_1a.length; additionSlot++) {
-        charData.additionLevels_1a[additionSlot] = data.readShort(offset);
+      for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
+        final int level = data.readShort(offset);
         offset += 2;
-        charData.additionXp_22[additionSlot] = data.readInt(offset);
+        final int xp = data.readInt(offset);
         offset += 4;
+
+        if(additionIndex < CHARACTER_ADDITIONS[charIndex].length) {
+          final RegistryDelegate<Addition> addition = CHARACTER_ADDITIONS[charIndex][additionIndex];
+          final CharacterAdditionStats stats = new CharacterAdditionStats();
+          stats.level = Math.max(0, level - 1);
+          stats.xp = xp;
+          charData.additionStats.put(addition.getId(), stats);
+        }
       }
     }
 

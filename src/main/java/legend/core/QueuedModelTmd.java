@@ -24,6 +24,7 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
 
   /** The untextured translucency override from the TMD header */
   int tmdTranslucency;
+  boolean usePs1Depth;
 
   public QueuedModelTmd(final RenderBatch batch, final Shader<ShaderOptionsTmd> shader, final ShaderOptionsTmd shaderOptions, final FloatBuffer lightingBuffer) {
     super(batch, shader, shaderOptions);
@@ -53,13 +54,19 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
     return this;
   }
 
+  public QueuedModelTmd usePs1Depth(final boolean use) {
+    this.usePs1Depth = use;
+    return this;
+  }
+
   @Override
-  void acquire(final Obj obj) {
-    super.acquire(obj);
+  void acquire(final Obj obj, final int sequence) {
+    super.acquire(obj, sequence);
 
     this.lightTransforms.set(this.transforms);
     this.lightUsed = false;
     this.tmdTranslucency = 0;
+    this.usePs1Depth = false;
   }
 
   @Override
@@ -83,6 +90,7 @@ public class QueuedModelTmd extends QueuedModel<ShaderOptionsTmd, QueuedModelTmd
   public void useShader(final int modelIndex, final int discardMode) {
     super.useShader(modelIndex, discardMode);
     this.shaderOptions.tmdTranslucency(this.tmdTranslucency);
+    this.shaderOptions.usePs1Depth(this.usePs1Depth);
   }
 
   @Override

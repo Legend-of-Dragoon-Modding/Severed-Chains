@@ -1,6 +1,7 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import legend.core.GameEngine;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
@@ -13,35 +14,22 @@ import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.InputPropagation;
 
-import java.nio.file.Path;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class Checkbox extends Control {
-  private final Obj obj;
+  private static Obj obj;
   private final MV transforms = new MV();
-
-  private final Texture uncheckedTexture;
-  private final Texture checkedTexture;
 
   private HorizontalAlign horizontalAlign = HorizontalAlign.CENTRE;
   private Label.VerticalAlign verticalAlign = Label.VerticalAlign.CENTRE;
   private boolean checked;
 
   public Checkbox() {
-    this.uncheckedTexture = Texture.png(Path.of("gfx", "ui", "checkbox.png"));
-    this.checkedTexture = Texture.png(Path.of("gfx", "ui", "checkbox_checked.png"));
-
-    this.obj = new QuadBuilder("Checkbox")
-      .bpp(Bpp.BITS_24)
-      .posSize(1.0f, 1.0f)
-      .uvSize(1.0f, 1.0f)
-      .build();
-
     this.setSize(14, 14);
   }
 
@@ -85,6 +73,18 @@ public class Checkbox extends Control {
 
   @Override
   protected void render(final int controlX, final int controlY) {
+    final Texture tex = GameEngine.getUiTexture();
+
+    if(obj == null) {
+      obj = new QuadBuilder("Checkbox")
+        .bpp(Bpp.BITS_24)
+        .posSize(1.0f, 1.0f)
+        .uvSize(14.0f / tex.width, 14.0f / tex.height)
+        .build();
+
+      obj.persistent = true;
+    }
+
     final int scale = Math.min(this.getWidth(), this.getHeight());
 
     final int x = switch(this.horizontalAlign) {
@@ -102,12 +102,12 @@ public class Checkbox extends Control {
     this.transforms.transfer.set(x, y, this.getZ() * 4.0f);
     this.transforms.scaling(scale, scale, 1.0f);
     final QueuedModelStandard model = RENDERER
-      .queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class);
+      .queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
+      .texture(tex)
+    ;
 
     if(this.checked) {
-      model.texture(this.checkedTexture);
-    } else {
-      model.texture(this.uncheckedTexture);
+      model.uvOffset(16.0f / tex.width, 0.0f);
     }
   }
 

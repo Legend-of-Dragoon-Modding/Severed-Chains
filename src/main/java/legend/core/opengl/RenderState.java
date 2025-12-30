@@ -7,14 +7,14 @@ import legend.core.gpu.Rect4i;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 
+import java.nio.FloatBuffer;
+
 import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glScissor;
 
 public class RenderState {
   private boolean backfaceCulling;
@@ -27,7 +27,6 @@ public class RenderState {
 
   private final Rect4i tempScissorRect = new Rect4i();
   private final Rect4i activeScissorRect = new Rect4i();
-  private boolean scissor;
 
   private boolean depthTest;
   private int depthComparator;
@@ -44,9 +43,6 @@ public class RenderState {
 
     this.backfaceCulling = false;
     glDisable(GL_CULL_FACE);
-
-    this.scissor = false;
-    glDisable(GL_SCISSOR_TEST);
   }
 
   public void backfaceCulling(final boolean enable) {
@@ -80,7 +76,7 @@ public class RenderState {
     }
   }
 
-  public void scissor(final QueuedModel<?, ?> model) {
+  public void scissor(final QueuedModel<?, ?> model, final FloatBuffer scissorBuffer, final Shader.UniformBuffer scissorUniform) {
     final Rect4i worldScissor = model.worldScissor();
     final Rect4i modelScissor = model.modelScissor();
 
@@ -93,7 +89,7 @@ public class RenderState {
         final float offset;
         final float w;
 
-        if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+        if(this.batch.getRenderMode() == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
           final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
           final float adjustedW = this.batch.nativeHeight * ratio;
           offset = (adjustedW - this.batch.nativeWidth) / 2.0f;
@@ -107,32 +103,17 @@ public class RenderState {
       }
     }
 
-    this.applyScissor();
+    this.applyScissor(scissorBuffer, scissorUniform);
   }
 
-  public void fullScreenScissor() {
-    this.tempScissorRect.set(0, 0, this.engine.getRenderWidth(), this.engine.getRenderHeight());
-    this.applyScissor();
-  }
-
-  private void applyScissor() {
+  private void applyScissor(final FloatBuffer scissorBuffer, final Shader.UniformBuffer scissorUniform) {
     if(!this.activeScissorRect.equals(this.tempScissorRect)) {
-      glScissor(this.tempScissorRect.x, this.tempScissorRect.y, this.tempScissorRect.w, this.tempScissorRect.h);
+      scissorBuffer.put(0, this.tempScissorRect.x);
+      scissorBuffer.put(1, this.tempScissorRect.y);
+      scissorBuffer.put(2, this.tempScissorRect.w);
+      scissorBuffer.put(3, this.tempScissorRect.h);
+      scissorUniform.set(scissorBuffer);
       this.activeScissorRect.set(this.tempScissorRect);
-    }
-  }
-
-  public void enableScissor() {
-    if(!this.scissor) {
-      glEnable(GL_SCISSOR_TEST);
-      this.scissor = true;
-    }
-  }
-
-  public void disableScissor() {
-    if(this.scissor) {
-      glDisable(GL_SCISSOR_TEST);
-      this.scissor = false;
     }
   }
 }

@@ -6,12 +6,10 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
@@ -19,6 +17,7 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
@@ -29,13 +28,13 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
+import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.Graphics.perspectiveTransform;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.FUN_800e61e4;
 import static legend.game.combat.SEffe.FUN_800e62a8;
@@ -50,7 +49,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     renderers[0] = LmbAnimationEffect5c::renderLmbSpecial;
     renderers[1] = LmbAnimationEffect5c::renderLmbTmd;
     renderers[2] = LmbAnimationEffect5c::renderLmbPoly;
-  };
+  }
 
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
@@ -87,13 +86,12 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   public int deffTmdFlags_48;
   public TmdObjTable1c deffTmdObjTable_4c;
-  public Obj obj;
   public int deffSpriteFlags_50;
   public final SpriteMetrics08 metrics_54 = new SpriteMetrics08();
 
   private static void renderLmbSpecial(final LmbAnimationEffect5c effect, final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final int objectIndex) {
     //LAB_80116790
-    final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
+    final ScriptState<EffectManagerData6c> state = SCRIPTS.getState(deffFlags, EffectManagerData6c.class);
     final EffectManagerData6c<?> manager2 = state.innerStruct_00;
     manager.params_10.trans_04.set(effect.transforms.transfer);
     getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, effect.transforms);
@@ -136,16 +134,10 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       // Cache it
       effect.deffTmdFlags_48 = deffFlags;
       effect.deffTmdObjTable_4c = tmdObjTable;
-
-      if(effect.obj != null) {
-        effect.obj.delete();
-      }
-
-      effect.obj = TmdObjLoader.fromObjTable(manager.name, effect.deffTmdObjTable_4c);
     }
 
     //LAB_80116778
-    renderTmdSpriteEffect(tmdObjTable, effect.obj, manager.params_10, effect.transforms);
+    renderTmdSpriteEffect(tmdObjTable, effect.deffTmdObjTable_4c.getObj(), manager.params_10, effect.transforms);
   }
 
   /**
@@ -317,7 +309,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
       //LAB_80117ac0
       //LAB_80117acc
-      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>("Temp 2", new EffectManagerParams.AnimType());
+      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>(manager.battle, "Temp 2", new EffectManagerParams.AnimType());
       anim.set(manager);
 
       final MV managerTransforms = new MV();
@@ -903,17 +895,16 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
    */
   private void renderPolyObj() {
     if(this.builder != null) {
-      this.obj = this.builder.build();
+      final Obj obj = this.builder.build();
 
       for(int i = 0; i < this.zDepths.size(); i++) {
         this.transforms.identity();
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
-        RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
           .vertices(i * 6, 6);
       }
 
-      this.obj.delete();
-      this.obj = null;
+      obj.delete();
       this.builder = null;
       this.zDepths.clear();
     }
@@ -921,9 +912,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
+    if(this.deffTmdObjTable_4c != null) {
+      this.deffTmdObjTable_4c.delete();
     }
   }
 }

@@ -1,6 +1,7 @@
 package legend.core.opengl;
 
 import legend.core.gpu.Bpp;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -11,15 +12,15 @@ import java.util.List;
 
 import static legend.core.MathHelper.makeClut;
 import static legend.core.MathHelper.makeTpage;
-import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
-import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
-import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
-import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
-import static legend.core.opengl.TmdObjLoader.POS_SIZE;
-import static legend.core.opengl.TmdObjLoader.TEXTURED_FLAG;
-import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
-import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
-import static legend.core.opengl.TmdObjLoader.UV_SIZE;
+import static legend.game.tmd.TmdObjLoader.CLUT_SIZE;
+import static legend.game.tmd.TmdObjLoader.COLOUR_SIZE;
+import static legend.game.tmd.TmdObjLoader.FLAGS_SIZE;
+import static legend.game.tmd.TmdObjLoader.NORM_SIZE;
+import static legend.game.tmd.TmdObjLoader.POS_SIZE;
+import static legend.game.tmd.TmdObjLoader.TEXTURED_FLAG;
+import static legend.game.tmd.TmdObjLoader.TPAGE_SIZE;
+import static legend.game.tmd.TmdObjLoader.TRANSLUCENT_FLAG;
+import static legend.game.tmd.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class PolyBuilder {
@@ -66,6 +67,12 @@ public class PolyBuilder {
     this.current.vramPos.set(this.lastVramPos);
     this.current.colour.set(this.lastColour);
     this.vertices.add(this.current);
+    return this;
+  }
+
+  public PolyBuilder normal(final float x, final float y, final float z) {
+    this.current.normal.set(x, y, z);
+    this.flags |= TmdObjLoader.LIT_FLAG;
     return this;
   }
 
@@ -154,9 +161,9 @@ public class PolyBuilder {
     vertices[i++] = vert.pos.y;
     vertices[i++] = vert.pos.z;
     vertices[i++] = 0.0f; // Vertex index, only used for VDF
-    vertices[i++] = 0.0f;
-    vertices[i++] = 0.0f;
-    vertices[i++] = 0.0f;
+    vertices[i++] = vert.normal.x;
+    vertices[i++] = vert.normal.y;
+    vertices[i++] = vert.normal.z;
     vertices[i++] = vert.uv.x;
     vertices[i++] = vert.uv.y;
     vertices[i++] = makeTpage(vert.vramPos.x, vert.vramPos.y, this.bpp, this.translucency);
@@ -210,6 +217,7 @@ public class PolyBuilder {
 
   private static class Vertex {
     private final Vector3f pos = new Vector3f();
+    private final Vector3f normal = new Vector3f();
     private final Vector2f uv = new Vector2f();
     private final Vector3f colour = new Vector3f();
     private final Vector2i clut = new Vector2i();

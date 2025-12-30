@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.core.IoHelper.pathToByteBuffer;
-import static org.lwjgl.opengl.GL11.glGetTexImage;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
@@ -101,6 +100,19 @@ public final class Texture {
     });
   }
 
+  public static Texture copyAttributesFrom(final Texture other) {
+    return Texture.create(builder -> {
+      builder.size(other.width, other.height);
+      builder.internalFormat(other.internalFormat);
+      builder.dataFormat(other.dataFormat);
+      builder.dataType(other.dataType);
+      builder.minFilter(other.minFilter);
+      builder.magFilter(other.magFilter);
+      builder.wrapS(other.wrapS);
+      builder.wrapT(other.wrapT);
+    });
+  }
+
   public static void unbind() {
     for(int i = 0; i < currentTextures.length; i++) {
       if(currentTextures[i] != 0) {
@@ -119,7 +131,14 @@ public final class Texture {
   public final int width;
   public final int height;
 
-  private final int dataFormat;
+  public final int internalFormat;
+  public final int dataFormat;
+  public final int dataType;
+
+  public final int minFilter;
+  public final int magFilter;
+  public final int wrapS;
+  public final int wrapT;
 
   private boolean deleted;
 
@@ -127,7 +146,13 @@ public final class Texture {
     this.id = glGenTextures();
     this.width = w;
     this.height = h;
+    this.internalFormat = internalFormat;
     this.dataFormat = dataFormat;
+    this.dataType = dataType;
+    this.minFilter = minFilter;
+    this.magFilter = magFilter;
+    this.wrapS = wrapS;
+    this.wrapT = wrapT;
     this.use();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
@@ -179,25 +204,6 @@ public final class Texture {
   public void dataInt(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
     glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT, data);
-
-    final int error = glGetError();
-    if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to upload data, rect: (" + x + ", " + y + ", " + w + ", " + h + "), glError: " + Long.toString(error, 16));
-    }
-  }
-
-  public void getData(final ByteBuffer data) {
-    if(data.capacity() != this.width * this.height * 4) {
-      throw new RuntimeException("Buffer capacity does not match texture dimensions, Buffer size: " + data.capacity() + ", Texture size: " + this.width * this.height * 4);
-    }
-
-    this.use();
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-    final int error = glGetError();
-    if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to acquire texture data, glError: " + Long.toString(error, 16));
-    }
   }
 
   public void use(final int activeTexture) {

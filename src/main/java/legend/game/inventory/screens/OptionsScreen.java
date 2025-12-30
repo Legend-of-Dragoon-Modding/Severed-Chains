@@ -17,21 +17,27 @@ import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.core.GameEngine.CONFIG;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_ADVANCED;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
+import static legend.game.modding.coremod.CoreMod.SHOW_ADVANCED_OPTIONS_CONFIG;
 
 public class OptionsScreen extends VerticalLayoutScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(OptionsScreen.class);
   private final Runnable unload;
 
+  private final List<ConfigEntry<?>> configs = new ArrayList<>();
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
 
@@ -59,6 +65,8 @@ public class OptionsScreen extends VerticalLayoutScreen {
         final String text = entry.getValue();
 
         if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl() && (!this.hideNonBattleEntries() || configEntry.availableInBattle())) {
+          this.configs.add(configEntry);
+
           Control editControl;
           boolean error = false;
 
@@ -70,6 +78,8 @@ public class OptionsScreen extends VerticalLayoutScreen {
             error = true;
           }
 
+          final Set<String> locked = config.getLocked(configEntry);
+
           editControl.setZ(35);
 
           final Label label = this.addRow(text, editControl);
@@ -78,17 +88,29 @@ public class OptionsScreen extends VerticalLayoutScreen {
             label.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
           }
 
+          int extrasX = (int)(label.getFont().textWidth(text) * label.getScale());
+
           if(configEntry.hasHelp()) {
             final Label help = label.addControl(new Label("?"));
             help.setScale(0.4f);
-            help.setPos((int)(textWidth(text) * label.getScale()) + 2, 1);
+            help.setPos(extrasX + 2, 1);
             help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), this.mouseX, this.mouseY)));
             this.helpLabels.put(label, help);
             this.helpEntries.put(label, configEntry);
+            extrasX += help.getWidth();
+          }
+
+          if(!locked.isEmpty()) {
+            editControl.disable();
+            final Label lock = label.addControl(new Label(I18n.translate("lod_core.ui.options.locked")));
+            lock.setScale(0.4f);
+            lock.setPos(extrasX + 2, 1);
+            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), this.mouseX, this.mouseY)));
           }
         }
       });
 
+    this.addToggleHotkey(I18n.translate("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, CONFIG.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
     this.addHotkey(I18n.translate("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
     this.addHotkey(I18n.translate("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
@@ -130,6 +152,14 @@ public class OptionsScreen extends VerticalLayoutScreen {
   private void back() {
     playMenuSound(3);
     this.unload.run();
+  }
+
+  private void advanced(final boolean advanced) {
+    CONFIG.setConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get(), advanced);
+
+    for(int i = 0; i < this.configs.size(); i++) {
+      this.setRowVisible(i, !this.configs.get(i).isAdvanced() || advanced);
+    }
   }
 
   private void help() {

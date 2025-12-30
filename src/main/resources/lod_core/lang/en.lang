@@ -10,7 +10,9 @@ lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
 # UI text
-lod_core.ui.hotkey=%s: %s
+lod_core.ui.title.hotkey=(%s)
+
+lod_core.ui.hotkey=%s (%s)
 
 lod_core.ui.campaign_selection.title=Campaigns
 lod_core.ui.campaign_selection.mods=Mods
@@ -33,11 +35,16 @@ lod_core.ui.mods.wrong_version=Wrong version: %s
 lod_core.ui.mods.help=Help
 lod_core.ui.mods.back=Back
 
+lod_core.ui.options.advanced=Advanced
 lod_core.ui.options.help=Help
 lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
+lod_core.ui.options.show_advanced=Show Advanced
+lod_core.ui.options.locked=Locked
+lod_core.ui.options.locked_by=Locked by %s
 
 lod_core.ui.options_category.back=Back
+lod_core.ui.options_category.some_options_not_available=Note: many options will only appear while in-game
 
 lod_core.ui.links.click_on_any_link_to_open=Click on any link to open it
 lod_core.ui.links.view_link=View Link
@@ -50,6 +57,23 @@ lod_core.ui.links.wiki=Legend of Dragoon Wiki
 lod_core.ui.links.project=Severed Chains Project Page
 lod_core.ui.links.github=Severed Chains GitHub Page
 lod_core.ui.links.issue=Report an Issue
+
+lod_core.ui.too_many_items.too_many_items_confirm=Inventory full. Would you\nlike to swap?
+lod_core.ui.too_many_items.discard_items_confirm=Discard these items?
+lod_core.ui.too_many_items.cannot_be_discarded=This item cannot\nbe discarded
+lod_core.ui.too_many_items.overflow=Overflow
+lod_core.ui.too_many_items.items=Items
+lod_core.ui.too_many_items.equipment=Equipment
+lod_core.ui.too_many_items.sort=Sort
+
+# Core items
+lod_core.items.nothing.name=Nothing
+lod_core.items.nothing.description=Nothing
+lod_core.items.nothing.battle_description=Nothing
+
+lod_core.ui.item_list.sort=Sort
+lod_core.ui.item_list.discard=Discard
+lod_core.ui.item_list.back=Back
 
 # Global config
 lod_core.config.controller_keybinds.label=Controls
@@ -103,13 +127,13 @@ lod_core.config.music_pitch_resolution.Retail = Retail
 lod_core.config.music_pitch_resolution.Double = Double
 lod_core.config.music_pitch_resolution.Quadruple = Quadruple
 lod_core.config.music_pitch_resolution.Octuple = Octuple
-lod_core.config.music_sample_rate.label = Sample Rate
-lod_core.config.music_sample_rate._44100 = 41.1 kHz
-lod_core.config.music_sample_rate._48000 = 48 kHz
 lod_core.config.music_effects_over_time_granularity.label = Effects Granularity
 lod_core.config.music_effects_over_time_granularity.Retail = Retail
-lod_core.config.music_effects_over_time_granularity.Finer = Finer
-lod_core.config.music_effects_over_time_granularity.Finest = Finest
+lod_core.config.music_effects_over_time_granularity.Double = Double
+lod_core.config.music_effects_over_time_granularity.Quadruple = Quadruple
+lod_core.config.music_effects_over_time_granularity.Octuple = Octuple
+lod_core.config.music_effects_over_time_granularity.Sexdecuple = Sexdecuple
+lod_core.config.music_effects_over_time_granularity.Duotrigintuple = Duotrigintuple
 lod_core.config.create_crash_save.label=Auto-Save on Crash
 lod_core.config.create_crash_save.help=If the game crashes, attempt to save the game\nautomatically (does not overwrite existing save)
 lod_core.config.ignore_steam_input_mode.label=Steam Input Fix
@@ -117,6 +141,7 @@ lod_core.config.ignore_steam_input_mode.help=Fixes duplicate keyboard input when
 lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (recommended)
 lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
 lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
+lod_core.config.retail_font.label=Font
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press %s to skip
@@ -147,6 +172,8 @@ lod_core.config.addition_overlay_mode.PARTIAL=No reticule
 lod_core.config.addition_overlay_mode.OFF=No HUD
 lod_core.config.addition_overlay_size.label=Addition Overlay Size
 lod_core.config.addition_overlay_size.help=Adjusts the size of the attack quick time event reticule.\nNote: players tend to find additions easier with larger reticules.
+lod_core.config.addition_timing_window.label=Addition Timing Window
+lod_core.config.addition_timing_window.help=Adjusts the timing window for addition button presses.\n100%% = original difficulty, 200%% = double the window (easier), etc.
 lod_core.config.transformation_mode.label=Dragoon Transformation Mode
 lod_core.config.transformation_mode.NORMAL=Normal
 lod_core.config.transformation_mode.SHORT=Short
@@ -194,10 +221,14 @@ lod_core.input_actions.menu_page_down.name=Menu: page down
 lod_core.input_actions.menu_confirm.name=Menu: confirm
 lod_core.input_actions.menu_back.name=Menu: back
 lod_core.input_actions.menu_delete.name=Menu: delete
+lod_core.input_actions.menu_advanced.name=Menu: advanced
 lod_core.input_actions.menu_sort.name=Menu: sort
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
 lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
+
+lod_core.input_actions.title_update.name=Title: download update
+lod_core.input_actions.title_convert_memcard.name=Title: convert memcard
 
 lod_core.input_actions.fmv_skip.name=FMV: skip
 

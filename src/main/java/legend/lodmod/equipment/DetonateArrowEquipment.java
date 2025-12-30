@@ -1,11 +1,18 @@
 package legend.lodmod.equipment;
 
 import legend.game.characters.ElementSet;
+import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.effects.ScriptDeffManualLoadingEffect;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.EquipmentAttackType;
 import legend.game.inventory.ItemIcon;
-import legend.game.scripting.Param;
+import legend.game.inventory.ItemStack;
+import legend.game.scripting.ScriptState;
 import legend.game.types.EquipmentSlot;
+import legend.lodmod.LodItems;
 import legend.lodmod.LodMod;
+
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class DetonateArrowEquipment extends Equipment {
   public DetonateArrowEquipment(final int price) {
@@ -13,10 +20,16 @@ public class DetonateArrowEquipment extends Equipment {
   }
 
   @Override
-  public void read(final int index, final Param out) {
-    switch(index) {
-      case 1000 -> out.set(1);
-      default -> super.read(index, out);
-    }
+  public void prepareAttack(final ScriptState<PlayerBattleEntity> player) {
+    battleState_8006e398._560 = 0;
+    battleState_8006e398._564 = 0;
+
+    player.innerStruct_00.item_d4 = new ItemStack(LodItems.DETONATE_ROCK.get());
+    player.innerStruct_00.battle.loadSpellItemDeff(player, 0xc1, 0, player.index, -1, 1, new ScriptDeffManualLoadingEffect());
+  }
+
+  @Override
+  public EquipmentAttackType attack(final ScriptState<PlayerBattleEntity> player) {
+    return EquipmentAttackType.DEFF;
   }
 }

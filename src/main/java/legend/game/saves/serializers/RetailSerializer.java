@@ -1,17 +1,29 @@
 package legend.game.saves.serializers;
 
+import legend.core.GameEngine;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.ConfigCollection;
+import legend.game.saves.InventoryEntry;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 
 public final class RetailSerializer {
   private RetailSerializer() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSerializer.class);
 
   public static final int MAGIC_RETAIL = 0x01114353; // SC__
 
@@ -72,7 +84,13 @@ public final class RetailSerializer {
     }
 
     for(int i = 0; i < 2; i++) {
-      state.goods_19c[i] = data.readInt(0x19c + i * 0x4);
+      final int packed = data.readInt(0x19c + i * 0x4);
+
+      for(int bit = 0; bit < 32; bit++) {
+        if((packed & (1 << bit)) != 0) {
+          state.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(LodMod.id(LodMod.GOODS_IDS[i * 32 + bit])));
+        }
+      }
     }
 
     for(int i = 0; i < 8; i++) {
@@ -90,7 +108,14 @@ public final class RetailSerializer {
         break;
       }
 
-      state.equipmentIds_1e8.add(id);
+      final String idStr = LodMod.EQUIPMENT_IDS[id];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown equipment ID %#x", id);
+        continue;
+      }
+
+      state.equipmentRegistryIds_1e8.add(LodMod.id(idStr));
     }
 
     for(int i = 0; i < 64; i++) {
@@ -100,7 +125,14 @@ public final class RetailSerializer {
         break;
       }
 
-      state.itemIds_2e9.add(id);
+      final String idStr = LodMod.ITEM_IDS[id - 192];
+
+      if(idStr.isBlank()) {
+        LOGGER.warn("Skipping unknown item ID %#x", id);
+        continue;
+      }
+
+      state.itemRegistryIds_2e9.add(new InventoryEntry(LodMod.id(idStr), 1, 1));
     }
 
     for(int charSlot = 0; charSlot < 9; charSlot++) {
@@ -121,11 +153,27 @@ public final class RetailSerializer {
         charData.equipmentIds_14.put(EquipmentSlot.fromLegacy(i), charSlice.readUByte(0x14 + i));
       }
 
-      charData.selectedAddition_19 = charSlice.readByte(0x19);
+      final int oldAdditionIndex = data.readByte(0x19) - additionOffsets_8004f5ac[charSlot];
+
+      if(CHARACTER_ADDITIONS[charSlot].length != 0) {
+        if(oldAdditionIndex >= 0) {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charSlot][oldAdditionIndex].getId();
+        } else {
+          charData.selectedAddition_19 = CHARACTER_ADDITIONS[charSlot][0].getId();
+        }
+      }
 
       for(int i = 0; i < 8; i++) {
-        charData.additionLevels_1a[i] = charSlice.readUByte(0x1a + i);
-        charData.additionXp_22[i] = charSlice.readUByte(0x22 + i);
+        final int level = charSlice.readUByte(0x1a + i);
+        final int xp = charSlice.readUByte(0x22 + i);
+
+        if(i < CHARACTER_ADDITIONS[charSlot].length) {
+          final RegistryDelegate<Addition> addition = CHARACTER_ADDITIONS[charSlot][i];
+          final CharacterAdditionStats stats = new CharacterAdditionStats();
+          stats.level = Math.max(0, level - 1);
+          stats.xp = xp;
+          charData.additionStats.put(addition.getId(), stats);
+        }
       }
     }
 

@@ -1,150 +1,412 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<VBox prefHeight="675.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.GameStateEditorController">
-    <AnchorPane VBox.vgrow="ALWAYS">
-        <HBox prefHeight="400.0" prefWidth="200.0">
-            <VBox>
-                <children>
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Data I" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Script Data" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Party" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Gold" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Chapter" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Stardust" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Timestamp" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Submap Scene" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Submap Cut" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Script Engine Value I" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Script Engine Value II" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Script Engine Value III" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Script Flagset I" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Script Flagset II" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Data II" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Data III" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Goods" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Data IV" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Chest Flags" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Equipment" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Items" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Character" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Path Index" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Dot Index" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Dot Offset" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Facing" />
-                    <Label alignment="CENTER" minHeight="25.0" minWidth="200.0" text="Area Index" />
-                </children>
-            </VBox>
-        </HBox>
-        <HBox layoutX="200.0" prefHeight="400.0" prefWidth="200.0">
-            <VBox>
-             <children>
-                 <Button fx:id="getData1" onAction="#getData1" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <ComboBox fx:id="getScriptData" onAction="#getScriptData" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getParty" onAction="#getParty" prefHeight="25.0" prefWidth="200.0" />
-                 <Button fx:id="getGold" onAction="#getGold" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getChapter" onAction="#getChapter" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getStardust" onAction="#getStardust" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getTimestamp" onAction="#getTimestamp" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getSubmapScene" onAction="#getSubmapScene" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getSubmapCut" onAction="#getSubmapCut" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getScriptEngine1" onAction="#getScriptEngine1" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getScriptEngine2" onAction="#getScriptEngine2" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getScriptEngine3" onAction="#getScriptEngine3" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <ComboBox fx:id="getScriptFlags1" onAction="#getScriptFlags1" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getScriptFlags2" onAction="#getScriptFlags2" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getData2" onAction="#getData2" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getData3" onAction="#getData3" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getGoods" onAction="#getGoods" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getData4" onAction="#getData4" prefHeight="25.0" prefWidth="200.0" />
-                 <ComboBox fx:id="getChestFlags" onAction="#getChestFlags" prefHeight="25.0" prefWidth="200.0" />
-                 <Spinner fx:id="getEquipment" prefHeight="25.0" prefWidth="200.0" />
-                 <Spinner fx:id="getItems" prefHeight="25.0" prefWidth="200.0" />
-                 <HBox>
-                     <ComboBox fx:id="getCharacter" onAction="#getCharacter" prefHeight="25.0" prefWidth="200.0" />
-                     <ComboBox fx:id="getCharacterData" onAction="#getCharacterData" prefHeight="25.0" prefWidth="200.0" />
-                 </HBox>
-                 <Button fx:id="getPathIndex" onAction="#getPathIndex" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getDotIndex" onAction="#getDotIndex" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getDotOffset" onAction="#getDotOffset" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getFacing" onAction="#getFacing" prefHeight="25.0" prefWidth="200.0" text="Get" />
-                 <Button fx:id="getAreaIndex" onAction="#getAreaIndex" prefHeight="25.0" prefWidth="200.0" text="Get" />
-             </children>
-            </VBox>
-        </HBox>
-        <HBox layoutX="400.0" prefHeight="400.0" prefWidth="200.0">
-            <VBox>
-                <children>
-                    <TextField fx:id="textData1" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textScriptData" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textParty" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textGold" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textChapter" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textStardust" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textTimestamp" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textSubmapScene" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textSubmapCut" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textScriptEngine1" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textScriptEngine2" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textScriptEngine3" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textScriptFlags1" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textScriptFlags2" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textData2" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textData3" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textGoods" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textData4" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textChestFlags" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textEquipment" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textItems" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textCharacterData" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textPathIndex" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textDotIndex" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textDotOffset" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textFacing" prefHeight="25.0" prefWidth="200.0" />
-                    <TextField fx:id="textAreaIndex" prefHeight="25.0" prefWidth="200.0" />
-                </children>
-            </VBox>
-        </HBox>
-        <HBox layoutX="600.0" prefHeight="400.0" prefWidth="200.0">
-            <VBox>
-                <children>
-                    <Button fx:id="setData1" onAction="#setData1" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setScriptData" onAction="#setScriptData" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setParty" onAction="#setParty" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setGold" onAction="#setGold" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setChapter" onAction="#setChapter" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setStardust" onAction="#setStardust" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setTimestamp" onAction="#setTimestamp" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setSubmapScene" onAction="#setSubmapScene" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setSubmapCut" onAction="#setSubmapCut" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setScriptEngine1" onAction="#setScriptEngine1" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setScriptEngine2" onAction="#setScriptEngine2" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setScriptEngine3" onAction="#setScriptEngine3" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setScriptFlags1" onAction="#setScriptFlags1" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setScriptFlags2" onAction="#setScriptFlags2" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setData2" onAction="#setData2" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setData3" onAction="#setData3" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setGoods" onAction="#setGoods" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setData4" onAction="#setData4" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setChestFlags" onAction="#setChestFlags" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setEquipment" onAction="#setEquipment" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setItems" onAction="#setItems" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setCharacterData" onAction="#setCharacterData" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setPathIndex" onAction="#setPathIndex" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setDotIndex" onAction="#setDotIndex" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setDotOffset" onAction="#setDotOffset" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setFacing" onAction="#setFacing" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                    <Button fx:id="setAreaIndex" onAction="#setAreaIndex" prefHeight="25.0" prefWidth="200.0" text="Set" />
-                </children>
-            </VBox>
-        </HBox>
-    </AnchorPane>
-</VBox>
+<GridPane hgap="8.0" prefHeight="814.0" prefWidth="781.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.GameStateEditorController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="20.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="10.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <Label alignment="CENTER" text="Data 1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Script Data" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Party" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Gold" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Chapter" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Stardust" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Timestamp" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Submap Scene" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Submap Cut" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Script Value 1" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Script Value 2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Script Value 3" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Script Flags 1" GridPane.halignment="CENTER" GridPane.rowIndex="12" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Script Flags 2" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Wmap Flags" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Location Flags" GridPane.halignment="CENTER" GridPane.rowIndex="15" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Goods" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Data 2" GridPane.halignment="CENTER" GridPane.rowIndex="17" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Chest Flags" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Equipment" GridPane.halignment="CENTER" GridPane.rowIndex="19" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Items" GridPane.halignment="CENTER" GridPane.rowIndex="20" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Character" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Path Index" GridPane.halignment="CENTER" GridPane.rowIndex="22" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Dot Index" GridPane.halignment="CENTER" GridPane.rowIndex="23" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Dot Offset" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Facing" GridPane.halignment="CENTER" GridPane.rowIndex="25" GridPane.valignment="CENTER" />
+      <Label alignment="CENTER" text="Area Index" GridPane.halignment="CENTER" GridPane.rowIndex="26" GridPane.valignment="CENTER" />
+      <TextField fx:id="textData1" GridPane.columnIndex="1" />
+      <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+            <ComboBox fx:id="getScriptData" onAction="#getScriptData" prefWidth="70.0" />
+            <TextField fx:id="textScriptData" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <ComboBox fx:id="getParty" onAction="#getParty" prefWidth="70.0" />
+            <TextField fx:id="textParty" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <TextField fx:id="textGold" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <TextField fx:id="textChapter" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <TextField fx:id="textStardust" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <TextField fx:id="textTimestamp" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <TextField fx:id="textSubmapScene" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <TextField fx:id="textSubmapCut" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      <TextField fx:id="textScriptEngine1" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+      <TextField fx:id="textScriptEngine2" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+      <TextField fx:id="textScriptEngine3" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+         <children>
+            <ComboBox fx:id="getScriptFlags1" onAction="#getScriptFlags1" prefWidth="70.0" />
+            <TextField fx:id="textScriptFlags1" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
+         <children>
+            <ComboBox fx:id="getScriptFlags2" onAction="#getScriptFlags2" prefWidth="70.0" />
+            <TextField fx:id="textScriptFlags2" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
+         <children>
+            <ComboBox fx:id="getData2" onAction="#getData2" prefWidth="70.0" />
+            <TextField fx:id="textData2" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
+         <children>
+            <ComboBox fx:id="getData3" onAction="#getData3" prefWidth="70.0" />
+            <TextField fx:id="textData3" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="17">
+         <children>
+            <ComboBox fx:id="getData4" onAction="#getData4" prefWidth="70.0" />
+            <TextField fx:id="textData4" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
+         <children>
+            <ComboBox fx:id="getChestFlags" onAction="#getChestFlags" prefWidth="70.0" />
+            <TextField fx:id="textChestFlags" HBox.hgrow="ALWAYS" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
+         <children>
+            <ComboBox fx:id="getCharacter" prefWidth="999999.0" />
+         </children>
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+      </HBox>
+      <TextField fx:id="textPathIndex" GridPane.columnIndex="1" GridPane.rowIndex="22" />
+      <TextField fx:id="textDotIndex" GridPane.columnIndex="1" GridPane.rowIndex="23" />
+      <TextField fx:id="textDotOffset" GridPane.columnIndex="1" GridPane.rowIndex="24" />
+      <TextField fx:id="textFacing" GridPane.columnIndex="1" GridPane.rowIndex="25" />
+      <TextField fx:id="textAreaIndex" GridPane.columnIndex="1" GridPane.rowIndex="26" />
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getData1" onAction="#getData1" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setData1" onAction="#setData1" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setScriptData" onAction="#setScriptData" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setParty" onAction="#setParty" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getGold" onAction="#getGold" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setGold" onAction="#setGold" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getChapter" onAction="#getChapter" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setChapter" onAction="#setChapter" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getStardust" onAction="#getStardust" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setStardust" onAction="#setStardust" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getTimestamp" onAction="#getTimestamp" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setTimestamp" onAction="#setTimestamp" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getSubmapScene" onAction="#getSubmapScene" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setSubmapScene" onAction="#setSubmapScene" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getSubmapCut" onAction="#getSubmapCut" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setSubmapCut" onAction="#setSubmapCut" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getScriptEngine1" onAction="#getScriptEngine1" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setScriptEngine1" onAction="#setScriptEngine1" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getScriptEngine2" onAction="#getScriptEngine2" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setScriptEngine2" onAction="#setScriptEngine2" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getScriptEngine3" onAction="#getScriptEngine3" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setScriptEngine3" onAction="#setScriptEngine3" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="12">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setScriptFlags1" onAction="#setScriptFlags1" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="13">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setScriptFlags2" onAction="#setScriptFlags2" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="14">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setData2" onAction="#setData2" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="15">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setData3" onAction="#setData3" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="16">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="giveGood" onAction="#giveGood" prefHeight="25.0" prefWidth="999999.0" text="Give" />
+            <Button fx:id="takeGood" onAction="#takeGood" prefHeight="25.0" prefWidth="999999.0" text="Take" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="17">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setData4" onAction="#setData4" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="18">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="setChestFlags" onAction="#setChestFlags" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="19">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="giveEquipment" onAction="#giveEquipment" prefHeight="25.0" prefWidth="999999.0" text="Give" />
+            <Button fx:id="takeEquipment" onAction="#takeEquipment" prefHeight="25.0" prefWidth="999999.0" text="Take" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="20">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="giveItem" onAction="#giveItem" prefHeight="25.0" prefWidth="999999.0" text="Give" />
+            <Button fx:id="takeItem" onAction="#takeItem" prefHeight="25.0" prefWidth="999999.0" text="Take" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="21">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="editCharacter" onAction="#editCharacter" prefHeight="25.0" prefWidth="999999.0" text="Edit" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="22">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getPathIndex" onAction="#getPathIndex" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setPathIndex" onAction="#setPathIndex" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="23">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getDotIndex" onAction="#getDotIndex" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setDotIndex" onAction="#setDotIndex" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="24">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getDotOffset" onAction="#getDotOffset" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setDotOffset" onAction="#setDotOffset" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="25">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getFacing" onAction="#getFacing" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setFacing" onAction="#setFacing" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="26">
+         <GridPane.margin>
+            <Insets top="2.0" />
+         </GridPane.margin>
+         <children>
+            <Button fx:id="getAreaIndex" onAction="#getAreaIndex" prefHeight="25.0" prefWidth="999999.0" text="Get" />
+            <Button fx:id="setAreaIndex" onAction="#setAreaIndex" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+         </children>
+      </HBox>
+      <ComboBox fx:id="equipmentList" onAction="#getChestFlags" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="19" />
+      <ComboBox fx:id="itemList" onAction="#getChestFlags" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="20" />
+      <ComboBox fx:id="goodsList" onAction="#getChestFlags" prefWidth="999999.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+   </children>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</GridPane>

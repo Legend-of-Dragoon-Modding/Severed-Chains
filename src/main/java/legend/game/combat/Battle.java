@@ -12,17 +12,17 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.Tmd;
-import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.input.InputAction;
+import legend.game.DrgnFiles;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
 import legend.game.characters.Element;
 import legend.game.characters.Stat;
 import legend.game.characters.StatMod;
@@ -65,6 +65,7 @@ import legend.game.combat.effects.SpTextEffect40;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.TextureAnimationAttachment1c;
 import legend.game.combat.effects.WeaponTrailEffect3c;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
@@ -73,9 +74,7 @@ import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BattleStruct14;
 import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
-import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageAmbiance4c;
-import legend.game.combat.environment.StageData2c;
 import legend.game.combat.particles.ParticleManager;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
@@ -89,21 +88,24 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
+import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.UiBox;
+import legend.game.ui.UiBox;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -118,12 +120,16 @@ import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.Tmd;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdWithId;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
@@ -133,7 +139,6 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
-import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -162,81 +167,87 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.Audio.FUN_80020308;
+import static legend.game.Audio._800bc9a8;
+import static legend.game.Audio.characterSoundFileIndices_800500f8;
+import static legend.game.Audio.getLoadedAudioFiles;
+import static legend.game.Audio.loadDeffSounds;
+import static legend.game.Audio.loadEncounterSoundsAndMusic;
+import static legend.game.Audio.loadMusicPackage;
+import static legend.game.Audio.monsterSoundFileIndices_800500e8;
+import static legend.game.Audio.playSound;
+import static legend.game.Audio.queuedSounds_800bd110;
+import static legend.game.Audio.sequenceData_800c4ac8;
+import static legend.game.Audio.soundFiles_800bcf80;
+import static legend.game.Audio.sssqFadeOut;
+import static legend.game.Audio.sssqResetStuff;
+import static legend.game.Audio.startEncounterSounds;
+import static legend.game.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.Audio.stopSoundSequence;
+import static legend.game.DrgnFiles.loadDir;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnDirSync;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.DrgnFiles.loadFile;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.previousEngineState_8004dd28;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.GetTPage;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetFlatLight;
+import static legend.game.Graphics.GsSetLightMatrix;
+import static legend.game.Graphics.centreScreenY_1f8003de;
+import static legend.game.Graphics.clearBlue_800babc0;
+import static legend.game.Graphics.clearGreen_800bb104;
+import static legend.game.Graphics.clearRed_8007a3a8;
+import static legend.game.Graphics.displayHeight_1f8003e4;
+import static legend.game.Graphics.getProjectionPlaneDistance;
+import static legend.game.Graphics.getScreenOffset;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.setDepthResolution;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Menus.whichMenu_800bdc38;
+import static legend.game.Models.adjustModelUvs;
+import static legend.game.Models.initModel;
+import static legend.game.Models.initObjTable2;
+import static legend.game.Models.loadModelStandardAnimation;
+import static legend.game.Models.loadPlayerModelAndAnimation;
+import static legend.game.Models.prepareObjTable2;
+import static legend.game.Models.vramSlots_8005027c;
+import static legend.game.SItem.characterDragoonIndices_800c6e68;
+import static legend.game.SItem.getUnlockedDragoonSpells;
+import static legend.game.SItem.giveEquipment;
+import static legend.game.SItem.giveItem;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
+import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDeffSounds;
-import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadEncounterSoundsAndMusic;
-import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
-import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.startEncounterSounds;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
-import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
-import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.loadPlayerModelAndAnimation;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
-import static legend.game.Scus94491BpeSegment_8002.sortItems;
-import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8002.takeItemId;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
-import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
-import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
-import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
-import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
-import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bc9a8;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
-import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
@@ -247,18 +258,13 @@ import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
+import static legend.game.Text.scriptDeallocateAllTextboxes;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
@@ -271,7 +277,6 @@ import static legend.game.combat.SEffe.loadDeffStageEffects;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_1;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_1000;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_400;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_ANIMATE_ONCE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_CURRENT_TURN;
@@ -281,16 +286,37 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_HIDE;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_RELOAD_BATTLE_ACTIONS;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
-import static legend.game.combat.environment.StageData.getEncounterStageData;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.AVOID_STAT;
+import static legend.lodmod.LodMod.DARK_ELEMENT;
+import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.DIVINE_ELEMENT;
+import static legend.lodmod.LodMod.EARTH_ELEMENT;
+import static legend.lodmod.LodMod.FIRE_ELEMENT;
+import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
+import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
+import static legend.lodmod.LodMod.LIGHT_ELEMENT;
+import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
+import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
+import static legend.lodmod.LodMod.THUNDER_ELEMENT;
+import static legend.lodmod.LodMod.WATER_ELEMENT;
+import static legend.lodmod.LodMod.WIND_ELEMENT;
+import static legend.lodmod.LodMod.disableRetailBattleActions;
 
 public class Battle extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
@@ -304,74 +330,76 @@ public class Battle extends EngineState {
   public final BattleCamera camera_800c67f0 = new BattleCamera();
   public final ParticleManager particles = new ParticleManager(this.camera_800c67f0);
 
+  private int encounterIntroFinishedTick;
+
   /**
    * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #initBattle}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadStageAndControllerScripts}</li>
    *   <li>{@link #initializeViewportAndCamera}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link #battleInitiateAndPreload_800c772c}</li>
    *   <li>{@link #allocateEnemyBattleEntities()}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #allocatePlayerBattleEntities()}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadEncounterAssets}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadHudAndAttackAnimations}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #FUN_800c79f0}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #loadSEffe}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #calculateInitialTurnValues}</li>
    *   <li>{@link #battleTick}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link #performPostBattleAction}</li>
    *   <li>{@link #deallocateCombat}</li>
-   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
-   *   <li>{@link Scus94491BpeSegment#renderPostCombatScreen}</li>
-   *   <li>{@link Scus94491BpeSegment#transitionBackFromBattle}</li>
+   *   <li>{@link SBtld#renderPostCombatScreen}</li>
+   *   <li>{@link SBtld#transitionBackFromBattle}</li>
    * </ol>
    */
   private final Runnable[] battleLoadingStage_8004f5d4 = {
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::initBattle,
-    Scus94491BpeSegment::waitForFilesToLoad,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadStageAndControllerScripts,
     this::initializeViewportAndCamera,
     Scus94491BpeSegment::nextLoadingStage,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
     this::battleInitiateAndPreload_800c772c,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::allocateEnemyBattleEntities,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::allocatePlayerBattleEntities,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadEncounterAssets,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadHudAndAttackAnimations,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::FUN_800c79f0,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::loadSEffe,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::calculateInitialTurnValues,
     this::battleTick,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     this::performPostBattleAction,
     this::deallocateCombat,
-    Scus94491BpeSegment::waitForFilesToLoad,
+    DrgnFiles::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
-    Scus94491BpeSegment::renderPostCombatScreen,
-    Scus94491BpeSegment::transitionBackFromBattle,
+    SBtld::renderPostCombatScreen,
+    SBtld::transitionBackFromBattle,
   };
 
   private int currentPostCombatActionFrame_800c6690;
@@ -404,13 +432,11 @@ public class Battle extends EngineState {
 
   public int _800c6710;
 
-  public StageData2c currentStageData_800c6718;
+//  public StageData2c currentStageData_800c6718;
   public int cameraScriptMainTableJumpIndex_800c6748;
   private ScriptState<ScriptedObject> scriptState_800c674c;
 
   public boolean shouldRenderStage_800c6754;
-
-  private int currentDisplayableIconsBitset_800c675c;
 
   public boolean shouldRenderMcq_800c6764;
 
@@ -455,7 +481,7 @@ public class Battle extends EngineState {
 
   public final String[] melbuMonsterNames_800c6ba8 = new String[3];
 
-  public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
+  public final List<ItemStack> usedRepeatItems_800c6c3c = new ArrayList<>();
 
   public int countCombatUiFilesLoaded_800c6cf4;
 
@@ -469,7 +495,6 @@ public class Battle extends EngineState {
   };
   /** Note: retail overlay doesn't have the last two elements, but the method that uses this copies the array and adds new elements */
   public static final int[] battleHudTextureVramXOffsets_800c6e60 = {0, 0x10, 0x20, 0x30, 0, 0x10};
-  public static final int[] characterDragoonIndices_800c6e68 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
 
   public static final int[] melbuMonsterNameIndices_800c6e90 = {395, 396, 397};
 
@@ -477,7 +502,7 @@ public class Battle extends EngineState {
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
 
   @SuppressWarnings("unchecked")
-  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {LodMod.FIRE_ELEMENT, LodMod.WIND_ELEMENT, LodMod.LIGHT_ELEMENT, LodMod.DARK_ELEMENT, LodMod.THUNDER_ELEMENT, LodMod.WIND_ELEMENT, LodMod.WATER_ELEMENT, LodMod.EARTH_ELEMENT, LodMod.LIGHT_ELEMENT};
+  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {FIRE_ELEMENT, WIND_ELEMENT, LIGHT_ELEMENT, DARK_ELEMENT, THUNDER_ELEMENT, WIND_ELEMENT, WATER_ELEMENT, EARTH_ELEMENT, LIGHT_ELEMENT};
 
   /** Different sets of bents for different target types (chars, monsters, all) */
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
@@ -702,14 +727,14 @@ public class Battle extends EngineState {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
 
     functions[32] = this::scriptResetCameraMovement;
-    functions[33] = this::FUN_800dac20;
-    functions[34] = this::FUN_800db034;
-    functions[35] = this::FUN_800db460;
-    functions[36] = this::FUN_800db574;
+    functions[33] = this::scriptCameraSetViewpoint;
+    functions[34] = this::scriptCameraSetRefpoint;
+    functions[35] = this::scriptCameraMoveViewpoint;
+    functions[36] = this::scriptCameraMoveRefpoint;
     functions[37] = this::FUN_800db688;
     functions[38] = this::FUN_800db79c;
-    functions[39] = this::FUN_800db8b0;
-    functions[40] = this::FUN_800db9e0;
+    functions[39] = this::scriptCameraAccelerateViewpoint;
+    functions[40] = this::scriptCameraAccelerateRefpoint;
     functions[41] = this::scriptIsCameraMoving;
     functions[42] = this::scriptCalculateCameraValue;
     functions[43] = this::FUN_800dbb9c;
@@ -731,7 +756,7 @@ public class Battle extends EngineState {
     functions[135] = Scus94491BpeSegment::scriptRewindAndPause2;
     functions[136] = this::scriptGetMonsterStatusResistFlags;
     functions[137] = Scus94491BpeSegment::scriptRewindAndPause2;
-    functions[138] = this::FUN_800cb618;
+    functions[138] = this::scriptSetBentHidden;
     functions[139] = this::scriptSetInterpolationEnabled;
     functions[140] = this::FUN_800cb6bc;
     functions[141] = this::FUN_800cb764;
@@ -929,7 +954,7 @@ public class Battle extends EngineState {
     functions[589] = SEffe::scriptSetEffectErrorFlag;
     functions[590] = SEffe::scriptSetEffectTranslucencySourceFlag;
     functions[591] = SEffe::scriptSetEffectTranslucencyModeFlag;
-    functions[592] = this::FUN_800e74ac;
+    functions[592] = this::scriptGetDeffBentParams;
     functions[593] = SEffe::scriptGetPositionScalerAttachmentVelocity;
     functions[594] = this::scriptAddOrUpdateTextureAnimationAttachment;
     functions[595] = SEffe::scriptSetEffectLightingDisableFlag;
@@ -1072,6 +1097,8 @@ public class Battle extends EngineState {
 
     functions[1010] = this::scriptUseItem;
     functions[1011] = this::scriptApplyEquipmentEffect;
+    functions[1012] = this::scriptPrepareAttack;
+    functions[1013] = this::scriptAttack;
 
     functions[1020] = this::scriptSetCombatantVramSlot;
     return functions;
@@ -1184,10 +1211,10 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "itemId", description = "The ID of the item being used")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The ID of the bent being targeted")
   private FlowControl scriptUseItem(final RunningScript<BattleEntity27c> script) {
-    final Item item = REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get();
+    final ItemStack stack = new ItemStack(REGISTRIES.items.getEntry(script.params_20[0].getRegistryId()).get());
     final int targetIndex = script.params_20[1].get();
 
-    return item.useInBattle(script.scriptState_04, targetIndex);
+    return stack.useInBattle(script.scriptState_04, targetIndex);
   }
 
   @ScriptDescription("Calls the applyEffect method for the given equipment")
@@ -1198,6 +1225,19 @@ public class Battle extends EngineState {
     final BattleEntity27c wearer = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     equipment.applyEffect(wearer);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Calls prepareAttack on the player's weapon")
+  private FlowControl scriptPrepareAttack(final RunningScript<PlayerBattleEntity> script) {
+    script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON).prepareAttack(script.scriptState_04);
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Calls attack on the player's weapon")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "type", description = "The EquipmentAttackType")
+  private FlowControl scriptAttack(final RunningScript<PlayerBattleEntity> script) {
+    script.params_20[0].set(script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON).attack(script.scriptState_04).ordinal());
     return FlowControl.CONTINUE;
   }
 
@@ -1450,7 +1490,7 @@ public class Battle extends EngineState {
 
     //LAB_800c760c
     this.allocateStageDarkeningStorage();
-    loadEncounterSoundsAndMusic();
+    loadEncounterSoundsAndMusic(this);
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1471,6 +1511,7 @@ public class Battle extends EngineState {
       battleFlags_800bc960 |= 0x40;
       setProjectionPlaneDistance(320);
       this.camera_800c67f0.resetCameraMovement();
+      this.encounterIntroFinishedTick = tickCount_800bb0fc + encounter.introWaitTicks;
       pregameLoadingStage_800bb10c++;
     }
 
@@ -1493,7 +1534,6 @@ public class Battle extends EngineState {
     battleState_8006e398.battlePhase_eec = 0;
 
     this.clearCombatants();
-    this.clearCurrentDisplayableItems();
 
     battleState_8006e398.clear();
 
@@ -1512,39 +1552,34 @@ public class Battle extends EngineState {
 
   @Method(0x800c788cL)
   public void allocateEnemyBattleEntities() {
-    final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
+    if(tickCount_800bb0fc < this.encounterIntroFinishedTick) {
+      return;
+    }
 
     //LAB_801095a0
-    for(int i = 0; i < 3; i++) {
-      final int enemyIndex = fp.encounterData_00.enemyIndices_00[i] & 0x1ff;
-      if(enemyIndex == 0x1ff) {
-        break;
-      }
-
+    for(final int enemyId : encounter.uniqueIds) {
+      final int enemyIndex = enemyId & 0x1ff;
       this.loadEnemyDropsAndScript((this.addCombatant(enemyIndex, -1) << 16) + enemyIndex);
     }
 
     //LAB_801095ec
     //LAB_801095fc
-    for(int i = 0; i < 6; i++) {
-      final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08[i];
-      final int charIndex = s5.index_00 & 0x1ff;
-      if(charIndex == 0x1ff) {
-        break;
-      }
+    for(int i = 0; i < encounter.monsters.size(); i++) {
+      final Encounter.Monster s5 = encounter.monsters.get(i);
+      final int charIndex = s5.id & 0x1ff;
 
       final int combatantIndex = this.getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+      final MonsterBattleEntity bent = new MonsterBattleEntity(this, name);
       final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
       bent.charId_272 = charIndex;
       bent.combatant_144 = this.getCombatant(combatantIndex);
       bent.combatantIndex_26c = combatantIndex;
-      bent.model_148.coord2_14.coord.transfer.set(s5.pos_02);
+      bent.model_148.coord2_14.coord.transfer.set(s5.pos);
       bent.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
-      state.storage_44[7] |= FLAG_MONSTER;
+      state.setFlag(FLAG_MONSTER);
       battleState_8006e398.addMonster(state);
       this.loadMonster(state);
     }
@@ -1575,7 +1610,7 @@ public class Battle extends EngineState {
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
       final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
-      final PlayerBattleEntity bent = new PlayerBattleEntity(name, charSlot + 6, this.playerBattleScript_800c66fc);
+      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charSlot + 6, this.playerBattleScript_800c66fc);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
@@ -1723,7 +1758,7 @@ public class Battle extends EngineState {
     this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
     this.hud.FUN_800f417c();
 
-    EVENTS.postEvent(new BattleStartedEvent());
+    EVENTS.postEvent(new BattleStartedEvent(this));
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1754,27 +1789,27 @@ public class Battle extends EngineState {
     if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
-      this.currentTurnBent_800c66c8.storage_44[7] &= ~FLAG_1000;
+      this.currentTurnBent_800c66c8.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
 
       if(battleState_8006e398.hasAlivePlayers()) {
         //LAB_800c7c98
         this.forcedTurnBent_800c66bc = battleState_8006e398.getForcedTurnBent();
 
         if(this.forcedTurnBent_800c66bc != null) { // A bent has a forced turn
-          this.forcedTurnBent_800c66bc.storage_44[7] = this.forcedTurnBent_800c66bc.storage_44[7] & ~FLAG_TAKE_FORCED_TURN | FLAG_1000 | FLAG_CURRENT_TURN;
+          this.forcedTurnBent_800c66bc.clearFlag(FLAG_TAKE_FORCED_TURN).setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-          EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
             //LAB_800c7d3c
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
-            this.currentTurnBent_800c66c8.storage_44[7] |= FLAG_1000 | FLAG_CURRENT_TURN;
+            this.currentTurnBent_800c66c8.setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-            EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.currentTurnBent_800c66c8));
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -1814,7 +1849,7 @@ public class Battle extends EngineState {
   public boolean FUN_800c7da8() {
     //LAB_800c7dd8
     for(int i = 0; i < battleState_8006e398.getAllBentCount(); i++) {
-      if((battleState_8006e398.allBents_e0c[i].storage_44[7] & (FLAG_400 | FLAG_CURRENT_TURN)) != 0) {
+      if(battleState_8006e398.allBents_e0c[i].hasAnyFlag(FLAG_400 | FLAG_CURRENT_TURN)) {
         return false;
       }
 
@@ -1827,7 +1862,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c8068L)
   public void performPostBattleAction() {
-    EVENTS.postEvent(new BattleEndedEvent());
+    EVENTS.postEvent(new BattleEndedEvent(this));
 
     final int postBattleAction = postBattleAction_800bc974;
 
@@ -1852,7 +1887,7 @@ public class Battle extends EngineState {
       if(postBattleAction == 1) {
         //LAB_800c8180
         for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-          battleState_8006e398.playerBents_e40[i].storage_44[7] |= FLAG_CURRENT_TURN;
+          battleState_8006e398.playerBents_e40[i].setFlag(FLAG_CURRENT_TURN);
         }
       }
     }
@@ -1889,10 +1924,7 @@ public class Battle extends EngineState {
 
       if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 != null) {
         for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
-          if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
-            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
-            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
-          }
+          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].tmd_08.delete();
         }
 
         battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 = null;
@@ -1951,7 +1983,8 @@ public class Battle extends EngineState {
         case 2 -> {
           if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
             //LAB_800c8514
-            gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
+            final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(0x3bb, true)).set;
+            gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
           } else {
             //LAB_800c8534
             postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
@@ -1964,13 +1997,13 @@ public class Battle extends EngineState {
       //LAB_800c8558
       postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
 
-      final int postCombatSubmapScene = this.currentStageData_800c6718.postCombatSubmapScene_0c;
+      final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
         submapScene_80052c34 = postCombatSubmapScene;
       }
 
       //LAB_800c8578
-      final int postCombatSubmapCut = this.currentStageData_800c6718.postCombatSubmapCut_28;
+      final int postCombatSubmapCut = encounter.postCombatSubmapCut;
       if(postCombatSubmapCut != 0xffff) {
         submapCut_80052c30 = postCombatSubmapCut;
       }
@@ -2322,7 +2355,7 @@ public class Battle extends EngineState {
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
-              if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+              if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
                 charIndex = 10; // Divine dragoon
               }
 
@@ -2411,6 +2444,8 @@ public class Battle extends EngineState {
 
     TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
 
+    EVENTS.postEvent(new CombatantModelLoadedEvent((Battle)currentEngineState_8004dd04, combatant, model));
+
     //LAB_800c9680
     combatant.assets_14[0]._09++;
   }
@@ -2432,12 +2467,14 @@ public class Battle extends EngineState {
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
-            fileIndex = 4031 + gameState_800babc8.charData_32c[charId].selectedAddition_19 + charId * 8 - additionOffsets_8004f5ac[charId];
-          } else {
-            // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
-            fileIndex = 4031 + charId * 8;
+            final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            return;
           }
-        } else if(charId != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+
+          // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
+          fileIndex = 4031 + charId * 8;
+        } else if(charId != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           // Dragoon addition
           fileIndex = 4103 + charId;
         } else { // Divine dragoon
@@ -2724,7 +2761,7 @@ public class Battle extends EngineState {
       int fileIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
-        if(fileIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+        if(fileIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
           fileIndex = 10;
         }
 
@@ -2823,11 +2860,6 @@ public class Battle extends EngineState {
     }
   }
 
-  @Method(0x800cae44L)
-  public void clearCurrentDisplayableItems() {
-    this.currentDisplayableIconsBitset_800c675c = 0;
-  }
-
   @Method(0x800cb250L)
   public boolean FUN_800cb250(final ScriptState<BattleEntity27c> state, final BattleEntity27c bent) {
     float x = bent.movementDestination_e8.x;
@@ -2885,7 +2917,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cb3fcL)
   public FlowControl scriptSetBentPos(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.coord.transfer.x = script.params_20[1].get();
     bent.model_148.coord2_14.coord.transfer.y = script.params_20[2].get();
     bent.model_148.coord2_14.coord.transfer.z = script.params_20[3].get();
@@ -2899,7 +2931,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cb468L)
   public FlowControl scriptGetBentPos(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(Math.round(bent.model_148.coord2_14.coord.transfer.x));
     script.params_20[2].set(Math.round(bent.model_148.coord2_14.coord.transfer.y));
     script.params_20[3].set(Math.round(bent.model_148.coord2_14.coord.transfer.z));
@@ -2913,7 +2945,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800cb4c8L)
   public FlowControl scriptSetBentRotation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
     bent.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
     bent.model_148.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
@@ -2925,7 +2957,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
   @Method(0x800cb534L)
   public FlowControl scriptSetBentRotationY(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
@@ -2937,7 +2969,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800cb578L)
   public FlowControl scriptGetBentRotation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.x));
     script.params_20[2].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.y));
     script.params_20[3].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.z));
@@ -2949,24 +2981,24 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The status resist flags")
   @Method(0x800cb5d8L)
   public FlowControl scriptGetMonsterStatusResistFlags(final RunningScript<?> script) {
-    final MonsterBattleEntity monster = (MonsterBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final MonsterBattleEntity monster = SCRIPTS.getObject(script.params_20[0].get(), MonsterBattleEntity.class);
     script.params_20[1].set(monster.monsterStatusResistFlag_76);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets bit 10 of battle entity script flags (possibly whether a battle entity renders and animates?)")
+  @ScriptDescription("Sets whether or not a bent is hidden")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set the flag, false otherwise")
   @Method(0x800cb618L)
-  public FlowControl FUN_800cb618(final RunningScript<?> script) {
-    final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+  public FlowControl scriptSetBentHidden(final RunningScript<?> script) {
+    final ScriptState<?> a1 = SCRIPTS.getState(script.params_20[0].get());
 
     //LAB_800cb668
     if(script.params_20[1].get() != 0) {
-      a1.storage_44[7] &= ~FLAG_HIDE;
+      a1.clearFlag(FLAG_HIDE);
     } else {
       //LAB_800cb65c
-      a1.storage_44[7] |= FLAG_HIDE;
+      a1.setFlag(FLAG_HIDE);
     }
 
     return FlowControl.CONTINUE;
@@ -2977,7 +3009,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to enable interpolation, false otherwise")
   @Method(0x800cb674L)
   public FlowControl scriptSetInterpolationEnabled(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.disableInterpolation_a2 = script.params_20[1].get() == 0;
     return FlowControl.CONTINUE;
   }
@@ -2987,12 +3019,12 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb6bcL)
   public FlowControl FUN_800cb6bc(final RunningScript<?> a0) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    if((state.storage_44[7] & FLAG_1) != 0) {
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(a0.params_20[0].get(), BattleEntity27c.class);
+    if(state.hasFlag(FLAG_1)) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+    final BattleEntity27c bent = state.innerStruct_00;
     final int animIndex = a0.params_20[1].get();
 
     if(bent.currentAnimIndex_270 < 0) {
@@ -3021,25 +3053,27 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb76cL)
   public FlowControl FUN_800cb76c(final RunningScript<?> a0) {
-    final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
-    if((s2.storage_44[7] & FLAG_1) == 0) {
-      int animIndex = s0.currentAnimIndex_270;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(a0.params_20[0].get(), BattleEntity27c.class);
+    if(state.hasFlag(FLAG_1)) {
+      return FlowControl.PAUSE_AND_REWIND;
+    }
 
-      if(animIndex < 0) {
-        animIndex = 0;
-      }
+    final BattleEntity27c bent = state.innerStruct_00;
+    int animIndex = bent.currentAnimIndex_270;
 
-      //LAB_800cb7d0
-      if(s0.combatant_144.isAssetLoaded(animIndex)) {
-        FUN_800ca194(s0.combatant_144.assets_14[s0.loadingAnimIndex_26e]);
-        this.loadAnimationAssetIntoModel(s0.model_148, s0.combatant_144, animIndex);
-        s2.storage_44[7] &= ~(FLAG_ANIMATE_ONCE | FLAG_HIDE);
-        s0.model_148.animationState_9c = 1;
-        s0.loadingAnimIndex_26e = animIndex;
-        s0.currentAnimIndex_270 = -1;
-        return FlowControl.CONTINUE;
-      }
+    if(animIndex < 0) {
+      animIndex = 0;
+    }
+
+    //LAB_800cb7d0
+    if(bent.combatant_144.isAssetLoaded(animIndex)) {
+      FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
+      this.loadAnimationAssetIntoModel(bent.model_148, bent.combatant_144, animIndex);
+      state.clearFlag(FLAG_ANIMATE_ONCE | FLAG_HIDE);
+      bent.model_148.animationState_9c = 1;
+      bent.loadingAnimIndex_26e = animIndex;
+      bent.currentAnimIndex_270 = -1;
+      return FlowControl.CONTINUE;
     }
 
     //LAB_800cb830
@@ -3055,7 +3089,7 @@ public class Battle extends EngineState {
     final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c bent = state.innerStruct_00;
 
-    if((state.storage_44[7] & FLAG_1) == 0) {
+    if(!state.hasFlag(FLAG_1)) {
       int newAnim = script.params_20[1].get();
       final int currentAnim = bent.currentAnimIndex_270;
 
@@ -3077,7 +3111,7 @@ public class Battle extends EngineState {
       if(bent.combatant_144.isAssetLoaded(newAnim)) {
         FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
         this.loadAnimationAssetIntoModel(bent.model_148, bent.combatant_144, newAnim);
-        state.storage_44[7] &= ~(FLAG_ANIMATE_ONCE | FLAG_HIDE);
+        state.clearFlag(FLAG_ANIMATE_ONCE | FLAG_HIDE);
         bent.model_148.animationState_9c = 1;
         bent.loadingAnimIndex_26e = newAnim;
         bent.currentAnimIndex_270 = -1;
@@ -3096,7 +3130,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb95cL)
   public FlowControl FUN_800cb95c(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     this.FUN_800ca26c(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
@@ -3106,7 +3140,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animationIndex", description = "The animation index")
   @Method(0x800cb9b0L)
   public FlowControl scriptGetLoadingBentAnimationIndex(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.loadingAnimIndex_26e);
     return FlowControl.CONTINUE;
   }
@@ -3115,7 +3149,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb9f0L)
   public FlowControl scriptPauseAnimation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.animationState_9c = 2;
     return FlowControl.CONTINUE;
   }
@@ -3124,7 +3158,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cba28L)
   public FlowControl scriptResumeAnimation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.animationState_9c = 1;
     return FlowControl.CONTINUE;
   }
@@ -3136,10 +3170,10 @@ public class Battle extends EngineState {
   public FlowControl scriptSetBentAnimationLoopState(final RunningScript<?> script) {
     //LAB_800cbab0
     if(script.params_20[1].get() != 0) {
-      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= ~FLAG_ANIMATE_ONCE;
+      SCRIPTS.getState(script.params_20[0].get()).clearFlag(FLAG_ANIMATE_ONCE);
     } else {
       //LAB_800cbaa4
-      scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] |= FLAG_ANIMATE_ONCE;
+      SCRIPTS.getState(script.params_20[0].get()).setFlag(FLAG_ANIMATE_ONCE);
     }
 
     return FlowControl.CONTINUE;
@@ -3150,252 +3184,252 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "finished", description = "True if finished, false otherwise")
   @Method(0x800cbabcL)
   public FlowControl scriptAnimationHasFinished(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.model_148.remainingFrames_9e > 0 ? 0 : 1);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbb00L)
   public FlowControl FUN_800cbb00(final RunningScript<?> script) {
-    final int scriptIndex = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex];
-    final BattleEntity27c v1 = state.innerStruct_00;
+    final int childBentIndex = script.params_20[0].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
 
-    float x = v1.model_148.coord2_14.coord.transfer.x;
-    float y = v1.model_148.coord2_14.coord.transfer.y;
-    float z = v1.model_148.coord2_14.coord.transfer.z;
+    float x = childBent.model_148.coord2_14.coord.transfer.x;
+    float y = childBent.model_148.coord2_14.coord.transfer.y;
+    float z = childBent.model_148.coord2_14.coord.transfer.z;
 
-    final int t0 = script.params_20[1].get();
-    if(t0 >= 0) {
-      v1.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
-      final BattleEntity27c parent = v1.movementParent_c8.innerStruct_00;
-      x -= parent.model_148.coord2_14.coord.transfer.x;
-      y -= parent.model_148.coord2_14.coord.transfer.y;
-      z -= parent.model_148.coord2_14.coord.transfer.z;
+    final int parentBentIndex = script.params_20[1].get();
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      x -= parentBent.model_148.coord2_14.coord.transfer.x;
+      y -= parentBent.model_148.coord2_14.coord.transfer.y;
+      z -= parentBent.model_148.coord2_14.coord.transfer.z;
     } else {
-      v1.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbb98
-    this.FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbc14L)
   public FlowControl FUN_800cbc14(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
-    final int scriptIndex2 = script.params_20[1].get();
+    final int childBentIndex = script.params_20[0].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    final int parentBentIndex = script.params_20[1].get();
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbcc4
     final float x = script.params_20[3].get() - vec.x;
     final float y = script.params_20[4].get() - vec.y;
     final float z = script.params_20[5].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbde0L)
   public FlowControl FUN_800cbde0(final RunningScript<?> script) {
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c bent = state.innerStruct_00;
-    float x = bent.model_148.coord2_14.coord.transfer.x;
-    float y = bent.model_148.coord2_14.coord.transfer.y;
-    float z = bent.model_148.coord2_14.coord.transfer.z;
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    float x = childBent.model_148.coord2_14.coord.transfer.x;
+    float y = childBent.model_148.coord2_14.coord.transfer.y;
+    float z = childBent.model_148.coord2_14.coord.transfer.z;
 
     if(script.params_20[1].get() >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      x -= parent.model_148.coord2_14.coord.transfer.x;
-      y -= parent.model_148.coord2_14.coord.transfer.y;
-      z -= parent.model_148.coord2_14.coord.transfer.z;
+      childBent.movementParent_c8 = SCRIPTS.getState(script.params_20[1].get(), BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      x -= parentBent.model_148.coord2_14.coord.transfer.x;
+      y -= parentBent.model_148.coord2_14.coord.transfer.y;
+      z -= parentBent.model_148.coord2_14.coord.transfer.z;
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbe78
-    this.FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbef8L)
   public FlowControl FUN_800cbef8(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(scriptIndex2 >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cbfa8
     final float x = script.params_20[3].get() - vec.x;
     final float y = script.params_20[4].get() - vec.y;
     final float z = script.params_20[5].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc0c8L)
   public FlowControl FUN_800cc0c8(final RunningScript<?> script) {
-    final int s0 = script.params_20[0].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[s0];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f translation = new Vector3f(bent.model_148.coord2_14.coord.transfer);
-    final int parentIndex = script.params_20[1].get();
+    final int childBentIndex = script.params_20[0].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c bentState = childState.innerStruct_00;
+    final Vector3f translation = new Vector3f(bentState.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      translation.sub(bent.movementParent_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
+    final int parentBentIndex = script.params_20[1].get();
+    if(parentBentIndex >= 0) {
+      bentState.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      translation.sub(bentState.movementParent_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      bentState.movementParent_c8 = null;
     }
 
     //LAB_800cc160
-    this.FUN_800cdc1c(state, translation.x, translation.y, translation.z, script.params_20[3].get(), translation.y, script.params_20[4].get(), 0, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, translation.x, translation.y, translation.z, script.params_20[3].get(), translation.y, script.params_20[4].get(), 0, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc1ccL)
   public FlowControl FUN_800cc1cc(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int parentIndex = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cc27c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc364L)
   public FlowControl FUN_800cc364(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int parentIndex = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cc3fc
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
+  @ScriptDescription("Moves a battle entity (optionally relative to another battle entity). Movement type not yet determined.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "childBentIndex", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentBentIndex", description = "A BattleEntity27c script index (-1 for no parent)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc46cL)
   public FlowControl FUN_800cc46c(final RunningScript<?> script) {
-    final int scriptIndex1 = script.params_20[0].get();
-    final int parentIndex = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleEntity27c bent = state.innerStruct_00;
-    final Vector3f vec = new Vector3f(bent.model_148.coord2_14.coord.transfer);
+    final int childBentIndex = script.params_20[0].get();
+    final int parentBentIndex = script.params_20[1].get();
+    final ScriptState<BattleEntity27c> childState = SCRIPTS.getState(childBentIndex, BattleEntity27c.class);
+    final BattleEntity27c childBent = childState.innerStruct_00;
+    final Vector3f vec = new Vector3f(childBent.model_148.coord2_14.coord.transfer);
 
-    if(parentIndex >= 0) {
-      bent.movementParent_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[parentIndex];
-      final BattleEntity27c parent = bent.movementParent_c8.innerStruct_00;
-      vec.sub(parent.model_148.coord2_14.coord.transfer);
+    if(parentBentIndex >= 0) {
+      childBent.movementParent_c8 = SCRIPTS.getState(parentBentIndex, BattleEntity27c.class);
+      final BattleEntity27c parentBent = childBent.movementParent_c8.innerStruct_00;
+      vec.sub(parentBent.model_148.coord2_14.coord.transfer);
     } else {
-      bent.movementParent_c8 = null;
+      childBent.movementParent_c8 = null;
     }
 
     //LAB_800cc51c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    this.FUN_800cdc1c(state, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
-    state.setTempTicker(this::FUN_800cb250);
+    this.FUN_800cdc1c(childState, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    childState.setTempTicker(this::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
 
@@ -3404,8 +3438,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndexTarget", description = "A BattleEntity27c script index to target")
   @Method(0x800cc608L)
   public FlowControl scriptBentLookAtBent(final RunningScript<?> script) {
-    final BattleEntity27c s0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c v0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c s0 = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c v0 = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     s0.model_148.coord2_14.transforms.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.x - s0.model_148.coord2_14.coord.transfer.x, v0.model_148.coord2_14.coord.transfer.z - s0.model_148.coord2_14.coord.transfer.z) + MathHelper.PI;
     return FlowControl.CONTINUE;
@@ -3419,8 +3453,8 @@ public class Battle extends EngineState {
   public FlowControl FUN_800cc698(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final ScriptState<BattleEntity27c> state2 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+    final ScriptState<BattleEntity27c> state1 = SCRIPTS.getState(scriptIndex1, BattleEntity27c.class);
+    final ScriptState<BattleEntity27c> state2 = SCRIPTS.getState(scriptIndex2, BattleEntity27c.class);
     final BattleEntity27c bent1 = state1.innerStruct_00;
     final BattleEntity27c bent2 = state2.innerStruct_00;
     final int ticks = script.params_20[2].get();
@@ -3437,7 +3471,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc784L)
   public FlowControl FUN_800cc784(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     this.FUN_800ca418(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
@@ -3447,7 +3481,7 @@ public class Battle extends EngineState {
   @Method(0x800cc7d8L)
   public FlowControl FUN_800cc7d8(final RunningScript<?> script) {
     final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
-    final int isMonster = state.storage_44[7] & FLAG_MONSTER;
+    final boolean isMonster = state.hasFlag(FLAG_MONSTER);
     final CombatantStruct1a8 bentCombatant = state.innerStruct_00.combatant_144;
 
     //LAB_800cc83c
@@ -3458,7 +3492,7 @@ public class Battle extends EngineState {
         if((combatant.flags_19e & 0x1) != 0 && combatant.mrg_04 != null && combatant.charIndex_1a2 >= 0) {
           final int v0 = combatant.flags_19e >>> 2 ^ 1;
 
-          if(isMonster == 0) {
+          if(!isMonster) {
             //LAB_800cc8ac
             if((v0 & 1) == 0) {
               //LAB_800cc8b4
@@ -3483,7 +3517,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc8f4L)
   public FlowControl scriptLoadAttackAnimations(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     this.loadAttackAnimations(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
@@ -3511,14 +3545,12 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "enabled", description = "True to enable, false otherwise")
   @Method(0x800cc9d8L)
   public FlowControl scriptEnableBentTextureAnimation(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.animateTextures_ec[script.params_20[1].get()] = script.params_20[2].get() > 0;
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "displayableIconsBitset", description = "A bitset of which icons are displayed")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "disabledIconsBitset", description = "A bitset of which icons are disabled")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
@@ -3526,37 +3558,23 @@ public class Battle extends EngineState {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final int displayableIconsBitset = script.params_20[0].get();
-
-    if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || (script.scriptState_04.storage_44[7] & FLAG_1000) != 0) {
-      //LAB_800cca7c
-      final int disabledIconsBitset;
-
-      if(script.paramCount_14 == 2) {
-        disabledIconsBitset = 0;
-      } else {
-        //LAB_800ccaa0
-        disabledIconsBitset = script.params_20[1].get();
-      }
-
+    if(script.scriptState_04.hasFlag(FLAG_RELOAD_BATTLE_ACTIONS)) {
       //LAB_800ccab4
-      this.hud.initializeMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
-
-      script.scriptState_04.storage_44[7] &= ~FLAG_1000;
-      this.currentDisplayableIconsBitset_800c675c = displayableIconsBitset;
+      this.hud.initializeMenuIcons(script.scriptState_04);
+      script.scriptState_04.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
     }
 
     //LAB_800ccaec
     this.hud.toggleHighlight(true);
 
-    final int selectedAction = this.hud.tickAndRender();
-    if(selectedAction == 0) {
+    final BattleAction selectedAction = this.hud.tickAndRender();
+    if(selectedAction == null) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     this.hud.toggleHighlight(false);
-    script.params_20[2].set(selectedAction - 1);
+    script.params_20[0].set(selectedAction.getRegistryId());
 
     //LAB_800ccb28
     return FlowControl.CONTINUE;
@@ -3585,11 +3603,11 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "isDragoon", description = "Whether or not the battle entity is a dragoon")
   @Method(0x800ccba4L)
   public FlowControl FUN_800ccba4(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c bent = state.innerStruct_00;
     final CombatantStruct1a8 combatant = bent.combatant_144;
 
-    if((state.storage_44[7] & FLAG_1) == 0) {
+    if(!state.hasFlag(FLAG_1)) {
       if(bent.currentAnimIndex_270 >= 0) {
         FUN_800ca194(bent.combatant_144.assets_14[bent.currentAnimIndex_270]);
       }
@@ -3598,11 +3616,11 @@ public class Battle extends EngineState {
       this.deallocateCombatant(bent.combatant_144);
 
       if(script.params_20[1].get() != 0) {
-        state.storage_44[7] |= FLAG_DRAGOON | FLAG_1;
+        state.setFlag(FLAG_DRAGOON | FLAG_1);
         combatant.charIndex_1a2 |= 0x1;
       } else {
         //LAB_800ccc60
-        state.storage_44[7] = state.storage_44[7] & ~FLAG_DRAGOON | FLAG_1;
+        state.clearFlag(FLAG_DRAGOON).setFlag(FLAG_1);
         combatant.charIndex_1a2 &= ~0x1;
       }
 
@@ -3614,7 +3632,7 @@ public class Battle extends EngineState {
       loadCombatantModelAndAnimation(bent.model_148, combatant);
       bent.loadingAnimIndex_26e = 0;
       bent.currentAnimIndex_270 = -1;
-      state.storage_44[7] &= ~FLAG_1;
+      state.clearFlag(FLAG_1);
       return FlowControl.CONTINUE;
     }
 
@@ -3627,7 +3645,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "id", description = "The character or monster ID")
   @Method(0x800cccf4L)
   public FlowControl scriptGetCharOrMonsterId(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.charId_272);
     return FlowControl.CONTINUE;
   }
@@ -3640,11 +3658,11 @@ public class Battle extends EngineState {
   @Method(0x800ccd34L)
   public FlowControl scriptSetBentStat(final RunningScript<?> script) {
     //LAB_800ccd8c
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
       default -> {
         int value = script.params_20[1].get();
         if(script.params_20[2].get() == 2 && value < 0) {
@@ -3665,11 +3683,11 @@ public class Battle extends EngineState {
   @ScriptEnum(BattleEntityStat.class)
   @Method(0x800ccda0L)
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
 
     switch(stat) {
-      case ITEM_ID -> bent.item_d4 = REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get();
+      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
       default -> bent.setStat(stat, script.params_20[1].get());
     }
 
@@ -3683,7 +3701,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce04L)
   public FlowControl scriptGetBentStat(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(script.params_20[1].get());
 
     switch(stat) {
@@ -3692,7 +3710,7 @@ public class Battle extends EngineState {
       case EQUIPMENT_ARMOUR_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
       case EQUIPMENT_BOOTS_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
       case EQUIPMENT_ACCESSORY_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
-      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getRegistryId());
+      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getItem().getRegistryId());
       case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
       case ELEMENT -> script.params_20[2].set(bent.getElement().getRegistryId());
       default -> script.params_20[2].set(bent.getStat(stat));
@@ -3739,29 +3757,28 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800ccf2cL)
   public FlowControl scriptSetBentDeadAndDropLoot(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleEntity27c data = (BattleEntity27c)state.innerStruct_00;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c data = state.innerStruct_00;
 
-    int flags = state.storage_44[7];
     if(script.params_20[1].get() != 0) {
-      if((flags & FLAG_DEAD) == 0) { // Not dead
-        flags |= FLAG_DEAD; // Set dead
+      if(!state.hasFlag(FLAG_DEAD)) { // Not dead
+        state.setFlag(FLAG_DEAD); // Set dead
 
-        if((flags & FLAG_MONSTER) != 0) { // Monster
+        if(state.hasFlag(FLAG_MONSTER)) { // Monster
           final CombatantStruct1a8 enemyCombatant = data.combatant_144;
           goldGainedFromCombat_800bc920 += enemyCombatant.gold_196;
           totalXpFromCombat_800bc95c += enemyCombatant.xp_194;
 
-          if((flags & FLAG_NO_LOOT) == 0) { // Hasn't already dropped loot
+          if(!state.hasFlag(FLAG_NO_LOOT)) { // Hasn't already dropped loot
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
                 if(drop.item() instanceof final Equipment equipment) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), I18n.translate(equipment), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
-                } else if(drop.item() instanceof final Item item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), I18n.translate(item), () -> giveItem(item), () -> itemOverflow.add(item)));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment, () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
+                } else if(drop.item() instanceof final ItemStack item) {
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item, () -> giveItem(new ItemStack(item)), () -> itemOverflow.add(new ItemStack(item))));
                 }
 
-                flags |= FLAG_NO_LOOT;
+                state.setFlag(FLAG_NO_LOOT);
               }
             }
           }
@@ -3769,11 +3786,10 @@ public class Battle extends EngineState {
       }
     } else {
       //LAB_800cd04c
-      flags &= ~FLAG_DEAD;
+      state.clearFlag(FLAG_DEAD);
     }
 
     //LAB_800cd054
-    state.storage_44[7] = flags;
     battleState_8006e398.cacheLivingBents();
     return FlowControl.CONTINUE;
   }
@@ -3783,14 +3799,14 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800cd078L)
   public FlowControl scriptSetBentDead(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final ScriptState<?> state = SCRIPTS.getState(script.params_20[0].get());
 
     //LAB_800cd0d0
     if(script.params_20[1].get() != 0) {
-      state.storage_44[7] |= FLAG_DEAD;
+      state.setFlag(FLAG_DEAD);
     } else {
       //LAB_800cd0c4
-      state.storage_44[7] &= ~FLAG_DEAD;
+      state.clearFlag(FLAG_DEAD);
     }
 
     battleState_8006e398.cacheLivingBents();
@@ -3804,7 +3820,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The hit property value")
   @Method(0x800cd0ecL)
   public FlowControl scriptGetHitProperty(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[3].set(battlePreloadedEntities_1f8003f4.getHitProperty(
       bent.charSlot_276,
       script.params_20[1].get(),
@@ -3820,38 +3836,34 @@ public class Battle extends EngineState {
   @Method(0x800cd160L)
   public FlowControl scriptLevelUpAddition(final RunningScript<?> script) {
     if(script.params_20[1].get() != 0) {
-      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
-      final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac[charIndex];
-      if(charIndex == 2 || charIndex == 8 || additionIndex < 0) {
+      if(charIndex == 2 || charIndex == 8 || charData.selectedAddition_19 == null) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
+      final int additionXp = Math.min(99, additionStats.xp + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
-        charData.additionLevels_1a[additionIndex]++;
+      while(additionStats.level < 4 && additionXp >= (additionStats.level + 1) * 20) {
+        additionStats.level++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
-      int lastNonMaxAdditionIndex = -1;
+      int nonMaxedAdditions = CHARACTER_ADDITIONS[charIndex].length;
 
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
-        if(charData.additionLevels_1a[additionIndex2] == 5) {
+      for(int additionIndex2 = 0; additionIndex2 < CHARACTER_ADDITIONS[charIndex].length; additionIndex2++) {
+        if(charData.additionStats.get(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 4) {
           nonMaxedAdditions--;
-        } else {
-          //LAB_800cd308
-          lastNonMaxAdditionIndex = additionIndex2;
         }
 
         //LAB_800cd30c
@@ -3861,17 +3873,11 @@ public class Battle extends EngineState {
       //LAB_800cd31c
       if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
         charData.partyFlags_04 |= 0x40;
-
-        if(lastNonMaxAdditionIndex >= 0) {
-          charData.additionLevels_1a[lastNonMaxAdditionIndex] = 1;
-        }
-
-        //LAB_800cd36c
         unlockedUltimateAddition_800bc910[bent.charSlot_276] = true;
       }
 
       //LAB_800cd390
-      charData.additionXp_22[additionIndex] = additionXp;
+      additionStats.xp = additionXp;
     }
 
     //LAB_800cd3ac
@@ -3884,7 +3890,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "visible", description = "True for visible, false otherwise")
   @Method(0x800cd3b4L)
   public FlowControl scriptSetModelPartVisibility(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     if(script.params_20[2].get() != 0) {
       bent.model_148.partInvisible_f4 &= ~(0x1L << script.params_20[1].get());
     } else {
@@ -3947,13 +3953,13 @@ public class Battle extends EngineState {
   @Method(0x800cd5b4L)
   public FlowControl scriptAllocateBent(final RunningScript<?> script) {
     final String name = "Bent allocated by script " + script.scriptState_04.index;
-    final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+    final MonsterBattleEntity bent = new MonsterBattleEntity(this, name);
     final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
     script.params_20[2].set(state.index);
     state.setTicker(bent::bentLoadingTicker);
     state.setDestructor(bent::bentDestructor);
     state.loadScriptFile(script.scriptState_04.frame().file, script.params_20[0].get());
-    state.storage_44[7] |= FLAG_NO_SCRIPT | FLAG_MONSTER;
+    state.setFlag(FLAG_NO_SCRIPT | FLAG_MONSTER);
 
     final CombatantStruct1a8 combatant = this.getCombatant(script.params_20[1].get());
     bent.combatant_144 = combatant;
@@ -4061,7 +4067,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
   @Method(0x800cd958L)
   public FlowControl scriptGetCombatantIndex(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.combatantIndex_26c);
     return FlowControl.CONTINUE;
   }
@@ -4072,7 +4078,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "mode", description = "If true, returns character slot, if false returns battle entity slot")
   @Method(0x800cd998L)
   public FlowControl scriptGetBentSlot(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
     if(script.params_20[2].get() != 0) {
       script.params_20[1].set(bent.charSlot_276);
@@ -4090,7 +4096,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count")
   @Method(0x800cd9fcL)
   public FlowControl scriptGetBentNobj(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(bent.model_148.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
@@ -4107,7 +4113,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cda78L)
   public FlowControl FUN_800cda78(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
     if(!bent.combatant_144.isModelLoaded()) {
       return FlowControl.PAUSE_AND_REWIND;
@@ -4612,9 +4618,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800d3968L)
-  public int[] setAdditionNameDisplayCoords(final int addition) {
-    final String additionName = additionNames_800fa8d4[addition];
-
+  public int[] setAdditionNameDisplayCoords(final String additionName) {
     int additionDisplayWidth = 0;
     //LAB_800d39b8
     for(int i = 0; i < additionName.length(); i++) {
@@ -4635,15 +4639,15 @@ public class Battle extends EngineState {
     } else {
       //LAB_800d3dc0
       final AdditionNameTextEffect1c additionStruct = new AdditionNameTextEffect1c();
-      final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
+      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19).get();
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
-      final String additionName = additionNames_800fa8d4[addition];
+      final String additionName = I18n.translate(addition);
 
       //LAB_800d3e5c
       //LAB_800d3e7c
-      additionStruct.additionId_02 = addition;
+      additionStruct.additionName_02 = additionName;
       additionStruct.length_08 = additionName.length();
       additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = additionStruct::renderAdditionNameChar;
@@ -4651,7 +4655,7 @@ public class Battle extends EngineState {
       Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
       this._800faa9d = 1;
 
-      final int[] displayOffset = this.setAdditionNameDisplayCoords(addition);
+      final int[] displayOffset = this.setAdditionNameDisplayCoords(additionName);
       int charPosition = -160;
       int displayOffsetX = displayOffset[0];
       final int displayOffsetY = displayOffset[1];
@@ -4826,14 +4830,14 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Sets battle camera viewpoint")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800dac20L)
-  public FlowControl FUN_800dac20(final RunningScript<?> script) {
+  public FlowControl scriptCameraSetViewpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4860,19 +4864,19 @@ public class Battle extends EngineState {
       bobj = null;
     }
 
-    this.camera_800c67f0.FUN_800dac70(script.params_20[0].get(), x, y, z, bobj);
+    this.camera_800c67f0.cameraSetViewpoint(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
   /** Note: sometimes nonsense values are passed for the script index (assassin cock passes -2 during yell attack) */
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Sets battle camera refpoint")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db034L)
-  public FlowControl FUN_800db034(final RunningScript<?> script) {
+  public FlowControl scriptCameraSetRefpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4899,11 +4903,11 @@ public class Battle extends EngineState {
       bobj = null;
     }
 
-    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, bobj);
+    this.camera_800c67f0.cameraSetRefpoint(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Moves battle camera viewpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -4913,7 +4917,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db460L)
-  public FlowControl FUN_800db460(final RunningScript<?> script) {
+  public FlowControl scriptCameraMoveViewpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4924,11 +4928,11 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db4ec(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.cameraMoveViewpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Moves battle camera refpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -4938,7 +4942,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db574L)
-  public FlowControl FUN_800db574(final RunningScript<?> script) {
+  public FlowControl scriptCameraMoveRefpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -4949,7 +4953,7 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db600(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.cameraMoveRefpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -5011,7 +5015,7 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Accelerates camera viewpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -5022,7 +5026,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db8b0L)
-  public FlowControl FUN_800db8b0(final RunningScript<?> script) {
+  public FlowControl scriptCameraAccelerateViewpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -5035,11 +5039,11 @@ public class Battle extends EngineState {
       stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.cameraAccelerateViewpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Related to battle camera movement")
+  @ScriptDescription("Accelerates camera refpoint towards target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
@@ -5050,7 +5054,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db9e0L)
-  public FlowControl FUN_800db9e0(final RunningScript<?> script) {
+  public FlowControl scriptCameraAccelerateRefpoint(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
@@ -5063,7 +5067,7 @@ public class Battle extends EngineState {
       stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.cameraAccelerateRefpoint(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -5391,7 +5395,7 @@ public class Battle extends EngineState {
         this.FUN_800e45c0(rotation, this.lights_800c692c[index - 1].light_00.direction_00);
       } else {
         //LAB_800e49f4
-        final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
+        final BattleEntity27c bent = SCRIPTS.getObject(index, BattleEntity27c.class);
         rotation.x = bent.model_148.coord2_14.transforms.rotate.x;
         rotation.z = bent.model_148.coord2_14.transforms.rotate.z;
       }
@@ -5428,7 +5432,7 @@ public class Battle extends EngineState {
       this.FUN_800e45c0(s0, this.lights_800c692c[s1 - 1].light_00.direction_00);
     } else {
       //LAB_800e4b40
-      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[s1].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(s1, BattleEntity27c.class);
       s0 = bent.model_148.coord2_14.transforms.rotate;
     }
 
@@ -5624,7 +5628,7 @@ public class Battle extends EngineState {
       s0.directionOrColourDest_28.set(sp0x18);
     } else {
       //LAB_800e51e8
-      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[lightOrBentIndex].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(lightOrBentIndex, BattleEntity27c.class);
       s0.directionOrColourDest_28.set(bent.model_148.coord2_14.transforms.rotate);
     }
 
@@ -5680,7 +5684,7 @@ public class Battle extends EngineState {
     a0_0.typeAndFlags_00 = 0x4002;
     light.scriptIndex_48 = bentIndex;
 
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
     a0_0.directionOrColour_04.set(sp0x10).sub(bent.model_148.coord2_14.transforms.rotate);
     a0_0.directionOrColourSpeed_10.zero();
     a0_0.directionOrColourAcceleration_1c.zero();
@@ -5902,7 +5906,7 @@ public class Battle extends EngineState {
         }
       } else if(type == 2) {
         //LAB_800e5bf0
-        final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
+        final BattleEntity27c bent = SCRIPTS.getObject(light.scriptIndex_48, BattleEntity27c.class);
         // Direction is 0..1 but used as a rotation so we have to scale it up to 0..2pi
         final Vector3f sp0x10 = new Vector3f(a2.directionOrColour_04).mul(MathHelper.TWO_PI).add(bent.model_148.coord2_14.transforms.rotate);
         this.FUN_800e4674(light.light_00.direction_00, sp0x10);
@@ -6323,7 +6327,7 @@ public class Battle extends EngineState {
     if(a0.init_1c && a0.script_14 != null) {
       final DeffManager7cc struct7cc = deffManager_800c693c;
 
-      if((struct7cc.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0) {
+      if((struct7cc.flags_20 & 0x4_0000) == 0 || (getLoadedAudioFiles() & 0x40) == 0) {
         //LAB_800e7154
         if((struct7cc.flags_20 & 0x20_0000) != 0) {
           loadDeffStageEffects(1);
@@ -6471,11 +6475,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Returns two unknown values")
+  @ScriptDescription("Returns deff's calling bent index and target param")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "bentIndex")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "target")
   @Method(0x800e74acL)
-  public FlowControl FUN_800e74ac(final RunningScript<?> script) {
+  public FlowControl scriptGetDeffBentParams(final RunningScript<?> script) {
     final LoadedDeff24 struct24 = this.loadedDeff_800c6938;
     script.params_20[0].set(struct24.bentState_04.index);
     script.params_20[1].set(struct24.param_08);
@@ -6489,7 +6493,7 @@ public class Battle extends EngineState {
     final int deffStage = this.deffLoadingStage_800fafe8;
     if(deffStage == 1) {
       //LAB_800e7510
-      if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
+      if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedAudioFiles() & 0x40) == 0)) {
         //LAB_800e756c
         this.deffLoadingStage_800fafe8 = 2;
       }
@@ -6505,9 +6509,6 @@ public class Battle extends EngineState {
 
   @Method(0x800e8ffcL)
   public void allocateDeffManager() {
-    if(deffManager_800c693c != null) {
-      deffManager_800c693c.delete();
-    }
 
     final DeffManager7cc deffManager = new DeffManager7cc();
     this.loadedDeff_800c6938 = deffManager._5b8;
@@ -6524,10 +6525,9 @@ public class Battle extends EngineState {
 
   @Method(0x800e9120L)
   public void deallocateLightingControllerAndDeffManager() {
-    scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
+    SCRIPTS.getState(1).deallocateWithChildren();
     deffManager_800c693c.deallocateScriptsArray();
     deffManager_800c693c.scriptState_1c.deallocateWithChildren();
-    deffManager_800c693c.delete();
     deffManager_800c693c = null;
   }
 
@@ -6575,7 +6575,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "-1 = shadow type 2, -2 = shadow type 3, -3 = shadow type 0, all other values are model part index to attach type 2 shadow to")
   @Method(0x800e9798L)
   public FlowControl scriptSetModelShadow(final RunningScript<?> script) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
     if(BattleObject.EM__.equals(bobj.magic_00)) {
@@ -6698,7 +6698,7 @@ public class Battle extends EngineState {
     model.zOffset_a0 = 0x200;
     model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
-    model.smallerStructPtr_a4 = null;
+    model.clutAnimations_a4 = null;
     model.remainingFrames_9e = a1.remainingFrames_5e2;
     model.subFrameIndex = 0;
     model.ptr_a8 = a1._5ec;
@@ -6771,7 +6771,7 @@ public class Battle extends EngineState {
       this.copyBattleStageModel(effect.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
-      this.copyModel(effect.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[id].innerStruct_00).model_148);
+      this.copyModel(effect.model_10, SCRIPTS.getObject(id, BattleEntity27c.class).model_148);
     }
 
     //LAB_800ea04c
@@ -6981,7 +6981,6 @@ public class Battle extends EngineState {
       if(index >= 5) {
         final DeffPart.TmdType tmdType = new DeffPart.TmdType("HUD DEFF file " + i, files.get(i));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
-        struct7cc.objs[index] = TmdObjLoader.fromObjTable(tmdType.name, struct7cc.tmds_2f8[index]);
       }
 
       //LAB_800ea928
@@ -7457,10 +7456,6 @@ public class Battle extends EngineState {
       final ModelPart10 part = stage.dobj2s_00[i];
 
       if((partBit & stage.flags_5e4) == 0) {
-        if(stage.tmd_5d0.objTable[i] != null && stage.dobj2s_00[i].obj == null) {
-          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
-        }
-
         final MV ls = new MV();
         final MV lw = new MV();
         GsGetLws(part.coord2_04, lw, ls);
@@ -7468,15 +7463,13 @@ public class Battle extends EngineState {
         GTE.setTransforms(ls);
         Renderer.renderDobj2(part, true, 0);
 
-        if(part.obj != null) {
-          RENDERER.queueModel(part.obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(stage.z_5e8 * 4)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .battleColour(this._800c6930.colour_00);
-        }
+        RENDERER.queueModel(part.tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
+          .depthOffset(stage.z_5e8 * 4)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .battleColour(this._800c6930.colour_00);
       }
 
       //LAB_800ec608
@@ -7586,7 +7579,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset")
   @Method(0x800ee2acL)
   public FlowControl scriptSetBentZOffset(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.zOffset_a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
@@ -7596,7 +7589,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The uniform scale (12-bit fixed-point)")
   @Method(0x800ee2e4L)
   public FlowControl scriptSetBentScaleUniform(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final float scale = script.params_20[1].get() / (float)0x1000;
     bent.model_148.coord2_14.transforms.scale.set(scale, scale, scale);
     return FlowControl.CONTINUE;
@@ -7609,7 +7602,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z scale (12-bit fixed-point)")
   @Method(0x800ee324L)
   public FlowControl scriptSetBentScale(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.coord2_14.transforms.scale.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
@@ -7618,7 +7611,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee384L)
   public FlowControl scriptAttachShadowToBottomOfBentModel(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowType_cc = 2;
     bent.model_148.modelPartWithShadowIndex_cd = -1;
     return FlowControl.CONTINUE;
@@ -7629,7 +7622,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartAttachmentIndex", description = "The model part index to attach the shadow to")
   @Method(0x800ee3c0L)
   public FlowControl scriptAttachShadowToBentModelPart(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowType_cc = 3;
     bent.model_148.modelPartWithShadowIndex_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
@@ -7639,7 +7632,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee408L)
   public FlowControl scriptUpdateBentShadowType(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final int index = bent.model_148.modelPartWithShadowIndex_cd;
     if(index == -2) {
       //LAB_800ee450
@@ -7659,7 +7652,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800ee468L)
   public FlowControl scriptDisableBentShadow(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
@@ -7670,7 +7663,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The shadow's Z size (12-bit fixed-point)")
   @Method(0x800ee49cL)
   public FlowControl scriptSetBentShadowSize(final RunningScript<?> script) {
-    final BattleEntity27c a1 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c a1 = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     a1.model_148.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
     a1.model_148.shadowSize_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
@@ -7683,7 +7676,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The shadow's Z size (12-bit fixed-point)")
   @Method(0x800ee4e8L)
   public FlowControl scriptSetBentShadowOffset(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
@@ -7801,25 +7794,27 @@ public class Battle extends EngineState {
       final CharacterData2c charData = gameState_800babc8.charData_32c[bent.charId_272];
 
       //LAB_800eec10
-      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(LodMod.HP_STAT.get()).getCurrent());
+      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent());
 
-      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[bent.charId_272]) != 0) {
-        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+      if((gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[bent.charId_272]))) {
+        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eec78
-      if(bent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[9]) != 0) {
-        charData.mp_0a = bent.stats.getStat(LodMod.MP_STAT.get()).getCurrent();
+      if(bent.charId_272 == 0 && gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[9])) {
+        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eecb8
       charData.status_10 = bent.status_0e & 0xc8;
-      charData.sp_0c = bent.stats.getStat(LodMod.SP_STAT.get()).getCurrent();
+      charData.sp_0c = bent.stats.getStat(SP_STAT.get()).getCurrent();
     }
 
     //LAB_800eed78
-    for(final Item item : this.usedRepeatItems_800c6c3c) {
-      giveItem(item);
+    for(final ItemStack stack : this.usedRepeatItems_800c6c3c) {
+      if(!giveItem(stack)) {
+        itemOverflow.add(stack);
+      }
     }
 
     this.usedRepeatItems_800c6c3c.clear();
@@ -7854,9 +7849,9 @@ public class Battle extends EngineState {
       System.arraycopy(spellIndices, 0, this.dragoonSpells_800c6960[charSlot].spellIndex_01, 0, 8);
 
       //LAB_800ef400
-      final VitalsStat playerHp = player.stats.getStat(LodMod.HP_STAT.get());
-      final VitalsStat playerMp = player.stats.getStat(LodMod.MP_STAT.get());
-      final VitalsStat playerSp = player.stats.getStat(LodMod.SP_STAT.get());
+      final VitalsStat playerHp = player.stats.getStat(HP_STAT.get());
+      final VitalsStat playerMp = player.stats.getStat(MP_STAT.get());
+      final VitalsStat playerSp = player.stats.getStat(SP_STAT.get());
 
       final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
       player.level_04 = stats.level_0e;
@@ -7881,15 +7876,16 @@ public class Battle extends EngineState {
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
-      player.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
-      player.attack_34 = stats.equipmentAttack_88 + stats.bodyAttack_6a;
-      player.magicAttack_36 = stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b;
-      player.defence_38 = stats.equipmentDefence_8c + stats.bodyDefence_6c;
-      player.magicDefence_3a = stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d;
+      player.stats.getStat(SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
+      player.stats.getStat(ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
+      player.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
+      player.stats.getStat(DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
+      player.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
       player.attackHit_3c = stats.equipmentAttackHit_90;
       player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.attackAvoid_40 = stats.equipmentAttackAvoid_94;
-      player.magicAvoid_42 = stats.equipmentMagicAvoid_96;
+      player.stats.getStat(AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
+      player.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
+      player.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10 + stats.equipmentGuardHeal);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
       player.equipment_19_46 = stats.equipment_19_99;
       player.equipment_1a_48 = stats.equipment_1a_9a;
@@ -7904,7 +7900,7 @@ public class Battle extends EngineState {
       player.magicalImmunity_112 = stats.equipmentMagicalImmunity_48;
       player.physicalResistance_114 = stats.equipmentPhysicalResistance_4a;
       player.magicalResistance_116 = stats.equipmentMagicalResistance_60;
-      player._118 = stats.addition_00_9c;
+//      player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
       player.equipment_11e.clear();
@@ -7929,8 +7925,8 @@ public class Battle extends EngineState {
 
   @Method(0x800f1aa8L)
   public boolean checkHit(final int attackerIndex, final int defenderIndex, final AttackType attackType) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerIndex].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[defenderIndex].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(attackerIndex, BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(defenderIndex, BattleEntity27c.class);
     final boolean isMonster = attacker instanceof MonsterBattleEntity;
 
     int effectAccuracy;
@@ -7958,10 +7954,10 @@ public class Battle extends EngineState {
 
     final int avoidChance;
     if(attackType == AttackType.PHYSICAL) {
-      avoidChance = defender.attackAvoid_40;
+      avoidChance = defender.stats.getStat(AVOID_STAT.get()).get();
     } else {
       //LAB_800f1c9c
-      avoidChance = defender.magicAvoid_42;
+      avoidChance = defender.stats.getStat(MAGIC_AVOID_STAT.get()).get();
     }
 
     boolean effectHit = false;
@@ -8024,7 +8020,7 @@ public class Battle extends EngineState {
     //LAB_800f2140
     int damage;
     if(attacker.spell_94 != null && (attacker.spell_94.flags_01 & 0x4) != 0) {
-      damage = defender.stats.getStat(LodMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
+      damage = defender.stats.getStat(HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
 
       final List<BattleEntity27c> targets = new ArrayList<>();
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
@@ -8078,10 +8074,10 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2500L)
   public FlowControl scriptPhysicalAttack(final RunningScript<?> script) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
-    final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
+    final int damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
@@ -8096,8 +8092,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2694L)
   public FlowControl scriptDragoonMagicStatusItemAttack(final RunningScript<?> script) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     attacker.spellId_4e = script.params_20[2].get();
 
@@ -8116,7 +8112,7 @@ public class Battle extends EngineState {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08.get());
     }
 
-    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
+    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
 
     //LAB_800f27ec
     script.params_20[3].set(damage);
@@ -8132,8 +8128,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2838L)
   public FlowControl scriptItemMagicAttack(final RunningScript<?> script) {
-    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
     attacker.spell_94 = null;
 
@@ -8149,7 +8145,7 @@ public class Battle extends EngineState {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.item_d4.getAttackElement());
     }
 
-    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
+    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
 
     //LAB_800f2970
     script.params_20[3].set(damage);
@@ -8168,7 +8164,7 @@ public class Battle extends EngineState {
     //LAB_800f4410
     //LAB_800f4430
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
     spGained_800bc950[player.charSlot_276] += script.params_20[1].get();
@@ -8188,7 +8184,7 @@ public class Battle extends EngineState {
     //LAB_800f454c
     //LAB_800f456c
     final PlayerBattleEntity player = SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class);
-    final VitalsStat sp = player.stats.getStat(LodMod.SP_STAT.get());
+    final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
@@ -8331,7 +8327,7 @@ public class Battle extends EngineState {
 
     final MonsterStatsEvent statsEvent = EVENTS.postEvent(new MonsterStatsEvent(monster.charId_272));
 
-    final VitalsStat monsterHp = monster.stats.getStat(LodMod.HP_STAT.get());
+    final VitalsStat monsterHp = monster.stats.getStat(HP_STAT.get());
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
@@ -8346,15 +8342,15 @@ public class Battle extends EngineState {
     monster.equipmentAttack1_28 = 0;
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
-    monster.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
-    monster.attack_34 = statsEvent.attack;
-    monster.magicAttack_36 = statsEvent.magicAttack;
-    monster.defence_38 = statsEvent.defence;
-    monster.magicDefence_3a = statsEvent.magicDefence;
+    monster.stats.getStat(SPEED_STAT.get()).setRaw(statsEvent.speed);
+    monster.stats.getStat(ATTACK_STAT.get()).setRaw(statsEvent.attack);
+    monster.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
+    monster.stats.getStat(DEFENSE_STAT.get()).setRaw(statsEvent.defence);
+    monster.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.attackAvoid_40 = statsEvent.attackAvoid;
-    monster.magicAvoid_42 = statsEvent.magicAvoid;
+    monster.stats.getStat(AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
+    monster.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
     monster.equipment_19_46 = 0;
     monster.equipment_1a_48 = 0;
@@ -8510,7 +8506,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f96d4L)
   public FlowControl scriptGetBentPos2(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[1].set(java.lang.Math.round(bent.model_148.coord2_14.coord.transfer.x));
     script.params_20[2].set(java.lang.Math.round(bent.model_148.coord2_14.coord.transfer.y));
     script.params_20[3].set(java.lang.Math.round(bent.model_148.coord2_14.coord.transfer.z));
@@ -8568,23 +8564,25 @@ public class Battle extends EngineState {
       return FlowControl.CONTINUE;
     }
 
-    Item item;
+    ItemStack stack;
     if(itemId == null) {
-      item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      stack = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.getSize()) >> 16);
 
-      if(item.isProtected()) {
-        item = null;
+      if(stack.isProtected()) {
+        stack = ItemStack.EMPTY;
+      } else {
+        stack = gameState_800babc8.items_2e9.take(stack);
       }
     } else {
-      item = REGISTRIES.items.getEntry(itemId).get();
+      stack = gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(itemId).get());
     }
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(item == null || !takeItemId(item)) {
-      script.params_20[1].set(0);
+    if(!stack.isEmpty()) {
+      script.params_20[1].set(stack.getItem().getRegistryId());
     } else {
-      script.params_20[1].set(item.getRegistryId());
+      script.params_20[1].set(0);
     }
 
     return FlowControl.CONTINUE;
@@ -8657,7 +8655,7 @@ public class Battle extends EngineState {
 
     if(characterId != -1) {
       if(characterId == 9) { //TODO stupid special case handling for DD Dart
-        this.dragoonSpaceElement_800c6b64 = LodMod.DIVINE_ELEMENT.get();
+        this.dragoonSpaceElement_800c6b64 = DIVINE_ELEMENT.get();
       } else {
         this.dragoonSpaceElement_800c6b64 = battleState_8006e398.getPlayerById(characterId).element;
       }
@@ -8731,7 +8729,7 @@ public class Battle extends EngineState {
   @Method(0x800f9cacL)
   public FlowControl scriptSetDisabledMenuIcons(final RunningScript<?> script) {
     final int disabledIconsBitset = script.params_20[0].get();
-    this.hud.setDisabledIcons(disabledIconsBitset);
+    disableRetailBattleActions(disabledIconsBitset, this.hud.battleMenu_800c6c34.disabledActions);
     return FlowControl.CONTINUE;
   }
 
@@ -8740,7 +8738,7 @@ public class Battle extends EngineState {
   @Method(0x800f9d7cL)
   public FlowControl scriptFinishBentTurn(final RunningScript<?> script) {
     final int bentIndex = script.params_20[0].get();
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
 
     bent.turnFinished();
     bent.recalculateSpeedAndPerHitStats();
@@ -8749,8 +8747,6 @@ public class Battle extends EngineState {
 
   @Method(0x80109050L)
   private void loadStageDataAndControllerScripts() {
-    this.currentStageData_800c6718 = getEncounterStageData(encounterId_800bb0f8);
-
     this.playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Loader.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", this::combatControllerScriptLoaded);
@@ -8763,15 +8759,15 @@ public class Battle extends EngineState {
 
     final int openingCamera;
     if((simpleRand() & 0x8000) == 0) {
-      openingCamera = this.currentStageData_800c6718.monsterOpeningCamera_14;
+      openingCamera = encounter.monsterOpeningCamera;
     } else {
-      openingCamera = this.currentStageData_800c6718.playerOpeningCamera_10;
+      openingCamera = encounter.playerOpeningCamera;
     }
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
     this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
-    this.currentCameraIndex_800c6780 = this.currentStageData_800c6718.cameraPosIndices_18[this.hud.currentCameraPositionIndicesIndex_800c66b0];
+    this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
     battleFlags_800bc960 |= 0x2;
   }
 
@@ -8832,5 +8828,10 @@ public class Battle extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     super.updateDiscordRichPresence(activity);
     activity.setState("In Combat");
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.camera_800c67f0.rview2_00;
   }
 }

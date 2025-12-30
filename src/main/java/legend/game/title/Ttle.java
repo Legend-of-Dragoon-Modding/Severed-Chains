@@ -1,6 +1,7 @@
 package legend.game.title;
 
 import de.jcm.discordgamesdk.activity.Activity;
+import legend.core.Async;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
@@ -13,19 +14,19 @@ import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputCodepoints;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.FontOptions;
@@ -43,6 +44,7 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
 import legend.game.tim.Tim;
+import legend.game.tmd.TmdWithId;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Translucency;
@@ -58,7 +60,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
@@ -72,29 +76,32 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
+import static legend.game.Audio.playSound;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetRefView2L;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Menus.initMenu;
+import static legend.game.Menus.whichMenu_800bdc38;
+import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.initMenu;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_CONVERT_MEMCARD;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_UPDATE;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 
 public class Ttle extends EngineState {
@@ -104,7 +111,6 @@ public class Ttle extends EngineState {
 
   private TmdRenderingStruct _800c66d0;
   private final FireAnimationData20[] fireAnimation_800c66d4 = new FireAnimationData20[4];
-  private int hasSavedGames;
   private int menuLoadingStage;
   private float logoFadeInAmount;
   private int logoFlashStage;
@@ -129,8 +135,13 @@ public class Ttle extends EngineState {
 
   private int loadingStage;
   private int selectedMenuOption;
-  private boolean memcardConversionShown;
+  private boolean hasCampaigns;
+  private List<Path> uncategorizedSaves = List.of();
+  private List<Path> foundMemcards = List.of();
   private boolean saveCategorizationShown;
+  private boolean memcardConversionShown;
+
+  private Future<?> loadingFiles;
 
   private Texture backgroundTex;
   private Texture logoTex;
@@ -143,7 +154,10 @@ public class Ttle extends EngineState {
   private Obj menuTextObj;
   private int updateAvailableIndex;
   private int updateAvailableShadowIndex;
-  private int updateIconIndex;
+  private int updateAvailableIconIndex;
+  private int memcardFoundIndex;
+  private int memcardFoundShadowIndex;
+  private int memcardFoundIconIndex;
   private Obj copyrightObj;
   private final Matrix4f flashTransforms = new Matrix4f();
 
@@ -155,7 +169,6 @@ public class Ttle extends EngineState {
   private VramTexture[] copyrightPalettes;
   private boolean texturesLoaded;
   private boolean fireLoaded;
-  private boolean renderablesLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
   private final int[] menuTextWidth = {407, 257, 227, 169, 141};
@@ -183,6 +196,7 @@ public class Ttle extends EngineState {
     switch(this.loadingStage) {
       case 0 -> this.initializeMainMenu();
       case 1 -> this.loadTextures();
+      case 2 -> this.waitForFilesToLoad();
       case 3 -> this.renderMainMenu();
       case 4 -> this.fadeOutForNewGame();
       case 5 -> this.waitForSaveSelection();
@@ -214,9 +228,7 @@ public class Ttle extends EngineState {
 
     this.texturesLoaded = false;
     this.fireLoaded = false;
-    this.renderablesLoaded = false;
 
-    this.hasSavedGames = 0;
     this.selectedMenuOption = 0;
 
     resizeDisplay(384, 240);
@@ -239,6 +251,12 @@ public class Ttle extends EngineState {
       final Rect4i rect = new Rect4i(944 + i * 16, 256, 64, 64);
       this.fireAnimation_800c66d4[i] = this.FUN_800cdaa0(rect, this._800ce7b0[i]);
     }
+
+    this.loadingFiles = Async.run(() -> {
+      this.hasCampaigns = SAVES.hasCampaigns();
+      this.foundMemcards = SAVES.findMemcards();
+      this.uncategorizedSaves = SAVES.findUncategorizedSaves();
+    });
 
     startFadeEffect(2, 15);
     GTE.setScreenOffset(0, 0);
@@ -319,13 +337,40 @@ public class Ttle extends EngineState {
       .uv(512.0f / this.menuTextTex.width, 6 * 64.0f / this.menuTextTex.height)
     ;
 
-    this.updateIconIndex = menuTextBuilder.currentQuadIndex();
+    this.updateAvailableIconIndex = menuTextBuilder.currentQuadIndex();
     menuTextBuilder
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(64.0f, 64.0f)
       .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
       .uv(0, 7 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.memcardFoundIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(512.0f, 64.0f)
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 5 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.memcardFoundShadowIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(512.0f, 64.0f)
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(512.0f / this.menuTextTex.width, 5 * 64.0f / this.menuTextTex.height)
+    ;
+
+    this.memcardFoundIconIndex = menuTextBuilder.currentQuadIndex();
+    menuTextBuilder
+      .add()
+      .bpp(Bpp.BITS_24)
+      .posSize(64.0f, 64.0f)
+      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(64.0f / this.menuTextTex.width, 7 * 64.0f / this.menuTextTex.height)
     ;
 
     this.menuTextObj = menuTextBuilder.build();
@@ -339,7 +384,7 @@ public class Ttle extends EngineState {
       .translucency(Translucency.B_PLUS_F)
       .build();
 
-    this.loadingStage = 3;
+    this.loadingStage = 2;
   }
 
   /**
@@ -393,12 +438,22 @@ public class Ttle extends EngineState {
     this.fireLoaded = true;
   }
 
-  private void prepareRenderables() {
-    for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
-      this._800c66d0.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("Title Screen Fire " + i, this._800c66d0.dobj2s_00[i].tmd_08);
-    }
+  private void waitForFilesToLoad() {
+    if(this.loadingFiles.isDone()) {
+      this.selectedMenuOption = this.hasCampaigns ? 1 : 0;
 
-    this.renderablesLoaded = true;
+      if(!this.saveCategorizationShown && !this.uncategorizedSaves.isEmpty()) {
+        this.menuState_800c672c = 4;
+        this.menuTransitionState_800c6728 = 2;
+        this.loadingStage = 9;
+      } else if(!this.memcardConversionShown && !this.foundMemcards.isEmpty()) {
+        this.menuState_800c672c = 4;
+        this.menuTransitionState_800c6728 = 2;
+        this.loadingStage = 10;
+      } else {
+        this.loadingStage = 3;
+      }
+    }
   }
 
   @Method(0x800c7e50L)
@@ -439,7 +494,7 @@ public class Ttle extends EngineState {
         }
 
         try {
-          SAVES.moveCategorizedSaves(name);
+          SAVES.moveCategorizedSaves(this.uncategorizedSaves, name);
         } catch(final IOException e) {
           LOGGER.error("Failed to categorize saves", e);
         }
@@ -461,7 +516,7 @@ public class Ttle extends EngineState {
 
         menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", 2, result1 -> {
           try {
-            SAVES.splitMemcards(name, result1 == MessageBoxResult.YES);
+            SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {
             LOGGER.error("Failed to convert memcard", e);
           }
@@ -470,19 +525,27 @@ public class Ttle extends EngineState {
       } else {
         whichMenu_800bdc38 = WhichMenu.UNLOAD;
       }
+
+      this.foundMemcards = SAVES.findMemcards();
     }), () -> false);
   }
 
-  private void fadeOutToMenu(final Supplier<MenuScreen> destScreen, final BooleanSupplier transition) {
+  private Future<?> menuLoadAction;
+
+  private <T> void fadeOutToMenuAsync(@Nullable final Supplier<Future<T>> waitAction, final Function<T, MenuScreen> destScreen, final BooleanSupplier transition) {
     if(this.fadeOutTimer_800c6754 == 0) {
+      if(waitAction != null) {
+        this.menuLoadAction = waitAction.get();
+      }
+
       startFadeEffect(1, 15);
     }
 
     //LAB_800c7fcc
     this.fadeOutTimer_800c6754++;
 
-    if(this.fadeOutTimer_800c6754 >= 16 && this.menuTransitionState_800c6728 == 2) {
-      initMenu(WhichMenu.RENDER_NEW_MENU, destScreen);
+    if(this.fadeOutTimer_800c6754 >= 16 && (this.menuLoadAction == null || this.menuLoadAction.isDone()) && this.menuTransitionState_800c6728 == 2) {
+      initMenu(WhichMenu.RENDER_NEW_MENU, () -> destScreen.apply(this.menuLoadAction != null ? (T)this.menuLoadAction.resultNow() : null));
       removeInputHandlers();
       this.deallocate();
       this.menuTransitionState_800c6728 = 3;
@@ -504,6 +567,10 @@ public class Ttle extends EngineState {
         this.renderCopyright();
       }
     }
+  }
+
+  private void fadeOutToMenu(final Supplier<MenuScreen> destScreen, final BooleanSupplier transition) {
+    this.fadeOutToMenuAsync(null, _ -> destScreen.get(), transition);
   }
 
   private void fadeOutForQuit() {
@@ -529,7 +596,7 @@ public class Ttle extends EngineState {
 
   @Method(0x800c7fa0L)
   private void waitForSaveSelection() {
-    this.fadeOutToMenu(CampaignSelectionScreen::new, () -> {
+    this.fadeOutToMenuAsync(() -> Async.run(SAVES::loadAllCampaigns), CampaignSelectionScreen::new, () -> {
       if(loadingNewGameState_800bdc34) {
         if(gameState_800babc8.isOnWorldMap_4e4) {
           engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
@@ -576,12 +643,8 @@ public class Ttle extends EngineState {
 
   @Method(0x800c8298L)
   private void renderMainMenu() {
-    if(!this.renderablesLoaded) {
-      if(!this.texturesLoaded || !this.fireLoaded) {
-        return;
-      }
-
-      this.prepareRenderables();
+    if(!this.texturesLoaded || !this.fireLoaded) {
+      return;
     }
 
     //LAB_800c83c8
@@ -685,7 +748,7 @@ public class Ttle extends EngineState {
       if(this.menuLoadingStage == 3) {
         if(this.menuState_800c672c < 3) {
           for(int i = 0; i < MENU_OPTIONS; i++) {
-            if(i == 1 && this.hasSavedGames != 1) {
+            if(i == 1 && !this.hasCampaigns) {
               continue;
             }
 
@@ -704,10 +767,25 @@ public class Ttle extends EngineState {
             }
           }
 
-          if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
+          if(this.update != null || !this.foundMemcards.isEmpty()) {
+            float clickY = top / scaleY + 5.0f;
+            boolean setCursor = false;
+
+            if(this.update != null) {
+              if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+                RENDERER.window().usePointerCursor();
+                setCursor = true;
+              }
+
+              clickY += 14.0f;
+            }
+
+            if(!this.foundMemcards.isEmpty() && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 111, 14)) {
               RENDERER.window().usePointerCursor();
-            } else {
+              setCursor = true;
+            }
+
+            if(!setCursor) {
               RENDERER.window().useNormalCursor();
             }
           }
@@ -760,7 +838,7 @@ public class Ttle extends EngineState {
 
         if(this.menuState_800c672c < 3) {
           for(int i = 0; i < MENU_OPTIONS; i++) {
-            if(i == 1 && this.hasSavedGames != 1) {
+            if(i == 1 && !this.hasCampaigns) {
               continue;
             }
 
@@ -778,10 +856,20 @@ public class Ttle extends EngineState {
             }
           }
 
+          float clickY = top / scaleY + 5.0f;
+
           if(this.update != null) {
-            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)(top / scaleY + 5), 105, 14)) {
-              PLATFORM.openUrl(this.update.uri);
+            if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+              this.downloadUpdate();
             }
+
+            clickY += 14.0f;
+          }
+
+          if(!this.foundMemcards.isEmpty() && MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
+            this.menuState_800c672c = 4;
+            this.menuTransitionState_800c6728 = 2;
+            this.loadingStage = 10;
           }
         }
       }
@@ -791,6 +879,10 @@ public class Ttle extends EngineState {
     onButtonPressed = RENDERER.events().onButtonPress((window, button, repeat) -> this.resetIdleTime());
 
     onInputActionPressed = RENDERER.events().onInputActionPressed(this::handleMainInput);
+  }
+
+  private void downloadUpdate() {
+    PLATFORM.openUrl(this.update.uri);
   }
 
   private static void removeInputHandlers() {
@@ -821,7 +913,7 @@ public class Ttle extends EngineState {
             this.selectedMenuOption = MENU_OPTIONS - 1;
           }
 
-          if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
+          if(this.selectedMenuOption == 1 && !this.hasCampaigns) {
             this.selectedMenuOption--;
           }
 
@@ -834,36 +926,29 @@ public class Ttle extends EngineState {
             this.selectedMenuOption = 0;
           }
 
-          if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
+          if(this.selectedMenuOption == 1 && !this.hasCampaigns) {
             this.selectedMenuOption++;
           }
 
           this.menuState_800c672c = 2;
+        } else if(this.update != null && action == INPUT_ACTION_TITLE_UPDATE.get()) {
+          this.downloadUpdate();
+        } else if(!this.foundMemcards.isEmpty() && action == INPUT_ACTION_TITLE_CONVERT_MEMCARD.get()) {
+          this.menuState_800c672c = 4;
+          this.menuTransitionState_800c6728 = 2;
+          this.loadingStage = 10;
         }
       }
     }
   }
 
+  private final Matrix4f optionTransforms = new Matrix4f();
+  private final Vector3f normalColour = new Vector3f(0xf0 / 255.0f, 0xf0 / 255.0f, 0xf0 / 255.0f);
+  private final Vector3f highlightColour = new Vector3f(0xc0 / 255.0f, 0x38 / 255.0f, 0x10 / 255.0f);
+  private final Vector3f tempColour = new Vector3f();
+
   @Method(0x800c8634L)
   private void renderMenuOptions() {
-    if(this.hasSavedGames == 0) {
-      if(!this.saveCategorizationShown && !SAVES.findUncategorizedSaves().isEmpty()) {
-        this.menuState_800c672c = 4;
-        this.menuTransitionState_800c6728 = 2;
-        this.loadingStage = 9;
-      }
-
-      if(!this.memcardConversionShown && !SAVES.findMemcards().isEmpty()) {
-        this.menuState_800c672c = 4;
-        this.menuTransitionState_800c6728 = 2;
-        this.loadingStage = 10;
-      }
-
-      this.hasSavedGames = SAVES.hasCampaigns() ? 1 : 2;
-      this.selectedMenuOption = this.hasSavedGames == 1 ? 1 : 0;
-      return;
-    }
-
     //LAB_800c868c
     switch(this.menuState_800c672c) {
       case 0 -> {
@@ -957,30 +1042,25 @@ public class Ttle extends EngineState {
       }
     }
 
-    final Matrix4f transforms = new Matrix4f();
     final float scale = 1.0f / 3.0f;
-
-    final Vector3f normalColour = new Vector3f(0xf0 / 255.0f, 0xf0 / 255.0f, 0xf0 / 255.0f);
-    final Vector3f highlightColour = new Vector3f(0xc0 / 255.0f, 0x38 / 255.0f, 0x10 / 255.0f);
-    final Vector3f tempColour = new Vector3f();
 
     //LAB_800c8a70
     for(int i = 0; i < MENU_OPTIONS; i++) {
       final int alpha;
-      if(i != 1 || this.hasSavedGames == 1) {
+      if(i != 1 || this.hasCampaigns) {
         alpha = this.menuOptionTransparency[i];
       } else {
         alpha = this.menuOptionTransparency[i] / 2;
       }
 
-      transforms
+      this.optionTransforms
         .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f + RENDERER.getWidescreenOrthoOffsetX(), 130.0f + i * 16.0f, 100.0f)
         .scale(scale, scale, 1.0f)
       ;
 
       //LAB_800c8a8c
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
         .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
         .alpha(alpha / 128.0f)
@@ -988,29 +1068,31 @@ public class Ttle extends EngineState {
         .useTextureAlpha()
         .vertices((i + MENU_OPTIONS) * 4, 4);
 
-      transforms
+      this.optionTransforms
         .translation(184.0f - this.menuTextWidth[i] * scale / 2.0f + RENDERER.getWidescreenOrthoOffsetX(), 130.0f + i * 16.0f, 100.1f)
         .scale(scale, scale, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
-        .colour(normalColour.lerp(highlightColour, (alpha - 0x40) / (float)0x60, tempColour))
+        .colour(this.normalColour.lerp(this.highlightColour, (alpha - 0x40) / (float)0x60, this.tempColour))
         .alpha(alpha / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()
         .vertices(i * 4, 4);
     }
 
+    float y = 5.0f;
+
     if(this.update != null) {
-      transforms
-        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.0f)
+      this.optionTransforms
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.0f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
         .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
         .alpha(this.menuUpdateTransparency / 128.0f)
@@ -1018,36 +1100,86 @@ public class Ttle extends EngineState {
         .useTextureAlpha()
         .vertices(this.updateAvailableIndex * 4, 4);
 
-      transforms
-        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
+      this.optionTransforms
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
-        .colour(normalColour)
+        .colour(this.normalColour)
         .alpha(this.menuUpdateTransparency / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()
         .vertices(this.updateAvailableShadowIndex * 4, 4);
 
-      transforms
-        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), 5.0f, 100.1f)
+      this.optionTransforms
+        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
         .scale(0.2f, 0.2f, 1.0f)
       ;
 
       RENDERER
-        .queueOrthoModel(this.menuTextObj, transforms, QueuedModelStandard.class)
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
         .translucency(Translucency.B_PLUS_F)
-        .colour(normalColour)
+        .colour(this.normalColour)
         .alpha(this.menuUpdateTransparency / 128.0f)
         .texture(this.menuTextTex)
         .useTextureAlpha()
-        .vertices(this.updateIconIndex * 4, 4);
+        .vertices(this.updateAvailableIconIndex * 4, 4);
+
+      renderText(I18n.translate("lod_core.ui.title.hotkey", InputCodepoints.getActionName(INPUT_ACTION_TITLE_UPDATE.get())), 111.0f, y + 3.0f, UI_WHITE_SMALL);
+
+      y += 14.0f;
     }
 
-    renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, model -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
+    if(!this.foundMemcards.isEmpty()) {
+      this.optionTransforms
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.0f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(0xf8 / 255.0f, 0x80 / 255.0f, 0x10 / 255.0f)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.memcardFoundIndex * 4, 4);
+
+      this.optionTransforms
+        .translation(20.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(this.normalColour)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.memcardFoundShadowIndex * 4, 4);
+
+      this.optionTransforms
+        .translation(6.0f + RENDERER.getWidescreenOrthoOffsetX(), y, 100.1f)
+        .scale(0.2f, 0.2f, 1.0f)
+      ;
+
+      RENDERER
+        .queueOrthoModel(this.menuTextObj, this.optionTransforms, QueuedModelStandard.class)
+        .translucency(Translucency.B_PLUS_F)
+        .colour(this.normalColour)
+        .alpha(this.menuUpdateTransparency / 128.0f)
+        .texture(this.menuTextTex)
+        .useTextureAlpha()
+        .vertices(this.memcardFoundIconIndex * 4, 4);
+
+      renderText(I18n.translate("lod_core.ui.title.hotkey", InputCodepoints.getActionName(INPUT_ACTION_TITLE_CONVERT_MEMCARD.get())), 115.0f, y + 3.0f, UI_WHITE_SMALL);
+    }
+
+    renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, (model, shadow) -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
 
     //LAB_800c9390
     //LAB_800c939c
@@ -1196,7 +1328,7 @@ public class Ttle extends EngineState {
       lw.scaleLocal(scale);
       lw.transfer.y -= 250.0f;
 
-      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].tmd_08.getObj(), lw, QueuedModelTmd.class)
         .monochrome(this.flameColour / 128.0f)
         .screenspaceOffset(8.0f, 0.0f)
         .lightDirection(lightDirectionMatrix_800c34e8)
@@ -1371,5 +1503,10 @@ public class Ttle extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     activity.setDetails("Title Screen");
     activity.setState(null);
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.GsRVIEW2_800c6760;
   }
 }

@@ -1,6 +1,6 @@
 package legend.game.inventory.screens.controls;
 
-import legend.core.MathHelper;
+import legend.core.font.Font;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -14,8 +14,7 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.MathHelper.flEq;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -39,19 +38,19 @@ public class NumberSpinner<T extends Number> extends Control {
   private final Function<T, String> toString;
 
   public static NumberSpinner<Integer> intSpinner(final int number, final int min, final int max) {
-    return new NumberSpinner<>(number, 1, 5, Integer::sum, (a, b) -> a - b, Integer::sum, num -> MathHelper.clamp(num, min, max));
+    return new NumberSpinner<>(number, 1, 5, Integer::sum, (a, b) -> a - b, Integer::sum, num -> Math.clamp(num, min, max));
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float min, final float max) {
-    return new NumberSpinner<>(number, step, step * 5, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
+    return new NumberSpinner<>(number, step, step * 5, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
-    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
   }
 
   public static NumberSpinner<Float> percentSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
-    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> MathHelper.clamp(num, min, max), num -> Math.round(num * 100) + "%");
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> Math.round(num * 100) + "%");
   }
 
   public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp) {
@@ -73,7 +72,7 @@ public class NumberSpinner<T extends Number> extends Control {
     this.highlight = this.addControl(new Brackets());
     this.highlight.setHeight(16);
     this.highlight.ignoreInput();
-    this.highlight.hide();
+    this.hideHighlight();
 
     this.add = add;
     this.subtract = subtract;
@@ -85,6 +84,14 @@ public class NumberSpinner<T extends Number> extends Control {
     this.setStep(step, bigStep);
   }
 
+  public void setFont(final Font font) {
+    this.label.setFont(font);
+  }
+
+  public Font getFont() {
+    return this.label.getFont();
+  }
+
   public void setNumber(final T number) {
     final T oldValue = this.number;
     this.number = this.clamp.apply(number);
@@ -92,7 +99,7 @@ public class NumberSpinner<T extends Number> extends Control {
       playMenuSound(1);
     }
     this.label.setText(this.toString.apply(this.number));
-    this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
 
     if(this.changeHandler != null) {
@@ -117,6 +124,18 @@ public class NumberSpinner<T extends Number> extends Control {
     return this.bigStep;
   }
 
+  public void showHighlight() {
+    this.highlight.show();
+  }
+
+  public void hideHighlight() {
+    this.highlight.hide();
+  }
+
+  public boolean isHighlightVisible() {
+    return this.highlight.isVisible();
+  }
+
   @Override
   public void setScale(final float scale) {
     super.setScale(scale);
@@ -125,7 +144,7 @@ public class NumberSpinner<T extends Number> extends Control {
     this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
     this.downArrow.setScale(scale);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
-    this.highlight.setWidth((int)((textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
   }
 
@@ -142,7 +161,7 @@ public class NumberSpinner<T extends Number> extends Control {
   @Override
   protected void lostFocus() {
     super.lostFocus();
-    this.highlight.hide();
+    this.hideHighlight();
   }
 
   @Override
@@ -167,7 +186,7 @@ public class NumberSpinner<T extends Number> extends Control {
 
     if(button == PLATFORM.getMouseButton(0) && mods.isEmpty() && !this.highlight.isVisible()) {
       playMenuSound(2);
-      this.highlight.show();
+      this.showHighlight();
     }
 
     return InputPropagation.HANDLED;
@@ -202,12 +221,12 @@ public class NumberSpinner<T extends Number> extends Control {
 
       if((action == INPUT_ACTION_MENU_CONFIRM.get() || action == INPUT_ACTION_MENU_BACK.get()) && !repeat) {
         playMenuSound(2);
-        this.highlight.hide();
+        this.hideHighlight();
         return InputPropagation.HANDLED;
       }
     } else if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       playMenuSound(2);
-      this.highlight.show();
+      this.showHighlight();
     }
 
     return InputPropagation.PROPAGATE;

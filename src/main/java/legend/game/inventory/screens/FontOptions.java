@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import org.joml.Vector3f;
+
 public class FontOptions {
   private HorizontalAlign horizontalAlign = HorizontalAlign.LEFT;
   private float size = 1.0f;
@@ -65,6 +67,13 @@ public class FontOptions {
     this.red = red;
     this.green = green;
     this.blue = blue;
+    return this;
+  }
+
+  public FontOptions colour(final Vector3f colour) {
+    this.red = colour.x;
+    this.green = colour.y;
+    this.blue = colour.z;
     return this;
   }
 

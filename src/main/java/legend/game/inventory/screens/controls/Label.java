@@ -1,13 +1,15 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.GameEngine;
+import legend.core.font.Font;
+import legend.core.platform.input.InputClass;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 
 public class Label extends Control {
   private String text;
@@ -15,6 +17,7 @@ public class Label extends Control {
   private float textHeight;
   private VerticalAlign verticalAlign = VerticalAlign.TOP;
   private boolean autoSize = true;
+  private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Label(final String text) {
@@ -36,6 +39,14 @@ public class Label extends Control {
 
   public boolean getAutoSize() {
     return this.autoSize;
+  }
+
+  public void setFont(final Font font) {
+    this.font = font;
+  }
+
+  public Font getFont() {
+    return this.font;
   }
 
   public FontOptions getFontOptions() {
@@ -60,9 +71,15 @@ public class Label extends Control {
     this.updateAutoSize();
   }
 
+  @Override
+  protected InputPropagation inputClassChanged(final InputClass type) {
+    this.updateTextSize();
+    return super.inputClassChanged(type);
+  }
+
   private void updateTextSize() {
-    this.textWidth = textWidth(this.text) * this.getScale();
-    this.textHeight = textHeight(this.text) * this.getScale();
+    this.textWidth = this.font.textWidth(this.text) * this.getScale();
+    this.textHeight = this.font.textHeight(this.text) * this.getScale();
   }
 
   private void updateAutoSize() {
@@ -94,7 +111,7 @@ public class Label extends Control {
 
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderText(this.text, x + offsetX, y + offsetY, this.fontOptions);
+    renderText(this.font, this.text, x + offsetX, y + offsetY, this.fontOptions);
     textZ_800bdf00 = oldZ;
   }
 

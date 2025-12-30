@@ -1,8 +1,12 @@
 package legend.game.types;
 
 import legend.core.gte.MV;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
+
+import static legend.core.GameEngine.CONFIG;
+import static legend.lodmod.LodConfig.UI_COLOUR;
 
 public class Textbox4c {
   public static final int ANIMATING = 0x1;
@@ -28,7 +32,7 @@ public class Textbox4c {
    * </ul>
    */
   public int flags_08;
-  public int z_0c;
+  public float z_0c;
   public int currentTicks_10;
   public float x_14;
   public float y_16;
@@ -59,7 +63,29 @@ public class Textbox4c {
   public int oldScaleH;
   public boolean updateBorder;
 
+  public final Vector3f colour = new Vector3f(CONFIG.getConfig(UI_COLOUR.get()));
+
   public Textbox4c() {
     Arrays.setAll(this.borderTransforms, i -> new MV());
+  }
+
+  public void clear() {
+    this.state_00 = TextboxState._1;
+    this.renderBorder_06 = false;
+    this.flags_08 = 0;
+    this.z_0c = 14;
+    this.currentTicks_10 = 0;
+    this.width_1c = 0;
+    this.height_1e = 0;
+    this.animationWidth_20 = 0x1000;
+    this.animationHeight_22 = 0x1000;
+    this.animationTicks_24 = 0;
+    this.currentX_28 = 0;
+    this.currentY_2c = 0;
+    this.stepX_30 = 0;
+    this.stepY_34 = 0;
+    this._38 = 0;
+    this._3c = 0;
+    this.colour.set(CONFIG.getConfig(UI_COLOUR.get()));
   }
 }

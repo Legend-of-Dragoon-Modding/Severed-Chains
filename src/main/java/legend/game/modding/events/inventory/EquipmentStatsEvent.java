@@ -13,10 +13,10 @@ public class EquipmentStatsEvent extends Event {
   public EquipmentSlot slot;
   public int _02;
   public int equipableFlags_03;
-  public ElementSet attackElement_04 = new ElementSet();
+  public ElementSet attackElement_04;
   public int _05;
-  public ElementSet elementalResistance_06 = new ElementSet();
-  public ElementSet elementalImmunity_07 = new ElementSet();
+  public ElementSet elementalResistance_06;
+  public ElementSet elementalImmunity_07;
   public int statusResist_08;
   public int _09;
   public int attack1_0a;
@@ -36,6 +36,7 @@ public class EquipmentStatsEvent extends Event {
   public int mpRegen;
   public int spRegen;
   public int escapeBonus;
+  public int guardHealBonus;
   public int icon_0e;
   public int speed_0f;
   public int attack2_10;
@@ -82,6 +83,7 @@ public class EquipmentStatsEvent extends Event {
     this.mpRegen = equipment.mpRegen;
     this.spRegen = equipment.spRegen;
     this.escapeBonus = equipment.escapeBonus;
+    this.guardHealBonus = equipment.getGuardHealBonus();
     this.icon_0e = equipment.icon_0e.resolve().icon;
     this.speed_0f = equipment.speed_0f;
     this.attack2_10 = equipment.attack2_10;

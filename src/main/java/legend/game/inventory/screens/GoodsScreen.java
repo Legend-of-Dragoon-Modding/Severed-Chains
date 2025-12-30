@@ -2,29 +2,33 @@ package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
+import legend.game.inventory.Good;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.ListBox;
 import legend.game.types.MenuEntryStruct04;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
-import static legend.core.IoHelper.getPackedFlag;
-import static legend.game.SItem.goodsDescriptions_8011b75c;
-import static legend.game.SItem.goodsItemNames_8011c008;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import java.util.Comparator;
+
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
 
 public class GoodsScreen extends MenuScreen {
   private final Runnable unload;
 
-  private final ItemList<Integer> leftList;
-  private final ItemList<Integer> rightList;
+  private final ItemList<GoodsEntry> leftList;
+  private final ItemList<GoodsEntry> rightList;
   private final Label description = new Label("");
 
   public GoodsScreen(final Runnable unload) {
@@ -33,13 +37,13 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item == null || item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c[item.item_00]);
+    final ListBox.Highlight<MenuEntryStruct04<GoodsEntry>> description = item -> this.description.setText(item == null ? "" : I18n.translate(item.getDescriptionTranslationKey()));
 
-    this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null);
+    this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, this::renderIcon, null, null, null);
     this.leftList.setPos(8, 15);
     this.leftList.setTitle("Goods");
 
-    this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, null, null, null);
+    this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, this::renderIcon, null, null, null);
     this.rightList.setPos(188, 15);
     this.rightList.setTitle("Goods");
 
@@ -91,21 +95,21 @@ public class GoodsScreen extends MenuScreen {
 
     this.setFocus(this.leftList);
 
-    for(int i = 0, listIndex = 0; i < 64; i++) {
-      if(getPackedFlag(gameState_800babc8.goods_19c, i)) {
-        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008[goodsIndex], null, null, i);
+    gameState_800babc8.goods_19c.stream().sorted(Comparator.comparingInt(good -> good.sortingIndex)).forEach(good -> {
+      final MenuEntryStruct04<GoodsEntry> item = new MenuEntryStruct04<>(new GoodsEntry(good));
 
-        if(listIndex % 2 == 0) {
-          this.leftList.add(item);
-        } else {
-          this.rightList.add(item);
-        }
-
-        listIndex++;
+      if((this.leftList.getCount() + this.rightList.getCount()) % 2 == 0) {
+        this.leftList.add(item);
+      } else {
+        this.rightList.add(item);
       }
-    }
+    });
 
     description.highlight(this.leftList.getSelectedItem());
+  }
+
+  private void renderIcon(final MenuEntryStruct04<GoodsEntry> entry, final int x, final int y, final int flags) {
+    entry.item_00.renderIcon(x, y, flags | FLAG_DELETE_AFTER_RENDER);
   }
 
   @Override
@@ -130,5 +134,58 @@ public class GoodsScreen extends MenuScreen {
     }
 
     return InputPropagation.PROPAGATE;
+  }
+
+  private static class GoodsEntry implements InventoryEntry {
+    public final Good good;
+
+    private GoodsEntry(final Good good) {
+      this.good = good;
+    }
+
+    @Override
+    public RegistryId getRegistryId() {
+      return this.good.getRegistryId();
+    }
+
+    @Override
+    public ItemIcon getIcon() {
+      return this.good.getIcon();
+    }
+
+    @Override
+    public String getNameTranslationKey() {
+      return this.good.getTranslationKey();
+    }
+
+    @Override
+    public String getDescriptionTranslationKey() {
+      return this.good.getTranslationKey("description");
+    }
+
+    @Override
+    public int getPrice() {
+      return 0;
+    }
+
+    @Override
+    public int getSize() {
+      return 1;
+    }
+
+    @Override
+    public int getMaxSize() {
+      return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      return this.good.toString();
+    }
   }
 }

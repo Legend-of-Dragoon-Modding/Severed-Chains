@@ -4,9 +4,11 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4fc;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -48,6 +50,7 @@ import static org.lwjgl.opengl.GL20C.glUniform3f;
 import static org.lwjgl.opengl.GL20C.glUniform3fv;
 import static org.lwjgl.opengl.GL20C.glUniform4f;
 import static org.lwjgl.opengl.GL20C.glUniform4fv;
+import static org.lwjgl.opengl.GL20C.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20C.glUseProgram;
 import static org.lwjgl.opengl.GL30C.glBindBufferBase;
 import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
@@ -197,7 +200,8 @@ public class Shader<Options extends ShaderOptions<Options>> {
     public static final int TRANSFORM2 = 1;
     public static final int LIGHTING = 2;
     public static final int PROJECTION_INFO = 3;
-    public static final int VDF = 4;
+    public static final int SCISSOR = 4;
+    public static final int CLUT_ANIMATION = 5;
 
     private final int id;
 
@@ -277,6 +281,31 @@ public class Shader<Options extends ShaderOptions<Options>> {
 
     public void set(final float x, final float y, final float z, final float w) {
       glUniform4f(this.loc, x, y, z, w);
+    }
+  }
+
+  private final FloatBuffer uniformMatrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
+
+  public class UniformMat4 extends Uniform {
+    public UniformMat4(final String name) {
+      super(name);
+    }
+
+    public void set(final Matrix4fc mat) {
+      this.set(mat, false);
+    }
+
+    public void set(final Matrix4fc mat, final boolean transpose) {
+      mat.get(Shader.this.uniformMatrixBuffer);
+      this.set(Shader.this.uniformMatrixBuffer, transpose);
+    }
+
+    public void set(final FloatBuffer mat) {
+      this.set(mat, false);
+    }
+
+    public void set(final FloatBuffer mat, final boolean transpose) {
+      glUniformMatrix4fv(this.loc, transpose, mat);
     }
   }
 

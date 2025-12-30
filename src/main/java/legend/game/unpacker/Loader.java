@@ -2,6 +2,7 @@ package legend.game.unpacker;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import legend.core.Async;
 import legend.core.DebugHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,8 +15,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -28,8 +27,6 @@ public final class Loader {
 
   private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
 
-  private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
-  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(AVAILABLE_PROCESSORS);
   private static final AtomicInteger LOADING_COUNT = new AtomicInteger();
 
   public static Path resolve(final String name) {
@@ -55,7 +52,7 @@ public final class Loader {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Queueing file %s (total queued: %d) from %s.%s(%s:%d)", path, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    EXECUTOR.execute(() -> {
+    Async.run(() -> {
       onCompletion.accept(loadFile(path));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("File %s loaded (remaining queued: %d)", path, remaining);
@@ -65,7 +62,7 @@ public final class Loader {
   public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
     final int total = LOADING_COUNT.incrementAndGet();
     LOGGER.info("Queueing file %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
+    Async.run(() -> {
       onCompletion.accept(loadFile(name));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
@@ -76,7 +73,7 @@ public final class Loader {
     final int total = LOADING_COUNT.updateAndGet(i -> i + files.length);
     LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
 
-    EXECUTOR.execute(() -> {
+    Async.run(() -> {
       final List<FileData> fileData = new ArrayList<>();
       for(final String file : files) {
         final FileData data = loadFile(file);
@@ -92,7 +89,7 @@ public final class Loader {
   public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
     final int total = LOADING_COUNT.incrementAndGet();
     LOGGER.info("Queueing directory %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
+    Async.run(() -> {
       onCompletion.accept(loadDirectory(name));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
@@ -105,7 +102,7 @@ public final class Loader {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Queueing directory %s (total queued: %d) from %s.%s(%s:%d)", dir, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    EXECUTOR.execute(() -> {
+    Async.run(() -> {
       onCompletion.accept(loadDirectory(dir));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("Directory %s loaded (remaining queued: %d)", dir, remaining);
@@ -249,14 +246,10 @@ public final class Loader {
       name = name.substring(0, name.lastIndexOf(';'));
     }
 
-    if(name.startsWith("\\")) {
+    if(name.startsWith("\\") || name.startsWith("/")) {
       name = name.substring(1);
     }
 
     return name.replace('\\', '/');
-  }
-
-  public static void shutdownLoader() {
-    EXECUTOR.shutdown();
   }
 }

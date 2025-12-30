@@ -18,8 +18,8 @@ import java.util.function.Consumer;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.game.Graphics.displayHeight_1f8003e4;
+import static legend.game.Graphics.displayWidth_1f8003e0;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.VoidType> {
@@ -107,12 +107,12 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
         //LAB_80109678
         angle1 += height * 0.05f;
         v += whichHalf;
-        rowOffset += height * whichHalf;
+        rowOffset += (int)height * whichHalf;
       }
     }
 
     this.transforms.scaling(fullWidth, 1.0f, 1.0f);
-    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 119.0f);
 
     final Obj obj = builder.build();
     obj.delete();
@@ -152,7 +152,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
 
     final float extraWidth = fullWidth - displayWidth_1f8003e0;
     this.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
-    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+    this.transforms.transfer.set(-extraWidth / 2, 0.0f, 119.0f);
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.transforms, QueuedModelStandard.class)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3))

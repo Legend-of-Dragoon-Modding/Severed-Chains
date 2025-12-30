@@ -1,6 +1,8 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.GameEngine;
 import legend.core.MathHelper;
+import legend.core.font.Font;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -14,10 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -36,6 +37,7 @@ public class Dropdown<T> extends Control {
   private final Function<T, String> toString;
   private int hoverIndex = -1;
   private int selectedIndex = -1;
+  private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Dropdown() {
@@ -82,6 +84,14 @@ public class Dropdown<T> extends Control {
     this.downArrow.setZ(this.background.getZ() - 1);
 
     this.setSize(100, 16);
+  }
+
+  public void setFont(final Font font) {
+    this.font = font;
+  }
+
+  public Font getFont() {
+    return this.font;
   }
 
   public void clearOptions() {
@@ -203,7 +213,7 @@ public class Dropdown<T> extends Control {
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
-      renderText(text, x + 4, y + (this.getHeight() - textHeight(text) * this.getScale()) / 2 + 0.5f, this.fontOptions);
+      renderText(text, x + 4, y + (this.getHeight() - this.font.textHeight(text) * this.getScale()) / 2 + 0.5f, this.fontOptions);
       textZ_800bdf00 = oldZ;
     }
   }

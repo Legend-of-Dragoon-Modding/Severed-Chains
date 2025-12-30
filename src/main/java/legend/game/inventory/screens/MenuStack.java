@@ -9,6 +9,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputAxis;
 import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
@@ -23,7 +24,7 @@ import java.util.function.Predicate;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
+import static legend.game.Menus.uploadRenderables;
 
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();
@@ -39,6 +40,7 @@ public class MenuStack {
   private WindowEvents.Axis onAxis;
   private WindowEvents.InputActionPressed onInputActionPressed;
   private WindowEvents.InputActionReleased onInputActionReleased;
+  private WindowEvents.InputClassChanged onInputClassChanged;
 
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
@@ -147,6 +149,7 @@ public class MenuStack {
     this.onAxis = RENDERER.events().onAxis(this::axis);
     this.onInputActionPressed = RENDERER.events().onInputActionPressed(this::inputActionPressed);
     this.onInputActionReleased = RENDERER.events().onInputActionReleased(this::inputActionReleased);
+    this.onInputClassChanged = RENDERER.events().onInputClassChanged(this::inputClassChanged);
   }
 
   public void removeInputHandlers() {
@@ -161,6 +164,7 @@ public class MenuStack {
     RENDERER.events().removeAxis(this.onAxis);
     RENDERER.events().removeInputActionPressed(this.onInputActionPressed);
     RENDERER.events().removeInputActionReleased(this.onInputActionReleased);
+    RENDERER.events().removeInputClassChanged(this.onInputClassChanged);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
@@ -262,6 +266,10 @@ public class MenuStack {
 
   private void inputActionReleased(final Window window, final InputAction action) {
     this.input(screen -> screen.inputActionReleased(action));
+  }
+
+  private void inputClassChanged(final Window window, final InputClass type) {
+    this.input(screen -> screen.inputClassChanged(type));
   }
 
   private record Point2D(double x, double y) { }

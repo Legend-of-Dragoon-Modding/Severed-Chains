@@ -4,6 +4,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputAxis;
 import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
@@ -79,6 +80,14 @@ public abstract class ControlHost implements Iterable<Control> {
       .map(type::cast)
       .filter(predicate)
       .findFirst();
+  }
+
+  public <T extends Control> List<T> findControls(final Class<T> type, final Predicate<T> predicate) {
+    return this.controls.stream()
+      .filter(type::isInstance)
+      .map(type::cast)
+      .filter(predicate)
+      .toList();
   }
 
   protected void renderControls(final int parentX, final int parentY) {
@@ -214,6 +223,10 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected InputPropagation inputActionReleased(final InputAction action) {
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation inputClassChanged(final InputClass type) {
     return InputPropagation.PROPAGATE;
   }
 }

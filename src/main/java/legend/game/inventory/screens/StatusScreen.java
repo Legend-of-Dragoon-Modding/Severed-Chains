@@ -1,12 +1,18 @@
 package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
+import legend.game.i18n.I18n;
 
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
+import static legend.game.SItem.getUnlockedDragoonSpells;
+import static legend.game.SItem.getUnlockedSpellCount;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterEquipment;
@@ -15,14 +21,9 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.spellMp_80114290;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Text.renderText;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
@@ -111,7 +112,7 @@ public class StatusScreen extends MenuScreen {
       allocateUiElement(0x58, 0x58, 194, 101);
     }
 
-    if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
+    if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
       final int[] spellIndices = new int[8];
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
@@ -124,7 +125,7 @@ public class StatusScreen extends MenuScreen {
         //LAB_80109370
         final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
-          renderText(spellStats_800fa0b8[spellIndex].name, 210, 125 + i * 14, UI_TEXT);
+          renderText(I18n.translate(spellStats_800fa0b8[spellIndex]), 210, 125 + i * 14, UI_TEXT);
 
           if(allocate) {
             renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);

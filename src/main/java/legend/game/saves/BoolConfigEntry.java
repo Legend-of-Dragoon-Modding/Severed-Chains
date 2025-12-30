@@ -3,9 +3,13 @@ package legend.game.saves;
 import legend.game.inventory.screens.controls.Checkbox;
 import legend.game.inventory.screens.HorizontalAlign;
 
-/** Convenience class for simple enum-backed configs */
+/** Convenience class for simple bool-backed configs */
 public class BoolConfigEntry extends ConfigEntry<Boolean> {
   public BoolConfigEntry(final boolean defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category) {
+    this(defaultValue, storageLocation, category, true);
+  }
+
+  public BoolConfigEntry(final boolean defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category, final boolean editable) {
     super(
       defaultValue,
       storageLocation,
@@ -14,13 +18,15 @@ public class BoolConfigEntry extends ConfigEntry<Boolean> {
       bytes -> deserialize(bytes, defaultValue)
     );
 
-    this.setEditControl((current, gameState) -> {
-      final Checkbox checkbox = new Checkbox();
-      checkbox.setHorizontalAlign(HorizontalAlign.RIGHT);
-      checkbox.setChecked(current);
-      checkbox.onToggled(val -> gameState.setConfig(this, val));
-      return checkbox;
-    });
+    if(editable) {
+      this.setEditControl((current, gameState) -> {
+        final Checkbox checkbox = new Checkbox();
+        checkbox.setHorizontalAlign(HorizontalAlign.RIGHT);
+        checkbox.setChecked(current);
+        checkbox.onToggled(val -> gameState.setConfig(this, val));
+        return checkbox;
+      });
+    }
   }
 
   private static byte[] serialize(final boolean val) {

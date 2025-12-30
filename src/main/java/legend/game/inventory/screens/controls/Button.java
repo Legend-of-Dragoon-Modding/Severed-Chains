@@ -1,5 +1,7 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.GameEngine;
+import legend.core.font.Font;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -11,17 +13,17 @@ import legend.game.inventory.screens.TextColour;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textHeight;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class Button extends Control {
   private final Highlight hover;
   private String text;
   private float textHeight;
+  private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
 
   public Button(final String text) {
@@ -32,6 +34,18 @@ public class Button extends Control {
     this.setSize(59, 14);
 
     this.setText(text);
+  }
+
+  public void setFont(final Font font) {
+    this.font = font;
+  }
+
+  public Font getFont() {
+    return this.font;
+  }
+
+  public FontOptions getFontOptions() {
+    return this.fontOptions;
   }
 
   @Override
@@ -61,7 +75,7 @@ public class Button extends Control {
   }
 
   private void updateTextSize() {
-    this.textHeight = textHeight(this.text) * this.getScale();
+    this.textHeight = this.font.textHeight(this.text) * this.getScale();
   }
 
   public void press() {

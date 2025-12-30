@@ -15,8 +15,8 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 
 public class ChapterTitleCard {
   private enum ChapterTitleState {
@@ -239,7 +239,7 @@ public class ChapterTitleCard {
           this.chapterTitleIsTranslucent_800c6724 = false;
           this.chapterTitleNameOffset_800c671c.set(0.0f, 0.0f);
           this.chapterTitleNumberOffset_800c6714.set(0.0f, 0.0f);
-          this.chapterTitleBrightness_800c6728 = 0.5f;
+          this.chapterTitleBrightness_800c6728 = 1.0f;
           this.chapterTitleAnimationTick_800c670a++;
           this.chapterTitleDropShadowOffset_800c670c.set(1.0f, 0.0f);
         } else if(currentTick == 34 * (3 - vsyncMode_8007a3b8)) {
@@ -297,7 +297,7 @@ public class ChapterTitleCard {
 
               //LAB_800e3744
               this.chapterTitleIsTranslucent_800c6724 = true;
-              this.chapterTitleBrightness_800c6728 = this.chapterTitleBrightness_800c6728 - 4.0f / 255.0f / (3 - vsyncMode_8007a3b8);
+              this.chapterTitleBrightness_800c6728 = this.chapterTitleBrightness_800c6728 - 4.0f / 128.0f / (3 - vsyncMode_8007a3b8);
             }
 
             //LAB_800e3790
@@ -337,7 +337,7 @@ public class ChapterTitleCard {
           }
 
           //LAB_800e2ff8
-          this.chapterTitleBrightness_800c6728 = this.chapterTitleBrightness_800c6728 + 4.0f / 255.0f / (3 - vsyncMode_8007a3b8);
+          this.chapterTitleBrightness_800c6728 = this.chapterTitleBrightness_800c6728 + 4.0f / 128.0f / (3 - vsyncMode_8007a3b8);
           this.chapterTitleNumberOffset_800c6714.x = this.chapterTitleNumberOffset_800c6714.x - 1.0f / (3 - vsyncMode_8007a3b8);
           this.chapterTitleNameOffset_800c671c.x = this.chapterTitleNameOffset_800c671c.x - 2.0f / (3 - vsyncMode_8007a3b8);
 
@@ -367,7 +367,7 @@ public class ChapterTitleCard {
 
           //LAB_800e3b14
           this.transforms.scaling(right - left, bottom - top, 1.0f);
-          this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
+          this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.1f);
           RENDERER.queueOrthoModel(shadow, this.transforms, QueuedModelStandard.class)
             .vertices(0, 4)
             .monochrome(this.chapterTitleBrightness_800c6728);
@@ -378,7 +378,7 @@ public class ChapterTitleCard {
           bottom = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y + this.chapterTitleNameOffset_800c671c.y + 45;
 
           this.transforms.scaling(right - left, bottom - top, 1.0f);
-          this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
+          this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.1f);
           RENDERER.queueOrthoModel(shadow, this.transforms, QueuedModelStandard.class)
             .vertices(4, 4)
             .monochrome(this.chapterTitleBrightness_800c6728);

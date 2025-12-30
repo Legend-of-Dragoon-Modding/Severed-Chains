@@ -110,7 +110,7 @@ public class LineParticle extends ParticleEffectData98 {
             particleMetrics.z_04 = z;
 
             //LAB_800fdbe4
-            for(int k = 0; k < this.countParticleSub_54 - 1; k++) {
+            for(int k = 1; k < this.countParticleSub_54; k++) {
               particleMetrics.colour0_40.set(colour.x, colour.y, colour.z);
               colour.sub(stepColour);
               particleMetrics.colour1_44.set(colour.x, colour.y, colour.z);

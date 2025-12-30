@@ -615,7 +615,7 @@ incr stor[12] ; operand
 jmp_cmp !=, stor[29], stor[12], inl[:LABEL_66] ; operand, left, right, addr
 mov 0xa, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x20, 0x0, 0x0, 0x0, 0x3 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x20, 0x0, 0x0, 0x0, 0x3 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 mov 0x0, stor[12] ; source, dest
 LABEL_68:
 mov var[50][stor[12]], stor[28] ; source, dest
@@ -645,7 +645,7 @@ incr stor[12] ; operand
 jmp_cmp !=, stor[29], stor[12], inl[:LABEL_70] ; operand, left, right, addr
 mov 0x2, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptStopSound, 0x0, 0x20, 0x3 ; soundFileIndex, soundIndex, mode
+call Audio::scriptStopSound, 0x0, 0x20, 0x3 ; soundFileIndex, soundIndex, mode
 mov 0x0, stor[12] ; source, dest
 LABEL_72:
 mov var[50][stor[12]], stor[28] ; source, dest
@@ -925,10 +925,10 @@ return
 
 ; SUBROUTINE
 LOAD_SOUNDS:
-call Scus94491BpeSegment::scriptLoadMonsterAttackSounds, stor[8] ; monsterIndex
+call Audio::scriptLoadMonsterAttackSounds, stor[8] ; monsterIndex
 LABEL_140:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[23] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[23] ; flags
 jmp_cmp &, 0x20, stor[23], inl[:LABEL_140] ; operand, left, right, addr
 return
 
@@ -982,7 +982,7 @@ mov 0x0, var[45][181] ; source, dest
 mov 0x0, stor[15] ; source, dest
 incr stor[15] ; operand
 mov 0x18, var[45][106] ; source, dest
-gosub inl[:LABEL_216] ; addr
+gosub inl[:GET_PLAYER_ADDITION_HIT_COUNT] ; addr
 mov stor[9], var[45][89] ; source, dest
 fork_reenter stor[28], 0x5, stor[0] ; index, entrypoint, p2
 LABEL_148:
@@ -1028,15 +1028,15 @@ gosub inl[:LABEL_195] ; addr
 or 0x80, var[45][105] ; right, left
 mov 0xa, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x26, 0x1, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x26, 0x1, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 incr var[104] ; operand
 call Battle::scriptApplyScreenDarkening, 0x10 ; intensity
 jmp_cmp !=, 0x1, var[45][75], inl[:LABEL_152] ; operand, left, right, addr
 mov 0x4, var[45][66] ; source, dest
 jmp inl[:LABEL_153] ; addr
 LABEL_152:
-call Scus94491BpeSegment::scriptStartFadeEffect, 0x4, 0xa ; type, frames
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x17, 0x1, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call FullScreenEffects::scriptStartFadeEffect, 0x4, 0xa ; type, frames
+call Audio::scriptPlaySound, 0x0, 0x17, 0x1, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 LABEL_153:
 call Battle::scriptResumeAnimation, stor[0] ; bentIndex
 gosub inl[:CAN_BECOME_DRAGOON] ; addr
@@ -1049,8 +1049,8 @@ jmp_cmp ==, 0x0, var[45][99], inl[:LABEL_157] ; operand, left, right, addr
 mov stor[14], stor[9] ; source, dest
 decr stor[9] ; operand
 call Battle::scriptGetHitProperty, stor[0], stor[9], 0xe, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
-jmp_cmp ==, 0x0, inl[:LABEL_162[stor[8]]], inl[:LABEL_157] ; operand, left, right, addr
-call Battle::scriptSetLoadingBentAnimationIndex, stor[0], inl[:LABEL_162[stor[8]]] ; bentIndex, animIndex
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_157] ; operand, left, right, addr
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], stor[8] ; bentIndex, animIndex
 LABEL_156:
 yield
 call Battle::scriptAnimationHasFinished, stor[0], stor[8] ; bentIndex, finished
@@ -1087,31 +1087,10 @@ call Battle::scriptAllocateSpTextEffect, 0xffffffff, 0x0 ; p0, p1
 LABEL_161:
 call Battle::scriptLevelUpAddition, stor[0], 0x0 ; bentIndex, doIt
 return
-LABEL_162:
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x0
-data 0x18
-data 0x19
 
 ; SUBROUTINE
 JMP_3128_0:
-gosub inl[:LABEL_219] ; addr
+gosub inl[:CACHE_ADDITION_TIMINGS] ; addr
 gosub inl[:ALLOCATE_WEAPON_TRAIL_EFFECT] ; addr
 mov 0x10, stor[8] ; source, dest
 add stor[14], stor[8] ; amount, operand
@@ -1155,7 +1134,7 @@ jmp_cmp !=, stor[8], var[45][89], inl[:LABEL_165] ; operand, left, right, addr
 call Battle::scriptGetCharOrMonsterId, stor[0], stor[8] ; bentIndex, id
 call Battle::scriptAllocateAdditionScript, stor[8], 0x0 ; charId, p1
 or 0x20, var[45][105] ; right, left
-call Scus94491BpeSegment::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:LABEL_238] ; addr
 gosub inl[:CAN_BECOME_DRAGOON] ; addr
 jmp_cmp ==, 0x0, stor[10], inl[:LABEL_165] ; operand, left, right, addr
@@ -1320,7 +1299,7 @@ mov 0x7, stor[23] ; source, dest
 wait stor[23] ; frames
 mov 0x3, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x26, 0x1, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x26, 0x1, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 incr var[104] ; operand
 call Battle::scriptApplyScreenDarkening, 0x10 ; intensity
 call Battle::scriptResumeAnimation, stor[0] ; bentIndex
@@ -1358,10 +1337,10 @@ add 0x1000, stor[10] ; amount, operand
 shl 0x8, stor[8] ; right, left
 shl 0x8, stor[9] ; right, left
 shl 0x8, stor[10] ; right, left
-call Battle::FUN_800dac20, 0x5, stor[8], stor[9], stor[10], 0x0 ; mode, x, y, z, scriptIndex
+call Battle::scriptCameraSetViewpoint, 0x5, stor[8], stor[9], stor[10], 0x0 ; mode, x, y, z, scriptIndex
 yield
 sub 0x100000, stor[10] ; amount, operand
-call Battle::FUN_800db8b0, 0x5, stor[8], stor[9], stor[10], 0x6, 0x1, 0x1, 0x0, 0x0 ; mode, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex
+call Battle::scriptCameraAccelerateViewpoint, 0x5, stor[8], stor[9], stor[10], 0x6, 0x1, 0x1, 0x0, 0x0 ; mode, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex
 LABEL_197:
 yield
 call Battle::scriptIsCameraMoving, 0x0, stor[8] ; type, isMoving
@@ -1486,18 +1465,12 @@ LABEL_215:
 return
 
 ; SUBROUTINE
-LABEL_216:
-mov 0x0, stor[9] ; source, dest
-LABEL_217:
-call Battle::scriptGetHitProperty, stor[0], stor[9], 0x1, stor[10] ; bentIndex, hitNum, hitPropertyIndex, value
-jmp_cmp ==, 0x0, stor[10], inl[:LABEL_218] ; operand, left, right, addr
-incr stor[9] ; operand
-jmp_cmp !=, 0x8, stor[9], inl[:LABEL_217] ; operand, left, right, addr
-LABEL_218:
+GET_PLAYER_ADDITION_HIT_COUNT:
+call Battle::scriptGetBentStat, stor[0], ADDITION_HIT_COUNT, stor[9]
 return
 
 ; SUBROUTINE
-LABEL_219:
+CACHE_ADDITION_TIMINGS:
 mov 0x56, stor[11] ; source, dest
 mov 0x1, stor[10] ; source, dest
 mov 0x3, stor[12] ; source, dest
@@ -1512,36 +1485,37 @@ data 0x24a
 data 0x200001e
 data 0xb1f1fd3
 
+HIT_INDEX:
+data 0
+SOUND_INDEX:
+data 0;
+
 ; SUBROUTINE
+; Plays addition sounds
 LABEL_221:
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
 mov 0x1, stor[9] ; source, dest
 shl stor[8], stor[9] ; right, left
 jmp_cmp &, stor[9], var[45][250], inl[:LABEL_225] ; operand, left, right, addr
-call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
-mov inl[:LABEL_245[stor[8]]], stor[8] ; source, dest
-mov var[45][83], stor[18] ; source, dest
-mul 0x4, stor[18] ; amount, operand
-add stor[8], stor[18] ; amount, operand
+
 mov 0x0, var[45][74] ; source, dest
 mov 0x4, stor[21] ; source, dest
+mov var[45][83], inl[:HIT_INDEX]
+mov 16, inl[:SOUND_INDEX]
+
 LABEL_222:
-mov inl[:LABEL_245[stor[18]]], stor[9] ; source, dest
-mov stor[9], stor[10] ; source, dest
-mov stor[9], stor[11] ; source, dest
-and 0xc0000000, stor[9] ; right, left
-and 0xffff00, stor[10] ; right, left
-shr 0x8, stor[10] ; right, left
-and 0xff, stor[11] ; right, left
-jmp_cmp >, 0x0, stor[9], inl[:LABEL_225] ; operand, left, right, addr
-jmp_cmp ==, 0x0, stor[9], inl[:LABEL_223] ; operand, left, right, addr
-call Scus94491BpeSegment::scriptPlaySound, 0x0, stor[10], 0x1, 0x0, stor[11], 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
-jmp inl[:LABEL_224] ; addr
-LABEL_223:
+call Battle::scriptGetHitProperty, stor[0], inl[:HIT_INDEX], inl[:SOUND_INDEX], stor[10] ; bentIndex, hitNum, hitPropertyIndex, value
+incr inl[:SOUND_INDEX]
+
+call Battle::scriptGetHitProperty, stor[0], inl[:HIT_INDEX], inl[:SOUND_INDEX], stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
+incr inl[:SOUND_INDEX]
+
+jmp_cmp >, 0x0, stor[10], inl[:LABEL_225] ; operand, left, right, addr
+
 call Battle::scriptPlayBentSound, 0x1, stor[0], stor[10], 0x1, 0x0, stor[11], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-LABEL_224:
-incr stor[18] ; operand
+
 while stor[21], inl[:LABEL_222] ; counter, addr
+
 LABEL_225:
 return
 
@@ -1589,7 +1563,7 @@ mul 0x100, stor[8] ; amount, operand
 mul 0x100, stor[9] ; amount, operand
 mul 0x100, stor[10] ; amount, operand
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xa, stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
-call Battle::FUN_800db574, 0x0, stor[8], stor[9], stor[10], 0x0, stor[11], 0x0, stor[0] ; mode, x, y, z, ?, ticks, stepType, scriptIndex
+call Battle::scriptCameraMoveRefpoint, 0x0, stor[8], stor[9], stor[10], 0x0, stor[11], 0x0, stor[0] ; mode, x, y, z, ?, ticks, stepType, scriptIndex
 LABEL_231:
 return
 LABEL_232:
@@ -1605,7 +1579,7 @@ add stor[11], stor[10] ; amount, operand
 shl 0x8, stor[8] ; right, left
 shl 0x8, stor[9] ; right, left
 shl 0x8, stor[10] ; right, left
-call Battle::FUN_800db8b0, 0x5, stor[8], stor[9], stor[10], 0x6, 0x1, 0x1, 0x0, 0x0 ; mode, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex
+call Battle::scriptCameraAccelerateViewpoint, 0x5, stor[8], stor[9], stor[10], 0x6, 0x1, 0x1, 0x0, 0x0 ; mode, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex
 LABEL_233:
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0x8, stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp ==, 0x0, stor[11], inl[:LABEL_234] ; operand, left, right, addr
@@ -1615,7 +1589,7 @@ add stor[11], stor[8] ; amount, operand
 mul 0x100, stor[8] ; amount, operand
 mul 0x100, stor[9] ; amount, operand
 mul 0x100, stor[10] ; amount, operand
-call Battle::FUN_800db574, 0x0, stor[8], stor[9], stor[10], 0x0, 0x6, 0x0, stor[0] ; mode, x, y, z, ?, ticks, stepType, scriptIndex
+call Battle::scriptCameraMoveRefpoint, 0x0, stor[8], stor[9], stor[10], 0x0, 0x6, 0x0, stor[0] ; mode, x, y, z, ?, ticks, stepType, scriptIndex
 LABEL_234:
 return
 
@@ -1635,20 +1609,20 @@ return
 
 ; SUBROUTINE
 LABEL_237:
-call Scus94491BpeSegment::scriptStartRumbleMode, 0x0, 0x1 ; joypadIndex, p1
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x0, 0xc ; joypadIndex, p1, duration
+call Rumble::scriptStartRumbleMode, 0x0, 0x1 ; joypadIndex, p1
+call Rumble::scriptStartRumble, 0x0, 0x0, 0xc ; joypadIndex, p1, duration
 return
 
 ; SUBROUTINE
 LABEL_238:
-call Scus94491BpeSegment::scriptStartRumbleMode, 0x0, 0x2 ; joypadIndex, p1
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x0, 0xc ; joypadIndex, p1, duration
+call Rumble::scriptStartRumbleMode, 0x0, 0x2 ; joypadIndex, p1
+call Rumble::scriptStartRumble, 0x0, 0x0, 0xc ; joypadIndex, p1, duration
 return
 
 ; SUBROUTINE
 LABEL_239:
-call Scus94491BpeSegment::scriptStartRumbleMode, 0x0, 0x3 ; joypadIndex, p1
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x0, 0xc ; joypadIndex, p1, duration
+call Rumble::scriptStartRumbleMode, 0x0, 0x3 ; joypadIndex, p1
+call Rumble::scriptStartRumble, 0x0, 0x0, 0xc ; joypadIndex, p1, duration
 return
 
 ; SUBROUTINE
@@ -1674,732 +1648,7 @@ LABEL_243:
 mov 0x0, stor[8] ; source, dest
 LABEL_244:
 return
-LABEL_245:
-data 0x29
-data 0x3d
-data 0x31
-data 0x4d
-data 0x61
-data 0x79
-data 0x95
-data 0xb5
-data 0xb5
-data 0xbd
-data 0xc9
-data 0xdd
-data 0xf9
-data 0x119
-data 0x119
-data 0x121
-data 0x12d
-data 0x145
-data 0x165
-data 0x2a5
-data 0x2ad
-data 0x2bd
-data 0x2d5
-data 0x23d
-data 0x245
-data 0x255
-data 0x269
-data 0x285
-data 0x2a5
-data 0x165
-data 0x16d
-data 0x179
-data 0x189
-data 0x19d
-data 0x1b9
-data 0x1d9
-data 0x1d9
-data 0x1e1
-data 0x1ed
-data 0x201
-data 0x21d
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x50b
-data 0x309
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0xd0c
-data 0x10a
-data 0xffffffff
-data 0xffffffff
-data 0x908
-data 0x306
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x51c
-data 0x11a
-data 0xffffffff
-data 0xffffffff
-data 0x90f
-data 0x20d
-data 0xffffffff
-data 0xffffffff
-data 0xa05
-data 0x303
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x717
-data 0x115
-data 0xffffffff
-data 0xffffffff
-data 0x90e
-data 0x30c
-data 0xffffffff
-data 0xffffffff
-data 0x50e
-data 0x20c
-data 0xffffffff
-data 0xffffffff
-data 0xa08
-data 0x306
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x50a
-data 0x208
-data 0xffffffff
-data 0xffffffff
-data 0x703
-data 0x301
-data 0xffffffff
-data 0xffffffff
-data 0x803
-data 0x301
-data 0xffffffff
-data 0xffffffff
-data 0x503
-data 0x301
-data 0xffffffff
-data 0xffffffff
-data 0x902
-data 0x300
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x714
-data 0x212
-data 0xffffffff
-data 0xffffffff
-data 0x809
-data 0x107
-data 0xffffffff
-data 0xffffffff
-data 0x70b
-data 0x309
-data 0xffffffff
-data 0xffffffff
-data 0x407
-data 0x205
-data 0xffffffff
-data 0xffffffff
-data 0x507
-data 0x205
-data 0xffffffff
-data 0xffffffff
-data 0xa0c
-data 0x30a
-data 0xc28
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x812
-data 0x110
-data 0xffffffff
-data 0xffffffff
-data 0x506
-data 0x204
-data 0xffffffff
-data 0xffffffff
-data 0x707
-data 0x105
-data 0xffffffff
-data 0xffffffff
-data 0x50f
-data 0x30d
-data 0xffffffff
-data 0xffffffff
-data 0x908
-data 0x106
-data 0xffffffff
-data 0xffffffff
-data 0xb09
-data 0x207
-data 0xffffffff
-data 0xffffffff
-data 0xa11
-data 0x30f
-data 0xffffffff
-data 0xffffffff
-data 0x50b
-data 0x9
-data 0xffffffff
-data 0xffffffff
-data 0x80d
-data 0x30b
-data 0xffffffff
-data 0xffffffff
-data 0x50b
-data 0x9
-data 0xffffffff
-data 0xffffffff
-data 0x910
-data 0x10e
-data 0xffffffff
-data 0xffffffff
-data 0xa14
-data 0x312
-data 0x704
-data 0x70a
-data 0x50b
-data 0x9
-data 0xffffffff
-data 0xffffffff
-data 0x80e
-data 0x10c
-data 0xffffffff
-data 0xffffffff
-data 0x807
-data 0x205
-data 0xffffffff
-data 0xffffffff
-data 0x90b
-data 0x209
-data 0xffffffff
-data 0xffffffff
-data 0xb0d
-data 0x30b
-data 0xffffffff
-data 0xffffffff
-data 0x50b
-data 0x9
-data 0xffffffff
-data 0xffffffff
-data 0x80e
-data 0x10c
-data 0xffffffff
-data 0xffffffff
-data 0xc0f
-data 0x30d
-data 0xffffffff
-data 0xffffffff
-data 0x806
-data 0x4
-data 0xffffffff
-data 0xffffffff
-data 0x911
-data 0x10f
-data 0x707
-data 0x70c
-data 0xa08
-data 0x206
-data 0xffffffff
-data 0xffffffff
-data 0xb13
-data 0x311
-data 0x70c
-data 0x70f
-data 0x50b
-data 0x9
-data 0xffffffff
-data 0xffffffff
-data 0xa0d
-data 0x10b
-data 0xffffffff
-data 0xffffffff
-data 0xd14
-data 0x213
-data 0xffffffff
-data 0xffffffff
-data 0x80b
-data 0x9
-data 0xffffffff
-data 0xffffffff
-data 0x911
-data 0x20f
-data 0xffffffff
-data 0xffffffff
-data 0x50d
-data 0x20b
-data 0xffffffff
-data 0xffffffff
-data 0xa0f
-data 0x10d
-data 0xffffffff
-data 0xffffffff
-data 0xb07
-data 0x305
-data 0xffffffff
-data 0xffffffff
-data 0x505
-data 0x3
-data 0xffffffff
-data 0xffffffff
-data 0x40b
-data 0x209
-data 0xffffffff
-data 0xffffffff
-data 0x505
-data 0x3
-data 0xffffffff
-data 0xffffffff
-data 0x709
-data 0x107
-data 0xffffffff
-data 0xffffffff
-data 0xa08
-data 0x306
-data 0xffffffff
-data 0xffffffff
-data 0x505
-data 0x3
-data 0xffffffff
-data 0xffffffff
-data 0x40c
-data 0x10a
-data 0xffffffff
-data 0xffffffff
-data 0x810
-data 0x20e
-data 0xffffffff
-data 0xffffffff
-data 0x506
-data 0x104
-data 0xffffffff
-data 0xffffffff
-data 0x90f
-data 0x30d
-data 0xffffffff
-data 0xffffffff
-data 0xa0c
-data 0x20a
-data 0xffffffff
-data 0xffffffff
-data 0x505
-data 0x3
-data 0xffffffff
-data 0xffffffff
-data 0x907
-data 0x105
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x307
-data 0xffffffff
-data 0xffffffff
-data 0x80e
-data 0x10c
-data 0xffffffff
-data 0xffffffff
-data 0x70e
-data 0xc
-data 0xffffffff
-data 0xffffffff
-data 0x80a
-data 0x208
-data 0xffffffff
-data 0xffffffff
-data 0x90b
-data 0x109
-data 0xffffffff
-data 0xffffffff
-data 0xa04
-data 0x202
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0xa03
-data 0x101
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0xa03
-data 0x1
-data 0xffffffff
-data 0xffffffff
-data 0xb2a
-data 0x328
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x90a
-data 0x108
-data 0xffffffff
-data 0xffffffff
-data 0x50b
-data 0x209
-data 0xffffffff
-data 0xffffffff
-data 0xb0a
-data 0x308
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x40a
-data 0x108
-data 0xffffffff
-data 0xffffffff
-data 0x806
-data 0x104
-data 0xffffffff
-data 0xffffffff
-data 0x906
-data 0x204
-data 0xffffffff
-data 0xffffffff
-data 0xb07
-data 0x305
-data 0xffffffff
-data 0xffffffff
-data 0x409
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0x508
-data 0x106
-data 0xffffffff
-data 0xffffffff
-data 0x904
-data 0x202
-data 0xffffffff
-data 0xffffffff
-data 0x806
-data 0x4
-data 0xffffffff
-data 0xffffffff
-data 0x505
-data 0x103
-data 0xffffffff
-data 0xffffffff
-data 0xb09
-data 0x207
-data 0xffffffff
-data 0xffffffff
-data 0xa0a
-data 0x308
-data 0xffffffff
-data 0xffffffff
-data 0x408
-data 0x6
-data 0xffffffff
-data 0xffffffff
-data 0x908
-data 0x106
-data 0xffffffff
-data 0xffffffff
-data 0x802
-data 0x200
-data 0xffffffff
-data 0xffffffff
-data 0x507
-data 0x5
-data 0xffffffff
-data 0xffffffff
-data 0x905
-data 0x203
-data 0xffffffff
-data 0xffffffff
-data 0x803
-data 0x101
-data 0xffffffff
-data 0xffffffff
-data 0xb0a
-data 0x208
-data 0xffffffff
-data 0xffffffff
-data 0xa03
-data 0x301
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x80f
-data 0x30d
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x913
-data 0x111
-data 0x70d
-data 0x70f
-data 0xa04
-data 0x302
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x816
-data 0x114
-data 0xffffffff
-data 0xffffffff
-data 0x804
-data 0x202
-data 0xffffffff
-data 0xffffffff
-data 0x903
-data 0x201
-data 0xffffffff
-data 0xffffffff
-data 0xb03
-data 0x301
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x813
-data 0x211
-data 0xffffffff
-data 0xffffffff
-data 0xc0f
-data 0x30d
-data 0x703
-data 0xffffffff
-data 0x801
-data 0x200
-data 0xffffffff
-data 0xffffffff
-data 0x906
-data 0x4
-data 0x709
-data 0x70e
-data 0xa07
-data 0x105
-data 0xffffffff
-data 0xffffffff
-data 0xb0c
-data 0x30a
-data 0x709
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0xa0c
-data 0x30a
-data 0xffffffff
-data 0xffffffff
-data 0xd03
-data 0x201
-data 0x700
-data 0xffffffff
-data 0x804
-data 0x2
-data 0xffffffff
-data 0xffffffff
-data 0x90b
-data 0x109
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x200
-data 0xffffffff
-data 0xffffffff
-data 0xa0e
-data 0xc
-data 0xffffffff
-data 0xffffffff
-data 0xb07
-data 0x305
-data 0x700
-data 0xffffffff
-data 0x401
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x506
-data 0x304
-data 0xffffffff
-data 0xffffffff
-data 0x401
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x808
-data 0x106
-data 0xffffffff
-data 0xffffffff
-data 0xf03
-data 0x1
-data 0xffffffff
-data 0xffffffff
-data 0xe10
-data 0x30e
-data 0x71a
-data 0xffffffff
-data 0x401
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x808
-data 0x106
-data 0xffffffff
-data 0xffffffff
-data 0x911
-data 0x20f
-data 0x71e
-data 0x721
-data 0xa02
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0xb0b
-data 0x309
-data 0xffffffff
-data 0xffffffff
-data 0x401
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0xa07
-data 0x105
-data 0xffffffff
-data 0xffffffff
-data 0x509
-data 0x7
-data 0xffffffff
-data 0xffffffff
-data 0xd08
-data 0x206
-data 0xffffffff
-data 0xffffffff
-data 0xe01
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0xa12
-data 0x211
-data 0xffffffff
-data 0xffffffff
-data 0xb01
-data 0x300
-data 0x70c
-data 0x710
-data 0x401
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x510
-data 0x10e
-data 0xffffffff
-data 0xffffffff
-data 0x901
-data 0x100
-data 0xffffffff
-data 0xffffffff
-data 0xf05
-data 0x303
-data 0xffffffff
-data 0xffffffff
-data 0x801
-data 0x100
-data 0xffffffff
-data 0xffffffff
-data 0x904
-data 0x202
-data 0xffffffff
-data 0xffffffff
-data 0xa07
-data 0x5
-data 0xffffffff
-data 0xffffffff
-data 0xb01
-data 0x300
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0xa15
-data 0x313
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x92e
-data 0x12c
-data 0x71a
-data 0x727
-data 0xa03
-data 0x201
-data 0xffffffff
-data 0xffffffff
-data 0xc0d
-data 0x30b
-data 0xffffffff
-data 0xffffffff
-data 0x502
-data 0x0
-data 0xffffffff
-data 0xffffffff
-data 0x40e
-data 0x10c
-data 0xffffffff
-data 0xffffffff
-data 0xb05
-data 0x103
-data 0xffffffff
-data 0xffffffff
-data 0x908
-data 0x6
-data 0xffffffff
-data 0xffffffff
-data 0xd03
-data 0x201
-data 0xffffffff
-data 0xffffffff
-data 0xe0c
-data 0x30a
-data 0xffffffff
-data 0xffffffff
+
 LABEL_246:
 data 0x29
 data 0x33
@@ -2793,51 +2042,85 @@ call Battle::scriptGetBentSlot, stor[28], stor[8], 0x1 ; bentIndex, charOrBentSl
 mov 0x1, stor[9] ; source, dest
 shl stor[8], stor[9] ; right, left
 jmp_cmp &, stor[9], var[45][250], inl[:LABEL_251] ; operand, left, right, addr
+
+; s8 = hit sound file
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
+; s8 = look up hit sound file in table
 mov inl[:LABEL_246[stor[8]]], stor[8] ; source, dest
+
+; s18 = addition hit index
 mov var[45][83], stor[18] ; source, dest
 mul 0x2, stor[18] ; amount, operand
 add stor[8], stor[18] ; amount, operand
+
+; s22 = look up hit from table - first value
 mov inl[:LABEL_246[stor[18]]], stor[22] ; source, dest
+
+; next table index
 incr stor[18] ; operand
+
+; s23 = look up hit from table - second value
 mov inl[:LABEL_246[stor[18]]], stor[23] ; source, dest
+
 mov stor[22], stor[10] ; source, dest
 and 0x3e0000, stor[10] ; right, left
 shr 0x11, stor[10] ; right, left
 shl 0x7, stor[10] ; right, left
+; double slash hit 0: s10 = 0x200
+
 mov stor[22], stor[11] ; source, dest
 and 0x1f000, stor[11] ; right, left
 shr 0xc, stor[11] ; right, left
 shl 0x7, stor[11] ; right, left
+; double slash hit 0: s11 = 0
+
 mov stor[23], stor[12] ; source, dest
 and 0xf8000000, stor[12] ; right, left
 shr 0x1b, stor[12] ; right, left
 shl 0x7, stor[12] ; right, left
+; double slash hit 0: s12 = 0
+
 mov stor[22], stor[19] ; source, dest
 and 0xfff, stor[19] ; right, left
 shl 0x4, stor[19] ; right, left
+; double slash hit 0: s19 = 0x120
+
+; sign extend
 jmp_cmp !&, 0x8000, stor[19], inl[:LABEL_248] ; operand, left, right, addr
 or 0xffff0000, stor[19] ; right, left
+
 LABEL_248:
 mov stor[23], stor[20] ; source, dest
 and 0xfff000, stor[20] ; right, left
 shr 0xc, stor[20] ; right, left
 shl 0x4, stor[20] ; right, left
+; double slash hit 0: s20 = 0xfc60
+
+; sign extend
 jmp_cmp !&, 0x8000, stor[20], inl[:LABEL_249] ; operand, left, right, addr
 or 0xffff0000, stor[20] ; right, left
+; double slash hit 0: s20 = 0xfffffc60
+
 LABEL_249:
 mov stor[23], stor[21] ; source, dest
 and 0xfff, stor[21] ; right, left
 shl 0x4, stor[21] ; right, left
+; double slash hit 0: s21 = 0xf9c0
+
+; sign extend
 jmp_cmp !&, 0x8000, stor[21], inl[:LABEL_250] ; operand, left, right, addr
 or 0xffff0000, stor[21] ; right, left
+; double slash hit 0: s21 = 0xfffff9c0
+
 LABEL_250:
 mov stor[22], stor[9] ; source, dest
 and 0x1fc00000, stor[9] ; right, left
 shr 0x16, stor[9] ; right, left
+
 mov stor[22], stor[8] ; source, dest
 and 0xe0000000, stor[8] ; right, left
 shr 0x1d, stor[8] ; right, left
+
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 mov stor[0], stor[30] ; source, dest
 mov stor[9], stor[stor[stor[0], 18], 9] ; source, dest
@@ -3249,7 +2532,7 @@ mov 0x0, stor[8] ; source, dest
 LABEL_278:
 mov var[34][stor[8]], stor[9] ; source, dest
 jmp_cmp ==, stor[0], stor[9], inl[:LABEL_279] ; operand, left, right, addr
-call Battle::FUN_800cb618, stor[9], 0x0 ; bentIndex, set
+call Battle::scriptSetBentHidden, stor[9], 0x0 ; bentIndex, set
 LABEL_279:
 incr stor[8] ; operand
 jmp_cmp <, stor[8], var[35], inl[:LABEL_278] ; operand, left, right, addr
@@ -3267,7 +2550,7 @@ call Battle::scriptGetHitProperty, stor[0], 0x0, 0xb, stor[8] ; bentIndex, hitNu
 add stor[8], stor[9] ; amount, operand
 mul 0x64, stor[9] ; amount, operand
 call Battle::FUN_800cc0c8, stor[0], stor[28], 0x6, stor[9], 0x0 ; bentIndex0, bentIndex1, ticks, x, z
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x20, 0x0, 0x0, 0x0, 0x2 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x20, 0x0, 0x0, 0x0, 0x2 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 call Battle::FUN_800f9c00, 0x1 ; p0
 call Battle::FUN_800f9b94, 0x2c, 0x2 ; p0, p1
 gosub inl[:LABEL_266] ; addr
@@ -3280,7 +2563,7 @@ gosub inl[:LABEL_266] ; addr
 mov 0x2, stor[23] ; source, dest
 wait stor[23] ; frames
 gosub inl[:LABEL_268] ; addr
-call Scus94491BpeSegment::scriptStopSound, 0x0, 0x20, 0x3 ; soundFileIndex, soundIndex, mode
+call Audio::scriptStopSound, 0x0, 0x20, 0x3 ; soundFileIndex, soundIndex, mode
 call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
 mov stor[0], stor[stor[stor[0], 28], 28] ; source, dest
 gosub inl[:LABEL_147] ; addr
@@ -3312,20 +2595,20 @@ call Battle::FUN_800cbb00, stor[28], 0xffffffff, 0xa, stor[stor[stor[0], 28], 24
 wait_cmp !&, 0x4000000, stor[7] ; operator, left, right
 gosub inl[:LABEL_291] ; addr
 gosub inl[:LABEL_298] ; addr
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:LABEL_269] ; addr
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0xe ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 call Battle::FUN_800cbde0, stor[0], 0xffffffff, 0x7, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x1ff, 0x3 ; joypadIndex, p1, duration
+call Rumble::scriptStartRumble, 0x0, 0x1ff, 0x3 ; joypadIndex, p1, duration
 mov 0x3, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x15e, 0x3 ; joypadIndex, p1, duration
+call Rumble::scriptStartRumble, 0x0, 0x15e, 0x3 ; joypadIndex, p1, duration
 wait_cmp !&, 0x4000000, stor[7] ; operator, left, right
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x1ff, 0x3 ; joypadIndex, p1, duration
+call Rumble::scriptStartRumble, 0x0, 0x1ff, 0x3 ; joypadIndex, p1, duration
 mov 0x3, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptStartRumble, 0x0, 0x0, 0x3 ; joypadIndex, p1, duration
+call Rumble::scriptStartRumble, 0x0, 0x0, 0x3 ; joypadIndex, p1, duration
 mov 0x2, stor[23] ; source, dest
 wait stor[23] ; frames
 mov 0x20, stor[8] ; source, dest
@@ -3406,7 +2689,7 @@ mov 0x0, stor[8] ; source, dest
 LABEL_292:
 mov var[34][stor[8]], stor[9] ; source, dest
 jmp_cmp ==, stor[0], stor[9], inl[:LABEL_293] ; operand, left, right, addr
-call Battle::FUN_800cb618, stor[9], 0x1 ; bentIndex, set
+call Battle::scriptSetBentHidden, stor[9], 0x1 ; bentIndex, set
 LABEL_293:
 incr stor[8] ; operand
 jmp_cmp <, stor[8], var[35], inl[:LABEL_292] ; operand, left, right, addr
@@ -3430,7 +2713,7 @@ LABEL_296:
 mov 0x0, stor[8] ; source, dest
 LABEL_297:
 mov var[52][stor[8]], stor[9] ; source, dest
-call Battle::FUN_800cb618, stor[9], 0x0 ; bentIndex, set
+call Battle::scriptSetBentHidden, stor[9], 0x0 ; bentIndex, set
 incr stor[8] ; operand
 jmp_cmp <, stor[8], var[53], inl[:LABEL_297] ; operand, left, right, addr
 return
@@ -3466,14 +2749,14 @@ return
 LABEL_304:
 mov stor[8], stor[stor[stor[0], 23], 8] ; source, dest
 mov stor[9], stor[stor[stor[0], 23], 9] ; source, dest
-call Battle::FUN_800cb618, stor[stor[stor[0], 23], 23], 0x1 ; bentIndex, set
+call Battle::scriptSetBentHidden, stor[stor[stor[0], 23], 23], 0x1 ; bentIndex, set
 jmp_cmp !=, 0x0, inl[:LABEL_316], inl[:LABEL_307] ; operand, left, right, addr
 jmp_cmp !&, 0x200, stor[stor[stor[23], 23], 7], inl[:LABEL_307] ; operand, left, right, addr
 mov 0x0, stor[8] ; source, dest
 LABEL_305:
 mov var[36][stor[8]], stor[9] ; source, dest
 jmp_cmp !&, 0x8000, stor[stor[stor[0], 9], 7], inl[:LABEL_306] ; operand, left, right, addr
-call Battle::FUN_800cb618, stor[9], 0x1 ; bentIndex, set
+call Battle::scriptSetBentHidden, stor[9], 0x1 ; bentIndex, set
 jmp inl[:LABEL_307] ; addr
 LABEL_306:
 incr stor[9] ; operand
@@ -3608,13 +2891,9 @@ gosub inl[:LABEL_348] ; addr
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x0, 0x0, 0x0, inl[:LABEL_352[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x4, 0x0, 0x0, inl[:LABEL_353[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 call Battle::scriptPlayBentSound, 0x1, stor[0], 0x5, 0x0, 0x0, inl[:LABEL_354[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-gosub inl[:IS_DETONATE_ARROW] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_321] ; operand, left, right, addr
-mov 0x0, var[45][248] ; source, dest
-mov 0x0, var[45][249] ; source, dest
-call Battle::scriptSetBentStat, stor[0], id[lod:detonate_rock], ITEM_ID ; bentIndex, value, statIndex
-call Battle::scriptLoadDeff, 0xc1, stor[0], 0xffffffff, 0x1, 0x2000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
-LABEL_321:
+
+call Battle::scriptPrepareAttack
+
 gosub inl[:LABEL_348] ; addr
 mov inl[:LABEL_352[stor[8]]], stor[23] ; source, dest
 wait stor[23] ; frames
@@ -3625,8 +2904,12 @@ mov 0x0, stor[11] ; source, dest
 gosub inl[:LABEL_404] ; addr
 mov 0x6, stor[23] ; source, dest
 wait stor[23] ; frames
-gosub inl[:IS_DETONATE_ARROW] ; addr
-jmp_cmp !=, 0x0, stor[8], inl[:LABEL_337] ; operand, left, right, addr
+
+call Battle::scriptAttack, stor[8] ; attack type
+jmp_cmp ==, 1, stor[8], inl[:LABEL_337] ; deff
+jmp_cmp ==, 2, stor[8], inl[:LABEL_335] ; custom
+
+; normal attacks
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 mov stor[28], stor[stor[stor[0], 18], 28] ; source, dest
 call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:LABEL_339] ; scriptIndex, address
@@ -3732,6 +3015,7 @@ mov 0x10, var[54] ; source, dest
 mov 0xe2, var[44] ; source, dest
 call Battle::scriptMoveCameraProjectionPlane, 0x2, 0x140, 0x10, 0x0 ; mode, newDistance, frames, stepZ1
 return
+
 LABEL_337:
 call Battle::scriptTickDeffLoadingStage, 0x1 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
@@ -3836,12 +3120,6 @@ wait stor[23] ; frames
 deallocate
 
 ; SUBROUTINE
-IS_DETONATE_ARROW:
-call Battle::scriptGetBentStat, stor[0], EQUIPMENT_WEAPON_SLOT, reg[0] ; bentIndex, statIndex, value
-call Scus94491BpeSegment_8002::scriptReadRegistryEntryVar, id[lod_core:equipment], reg[0], 1000, stor[8]
-return
-
-; SUBROUTINE
 LABEL_346:
 gosub inl[:LABEL_57] ; addr
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
@@ -3940,7 +3218,7 @@ return
 
 ; SUBROUTINE
 ALLOCATE_REGEN_EFFECT:
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x2f, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x2f, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:ALLOCATE_RECOVER_EFFECT] ; addr
 call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:LABEL_375] ; scriptIndex, address
 return
@@ -3963,7 +3241,7 @@ rewind
 
 ; SUBROUTINE
 ALLOCATE_GUARD_OR_ON_DAMAGE_RECOVER_EFFECT:
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x2f, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x2f, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:ALLOCATE_RECOVER_EFFECT] ; addr
 call SEffe::scriptLoadSameScriptAndJump, stor[18], inl[:LABEL_377] ; scriptIndex, address
 return
@@ -4148,7 +3426,7 @@ data 0x82
 
 ; SUBROUTINE
 ALLOCATE_REVIVAL_EFFECT:
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x2e, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x2e, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 call Battle::allocateBillboardSpriteEffect, stor[18], 0xfff25 ; effectIndex, flags
 call SEffe::scriptSetRelativePosition, stor[18], stor[28], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x200, 0x200, 0x200 ; bobjIndex1, bobjIndex2, x, y, z
@@ -4405,7 +3683,7 @@ gosub inl[:LOAD_D_ATTACK_SOUNDS] ; addr
 call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_DEFF, inl[:JMP_bf60_0_DEFF]
 call Battle::scriptLoadDragoonDeffSync, inl[:JMP_bf60_0_DEFF], stor[0], stor[28], 0x0 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
 yield
-call Scus94491BpeSegment::scriptUnloadSoundFile, 0x6 ; soundType
+call Audio::scriptUnloadSoundFile, 0x6 ; soundType
 yield
 return
 
@@ -4415,10 +3693,10 @@ data 0
 ; SUBROUTINE
 LOAD_D_ATTACK_SOUNDS:
 call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_SOUNDS, inl[:LOAD_D_ATTACK_SOUNDS_FILE]
-call Scus94491BpeSegment::scriptLoadMonsterAttackSounds, inl[:LOAD_D_ATTACK_SOUNDS_FILE] ; monsterIndex
+call Audio::scriptLoadMonsterAttackSounds, inl[:LOAD_D_ATTACK_SOUNDS_FILE] ; monsterIndex
 LABEL_417:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[23] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[23] ; flags
 jmp_cmp &, 0x20, stor[23], inl[:LABEL_417] ; operand, left, right, addr
 return
 
@@ -4856,7 +4134,7 @@ return
 LABEL_459:
 mov 0x5, stor[23] ; source, dest
 wait stor[23] ; frames
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x2d, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x2d, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 call SEffe::scriptAllocateParticleEffect, stor[18], 0xffffffff, 0xfff2d, 0x10, 0x80, 0x2, 0x800, 0x6107f00, 0x4 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 mov 0xfffffd00, stor[8] ; source, dest
 gosub inl[:LABEL_478] ; addr
@@ -5241,7 +4519,7 @@ mov stor[0], var[80] ; source, dest
 
 ; start the sequence and fade its volume back in to the expected amount
 mov var[45][118], stor[8] ; source, dest
-call Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime, 0xa, stor[8] ; fadeTime, volume
+call Audio::scriptStartSequenceAndChangeVolumeOverTime, 0xa, stor[8] ; fadeTime, volume
 
 ; returns s8, 0 = alive, 1 = dead
 gosub inl[:START_TURN] ; addr
@@ -5354,7 +4632,7 @@ data 0x0  ; poisoned
 ; @param int s30 status affliction action
 RUN_STATUS_AFFLICTION_ACTION:
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
-gosub_table stor[30], inl[:ACTION_TABLES + inl[:ACTION_TABLES + 0x0]] ; index, table
+gosub_table stor[30], inl[:ACTION_HANDLERS] ; index, table
 return
 
 
@@ -5365,12 +4643,39 @@ call Battle::scriptSetBattleHudVisibility, 0x1 ; visible
 LABEL_495:
 gosub inl[:LABEL_63] ; addr
 gosub inl[:IS_DRAGOON] ; s31 = is dragoon
-gosub inl[:GET_USABLE_MENU_ICONS] ; s8 = menu icons
-gosub inl[:GET_DISABLED_MENU_ICONS] ; s9 = disabled menu items
-gosub inl[:APPLY_MENU_BLOCKS] ; addr
-call Battle::scriptSetUpAndHandleCombatMenu, stor[8], stor[9], stor[30] ; displayableIconsBitset, disabledIconsBitset, selectedAction
+call Battle::scriptSetUpAndHandleCombatMenu, reg[0] ; selectedAction
 yield
-gosub_table stor[30], inl[:ACTION_TABLES[:ACTION_TABLES[stor[31]]]] ; index, table
+
+mov 9, stor[30] ; default to no-op
+
+;TODO maybe rework this, but maybe it's fine
+;TODO new actions can be done in code instead of here?
+jmp_cmp !=, reg[0], id[lod:attack], inl[:NOT_ACTION_ATTACK]
+mov 3, stor[30]
+NOT_ACTION_ATTACK:
+jmp_cmp !=, reg[0], id[lod:guard], inl[:NOT_ACTION_GUARD]
+mov 0, stor[30]
+NOT_ACTION_GUARD:
+jmp_cmp !=, reg[0], id[lod:items], inl[:NOT_ACTION_ITEMS]
+mov 4, stor[30]
+NOT_ACTION_ITEMS:
+jmp_cmp !=, reg[0], id[lod:spells], inl[:NOT_ACTION_SPELLS]
+mov 2, stor[30]
+NOT_ACTION_SPELLS:
+jmp_cmp !=, reg[0], id[lod:escape], inl[:NOT_ACTION_ESCAPE]
+mov 5, stor[30]
+NOT_ACTION_ESCAPE:
+jmp_cmp !=, reg[0], id[lod:transform], inl[:NOT_ACTION_TRANSFORM]
+mov 1, stor[30]
+NOT_ACTION_TRANSFORM:
+jmp_cmp !=, reg[0], id[lod:special], inl[:NOT_ACTION_SPECIAL]
+mov 6, stor[30]
+NOT_ACTION_SPECIAL:
+jmp_cmp !=, reg[0], id[lod:d_attack], inl[:NOT_ACTION_D_ATTACK]
+mov 8, stor[30]
+NOT_ACTION_D_ATTACK:
+
+gosub_table stor[30], inl[:ACTION_HANDLERS] ; index, table
 gosub inl[:LABEL_515] ; addr
 jmp_cmp !=, 0x0, var[45][253], inl[:LABEL_495] ; operand, left, right, addr
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
@@ -5379,21 +4684,16 @@ return
 
 
 ; SUBROUTINE TABLE
-ACTION_TABLES:
-rel :HUMAN_ACTIONS
-rel :DRAGOON_ACTIONS
-
-; SUBROUTINE TABLE
-HUMAN_ACTIONS:
+ACTION_HANDLERS:
 rel :ACTION_GUARD ; guard
 rel :ACTION_TRANSFORM ; transform
-rel :ACTION_NOOP ; d-magic (no-op)
+rel :ACTION_DRAGOON_MAGIC ; d-magic
 rel :ACTION_ATTACK ; attack
 rel :ACTION_USE_ITEM ; item
 rel :ACTION_RUN_AWAY ; run
 rel :ACTION_SPECIAL ; special
 rel :ACTION_NOOP ; ? (no-op)
-rel :ACTION_ATTACK ; d-attack
+rel :ACTION_DRAGOON_ATTACK ; d-attack
 rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
@@ -5410,136 +4710,7 @@ rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
 rel :ACTION_NOOP ; no-op
 
-; SUBROUTINE TABLE
-DRAGOON_ACTIONS:
-rel :ACTION_NOOP ; guard (no-op)
-rel :ACTION_DRAGOON_TRANSFORM ; transform (no-op)
-rel :ACTION_DRAGOON_MAGIC ; d-magic
-rel :ACTION_DRAGOON_ATTACK ; attack
-rel :ACTION_NOOP ; item (no-op)
-rel :ACTION_NOOP ; run (no-op)
-rel :ACTION_NOOP ; special (no-op)
-rel :ACTION_NOOP ; ? (no-op)
-rel :ACTION_DRAGOON_ATTACK ; d-attack
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :JMP_c400_15 ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
-rel :ACTION_NOOP ; no-op
 
-; SUBROUTINE
-; @param bool s31 is dragoon
-; @return int s8 packed icons, 0xf = not already dragoon, 0x10 = can become dragoon, 0x60 = already dragoon, 0x80 = can use special
-GET_USABLE_MENU_ICONS:
-jmp_cmp !=, 0x0, stor[31], inl[:LABEL_500] ; if dragoon
-
-mov 0xf, stor[8] ; source, dest
-
-call Battle::scriptGiveSp, stor[0], 0x0, stor[9] ; s9 = my sp
-jmp_cmp >, 100, stor[9], inl[:LABEL_498] ; less than 100 sp
-
-gosub inl[:CAN_BECOME_DRAGOON] ; s10 = can become dragoon
-jmp_cmp ==, 0x0, stor[10], inl[:LABEL_498] ; can't become dragoon
-or 0x10, stor[8] ; right, left
-
-LABEL_498:
-mov stor[8], stor[17] ; source, dest
-gosub inl[:CAN_USE_SPECIAL_TRANSFORM] ; s8 = can use special transform
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_499] ; can't use special transform
-or 0x80, stor[17] ; right, left
-
-LABEL_499:
-mov stor[17], stor[8] ; source, dest
-return
-
-LABEL_500:
-mov 0x60, stor[8] ; source, dest
-gosub inl[:IS_DRAGOON] ; addr
-return
-
-
-
-; SUBROUTINE
-; @param int s9 current disabled menu items
-; @return int s9 adjusted disabled menu items
-APPLY_MENU_BLOCKS:
-call Battle::scriptGetBentSlot, stor[0], stor[10], 0x0 ; s10 = my bent slot
-mov var[128 + stor[10]][6], stor[10] ; s10 = my menu blocks
-or stor[10], stor[9] ; s9 |= my menu blocks
-call Battle::scriptGetBentStat, stor[0], STATUS, stor[10] ; s10 = my status
-jmp_cmp !&, 0x20, stor[10], inl[:APPLY_MENU_BLOCKS_NOT_ARM_BLOCKED] ; not weapon blocked
-or 0x1, stor[9] ; disable attacking
-APPLY_MENU_BLOCKS_NOT_ARM_BLOCKED:
-or var[45][228], stor[9] ; s9 |= global menu blocks
-return
-
-
-
-; SUBROUTINE
-; @return int s9 disabled menu items, 0x8 = can't escape, ...
-GET_DISABLED_MENU_ICONS:
-mov 0x0, stor[9] ; source, dest
-
-jmp_cmp ==, 0x0, var[45][243], inl[:LABEL_506] ; operand, left, right, addr
-
-mov var[36][0], stor[28] ; s28 = monster bent slot 0 bent id
-
-jmp_cmp !=, 0x0, var[45][242], inl[:LABEL_508] ; operand, left, right, addr
-
-or 0x1, stor[9] ; can't attack
-
-LABEL_504:
-or 0x20, stor[stor[stor[0], 28], 7] ; monster has forced turn
-incr var[45][243] ; operand
-
-LABEL_505:
-neg stor[9] ; operand
-decr stor[9] ; operand
-
-LABEL_506:
-mov var[46][2], stor[10] ; s10 = encounter escape chance
-jmp_cmp !=, 0x0, stor[10], inl[:LABEL_507] ; escape chance is not 0
-or 0x8, stor[9] ; can't run
-LABEL_507:
-return
-
-LABEL_508:
-jmp_cmp ==, 0x1, var[45][242], inl[:LABEL_514] ; operand, left, right, addr
-jmp_cmp !=, 0x3, var[45][243], inl[:LABEL_509] ; operand, left, right, addr
-or 0x1, stor[9] ; can't attack
-jmp inl[:LABEL_505] ; addr
-LABEL_509:
-jmp_cmp !=, 0x5, var[45][243], inl[:LABEL_510] ; operand, left, right, addr
-or 0x10, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_510:
-jmp_cmp !=, 0x9, var[45][243], inl[:LABEL_511] ; operand, left, right, addr
-or 0x10, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_511:
-jmp_cmp !=, 0xc, var[45][243], inl[:LABEL_512] ; operand, left, right, addr
-or 0x20, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_512:
-jmp_cmp !=, 0x10, var[45][243], inl[:LABEL_513] ; operand, left, right, addr
-or 0x10, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_513:
-or 0x40, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
-LABEL_514:
-or 0x4, stor[9] ; right, left
-jmp inl[:LABEL_504] ; addr
 
 ; SUBROUTINE
 LABEL_515:
@@ -5560,6 +4731,9 @@ return
 ACTION_NOOP:
 return
 
+GUARD_HEAL_PERCENT:
+data 0
+
 ; SUBROUTINE
 ACTION_GUARD:
 mov 0x0, stor[8] ; source, dest
@@ -5572,8 +4746,10 @@ call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 LABEL_518:
 call Battle::scriptGetBentStat2, stor[0], CURRENT_HP, stor[8] ; bentIndex, statIndex, value
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[9] ; bentIndex, statIndex, value
+call Battle::scriptGetBentStat2, stor[0], GUARD_HEAL, inl[:GUARD_HEAL_PERCENT] ; bentIndex, statIndex, value
 mov stor[8], stor[11] ; source, dest
-div 0xa, stor[9] ; amount, operand
+mul inl[:GUARD_HEAL_PERCENT], stor[9]
+div 100, stor[9] ; amount, operand
 add stor[9], stor[11] ; amount, operand
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[10] ; bentIndex, statIndex, value
 jmp_cmp >=, stor[10], stor[11], inl[:LABEL_519] ; operand, left, right, addr
@@ -5603,11 +4779,11 @@ call Battle::scriptGetBentPos, stor[0], stor[24], stor[25], stor[26] ; bentIndex
 mov var[45][118], stor[8] ; source, dest
 mul 0x41, stor[8] ; amount, operand
 div 0x64, stor[8] ; amount, operand
-call Scus94491BpeSegment::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
+call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:LABEL_670] ; addr
 or 0x2, var[45][245] ; right, left
-gosub inl[:LABEL_527] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_521] ; operand, left, right, addr
+gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_521] ; don't need to change stages
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 LABEL_521:
 call Battle::scriptLoadDeff, stor[29], stor[0], stor[28], 0x0, 0x1000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
@@ -5618,9 +4794,9 @@ yield
 jmp_cmp !=, 0x2, var[45][248], inl[:LABEL_522] ; operand, left, right, addr
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
-call Scus94491BpeSegment::scriptWaitForFilesToLoad ; index
-gosub inl[:LABEL_527] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_525] ; operand, left, right, addr
+call DrgnFiles::scriptWaitForFilesToLoad ; index
+gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_525] ; don't need to change stages
 mov var[45][76], stor[8] ; source, dest
 jmp_cmp >, 0x0, stor[8], inl[:LABEL_523] ; operand, left, right, addr
 mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[8] ; source, dest
@@ -5632,7 +4808,7 @@ gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 LABEL_525:
 and 0xfffffffd, var[45][245] ; right, left
 mov var[45][118], stor[8] ; source, dest
-call Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
+call Audio::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 call Battle::scriptSetBentPos, stor[0], stor[24], stor[25], stor[26] ; bentIndex, x, y, z
 gosub inl[:LABEL_436] ; addr
 return
@@ -5642,16 +4818,20 @@ return
 data 0x49
 
 ; SUBROUTINE
-LABEL_527:
+; If the spell is a dragon summon spell, returns the special stage to switch to
+; @param int stor[29] spell id
+; @return int stor[8] the special stage to switch to if any, or 0 if not a dragon summon or already on that stage
+GET_DRAGON_SUMMON_SPECIAL_STAGE:
 mov 0x0, stor[23] ; source, dest
 gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp !=, stor[29], inl[:LABEL_529[stor[8]]], inl[:LABEL_528] ; operand, left, right, addr
+jmp_cmp !=, stor[29], inl[:DRAGON_SUMMON_SPELL_INDICES[stor[8]]], inl[:LABEL_528] ; operand, left, right, addr
 jmp_cmp ==, stor[8], var[45][76], inl[:LABEL_528] ; operand, left, right, addr
 mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[23] ; source, dest
 LABEL_528:
 mov stor[23], stor[8] ; source, dest
 return
-LABEL_529:
+
+DRAGON_SUMMON_SPELL_INDICES:
 data 0x3
 data 0x8
 data 0xd
@@ -5680,20 +4860,20 @@ gosub inl[:LABEL_471] ; addr
 gosub inl[:GET_MY_CHAR_ID] ; addr
 jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_531] ; operand, left, right, addr
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
-call Scus94491BpeSegment::scriptLoadCharacterAttackSounds, stor[8] ; charId
+call Audio::scriptLoadCharacterAttackSounds, stor[8] ; charId
 
 ACTION_ATTACK_WAIT_FOR_SOUND_TO_LOAD:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[31] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x10000, stor[31], inl[:ACTION_ATTACK_WAIT_FOR_SOUND_TO_LOAD] ; operand, left, right, addr
 
 LABEL_531:
 gosub inl[:GET_MY_CHAR_ID] ; addr
 gosub_table stor[8], inl[:LABEL_479] ; index, table
-call Scus94491BpeSegment::scriptStopSound, 0xa, 0x0, 0x3 ; soundFileIndex, soundIndex, mode
+call Audio::scriptStopSound, 0xa, 0x0, 0x3 ; soundFileIndex, soundIndex, mode
 gosub inl[:GET_MY_CHAR_ID] ; addr
 jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_532] ; operand, left, right, addr
-call Scus94491BpeSegment::scriptUnloadSoundFile, 0x7 ; soundType
+call Audio::scriptUnloadSoundFile, 0x7 ; soundType
 LABEL_532:
 call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
 
@@ -5773,10 +4953,6 @@ return
 
 
 ; SUBROUTINE
-ACTION_DRAGOON_TRANSFORM:
-return
-
-; SUBROUTINE
 ACTION_SPECIAL:
 gosub inl[:GET_MY_CHAR_ID] ; addr
 mov stor[8], var[45][76] ; source, dest
@@ -5799,13 +4975,14 @@ jmp_cmp !=, stor[8], var[35], inl[:LABEL_538] ; operand, left, right, addr
 mov 0xc, stor[23] ; source, dest
 wait stor[23] ; frames
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
+or 0x1000, stor[7] ; mark battle menu for reload
 gosub inl[:LABEL_471] ; addr
 yield
 gosub inl[:CLEAR_MY_STATUS] ; addr
 mov var[45][118], stor[8] ; source, dest
 mul 0x41, stor[8] ; amount, operand
 div 0x64, stor[8] ; amount, operand
-call Scus94491BpeSegment::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
+call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:GET_MY_CHAR_ID] ; addr
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[18] ; effectIndex
 mov 0x0, stor[stor[stor[0], 18], 31] ; source, dest
@@ -5819,21 +4996,21 @@ call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
 call Battle::scriptGetBentStat, stor[0], FOOT_MODEL_PART, inl[:ACTION_SPECIAL_FOOT_MODEL_PART_INDEX]
 call Battle::scriptAttachShadowToBentModelPart, stor[0], inl[:ACTION_SPECIAL_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
-call Scus94491BpeSegment::scriptWaitForFilesToLoad ; index
-call Scus94491BpeSegment::scriptLoadCharAttackSounds, var[34][0], 0x0 ; bentIndex, type
+call DrgnFiles::scriptWaitForFilesToLoad ; index
+call Audio::scriptLoadCharAttackSounds, var[34][0], 0x0 ; bentIndex, type
 LABEL_540:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[31] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_540] ; operand, left, right, addr
-call Scus94491BpeSegment::scriptLoadCharAttackSounds, var[34][1], 0x0 ; bentIndex, type
+call Audio::scriptLoadCharAttackSounds, var[34][1], 0x0 ; bentIndex, type
 LABEL_541:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[31] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_541] ; operand, left, right, addr
-call Scus94491BpeSegment::scriptLoadCharAttackSounds, var[34][2], 0x0 ; bentIndex, type
+call Audio::scriptLoadCharAttackSounds, var[34][2], 0x0 ; bentIndex, type
 LABEL_542:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[31] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_542] ; operand, left, right, addr
 gosub inl[:GET_MY_CHAR_ID] ; addr
 call Battle::scriptSetDragoonSpaceElementIndex, stor[8] ; charId
@@ -5841,7 +5018,7 @@ mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[8] ; source, dest
 mov stor[8], var[45][187] ; source, dest
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 mov var[45][118], stor[8] ; source, dest
-call Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
+call Audio::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x0 ; bentIndex, animIndex
 call Battle::scriptSetBattleHudVisibility, 0x1 ; visible
 gosub inl[:LABEL_64] ; addr
@@ -5877,12 +5054,12 @@ mov stor[29], stor[28] ; source, dest
 gosub inl[:CLEAR_BENT_STATUS] ; addr
 call Battle::scriptDisableBentShadow, stor[29] ; bentIndex
 call Battle::FUN_800ccba4, stor[29], 0x1 ; bentIndex, isDragoon
-call Scus94491BpeSegment::scriptWaitForFilesToLoad ; index
+call DrgnFiles::scriptWaitForFilesToLoad ; index
 gosub inl[:LABEL_712] ; addr
 call Battle::scriptGetBentStat, stor[29], FOOT_MODEL_PART, inl[:LABEL_546_FOOT_MODEL_PART_INDEX]
 call Battle::scriptAttachShadowToBentModelPart, stor[29], inl[:LABEL_546_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
 call Battle::scriptSetLoadingBentAnimationIndex, stor[29], 0x0 ; bentIndex, animIndex
-call Battle::FUN_800cb618, stor[29], 0x0 ; bentIndex, set
+call Battle::scriptSetBentHidden, stor[29], 0x0 ; bentIndex, set
 call Battle::scriptGetBentStat, stor[29], GUARD, stor[23] ; bentIndex, statIndex, value
 and 0xfffffffe, stor[23] ; right, left
 call Battle::scriptSetBentStat, stor[29], stor[23], GUARD ; bentIndex, value, statIndex
@@ -5893,6 +5070,11 @@ data 0
 
 ; SUBROUTINE
 ACTION_TRANSFORM:
+
+; if we're already dragoon, we're detransforming
+gosub inl[:IS_DRAGOON] ; addr
+jmp_cmp !=, 0, stor[31], inl[:ACTION_DETRANSFORM]
+
 call Battle::scriptGiveSp, stor[0], 0x0, stor[9] ; bentIndex, amount, total
 mov stor[9], stor[10] ; source, dest
 div 0x64, stor[9] ; amount, operand
@@ -5905,16 +5087,17 @@ call Battle::scriptConsumeSp, stor[0], 0x1, stor[10] ; bentIndex, unused, amount
 mov 0xc, stor[23] ; source, dest
 wait stor[23] ; frames
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
+or 0x1000, stor[7] ; mark battle menu for reload
 gosub inl[:LABEL_471] ; addr
 yield
 gosub inl[:CLEAR_MY_STATUS] ; addr
 mov var[45][118], stor[8] ; source, dest
 mul 0x41, stor[8] ; amount, operand
 div 0x64, stor[8] ; amount, operand
-call Scus94491BpeSegment::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
+call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:GET_MY_CHAR_ID] ; addr
-gosub inl[:LABEL_571] ; addr
-jmp_cmp !=, 0x0, stor[31], inl[:LABEL_547] ; operand, left, right, addr
+gosub inl[:GET_TRANSFORM_MODE] ; addr
+jmp_cmp !=, 0x0, stor[31], inl[:LABEL_547] ; is short transform
 call Battle::scriptGetBentStat, stor[0], DRAGOON_TRANSFORM_DEFF, stor[27]
 call Battle::scriptLoadDragoonDeffSync, stor[27], stor[0], 0x0, stor[9] ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
 jmp inl[:LABEL_548] ; addr
@@ -5922,13 +5105,13 @@ LABEL_547:
 mov 0x0, stor[19] ; source, dest
 call Battle::scriptLoadDragoonDeffSync, 0x21, stor[0], 0x0, 0x0 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
 LABEL_548:
-call Scus94491BpeSegment::scriptWaitForFilesToLoad ; index
+call DrgnFiles::scriptWaitForFilesToLoad ; index
 mov var[45][118], stor[8] ; source, dest
-call Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
-call Scus94491BpeSegment::scriptLoadCharAttackSounds, stor[0], 0x0 ; bentIndex, type
+call Audio::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
+call Audio::scriptLoadCharAttackSounds, stor[0], 0x0 ; bentIndex, type
 LABEL_549:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[31] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_549] ; operand, left, right, addr
 call Battle::scriptSetBattleHudVisibility, 0x1 ; visible
 jmp_cmp ==, 0x2, var[45][242], inl[:LABEL_550] ; operand, left, right, addr
@@ -5940,75 +5123,25 @@ return
 
 
 ; SUBROUTINE
-; @return bool s8 can use special transform
-CAN_USE_SPECIAL_TRANSFORM:
-jmp_cmp !=, 0x3, var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; not 3 players
+ACTION_DETRANSFORM:
+call Battle::scriptGetBentStat, stor[0], DETRANSFORMATION_MODE, stor[8]
+jmp_cmp ==, 1, stor[8], inl[:DETRANSFORM_FROM_DRAGOON_AFTER_TURN] ;
 
-mov 0x0, stor[8] ; loop counter, bent slot
-mov 0x0, stor[11] ; number of characters who are dead
-
-CAN_USE_SPECIAL_TRANSFORM_DEAD_LOOP:
-mov var[34][stor[8]], stor[28] ; s28 = bent id for bent slot s8
-call Battle::scriptGetBentStat, stor[28], STATUS, stor[9] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x40, stor[stor[stor[0], 28], 7], inl[:LABEL_553] ; bent s28 is not dead
-jmp_cmp &, 0x1, stor[9], inl[:LABEL_553] ; bent s28 is petrified
-incr stor[11] ; increment dead characters
-LABEL_553:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_DEAD_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character is dead
-
-mov 0x0, stor[8] ; loop counter
-mov 0x0, stor[10] ; number of characters whose sp is not full
-
-CAN_USE_SPECIAL_TRANSFORM_SP_LOOP:
-call Battle::scriptGiveSp, var[34][stor[8]], 0x0, stor[9] ; s9 = bent slot s8 sp
-mov var[34][stor[8]], stor[11] ; s11 = bent slot s8 id
-call Battle::scriptGetBentStat, stor[11], DLEVEL, stor[11] ; s11 = bent id s11 dlevel
-jmp_cmp ==, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; dlevel is 0
-mul 100, stor[11] ; max sp, dlevel * 100
-jmp_cmp <=, stor[11], stor[9], inl[:LABEL_555] ; sp is full
-incr stor[10] ; increment characters whose sp is not full
-LABEL_555:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_SP_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[10], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character's sp is not full
-
-mov 0x0, stor[8] ; loop counter, bent slot
-mov 0x0, stor[11] ; number of characters who are dragoon
-
-CAN_USE_SPECIAL_TRANSFORM_DRAGOON_LOOP:
-mov var[34][stor[8]], stor[28] ; s28 = bent slot s8 id
-gosub inl[:IS_BENT_DRAGOON] ; addr
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_557] ; bent is not dragoon
-incr stor[11] ; increment number of characters who are dragoon
-LABEL_557:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_DRAGOON_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character is dragoon
-
-mov 0x0, stor[8] ; loop counter, bent slot
-mov 0x0, stor[11] ; number of characters who can't become dragoon
-
-CAN_USE_SPECIAL_TRANSFORM_CANT_DRAGOON_LOOP:
-mov var[34][stor[8]], stor[28] ; s28 = bent slot s8 id
-gosub inl[:CAN_BENT_BECOME_DRAGOON] ; addr
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_559] ; TODO retail bug, this should be checking s10
-incr stor[11] ; increment characters who can't become dragoon
-LABEL_559:
-incr stor[8] ; increment bent slot
-jmp_cmp !=, stor[8], var[35], inl[:CAN_USE_SPECIAL_TRANSFORM_CANT_DRAGOON_LOOP] ; operand, left, right, addr
-
-jmp_cmp !=, 0x0, stor[11], inl[:CAN_USE_SPECIAL_TRANSFORM_NOPE] ; any character can't become dragoon
-
-mov 0x1, stor[8] ; source, dest
+call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
+call Battle::scriptConsumeSp, stor[0], 1, 100 ; consume 100 sp
+gosub inl[:SET_MY_ATTACK_TARGETING_BIT] ; addr
+mov stor[0], stor[30] ; source, dest
+gosub inl[:TRANSFORM_OUT_OF_DRAGOON] ; addr
+and 0xfffffffe, var[45][245] ; right, left
+gosub inl[:CLEAR_MY_ATTACK_TARGETING_BIT] ; addr
 return
 
-CAN_USE_SPECIAL_TRANSFORM_NOPE:
-mov 0x0, stor[8] ; source, dest
+DETRANSFORM_FROM_DRAGOON_AFTER_TURN:
+gosub inl[:HANDLE_BATTLE_HUD] ;
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
+add 0x45, stor[8] ; amount, operand
+mov 0x1, var[45][stor[8]] ; source, dest
+DETRANSFORM_FROM_DRAGOON_EXIT:
 return
 
 
@@ -6020,7 +5153,7 @@ gosub inl[:DARKEN_STAGE_BEFORE_CHANGING_STAGE] ; addr
 gosub inl[:ALLOCATE_SCRIPT_THAT_CONSTANTLY_SETS_STAGE_DARKENING_BACK_TO_0] ; addr
 call Battle::scriptStopRenderingStage ; index
 call Battle::scriptLoadStage, stor[8] ; stageIndex
-call Scus94491BpeSegment::scriptWaitForFilesToLoad ; index
+call DrgnFiles::scriptWaitForFilesToLoad ; index
 gosub inl[:APPLY_STAGE_AMBIANCE] ; addr
 gosub inl[:DEALLOCATE_SCRIPT_THAT_CONSTANTLY_SETS_STAGE_DARKENING_BACK_TO_0] ; addr
 gosub inl[:BRIGHTEN_STAGE_AFTER_CHANGING_STAGE] ; addr
@@ -6104,19 +5237,23 @@ return
 
 
 ; SUBROUTINE
-LABEL_571:
+; @param int stor[8] char id
+; @return bool stor[9] has transformed before (and not divine dragoon)
+; @return bool stor[31] use short transform
+GET_TRANSFORM_MODE:
 mov 0x0, stor[9] ; source, dest
-call Scus94491BpeSegment::scriptReadGlobalFlag2, inl[:LABEL_574[stor[8]]], stor[31] ; flag, value
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; operand, left, right, addr
-jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; operand, left, right, addr
+call Scus94491BpeSegment::scriptReadGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], stor[31] ; flag, value
+jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; has not transformed before
+jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; short transform mode
 mov 0x0, stor[31] ; source, dest
-jmp_cmp !=, 0x9, stor[8], inl[:LABEL_572] ; operand, left, right, addr
+jmp_cmp !=, 0x9, stor[8], inl[:LABEL_572] ; not divine dragoon
 mov 0x1, stor[9] ; source, dest
 LABEL_572:
-call Scus94491BpeSegment::scriptSetGlobalFlag2, inl[:LABEL_574[stor[8]]], 0x1 ; flag, value
+call Scus94491BpeSegment::scriptSetGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], 0x1 ; flag, value
 LABEL_573:
 return
-LABEL_574:
+
+CHAR_HAS_TRANSFORMED_BEFORE_FLAGS:
 data 0x1b8
 data 0x1ba
 data 0x1b9
@@ -6142,17 +5279,17 @@ jmp_cmp !&, 0x2, stor[stor[stor[0], 30], 7], inl[:TRANSFORM_OUT_OF_DRAGOON_EXIT]
 
 ; load deff
 call Battle::scriptLoadDragoonDeffSync, 0x21, stor[30], stor[30], 0x1 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
-call Scus94491BpeSegment::scriptWaitForFilesToLoad ; index
+call DrgnFiles::scriptWaitForFilesToLoad ; index
 
 ; set shadow size and load sounds
 mov stor[30], stor[8] ; source, dest
 gosub inl[:SET_CHAR_BENT_SHADOW_SIZE] ; addr
-call Scus94491BpeSegment::scriptLoadCharAttackSounds, stor[30], 0x1 ; bentIndex, type
+call Audio::scriptLoadCharAttackSounds, stor[30], 0x1 ; bentIndex, type
 
 ; wait for sounds to load
 TRANSFORM_OUT_OF_DRAGOON_WAIT_FOR_SOUNDS:
 yield
-call Scus94491BpeSegment::scriptGetLoadedSoundFiles, stor[31] ; flags
+call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:TRANSFORM_OUT_OF_DRAGOON_WAIT_FOR_SOUNDS] ; operand, left, right, addr
 
 ; update animation
@@ -6190,7 +5327,7 @@ mov var[50][stor[8]], stor[28] ; s28 = bent index s8 id
 jmp_cmp ==, stor[0], stor[28], inl[:LABEL_580] ; operand, left, right, addr
 call Battle::scriptBentLookAtBent, stor[0], stor[28] ; bentIndexToTurn, bentIndexTarget
 LABEL_580:
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0xb, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0xb, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 call Battle::scriptSetInterpolationEnabled, stor[0], 0x0 ; bentIndex, set
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x10 ; bentIndex, animIndex
@@ -6199,7 +5336,7 @@ call Battle::scriptSetInterpolationEnabled, stor[0], 0x1 ; bentIndex, set
 mov stor[0], stor[30] ; source, dest
 call Battle::scriptGetBentStat2, stor[0], MAX_HP, stor[8] ; bentIndex, statIndex, value
 div 0x5, stor[8] ; amount, operand
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 jmp_cmp ==, stor[0], stor[28], inl[:LABEL_582] ; operand, left, right, addr
 fork_reenter stor[28], 0x2, stor[8] ; index, entrypoint, p2
 call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
@@ -6356,7 +5493,7 @@ gosub inl[:ADJUST_INCOMING_DAMAGE] ; addr
 gosub inl[:CHECK_MATERIAL_MAGICAL_SHIELD] ; addr
 jmp_cmp ==, 0x0, stor[8], inl[:APPLY_DAMAGE_NO_SHIELD] ; operand, left, right, addr
 
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x14, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 
 decr stor[8] ; sub expects 0/1 for material/magic shield, not 1/2
 mov stor[0], stor[28] ; source, dest
@@ -6886,7 +6023,7 @@ yield
 jmp_cmp !&, 0x10, var[58], inl[:WAIT_FOR_TURN_VALUE_CALCULATION] ; operand, left, right, addr
 
 ; copy current sequence volume to s8 and then to battle var 118
-call Scus94491BpeSegment::scriptGetSequenceVolume, stor[8] ; volume
+call Audio::scriptGetSequenceVolume, stor[8] ; volume
 mov stor[8], var[45][118] ; source, dest
 return
 
@@ -7203,22 +6340,22 @@ call SEffe::allocateDeffTmd, stor[19], 0xfff0f ; effectIndex, flags
 call SEffe::scriptSetRelativeScale, stor[19], 0xffffffff, 0x0, 0x400, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativePosition, stor[19], stor[30], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeColour, stor[19], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, r, g, b
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x1b, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x1b, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 LABEL_671:
 yield
 call Battle::scriptAnimationHasFinished, stor[30], stor[8] ; bentIndex, finished
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_671] ; operand, left, right, addr
 mov 0xffffff6f, stor[10] ; source, dest
 mov 0xa, stor[9] ; source, dest
-call Battle::FUN_800dac20, 0x6, 0xffee0000, 0xfff38000, 0xfff30000, stor[30] ; mode, x, y, z, scriptIndex
-call Battle::FUN_800db034, 0x6, 0x0, 0xfffa8000, 0x0, stor[30] ; mode, x, y, z, scriptIndex
+call Battle::scriptCameraSetViewpoint, 0x6, 0xffee0000, 0xfff38000, 0xfff30000, stor[30] ; mode, x, y, z, scriptIndex
+call Battle::scriptCameraSetRefpoint, 0x6, 0x0, 0xfffa8000, 0x0, stor[30] ; mode, x, y, z, scriptIndex
 mov 0x0, stor[8] ; source, dest
 gosub inl[:LABEL_680] ; addr
-call Battle::FUN_800dac20, 0x0, stor[11], stor[12], stor[13], 0x0 ; mode, x, y, z, scriptIndex
-call Battle::FUN_800db460, 0x5, 0x0, 0x10000, 0x120000, 0x0, 0x40, 0x6, 0x0 ; mode, x, y, z, ?, ticks, stepType, scriptIndex
+call Battle::scriptCameraSetViewpoint, 0x0, stor[11], stor[12], stor[13], 0x0 ; mode, x, y, z, scriptIndex
+call Battle::scriptCameraMoveViewpoint, 0x5, 0x0, 0x10000, 0x120000, 0x0, 0x40, 0x6, 0x0 ; mode, x, y, z, ?, ticks, stepType, scriptIndex
 mov 0x1, stor[8] ; source, dest
 gosub inl[:LABEL_680] ; addr
-call Battle::FUN_800db034, 0x0, stor[11], stor[12], stor[13], 0x0 ; mode, x, y, z, scriptIndex
+call Battle::scriptCameraSetRefpoint, 0x0, stor[11], stor[12], stor[13], 0x0 ; mode, x, y, z, scriptIndex
 call SEffe::scriptAddScaleScalerAttachment, stor[18], 0xd0, 0xd0, 0xd0, 0x0, 0x0, 0x0 ; effectIndex, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ
 call SEffe::scriptAddConstantColourScalerAttachment, stor[18], 0xffffffff, 0x14, 0x80, 0x80, 0x80 ; effectIndex, parentIndex, ticks, destR, destG, destB
 call SEffe::scriptAllocateParticleEffect, stor[22], 0xffffffff, 0xfff03, 0x20, 0xc8, 0x1, 0x100, 0x0, 0x4 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
@@ -7296,21 +6433,21 @@ call SEffe::scriptAddConstantColourScalerAttachment, stor[19], 0xffffffff, 0xa, 
 call SEffe::scriptAddLifespanAttachment, stor[19], 0xa ; effectIndex, ticks
 mov 0x5, stor[23] ; source, dest
 wait stor[23] ; frames
-call Battle::FUN_800db460, 0x5, 0x80000, 0x10000, 0x180000, 0x0, 0x190, 0x6, 0x0 ; mode, x, y, z, ?, ticks, stepType, scriptIndex
+call Battle::scriptCameraMoveViewpoint, 0x5, 0x80000, 0x10000, 0x180000, 0x0, 0x190, 0x6, 0x0 ; mode, x, y, z, ?, ticks, stepType, scriptIndex
 LABEL_678:
 yield
 jmp_cmp ==, 0x0, var[45][248], inl[:LABEL_678] ; operand, left, right, addr
 call SEffe::scriptAddScaleScalerMultiplicativeAttachmentTicks, stor[20], 0xffffffff, 0x5, 0x4000, 0x4000, 0x4000 ; effectIndex, parentIndex, ticks, x, y, z
 call SEffe::scriptAddConstantColourScalerAttachment, stor[20], 0xffffffff, 0x5, 0x0, 0x0, 0x0 ; effectIndex, parentIndex, ticks, destR, destG, destB
 call SEffe::scriptAddLifespanAttachment, stor[20], 0xa ; effectIndex, ticks
-call Scus94491BpeSegment::scriptStartFadeEffect, 0x3, 0xe ; type, frames
+call FullScreenEffects::scriptStartFadeEffect, 0x3, 0xe ; type, frames
 mov 0xd, stor[23] ; source, dest
 wait stor[23] ; frames
 gosub inl[:LABEL_719] ; addr
 gosub inl[:LABEL_299] ; addr
 gosub inl[:LABEL_720] ; addr
 call Battle::scriptSetBentPos, stor[30], stor[24], stor[25], stor[26] ; bentIndex, x, y, z
-call Scus94491BpeSegment::scriptPlaySound, 0x0, 0x1e, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+call Audio::scriptPlaySound, 0x0, 0x1e, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 mov 0x2, var[45][248] ; source, dest
 deallocate
 

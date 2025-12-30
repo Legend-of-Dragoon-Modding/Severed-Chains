@@ -10,8 +10,8 @@ import legend.game.types.MessageBoxResult;
 
 import java.util.function.BiConsumer;
 
+import static legend.game.Audio.playMenuSound;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;

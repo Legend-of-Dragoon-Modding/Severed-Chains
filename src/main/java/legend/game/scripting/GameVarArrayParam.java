@@ -1,20 +1,21 @@
 package legend.game.scripting;
 
-import legend.game.combat.Battle;
-import legend.game.submap.SMap;
 import legend.game.Scus94491BpeSegment_8006;
 import legend.game.Scus94491BpeSegment_800b;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.modding.events.battle.DragonBlockStaffOffEvent;
 import legend.game.modding.events.battle.DragonBlockStaffOnEvent;
+import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 
 public class GameVarArrayParam extends Param {
   private final int varIndex;
@@ -36,7 +37,7 @@ public class GameVarArrayParam extends Param {
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
       case 45 -> this.readBattleVar(this.arrIndex);
       // Indices 6-9 are indices for the four camera positions in a battle
-      case 46 -> ((Battle)currentEngineState_8004dd04).currentStageData_800c6718.get(this.arrIndex);
+      case 46 -> encounter.get(this.arrIndex);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex].index : -1;
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex].index : -1;
@@ -44,7 +45,7 @@ public class GameVarArrayParam extends Param {
       case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex];
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(this.arrIndex);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.getRaw(this.arrIndex);
-      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c.pack(this.arrIndex);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex];
       case 128 -> this.readStatusConditionsVar(0, this.arrIndex);
@@ -72,7 +73,7 @@ public class GameVarArrayParam extends Param {
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).set(val);
       case 45 -> this.writeCombatVar(this.arrIndex, val);
-      case 46 -> ((Battle)currentEngineState_8004dd04).currentStageData_800c6718.set(this.arrIndex, val);
+      case 46 -> encounter.set(this.arrIndex, val);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex] = SCRIPTS.getState(val, BattleEntity27c.class);
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
@@ -80,7 +81,7 @@ public class GameVarArrayParam extends Param {
       case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex] = val;
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(this.arrIndex, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.setRaw(this.arrIndex, val);
-      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c.unpack(this.arrIndex, val);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex] = val;
       case 128 -> this.writeStatusConditionsVar(0, this.arrIndex, val);
@@ -195,12 +196,12 @@ public class GameVarArrayParam extends Param {
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0;
       case 81 -> Scus94491BpeSegment_8006.battleState_8006e398._2c4;
       case 82 -> Scus94491BpeSegment_8006.battleState_8006e398._2c8;
-      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398._2cc;
+      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc;
       case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0;
       case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4;
-      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398._2d8;
-      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398._2dc;
-      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398._2e0;
+      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalFrames_2d8;
+      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398.additionOverlayHitFrameOffset_2dc;
+      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalSuccessFrames_2e0;
       case 89 -> Scus94491BpeSegment_8006.battleState_8006e398._2e4;
       case 90 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[0];
       case 91 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[1];
@@ -458,12 +459,12 @@ public class GameVarArrayParam extends Param {
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0 = val;
       case 81 -> Scus94491BpeSegment_8006.battleState_8006e398._2c4 = val;
       case 82 -> Scus94491BpeSegment_8006.battleState_8006e398._2c8 = val;
-      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398._2cc = val;
+      case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc = val;
       case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0 = val;
       case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4 = val;
-      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398._2d8 = val;
-      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398._2dc = val;
-      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398._2e0 = val;
+      case 86 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalFrames_2d8 = val;
+      case 87 -> Scus94491BpeSegment_8006.battleState_8006e398.additionOverlayHitFrameOffset_2dc = val;
+      case 88 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalSuccessFrames_2e0 = val;
       case 89 -> Scus94491BpeSegment_8006.battleState_8006e398._2e4 = val;
       case 90 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[0] = val;
       case 91 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[1] = val;
@@ -622,9 +623,9 @@ public class GameVarArrayParam extends Param {
       case 244 -> {
         Scus94491BpeSegment_8006.battleState_8006e398.fieldFlags_550 = val;
         if (val == 1) {
-          EVENTS.postEvent(new DragonBlockStaffOnEvent());
+          EVENTS.postEvent(new DragonBlockStaffOnEvent((Battle)currentEngineState_8004dd04));
         } else {
-          EVENTS.postEvent(new DragonBlockStaffOffEvent());
+          EVENTS.postEvent(new DragonBlockStaffOffEvent((Battle)currentEngineState_8004dd04));
         }
       }
       case 245 -> Scus94491BpeSegment_8006.battleState_8006e398._554 = val;

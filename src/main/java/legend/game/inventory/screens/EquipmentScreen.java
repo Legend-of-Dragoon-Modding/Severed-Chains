@@ -14,30 +14,30 @@ import legend.game.types.Renderable58;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.addHp;
+import static legend.game.SItem.addMp;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.equipmentGlyphs_80114180;
+import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
+import static legend.game.SItem.menuEquipmentSlotComparator;
 import static legend.game.SItem.renderCharacterEquipment;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.addHp;
-import static legend.game.Scus94491BpeSegment_8002.addMp;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
-import static legend.game.Scus94491BpeSegment_8002.menuEquipmentSlotComparator;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
-import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
+import static legend.game.SItem.setInventoryFromDisplay;
+import static legend.game.SItem.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -102,7 +102,7 @@ public class EquipmentScreen extends MenuScreen {
 
         this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
         this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8[this.charSlot]);
-        this.slotScroll = MathHelper.clamp(this.slotScroll, 0, Math.max(0, this.equipmentCount - 4));
+        this.slotScroll = Math.clamp(this.slotScroll, 0, Math.max(0, this.equipmentCount - 4));
 
         this.renderEquipmentScreen(this.charSlot, this.selectedSlot, this.slotScroll, 0xff);
         this.loadingStage++;
@@ -151,7 +151,7 @@ public class EquipmentScreen extends MenuScreen {
       final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentSlot);
       if(canEquip(equipment, charIndex)) {
         if(equipment != gameState_800babc8.charData_32c[charIndex].equipment_14.get(equipment.slot)) {
-          final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+          final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
           menuEntry.itemSlot_01 = equipmentSlot;
           this.menuItems.add(menuEntry);
         }

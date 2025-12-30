@@ -12,8 +12,8 @@ import legend.game.types.Renderable58;
 
 import java.util.Set;
 
-import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.Menus.allocateRenderable;
+import static legend.game.Menus.uiFile_800bdc3c;
 
 public abstract class Control extends ControlHost {
   private MenuScreen screen;
@@ -44,6 +44,10 @@ public abstract class Control extends ControlHost {
 
   void setScreen(final MenuScreen screen) {
     this.screen = screen;
+
+    for(final Control control : this.getControls()) {
+      control.setScreen(screen);
+    }
   }
 
   void setParent(final ControlHost parent) {
@@ -176,7 +180,11 @@ public abstract class Control extends ControlHost {
   }
 
   public void unfocus() {
-    this.screen.setFocus(null);
+    if(this.screen.getFocus() == this) {
+      this.screen.setFocus(null);
+    } else {
+      this.lostFocus();
+    }
   }
 
   protected void onResize() {

@@ -6,8 +6,8 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
+import legend.core.opengl.CopyShaderOptions;
 import legend.core.opengl.FrameBuffer;
-import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
@@ -36,6 +36,10 @@ import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.scripting.FlowControl;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +51,6 @@ import org.lwjgl.opengl.GLUtil;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -67,9 +70,8 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
-import static legend.core.MathHelper.clamp;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_OPEN_DEBUGGER;
@@ -101,6 +103,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_RGBA16;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.GL_VENDOR;
 import static org.lwjgl.opengl.GL11C.GL_VERSION;
@@ -134,12 +137,15 @@ public class RenderEngine {
   private Shader.UniformBuffer transforms2Uniform;
   private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
-  private Shader.UniformBuffer vdfUniform;
+  Shader.UniformBuffer scissorUniform;
+  private Shader.UniformBuffer clutAnimationUniform;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
-  private final FloatBuffer vdfBuffer = BufferUtils.createFloatBuffer(4 * 1024);
+  final FloatBuffer scissorBuffer = BufferUtils.createFloatBuffer(4);
+  private final FloatBuffer clutAnimationBuffer = BufferUtils.createFloatBuffer(2 * 2 * 1024); // 2 sets of 2 vectors
+  private int clutAnimationBufferIndex;
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -152,6 +158,14 @@ public class RenderEngine {
     }
   );
 
+  public static final ShaderType<CopyShaderOptions> COPY_SHADER = new ShaderType<>(
+    options -> loadShader("copy", "copy", options),
+    shader -> {
+      final Shader<CopyShaderOptions>.UniformMat4 projection = shader.new UniformMat4("projection");
+      return () -> new CopyShaderOptions(projection);
+    }
+  );
+
   public static final ShaderType<ShaderOptionsStandard> STANDARD_SHADER = new ShaderType<>(
     options -> loadShader("standard", "standard", options),
     shader -> {
@@ -160,7 +174,10 @@ public class RenderEngine {
       shader.new UniformInt("tex15").set(1);
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      shader.bindUniformBlock("clutAnimation", Shader.UniformBuffer.CLUT_ANIMATION);
       final Shader<ShaderOptionsStandard>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsStandard>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsStandard>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -184,6 +201,8 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      shader.bindUniformBlock("clutAnimation", Shader.UniformBuffer.CLUT_ANIMATION);
       final Shader<ShaderOptionsTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -191,7 +210,8 @@ public class RenderEngine {
       final Shader<ShaderOptionsTmd>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
       final Shader<ShaderOptionsTmd>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
       final Shader<ShaderOptionsTmd>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
-      return () -> new ShaderOptionsTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency);
+      final Shader<ShaderOptionsTmd>.UniformInt usePs1Depth = shader.new UniformInt("usePs1Depth");
+      return () -> new ShaderOptionsTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, usePs1Depth);
     }
   );
 
@@ -205,7 +225,8 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
-      shader.bindUniformBlock("vdf", Shader.UniformBuffer.VDF);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      shader.bindUniformBlock("clutAnimation", Shader.UniformBuffer.CLUT_ANIMATION);
       final Shader<ShaderOptionsBattleTmd>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<ShaderOptionsBattleTmd>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -213,10 +234,10 @@ public class RenderEngine {
       final Shader<ShaderOptionsBattleTmd>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
       final Shader<ShaderOptionsBattleTmd>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
       final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
+      final Shader<ShaderOptionsBattleTmd>.UniformInt usePs1Depth = shader.new UniformInt("usePs1Depth");
       final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags = shader.new UniformInt("ctmdFlags");
       final Shader<ShaderOptionsBattleTmd>.UniformVec3 battleColour = shader.new UniformVec3("battleColour");
-      final Shader<ShaderOptionsBattleTmd>.UniformInt useVdf = shader.new UniformInt("useVdf");
-      return () -> new ShaderOptionsBattleTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour, useVdf);
+      return () -> new ShaderOptionsBattleTmd(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency, tmdTranslucency, usePs1Depth, ctmdFlags, battleColour);
     }
   );
 
@@ -236,13 +257,11 @@ public class RenderEngine {
   /** Set when resizing the window so that the render buffers will be resized on the next frame */
   private boolean resizeRenderBuffers;
 
-  // Text
-  public Texture textTexture;
-  public Obj chars;
   // Plain quads
   public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
   public Obj opaqueQuad;
   // Simple quads
+  public Obj centredQuadOpaque;
   public Obj centredQuadBPlusF;
   public Obj centredQuadBMinusF;
   // Line box (reticles)
@@ -259,7 +278,7 @@ public class RenderEngine {
 
   private long lastFrame;
   private double vsyncCount;
-  private final float[] fps = new float[60];
+  private final long[] frameTimes = new long[60];
   private int fpsIndex;
 
   private Runnable renderCallback = () -> { };
@@ -292,7 +311,7 @@ public class RenderEngine {
   private final Deque<Runnable> tasks = new LinkedList<>();
 
   public RenderEngine() {
-    this.mainBatch = new RenderBatch(this, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    this.mainBatch = new RenderBatch(this, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
     this.state = new RenderState(this);
   }
@@ -306,7 +325,7 @@ public class RenderEngine {
    * out with a copy of the main render batch's config when they are created.
    */
   public RenderBatch addBatch() {
-    final RenderBatch batch = new RenderBatch(this, this.mainBatch, () -> this.vdfUniform, this.vdfBuffer, this.lightBuffer);
+    final RenderBatch batch = new RenderBatch(this, this.mainBatch, this.lightBuffer);
     this.batches.add(batch);
     return batch;
   }
@@ -475,6 +494,7 @@ public class RenderEngine {
     this.window.events().onInputActionReleased(this::onInputActionReleased);
 
     ShaderManager.addShader(SIMPLE_SHADER);
+    ShaderManager.addShader(COPY_SHADER);
     final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
     this.standardShader = ShaderManager.addShader(STANDARD_SHADER);
     this.standardShaderOptions = this.standardShader.makeOptions();
@@ -487,7 +507,8 @@ public class RenderEngine {
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
-    this.vdfUniform = ShaderManager.addUniformBuffer("vdf", new Shader.UniformBuffer((long)this.vdfBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.VDF));
+    this.scissorUniform = ShaderManager.addUniformBuffer("scissor", new Shader.UniformBuffer((long)this.scissorBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.SCISSOR));
+    this.clutAnimationUniform = ShaderManager.addUniformBuffer("clutAnimation", new Shader.UniformBuffer((long)this.clutAnimationBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.CLUT_ANIMATION));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
@@ -501,11 +522,6 @@ public class RenderEngine {
 
     postQuad.attribute(0, 0L, 2, 4);
     postQuad.attribute(1, 2L, 2, 4);
-
-    // Build text quads
-    this.textTexture = Texture.png(Path.of("./gfx/fonts/ingame.png"));
-    this.chars = new LegacyTextBuilder("Text Characters").build();
-    this.chars.persistent = true;
 
     // Build fullscreen fade quads
     for(final Translucency translucency : Translucency.FOR_RENDERING) {
@@ -523,6 +539,13 @@ public class RenderEngine {
       .size(1.0f, 1.0f)
       .build();
     this.opaqueQuad.persistent = true;
+
+    this.centredQuadOpaque = new QuadBuilder("Centred Quad Opaque")
+      .monochrome(1.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.centredQuadOpaque.persistent = true;
 
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
@@ -601,7 +624,7 @@ public class RenderEngine {
 
           this.scissorStack.reset();
         } else {
-          this.renderCallback.run();
+          this.renderFrame();
         }
       }
 
@@ -614,7 +637,7 @@ public class RenderEngine {
 
         this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
         this.resetBatches();
-        this.renderCallback.run();
+        this.renderFrame();
 
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
@@ -640,7 +663,7 @@ public class RenderEngine {
           this.mainBatch.orthoPool.ignoreQueues = true;
         }
 
-        this.renderCallback.run();
+        this.renderFrame();
       }
 
       if(legacyMode == 0) {
@@ -663,11 +686,6 @@ public class RenderEngine {
 
           this.renderBatch(this.mainBatch);
         }
-
-        // Fix for GH#1885
-        // Don't know why it's broken or why this fixes it. The scissoring for the text is somehow getting
-        // applied to the render buffer rendering. Resetting the scissor rect to the full screen fixes it.
-        this.state.fullScreenScissor();
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -715,21 +733,21 @@ public class RenderEngine {
           this.frameSkipIndex = 0;
         }
 
-        final float fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
+        final long frameTime = System.nanoTime() - this.lastFrame;
         this.lastFrame = System.nanoTime();
         this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
         final int fpsLimit = Math.max(1, RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier());
-        this.fps[this.fpsIndex] = fps;
+        this.frameTimes[this.fpsIndex] = frameTime;
         this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
 
         if(this.fpsIndex == 0) {
-          float avg = 0.0f;
+          long avg = 0L;
           for(int i = 0; i < fpsLimit; i++) {
-            avg += this.fps[i];
+            avg += this.frameTimes[i];
           }
 
-          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
+          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, 1_000_000_000.0f / (avg / (float)fpsLimit), fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
         }
       }
 
@@ -748,14 +766,26 @@ public class RenderEngine {
     });
   }
 
+  private void renderFrame() {
+    // Reset CLUT animations
+    this.clutAnimationBufferIndex = 0;
+
+    // Run game callback
+    this.renderCallback.run();
+
+    // Upload CLUT animations
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex, -1);
+    this.clutAnimationUniform.set(this.clutAnimationBuffer);
+  }
+
   private void renderBatch(final RenderBatch batch) {
     if(batch.needsSorting) {
+      this.sortPerspectivePool(batch.modelPool);
       this.sortOrthoPool(batch.orthoPool);
       batch.needsSorting = false;
     }
 
     this.state.initBatch(batch);
-    this.state.enableScissor();
 
     this.clearDepth();
 
@@ -774,8 +804,6 @@ public class RenderEngine {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPoolTranslucent(batch, batch.orthoPool);
-
-    this.state.disableScissor();
   }
 
   private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
@@ -807,7 +835,7 @@ public class RenderEngine {
       entry.useShader(modelIndex, 1);
       this.state.enableDepthTest(entry.opaqueDepthComparator);
 
-      this.state.scissor(entry);
+      this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
 
       for(int layer = 0; layer < entry.getLayers(); layer++) {
         if(entry.shouldRender(null, layer)) {
@@ -866,7 +894,7 @@ public class RenderEngine {
         entry.useShader(modelIndex, entry.texturesUsed ? 0 : 2); // Don't discard if we aren't using the emulated VRAM texture
         this.state.enableDepthTest(entry.translucentDepthComparator);
 
-        this.state.scissor(entry);
+        this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
 
         entry.useTexture();
 
@@ -893,6 +921,51 @@ public class RenderEngine {
         }
       }
     }
+  }
+
+  public void addClutAnimation(final int originalX, final int originalY, final int replacementX, final int replacementY) {
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, originalX);
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, originalY);
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, replacementX);
+    this.clutAnimationBuffer.put(this.clutAnimationBufferIndex++, replacementY);
+  }
+
+  /** Duplicates the passed in texture into a new texture. New texture must be deleted by the caller. Can only be called on the render thread. */
+  public Texture copyTexture(final Texture texture) {
+    final Texture copy = Texture.copyAttributesFrom(texture);
+    final FrameBuffer buffer = FrameBuffer.create(builder -> builder.attachment(copy, GL_COLOR_ATTACHMENT0));
+    final Shader<CopyShaderOptions> shader = ShaderManager.getShader(COPY_SHADER);
+    final CopyShaderOptions options = shader.makeOptions();
+
+    final int w = texture.width;
+    final int h = texture.height;
+
+    glDepthMask(false);
+    glDisable(GL_BLEND);
+    this.state.backfaceCulling(false);
+    this.state.disableDepthTest();
+
+    buffer.bind();
+    texture.use();
+
+    glViewport(0, 0, w, h);
+    options.projection.ortho2DLH(0.0f, w, 0.0f, h);
+    shader.use();
+    options.apply();
+
+    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+      0, 0, 0, 0,
+      0, h, 0, 1,
+      w, 0, 1, 0,
+      w, h, 1, 1,
+    }, 4);
+    mesh.attribute(0, 0L, 2, 4);
+    mesh.attribute(1, 2L, 2, 4);
+    mesh.draw();
+    mesh.delete();
+    buffer.delete();
+
+    return copy;
   }
 
   private void handleMovement() {
@@ -1003,10 +1076,33 @@ public class RenderEngine {
     this.transformsUniform.set(this.transformsBuffer);
   }
 
-  private final Comparator<QueuedModel<?, ?>> translucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.transforms.m32()).reversed();
+  private final Comparator<QueuedModel<?, ?>> perspectiveTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.modelView.m32() + model.screenspaceOffset.z).reversed().thenComparingInt(model -> model.sequence);
+  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter = Comparator.comparingDouble((QueuedModel<?, ?> model) -> model.transforms.m32() + model.screenspaceOffset.z).reversed().thenComparingInt(model -> model.sequence);
+  private final Comparator<QueuedModel<?, ?>> orthoTranslucencySorter1 = (a, b) -> {
+    final float depthA = a.transforms.m32() + a.screenspaceOffset.z;
+    final float depthB = b.transforms.m32() + b.screenspaceOffset.z;
+
+    final int depthComparison = Float.compare(depthB, depthA);
+
+    if(depthComparison == 0) {
+      return Integer.compare(b.sequence, a.sequence);
+    }
+
+    return depthComparison;
+  };
+
+  private void sortPerspectivePool(final QueuePool<QueuedModel<?, ?>> pool) {
+    // Cache modelview for sorting
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel<?, ?> model = pool.get(i);
+      this.camera3d.getView().mul(model.transforms, model.modelView);
+    }
+
+    pool.sort(this.perspectiveTranslucencySorter);
+  }
 
   private void sortOrthoPool(final QueuePool<QueuedModel<?, ?>> pool) {
-    pool.sort(this.translucencySorter);
+    pool.sort(this.orthoTranslucencySorter1);
   }
 
   public <T extends QueuedModel<?, ?>> T queueModel(final Obj obj, final Class<T> type) {
@@ -1175,7 +1271,7 @@ public class RenderEngine {
       this.yaw += x * MOUSE_SPEED;
       this.pitch -= y * MOUSE_SPEED;
 
-      this.pitch = clamp(this.pitch, -PI / 2, PI / 2);
+      this.pitch = Math.clamp(this.pitch, -PI / 2, PI / 2);
 
       this.camera3d.look(-this.yaw, -this.pitch);
       this.camera3d.getView().get3x3(worldToScreenMatrix_800c3548);
@@ -1299,5 +1395,12 @@ public class RenderEngine {
     if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD.get()) {
       this.frameAdvance = false;
     }
+  }
+
+  @ScriptDescription("Returns a .12 aspect ratio multiplier for adjusting widths for widescreen")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "multiplier", description = "The width multiplier (.12)")
+  public static FlowControl scriptGetRenderAspectMultiplier(final RunningScript<?> script) {
+    script.params_20[0].set((int)(RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio() * 0x1000));
+    return FlowControl.CONTINUE;
   }
 }

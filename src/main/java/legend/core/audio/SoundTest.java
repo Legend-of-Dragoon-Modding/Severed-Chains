@@ -11,12 +11,12 @@ public final class SoundTest {
   private SoundTest() {}
 
   public static void main(final String[] args) {
-    final AudioThread audioThread = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000, EffectsOverTimeGranularity.Finer);
+    final AudioThread audioThread = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, EffectsOverTimeGranularity.Double);
 
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");
 
-    final BackgroundMusic bgm = new BackgroundMusic(Loader.loadDirectory("SECT/DRGN0.BIN/" + FILE_INDEX), FILE_INDEX, audioThread.getSampleRate());
+    final BackgroundMusic bgm = new BackgroundMusic(Loader.loadDirectory("SECT/DRGN0.BIN/" + FILE_INDEX), FILE_INDEX);
 
     spuThread.start();
 

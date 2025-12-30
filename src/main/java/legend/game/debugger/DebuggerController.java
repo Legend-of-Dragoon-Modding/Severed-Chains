@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
@@ -17,6 +16,7 @@ import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapState;
+import legend.game.types.GsRVIEW2;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
 import legend.game.wmap.WmapState;
@@ -24,12 +24,15 @@ import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.GsSetRefView2L;
+import static legend.game.Graphics.GsSetSmapRefView2L;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
@@ -73,14 +76,6 @@ public class DebuggerController {
   public Button setGameSpeedMultiplier;
 
   @FXML
-  public CheckBox battleUiColour;
-  @FXML
-  public Spinner<Integer> battleUiColourR;
-  @FXML
-  public Spinner<Integer> battleUiColourG;
-  @FXML
-  public Spinner<Integer> battleUiColourB;
-  @FXML
   public CheckBox additionOverlayColour;
   @FXML
   public Spinner<Integer> additionOverlayR;
@@ -110,75 +105,26 @@ public class DebuggerController {
   public CheckBox fastTextSpeed;
   @FXML
   public CheckBox autoAdvanceText;
+
   @FXML
-  public CheckBox textBoxColour;
+  public Spinner<Double> viewpointX;
   @FXML
-  public RadioButton textBoxBase;
+  public Spinner<Double> viewpointY;
   @FXML
-  public RadioButton textBoxHorizontal;
+  public Spinner<Double> viewpointZ;
   @FXML
-  public RadioButton textBoxVertical;
+  public Spinner<Double> refpointX;
   @FXML
-  public Spinner<Integer> textBox1R;
+  public Spinner<Double> refpointY;
   @FXML
-  public Spinner<Integer> textBox1G;
-  @FXML
-  public Spinner<Integer> textBox1B;
-  @FXML
-  public Spinner<Integer> textBox2R;
-  @FXML
-  public Spinner<Integer> textBox2G;
-  @FXML
-  public Spinner<Integer> textBox2B;
-  @FXML
-  public Spinner<Integer> textBox3R;
-  @FXML
-  public Spinner<Integer> textBox3G;
-  @FXML
-  public Spinner<Integer> textBox3B;
-  @FXML
-  public Spinner<Integer> textBox4R;
-  @FXML
-  public Spinner<Integer> textBox4G;
-  @FXML
-  public Spinner<Integer> textBox4B;
-  @FXML
-  public Spinner<Integer> textBox5R;
-  @FXML
-  public Spinner<Integer> textBox5G;
-  @FXML
-  public Spinner<Integer> textBox5B;
-  @FXML
-  public Spinner<Integer> textBox6R;
-  @FXML
-  public Spinner<Integer> textBox6G;
-  @FXML
-  public Spinner<Integer> textBox6B;
-  @FXML
-  public Spinner<Integer> textBox7R;
-  @FXML
-  public Spinner<Integer> textBox7G;
-  @FXML
-  public Spinner<Integer> textBox7B;
-  @FXML
-  public Spinner<Integer> textBox8R;
-  @FXML
-  public Spinner<Integer> textBox8G;
-  @FXML
-  public Spinner<Integer> textBox8B;
-  @FXML
-  public Spinner<Integer> textBoxTransparencyMode;
+  public Spinner<Double> refpointZ;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
-    this.battleUiColour.setSelected(Config.changeBattleRgb());
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-    this.battleUiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().x * 255)));
-    this.battleUiColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().y * 255)));
-    this.battleUiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().z * 255)));
     this.additionOverlayColour.setSelected(Config.changeAdditionOverlayRgb());
     this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRgb() & 0xff)));
     this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 8) & 0xff)));
@@ -193,46 +139,13 @@ public class DebuggerController {
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
     this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
     this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
-    this.textBoxColour.setSelected(Config.textBoxColour());
-    this.textBox1R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(0) & 0xff)));
-    this.textBox1G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(0) >> 8) & 0xff)));
-    this.textBox1B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(0) >> 16) & 0xff)));
-    this.textBox2R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(1) & 0xff)));
-    this.textBox2G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(1) >> 8) & 0xff)));
-    this.textBox2B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(1) >> 16) & 0xff)));
-    this.textBox3R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(2) & 0xff)));
-    this.textBox3G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(2) >> 8) & 0xff)));
-    this.textBox3B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(2) >> 16) & 0xff)));
-    this.textBox4R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(3) & 0xff)));
-    this.textBox4G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(3) >> 8) & 0xff)));
-    this.textBox4B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(3) >> 16) & 0xff)));
-    this.textBox5R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(4) & 0xff)));
-    this.textBox5G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(4) >> 8) & 0xff)));
-    this.textBox5B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(4) >> 16) & 0xff)));
-    this.textBox6R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(5) & 0xff)));
-    this.textBox6G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(5) >> 8) & 0xff)));
-    this.textBox6B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(5) >> 16) & 0xff)));
-    this.textBox7R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(6) & 0xff)));
-    this.textBox7G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(6) >> 8) & 0xff)));
-    this.textBox7B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(6) >> 16) & 0xff)));
-    this.textBox8R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(7) & 0xff)));
-    this.textBox8G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 8) & 0xff)));
-    this.textBox8B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 16) & 0xff)));
-    this.textBoxTransparencyMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, Config.getTextBoxTransparencyMode()));
 
-    if(Config.getTextBoxColourMode() == 0) {
-      this.textBoxBase.setSelected(true);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(false);
-    } else if(Config.getTextBoxColourMode() == 1) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(true);
-      this.textBoxVertical.setSelected(false);
-    } else if(Config.getTextBoxColourMode() == 2) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(true);
-    }
+    this.viewpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.viewpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.viewpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.refpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.refpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+    this.refpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
 
     EVENTS.register(this);
   }
@@ -310,18 +223,19 @@ public class DebuggerController {
       smap.submap.prepareEncounter(this.encounterId.getValue(), false);
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
-      encounterId_800bb0f8 = this.encounterId.getValue();
+      final int encounterId = this.encounterId.getValue();
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
+      final int stageId;
       if(Config.combatStage()) {
-        battleStage_800bb0f4 = Config.getCombatStage();
+        stageId = Config.getCombatStage();
+      } else if(directionalPathSegment.battleStage_04 == -1) {
+        stageId = 1;
       } else {
-        if(directionalPathSegment.battleStage_04 == -1) {
-          battleStage_800bb0f4 = 1;
-        } else {
-          battleStage_800bb0f4 = directionalPathSegment.battleStage_04;
-        }
+        stageId = directionalPathSegment.battleStage_04;
       }
+
+      startLegacyEncounter(encounterId, stageId);
 
       gameState_800babc8.directionalPathIndex_4de = wmap.mapState_800c6798.directionalPathIndex_12;
       gameState_800babc8.pathIndex_4d8 = wmap.mapState_800c6798.pathIndex_14;
@@ -367,21 +281,6 @@ public class DebuggerController {
   @FXML
   private void toggleSaveAnywhere(final ActionEvent event) {
     CONFIG.setConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get(), !CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-  }
-
-  @FXML
-  private void toggleBattleUiColour(final ActionEvent event) {
-    Config.toggleBattleUiColour();
-  }
-
-  @FXML
-  private void setBattleUiRgb(final ActionEvent event) {
-    final int rgb = ((this.battleUiColourR.getValueFactory().getValue().byteValue() & 0xff) << 16) |
-      ((this.battleUiColourG.getValueFactory().getValue().byteValue() & 0xff) << 8) |
-      ((this.battleUiColourB.getValueFactory().getValue().byteValue() & 0xff));
-
-    Config.setBattleRgb(rgb);
-    this.battleUiColour.setSelected(true);
   }
 
   @FXML
@@ -485,176 +384,58 @@ public class DebuggerController {
   }
 
   @FXML
-  private void toggleTextBoxColour(final ActionEvent event) {
-    Config.toggleTextBoxColour();
-  }
+  private void getViewpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
 
-  @FXML
-  private void setTextBoxRadio(final ActionEvent event) {
-    if((event.toString().contains("textBoxBase"))) {
-      this.textBoxBase.setSelected(true);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(false);
-      Config.setTextBoxColourMode(0);
-    } else if (event.toString().contains("textBoxHorizontal")) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(true);
-      this.textBoxVertical.setSelected(false);
-      Config.setTextBoxColourMode(1);
-    } else if (event.toString().contains("textBoxVertical")) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(true);
-      Config.setTextBoxColourMode(2);
+    if(camera != null) {
+      this.viewpointX.getValueFactory().setValue((double)camera.viewpoint_00.x);
+      this.viewpointY.getValueFactory().setValue((double)camera.viewpoint_00.y);
+      this.viewpointZ.getValueFactory().setValue((double)camera.viewpoint_00.z);
     }
   }
 
   @FXML
-  private void setTextBox1() {
-    final byte[] rgbArray = {
-      this.textBox1R.getValueFactory().getValue().byteValue(),
-      this.textBox1G.getValueFactory().getValue().byteValue(),
-      this.textBox1B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
+  private void setViewpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
 
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+    if(camera != null) {
+      camera.viewpoint_00.x = (float)(double)this.viewpointX.getValueFactory().getValue();
+      camera.viewpoint_00.y = (float)(double)this.viewpointY.getValueFactory().getValue();
+      camera.viewpoint_00.z = (float)(double)this.viewpointZ.getValueFactory().getValue();
 
-    Config.setTextBoxRgb(0, rgb);
+      if(currentEngineState_8004dd04 instanceof SMap) {
+        GsSetSmapRefView2L(camera);
+      } else {
+        GsSetRefView2L(camera);
+      }
+    }
   }
 
   @FXML
-  private void setTextBox2() {
-    final byte[] rgbArray = {
-      this.textBox2R.getValueFactory().getValue().byteValue(),
-      this.textBox2G.getValueFactory().getValue().byteValue(),
-      this.textBox2B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
+  private void getRefpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
 
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(1, rgb);
+    if(camera != null) {
+      this.refpointX.getValueFactory().setValue((double)camera.refpoint_0c.x);
+      this.refpointY.getValueFactory().setValue((double)camera.refpoint_0c.y);
+      this.refpointZ.getValueFactory().setValue((double)camera.refpoint_0c.z);
+    }
   }
 
   @FXML
-  private void setTextBox3() {
-    final byte[] rgbArray = {
-      this.textBox3R.getValueFactory().getValue().byteValue(),
-      this.textBox3G.getValueFactory().getValue().byteValue(),
-      this.textBox3B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
+  private void setRefpoint() {
+    final GsRVIEW2 camera = currentEngineState_8004dd04.getCamera();
 
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+    if(camera != null) {
+      camera.refpoint_0c.x = (float)(double)this.refpointX.getValueFactory().getValue();
+      camera.refpoint_0c.y = (float)(double)this.refpointY.getValueFactory().getValue();
+      camera.refpoint_0c.z = (float)(double)this.refpointZ.getValueFactory().getValue();
 
-    Config.setTextBoxRgb(2, rgb);
-  }
-
-  @FXML
-  private void setTextBox4() {
-    final byte[] rgbArray = {
-      this.textBox4R.getValueFactory().getValue().byteValue(),
-      this.textBox4G.getValueFactory().getValue().byteValue(),
-      this.textBox4B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(3, rgb);
-  }
-
-  @FXML
-  private void setTextBox5() {
-    final byte[] rgbArray = {
-      this.textBox5R.getValueFactory().getValue().byteValue(),
-      this.textBox5G.getValueFactory().getValue().byteValue(),
-      this.textBox5B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(4, rgb);
-  }
-
-  @FXML
-  private void setTextBox6() {
-    final byte[] rgbArray = {
-      this.textBox6R.getValueFactory().getValue().byteValue(),
-      this.textBox6G.getValueFactory().getValue().byteValue(),
-      this.textBox6B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(5, rgb);
-  }
-
-  @FXML
-  private void setTextBox7() {
-    final byte[] rgbArray = {
-      this.textBox7R.getValueFactory().getValue().byteValue(),
-      this.textBox7G.getValueFactory().getValue().byteValue(),
-      this.textBox7B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(6, rgb);
-  }
-
-  @FXML
-  private void setTextBox8() {
-    final byte[] rgbArray = {
-      this.textBox8R.getValueFactory().getValue().byteValue(),
-      this.textBox8G.getValueFactory().getValue().byteValue(),
-      this.textBox8B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(7, rgb);
-  }
-
-  @FXML
-  private void setTextBoxTransparencyMode() {
-    Config.setTextBoxTransparencyMode(this.textBoxTransparencyMode.getValue());
+      if(currentEngineState_8004dd04 instanceof SMap) {
+        GsSetSmapRefView2L(camera);
+      } else {
+        GsSetRefView2L(camera);
+      }
+    }
   }
 }

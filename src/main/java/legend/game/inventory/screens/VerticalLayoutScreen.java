@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
+import it.unimi.dsi.fastutil.booleans.BooleanList;
 import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Brackets;
@@ -12,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -33,6 +35,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private final List<Label> rows = new ArrayList<>();
   private final List<Control> configControls = new ArrayList<>();
+  private final BooleanList visible = new BooleanArrayList();
 
   protected final Glyph upArrow;
   protected final Glyph downArrow;
@@ -45,6 +48,11 @@ public class VerticalLayoutScreen extends MenuScreen {
 
     this.upArrow = this.addControl(Glyph.blueSpinnerUp());
     this.downArrow = this.addControl(Glyph.blueSpinnerDown());
+  }
+
+  public void setRowVisible(final int index, final boolean visible) {
+    this.visible.set(index, visible);
+    this.updateEntries();
   }
 
   protected float getSizeScale() {
@@ -79,6 +87,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     this.rows.add(label);
+    this.visible.add(true);
 
     if(this.rows.size() == 1) {
       this.highlightRow(0);
@@ -123,15 +132,23 @@ public class VerticalLayoutScreen extends MenuScreen {
   }
 
   private void updateEntries() {
-    for(int i = 0; i < this.rows.size(); i++) {
-      final Control control = this.rows.get(i);
+    for(int rowIndex = 0, visibleIndex = 0; rowIndex < this.rows.size(); rowIndex++) {
+      final Control control = this.rows.get(rowIndex);
+      final boolean visible = this.visible.getBoolean(rowIndex);
 
-      if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries()) {
-        control.setY(32 + (i - this.scroll) * 13);
+      if(!visible) {
+        control.hide();
+        continue;
+      }
+
+      if(visibleIndex >= this.scroll && visibleIndex < this.scroll + this.maxVisibleEntries()) {
+        control.setY(32 + (visibleIndex - this.scroll) * 13);
         control.show();
       } else {
         control.hide();
       }
+
+      visibleIndex++;
     }
 
     if(!this.rows.isEmpty() && this.highlightedRow != -1) {
@@ -198,14 +215,23 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void menuNavigateUp() {
     final int optionCount = this.rows.size();
-    if(this.highlightedRow > this.scroll) {
+
+    // Skip over hidden entries
+    int destRow;
+    for(destRow = this.highlightedRow - 1; destRow >= this.scroll; destRow--) {
+      if(this.visible.getBoolean(destRow)) {
+        break;
+      }
+    }
+
+    if(destRow >= this.scroll) {
       playMenuSound(1);
-      this.highlightRow(this.highlightedRow - 1);
+      this.highlightRow(destRow);
     } else if(this.scroll > 0) {
       playMenuSound(1);
       this.scroll--;
       this.updateEntries();
-      this.highlightRow(Math.floorMod(this.highlightedRow - 1, optionCount));
+      this.highlightRow(Math.floorMod(destRow, optionCount));
     } else if(optionCount > 1 && this.allowWrapY) {
       playMenuSound(1);
       this.highlightRow(optionCount - 1);
@@ -216,12 +242,21 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void menuNavigateDown() {
     final int optionCount = this.rows.size();
-    if(this.highlightedRow < this.scroll + this.visibleEntries() - 1) {
+
+    // Skip over hidden entries
+    int destRow;
+    for(destRow = this.highlightedRow + 1; destRow < this.scroll + this.visibleEntries(); destRow++) {
+      if(this.visible.getBoolean(destRow)) {
+        break;
+      }
+    }
+
+    if(destRow < this.scroll + this.visibleEntries()) {
       playMenuSound(1);
-      this.highlightRow(this.highlightedRow + 1);
-    } else if(this.highlightedRow != optionCount - 1) {
+      this.highlightRow(destRow);
+    } else if(destRow != optionCount) {
       playMenuSound(1);
-      this.highlightRow(this.highlightedRow + 1);
+      this.highlightRow(destRow);
       this.scroll++;
       this.updateEntries();
     } else if(optionCount > 1 && this.allowWrapY) {

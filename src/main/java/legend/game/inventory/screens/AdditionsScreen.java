@@ -3,20 +3,27 @@ package legend.game.inventory.screens;
 import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
-import legend.game.types.MenuAdditionInfo;
+import legend.game.additions.Addition;
+import legend.game.additions.CharacterAdditionStats;
+import legend.game.i18n.I18n;
+import legend.game.types.CharacterData2c;
 import legend.game.types.Renderable58;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
+import static legend.game.Menus.unloadRenderable;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_SELECTED;
 import static legend.game.SItem.additionGlyphs_801141e4;
-import static legend.game.SItem.additions_80114070;
-import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.loadAdditions;
@@ -24,15 +31,10 @@ import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
-import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -52,7 +54,7 @@ public class AdditionsScreen extends MenuScreen {
   private int charSlot;
   private int selectedSlot;
   private Renderable58 additionHighlight;
-  private final MenuAdditionInfo[] additions = new MenuAdditionInfo[9];
+  private final List<Addition> additions = new ArrayList<>();
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapX = true;
@@ -60,7 +62,6 @@ public class AdditionsScreen extends MenuScreen {
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;
-    Arrays.setAll(this.additions, i -> new MenuAdditionInfo());
   }
 
   @Override
@@ -79,7 +80,7 @@ public class AdditionsScreen extends MenuScreen {
         deallocateRenderables(0);
         loadAdditions(characterIndices_800bdbb8[this.charSlot], this.additions);
 
-        if(this.additions[0].offset_00 != -1) {
+        if(!this.additions.isEmpty()) {
           this.additionHighlight = allocateUiElement(117, 117, 39, this.getAdditionSlotY(this.selectedSlot) - 4);
           FUN_80104b60(this.additionHighlight);
         }
@@ -119,43 +120,45 @@ public class AdditionsScreen extends MenuScreen {
     }
   }
 
-  private void renderAdditions(final int charSlot, final MenuAdditionInfo[] additions, final int selectedAdditionOffset, final long a4) {
+  private void renderAdditions(final int charSlot, final List<Addition> additions, final RegistryId selectedAddition, final long a4) {
     final boolean allocate = a4 == 0xff;
     final int charIndex = characterIndices_800bdbb8[charSlot];
 
-    if(additions[0].offset_00 == -1) {
+    if(additions.isEmpty()) {
       renderText(Addition_cannot_be_used_8011c340, 106, 150, UI_TEXT);
     } else {
       if(allocate) {
         renderGlyphs(additionGlyphs_801141e4, 0, 0);
       }
 
-      for(int i = 0; i < 8; i++) {
-        final int y = this.getAdditionSlotY(i);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
-        if(allocate && i < additionCounts_8004f5c0[charIndex]) { // Total number of additions
+      if(allocate) {
+        for(int i = 0; i < CHARACTER_ADDITIONS[charIndex].length; i++) {
+          final int y = this.getAdditionSlotY(i);
           renderCharacter(24, y, i + 1); // Addition number
         }
+      }
 
-        final int offset = additions[i].offset_00;
-        final int index = additions[i].index_01;
+      for(int i = 0; i < this.additions.size(); i++) {
+        final Addition addition = this.additions.get(i);
+        final int y = this.getAdditionSlotY(i);
 
-        if(offset != -1) {
-          renderText(additions_8011a064[offset], 33, y - 2, offset != selectedAdditionOffset ? UI_TEXT : UI_TEXT_SELECTED);
+        renderText(I18n.translate(addition), 33, y - 2, !addition.getRegistryId().equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);
 
-          if(allocate) {
-            final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
-            renderThreeDigitNumber(197, y, level); // Addition level
-            renderThreeDigitNumber(230, y, additionData_80052884[offset].attacks_01); // Number of attacks
-            renderThreeDigitNumber(263, y, additionData_80052884[offset].sp_02[level - 1]); // SP
-            renderThreeDigitNumber(297, y, additionData_80052884[offset].damage_0c * (additions_80114070[offset][level].damageMultiplier_03 + 100) / 100); // Damage
-            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
+        if(allocate) {
+          final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
+          final int level = additionStats.level + 1;
+          renderThreeDigitNumber(197, y, level);
+          renderThreeDigitNumber(230, y, addition.getHitCount(charData, additionStats));
+          renderThreeDigitNumber(263, y, addition.getSp(charData, additionStats));
+          renderThreeDigitNumber(297, y, addition.getDamage(charData, additionStats));
+          renderThreeDigitNumber(322, y, additionStats.xp);
 
-            if(level < 5) {
-              renderThreeDigitNumber(342, y, level * 20); // Max XP
-            } else {
-              renderCharacter(354, y, 218); // Dash if at max XP
-            }
+          if(level < 5) {
+            renderThreeDigitNumber(342, y, level * 20); // Max XP
+          } else {
+            renderCharacter(354, y, 218); // Dash if at max XP
           }
         }
       }
@@ -186,7 +189,7 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 7; i++) {
-      if(this.additions[0].offset_00 != -1 && this.selectedSlot != i && MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
+      if(!this.additions.isEmpty() && this.selectedSlot != i && MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
         playMenuSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
@@ -207,22 +210,15 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(button == PLATFORM.getMouseButton(0) && this.additions[0].offset_00 != -1) {
-      for(int i = 0; i < 7; i++) {
+    if(button == PLATFORM.getMouseButton(0) && !this.additions.isEmpty()) {
+      for(int i = 0; i < this.additions.size(); i++) {
         if(MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
           this.selectedSlot = i;
           this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
-
-          final int additionOffset = this.additions[i].offset_00;
-
-          if(additionOffset != -1) {
-            gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = additionOffset;
-            playMenuSound(2);
-            unloadRenderable(this.additionHighlight);
-            this.loadingStage = 1;
-          } else {
-            playMenuSound(40);
-          }
+          gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = this.additions.get(i).getRegistryId();
+          playMenuSound(2);
+          unloadRenderable(this.additionHighlight);
+          this.loadingStage = 1;
 
           return InputPropagation.HANDLED;
         }
@@ -238,7 +234,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    if(this.additions[0].offset_00 != -1) {
+    if(!this.additions.isEmpty()) {
       if(this.selectedSlot > 0) {
         playMenuSound(1);
         this.selectedSlot--;
@@ -252,7 +248,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuNavigateDown() {
-    if(this.additions[0].offset_00 != -1) {
+    if(!this.additions.isEmpty()) {
       if(this.selectedSlot < 6) {
         playMenuSound(1);
         this.selectedSlot++;
@@ -298,10 +294,8 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuSelect() {
-    final int additionOffset = this.additions[this.selectedSlot].offset_00;
-
-    if(additionOffset != -1) {
-      gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = additionOffset;
+    if(this.selectedSlot < this.additions.size()) {
+      gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = this.additions.get(this.selectedSlot).getRegistryId();
       playMenuSound(2);
       unloadRenderable(this.additionHighlight);
       this.loadingStage = 1;

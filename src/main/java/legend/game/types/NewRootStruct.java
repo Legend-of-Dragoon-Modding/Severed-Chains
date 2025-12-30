@@ -7,7 +7,7 @@ import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class NewRootStruct {

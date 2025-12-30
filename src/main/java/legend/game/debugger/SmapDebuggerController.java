@@ -20,7 +20,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 
 public class SmapDebuggerController {
   @FXML
@@ -51,6 +51,10 @@ public class SmapDebuggerController {
   public Spinner<Double> scaleY;
   @FXML
   public Spinner<Double> scaleZ;
+  @FXML
+  public Spinner<Integer> depthOffset;
+  @FXML
+  public CheckBox usePs1Depth;
 
   @FXML
   public CheckBox collideByPlayer;
@@ -83,7 +87,7 @@ public class SmapDebuggerController {
   private SubmapObject210 sobj;
 
   public void initialize() {
-    for(int i = 0; i < ((SMap)currentEngineState_8004dd04).sobjCount_800c6730; i++) {
+    for(int i = 0; i < ((SMap)currentEngineState_8004dd04).submap.objects.size(); i++) {
       this.sobjs.add(new ListItem(this::getSobjName, i));
     }
 
@@ -120,6 +124,7 @@ public class SmapDebuggerController {
     this.scaleX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.scaleY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.scaleZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.depthOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
 
     this.sobjList.getSelectionModel().select(0);
   }
@@ -158,6 +163,8 @@ public class SmapDebuggerController {
     this.scaleX.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.x));
     this.scaleY.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.y));
     this.scaleZ.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.z));
+    this.depthOffset.getValueFactory().setValue(this.sobj.model_00.zOffset_a0);
+    this.usePs1Depth.setSelected(this.sobj.model_00.usePs1Depth);
 
     this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
     this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
@@ -222,6 +229,19 @@ public class SmapDebuggerController {
       this.sobj.model_00.coord2_14.transforms.scale.x = this.scaleX.getValueFactory().getValue().floatValue();
       this.sobj.model_00.coord2_14.transforms.scale.y = this.scaleY.getValueFactory().getValue().floatValue();
       this.sobj.model_00.coord2_14.transforms.scale.z = this.scaleZ.getValueFactory().getValue().floatValue();
+    }
+  }
+
+  public void updateDepthOffset(final ActionEvent event) {
+    if(this.sobj != null) {
+      this.sobj.model_00.zOffset_a0 = this.depthOffset.getValueFactory().getValue();
+    }
+  }
+
+  @FXML
+  public void usePs1DepthClick(final ActionEvent actionEvent) {
+    if(this.sobj != null) {
+      this.sobj.model_00.usePs1Depth = this.usePs1Depth.isSelected();
     }
   }
 

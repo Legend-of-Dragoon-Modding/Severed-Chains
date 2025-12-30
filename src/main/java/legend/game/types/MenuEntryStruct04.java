@@ -1,15 +1,8 @@
 package legend.game.types;
 
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.ItemIcon;
 
-import java.util.function.Function;
-
-public class MenuEntryStruct04<T> {
-  private final Function<T, String> nameTranslationKey;
-  private final Function<T, String> descriptionTranslationKey;
-  private final Function<T, ItemIcon> icon;
-
+public class MenuEntryStruct04<T extends InventoryEntry> {
   public final T item_00;
   public int itemSlot_01;
   /**
@@ -22,26 +15,32 @@ public class MenuEntryStruct04<T> {
    */
   public int flags_02;
 
-  public MenuEntryStruct04(final Function<T, String> nameTranslationKey, final Function<T, String> descriptionTranslationKey, final Function<T, ItemIcon> icon, final T entry) {
-    this.nameTranslationKey = nameTranslationKey;
-    this.descriptionTranslationKey = descriptionTranslationKey;
-    this.icon = icon;
+  public MenuEntryStruct04(final T entry) {
     this.item_00 = entry;
   }
 
-  public static <T extends InventoryEntry> MenuEntryStruct04<T> make(final T entry) {
-    return new MenuEntryStruct04<>(InventoryEntry::getNameTranslationKey, InventoryEntry::getDescriptionTranslationKey, InventoryEntry::getIcon, entry);
-  }
-
   public String getNameTranslationKey() {
-    return this.nameTranslationKey.apply(this.item_00);
+    return this.item_00.getNameTranslationKey();
   }
 
   public String getDescriptionTranslationKey() {
-    return this.descriptionTranslationKey.apply(this.item_00);
+    return this.item_00.getDescriptionTranslationKey();
   }
 
-  public ItemIcon getIcon() {
-    return this.icon.apply(this.item_00);
+  public int getSize() {
+    return this.item_00.getSize();
+  }
+
+  public int getMaxSize() {
+    return this.item_00.getMaxSize();
+  }
+
+  public boolean isEmpty() {
+    return this.item_00.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return this.item_00.toString();
   }
 }

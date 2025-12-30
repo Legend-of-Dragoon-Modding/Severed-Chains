@@ -15,8 +15,8 @@ public class Instance10 extends ParticleEffectInstance94 {
   @Override
   protected void initType() {
     // This method uses an uninitialized variable - the way the ASM was generated, it uses t2 which is set
-    // in the calling method to the behaviourType. Since this is the 10th behaviour, t2 will always be 10.
-    final int t2 = 10;
+    // in the calling method to the behaviourType. Since this is the 10th behaviour, t2 will always be 10 * 10.
+    final int t2 = 100;
 
     this.particleVelocity_58.y = -(seed_800fa754.nextInt(61) + 60) * this.particle.effectInner_08._18;
     this._14 = (short)seed_800fa754.nextInt(4097);

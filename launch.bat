@@ -17,29 +17,30 @@ if not errorlevel 1 (
   exit 1
 )
 
-if exist ".\jdk21\bin\java.exe" (
+if exist ".\jdk25\bin\java.exe" (
   goto LAUNCH
 )
 
 : DOWNLOAD_JAVA
-if exist ".\jdk21\" (
-  @rmdir /S /Q ".\jdk21"
+if exist ".\jdk25\" (
+  @rmdir /S /Q ".\jdk25"
 )
 
 echo Downloading java...
-powershell -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://corretto.aws/downloads/resources/21.0.6.7.1/amazon-corretto-21.0.6.7.1-windows-x64-jdk.zip' -OutFile '.\jdk.zip'" || goto DOWNLOAD_FAILED
+powershell -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://corretto.aws/downloads/resources/25.0.0.36.2/amazon-corretto-25.0.0.36.2-windows-x64-jdk.zip' -OutFile '.\jdk.zip'" || goto DOWNLOAD_FAILED
 
 echo Extracting java...
 powershell Expand-Archive ".\jdk.zip" -DestinationPath "." || goto DOWNLOAD_FAILED
 
 echo Cleaning up...
-move ".\jdk21.0.6_7" ".\jdk21"
+move ".\jdk25.0.0_36" ".\jdk25"
 del ".\jdk.zip"
 
 : LAUNCH
-".\jdk21\bin\java" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar;@libs@" legend.game.MainWindows -Xmx2G -ea || pause
+".\jdk25\bin\java" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "lod-game-@version@.jar;@libs@" legend.game.MainWindows -Xmx2G -ea || pause
 exit 0
 
 : DOWNLOAD_FAILED
 echo Java download failed
+pause
 exit 2

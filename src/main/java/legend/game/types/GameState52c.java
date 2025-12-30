@@ -1,11 +1,13 @@
 package legend.game.types;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
+import legend.game.inventory.Inventory;
 import legend.game.saves.Campaign;
+import legend.game.saves.InventoryEntry;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +57,7 @@ public class GameState52c {
   public final Flags scriptFlags1_13c = new Flags(8);
   public final Flags wmapFlags_15c = new Flags(8);
   public final Flags visitedLocations_17c = new Flags(8);
-  public final int[] goods_19c = new int[2];
+  public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];
   /** Note: I'm not _100%_ sure this is only chest flags */
@@ -63,16 +65,12 @@ public class GameState52c {
 //  public final ShortRef equipmentCount_1e4;
 //  public final ShortRef itemCount_1e6;
   public final List<Equipment> equipment_1e8 = new ArrayList<>();
-  public final List<Item> items_2e9 = new ArrayList<>();
+  public final Inventory items_2e9 = new Inventory();
 
-  /** Only used during loading */
-  public final IntList equipmentIds_1e8 = new IntArrayList();
   /** Only used during loading */
   public final List<RegistryId> equipmentRegistryIds_1e8 = new ArrayList<>();
   /** Only used during loading */
-  public final IntList itemIds_2e9 = new IntArrayList();
-  /** Only used during loading */
-  public final List<RegistryId> itemRegistryIds_2e9 = new ArrayList<>();
+  public final List<InventoryEntry> itemRegistryIds_2e9 = new ArrayList<>();
 
   public final CharacterData2c[] charData_32c = new CharacterData2c[9];
 //  public final int[] _4b8 = new int[8];
@@ -99,24 +97,6 @@ public class GameState52c {
   public void syncIds() {
     this.equipment_1e8.clear();
     this.items_2e9.clear();
-
-    for(final int id : this.equipmentIds_1e8) {
-      final String idStr = LodMod.EQUIPMENT_IDS[id];
-
-      if(idStr.isBlank()) {
-        LOGGER.warn("Skipping unknown equipment ID %#x", id);
-        continue;
-      }
-
-      final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id(idStr));
-
-      if(!delegate.isValid()) {
-        LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
-        continue;
-      }
-
-      this.equipment_1e8.add(delegate.get());
-    }
 
     for(final RegistryId id : this.equipmentRegistryIds_1e8) {
       final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(id);
@@ -161,33 +141,15 @@ public class GameState52c {
       }
     }
 
-    for(final int id : this.itemIds_2e9) {
-      final String idStr = LodMod.ITEM_IDS[id - 192];
-
-      if(idStr.isBlank()) {
-        LOGGER.warn("Skipping unknown item ID %#x", id);
-        continue;
-      }
-
-      final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(LodMod.id(idStr));
+    for(final InventoryEntry entry : this.itemRegistryIds_2e9) {
+      final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(entry.id);
 
       if(!delegate.isValid()) {
         LOGGER.warn("Skipping unknown item ID %s", delegate.getId());
         continue;
       }
 
-      this.items_2e9.add(delegate.get());
-    }
-
-    for(final RegistryId id : this.itemRegistryIds_2e9) {
-      final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(id);
-
-      if(!delegate.isValid()) {
-        LOGGER.warn("Skipping unknown item ID %s", delegate.getId());
-        continue;
-      }
-
-      this.items_2e9.add(delegate.get());
+      this.items_2e9.give(new ItemStack(delegate.get(), entry.size, entry.durability), true);
     }
   }
 }

@@ -1,13 +1,8 @@
 package legend.core.spu;
 
-import legend.core.audio.SampleRate;
 import legend.game.sound.ReverbConfig;
 
-import static legend.core.audio.AudioThread.BASE_SAMPLE_RATE;
-
 public class Reverb {
-  private ReverbConfig config;
-
   public int dAPF1;
   public int dAPF2;
   public float vIIR;
@@ -41,13 +36,9 @@ public class Reverb {
   public float vLIN;
   public float vRIN;
 
-  public void set(final ReverbConfig config, final SampleRate sampleRate) {
-    this.config = config;
-
-    final double sampleRateMultiplier = sampleRate.value / (double)BASE_SAMPLE_RATE;
-
-    this.dAPF1 = (int)Math.round((config.dApf1 << 3) * sampleRateMultiplier);
-    this.dAPF2 = (int)Math.round((config.dApf2 << 3) * sampleRateMultiplier);
+  public void set(final ReverbConfig config) {
+    this.dAPF1 = config.dApf1 << 3;
+    this.dAPF2 = config.dApf2 << 3;
     this.vIIR = config.vIir / 32768.0f;
     this.vCOMB1 = config.vComb1 / 32768.0f;
     this.vCOMB2 = config.vComb2 / 32768.0f;
@@ -56,54 +47,27 @@ public class Reverb {
     this.vWALL = config.vWall / 32768.0f;
     this.vAPF1 = config.vApf1 / 32768.0f;
     this.vAPF2 = config.vApf2 / 32768.0f;
-    this.mLSAME = (int)Math.round((config.mLSame << 3) * sampleRateMultiplier);
-    this.mRSAME = (int)Math.round((config.mRSame << 3) * sampleRateMultiplier);
-    this.mLCOMB1 = (int)Math.round((config.mLComb1 << 3) * sampleRateMultiplier);
-    this.mRCOMB1 = (int)Math.round((config.mRComb1 << 3) * sampleRateMultiplier);
-    this.mLCOMB2 = (int)Math.round((config.mLComb2 << 3) * sampleRateMultiplier);
-    this.mRCOMB2 = (int)Math.round((config.mRComb2 << 3) * sampleRateMultiplier);
-    this.dLSAME = (int)Math.round((config.dLSame << 3) * sampleRateMultiplier);
-    this.dRSAME = (int)Math.round((config.dRSame << 3) * sampleRateMultiplier);
-    this.mLDIFF = (int)Math.round((config.mLDiff << 3) * sampleRateMultiplier);
-    this.mRDIFF = (int)Math.round((config.mRDiff << 3) * sampleRateMultiplier);
-    this.mLCOMB3 = (int)Math.round((config.mLComb3 << 3) * sampleRateMultiplier);
-    this.mRCOMB3 = (int)Math.round((config.mRComb3 << 3) * sampleRateMultiplier);
-    this.mLCOMB4 = (int)Math.round((config.mLComb4 << 3) * sampleRateMultiplier);
-    this.mRCOMB4 = (int)Math.round((config.mRComb4 << 3) * sampleRateMultiplier);
-    this.dLDIFF = (int)Math.round((config.dLDiff << 3) * sampleRateMultiplier);
-    this.dRDIFF = (int)Math.round((config.dRDiff << 3) * sampleRateMultiplier);
-    this.mLAPF1 = (int)Math.round((config.mLApf1 << 3) * sampleRateMultiplier);
-    this.mRAPF1 = (int)Math.round((config.mRApf1 << 3) * sampleRateMultiplier);
-    this.mLAPF2 = (int)Math.round((config.mLApf2 << 3) * sampleRateMultiplier);
-    this.mRAPF2 = (int)Math.round((config.mRApf2 << 3) * sampleRateMultiplier);
+    this.mLSAME = config.mLSame << 3;
+    this.mRSAME = config.mRSame << 3;
+    this.mLCOMB1 = config.mLComb1 << 3;
+    this.mRCOMB1 = config.mRComb1 << 3;
+    this.mLCOMB2 = config.mLComb2 << 3;
+    this.mRCOMB2 = config.mRComb2 << 3;
+    this.dLSAME = config.dLSame << 3;
+    this.dRSAME = config.dRSame << 3;
+    this.mLDIFF = config.mLDiff << 3;
+    this.mRDIFF = config.mRDiff << 3;
+    this.mLCOMB3 = config.mLComb3 << 3;
+    this.mRCOMB3 = config.mRComb3 << 3;
+    this.mLCOMB4 = config.mLComb4 << 3;
+    this.mRCOMB4 = config.mRComb4 << 3;
+    this.dLDIFF = config.dLDiff << 3;
+    this.dRDIFF = config.dRDiff << 3;
+    this.mLAPF1 = config.mLApf1 << 3;
+    this.mRAPF1 = config.mRApf1 << 3;
+    this.mLAPF2 = config.mLApf2 << 3;
+    this.mRAPF2 = config.mRApf2 << 3;
     this.vLIN = config.vLIn / 32768.0f;
     this.vRIN = config.vRIn / 32768.0f;
-  }
-
-  public void changeSampleRate(final SampleRate sampleRate) {
-    final double sampleRateMultiplier = sampleRate.value / (double)BASE_SAMPLE_RATE;
-
-    this.dAPF1 = (int)Math.round((this.config.dApf1 << 3) * sampleRateMultiplier);
-    this.dAPF2 = (int)Math.round((this.config.dApf2 << 3) * sampleRateMultiplier);
-    this.mLSAME = (int)Math.round((this.config.mLSame << 3) * sampleRateMultiplier);
-    this.mRSAME = (int)Math.round((this.config.mRSame << 3) * sampleRateMultiplier);
-    this.mLCOMB1 = (int)Math.round((this.config.mLComb1 << 3) * sampleRateMultiplier);
-    this.mRCOMB1 = (int)Math.round((this.config.mRComb1 << 3) * sampleRateMultiplier);
-    this.mLCOMB2 = (int)Math.round((this.config.mLComb2 << 3) * sampleRateMultiplier);
-    this.mRCOMB2 = (int)Math.round((this.config.mRComb2 << 3) * sampleRateMultiplier);
-    this.dLSAME = (int)Math.round((this.config.dLSame << 3) * sampleRateMultiplier);
-    this.dRSAME = (int)Math.round((this.config.dRSame << 3) * sampleRateMultiplier);
-    this.mLDIFF = (int)Math.round((this.config.mLDiff << 3) * sampleRateMultiplier);
-    this.mRDIFF = (int)Math.round((this.config.mRDiff << 3) * sampleRateMultiplier);
-    this.mLCOMB3 = (int)Math.round((this.config.mLComb3 << 3) * sampleRateMultiplier);
-    this.mRCOMB3 = (int)Math.round((this.config.mRComb3 << 3) * sampleRateMultiplier);
-    this.mLCOMB4 = (int)Math.round((this.config.mLComb4 << 3) * sampleRateMultiplier);
-    this.mRCOMB4 = (int)Math.round((this.config.mRComb4 << 3) * sampleRateMultiplier);
-    this.dLDIFF = (int)Math.round((this.config.dLDiff << 3) * sampleRateMultiplier);
-    this.dRDIFF = (int)Math.round((this.config.dRDiff << 3) * sampleRateMultiplier);
-    this.mLAPF1 = (int)Math.round((this.config.mLApf1 << 3) * sampleRateMultiplier);
-    this.mRAPF1 = (int)Math.round((this.config.mRApf1 << 3) * sampleRateMultiplier);
-    this.mLAPF2 = (int)Math.round((this.config.mLApf2 << 3) * sampleRateMultiplier);
-    this.mRAPF2 = (int)Math.round((this.config.mRApf2 << 3) * sampleRateMultiplier);
   }
 }

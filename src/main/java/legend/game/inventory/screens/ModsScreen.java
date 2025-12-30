@@ -12,10 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.MODS;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
@@ -53,7 +52,7 @@ public class ModsScreen extends VerticalLayoutScreen {
         final String required = I18n.translate("lod_core.ui.mods.required");
         final Label help = label.addControl(new Label("?"));
         help.setScale(0.4f);
-        help.setPos((int)(textWidth(label.getText()) * label.getScale()) + 2, 1);
+        help.setPos((int)(help.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
         help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.mods.required"), this.mouseX, this.mouseY)));
         this.helpLabels.put(label, help);
         this.helpText.put(label, required);

@@ -57,6 +57,8 @@ public abstract class PlatformManager {
     this.windows.removeAll(windows);
   }
 
+  public abstract Window getLastWindow();
+
   public Action addAction(final Action action) {
     this.actions.add(action);
     return action;

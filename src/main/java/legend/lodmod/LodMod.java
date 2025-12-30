@@ -11,6 +11,7 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.FractionalStat;
@@ -26,15 +27,24 @@ import legend.game.characters.UnaryStatMod;
 import legend.game.characters.UnaryStatModConfig;
 import legend.game.characters.UnaryStatModType;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.RegisterDeffsEvent;
+import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.ui.BattleAction;
+import legend.game.combat.ui.GatherBattleActionsEvent;
+import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
+import legend.game.inventory.GoodsRegistryEvent;
 import legend.game.inventory.IconMapEvent;
 import legend.game.inventory.IconSet;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.ItemStack;
 import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.coremod.CoreMod;
@@ -52,6 +62,8 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.saves.ConfigRegistryEvent;
+import legend.game.scripting.ScriptState;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Loader;
@@ -62,10 +74,12 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Map;
+import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
-import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
+import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
@@ -91,8 +105,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ROTATE_LEFT = INPUT_ACTION_REGISTRAR.register("wmap_rotate_left", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_OUT = INPUT_ACTION_REGISTRAR.register("wmap_zoom_out", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_ZOOM_IN = INPUT_ACTION_REGISTRAR.register("wmap_zoom_in", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_coolon", InputAction::editable);
-  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_QUEEN_FURY_COOLON = INPUT_ACTION_REGISTRAR.register("wmap_queen_fury_coolon", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_SERVICES = INPUT_ACTION_REGISTRAR.register("wmap_services", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_WMAP_DESTINATIONS = INPUT_ACTION_REGISTRAR.register("wmap_destinations", InputAction::editable);
 
@@ -109,6 +122,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ESCAPE = INPUT_ACTION_REGISTRAR.register("bttl_escape", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_GUARD = INPUT_ACTION_REGISTRAR.register("bttl_guard", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ITEMS = INPUT_ACTION_REGISTRAR.register("bttl_items", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPELLS = INPUT_ACTION_REGISTRAR.register("bttl_spells", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_OPTIONS = INPUT_ACTION_REGISTRAR.register("bttl_options", InputAction::editable);
 
   private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
@@ -117,6 +131,13 @@ public class LodMod {
   public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
 
   public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_TYPE_REGISTRAR.register("speed", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_STAT = STAT_TYPE_REGISTRAR.register("attack", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", () -> new StatType<>(UnaryStat::new));
 
   private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statModTypes, MOD_ID);
   public static final RegistryDelegate<StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig>> UNARY_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("unary", UnaryStatModType::new);
@@ -175,6 +196,37 @@ public class LodMod {
     "", "", "", "", "", "", "", ""
   };
 
+  public static final String[] GOODS_IDS = {
+    "red_dragoon_spirit", "blue_dragoon_spirit", "jade_dragoon_spirit", "gold_dragoon_spirit", "violet_dragoon_spirit",
+    "silver_dragoon_spirit", "dark_dragoon_spirit", "divine_dragoon_spirit", "war_bulletin", "fathers_stone",
+    "prison_key", "axe_from_shack", "good_spirits", "shiny_bag", "water_bottle",
+    "life_water", "magic_oil", "yellow_stone", "blue_stone", "red_stone",
+    "letter_from_lynn", "pass_for_valley", "kates_bouquet", "key_to_ship", "boat_license",
+    "dragon_blocker", "moon_gem", "moon_dagger", "moon_mirror", "omega_bomb",
+    "omega_master", "law_maker", "law_output", "gold_dragoon_spirit_2", "magic_shiny_bag",
+    "vanishing_stone", "lavitzs_picture",
+  };
+
+
+  public static final String[] SPELL_IDS = {
+    "flameshot", "explosion", "final_burst", "red_eyed_dragon", "divine_dg_cannon", "wing_blaster", "gaspless", "blossom_storm",
+    "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "w_silver_dragon", "wing_blaster", "astral_drain",
+    "death_dimension", "gaspless", "demons_gate", "dark_dragon", "atomic_mind", "thunder_kid", "thunder_god", "violet_dragon",
+    "freezing_ring", "rainbow_breath", "rose_storm", "diamond_dust", "blue_sea_dragon", "grand_stream", "meteor_strike", "golden_dragon",
+    "spell32", "spell33", "spell34", "spell35", "spell36", "spell37", "spell38", "spell39",
+    "spell40", "spell41", "spell42", "spell43", "spell44", "spell45", "spell46", "spell47",
+    "spell48", "spell49", "spell50", "spell51", "spell52", "spell53", "spell54", "spell55",
+    "spell56", "spell57", "spell58", "spell59", "spell60", "spell61", "spell62", "spell63",
+    "spell64", "star_children", "moon_light", "gates_of_heaven", "spell68", "spell69", "spell70", "spell71",
+    "spell72", "spell73", "spell74", "spell75", "spell76", "spell77", "spell78", "spell79",
+    "spell80", "spell81", "spell82", "spell83", "spell84", "spell85", "spell86", "spell87",
+    "spell88", "spell89", "spell90", "spell91", "spell92", "spell93", "spell94", "spell95",
+    "spell96", "spell97", "spell98", "spell99", "spell100", "spell101", "spell102", "spell103",
+    "spell104", "spell105", "spell106", "spell107", "spell108", "spell109", "spell110", "spell111",
+    "spell112", "spell113", "spell114", "spell115", "spell116", "spell117", "spell118", "spell119",
+    "spell120", "spell121", "spell122", "spell123", "spell124", "spell125", "spell126", "spell127",
+  };
+
   public static final String[] SHOP_IDS = {
     "bale_equipment_shop", "serdio_item_shop", "lohan_equipment_shop", "lohan_item_shop",
     "kazas_equipment_shop", "kazas_fort_item_shop", "fletz_equipment_shop", "fletz_item_shop",
@@ -189,6 +241,17 @@ public class LodMod {
     , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop"
     , "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
     "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop", "empty_shop",
+  };
+
+  private static final RegistryDelegate<BattleAction>[] RETAIL_MENU_BLOCKS = new RegistryDelegate[] {
+    LodBattleActions.ATTACK,
+    LodBattleActions.GUARD,
+    LodBattleActions.ITEMS,
+    LodBattleActions.ESCAPE,
+    LodBattleActions.TRANSFORM,
+    LodBattleActions.D_ATTACK,
+    LodBattleActions.SPELLS,
+    LodBattleActions.SPECIAL,
   };
 
   @EventListener
@@ -229,10 +292,8 @@ public class LodMod {
       .add(INPUT_ACTION_WMAP_ZOOM_OUT.get(), new AxisInputActivation(InputAxis.LEFT_TRIGGER, InputAxisDirection.POSITIVE))
       .add(INPUT_ACTION_WMAP_ZOOM_IN.get(), new ScancodeInputActivation(InputKey.X))
       .add(INPUT_ACTION_WMAP_ZOOM_IN.get(), new AxisInputActivation(InputAxis.RIGHT_TRIGGER, InputAxisDirection.POSITIVE))
-      .add(INPUT_ACTION_WMAP_COOLON.get(), new ScancodeInputActivation(InputKey.Q))
-      .add(INPUT_ACTION_WMAP_COOLON.get(), new ButtonInputActivation(InputButton.X))
-      .add(INPUT_ACTION_WMAP_QUEEN_FURY.get(), new ScancodeInputActivation(InputKey.Q))
-      .add(INPUT_ACTION_WMAP_QUEEN_FURY.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get(), new ScancodeInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get(), new ButtonInputActivation(InputButton.X))
       .add(INPUT_ACTION_WMAP_SERVICES.get(), new ScancodeInputActivation(InputKey.Q))
       .add(INPUT_ACTION_WMAP_SERVICES.get(), new ButtonInputActivation(InputButton.X))
       .add(INPUT_ACTION_WMAP_DESTINATIONS.get(), new KeyInputActivation(InputKey.L))
@@ -255,7 +316,13 @@ public class LodMod {
       .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ScancodeInputActivation(InputKey.ESCAPE))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ButtonInputActivation(InputButton.START))
+      .add(INPUT_ACTION_BTTL_GUARD.get(), new ScancodeInputActivation(InputKey.G))
     ;
+  }
+
+  @EventListener
+  public static void registerConfig(final ConfigRegistryEvent event) {
+    LodConfig.register(event);
   }
 
   @EventListener
@@ -269,17 +336,25 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerGoods(final GoodsRegistryEvent event) {
+    LodGoods.register(event);
+  }
+
+  @EventListener
   public static void registerShops(final ShopRegistryEvent event) {
     LodShops.register(event);
+  }
+
+  @EventListener
+  public static void registerEncounters(final EncounterRegistryEvent event) {
+    LodEncounters.register(event);
   }
 
   @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
       if(spellStats_800fa0b8[spellId] == null) {
-        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
-        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Loader.loadFile("spells/" + spellId + ".dspl"));
+        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(id(SPELL_IDS[spellId]), Loader.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }
@@ -311,9 +386,16 @@ public class LodMod {
     if(event.type == PLAYER_TYPE.get()) {
       event.addStat(MP_STAT.get());
       event.addStat(SP_STAT.get());
+      event.addStat(GUARD_HEAL_STAT.get());
     }
 
     event.addStat(SPEED_STAT.get());
+    event.addStat(ATTACK_STAT.get());
+    event.addStat(MAGIC_ATTACK_STAT.get());
+    event.addStat(DEFENSE_STAT.get());
+    event.addStat(MAGIC_DEFENSE_STAT.get());
+    event.addStat(AVOID_STAT.get());
+    event.addStat(MAGIC_AVOID_STAT.get());
   }
 
   @EventListener
@@ -322,50 +404,198 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerAdditions(final AdditionRegistryEvent event) {
+    LodAdditions.register(event);
+  }
+
+  @EventListener
+  public static void registerBattleActions(final RegisterBattleActionsEvent event) {
+    LodBattleActions.register(event);
+  }
+
+  @EventListener
+  public static void gatherBattleActions(final GatherBattleActionsEvent event) {
+    final PlayerBattleEntity player = event.player;
+    int sort = 100;
+
+    if(player.isDragoon()) {
+      event.actions.put(LodBattleActions.D_ATTACK.get(), sort);
+    } else {
+      event.actions.put(LodBattleActions.ATTACK.get(), sort);
+    }
+
+    sort += 100;
+
+    if(!player.isDragoon() || CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {
+      event.actions.put(LodBattleActions.GUARD.get(), sort);
+      sort += 100;
+      event.actions.put(LodBattleActions.ITEMS.get(), sort);
+      sort += 100;
+      event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
+      sort += 100;
+    }
+
+    if(player.isDragoon()) {
+      event.actions.put(LodBattleActions.SPELLS.get(), sort);
+      sort += 100;
+
+      if(CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {
+        event.actions.put(LodBattleActions.TRANSFORM.get(), sort);
+        sort += 100;
+      }
+    }
+
+    if(!player.isDragoon() || CONFIG.getConfig(LodConfig.EXTENDED_DRAGOON_ACTIONS.get())) {
+      event.actions.put(LodBattleActions.ESCAPE.get(), sort);
+      sort += 100;
+    }
+
+    if(!player.isDragoon() && player.stats.getStat(SP_STAT.get()).getCurrent() >= 100 && player.canBecomeDragoon()) {
+      event.actions.put(LodBattleActions.TRANSFORM.get(), sort);
+      sort += 100;
+
+      if(canSpecialTransform()) {
+        event.actions.put(LodBattleActions.SPECIAL.get(), sort);
+      }
+    }
+
+    final int legacyFlags = battleState_8006e398.statusConditions_00[player.bentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
+    disableRetailBattleActions(legacyFlags, event.disabledActions);
+
+    if((player.status_0e & 0x20) != 0) {
+      event.disabledActions.add(LodBattleActions.ATTACK.get());
+    }
+
+    if(encounter.escapeChance == 0) {
+      event.disabledActions.add(LodBattleActions.ESCAPE.get());
+    }
+
+    // This seems to be for the tutorial fights - disables all actions except for one
+    if(battleState_8006e398._54c != 0) {
+      for(final RegistryId id : REGISTRIES.battleActions) {
+        event.disabledActions.add(REGISTRIES.battleActions.getEntry(id).get());
+      }
+
+      final ScriptState<MonsterBattleEntity> tutorialEnemy = battleState_8006e398.monsterBents_e50[0];
+
+      if(battleState_8006e398._548 == 0) {
+        event.disabledActions.remove(LodBattleActions.ATTACK.get());
+        tutorialEnemy.setFlag(BattleEntity27c.FLAG_TAKE_FORCED_TURN);
+        battleState_8006e398._54c++;
+      } else if(battleState_8006e398._548 == 1) {
+        event.disabledActions.remove(LodBattleActions.ITEMS.get());
+        tutorialEnemy.setFlag(BattleEntity27c.FLAG_TAKE_FORCED_TURN);
+        battleState_8006e398._54c++;
+      } else if(battleState_8006e398._54c == 3) {
+        event.disabledActions.remove(LodBattleActions.ATTACK.get());
+      } else {
+        if((battleState_8006e398._54c == 5 || battleState_8006e398._54c == 9) || battleState_8006e398._54c == 16) {
+          event.disabledActions.remove(LodBattleActions.TRANSFORM.get());
+        } else if(battleState_8006e398._54c == 12) {
+          event.disabledActions.remove(LodBattleActions.D_ATTACK.get());
+        } else {
+          event.disabledActions.remove(LodBattleActions.SPELLS.get());
+        }
+
+        tutorialEnemy.setFlag(BattleEntity27c.FLAG_TAKE_FORCED_TURN);
+        battleState_8006e398._54c++;
+      }
+    }
+  }
+
+  public static void disableRetailBattleActions(final int packedActions, final Set<BattleAction> disabled) {
+    for(int i = 0; i < RETAIL_MENU_BLOCKS.length; i++) {
+      if((packedActions & 0x1 << i) != 0) {
+        disabled.add(RETAIL_MENU_BLOCKS[i].get());
+      }
+    }
+  }
+
+  private static boolean canSpecialTransform() {
+    if(battleState_8006e398.getPlayerCount() < 3) {
+      return false;
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+
+      // not dead or petrified
+      if(player.hasFlag(BattleEntity27c.FLAG_DEAD) || (player.innerStruct_00.status_0e & 0x1) != 0) {
+        return false;
+      }
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+      final int sp = player.innerStruct_00.stats.getStat(SP_STAT.get()).getCurrent();
+      final int dlevel = player.innerStruct_00.dlevel_06;
+
+      if(dlevel == 0 || sp < dlevel * 100) {
+        return false;
+      }
+
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      if(battleState_8006e398.playerBents_e40[i].innerStruct_00.isDragoon()) {
+        return false;
+      }
+    }
+
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
+      if(!battleState_8006e398.playerBents_e40[i].innerStruct_00.canBecomeDragoon()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  @EventListener
   public static void gatherAttackItems(final GatherAttackItemsEvent event) {
-    event.add(LodItems.SPARK_NET.get());
-    event.add(LodItems.BURN_OUT.get());
-    event.add(LodItems.PELLET.get());
-    event.add(LodItems.SPEAR_FROST.get());
-    event.add(LodItems.SPINNING_GALE.get());
-    event.add(LodItems.TRANS_LIGHT.get());
-    event.add(LodItems.DARK_MIST.get());
-    event.add(LodItems.PANIC_BELL.get());
-    event.add(LodItems.STUNNING_HAMMER.get());
-    event.add(LodItems.POISON_NEEDLE.get());
-    event.add(LodItems.MIDNIGHT_TERROR.get());
-    event.add(LodItems.THUNDERBOLT.get());
-    event.add(LodItems.METEOR_FALL.get());
-    event.add(LodItems.GUSHING_MAGMA.get());
-    event.add(LodItems.DANCING_RAY.get());
-    event.add(LodItems.FATAL_BLIZZARD.get());
-    event.add(LodItems.BLACK_RAIN.get());
-    event.add(LodItems.RAVE_TWISTER.get());
-    event.add(LodItems.BURNING_WAVE.get());
-    event.add(LodItems.FROZEN_JET.get());
-    event.add(LodItems.DOWN_BURST.get());
-    event.add(LodItems.GRAVITY_GRABBER.get());
-    event.add(LodItems.SPECTRAL_FLASH.get());
-    event.add(LodItems.NIGHT_RAID.get());
-    event.add(LodItems.FLASH_HALL.get());
+    event.add(new ItemStack(LodItems.SPARK_NET.get()));
+    event.add(new ItemStack(LodItems.BURN_OUT.get()));
+    event.add(new ItemStack(LodItems.PELLET.get()));
+    event.add(new ItemStack(LodItems.SPEAR_FROST.get()));
+    event.add(new ItemStack(LodItems.SPINNING_GALE.get()));
+    event.add(new ItemStack(LodItems.TRANS_LIGHT.get()));
+    event.add(new ItemStack(LodItems.DARK_MIST.get()));
+    event.add(new ItemStack(LodItems.PANIC_BELL.get()));
+    event.add(new ItemStack(LodItems.STUNNING_HAMMER.get()));
+    event.add(new ItemStack(LodItems.POISON_NEEDLE.get()));
+    event.add(new ItemStack(LodItems.MIDNIGHT_TERROR.get()));
+    event.add(new ItemStack(LodItems.THUNDERBOLT.get()));
+    event.add(new ItemStack(LodItems.METEOR_FALL.get()));
+    event.add(new ItemStack(LodItems.GUSHING_MAGMA.get()));
+    event.add(new ItemStack(LodItems.DANCING_RAY.get()));
+    event.add(new ItemStack(LodItems.FATAL_BLIZZARD.get()));
+    event.add(new ItemStack(LodItems.BLACK_RAIN.get()));
+    event.add(new ItemStack(LodItems.RAVE_TWISTER.get()));
+    event.add(new ItemStack(LodItems.BURNING_WAVE.get()));
+    event.add(new ItemStack(LodItems.FROZEN_JET.get()));
+    event.add(new ItemStack(LodItems.DOWN_BURST.get()));
+    event.add(new ItemStack(LodItems.GRAVITY_GRABBER.get()));
+    event.add(new ItemStack(LodItems.SPECTRAL_FLASH.get()));
+    event.add(new ItemStack(LodItems.NIGHT_RAID.get()));
+    event.add(new ItemStack(LodItems.FLASH_HALL.get()));
   }
 
   @EventListener
   public static void gatherRecoveryItems(final GatherRecoveryItemsEvent event) {
-    event.add(LodItems.SPIRIT_POTION.get());
-    event.add(LodItems.SUN_RHAPSODY.get());
-    event.add(LodItems.HEALING_POTION.get());
-    event.add(LodItems.HEALING_FOG.get());
-    event.add(LodItems.MOON_SERENADE.get());
-    event.add(LodItems.HEALING_RAIN.get());
-    event.add(LodItems.HEALING_BREEZE.get());
+    event.add(new ItemStack(LodItems.SPIRIT_POTION.get()));
+    event.add(new ItemStack(LodItems.SUN_RHAPSODY.get()));
+    event.add(new ItemStack(LodItems.HEALING_POTION.get()));
+    event.add(new ItemStack(LodItems.HEALING_FOG.get()));
+    event.add(new ItemStack(LodItems.MOON_SERENADE.get()));
+    event.add(new ItemStack(LodItems.HEALING_RAIN.get()));
+    event.add(new ItemStack(LodItems.HEALING_BREEZE.get()));
   }
 
   @EventListener
   public static void newGame(final NewGameEvent event) {
-    event.gameState.items_2e9.add(LodItems.BURN_OUT.get());
-    event.gameState.items_2e9.add(LodItems.HEALING_POTION.get());
-    event.gameState.items_2e9.add(LodItems.HEALING_POTION.get());
+    event.gameState.items_2e9.give(LodItems.BURN_OUT.get());
+    event.gameState.items_2e9.give(LodItems.HEALING_POTION.get());
+    event.gameState.items_2e9.give(LodItems.HEALING_POTION.get());
 
     final Map<EquipmentSlot, Equipment> dart = event.gameState.charData_32c[0].equipment_14;
     dart.put(EquipmentSlot.WEAPON, LodEquipment.BROAD_SWORD.get());

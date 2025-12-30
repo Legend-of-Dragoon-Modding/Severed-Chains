@@ -13,6 +13,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.tim.Tim;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
@@ -26,13 +27,14 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.sin;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Audio.playXaAudio;
+import static legend.game.Audio.stopXaAudio;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.orderingTableSize_1f8003c8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -690,6 +692,9 @@ public class Credits extends EngineState {
       this.credits.delete();
       this.credits = null;
     }
+
+    stopXaAudio();
+
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
 
     //LAB_800eaf14
@@ -699,6 +704,11 @@ public class Credits extends EngineState {
   public void updateDiscordRichPresence(final Activity activity) {
     activity.setDetails("Watching the Credits");
     activity.setState(null);
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return null;
   }
 
   public static class CreditHeader08 {

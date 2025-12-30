@@ -2,7 +2,7 @@ package legend.game.combat.environment;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.Tmd;
+import legend.game.tmd.Tmd;
 import legend.core.gte.Transforms;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.Keyframe0c;

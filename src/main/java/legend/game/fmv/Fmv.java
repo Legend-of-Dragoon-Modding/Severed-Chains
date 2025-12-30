@@ -25,9 +25,8 @@ import legend.game.i18n.I18n;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joml.Vector2i;
+import org.joml.Vector3i;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -38,30 +37,29 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Audio.sssqResetStuff;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Graphics.clearBlue_800babc0;
+import static legend.game.Graphics.clearGreen_800bb104;
+import static legend.game.Graphics.clearRed_8007a3a8;
+import static legend.game.Rumble.adjustRumbleOverTime;
+import static legend.game.Rumble.startRumbleIntensity;
+import static legend.game.Rumble.stopRumble;
 import static legend.game.SItem.UI_WHITE;
-import static legend.game.Scus94491BpeSegment_8002.adjustRumbleOverTime;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8002.startRumbleIntensity;
-import static legend.game.Scus94491BpeSegment_8002.stopRumble;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FMV_SKIP;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
 public final class Fmv {
   private Fmv() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
-
-  private static final int[] _80052d6c = {0, 4, 7, 15};
-  private static final String[][] diskFmvs_80052d7c = {
-    {"\\STR\\DEMOH.IKI", "\\STR\\DEMO2.IKI", "\\STR\\OPENH.IKI", "\\STR\\WAR1H.IKI"},
-    {"\\STR\\TVRH.IKI", "\\STR\\GOAST.IKI", "\\STR\\ROZEH.IKI"},
-    {"\\STR\\TREEH.IKI", "\\STR\\WAR2H.IKI", "\\STR\\BLACKH.IKI", "\\STR\\DRAGON1.IKI", "\\STR\\DENIN.IKI", "\\STR\\DENIN2.IKI", "\\STR\\DRAGON2.IKI", "\\STR\\DEIASH.IKI"},
-    {"\\STR\\MOONH.IKI", "\\STR\\ENDING1H.IKI", "\\STR\\ENDING2H.IKI"}
+  private static final String[] diskFmvs_80052d7c = {
+    "STR/DEMOH.IKI", "STR/DEMO2.IKI", "STR/OPENH.IKI", "STR/WAR1H.IKI",
+    "STR/TVRH.IKI", "STR/GOAST.IKI", "STR/ROZEH.IKI",
+    "STR/TREEH.IKI", "STR/WAR2H.IKI", "STR/BLACKH.IKI", "STR/DRAGON1.IKI", "STR/DENIN.IKI", "STR/DENIN2.IKI", "STR/DRAGON2.IKI", "STR/DEIASH.IKI",
+    "STR/MOONH.IKI", "STR/ENDING1H.IKI", "STR/ENDING2H.IKI",
   };
 
   private static final ZeroRunLengthAc ESCAPE_CODE = new ZeroRunLengthAc(BitStreamCode._000001___________, true, false);
@@ -225,7 +223,6 @@ public final class Fmv {
   private static float volume = 1.0f;
   private static GenericSource source;
 
-  private static WindowEvents.InputClassChanged inputClassChanged;
   private static WindowEvents.KeyPressed keyPress;
   private static WindowEvents.ButtonPressed buttonPressed;
   private static WindowEvents.InputActionPressed inputActionPressed;
@@ -236,6 +233,7 @@ public final class Fmv {
   private static Texture displayTexture;
   private static final Vector2i oldProjectionSize = new Vector2i();
   private static EngineState.RenderMode oldRenderMode;
+  private static final Vector3i oldClearColour = new Vector3i();
 
   private static RumbleData[] rumbleData;
   private static int rumbleFrames;
@@ -260,7 +258,8 @@ public final class Fmv {
     rumbleFrames = 0;
 
     isPlaying = true;
-    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
+    Fmv.play(diskFmvs_80052d7c[fmvIndex], true);
+
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 
@@ -323,8 +322,10 @@ public final class Fmv {
     oldFps = RENDERER.window().getFpsLimit();
     oldProjectionSize.set(RENDERER.getNativeWidth(), RENDERER.getNativeHeight());
     oldRenderMode = RENDERER.getRenderMode();
+    oldClearColour.set(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
+    RENDERER.setClearColour(0.0f, 0.0f, 0.0f);
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
     volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
@@ -358,8 +359,12 @@ public final class Fmv {
     });
 
     inputActionPressed = RENDERER.events().onInputActionPressed((window, action, repeat) -> {
-      if(action == INPUT_ACTION_FMV_SKIP.get() && isValidSkipInput(window.getInputClass())) {
-        shouldStop = true;
+      if(action == INPUT_ACTION_FMV_SKIP.get()) {
+        if(isValidSkipInput(window.getInputClass()) && !repeat) {
+          shouldStop = true;
+        } else {
+          handleSkipText();
+        }
       }
     });
 
@@ -592,7 +597,7 @@ public final class Fmv {
             final EngineStateEnum oldEngineState = engineState_8004dd20;
             engineState_8004dd20 = EngineStateEnum.FMV_09;
             startRumbleIntensity(0, rumble.initialIntensity);
-            adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration);
+            adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration, 1);
             rumbleFrames = rumble.duration;
             engineState_8004dd20 = oldEngineState;
           }
@@ -625,11 +630,6 @@ public final class Fmv {
         displayTexture = null;
       }
 
-      if(inputClassChanged != null) {
-        RENDERER.events().removeInputClassChanged(inputClassChanged);
-        inputClassChanged = null;
-      }
-
       if(inputActionPressed != null) {
         RENDERER.events().removeInputActionPressed(inputActionPressed);
         inputActionPressed = null;
@@ -655,6 +655,10 @@ public final class Fmv {
       PLATFORM.setInputTickRate(oldFps);
       RENDERER.setRenderMode(oldRenderMode);
       RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
+      clearRed_8007a3a8 = oldClearColour.x;
+      clearGreen_800bb104 = oldClearColour.y;
+      clearBlue_800babc0 = oldClearColour.z;
+
       oldRenderer = null;
 
       AUDIO_THREAD.removeSource(source);

@@ -1,6 +1,6 @@
 package legend.game.types;
 
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdWithId;
 import legend.game.unpacker.FileData;
 
 /**
@@ -8,7 +8,7 @@ import legend.game.unpacker.FileData;
  */
 public class CContainer {
   public final TmdWithId tmdPtr_00;
-  public final CContainerSubfile1 ext_04;
+  public final CContainerClutAnimations clutAnimations_04;
   public final CContainerSubfile2 ptr_08;
 
   public CContainer(final String name, final FileData data) {
@@ -20,9 +20,9 @@ public class CContainer {
 
     final int offset04 = data.readInt(0x4);
     if(offset04 != 0) {
-      this.ext_04 = new CContainerSubfile1(data.slice(offset04));
+      this.clutAnimations_04 = new CContainerClutAnimations(data.slice(offset04));
     } else {
-      this.ext_04 = null;
+      this.clutAnimations_04 = null;
     }
 
     final int offset08 = data.readInt(0x8);
