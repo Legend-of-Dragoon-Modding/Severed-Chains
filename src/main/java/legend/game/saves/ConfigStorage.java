@@ -1,6 +1,7 @@
 package legend.game.saves;
 
 import legend.core.memory.types.IntRef;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -14,8 +15,10 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.RENDERER;
 
 public final class ConfigStorage {
   private ConfigStorage() { }
@@ -105,6 +108,7 @@ public final class ConfigStorage {
     }
 
     EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
+    RENDERER.setFrameSkipOption(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get()));
   }
 
   public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data, final IntRef offset) {

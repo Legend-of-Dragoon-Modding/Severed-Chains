@@ -146,6 +146,7 @@ public class RenderEngine {
   final FloatBuffer scissorBuffer = BufferUtils.createFloatBuffer(4);
   private final FloatBuffer clutAnimationBuffer = BufferUtils.createFloatBuffer(2 * 2 * 1024); // 2 sets of 2 vectors
   private int clutAnimationBufferIndex;
+  private boolean frameSkip = true;
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -722,7 +723,7 @@ public class RenderEngine {
           this.scissorStack.reset();
         }
 
-        if(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get())) {
+        if(this.frameSkip) {
           if(this.frameSkipIndex == Config.getGameSpeedMultiplier() - 1) {
             this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
           }
@@ -1402,5 +1403,9 @@ public class RenderEngine {
   public static FlowControl scriptGetRenderAspectMultiplier(final RunningScript<?> script) {
     script.params_20[0].set((int)(RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio() * 0x1000));
     return FlowControl.CONTINUE;
+  }
+
+  public void setFrameSkipOption(final boolean frameSkip) {
+    this.frameSkip = frameSkip;
   }
 }
