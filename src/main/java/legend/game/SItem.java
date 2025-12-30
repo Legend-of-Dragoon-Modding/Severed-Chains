@@ -139,6 +139,8 @@ public final class SItem {
   public static final FontOptions UI_WHITE = new FontOptions().colour(TextColour.WHITE);
   public static final FontOptions UI_WHITE_CENTERED = new FontOptions().colour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_WHITE_SMALL = new FontOptions().colour(TextColour.WHITE).size(0.67f);
+  public static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  public static final FontOptions UI_WHITE_SHADOWED_RIGHT = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.RIGHT);
 
   public static int shopId_8007a3b4;
 
