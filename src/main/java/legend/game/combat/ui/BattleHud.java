@@ -826,7 +826,7 @@ public class BattleHud {
                   .build();
               }
 
-              this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f);
+              this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f + i * 0.1f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
               RENDERER.queueOrthoModel(this.spBars, this.spBarTransforms, QueuedModelStandard.class).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
