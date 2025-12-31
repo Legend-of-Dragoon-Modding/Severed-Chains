@@ -15,6 +15,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
+import legend.core.platform.input.InputCodepoints;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -136,11 +137,14 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
+import static legend.game.Text.renderText;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
+import static legend.game.SItem.UI_WHITE_SHADOWED;
+
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
@@ -1272,7 +1276,7 @@ public final class SEffe {
 
     //LAB_80107b10
     // Button
-    renderButtonPressHudElement1(buttonHudMetricsIndex, x0 + 12, y0 + 66, Translucency.B_PLUS_F, 128);
+    renderText(InputCodepoints.getActionName(INPUT_ACTION_BTTL_ATTACK.get()), GPU.getOffsetX() + 87.85f, GPU.getOffsetY() + 8, UI_WHITE_SHADOWED);
 
     // Button press red glow
     if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {
