@@ -35,18 +35,12 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   public QueuedModelStandard translucency(@Nullable final Translucency translucency) {
     this.translucency = translucency;
     this.hasTranslucencyOverride = true;
-
-    if(translucency == Translucency.HALF_B_PLUS_HALF_F) {
-      this.batch.needsSorting = true;
-    }
-
     return this;
   }
 
   /** Changes translucency mode to true alpha */
   public QueuedModelStandard alpha(final float alpha) {
     this.alpha = alpha;
-    this.batch.needsSorting = true;
     return this;
   }
 

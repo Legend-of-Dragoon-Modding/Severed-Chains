@@ -5,7 +5,6 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.SubmapWidescreenMode;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.types.Translucency;
 import org.joml.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -162,10 +161,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     this.temp.identity();
 
     final T entry = this.modelPool.acquire(type);
@@ -178,10 +174,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, this.sequence++, mv);
     return entry;
@@ -192,10 +185,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, this.sequence++, mv);
     entry.setLightTransforms(lightMv);
@@ -207,10 +197,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, this.sequence++, mv);
     return entry;
@@ -221,10 +208,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     final T entry = this.modelPool.acquire(type);
     entry.acquire(obj, this.sequence++, mv);
     entry.setLightTransforms(lightMv);
@@ -238,10 +222,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     this.temp.identity().setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
 
     final T entry = this.orthoPool.acquire(type);
@@ -254,10 +235,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     this.temp.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
 
     final T entry = this.orthoPool.acquire(type);
@@ -271,10 +249,7 @@ public class RenderBatch {
       throw new IllegalArgumentException("obj is null");
     }
 
-    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
-      this.needsSorting = true;
-    }
-
+    this.needsSorting = true;
     final T entry = this.orthoPool.acquire(type);
     entry.acquire(obj, this.sequence++, transforms);
     return entry;
