@@ -429,7 +429,7 @@ public class BattleHud {
         this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78[bentIndex]));
       }
 
-      while(processedBents < 6) {
+      while(!this.turns.isEmpty() && processedBents < 6) {
         int highestTurnValue = 0;
         int highestIndex = 0;
         for(int i = 0; i < this.turns.size(); i++) {
