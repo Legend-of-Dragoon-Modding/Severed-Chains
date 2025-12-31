@@ -15,7 +15,6 @@ import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.Arrays;
 
@@ -42,7 +41,6 @@ import static legend.game.SItem.giveItems;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
@@ -52,7 +50,6 @@ import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
-import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -125,10 +122,6 @@ public class PostBattleScreen extends MenuScreen {
           Arrays.fill(this.levelsGained_8011e1c8, 0);
           Arrays.fill(this.dragoonLevelsGained_8011e1d8, 0);
           Arrays.fill(this.pendingXp_8011e180, 0);
-
-          this.additionsUnlocked_8011e1b8[0] = this.getUltimateAdditionIdIfUnlocked(0);
-          this.additionsUnlocked_8011e1b8[1] = this.getUltimateAdditionIdIfUnlocked(1);
-          this.additionsUnlocked_8011e1b8[2] = this.getUltimateAdditionIdIfUnlocked(2);
 
           int xpDivisor = 0;
           for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -444,43 +437,39 @@ public class PostBattleScreen extends MenuScreen {
       if(charId >= 0) {
         final int pendingXp = this.pendingXp_8011e180[charId];
 
-        if(pendingXp == 0) {
-          //LAB_8010cc68
-          pendingXpCleared++;
-          continue;
-        }
-
-        //LAB_8010cc70
-        final int cappedPendingXp;
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || pendingXp < 10) {
-          cappedPendingXp = pendingXp;
-        } else {
-          cappedPendingXp = 10;
-        }
-
-        //LAB_8010cc94
-        //LAB_8010cc98
-        int xp = gameState_800babc8.charData_32c[charId].xp_00;
-        if(xp <= 999999) {
-          xp = xp + cappedPendingXp;
-        } else {
-          xp = 999999;
-        }
-
-        //LAB_8010ccd4
-        gameState_800babc8.charData_32c[charId].xp_00 = xp;
-        this.pendingXp_8011e180[charId] -= cappedPendingXp;
-
-        //LAB_8010cd30
-        while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < 60) {
-          gameState_800babc8.charData_32c[charId].level_12++;
-
-          this.levelsGained_8011e1c8[charSlot]++;
-          if(this.additionsUnlocked_8011e1b8[charSlot] == null) {
-            this.additionsUnlocked_8011e1b8[charSlot] = checkForNewlyUnlockedAddition(charId);
+        if(pendingXp != 0) {
+          final int cappedPendingXp;
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || pendingXp < 10) {
+            cappedPendingXp = pendingXp;
+          } else {
+            cappedPendingXp = 10;
           }
 
-          //LAB_8010cd9c
+          //LAB_8010cc94
+          //LAB_8010cc98
+          int xp = gameState_800babc8.charData_32c[charId].xp_00;
+          if(xp <= 999999) {
+            xp = xp + cappedPendingXp;
+          } else {
+            xp = 999999;
+          }
+
+          //LAB_8010ccd4
+          gameState_800babc8.charData_32c[charId].xp_00 = xp;
+          this.pendingXp_8011e180[charId] -= cappedPendingXp;
+
+          //LAB_8010cd30
+          while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < 60) {
+            gameState_800babc8.charData_32c[charId].level_12++;
+            this.levelsGained_8011e1c8[charSlot]++;
+          }
+        } else {
+          //LAB_8010cc68
+          pendingXpCleared++;
+        }
+
+        if(this.additionsUnlocked_8011e1b8[charSlot] == null) {
+          this.additionsUnlocked_8011e1b8[charSlot] = checkForNewlyUnlockedAddition(charId);
         }
       } else {
         pendingXpCleared++;
@@ -908,30 +897,6 @@ public class PostBattleScreen extends MenuScreen {
     }
 
     //LAB_8010d470
-  }
-
-  @Method(0x8010d598L)
-  private Addition getUltimateAdditionIdIfUnlocked(final int charSlot) {
-    final int charIndex = gameState_800babc8.charIds_88[charSlot];
-
-    if(charIndex == -1) {
-      return null;
-    }
-
-    if(!unlockedUltimateAddition_800bc910[charSlot]) {
-      //LAB_8010d5d0
-      return null;
-    }
-
-    //LAB_8010d5d8
-    final RegistryDelegate<Addition>[] additions = CHARACTER_ADDITIONS[charSlot];
-
-    if(additions.length == 0) {
-      return null;
-    }
-
-    //LAB_8010d60c
-    return additions[additions.length - 1].get();
   }
 
   private void deleteResultsScreenObjects() {

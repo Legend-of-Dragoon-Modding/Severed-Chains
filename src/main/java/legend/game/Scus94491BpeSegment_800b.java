@@ -29,7 +29,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static int pregameLoadingStage_800bb10c;
 
-  public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
   public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
   public static int goldGainedFromCombat_800bc920;
 
