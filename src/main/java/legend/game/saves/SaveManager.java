@@ -10,6 +10,7 @@ import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
@@ -40,6 +41,7 @@ import java.util.stream.Stream;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.bootRegistries;
 import static legend.game.EngineStates.engineState_8004dd20;
@@ -402,6 +404,14 @@ public final class SaveManager {
 
     gameState_800babc8 = event.gameState;
     gameState_800babc8.syncIds();
+
+    for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+      for(final var entry : character.additionStats.entrySet()) {
+        if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(character, entry.getValue())) {
+          entry.getValue().unlocked = true;
+        }
+      }
+    }
 
     loadingNewGameState_800bdc34 = true;
     whichMenu_800bdc38 = WhichMenu.UNLOAD;
