@@ -169,7 +169,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Audio.FUN_80020308;
 import static legend.game.Audio._800bc9a8;
-import static legend.game.Audio.characterSoundFileIndices_800500f8;
 import static legend.game.Audio.getLoadedAudioFiles;
 import static legend.game.Audio.loadDeffSounds;
 import static legend.game.Audio.loadEncounterSoundsAndMusic;
@@ -293,6 +292,7 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
 import static legend.lodmod.LodMod.AVOID_STAT;
@@ -1285,8 +1285,8 @@ public class Battle extends EngineState {
     int soundFileIndex = 0;
     if(type == 1) {
       //LAB_80019e68
-      for(int charSlot = 0; charSlot < 3; charSlot++) {
-        final int index = characterSoundFileIndices_800500f8[charSlot];
+      for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+        final int index = charSlot + 1;
         if(soundFiles_800bcf80[index].id_02 == bent.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
@@ -1336,8 +1336,8 @@ public class Battle extends EngineState {
     //LAB_8001a018
     if(type == 1) {
       //LAB_8001a034
-      for(int charSlot = 0; charSlot < 3; charSlot++) {
-        final int index = characterSoundFileIndices_800500f8[charSlot];
+      for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+        final int index = charSlot + 1;
 
         if(soundFiles_800bcf80[index].id_02 == charOrMonsterIndex) {
           soundFileIndex = index;
@@ -1466,26 +1466,6 @@ public class Battle extends EngineState {
     itemOverflow.clear();
     equipmentOverflow.clear();
 
-    int charIndex = gameState_800babc8.charIds_88[1];
-    if(charIndex < 0) {
-      gameState_800babc8.charIds_88[1] = gameState_800babc8.charIds_88[2];
-      gameState_800babc8.charIds_88[2] = charIndex;
-    }
-
-    //LAB_800c75c0
-    charIndex = gameState_800babc8.charIds_88[0];
-    if(charIndex < 0) {
-      gameState_800babc8.charIds_88[0] = gameState_800babc8.charIds_88[1];
-      gameState_800babc8.charIds_88[1] = charIndex;
-    }
-
-    //LAB_800c75e8
-    charIndex = gameState_800babc8.charIds_88[1];
-    if(charIndex < 0) {
-      gameState_800babc8.charIds_88[1] = gameState_800babc8.charIds_88[2];
-      gameState_800babc8.charIds_88[2] = charIndex;
-    }
-
     //LAB_800c760c
     this.allocateStageDarkeningStorage();
     loadEncounterSoundsAndMusic(this);
@@ -1588,25 +1568,20 @@ public class Battle extends EngineState {
   @Method(0x800c78d4L)
   public void allocatePlayerBattleEntities() {
     //LAB_800fbdb8
-    int charCount;
-    for(charCount = 0; charCount < 3; charCount++) {
-      if(gameState_800babc8.charIds_88[charCount] < 0) {
-        break;
-      }
-    }
+    final int charCount = gameState_800babc8.charIds_88.size();
 
     //LAB_800fbde8
     final int[] combatantIndices = new int[charCount];
 
     //LAB_800fbe18
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
-      combatantIndices[charSlot] = this.addCombatant(0x200 + gameState_800babc8.charIds_88[charSlot] * 2, charSlot);
+      combatantIndices[charSlot] = this.addCombatant(0x200 + gameState_800babc8.charIds_88.getInt(charSlot) * 2, charSlot);
     }
 
     //LAB_800fbe4c
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
-      final int charIndex = gameState_800babc8.charIds_88[charSlot];
+      final int charIndex = gameState_800babc8.charIds_88.getInt(charSlot);
       final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
       final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charSlot + 6, this.playerBattleScript_800c66fc);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, bent);
@@ -1709,8 +1684,8 @@ public class Battle extends EngineState {
   /** Pulled from S_ITEM */
   @Method(0x800fc504L)
   public void loadPartyTims() {
-    for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88[charSlot];
+    for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+      final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
       final String name = getCharacterName(charId).toLowerCase();
       final int finalCharSlot = charSlot;
       loadFile("characters/%s/textures/combat".formatted(name), files -> this.loadCharacterTim(files, finalCharSlot));
@@ -1727,8 +1702,8 @@ public class Battle extends EngineState {
   /** Pulled from S_ITEM */
   @Method(0x800fc654L)
   public void loadPartyTmdAndAnims() {
-    for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88[charSlot];
+    for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+      final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
       final String name = getCharacterName(charId).toLowerCase();
       final int finalCharSlot = charSlot;
       loadDir("characters/%s/models/combat".formatted(name), files -> this.loadCharTmdAndAnims(files, finalCharSlot));
@@ -2349,18 +2324,18 @@ public class Battle extends EngineState {
           } else {
             // Player TMDs
             //LAB_800c9334
-            int charIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
+            int charId = gameState_800babc8.charIds_88.get(combatant.charSlot_19c);
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
-              if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-                charIndex = 10; // Divine dragoon
+              if(charId == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+                charId = 10; // Divine dragoon
               }
 
-              final String charName = getCharacterName(charIndex).toLowerCase();
+              final String charName = getCharacterName(charId).toLowerCase();
               loadDir("characters/%s/models/dragoon".formatted(charName), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
             } else {
-              final String charName = getCharacterName(charIndex).toLowerCase();
+              final String charName = getCharacterName(charId).toLowerCase();
               loadDir("characters/%s/models/combat".formatted(charName), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
             }
           }
@@ -2419,12 +2394,8 @@ public class Battle extends EngineState {
 
     final TmdAnimationFile anim = battleState_8006e398.getAnimationGlobalAsset(combatant, 0);
     if((combatant.flags_19e & 0x4) != 0) {
-      final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[combatant.charSlot_19c];
-
-      a0_0.dobj2s_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
-      Arrays.setAll(a0_0.dobj2s_00, i -> new ModelPart10());
-
-      model.modelParts_00 = a0_0.dobj2s_00;
+      model.modelParts_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
+      Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
       final int shadowSizeIndex;
       if((combatant.charIndex_1a2 & 0x1) != 0) {
@@ -2461,7 +2432,7 @@ public class Battle extends EngineState {
       } else {
         //LAB_800c97a4
         final int isDragoon = combatant.charIndex_1a2 & 0x1;
-        final int charId = gameState_800babc8.charIds_88[combatant.charSlot_19c];
+        final int charId = gameState_800babc8.charIds_88.get(combatant.charSlot_19c);
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
@@ -2756,7 +2727,7 @@ public class Battle extends EngineState {
   @Method(0x800ca55cL)
   public void loadCombatantTextures(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
-      int fileIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
+      int fileIndex = gameState_800babc8.charIds_88.get(combatant.charSlot_19c);
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
         if(fileIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
@@ -3869,8 +3840,8 @@ public class Battle extends EngineState {
 
       // If there's only one addition that isn't maxed (the ultimate addition), unlock it
       //LAB_800cd31c
-      if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
-        charData.partyFlags_04 |= 0x40;
+      if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) == 0) {
+        charData.partyFlags_04 |= HAS_ULTIMATE_ADDITION;
       }
 
       //LAB_800cd390

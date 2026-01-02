@@ -25,9 +25,9 @@ public final class V1Serializer {
 
   public static SavedGame fromV1(final String name, final FileData data) {
     final GameState52c state = deserializeRetailGameState(data.slice(0x30));
-    final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
-    final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
+    final CharacterData2c charData = state.charData_32c[state.charIds_88.getInt(0)];
+    final int maxHp = levelStuff_80111cfc[state.charIds_88.getInt(0)][charData.level_12].hp_00;
+    final int maxMp = magicStuff_80111d20[state.charIds_88.getInt(0)][charData.dlevel_13].mp_00;
     return new SavedGame(name, name, data.readUByte(0x2d), data.readUByte(0x2c), state, new ConfigCollection(), maxHp, maxMp);
   }
 }

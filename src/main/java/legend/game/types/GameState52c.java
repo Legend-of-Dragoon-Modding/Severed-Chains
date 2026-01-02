@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
@@ -34,7 +36,7 @@ public class GameState52c {
    * </ul>
    */
   public final int[] scriptData_08 = new int[0x20];
-  public final int[] charIds_88 = new int[3];
+  public final IntList charIds_88 = new IntArrayList();
   public int gold_94;
   public int chapterIndex_98;
   public int stardust_9c;
@@ -92,6 +94,10 @@ public class GameState52c {
 
   public GameState52c() {
     Arrays.setAll(this.charData_32c, i -> new CharacterData2c());
+  }
+
+  public CharacterData2c getCharBySlot(final int slot) {
+    return this.charData_32c[this.charIds_88.getInt(slot)];
   }
 
   public void syncIds() {

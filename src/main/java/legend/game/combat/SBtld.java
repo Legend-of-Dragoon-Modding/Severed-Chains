@@ -477,29 +477,26 @@ public final class SBtld {
   @Method(0x80109250L)
   public static void loadAdditions() {
     //LAB_801092a0
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final int charIndex = gameState_800babc8.charIds_88[charSlot];
+    for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+      final int charId = gameState_800babc8.charIds_88.get(charSlot);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
 
-      if(charIndex >= 0) {
-        final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
-
-        if(charData.selectedAddition_19 == null) {
-          continue;
-        }
-
-        //LAB_801092dc
-        final int activeDragoonAdditionIndex;
-        if(charIndex != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-          //LAB_80109308
-          activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[charIndex];
-        } else {
-          activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[9];
-        }
-
-        //LAB_80109310
-        //LAB_80109320
-        battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38[charSlot] = additionHits_8010e658[activeDragoonAdditionIndex];
+      if(charData.selectedAddition_19 == null) {
+        continue;
       }
+
+      //LAB_801092dc
+      final int activeDragoonAdditionIndex;
+      if(charId != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+        //LAB_80109308
+        activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[charId];
+      } else {
+        activeDragoonAdditionIndex = dragoonAdditionIndices_801134e8[9];
+      }
+
+      //LAB_80109310
+      //LAB_80109320
+      battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38[charSlot] = additionHits_8010e658[activeDragoonAdditionIndex];
 
       //LAB_80109340
     }

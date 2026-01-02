@@ -16,6 +16,8 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.types.CharacterData2c.IN_PARTY;
 import static legend.lodmod.LodAdditions.ALBERT_HARPOON;
 import static legend.lodmod.LodAdditions.DOUBLE_PUNCH;
 import static legend.lodmod.LodAdditions.DOUBLE_SLASH;
@@ -41,9 +43,8 @@ public class NewGame extends EngineState {
 
   @Method(0x800c7194L)
   private void setUpNewGameData() {
-    gameState_800babc8.charIds_88[0] = 0;
-    gameState_800babc8.charIds_88[1] = -1;
-    gameState_800babc8.charIds_88[2] = -1;
+    gameState_800babc8.charIds_88.clear();
+    gameState_800babc8.charIds_88.add(0);
 
     //LAB_800c723c
     for(int charIndex = 0; charIndex < 9; charIndex++) {
@@ -68,7 +69,7 @@ public class NewGame extends EngineState {
       }
     }
 
-    gameState_800babc8.charData_32c[0].partyFlags_04 = 0x3;
+    gameState_800babc8.charData_32c[0].partyFlags_04 = IN_PARTY | CAN_BE_IN_PARTY;
   }
 
   @Override

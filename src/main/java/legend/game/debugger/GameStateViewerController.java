@@ -303,9 +303,9 @@ public class GameStateViewerController {
           GameStateViewerController.this.scriptData29.setText(String.format("%#x", gameState_800babc8.scriptData_08[29]));
           GameStateViewerController.this.scriptData30.setText(String.format("%#x", gameState_800babc8.scriptData_08[30]));
           GameStateViewerController.this.scriptData31.setText(String.format("%#x", gameState_800babc8.scriptData_08[31]));
-          GameStateViewerController.this.partyI.setText(String.format("%#x", gameState_800babc8.charIds_88[0]));
-          GameStateViewerController.this.partyII.setText(String.format("%#x", gameState_800babc8.charIds_88[1]));
-          GameStateViewerController.this.partyIII.setText(String.format("%#x", gameState_800babc8.charIds_88[2]));
+          GameStateViewerController.this.partyI.setText(String.format("%#x", gameState_800babc8.charIds_88.getInt(0)));
+          GameStateViewerController.this.partyII.setText(String.format("%#x", gameState_800babc8.charIds_88.getInt(1)));
+          GameStateViewerController.this.partyIII.setText(String.format("%#x", gameState_800babc8.charIds_88.getInt(2)));
           GameStateViewerController.this.gold.setText(String.valueOf(gameState_800babc8.gold_94));
           GameStateViewerController.this.chapter.setText(String.valueOf(gameState_800babc8.chapterIndex_98));
           GameStateViewerController.this.stardust.setText(String.valueOf(gameState_800babc8.stardust_9c));

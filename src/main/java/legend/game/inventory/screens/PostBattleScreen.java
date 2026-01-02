@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
@@ -124,15 +126,15 @@ public class PostBattleScreen extends MenuScreen {
           Arrays.fill(this.pendingXp_8011e180, 0);
 
           int xpDivisor = 0;
-          for(int charSlot = 0; charSlot < 3; charSlot++) {
+          for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
             if(this.characterIsAlive(charSlot)) {
               xpDivisor++;
             }
           }
 
-          for(int charSlot = 0; charSlot < 3; charSlot++) {
+          for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
             if(this.characterIsAlive(charSlot)) {
-              this.pendingXp_8011e180[gameState_800babc8.charIds_88[charSlot]] = totalXpFromCombat_800bc95c / xpDivisor;
+              this.pendingXp_8011e180[gameState_800babc8.charIds_88.getInt(charSlot)] = totalXpFromCombat_800bc95c / xpDivisor;
             }
           }
 
@@ -140,7 +142,7 @@ public class PostBattleScreen extends MenuScreen {
 
           //LAB_8010d9d4
           //LAB_8010d9f8
-          for(int secondaryCharSlot = 0; secondaryCharSlot < 9; secondaryCharSlot++) {
+          for(int secondaryCharSlot = 0; secondaryCharSlot < secondaryCharIds_800bdbf8.length; secondaryCharSlot++) {
             final int secondaryCharIndex = secondaryCharIds_800bdbf8[secondaryCharSlot];
 
             if(secondaryCharIndex != -1) {
@@ -297,9 +299,9 @@ public class PostBattleScreen extends MenuScreen {
         break;
 
       case DRAGOON_LEVEL_UPS_10:
-        for(int charSlot = 0; charSlot < 3; charSlot++) {
+        for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
           if(this.characterIsAlive(charSlot)) {
-            this.levelUpDragoon(gameState_800babc8.charIds_88[charSlot], charSlot);
+            this.levelUpDragoon(gameState_800babc8.charIds_88.getInt(charSlot), charSlot);
           }
         }
 
@@ -416,24 +418,13 @@ public class PostBattleScreen extends MenuScreen {
    */
   @Method(0x8010cc24L)
   private boolean givePendingXp() {
-    final int[] charIds = {
-      gameState_800babc8.charIds_88[0],
-      gameState_800babc8.charIds_88[1],
-      gameState_800babc8.charIds_88[2],
-      secondaryCharIds_800bdbf8[0],
-      secondaryCharIds_800bdbf8[1],
-      secondaryCharIds_800bdbf8[2],
-      secondaryCharIds_800bdbf8[3],
-      secondaryCharIds_800bdbf8[4],
-      secondaryCharIds_800bdbf8[5],
-      secondaryCharIds_800bdbf8[6],
-      secondaryCharIds_800bdbf8[7],
-      secondaryCharIds_800bdbf8[8],
-    };
+    final IntList charIds = new IntArrayList();
+    charIds.addAll(gameState_800babc8.charIds_88);
+    charIds.addAll(IntList.of(secondaryCharIds_800bdbf8));
     int pendingXpCleared = 0;
 
-    for(int charSlot = 0; charSlot < charIds.length; charSlot++) {
-      final int charId = charIds[charSlot];
+    for(int charSlot = 0; charSlot < charIds.size(); charSlot++) {
+      final int charId = charIds.getInt(charSlot);
       if(charId >= 0) {
         final int pendingXp = this.pendingXp_8011e180[charId];
 
@@ -478,7 +469,7 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010cdb0
     //LAB_8010cdcc
-    return pendingXpCleared < charIds.length;
+    return pendingXpCleared < charIds.size();
   }
 
   @Method(0x8010cde8L)
@@ -592,7 +583,7 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010d078L)
-  private void drawResultsBackground(int x, int y, final int w, final int h, final int type) {
+  private void drawResultsBackground(int x, final int y, final int w, final int h, final int type) {
     if(this.resultsBackgroundObj[type - 1] != null) {
       x -= 8;
       //y += 120;
@@ -782,22 +773,20 @@ public class PostBattleScreen extends MenuScreen {
     int y3 = -70;
 
     //LAB_8010e9fc
-    for(int i = 0; i < 3; i++) {
-      if(gameState_800babc8.charIds_88[i] != -1) {
-        this.drawChar(176, y1, gameState_800babc8.charIds_88[i]);
+    for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+      this.drawChar(176, y1, gameState_800babc8.charIds_88.getInt(i));
 
-        if(this.levelsGained_8011e1c8[i] != 0) {
-          this.levelsGained_8011e1c8[i] = 0;
-          addLevelUpOverlay(72, y2);
-          playMenuSound(9);
-        }
+      if(this.levelsGained_8011e1c8[i] != 0) {
+        this.levelsGained_8011e1c8[i] = 0;
+        addLevelUpOverlay(72, y2);
+        playMenuSound(9);
+      }
 
-        //LAB_8010ea44
-        if(this.dragoonLevelsGained_8011e1d8[i] != 0) {
-          this.dragoonLevelsGained_8011e1d8[i] = 0;
-          addLevelUpOverlay(72, y3);
-          playMenuSound(9);
-        }
+      //LAB_8010ea44
+      if(this.dragoonLevelsGained_8011e1d8[i] != 0) {
+        this.dragoonLevelsGained_8011e1d8[i] = 0;
+        addLevelUpOverlay(72, y3);
+        playMenuSound(9);
       }
 
       //LAB_8010ea70
@@ -855,17 +844,15 @@ public class PostBattleScreen extends MenuScreen {
 
   @Method(0x8010d32cL)
   private boolean characterIsAlive(final int charSlot) {
-    final int charIndex = gameState_800babc8.charIds_88[charSlot];
+    final int charIndex = gameState_800babc8.charIds_88.getInt(charSlot);
 
-    if(charIndex != -1) {
-      //LAB_8010d36c
-      for(int i = 0; i < livingCharCount_800bc97c; i++) {
-        if(livingCharIds_800bc968[i] == charIndex) {
-          return true;
-        }
-
-        //LAB_8010d384
+    //LAB_8010d36c
+    for(int i = 0; i < livingCharCount_800bc97c; i++) {
+      if(livingCharIds_800bc968[i] == charIndex) {
+        return true;
       }
+
+      //LAB_8010d384
     }
 
     //LAB_8010d390

@@ -224,7 +224,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void addCharCard(final int slot) {
-    final int id = gameState_800babc8.charIds_88[slot];
+    final int id = slot < gameState_800babc8.charIds_88.size() ? gameState_800babc8.charIds_88.getInt(slot) : -1;
     this.charCards[slot] = this.addControl(new CharacterCard(id));
     this.charCards[slot].setPos(186, 16 + slot * 72);
   }
@@ -244,8 +244,8 @@ public class MainMenuScreen extends MenuScreen {
         cacheCharacterSlots();
         startFadeEffect(2, 10);
 
-        for(int i = 0; i < 3; i++) {
-          this.charCards[i].setCharId(gameState_800babc8.charIds_88[i]);
+        for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+          this.charCards[i].setCharId(gameState_800babc8.charIds_88.getInt(i));
         }
 
         this.loadingStage++;

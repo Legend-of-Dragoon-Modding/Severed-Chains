@@ -54,12 +54,16 @@ public final class V2Serializer {
       offset += 4;
     }
 
-    final int charSlotCount = data.readByte(offset); // Not yet used
+    final int charSlotCount = data.readByte(offset);
     offset++;
 
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      state.charIds_88[i] = data.readShort(offset);
+    for(int i = 0; i < charSlotCount; i++) {
+      final int charId = data.readShort(offset);
       offset += 2;
+
+      if(charId != -1) {
+        state.charIds_88.add(charId);
+      }
     }
 
     state.gold_94 = data.readInt(offset);
@@ -247,9 +251,9 @@ public final class V2Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
-    final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
+    final CharacterData2c charData = state.charData_32c[state.charIds_88.getInt(0)];
+    final int maxHp = levelStuff_80111cfc[state.charIds_88.getInt(0)][charData.level_12].hp_00;
+    final int maxMp = magicStuff_80111d20[state.charIds_88.getInt(0)][charData.dlevel_13].mp_00;
     return new SavedGame(name, name, locationType, locationIndex, state, config, maxHp, maxMp);
   }
 }

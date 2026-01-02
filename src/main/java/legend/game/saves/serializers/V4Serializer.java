@@ -57,12 +57,16 @@ public final class V4Serializer {
       offset += 4;
     }
 
-    final int charSlotCount = data.readByte(offset); // Not yet used
+    final int charSlotCount = data.readByte(offset);
     offset++;
 
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      state.charIds_88[i] = data.readShort(offset);
+    for(int i = 0; i < charSlotCount; i++) {
+      final int charId = data.readShort(offset);
       offset += 2;
+
+      if(charId != -1) {
+        state.charIds_88.add(charId);
+      }
     }
 
     state.gold_94 = data.readInt(offset);

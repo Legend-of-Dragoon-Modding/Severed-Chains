@@ -113,6 +113,7 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.ITEM_GROUP_SORT_MODE;
+import static legend.game.types.CharacterData2c.IN_PARTY;
 import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.DARK_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
@@ -1254,11 +1255,11 @@ public final class SItem {
       secondaryCharIds_800bdbf8[slot] = -1;
       characterIndices_800bdbb8[slot] = -1;
 
-      if((gameState_800babc8.charData_32c[slot].partyFlags_04 & 0x1) != 0) {
+      if((gameState_800babc8.charData_32c[slot].partyFlags_04 & IN_PARTY) != 0) {
         characterIndices_800bdbb8[characterCount_8011d7c4] = slot;
         characterCount_8011d7c4++;
 
-        if(gameState_800babc8.charIds_88[0] != slot && gameState_800babc8.charIds_88[1] != slot && gameState_800babc8.charIds_88[2] != slot) {
+        if(!gameState_800babc8.charIds_88.contains(slot)) {
           secondaryCharIds_800bdbf8[usedCharacterSlots] = slot;
           usedCharacterSlots++;
         }
@@ -1362,12 +1363,15 @@ public final class SItem {
       }
 
       if(a0 == 0) {
-        for(int i = 0; i < characterCount_8011d7c4; i++) {
+        for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            if(gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot) != null) {
-              final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot);
+            final int charId = gameState_800babc8.charIds_88.getInt(i);
+            final CharacterData2c character = gameState_800babc8.charData_32c[charId];
+
+            if(character.equipment_14.get(equipmentSlot) != null) {
+              final Equipment equipment = character.equipment_14.get(equipmentSlot);
               final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
-              menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8[i];
+              menuEntry.flags_02 = 0x3000 | charId;
               equipments.add(menuEntry);
 
               equipmentIndex++;

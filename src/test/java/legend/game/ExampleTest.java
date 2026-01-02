@@ -6,16 +6,23 @@ import legend.game.characters.StatCollection;
 import legend.game.combat.BattleTransitionMode;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.effects.TransformationMode;
+import legend.game.inventory.ItemStack;
+import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.SavedGame;
 import legend.game.scripting.ScriptState;
+import legend.game.submap.SMap;
 import legend.game.title.Ttle;
+import legend.lodmod.LodItems;
 import legend.lodmod.LodMod;
 import org.junit.jupiter.api.Test;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
+import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExampleTest {
@@ -48,25 +55,43 @@ public class ExampleTest {
     Harness.setSimpleRandSeed(0);
     Harness.setMersenneTwisterSeed(0L);
 
-    // Start battle
-    Harness.startBattle(443, 0);
 
-    // Wait for first player turn
-    Wait.waitForPlayerTurn();
+    Harness.transitionToEngineState(EngineStateEnum.SUBMAP_05);
+    Wait.waitForEngineState(SMap.class);
 
-    // Set Melbu health to 50%
-    final ScriptState<MonsterBattleEntity> melbu = battleState_8006e398.monsterBents_e50[0];
-    final StatCollection melbuStats = melbu.innerStruct_00.stats;
-    melbuStats.getStat(LodMod.HP_STAT.get()).setCurrent(melbuStats.getStat(LodMod.HP_STAT.get()).getMaxRaw() / 2);
+    itemOverflow.add(new ItemStack(LodItems.PELLET.get()));
+    itemOverflow.add(new ItemStack(LodItems.BURN_OUT.get()));
+//    itemOverflow.add(new ItemStack(LodItems.ANGELS_PRAYER.get()));
+//    itemOverflow.add(new ItemStack(LodItems.HEALING_POTION.get()));
+//    itemOverflow.add(new ItemStack(LodItems.CHARM_POTION.get()));
+//    itemOverflow.add(new ItemStack(LodItems.HEALING_BREEZE.get()));
+//    itemOverflow.add(new ItemStack(LodItems.TRANS_LIGHT.get()));
+//    itemOverflow.add(new ItemStack(LodItems.DARK_MIST.get()));
+    SItem.menuStack.pushScreen(new TooManyItemsScreen());
+    Menus.whichMenu_800bdc38 = WhichMenu.RENDER_NEW_MENU;
+    SCRIPTS.pause();
 
-    // Guard forever
-    while(true) {
+    if(false) {
+      // Start battle
+      Harness.startBattle(443, 0);
+
+      // Wait for first player turn
       Wait.waitForPlayerTurn();
-      Harness.selectBattleMenuIcon(1);
-      Input.sendKeyPress(InputKey.RETURN);
-      DebugHelper.sleep(10);
 
-      if(false)break;
+      // Set Melbu health to 50%
+      final ScriptState<MonsterBattleEntity> melbu = battleState_8006e398.monsterBents_e50[0];
+      final StatCollection melbuStats = melbu.innerStruct_00.stats;
+      melbuStats.getStat(LodMod.HP_STAT.get()).setCurrent(melbuStats.getStat(LodMod.HP_STAT.get()).getMaxRaw() / 2);
+
+      // Guard forever
+      while(true) {
+        Wait.waitForPlayerTurn();
+        Harness.selectBattleMenuIcon(1);
+        Input.sendKeyPress(InputKey.RETURN);
+        DebugHelper.sleep(10);
+
+        if(false) break;
+      }
     }
 
     try {

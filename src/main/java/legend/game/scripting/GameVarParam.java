@@ -57,7 +57,7 @@ public class GameVarParam extends Param {
       case 14 -> FullScreenEffects.fullScreenEffect_800bb140.red1_18;
       case 15 -> FullScreenEffects.fullScreenEffect_800bb140.green1_10;
       case 16 -> FullScreenEffects.fullScreenEffect_800bb140.blue1_0c;
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0];
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.getInt(0);
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c;
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0;
@@ -188,7 +188,7 @@ public class GameVarParam extends Param {
       case 14 -> FullScreenEffects.fullScreenEffect_800bb140.red1_18 = val;
       case 15 -> FullScreenEffects.fullScreenEffect_800bb140.green1_10 = val;
       case 16 -> FullScreenEffects.fullScreenEffect_800bb140.blue1_0c = val;
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0] = val;
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.set(0, val);
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98 = val;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c = val;
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0 = val;

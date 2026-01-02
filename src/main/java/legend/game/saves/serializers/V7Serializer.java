@@ -57,10 +57,14 @@ public final class V7Serializer {
       state.scriptData_08[i] = data.readInt(offset);
     }
 
-    final int charSlotCount = data.readByte(offset); // Not yet used
+    final int charSlotCount = data.readByte(offset);
 
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      state.charIds_88[i] = data.readShort(offset);
+    for(int i = 0; i < charSlotCount; i++) {
+      final int charId = data.readShort(offset);
+
+      if(charId != -1) {
+        state.charIds_88.add(charId);
+      }
     }
 
     state.gold_94 = data.readInt(offset);
@@ -191,15 +195,7 @@ public final class V7Serializer {
 
     data.writeAscii(offset, name);
 
-    int mainCharId = 0;
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      if(state.charIds_88[i] != -1) {
-        mainCharId = state.charIds_88[i];
-        break;
-      }
-    }
-
-    final ActiveStatsa0 slot0Stats = activeStats[mainCharId];
+    final ActiveStatsa0 slot0Stats = activeStats[state.charIds_88.getInt(0)];
     data.writeInt(offset, slot0Stats.maxHp_66);
     data.writeInt(offset, slot0Stats.maxMp_6e);
 
@@ -212,7 +208,7 @@ public final class V7Serializer {
       data.writeInt(offset, scriptData);
     }
 
-    data.writeByte(offset, state.charIds_88.length);
+    data.writeByte(offset, state.charIds_88.size());
 
     for(final int charIndex : state.charIds_88) {
       data.writeShort(offset, charIndex);

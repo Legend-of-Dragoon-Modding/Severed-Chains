@@ -50,10 +50,14 @@ public final class V6Serializer {
       state.scriptData_08[i] = data.readInt(offset);
     }
 
-    final int charSlotCount = data.readByte(offset); // Not yet used
+    final int charSlotCount = data.readByte(offset);
 
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      state.charIds_88[i] = data.readShort(offset);
+    for(int i = 0; i < charSlotCount; i++) {
+      final int charId = data.readShort(offset);
+
+      if(charId != -1) {
+        state.charIds_88.add(charId);
+      }
     }
 
     state.gold_94 = data.readInt(offset);

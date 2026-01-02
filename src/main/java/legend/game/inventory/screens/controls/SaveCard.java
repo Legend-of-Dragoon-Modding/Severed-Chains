@@ -51,8 +51,12 @@ public class SaveCard extends Control {
       this.invalidSave.setVisibility(false);
       this.dragoonSpirits.setGoods(saveData.state.goods_19c);
 
-      for(int i = 0; i < 3; i++) {
-        this.portraits[i].setCharId(saveData.state.charIds_88[i]);
+      for(int i = 0; i < saveData.state.charIds_88.size(); i++) {
+        this.portraits[i].setCharId(saveData.state.charIds_88.getInt(i));
+      }
+
+      for(int i = saveData.state.charIds_88.size(); i < 3; i++) {
+        this.portraits[i].setCharId(-1);
       }
     } else {
       this.invalidSave.setVisibility(saveData != null);
@@ -89,15 +93,7 @@ public class SaveCard extends Control {
         }
 
         final GameState52c state = this.saveData.state;
-
-        int firstCharId = 0;
-        for(int i = 0; i < state.charIds_88.length; i++) {
-          if(state.charIds_88[i] != -1) {
-            firstCharId = state.charIds_88[i];
-            break;
-          }
-        }
-
+        final int firstCharId = state.charIds_88.getInt(0);
         final CharacterData2c char0 = state.charData_32c[firstCharId];
         this.renderNumber(224, y + 6, char0.level_12, 2); // Level
         this.renderNumber(269, y + 6, char0.dlevel_13, 2); // Dragoon level

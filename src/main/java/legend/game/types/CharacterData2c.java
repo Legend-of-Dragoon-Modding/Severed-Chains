@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CharacterData2c {
+  public static final int IN_PARTY = 0x1;
+  public static final int CAN_BE_IN_PARTY = 0x2;
+  public static final int CANT_REMOVE = 0x20;
+  public static final int HAS_ULTIMATE_ADDITION = 0x40;
+
   public int xp_00;
   /**
    * <ul>

@@ -73,9 +73,9 @@ public final class Audio {
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
   public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
-  public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
 
-  public static final int[] charSlotSpuOffsets_80050190 = {0x44250, 0x4b780, 0x52cb0};
+  public static final int charSlotSpuOffset_80050190 = 0x44250;
+  public static final int charSlotSpuSize = 0x7530;
 
   public static final int[] combatSoundEffectsTypes_8005019c = {
     12, 13, 86, 12, 12, 12, 12, 12,
@@ -644,20 +644,17 @@ public final class Audio {
   }
 
   @Method(0x8001cae0L)
-  public static void charSoundEffectsLoaded(final List<FileData> files, final int charSlot) {
-    final int charId = gameState_800babc8.charIds_88[charSlot];
-
+  public static void charSoundEffectsLoaded(final List<FileData> files, final int charId, final int charSlot) {
     //LAB_8001cb34
-    final int index = characterSoundFileIndices_800500f8[charSlot];
-    final SoundFile sound = soundFiles_800bcf80[index];
+    final SoundFile sound = soundFiles_800bcf80[charSlot + 1];
 
-    sound.name = "Char slot %d sound effects".formatted(charSlot);
+    sound.name = "Char ID %d sound effects".formatted(charId);
     sound.id_02 = charId;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
 
     //LAB_8001cc48
     //LAB_8001cc50
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffset_80050190 + charSlotSpuSize * charSlot);
     sound.used_00 = true;
   }
 
@@ -667,8 +664,8 @@ public final class Audio {
 
     //LAB_8001cd3c
     int charSlot;
-    for(charSlot = 0; charSlot < 3; charSlot++) {
-      final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
+    for(charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+      final SoundFile soundFile = soundFiles_800bcf80[charSlot + 1];
 
       if(soundFile.id_02 == bent.charId_272) {
         break;
@@ -676,7 +673,7 @@ public final class Audio {
     }
 
     //LAB_8001cd78
-    final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
+    final SoundFile soundFile = soundFiles_800bcf80[charSlot + 1];
     sssqUnloadPlayableSound(soundFile.playableSound_10);
     soundFile.used_00 = false;
 
@@ -704,14 +701,14 @@ public final class Audio {
 
   @Method(0x8001ce98L)
   public static void charAttackSoundsLoaded(final List<FileData> files, final String soundName, final int charSlot) {
-    final SoundFile sound = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
+    final SoundFile sound = soundFiles_800bcf80[charSlot + 1];
 
     //LAB_8001cee8
     //LAB_8001cf2c
     sound.name = soundName;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffset_80050190 + charSlotSpuSize * charSlot);
     cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     sound.used_00 = true;
@@ -954,28 +951,23 @@ public final class Audio {
     //LAB_8001df9c
     loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x8);
 
-    final AtomicInteger remaining = new AtomicInteger(3);
+    final AtomicInteger remaining = new AtomicInteger(gameState_800babc8.charIds_88.size());
 
     // Player combat sounds for current party composition (example file: 764)
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final int charIndex = gameState_800babc8.charIds_88[charSlot];
+    for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+      final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
 
-      if(charIndex != -1) {
-        final String name = getCharacterName(charIndex).toLowerCase();
-        final int finalCharSlot = charSlot;
-        loadDir("characters/%s/sounds/combat".formatted(name), files -> {
-          charSoundEffectsLoaded(files, finalCharSlot);
-          if(remaining.decrementAndGet() == 0) {
-            //LAB_8001cc38
-            //LAB_8001cc40
-            FUN_8001e8d4();
-          }
-        });
-      } else {
+      final String name = getCharacterName(charId).toLowerCase();
+      final int finalCharSlot = charSlot;
+      loadDir("characters/%s/sounds/combat".formatted(name), files -> {
+        charSoundEffectsLoaded(files, charId, finalCharSlot);
+
         if(remaining.decrementAndGet() == 0) {
-          FUN_8001e8d4();
+          //LAB_8001cc38
+          //LAB_8001cc40
+          finishLoadingCharSoundEffects();
         }
-      }
+      });
     }
 
     loadMonsterSounds();
@@ -1014,9 +1006,13 @@ public final class Audio {
       }
 
       case 1 -> {
+        if(gameState_800babc8 == null) {
+          break;
+        }
+
         //LAB_8001e324
-        for(int charSlot = 0; charSlot < 3; charSlot++) {
-          final int index = characterSoundFileIndices_800500f8[charSlot];
+        for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
+          final int index = charSlot + 1;
 
           if(soundFiles_800bcf80[index].used_00) {
             sssqUnloadPlayableSound(soundFiles_800bcf80[index].playableSound_10);
@@ -1132,7 +1128,7 @@ public final class Audio {
 
 
   @Method(0x8001e8d4L)
-  public static void FUN_8001e8d4() {
+  public static void finishLoadingCharSoundEffects() {
     loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
   }
 

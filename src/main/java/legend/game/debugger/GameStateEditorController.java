@@ -249,12 +249,19 @@ public class GameStateEditorController {
 
   @FXML
   public void getParty() {
-    this.textParty.setText(String.valueOf(gameState_800babc8.charIds_88[this.getParty.getSelectionModel().getSelectedIndex()]));
+    this.textParty.setText(String.valueOf(gameState_800babc8.charIds_88.getInt(this.getParty.getSelectionModel().getSelectedIndex())));
   }
 
   @FXML
   public void setParty() {
-    gameState_800babc8.charIds_88[this.getParty.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textParty.getText());
+    final int charSlot = this.getParty.getSelectionModel().getSelectedIndex();
+    final int charId = Integer.parseInt(this.textParty.getText());
+
+    if(charSlot < gameState_800babc8.charIds_88.size()) {
+      gameState_800babc8.charIds_88.set(charSlot, charId);
+    } else {
+      gameState_800babc8.charIds_88.add(charId);
+    }
   }
 
   @FXML
