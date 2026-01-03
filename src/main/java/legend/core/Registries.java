@@ -3,6 +3,9 @@ package legend.core;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActionRegistry;
 import legend.core.platform.input.InputActionRegistryEvent;
+import legend.game.EngineState;
+import legend.game.EngineStateRegistry;
+import legend.game.RegisterEngineStatesEvent;
 import legend.game.additions.Addition;
 import legend.game.additions.AdditionRegistry;
 import legend.game.additions.AdditionRegistryEvent;
@@ -55,6 +58,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
+  public final Registry<EngineState> engineStates = this.addRegistry(new EngineStateRegistry(), RegisterEngineStatesEvent::new);
   public final Registry<InputAction> inputActions = this.addRegistry(new InputActionRegistry(), InputActionRegistryEvent::new);
   public final Registry<StatType<?>> statTypes = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
   public final Registry<StatModType<?, ?, ?>> statModTypes = this.addRegistry(new StatModTypeRegistry(), StatModTypeRegistryEvent::new);

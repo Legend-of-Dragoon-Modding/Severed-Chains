@@ -9,6 +9,7 @@ import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
 import org.joml.Math;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.function.Function;
 
@@ -22,7 +23,7 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 
-public abstract class EngineState {
+public abstract class EngineState extends RegistryEntry {
   private final Function<RunningScript, FlowControl>[] functions = new Function[1024];
 
   private float analogueAngle;

@@ -11,6 +11,7 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.RegisterEngineStatesEvent;
 import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
@@ -253,6 +254,11 @@ public class LodMod {
     LodBattleActions.SPELLS,
     LodBattleActions.SPECIAL,
   };
+
+  @EventListener
+  public static void registerEngineStates(final RegisterEngineStatesEvent event) {
+    LodEngineStates.register(event);
+  }
 
   @EventListener
   public static void registerInputActions(final InputActionRegistryEvent event) {
