@@ -23,7 +23,7 @@ import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.renderFraction;
 
-public class ItemList<T extends InventoryEntry> extends Control {
+public class ItemList<T extends InventoryEntry<?>> extends Control {
   private final Int2IntFunction itemCount;
   private final ListBox<MenuEntryStruct04<T>> items;
   private final Renderable58 background;

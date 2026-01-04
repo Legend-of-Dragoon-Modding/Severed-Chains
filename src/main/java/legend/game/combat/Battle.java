@@ -157,6 +157,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -189,7 +190,6 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnDirSync;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.DrgnFiles.loadFile;
-import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -778,7 +778,7 @@ public class Battle extends EngineState {
     functions[158] = this::FUN_800cc784;
     functions[159] = this::scriptLoadAttackAnimations;
     functions[160] = this::scriptSetUpAndHandleCombatMenu;
-    functions[161] = Scus94491BpeSegment::scriptRewindAndPause2;
+    functions[161] = this::scriptOverrideBattleMenuActions;
     functions[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     functions[163] = Scus94491BpeSegment::scriptRewindAndPause2;
     functions[164] = this::scriptRenderDamage;
@@ -1860,8 +1860,6 @@ public class Battle extends EngineState {
 
   @Method(0x800c8068L)
   public void performPostBattleAction() {
-    EVENTS.postEvent(new BattleEndedEvent(this));
-
     final int postBattleAction = postBattleAction_800bc974;
 
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
@@ -1899,6 +1897,7 @@ public class Battle extends EngineState {
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
+        EVENTS.postEvent(new BattleEndedEvent(this));
         startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
       }
 
@@ -2403,7 +2402,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c952cL)
-  public static void loadCombatantModelAndAnimation(final Model124 model, final CombatantStruct1a8 combatant) {
+  public static void loadCombatantModelAndAnimation(final Battle battle, final Model124 model, final CombatantStruct1a8 combatant) {
     final CContainer tmd;
     if(combatant._1a4 >= 0) {
       tmd = new CContainer(model.name, battleState_8006e398.getGlobalAsset(combatant._1a4).data_00);
@@ -2442,7 +2441,7 @@ public class Battle extends EngineState {
 
     TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
 
-    EVENTS.postEvent(new CombatantModelLoadedEvent((Battle)currentEngineState_8004dd04, combatant, model));
+    EVENTS.postEvent(new CombatantModelLoadedEvent(battle, combatant, model));
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
@@ -3549,9 +3548,9 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
   @Method(0x800cca34L)
-  public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
+  public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<PlayerBattleEntity> script) {
     if(this.hud.listMenu_800c6b60 != null) {
       return FlowControl.PAUSE_AND_REWIND;
     }
@@ -3575,6 +3574,27 @@ public class Battle extends EngineState {
     script.params_20[0].set(selectedAction.getRegistryId());
 
     //LAB_800ccb28
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Overrides battle menu actions")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "actionCount", description = "The number of elements in the battle action registry ID array")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG_ARRAY, name = "actions", description = "An array of battle action registry IDs")
+  @Method(0x800cca34L)
+  public FlowControl scriptOverrideBattleMenuActions(final RunningScript<PlayerBattleEntity> script) {
+    final List<BattleAction> battleActions = new ArrayList<>();
+    final int battleActionCount = script.params_20[0].get();
+
+    for(int i = 0; i < battleActionCount; i++) {
+      final RegistryId id = script.params_20[1].array(i).getRegistryId();
+
+      if(REGISTRIES.battleActions.hasEntry(id)) {
+        battleActions.add(REGISTRIES.battleActions.getEntry(id).get());
+      }
+    }
+
+    this.hud.initializeMenuIcons(script.scriptState_04, battleActions, Set.of());
+    script.scriptState_04.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
     return FlowControl.CONTINUE;
   }
 
@@ -3627,7 +3647,7 @@ public class Battle extends EngineState {
       this.loadCombatantTmdAndAnims(combatant);
       //LAB_800ccc94
     } else if((combatant.flags_19e & 0x20) == 0) {
-      loadCombatantModelAndAnimation(bent.model_148, combatant);
+      loadCombatantModelAndAnimation(this, bent.model_148, combatant);
       bent.loadingAnimIndex_26e = 0;
       bent.currentAnimIndex_270 = -1;
       state.clearFlag(FLAG_1);
@@ -4121,7 +4141,7 @@ public class Battle extends EngineState {
 
     //LAB_800cdaf4
     bent.loadingAnimIndex_26e = 0;
-    loadCombatantModelAndAnimation(bent.model_148, bent.combatant_144);
+    loadCombatantModelAndAnimation(this, bent.model_148, bent.combatant_144);
 
     //LAB_800cdb08
     return FlowControl.CONTINUE;

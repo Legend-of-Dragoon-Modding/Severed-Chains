@@ -32,6 +32,7 @@ public @interface ScriptParam {
     FLAG_ARRAY,
     STRING,
     REG,
+    REG_ARRAY,
     ENUM,
     ANY,
   }

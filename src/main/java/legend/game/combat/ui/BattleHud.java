@@ -50,6 +50,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DEFAULT_FONT;
@@ -1482,7 +1483,21 @@ public class BattleHud {
   }
 
   @Method(0x800f6134L)
-  public void initializeMenuIcons(final ScriptState<? extends BattleEntity27c> bentState) {
+  public void initializeMenuIcons(final ScriptState<PlayerBattleEntity> bentState) {
+    //LAB_800f62a4
+    final GatherBattleActionsEvent event = EVENTS.postEvent(new GatherBattleActionsEvent(this.battle, bentState.innerStruct_00));
+
+    final List<BattleAction> actions = event.actions.object2IntEntrySet().stream()
+      .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
+      .map(Map.Entry::getKey)
+      .toList()
+    ;
+
+    this.initializeMenuIcons(bentState, actions, event.disabledActions);
+  }
+
+  @Method(0x800f6134L)
+  public void initializeMenuIcons(final ScriptState<PlayerBattleEntity> bentState, final List<BattleAction> actions, final Set<BattleAction> disabledActions) {
     this.battleMenu_800c6c34.initIconObjs();
 
     this.battleMenu_800c6c34.state_00 = 1;
@@ -1514,29 +1529,14 @@ public class BattleHud {
 
     //LAB_800f6224
     //LAB_800f6234
-    int bentIndex;
-    for(bentIndex = 0; bentIndex < battleState_8006e398.getPlayerCount(); bentIndex++) {
-      if(battleState_8006e398.playerBents_e40[bentIndex] == bentState) {
-        break;
-      }
-    }
-
     //LAB_800f6254
-    this.battleMenu_800c6c34.player_04 = battleState_8006e398.playerBents_e40[bentIndex].innerStruct_00;
+    this.battleMenu_800c6c34.player_04 = bentState.innerStruct_00;
 
     //LAB_800f62a4
-    final GatherBattleActionsEvent event = EVENTS.postEvent(new GatherBattleActionsEvent(this.battle, this.battleMenu_800c6c34.player_04));
-
     this.battleMenu_800c6c34.actions.clear();
     this.battleMenu_800c6c34.disabledActions.clear();
-
-    event.actions.object2IntEntrySet().stream()
-      .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
-      .map(Map.Entry::getKey)
-      .forEach(this.battleMenu_800c6c34.actions::add)
-    ;
-
-    this.battleMenu_800c6c34.disabledActions.addAll(event.disabledActions);
+    this.battleMenu_800c6c34.actions.addAll(actions);
+    this.battleMenu_800c6c34.disabledActions.addAll(disabledActions);
 
     this.battleMenu_800c6c34.xShiftOffset_0a = (short)((this.battleMenu_800c6c34.actions.size() * 19 - 3) / 2);
   }

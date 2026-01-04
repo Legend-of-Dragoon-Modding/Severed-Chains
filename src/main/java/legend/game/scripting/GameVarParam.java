@@ -150,7 +150,7 @@ public class GameVarParam extends Param {
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04;
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368 ? 1 : 0;
-      case 125 -> SItem.shopId_8007a3b4;
+      case 125 -> LodMod.getShopIndex(SItem.shopId_8007a3b4);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0];
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.get();
@@ -212,7 +212,7 @@ public class GameVarParam extends Param {
         // size and simply add the drop to the list if var[41] is set.
       }
       case 41 -> {
-        final InventoryEntry invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[val])).get() : new ItemStack(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[val - 192])).get());
+        final InventoryEntry<?> invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[val])).get() : new ItemStack(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[val - 192])).get());
 
         if(invEntry instanceof final Equipment equipment) {
           equipmentOverflow.add(equipment);
@@ -289,7 +289,7 @@ public class GameVarParam extends Param {
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04 = val;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04 = val;
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368 = val != 0;
-      case 125 -> SItem.shopId_8007a3b4 = val;
+      case 125 -> SItem.shopId_8007a3b4 = LodMod.id(LodMod.SHOP_IDS[val]);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0] = val;
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.set(val);

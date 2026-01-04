@@ -159,7 +159,7 @@
 "Battle::FUN_800cc784","Unknown"
 "Battle::scriptLoadAttackAnimations","Loads the attack animations for a battle entity"
 "Battle::scriptSetUpAndHandleCombatMenu","Sets up battle menu, handles its input, and renders it"
-"Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
+"Battle::scriptOverrideBattleMenuActions","Overrides battle menu actions"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Battle::scriptRenderDamage","Adds a damage number to a battle entity"

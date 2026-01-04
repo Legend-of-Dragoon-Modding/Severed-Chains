@@ -12,7 +12,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.GameEngine.RENDERER;
 
-public class ItemStack implements InventoryEntry {
+public class ItemStack implements InventoryEntry<ItemStack> {
   public static final ItemStack EMPTY = new Empty();
 
   private final Item item;
@@ -180,6 +180,11 @@ public class ItemStack implements InventoryEntry {
     return this.size < 1 || this.durability < 1;
   }
 
+  @Override
+  public ItemStack copy() {
+    return new ItemStack(this);
+  }
+
   public boolean isSameItem(final Item item) {
     return item.isSame(this);
   }
@@ -259,8 +264,13 @@ public class ItemStack implements InventoryEntry {
   }
 
   @Override
-  public int getPrice() {
-    return this.getItem().getPrice(this);
+  public int getBuyPrice() {
+    return this.getItem().getBuyPrice(this);
+  }
+
+  @Override
+  public int getSellPrice() {
+    return this.getItem().getSellPrice(this);
   }
 
   /** Item can't be stolen by enemies */
