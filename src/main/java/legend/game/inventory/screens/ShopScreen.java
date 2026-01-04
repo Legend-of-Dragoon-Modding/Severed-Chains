@@ -151,7 +151,7 @@ public class ShopScreen extends MenuScreen {
 
         for(int i = 0; i < shop.getInventoryCount(); i++) {
           final InventoryEntry entry = shop.getItem(i);
-          shopEntries.add(new ShopEntry<>(entry, entry.getPrice() * 2));
+          shopEntries.add(new ShopEntry<>(entry, entry.getBuyPrice()));
         }
 
         final ShopContentsEvent event = EVENTS.postEvent(new ShopContentsEvent(shop, shopEntries));
@@ -419,7 +419,7 @@ public class ShopScreen extends MenuScreen {
           this.renderNumber(247, this.menuEntryY(i) + 4, stack.getSize(), 10);
         }
 
-        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, stack, stack.getPrice()));
+        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, stack, stack.getSellPrice()));
         this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
       }
 
@@ -432,7 +432,7 @@ public class ShopScreen extends MenuScreen {
         renderText(I18n.translate(equipment), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? UI_TEXT : UI_TEXT_DISABLED);
 
         if(equipment.canBeDiscarded()) {
-          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getPrice()));
+          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getSellPrice()));
           renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
           ItemIcon.WARNING.render(330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
@@ -703,7 +703,7 @@ public class ShopScreen extends MenuScreen {
                 }
 
                 if(success) {
-                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getPrice()));
+                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getSellPrice()));
                   addGold(event.price);
 
                   if(this.invScroll_8011e0e4 > 0 && this.invScroll_8011e0e4 + 6 > count - 1) {
@@ -1130,7 +1130,7 @@ public class ShopScreen extends MenuScreen {
           }
 
           if(taken) {
-            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getPrice()));
+            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getSellPrice()));
             addGold(event.price);
 
             if(count == 0) {

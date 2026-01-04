@@ -132,7 +132,12 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
   }
 
   @Override
-  public int getPrice() {
+  public int getBuyPrice() {
+    return this.price * 2;
+  }
+
+  @Override
+  public int getSellPrice() {
     return this.price;
   }
 

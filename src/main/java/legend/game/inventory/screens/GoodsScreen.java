@@ -164,7 +164,12 @@ public class GoodsScreen extends MenuScreen {
     }
 
     @Override
-    public int getPrice() {
+    public int getBuyPrice() {
+      return 0;
+    }
+
+    @Override
+    public int getSellPrice() {
       return 0;
     }
 

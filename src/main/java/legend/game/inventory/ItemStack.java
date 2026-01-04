@@ -259,8 +259,13 @@ public class ItemStack implements InventoryEntry {
   }
 
   @Override
-  public int getPrice() {
-    return this.getItem().getPrice(this);
+  public int getBuyPrice() {
+    return this.getItem().getBuyPrice(this);
+  }
+
+  @Override
+  public int getSellPrice() {
+    return this.getItem().getSellPrice(this);
   }
 
   /** Item can't be stolen by enemies */
