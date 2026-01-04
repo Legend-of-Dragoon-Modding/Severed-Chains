@@ -142,7 +142,7 @@ public final class SItem {
   public static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_WHITE_SHADOWED_RIGHT = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.RIGHT);
 
-  public static int shopId_8007a3b4;
+  public static RegistryId shopId_8007a3b4;
 
   public static final RegistryDelegate<Good>[] characterDragoonIndices_800c6e68 = new RegistryDelegate[10];
   static {
@@ -812,7 +812,7 @@ public final class SItem {
   }
 
   @Method(0x800239e0L)
-  public static <T extends InventoryEntry> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
+  public static <T extends InventoryEntry<?>> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
     out.clear();
 
     //LAB_800239ec
@@ -836,7 +836,7 @@ public final class SItem {
   }
 
   @Method(0x80023a2cL)
-  public static <T extends InventoryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
+  public static <T extends InventoryEntry<?>> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
     display.sort(menuItemIconComparator(retailSorting, InventoryEntry::getRegistryId));
     setInventoryFromDisplay(display, items, count);
   }
@@ -847,7 +847,7 @@ public final class SItem {
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static <T extends InventoryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
+  public static <T extends InventoryEntry<?>> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
     Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.item_00.getIcon().resolve().icon);

@@ -13,26 +13,25 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.ShopBuyEvent;
 import legend.game.modding.events.inventory.ShopContentsEvent;
+import legend.game.modding.events.inventory.ShopSellEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
-import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -67,7 +66,6 @@ import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
-import static legend.game.SItem.shopId_8007a3b4;
 import static legend.game.SItem.takeEquipment;
 import static legend.game.SItem.takeItemFromSlot;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -98,6 +96,8 @@ public class ShopScreen extends MenuScreen {
   private static final String Cannot_be_armed_with_8011c6d4 = "Cannot be armed\nwith";
   private static final String Number_kept_8011c7f4 = "Carrying: ";
 
+  private final Shop shop;
+
   private MenuState menuState = MenuState.INIT_0;
   private MenuState confirmDest;
 
@@ -114,7 +114,7 @@ public class ShopScreen extends MenuScreen {
   private Renderable58 selectedMenuOptionRenderablePtr_800bdbe4;
   private Renderable58 charHighlight;
 
-  private final List<ShopEntry<? extends InventoryEntry>> inv = new ArrayList<>();
+  private final List<ShopEntry<? extends InventoryEntry<?>>> inv = new ArrayList<>();
 
   /**
    * <ul>
@@ -129,6 +129,10 @@ public class ShopScreen extends MenuScreen {
   private double scrollAccumulator;
   private int mouseX;
   private int mouseY;
+
+  public ShopScreen(final Shop shop) {
+    this.shop = shop;
+  }
 
   @Override
   protected void render() {
@@ -145,16 +149,14 @@ public class ShopScreen extends MenuScreen {
       case LOAD_ITEMS_1 -> {
         startFadeEffect(2, 10);
 
-        final Shop shop = REGISTRIES.shop.getEntry(LodMod.id(LodMod.SHOP_IDS[shopId_8007a3b4])).get();
+        final List<ShopEntry<InventoryEntry<?>>> shopEntries = new ArrayList<>();
 
-        final List<ShopEntry<InventoryEntry>> shopEntries = new ArrayList<>();
-
-        for(int i = 0; i < shop.getInventoryCount(); i++) {
-          final InventoryEntry entry = shop.getItem(i);
+        for(int i = 0; i < this.shop.getInventoryCount(); i++) {
+          final InventoryEntry<?> entry = this.shop.getItem(i);
           shopEntries.add(new ShopEntry<>(entry, entry.getBuyPrice()));
         }
 
-        final ShopContentsEvent event = EVENTS.postEvent(new ShopContentsEvent(shop, shopEntries));
+        final ShopContentsEvent event = EVENTS.postEvent(new ShopContentsEvent(this.shop, shopEntries));
         this.inv.addAll(event.contents);
 
         cacheCharacterSlots();
@@ -190,7 +192,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       case BUY_4 -> {
-        final ShopEntry<? extends InventoryEntry> entry = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
+        final ShopEntry<? extends InventoryEntry<?>> entry = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
 
         if(entry.item instanceof Equipment) {
           this.renderEquipmentStatChange((Equipment)entry.item, characterIndices_800bdbb8[this.equipCharIndex]);
@@ -229,7 +231,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       case BUY_SELECT_CHAR_5 -> {
-        final ShopEntry<? extends InventoryEntry> equipment = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
+        final ShopEntry<? extends InventoryEntry<?>> equipment = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
         this.renderEquipmentStatChange((Equipment)equipment.item, characterIndices_800bdbb8[this.equipCharIndex]);
         renderString(16, 122, I18n.translate(equipment.item.getDescriptionTranslationKey()), false);
         this.renderMenuEntries(this.inv, this.invScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
@@ -409,8 +411,7 @@ public class ShopScreen extends MenuScreen {
 
   private void renderSellList(final int firstItem, final boolean isItemShop, final Renderable58 upArrow, final Renderable58 downArrow) {
     if(isItemShop) {
-      int i;
-      for(i = 0; firstItem + i < gameState_800babc8.items_2e9.getSize() && i < 6; i++) {
+      for(int i = 0; firstItem + i < gameState_800babc8.items_2e9.getSize() && i < 6; i++) {
         final ItemStack stack = gameState_800babc8.items_2e9.get(firstItem + i);
         stack.renderIcon(151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(stack.getItem()), 168, this.menuEntryY(i) + 2, UI_TEXT);
@@ -419,20 +420,19 @@ public class ShopScreen extends MenuScreen {
           this.renderNumber(247, this.menuEntryY(i) + 4, stack.getSize(), 10);
         }
 
-        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, stack, stack.getSellPrice()));
-        this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
+        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(this.shop, stack, stack.getSellPrice()));
+        this.renderFourDigitNumber(324, this.menuEntryY(i) + 4, event.price);
       }
 
       downArrow.setVisible(firstItem + 6 <= gameState_800babc8.items_2e9.getSize() - 1);
     } else {
-      int i;
-      for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
+      for(int i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
         equipment.renderIcon(151, this.menuEntryY(i), 0x8);
         renderText(I18n.translate(equipment), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? UI_TEXT : UI_TEXT_DISABLED);
 
         if(equipment.canBeDiscarded()) {
-          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, equipment, equipment.getSellPrice()));
+          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(this.shop, equipment, equipment.getSellPrice()));
           renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
           ItemIcon.WARNING.render(330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
@@ -447,10 +447,10 @@ public class ShopScreen extends MenuScreen {
     this.renderShopTypeInfo(isItemShop);
   }
 
-  private void renderMenuEntries(final List<ShopEntry<? extends InventoryEntry>> list, final int startItemIndex, final Renderable58 upArrow, final Renderable58 downArrow) {
+  private void renderMenuEntries(final List<ShopEntry<? extends InventoryEntry<?>>> list, final int startItemIndex, final Renderable58 upArrow, final Renderable58 downArrow) {
     int i;
     for(i = 0; i < Math.min(6, list.size() - startItemIndex); i++) {
-      final ShopEntry<? extends InventoryEntry> item = list.get(startItemIndex + i);
+      final ShopEntry<? extends InventoryEntry<?>> item = list.get(startItemIndex + i);
       renderText(I18n.translate(item.item.getNameTranslationKey()), 168, this.menuEntryY(i) + 2, UI_TEXT);
       renderFiveDigitNumber(324, this.menuEntryY(i) + 4, item.price);
       item.item.renderIcon(151, this.menuEntryY(i), 0x8);
@@ -478,7 +478,7 @@ public class ShopScreen extends MenuScreen {
     return s0;
   }
 
-  private void FUN_801069d0(final int x, final int y, final int value) {
+  private void renderFourDigitNumber(final int x, final int y, final int value) {
     // I didn't look at this method too closely, this may or may not be right
     this.renderNumber(x, y, value, 4);
   }
@@ -589,90 +589,18 @@ public class ShopScreen extends MenuScreen {
     } else if(this.menuState == MenuState.BUY_4) {
       for(int i = 0; i < Math.min(6, this.inv.size() - this.invScroll_8011e0e4); i++) {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
-          playMenuSound(2);
           this.invIndex_8011e0e0 = i;
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
-
-          final ShopEntry<? extends InventoryEntry> inv = this.inv.get(this.invScroll_8011e0e4 + i);
-          final boolean hasSpace;
-          if(inv.item instanceof final Equipment equipment) {
-            this.equipCharIndex = this.FUN_8010a864(equipment);
-            hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
-          } else if(inv.item instanceof final ItemStack stack) {
-            hasSpace = gameState_800babc8.items_2e9.hasRoom(stack);
-          } else {
-            throw new RuntimeException("Unknown item type " + inv.item.getClass().getSimpleName());
-          }
-
-          if(!hasSpace) {
-            menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, result -> { }));
-          } else if(gameState_800babc8.gold_94 < inv.price) {
-            menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
-          } else {
-            if(inv.item instanceof final ItemStack item) {
-              menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
-                if(result == MessageBoxResult.YES) {
-                  if(giveItem(item)) {
-                    gameState_800babc8.gold_94 -= inv.price;
-                  } else {
-                    menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> { }));
-                  }
-                }
-              }));
-            } else {
-              this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
-              FUN_80104b60(this.charHighlight);
-              this.menuState = MenuState.BUY_SELECT_CHAR_5;
-            }
-          }
-
+          this.menuBuy4Select();
           return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.BUY_SELECT_CHAR_5) {
       for(int i = 0; i < characterCount_8011d7c4; i++) {
         if(MathHelper.inBox(x, y, this.FUN_8010a818(i) - 9, 174, 50, 48)) {
-          playMenuSound(2);
           this.equipCharIndex = i;
           this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
-
-          menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
-            if(result == MessageBoxResult.YES) {
-              if(canEquip((Equipment)this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex])) {
-                menuStack.pushScreen(new MessageBoxScreen("Equip item?", 2, result1 -> {
-                  if(result1 == MessageBoxResult.YES) {
-                    final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item, characterIndices_800bdbb8[this.equipCharIndex]);
-
-                    if(equipResult.previousEquipment != null) {
-                      if(equipResult.success) {
-                        if(giveEquipment(equipResult.previousEquipment)) {
-                          gameState_800babc8.gold_94 -= this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).price;
-                        } else {
-                          equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
-                          menuStack.pushScreen(new MessageBoxScreen("Cannot carry any more", 0, onResult -> {}));
-                        }
-                      } else {
-                        equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.equipCharIndex]);
-                        menuStack.pushScreen(new MessageBoxScreen("Failed to equip new item", 0, onResult -> {}));
-                      }
-                    }
-                  } else {
-                    this.giveUnequipped(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
-                  }
-
-                  this.menuState = MenuState.BUY_4;
-                  unloadRenderable(this.charHighlight);
-                  this.charHighlight = null;
-                }));
-              } else {
-                this.giveUnequipped(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
-                this.menuState = MenuState.BUY_4;
-                unloadRenderable(this.charHighlight);
-                this.charHighlight = null;
-              }
-            }
-          }));
-
+          this.menuSelectChar5Select();
           return InputPropagation.HANDLED;
         }
       }
@@ -683,42 +611,7 @@ public class ShopScreen extends MenuScreen {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           this.invIndex_8011e0e0 = i;
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
-
-          final int slot = this.invScroll_8011e0e4 + this.invIndex_8011e0e0;
-          if(this.sellType != 0 && slot >= gameState_800babc8.items_2e9.getSize() || this.sellType == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
-            playMenuSound(40);
-          } else {
-            playMenuSound(2);
-
-            menuStack.pushScreen(new MessageBoxScreen("Sell item?", 2, result -> {
-              if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
-                final InventoryEntry inv;
-                final boolean success;
-                if(this.sellType != 0) {
-                  inv = gameState_800babc8.items_2e9.get(slot);
-                  success = takeItemFromSlot(slot, 1);
-                } else {
-                  inv = gameState_800babc8.equipment_1e8.get(slot);
-                  success = takeEquipment(slot);
-                }
-
-                if(success) {
-                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getSellPrice()));
-                  addGold(event.price);
-
-                  if(this.invScroll_8011e0e4 > 0 && this.invScroll_8011e0e4 + 6 > count - 1) {
-                    this.invScroll_8011e0e4--;
-                  }
-
-                  if(this.invIndex_8011e0e0 != 0 && this.invIndex_8011e0e0 > count - 2) {
-                    this.invIndex_8011e0e0--;
-                    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-                  }
-                }
-              }
-            }));
-          }
-
+          this.menuSell10Select();
           return InputPropagation.HANDLED;
         }
       }
@@ -862,10 +755,11 @@ public class ShopScreen extends MenuScreen {
   private void menuBuy4Select() {
     playMenuSound(2);
 
-    final ShopEntry<? extends InventoryEntry> inv = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
+    final ShopEntry<? extends InventoryEntry<?>> inv = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
 
     final boolean hasSpace;
-    if(inv.item instanceof Equipment) {
+    if(inv.item instanceof final Equipment equipment) {
+      this.equipCharIndex = this.FUN_8010a864(equipment);
       hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
     } else if(inv.item instanceof final ItemStack stack) {
       hasSpace = gameState_800babc8.items_2e9.hasRoom(stack);
@@ -880,6 +774,8 @@ public class ShopScreen extends MenuScreen {
     } else if(inv.item instanceof final ItemStack item) {
       menuStack.pushScreen(new MessageBoxScreen("Buy item?", 2, result -> {
         if(result == MessageBoxResult.YES) {
+          EVENTS.postEvent(new ShopBuyEvent(this.shop, item));
+
           if(giveItem(item)) {
             gameState_800babc8.gold_94 -= inv.price;
           } else {
@@ -1069,7 +965,7 @@ public class ShopScreen extends MenuScreen {
     }));
   }
 
-  private void giveUnequipped(final ShopEntry<? extends InventoryEntry> shopEntry) {
+  private void giveUnequipped(final ShopEntry<? extends InventoryEntry<?>> shopEntry) {
     if(giveEquipment((Equipment)shopEntry.item)) {
       gameState_800babc8.gold_94 -= shopEntry.price;
     } else {
@@ -1115,8 +1011,8 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(2);
 
       menuStack.pushScreen(new MessageBoxScreen("Sell item?", 2, result -> {
-        if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
-          final InventoryEntry inv;
+        if(result == MessageBoxResult.YES) {
+          final InventoryEntry<?> inv;
           final boolean taken;
           final int count;
           if(this.sellType != 0) {
@@ -1130,8 +1026,9 @@ public class ShopScreen extends MenuScreen {
           }
 
           if(taken) {
-            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4, inv, inv.getSellPrice()));
-            addGold(event.price);
+            EVENTS.postEvent(new ShopSellEvent(this.shop, inv));
+            final ShopSellPriceEvent priceEvent = EVENTS.postEvent(new ShopSellPriceEvent(this.shop, inv, inv.getSellPrice()));
+            addGold(priceEvent.price);
 
             if(count == 0) {
               if(this.sellType != 0) {
@@ -1498,7 +1395,7 @@ public class ShopScreen extends MenuScreen {
     return InputPropagation.PROPAGATE;
   }
 
-  public static class ShopEntry<T extends InventoryEntry> {
+  public static class ShopEntry<T extends InventoryEntry<?>> {
     public final T item;
     public int price;
 

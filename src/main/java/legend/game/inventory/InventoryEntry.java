@@ -3,7 +3,7 @@ package legend.game.inventory;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
-public interface InventoryEntry {
+public interface InventoryEntry<T extends InventoryEntry<T>> {
   RegistryId getRegistryId();
   ItemIcon getIcon();
   String getNameTranslationKey();
@@ -24,6 +24,10 @@ public interface InventoryEntry {
   int getSize();
   int getMaxSize();
   boolean isEmpty();
+
+  default T copy() {
+    return (T)this;
+  }
 
   default Renderable58 renderIcon(final int x, final int y, final int flags) {
     final ItemIcon icon = this.getIcon();

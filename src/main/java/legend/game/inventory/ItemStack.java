@@ -12,7 +12,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.GameEngine.RENDERER;
 
-public class ItemStack implements InventoryEntry {
+public class ItemStack implements InventoryEntry<ItemStack> {
   public static final ItemStack EMPTY = new Empty();
 
   private final Item item;
@@ -178,6 +178,11 @@ public class ItemStack implements InventoryEntry {
   @Override
   public boolean isEmpty() {
     return this.size < 1 || this.durability < 1;
+  }
+
+  @Override
+  public ItemStack copy() {
+    return new ItemStack(this);
   }
 
   public boolean isSameItem(final Item item) {

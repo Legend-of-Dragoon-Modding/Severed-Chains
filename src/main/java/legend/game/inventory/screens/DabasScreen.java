@@ -79,7 +79,7 @@ public class DabasScreen extends MenuScreen {
 
   private final Runnable unload;
 
-  private final MenuEntries<InventoryEntry> menuItems = new MenuEntries<>();
+  private final MenuEntries<InventoryEntry<?>> menuItems = new MenuEntries<>();
   private MenuEntryStruct04<Equipment> specialItem;
 
   public DabasScreen(final Runnable unload) {
@@ -244,7 +244,7 @@ public class DabasScreen extends MenuScreen {
     int itemCount = 0;
     dabasData.gold_34 = 0;
 
-    for(final MenuEntryStruct04<? extends InventoryEntry> item : this.menuItems) {
+    for(final MenuEntryStruct04<? extends InventoryEntry<?>> item : this.menuItems) {
       if(item != null) {
         if(item.item_00 instanceof Equipment) {
           equipmentCount++;
@@ -265,7 +265,7 @@ public class DabasScreen extends MenuScreen {
 
     this.hasItems = false;
 
-    for(final MenuEntryStruct04<? extends InventoryEntry> entry : this.menuItems) {
+    for(final MenuEntryStruct04<? extends InventoryEntry<?>> entry : this.menuItems) {
       if(entry.item_00 instanceof final ItemStack item) {
         giveItem(item);
       } else if(entry.item_00 instanceof final Equipment equipment) {

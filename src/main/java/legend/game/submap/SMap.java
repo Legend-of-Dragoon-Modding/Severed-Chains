@@ -84,6 +84,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.cos;
@@ -131,6 +132,7 @@ import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.shopId_8007a3b4;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.srand;
@@ -3826,7 +3828,7 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3fe) {
-      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
+      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new ShopScreen(REGISTRIES.shop.getEntry(shopId_8007a3b4).get()));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }

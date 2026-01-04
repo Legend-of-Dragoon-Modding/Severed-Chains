@@ -136,7 +136,7 @@ public class GoodsScreen extends MenuScreen {
     return InputPropagation.PROPAGATE;
   }
 
-  private static class GoodsEntry implements InventoryEntry {
+  private static class GoodsEntry implements InventoryEntry<GoodsEntry> {
     public final Good good;
 
     private GoodsEntry(final Good good) {

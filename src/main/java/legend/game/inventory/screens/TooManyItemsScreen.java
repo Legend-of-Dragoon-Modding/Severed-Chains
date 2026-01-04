@@ -85,7 +85,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
   private final MenuEntries<Equipment> equipment = new MenuEntries<>();
   private final MenuEntries<ItemStack> items = new MenuEntries<>();
-  private final MenuEntries<InventoryEntry> droppedItems = new MenuEntries<>();
+  private final MenuEntries<InventoryEntry<?>> droppedItems = new MenuEntries<>();
 
   public TooManyItemsScreen() {
     this.addHotkey(I18n.translate(SORT), INPUT_ACTION_MENU_SORT, this::sortMenuState9);
@@ -205,7 +205,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate(DISCARD_ITEMS_CONFIRM), 2, result -> {
           if(result == MessageBoxResult.YES) {
-            for(final MenuEntryStruct04<InventoryEntry> item : this.droppedItems) {
+            for(final MenuEntryStruct04<InventoryEntry<?>> item : this.droppedItems) {
               if(item.item_00 instanceof final Equipment equipment && !equipment.canBeDiscarded()) {
                 menuStack.pushScreen(new MessageBoxScreen(I18n.translate(CANNOT_BE_THROWN_AWAY), 0, result1 -> this.menuState = MenuState.RENDER_6));
                 return;
@@ -233,7 +233,7 @@ public class TooManyItemsScreen extends MenuScreen {
     }
   }
 
-  private void renderItemLists(final boolean allocate, final InventoryEntry inv, final int mode) {
+  private void renderItemLists(final boolean allocate, final InventoryEntry<?> inv, final int mode) {
     if(allocate) {
       renderGlyphs(glyphs_80114548, 0, 0);
       this.dropUpArrow = allocateUiElement(61, 68, 180, this.getSlotY(0));
@@ -257,7 +257,7 @@ public class TooManyItemsScreen extends MenuScreen {
     }
   }
 
-  private void renderCurrentItemList(final boolean allocate, final String text, final MenuEntries<? extends InventoryEntry> entries, final int mode) {
+  private void renderCurrentItemList(final boolean allocate, final String text, final MenuEntries<? extends InventoryEntry<?>> entries, final int mode) {
     renderText(text, 210, 22, UI_TEXT);
 
     if((mode & 0x1) != 0) {
@@ -578,18 +578,18 @@ public class TooManyItemsScreen extends MenuScreen {
       return;
     }
 
-    final MenuEntryStruct04<InventoryEntry> newItem = this.droppedItems.get(this.dropScroll + this.dropIndex);
+    final MenuEntryStruct04<InventoryEntry<?>> newItem = this.droppedItems.get(this.dropScroll + this.dropIndex);
     final boolean isItem = newItem.item_00 instanceof ItemStack;
 
     if(((isItem ? this.items : this.equipment).get(this.invIndex + this.invScroll).flags_02 & 0x6000) != 0) {
       playMenuSound(40);
     } else {
       if(isItem) {
-        this.droppedItems.set(this.dropScroll + this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.items.get(this.invIndex + this.invScroll));
+        this.droppedItems.set(this.dropScroll + this.dropIndex, (MenuEntryStruct04<InventoryEntry<?>>)(MenuEntryStruct04)this.items.get(this.invIndex + this.invScroll));
         this.items.set(this.invIndex + this.invScroll, (MenuEntryStruct04<ItemStack>)(MenuEntryStruct04)newItem);
         setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize());
       } else {
-        this.droppedItems.set(this.dropScroll + this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.equipment.get(this.invIndex + this.invScroll));
+        this.droppedItems.set(this.dropScroll + this.dropIndex, (MenuEntryStruct04<InventoryEntry<?>>)(MenuEntryStruct04)this.equipment.get(this.invIndex + this.invScroll));
         this.equipment.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Equipment>)(MenuEntryStruct04)newItem);
         setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
       }

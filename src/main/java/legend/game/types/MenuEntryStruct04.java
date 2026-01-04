@@ -2,7 +2,7 @@ package legend.game.types;
 
 import legend.game.inventory.InventoryEntry;
 
-public class MenuEntryStruct04<T extends InventoryEntry> {
+public class MenuEntryStruct04<T extends InventoryEntry<?>> {
   public final T item_00;
   public int itemSlot_01;
   /**

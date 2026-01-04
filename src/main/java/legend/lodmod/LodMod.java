@@ -254,6 +254,16 @@ public class LodMod {
     LodBattleActions.SPECIAL,
   };
 
+  public static int getShopIndex(final RegistryId shop) {
+    for(int i = 0; i < SHOP_IDS.length; i++) {
+      if(SHOP_IDS[i].equals(shop.entryId())) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
   @EventListener
   public static void registerInputActions(final InputActionRegistryEvent event) {
     INPUT_ACTION_REGISTRAR.registryEvent(event);
