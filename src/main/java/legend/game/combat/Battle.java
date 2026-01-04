@@ -1860,8 +1860,6 @@ public class Battle extends EngineState {
 
   @Method(0x800c8068L)
   public void performPostBattleAction() {
-    EVENTS.postEvent(new BattleEndedEvent(this));
-
     final int postBattleAction = postBattleAction_800bc974;
 
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
@@ -1899,6 +1897,7 @@ public class Battle extends EngineState {
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
+        EVENTS.postEvent(new BattleEndedEvent(this));
         startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
       }
 
