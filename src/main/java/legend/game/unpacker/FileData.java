@@ -292,7 +292,7 @@ public class FileData {
 
   public long readLong(final int offset) {
     this.checkBounds(offset, 8);
-    return (long)MathHelper.get(this.data, this.offset + offset, 8);
+    return MathHelper.get(this.data, this.offset + offset, 8);
   }
 
   public long readLong(final IntRef offset) {
