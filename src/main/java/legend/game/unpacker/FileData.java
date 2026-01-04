@@ -280,6 +280,27 @@ public class FileData {
     return read;
   }
 
+  public void writeLong(final int offset, final long val) {
+    this.checkBounds(offset, 8);
+    MathHelper.set(this.data, this.offset + offset, 8, val);
+  }
+
+  public void writeLong(final IntRef offset, final long val) {
+    this.writeLong(offset.get(), val);
+    offset.add(8);
+  }
+
+  public long readLong(final int offset) {
+    this.checkBounds(offset, 8);
+    return (long)MathHelper.get(this.data, this.offset + offset, 8);
+  }
+
+  public long readLong(final IntRef offset) {
+    final long read = this.readLong(offset.get());
+    offset.add(8);
+    return read;
+  }
+
   public void writeAscii(final int offset, final String val) {
     this.writeAscii(offset, val, 3);
   }
