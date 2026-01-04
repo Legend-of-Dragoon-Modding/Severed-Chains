@@ -601,7 +601,7 @@ public abstract class BattleEntity27c extends BattleObject {
       if(this.combatant_144.isModelLoaded()) {
         this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
         this.loadingAnimIndex_26e = 0;
-        loadCombatantModelAndAnimation(this.model_148, this.combatant_144);
+        loadCombatantModelAndAnimation(this.battle, this.model_148, this.combatant_144);
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
