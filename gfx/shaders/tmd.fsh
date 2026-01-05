@@ -1,6 +1,6 @@
 #version 330 core
 
-in GS_OUT {
+in VS_OUT {
   smooth vec2 vertUv;
   flat vec2 vertTpage;
   flat vec2 vertClut;
@@ -14,6 +14,8 @@ in GS_OUT {
   flat int widthMask;
   flat int indexShift;
   flat int indexMask;
+
+  smooth float viewspaceZ;
 
   smooth float depth;
   smooth float depthOffset;

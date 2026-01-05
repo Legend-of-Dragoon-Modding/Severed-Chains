@@ -187,12 +187,14 @@ public final class GameEngine {
   public static void start() throws IOException {
     UPDATE_CHECK_FINISHED = false;
     UPDATE = null;
+/*
     UPDATER.check(release -> {
       synchronized(UPDATER_LOCK) {
         UPDATE_CHECK_FINISHED = true;
         UPDATE = release;
       }
     });
+*/
 
     loadUnpackerLang();
 
@@ -252,8 +254,10 @@ public final class GameEngine {
       }
     });
 
+    LOGGER.info("Initializing SDL platform...");
     PLATFORM.init();
 
+    LOGGER.info("Launching game thread...");
     thread.start();
 
     // Find and load all mods so their global config can be shown in the title screen options menu
@@ -270,11 +274,17 @@ public final class GameEngine {
     AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
     AUDIO_THREAD.changeEffectsOverTimeGranularity(CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get()));
 
+    LOGGER.info("Initializing SPU...");
     SPU.init();
+    LOGGER.info("Initializing renderer...");
     RENDERER.init();
     RENDERER.events().onClose(Async::shutdown);
+    LOGGER.info("Initializing legacy renderer...");
     GPU.init();
+    LOGGER.info("Initializing discord integration...");
     DISCORD.init();
+
+    LOGGER.info("Starting game!");
 
     try {
       time = System.nanoTime();
@@ -293,6 +303,8 @@ public final class GameEngine {
   }
 
   private static void loadUnpackerLang() {
+    LOGGER.info("Loading unpacker lang...");
+
     try {
       LANG_ACCESS.loadLang(LANG_ACCESS.getLangPath(Path.of("lang", "unpacker"), Main.ORIGINAL_LOCALE));
     } catch(final IOException e) {
@@ -392,6 +404,8 @@ public final class GameEngine {
   }
 
   private static void transitionToGame() {
+    LOGGER.info("Transitioning to game");
+
     glDisable(GL_BLEND);
 
     if(title1Texture != null) {
@@ -439,9 +453,12 @@ public final class GameEngine {
       onShutdown = null;
     }
 
+    LOGGER.info("Starting audio thread");
     openalThread.start();
 
     synchronized(INIT_LOCK) {
+      LOGGER.info("Running main");
+
       Scus94491BpeSegment.main();
 
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
@@ -459,6 +476,8 @@ public final class GameEngine {
   }
 
   private static void loadGfx() {
+    LOGGER.info("Loading menu GFX");
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -513,6 +532,8 @@ public final class GameEngine {
   private static float eyeColour;
 
   private static void renderIntro() {
+    LOGGER.info("Render intro");
+
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 
     if(deltaMs < 5000) {

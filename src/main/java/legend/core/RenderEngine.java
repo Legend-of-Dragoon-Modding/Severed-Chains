@@ -193,7 +193,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsTmd> TMD_SHADER = new ShaderType<>(
-    options -> loadShader("tmd", "tmd", "tmd", options),
+    options -> loadShader("tmd", "tmd", options),
     shader -> {
       shader.use();
       shader.new UniformInt("tex24").set(0);
@@ -217,7 +217,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsBattleTmd> BATTLE_TMD_SHADER = new ShaderType<>(
-    options -> loadShader("battle_tmd", "tmd", "battle_tmd", options),
+    options -> loadShader("battle_tmd", "battle_tmd", options),
     shader -> {
       shader.use();
       shader.new UniformInt("tex24").set(0);
@@ -487,12 +487,16 @@ public class RenderEngine {
 
     glEnable(GL_LINE_SMOOTH);
 
+    LOGGER.info("Binding events...");
+
     this.window.events().onResize(this::onResize);
 
     this.window.events().onMouseMove(this::onMouseMove);
     this.window.events().onKeyPress(this::onKeyPress);
     this.window.events().onInputActionPressed(this::onInputActionPressed);
     this.window.events().onInputActionReleased(this::onInputActionReleased);
+
+    LOGGER.info("Registering shaders...");
 
     ShaderManager.addShader(SIMPLE_SHADER);
     ShaderManager.addShader(COPY_SHADER);
@@ -504,12 +508,16 @@ public class RenderEngine {
     this.battleTmdShader = ShaderManager.addShader(BATTLE_TMD_SHADER);
     this.battleTmdShaderOptions = this.battleTmdShader.makeOptions();
 
+    LOGGER.info("Creating uniform buffers...");
+
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
     this.scissorUniform = ShaderManager.addUniformBuffer("scissor", new Shader.UniformBuffer((long)this.scissorBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.SCISSOR));
     this.clutAnimationUniform = ShaderManager.addUniformBuffer("clutAnimation", new Shader.UniformBuffer((long)this.clutAnimationBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.CLUT_ANIMATION));
+
+    LOGGER.info("Initializing postprocessing...");
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
@@ -523,6 +531,8 @@ public class RenderEngine {
 
     postQuad.attribute(0, 0L, 2, 4);
     postQuad.attribute(1, 2L, 2, 4);
+
+    LOGGER.info("Initializing default objs...");
 
     // Build fullscreen fade quads
     for(final Translucency translucency : Translucency.FOR_RENDERING) {
@@ -590,6 +600,8 @@ public class RenderEngine {
       .uvSize(1.0f, -1.0f)
       .build();
     this.renderBufferQuad.persistent = true;
+
+    LOGGER.info("Binding draw event...");
 
     this.window.events().onDraw(() -> {
       synchronized(this.tasks) {

@@ -93,6 +93,8 @@ public class Gpu {
 
     this.transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
 
+    LOGGER.info("Initializing legacy VRAM...");
+
     this.vramTexture15 = Texture.create(builder -> {
       builder.size(1024, 512);
       builder.internalFormat(GL_R32UI);
@@ -132,6 +134,8 @@ public class Gpu {
   }
 
   private void updateDisplayTexture(final int width, final int height) {
+    LOGGER.info("Resizing display texture to %dx%d", width, height);
+
     this.windowWidth = width;
     this.windowHeight = height;
 
