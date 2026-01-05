@@ -13,6 +13,8 @@ import legend.game.title.Ttle;
 import legend.lodmod.LodMod;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ExecutionException;
+
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -20,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExampleTest {
   @Test
-  void test() {
+  void test() throws ExecutionException, InterruptedException {
     // Bootstrap engine
     final Thread engine = Bootstrapper.loadEngine();
 
@@ -35,7 +37,7 @@ public class ExampleTest {
     Input.sendKeyPress(InputKey.RETURN);
 
     // Inject most recent save
-    final SavedGame save = SAVES.loadAllCampaigns().getFirst().loadAllSaves().getFirst();
+    final SavedGame save = SAVES.loadAllCampaigns().getFirst().loadAllSaves().getFirst().get();
     Harness.injectGameState(save.state, save.config, true);
 
     // Init some configs

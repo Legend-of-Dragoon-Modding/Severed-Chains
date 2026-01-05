@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import legend.core.Async;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static legend.core.GameEngine.CONFIG;
@@ -44,7 +44,7 @@ public class CampaignSelectionScreen extends MenuScreen {
   private Control saveCard;
 
   private Campaign selectedCampaign;
-  private Future<List<SavedGame>> saveFuture;
+  private List<CompletableFuture<SavedGame>> savedGames;
 
   public CampaignSelectionScreen(final List<Campaign> campaigns) {
     deallocateRenderables(0xff);
@@ -118,13 +118,13 @@ public class CampaignSelectionScreen extends MenuScreen {
     startFadeEffect(1, 5);
 
     this.selectedCampaign = campaign;
-    this.saveFuture = Async.run(campaign::loadAllSaves);
+    this.savedGames = campaign.loadAllSaves();
   }
 
   private void showLoadGameScreen() {
     startFadeEffect(2, 5);
 
-    menuStack.pushScreen(new LoadGameScreen(this.saveFuture.resultNow(), SAVES::loadGameState, () -> {
+    menuStack.pushScreen(new LoadGameScreen(this.savedGames, SAVES::loadGameState, () -> {
       startFadeEffect(2, 5);
       menuStack.popScreen();
       bootMods(MODS.getAllModIds());
@@ -139,10 +139,10 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    if(this.saveFuture != null && this.saveFuture.isDone() && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
+    if(this.savedGames != null && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.showLoadGameScreen();
       this.selectedCampaign = null;
-      this.saveFuture = null;
+      this.savedGames = null;
     }
   }
 

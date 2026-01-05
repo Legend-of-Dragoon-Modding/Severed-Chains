@@ -33,6 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +116,7 @@ public final class SaveManager {
 
   private static final Pattern SAVE_NUMBER_PATTERN = Pattern.compile("^(.+?)\\s(\\d+)$");
 
-  public String generateSaveName(final List<SavedGame> existingSaves, final GameState52c state) {
+  public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final GameState52c state) {
     final String location;
     if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       location = worldMapNames_8011c1ec[continentIndex_800bf0b0];
@@ -126,11 +129,17 @@ public final class SaveManager {
     return this.generateSaveName(existingSaves, location);
   }
 
-  public String generateSaveName(final List<SavedGame> existingSaves, final String name) {
+  public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final String name) {
     int highestSaveNumber = 0;
 
-    for(final SavedGame save : existingSaves) {
-      final Matcher matcher = SAVE_NUMBER_PATTERN.matcher(save.saveName);
+    for(final Future<SavedGame> save : existingSaves) {
+      final Matcher matcher;
+      try {
+        matcher = SAVE_NUMBER_PATTERN.matcher(save.get().saveName);
+      } catch(final InterruptedException | ExecutionException e) {
+        LOGGER.warn("Failed to load save", e);
+        continue;
+      }
 
       if(matcher.matches() && matcher.group(1).equals(name)) {
         final int saveNumber = Integer.parseInt(matcher.group(2));
