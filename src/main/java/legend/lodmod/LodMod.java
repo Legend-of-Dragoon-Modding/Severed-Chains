@@ -79,6 +79,9 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.SItem.chapterNames_80114248;
+import static legend.game.SItem.submapNames_8011c108;
+import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -263,6 +266,27 @@ public class LodMod {
     }
 
     return -1;
+  }
+
+  public static String getLocationName(final int locationType, final int locationIndex) {
+    final String[] locationNames;
+    if(locationType == 1) {
+      //LAB_80108b5c
+      locationNames = worldMapNames_8011c1ec;
+    } else if(locationType == 3) {
+      //LAB_80108b78
+      locationNames = chapterNames_80114248;
+    } else {
+      //LAB_80108b90
+      locationNames = submapNames_8011c108;
+    }
+
+    //LAB_80108ba0
+    if(locationIndex >= locationNames.length) {
+      return "Unknown location";
+    }
+
+    return locationNames[locationIndex];
   }
 
   @EventListener

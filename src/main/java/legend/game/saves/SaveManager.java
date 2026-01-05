@@ -238,29 +238,24 @@ public final class SaveManager {
       final Instant now = Instant.now();
 
       for(int i = 0; i < saves.size(); i++) {
-        final SavedGame save = saves.get(i);
+        final MemcardSavedGame save = (MemcardSavedGame)saves.get(i);
         save.state.syncIds();
 
         final EngineStateEnum oldState = engineState_8004dd20;
         final WhichMenu oldMenu = whichMenu_800bdc38;
 
-        final String[] locationNames;
         if(save.locationType == 1) {
-          locationNames = worldMapNames_8011c1ec;
           continentIndex_800bf0b0 = save.locationIndex;
           engineState_8004dd20 = EngineStateEnum.WORLD_MAP_08;
         } else if(save.locationType == 3) {
-          locationNames = chapterNames_80114248;
           whichMenu_800bdc38 = WhichMenu.RENDER_SAVE_GAME_MENU_19;
           engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
         } else {
-          locationNames = submapNames_8011c108;
           submapId_800bd808 = save.locationIndex;
           engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
         }
 
-        final String location = locationNames[save.locationIndex];
-        indices.mergeInt(location, 1, Integer::sum);
+        indices.mergeInt(save.locationName, 1, Integer::sum);
 
         gameState_800babc8 = save.state;
 
@@ -273,7 +268,7 @@ public final class SaveManager {
 
         gameState_800babc8.syncIds();
 
-        final Path file = this.newSave(location + ' ' + indices.getInt(location), gameState_800babc8, stats_800be5f8);
+        final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), gameState_800babc8, stats_800be5f8);
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
 
         engineState_8004dd20 = oldState;

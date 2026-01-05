@@ -7,6 +7,7 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.RetailSavedGame;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
@@ -21,6 +22,7 @@ import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.lodmod.LodMod.getLocationName;
 
 public final class V2Serializer {
   private V2Serializer() { }
@@ -45,6 +47,8 @@ public final class V2Serializer {
     offset++;
     final int locationIndex = data.readUShort(offset);
     offset += 2;
+
+    final String locationName = getLocationName(locationType, locationIndex);
 
     state._04 = data.readInt(offset);
     offset += 4;
@@ -250,6 +254,6 @@ public final class V2Serializer {
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
     final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
     final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
-    return new SavedGame(name, name, locationType, locationIndex, state, config, maxHp, maxMp);
+    return new RetailSavedGame(name, name, locationName, state, config, maxHp, maxMp);
   }
 }

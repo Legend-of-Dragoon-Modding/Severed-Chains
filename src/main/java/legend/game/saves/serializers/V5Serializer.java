@@ -8,6 +8,7 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.RetailSavedGame;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
@@ -19,6 +20,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.lodmod.LodMod.getLocationName;
 
 public final class V5Serializer {
   private V5Serializer() { }
@@ -44,6 +46,8 @@ public final class V5Serializer {
 
     final int locationType = data.readUByte(offset);
     final int locationIndex = data.readUShort(offset);
+
+    final String locationName = getLocationName(locationType, locationIndex);
 
     state._04 = data.readInt(offset);
 
@@ -180,6 +184,6 @@ public final class V5Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
-    return new SavedGame(filename, name, locationType, locationIndex, state, config, maxHp, maxMp);
+    return new RetailSavedGame(filename, name, locationName, state, config, maxHp, maxMp);
   }
 }

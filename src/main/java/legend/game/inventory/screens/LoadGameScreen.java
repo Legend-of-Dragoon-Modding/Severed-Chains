@@ -4,7 +4,6 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
@@ -31,6 +30,7 @@ public class LoadGameScreen extends MenuScreen {
 
   private final Campaign campaign;
   private final BigList<SavedGame> saveList;
+  private Control saveCard;
   private final Consumer<SavedGame> saveSelected;
   private final Runnable closed;
   private boolean closing;
@@ -48,13 +48,17 @@ public class LoadGameScreen extends MenuScreen {
     this.addControl(Glyph.glyph(78)).setPos(26, 155);
     this.addControl(Glyph.glyph(79)).setPos(192, 155);
 
-    final SaveCard saveCard = this.addControl(new SaveCard());
-    saveCard.setPos(16, 160);
-
-    this.saveList = this.addControl(new BigList<>(SavedGame::toString));
+    this.saveList = this.addControl(new BigList<>(savedGame -> savedGame.saveName));
     this.saveList.setPos(16, 16);
     this.saveList.setSize(360, 144);
-    this.saveList.onHighlight(saveCard::setSaveData);
+    this.saveList.onHighlight(save -> {
+      if(this.saveCard != null) {
+        this.removeControl(this.saveCard);
+      }
+
+      this.saveCard = this.addControl(save.createSaveCard());
+      this.saveCard.setPos(16, 160);
+    });
     this.saveList.onSelection(this::onSelection);
     this.setFocus(this.saveList);
 

@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Campaign {
@@ -98,7 +97,7 @@ public final class Campaign {
           }
         })
         .filter(Objects::nonNull)
-        .findFirst().orElseGet(() -> SavedGame.invalid(""));
+        .findFirst().orElseGet(() -> new InvalidSavedGame(""));
     } catch(final Throwable e) {
       LOGGER.info("Failed to load save", e);
       return null;
@@ -116,7 +115,7 @@ public final class Campaign {
         saves.add(this.loadGame(name));
       } catch(final InvalidSaveException e) {
         LOGGER.warn("Failed to load save " + filename, e);
-        saves.add(SavedGame.invalid(name));
+        saves.add(new InvalidSavedGame(name));
       }
     }
 
@@ -151,7 +150,7 @@ public final class Campaign {
     try(final Stream<Path> children = IoHelper.childrenSortedByDate(campaignPath, SaveManager.SAVE_MATCHER)) {
       return children
         .map(Path::getFileName)
-        .collect(Collectors.toList());
+        .toList();
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }

@@ -12,6 +12,7 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.RetailSavedGame;
 import legend.game.saves.SavedGame;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -25,6 +26,7 @@ import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.lodmod.LodMod.getLocationName;
 
 public final class V7Serializer {
   private V7Serializer() { }
@@ -50,6 +52,8 @@ public final class V7Serializer {
 
     final int locationType = data.readUByte(offset);
     final int locationIndex = data.readUShort(offset);
+
+    final String locationName = getLocationName(locationType, locationIndex);
 
     state._04 = data.readInt(offset);
 
@@ -171,7 +175,7 @@ public final class V7Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
-    return new SavedGame(filename, name, locationType, locationIndex, state, config, maxHp, maxMp);
+    return new RetailSavedGame(filename, name, locationName, state, config, maxHp, maxMp);
   }
 
   public static void toV7(final String name, final FileData data, final IntRef offset, final GameState52c state, final ActiveStatsa0[] activeStats) {
