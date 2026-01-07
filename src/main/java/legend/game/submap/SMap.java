@@ -17,7 +17,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.Menus;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.fmv.Fmv;
@@ -26,6 +26,7 @@ import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
@@ -62,7 +63,9 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -93,6 +96,7 @@ import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
 import static legend.game.Audio.getLoadedAudioFiles;
 import static legend.game.Audio.musicLoaded_800bd782;
+import static legend.game.Audio.sssqResetStuff;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
@@ -100,7 +104,7 @@ import static legend.game.DrgnFiles.loadDir;
 import static legend.game.DrgnFiles.loadFile;
 import static legend.game.EngineStates.FUN_800218f0;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
-import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GetTPage;
@@ -181,12 +185,12 @@ import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class SMap extends EngineState {
+public class SMap extends EngineState<SMap> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
 
   private int fmvIndex_800bf0dc;
 
-  private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
+  private EngineStateType<?> afterFmvLoadingStage_800bf0ec;
 
   private final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
@@ -386,6 +390,31 @@ public class SMap extends EngineState {
   private int inputPressed;
   private int inputRepeat;
   private int inputHeld;
+
+  public SMap() {
+    super(LodEngineStateTypes.SUBMAP.get());
+  }
+
+  @Override
+  public void init() {
+    lastSavableEngineState = this.type;
+    sssqResetStuff();
+  }
+
+  @Override
+  public void destroy() {
+    sssqResetStuff();
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final FileData data) {
+
+  }
 
   @Override
   public void restoreMusicAfterMenu() {
@@ -798,13 +827,7 @@ public class SMap extends EngineState {
     textbox.currentY_2c = caches.bottomMiddle_70.y - offsetY;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
-
-    final int width;
-    if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
-      width = 320;
-    } else {
-      width = 360;
-    }
+    final int width = 360;
 
     //LAB_80028a20
     if(textboxText.chars_1c >= 17) {
@@ -3776,7 +3799,14 @@ public class SMap extends EngineState {
 
     if(newCut > 0x7ff) {
       this.fmvIndex_800bf0dc = newCut - 0x800;
-      this.afterFmvLoadingStage_800bf0ec = EngineStateEnum.values()[newScene];
+      this.afterFmvLoadingStage_800bf0ec = switch(newScene) {
+        case 2 -> CoreEngineStateTypes.TITLE.get();
+        case 5 -> LodEngineStateTypes.SUBMAP.get();
+        case 6 -> LodEngineStateTypes.BATTLE.get();
+        case 7 -> LodEngineStateTypes.GAME_OVER.get();
+        case 8 -> LodEngineStateTypes.WORLD_MAP.get();
+        default -> throw new IllegalArgumentException("Unknown engine state " + newScene);
+      };
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_FMV_21;
       return;
     }
@@ -4096,7 +4126,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e62cc
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
+        engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.WORLD_MAP.get();
         pregameLoadingStage_800bb10c = 0;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
@@ -4106,7 +4136,7 @@ public class SMap extends EngineState {
       case TRANSITION_TO_COMBAT_19 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
+        engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.BATTLE.get();
         pregameLoadingStage_800bb10c = 0;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
@@ -4132,7 +4162,7 @@ public class SMap extends EngineState {
 
         //LAB_800e6458
         resetSubmapToNewGame();
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
         pregameLoadingStage_800bb10c = 0;
 
         //LAB_800e6484

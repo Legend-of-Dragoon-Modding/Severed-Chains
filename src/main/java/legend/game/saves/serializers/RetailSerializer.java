@@ -11,10 +11,12 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -38,14 +40,15 @@ public final class RetailSerializer {
   }
 
   public static SavedGame fromRetail(final String name, final FileData data) {
-    final GameState52c state = deserializeRetailGameState(data.slice(0x1fc));
-    final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
-    final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
+    final GameState52c gameState = deserializeRetailGameState(data.slice(0x1fc));
+    final CharacterData2c charData = gameState.charData_32c[gameState.charIds_88[0]];
+    final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    final int maxHp = levelStuff_80111cfc[gameState.charIds_88[0]][charData.level_12].hp_00;
+    final int maxMp = magicStuff_80111d20[gameState.charIds_88[0]][charData.dlevel_13].mp_00;
     final int locationType = data.readUByte(0x1a9);
     final int locationIndex = data.readUByte(0x1a8);
     final String locationName = getLocationName(locationType, locationIndex);
-    return new MemcardSavedGame(name, name, locationType, locationIndex, locationName, state, new ConfigCollection(), maxHp, maxMp);
+    return new MemcardSavedGame(name, name, locationType, locationIndex, locationName, engineState, new FileData(new byte[0]), gameState, new ConfigCollection(), maxHp, maxMp);
   }
 
   public static GameState52c deserializeRetailGameState(final FileData data) {

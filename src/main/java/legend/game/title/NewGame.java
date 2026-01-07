@@ -3,11 +3,13 @@ package legend.game.title;
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.memory.Method;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
+import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
@@ -24,7 +26,7 @@ import static legend.lodmod.LodAdditions.HARPOON;
 import static legend.lodmod.LodAdditions.PURSUIT;
 import static legend.lodmod.LodAdditions.WHIP_SMACK;
 
-public class NewGame extends EngineState {
+public class NewGame extends EngineState<NewGame> {
   public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Addition>[] startingAddition_800ce758 = new RegistryDelegate[] {
@@ -38,6 +40,20 @@ public class NewGame extends EngineState {
     PURSUIT,
     null,
   };
+
+  public NewGame() {
+    super(CoreEngineStateTypes.NEW_GAME.get());
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final FileData data) {
+
+  }
 
   @Method(0x800c7194L)
   private void setUpNewGameData() {
@@ -77,7 +93,7 @@ public class NewGame extends EngineState {
     super.tick();
 
     this.setUpNewGameData();
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.SUBMAP.get();
   }
 
   @Override

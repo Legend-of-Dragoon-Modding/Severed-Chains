@@ -20,7 +20,7 @@ import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.i18n.I18n;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
@@ -39,7 +39,6 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Audio.sssqResetStuff;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.clearBlue_800babc0;
 import static legend.game.Graphics.clearGreen_800bb104;
 import static legend.game.Graphics.clearRed_8007a3a8;
@@ -249,7 +248,7 @@ public final class Fmv {
 
   public static boolean isPlaying;
 
-  public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
+  public static void playCurrentFmv(final int fmvIndex, final EngineStateType<?> afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808 = -1;
@@ -594,12 +593,9 @@ public final class Fmv {
       if(rumbleData != null) {
         for(final RumbleData rumble : rumbleData) {
           if(rumble.frame == frame) {
-            final EngineStateEnum oldEngineState = engineState_8004dd20;
-            engineState_8004dd20 = EngineStateEnum.FMV_09;
             startRumbleIntensity(0, rumble.initialIntensity);
             adjustRumbleOverTime(0, rumble.endingIntensity, rumble.duration, 1);
             rumbleFrames = rumble.duration;
-            engineState_8004dd20 = oldEngineState;
           }
         }
 

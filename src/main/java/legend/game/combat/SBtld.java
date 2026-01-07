@@ -8,10 +8,10 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment_800b;
-import legend.game.combat.encounters.Encounter;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionHits80;
 import legend.game.additions.AdditionSound;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.WhichMenu;
@@ -29,6 +29,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Audio.playSound;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.EngineStates.postBattleEngineState_800bc91c;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.clearBlue_800babc0;
 import static legend.game.Graphics.clearGreen_800bb104;
@@ -45,7 +46,6 @@ import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
@@ -97,7 +97,7 @@ public final class SBtld {
       stopMusicSequence();
       pregameLoadingStage_800bb10c = 0;
       vsyncMode_8007a3b8 = 2;
-      engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
+      engineStateOnceLoaded_8004dd24 = postBattleEngineState_800bc91c;
     }
 
     //LAB_80018a4c

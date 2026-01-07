@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.MODS;
@@ -45,6 +44,8 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   private Campaign selectedCampaign;
   private List<CompletableFuture<SavedGame>> savedGames;
+
+  private SavedGame selectedSave;
 
   public CampaignSelectionScreen(final List<Campaign> campaigns) {
     deallocateRenderables(0xff);
@@ -78,6 +79,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.mods"), INPUT_ACTION_MENU_MODS, this::menuMods);
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+  }
+
+  public SavedGame getSelectedSave() {
+    return this.selectedSave;
   }
 
   private boolean selectLock;
@@ -124,12 +129,17 @@ public class CampaignSelectionScreen extends MenuScreen {
   private void showLoadGameScreen() {
     startFadeEffect(2, 5);
 
-    menuStack.pushScreen(new LoadGameScreen(this.savedGames, SAVES::loadGameState, () -> {
+    menuStack.pushScreen(new LoadGameScreen(this.savedGames, this::onSavedGameSelected, () -> {
       startFadeEffect(2, 5);
       menuStack.popScreen();
       bootMods(MODS.getAllModIds());
       this.selectLock = false;
     }, this.selectedCampaign));
+  }
+
+  private void onSavedGameSelected(final SavedGame save) {
+    this.selectedSave = save;
+    SAVES.loadGameState(save);
   }
 
   @Override

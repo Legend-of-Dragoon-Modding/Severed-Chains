@@ -59,7 +59,6 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.DrgnFiles.loadDrgnFiles;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
@@ -217,14 +216,14 @@ public final class Audio {
 
       case 8 -> {
         //LAB_80019bd4
-        if((loadedAudioFiles_800bcf78.get() & 0x2) != 0 || engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
+        if((loadedAudioFiles_800bcf78.get() & 0x2) != 0) {
           return;
         }
       }
 
       case 9 -> {
         //LAB_80019bd4
-        if((loadedAudioFiles_800bcf78.get() & 0x4) != 0 || engineState_8004dd20 != EngineStateEnum.COMBAT_06) {
+        if((loadedAudioFiles_800bcf78.get() & 0x4) != 0) {
           return;
         }
       }
@@ -237,7 +236,7 @@ public final class Audio {
 
       case 0xc -> {
         //LAB_80019bd4
-        if((loadedAudioFiles_800bcf78.get() & 0x8000) != 0 || engineState_8004dd20 != EngineStateEnum.WORLD_MAP_08) {
+        if((loadedAudioFiles_800bcf78.get() & 0x8000) != 0) {
           return;
         }
       }

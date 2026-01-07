@@ -1,7 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.EngineStateEnum;
-import legend.game.EngineStates;
 import legend.game.FullScreenEffects;
 import legend.game.Graphics;
 import legend.game.SItem;
@@ -40,7 +38,7 @@ public class GameVarParam extends Param {
   @Override
   public int get() {
     return switch(this.index) {
-      case 0 -> EngineStates.engineState_8004dd20.ordinal();
+//      case 0 -> EngineStates.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier();
       case 3 -> currentEngineState_8004dd04.getInputsHeld();
@@ -173,7 +171,7 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
+//      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94 = val;

@@ -22,12 +22,12 @@ public class RetailSaveCard extends BlankSaveCard {
 
     this.dragoonSpirits = this.addControl(new DragoonSpirits(new GoodsInventory()));
     this.dragoonSpirits.setPos(205, 27);
-    this.dragoonSpirits.setGoods(this.savedGame.state.goods_19c);
+    this.dragoonSpirits.setGoods(this.savedGame.gameState.goods_19c);
 
     for(int i = 0; i < 3; i++) {
       this.portraits[i] = this.addControl(new CharacterPortrait());
       this.portraits[i].setPos(18 + i * 52, 8);
-      this.portraits[i].setCharId(savedGame.state.charIds_88[i]);
+      this.portraits[i].setCharId(savedGame.gameState.charIds_88[i]);
     }
   }
 
@@ -37,7 +37,7 @@ public class RetailSaveCard extends BlankSaveCard {
       //LAB_80108ba0
       renderText(this.savedGame.locationName, x + 258, y + 47, UI_TEXT_CENTERED);
 
-      final GameState52c state = this.savedGame.state;
+      final GameState52c state = this.savedGame.gameState;
 
       int firstCharId = 0;
       for(int i = 0; i < state.charIds_88.length; i++) {

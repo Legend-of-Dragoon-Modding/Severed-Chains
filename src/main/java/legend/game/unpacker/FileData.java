@@ -109,6 +109,11 @@ public class FileData {
     this.write(srcOffset + src.offset, src.data, destOffset, size);
   }
 
+  public void write(final IntRef srcOffset, final FileData src, final int destOffset, final int size) {
+    this.write(srcOffset.get() + src.offset, src.data, destOffset, size);
+    srcOffset.add(size);
+  }
+
   public void write(final int srcOffset, final FileData src, final IntRef destOffset, final int size) {
     this.write(srcOffset + src.offset, src.data, destOffset, size);
   }

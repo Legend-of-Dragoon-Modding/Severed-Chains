@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.Audio.playMenuSound;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.UI_TEXT_CENTERED;
@@ -147,7 +148,7 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
+        SAVES.newSave(name, currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
@@ -162,7 +163,7 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
-        SAVES.overwriteSave(save.fileName, save.saveName, gameState_800babc8, stats_800be5f8);
+        SAVES.overwriteSave(save.fileName, save.saveName, currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
@@ -184,7 +185,7 @@ public class SaveGameScreen extends MenuScreen {
         if(result == MessageBoxResult.YES) {
           try {
             final SavedGame savedGame = this.saveList.getSelected().resultNow();
-            savedGame.state.campaign.deleteSave(savedGame.fileName);
+            savedGame.gameState.campaign.deleteSave(savedGame.fileName);
             this.saves.removeIf(save -> save.resultNow().fileName.equals(savedGame.fileName));
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {

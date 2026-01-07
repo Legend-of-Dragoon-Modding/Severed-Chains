@@ -19,7 +19,7 @@ import legend.core.opengl.McqBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.DrgnFiles;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
@@ -139,6 +139,7 @@ import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -190,6 +191,7 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnDirSync;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.DrgnFiles.loadFile;
+import static legend.game.EngineStates.postBattleEngineState_800bc91c;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -256,7 +258,6 @@ import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -268,6 +269,7 @@ import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
 import static legend.game.combat.SBtld._8011517c;
+import static legend.game.combat.SBtld.clearCombatVars;
 import static legend.game.combat.SBtld.loadAdditions;
 import static legend.game.combat.SEffe.addGenericAttachment;
 import static legend.game.combat.SEffe.allocateEffectManager;
@@ -317,7 +319,7 @@ import static legend.lodmod.LodMod.WATER_ELEMENT;
 import static legend.lodmod.LodMod.WIND_ELEMENT;
 import static legend.lodmod.LodMod.disableRetailBattleActions;
 
-public class Battle extends EngineState {
+public class Battle extends EngineState<Battle> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
@@ -623,6 +625,32 @@ public class Battle extends EngineState {
    */
   public static final int[] melbuStageIndices_800fb064 = {93, 94, 95, 25, 52, -1, -1, -1};
   public static final int[] modelVramSlotIndices_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
+
+  public Battle() {
+    super(LodEngineStateTypes.BATTLE.get());
+  }
+
+  @Override
+  public FileData writeSaveData() {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final FileData data) {
+
+  }
+
+  @Override
+  public void init() {
+    super.init();
+    clearCombatVars();
+  }
+
+  @Override
+  public void destroy() {
+    super.destroy();
+    sssqResetStuff();
+  }
 
   private int inputPressed;
   private int inputRepeat;
@@ -1970,10 +1998,7 @@ public class Battle extends EngineState {
       this.deallocateStageDarkeningStorage();
       this.FUN_800c8748();
 
-      EngineStateEnum postCombatMainCallbackIndex = previousEngineState_8004dd28;
-      if(postCombatMainCallbackIndex == EngineStateEnum.FMV_09) {
-        postCombatMainCallbackIndex = EngineStateEnum.SUBMAP_05;
-      }
+      EngineStateType<?> postBattleEngineState = previousEngineState_8004dd28;
 
       //LAB_800c84b4
       switch(postBattleAction_800bc974) {
@@ -1984,15 +2009,15 @@ public class Battle extends EngineState {
             gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
           } else {
             //LAB_800c8534
-            postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
+            postBattleEngineState = LodEngineStateTypes.GAME_OVER.get();
           }
         }
 
-        case 4 -> Fmv.playCurrentFmv(16, EngineStateEnum.FINAL_FMV_11);
+        case 4 -> Fmv.playCurrentFmv(16, LodEngineStateTypes.FINAL_FMV.get());
       }
 
       //LAB_800c8558
-      postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
+      postBattleEngineState_800bc91c = postBattleEngineState;
 
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {

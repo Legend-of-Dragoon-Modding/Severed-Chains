@@ -5,7 +5,7 @@ import legend.game.inventory.screens.controls.InvalidSaveCard;
 
 public class InvalidSavedGame extends SavedGame {
   public InvalidSavedGame(final String fileName) {
-    super(fileName, fileName, null, null);
+    super(fileName, fileName, null, null, null, null);
   }
 
   @Override

@@ -60,8 +60,6 @@ import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.EngineStates.FUN_80020ed8;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.EngineStates.loadQueuedOverlay;
 import static legend.game.FullScreenEffects.handleFullScreenEffects;
 import static legend.game.Graphics.InitGeom;
@@ -139,7 +137,7 @@ public final class Scus94491BpeSegment {
 
     GPU.startFrame();
 
-    if(engineState_8004dd20.isInGame()) {
+    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.advancesTime()) {
       gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8;
     }
 
@@ -634,7 +632,6 @@ public final class Scus94491BpeSegment {
     setProjectionPlaneDistance(640);
     initSound();
 
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
     pregameLoadingStage_800bb10c = 0;
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc = 0;

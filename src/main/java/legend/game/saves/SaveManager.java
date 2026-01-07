@@ -6,7 +6,8 @@ import legend.core.GameEngine;
 import legend.core.IoHelper;
 import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputBindings;
-import legend.game.EngineStateEnum;
+import legend.game.EngineState;
+import legend.game.EngineStateType;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.types.ActiveStatsa0;
@@ -14,6 +15,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +49,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.bootRegistries;
-import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.loadCharacterStats;
@@ -118,7 +120,7 @@ public final class SaveManager {
 
   public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final GameState52c state) {
     final String location;
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
+    if(currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get())) {
       location = worldMapNames_8011c1ec[continentIndex_800bf0b0];
     } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
       location = chapterNames_80114248[state.chapterIndex_98];
@@ -241,32 +243,32 @@ public final class SaveManager {
         this.splitMemcard(campaign, new FileData(Files.readAllBytes(memcard)), saves);
       }
 
-      saves.sort(Comparator.comparingInt(save -> save.state.timestamp_a0));
+      saves.sort(Comparator.comparingInt(save -> save.gameState.timestamp_a0));
       final Object2IntMap<String> indices = new Object2IntOpenHashMap<>();
 
       final Instant now = Instant.now();
 
       for(int i = 0; i < saves.size(); i++) {
         final MemcardSavedGame save = (MemcardSavedGame)saves.get(i);
-        save.state.syncIds();
+        save.gameState.syncIds();
 
-        final EngineStateEnum oldState = engineState_8004dd20;
+        final EngineStateType<?> engineState;
         final WhichMenu oldMenu = whichMenu_800bdc38;
 
         if(save.locationType == 1) {
           continentIndex_800bf0b0 = save.locationIndex;
-          engineState_8004dd20 = EngineStateEnum.WORLD_MAP_08;
+          engineState = LodEngineStateTypes.WORLD_MAP.get();
         } else if(save.locationType == 3) {
           whichMenu_800bdc38 = WhichMenu.RENDER_SAVE_GAME_MENU_19;
-          engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
+          engineState = LodEngineStateTypes.SUBMAP.get();
         } else {
           submapId_800bd808 = save.locationIndex;
-          engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
+          engineState = LodEngineStateTypes.SUBMAP.get();
         }
 
         indices.mergeInt(save.locationName, 1, Integer::sum);
 
-        gameState_800babc8 = save.state;
+        gameState_800babc8 = save.gameState;
 
         try {
           loadCharacterStats();
@@ -277,10 +279,9 @@ public final class SaveManager {
 
         gameState_800babc8.syncIds();
 
-        final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), gameState_800babc8, stats_800be5f8);
+        final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), engineState.constructor_00.get(), gameState_800babc8, stats_800be5f8);
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
 
-        engineState_8004dd20 = oldState;
         whichMenu_800bdc38 = oldMenu;
       }
 
@@ -348,18 +349,18 @@ public final class SaveManager {
     return campaigns;
   }
 
-  public Path overwriteSave(final String fileName, final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+  public Path overwriteSave(final String fileName, final String saveName, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) throws SaveFailedException {
     try {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
 
       final FileData data = new ExpandableFileData(0x1);
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerMagic);
-      this.serializer.serializer(saveName, data, offset, state, activeStats);
+      this.serializer.serializer(saveName, data, offset, engineState, gameState, activeStats);
 
-      final Path file = state.campaign.path.resolve(fileName + ".dsav");
+      final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
-      Files.createDirectories(state.campaign.path);
+      Files.createDirectories(gameState.campaign.path);
       Files.write(file, data.slice(0, offset.get()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
       return file;
     } catch(final IOException e) {
@@ -367,8 +368,8 @@ public final class SaveManager {
     }
   }
 
-  public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
-    return this.overwriteSave(IoHelper.slugName(saveName), saveName, state, activeStats);
+  public Path newSave(final String saveName, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+    return this.overwriteSave(IoHelper.slugName(saveName), saveName, engineState, gameState, activeStats);
   }
 
   public SavedGame loadData(final Campaign campaign, final String filename, final FileData data) throws InvalidSaveException {
@@ -378,7 +379,7 @@ public final class SaveManager {
 
       if(slice != null) {
         final SavedGame savedGame = entry.getValue().deserialize(filename, slice);
-        savedGame.state.campaign = campaign;
+        savedGame.gameState.campaign = campaign;
         return savedGame;
       }
     }
@@ -387,19 +388,18 @@ public final class SaveManager {
   }
 
   public void loadGameState(final SavedGame save) {
-    this.loadGameState(save.state, save.config, true);
+    this.loadGameState(save.gameState, save.config, true);
     submapCutForSave_800cb450 = submapCut_80052c30;
   }
 
   public void loadGameState(final GameState52c state, final ConfigCollection config, final boolean fullBoot) {
     menuStack.reset();
 
+    CONFIG.clearConfig(ConfigStorageLocation.SAVE);
+    CONFIG.copyConfigFrom(config);
+
     if(fullBoot) {
-      CONFIG.clearConfig(ConfigStorageLocation.SAVE);
-      CONFIG.copyConfigFrom(config);
-
       GameEngine.bootRegistries();
-
       InputBindings.initBindings();
       InputBindings.loadBindings(CONFIG);
     }
