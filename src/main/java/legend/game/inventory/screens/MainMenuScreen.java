@@ -11,7 +11,6 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Translucency;
-import legend.lodmod.LodEngineStateTypes;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -69,8 +68,6 @@ public class MainMenuScreen extends MenuScreen {
 
     loadingNewGameState_800bdc34 = false;
     loadCharacterStats();
-
-    gameState_800babc8.isOnWorldMap_4e4 = currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get());
 
     this.addControl(new Background());
     this.addControl(Glyph.glyph(71)).setPos( 16,  16); // Chapter box

@@ -421,7 +421,7 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public FileData writeSaveData(final GameState52c gameState) {
-    final FileData data = new ExpandableFileData(9);
+    final FileData data = new ExpandableFileData(10);
     final IntRef offset = new IntRef();
     data.writeShort(offset, WMAP_SAVE_VERSION_1);
     data.writeShort(offset, gameState.pathIndex_4d8);
@@ -429,7 +429,6 @@ public class WMap extends EngineState<WMap> {
     data.writeByte(offset, (int)gameState.dotOffset_4dc);
     data.writeByte(offset, gameState.facing_4dd);
     data.writeShort(offset, gameState.directionalPathIndex_4de);
-    data.writeByte(offset, gameState.isOnWorldMap_4e4 ? 1 : 0);
     return data;
   }
 
@@ -458,7 +457,6 @@ public class WMap extends EngineState<WMap> {
     gameState.dotOffset_4dc = data.readUByte(offset);
     gameState.facing_4dd = data.readByte(offset);
     gameState.directionalPathIndex_4de = data.readUShort(offset);
-    gameState.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
   }
 
   @Override

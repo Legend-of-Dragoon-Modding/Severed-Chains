@@ -435,6 +435,9 @@ public class SMap extends EngineState<SMap> {
   public void readSaveData(final GameState52c gameState, final FileData data) {
     // no data - legacy saves
     if(data.size() == 0) {
+      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
+      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+      collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
       return;
     }
 

@@ -84,6 +84,7 @@ public class GameState52c {
   // Config stuff
 //  public boolean vibrationEnabled_4e1;
   public boolean indicatorsDisabled_4e3;
+  /** Legacy, only used in old save deserializers */
   public boolean isOnWorldMap_4e4;
 
   /** A bitset used to set each char's MP to max the first time each one is loaded */

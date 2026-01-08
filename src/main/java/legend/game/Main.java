@@ -5,7 +5,6 @@ import legend.core.Version;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
-import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +50,6 @@ public final class Main {
         gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
         gameState_800babc8.submapCut_a8 = submapCut_80052c30;
         currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
-        gameState_800babc8.isOnWorldMap_4e4 = currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get());
 
         try {
           SAVES.newSave(name, currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
