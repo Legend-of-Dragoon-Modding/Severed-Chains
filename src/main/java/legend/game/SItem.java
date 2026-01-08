@@ -58,7 +58,6 @@ import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
-import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,13 +79,10 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Audio.copyPlayingSounds;
-import static legend.game.Audio.loadedAudioFiles_800bcf78;
-import static legend.game.Audio.musicPackageLoadedCallback;
 import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playMusicPackage;
 import static legend.game.Audio.playingSoundsBackup_800bca78;
 import static legend.game.Audio.queuedSounds_800bd110;
-import static legend.game.Audio.sssqResetStuff;
 import static legend.game.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.Audio.unloadSoundFile;
@@ -1067,14 +1063,7 @@ public final class SItem {
   public static void stopMenuMusic() {
     //LAB_8001e044
     //LAB_8001e0f8
-    if(loadingNewGameState_800bdc34) {
-      if(currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get()) && gameState_800babc8.isOnWorldMap_4e4) {
-        sssqResetStuff();
-        unloadSoundFile(8);
-        loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-        loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
-      }
-    } else {
+    if(!loadingNewGameState_800bdc34) {
       //LAB_8001e160
       stopMusicSequence();
       unloadSoundFile(8);
