@@ -50,16 +50,13 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.bootRegistries;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineStateData;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
-import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
@@ -388,10 +385,25 @@ public final class SaveManager {
   }
 
   public void loadGameState(final SavedGame save) {
-    this.loadGameState(save.gameState, save.config, true);
-    submapCutForSave_800cb450 = submapCut_80052c30;
+    this.loadGameState(save, true);
   }
 
+  /**
+   * @param fullBoot If true, boots registries
+   */
+  public void loadGameState(final SavedGame save, final boolean fullBoot) {
+    this.loadGameState(save.gameState, save.config, fullBoot);
+
+    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.is(save.engineState)) {
+      currentEngineState_8004dd04.readSaveData(save.gameState, save.engineStateData);
+    } else {
+      engineStateData = save.engineStateData;
+    }
+  }
+
+  /**
+   * @param fullBoot If true, boots registries
+   */
   public void loadGameState(final GameState52c state, final ConfigCollection config, final boolean fullBoot) {
     menuStack.reset();
 
@@ -419,19 +431,5 @@ public final class SaveManager {
 
     loadingNewGameState_800bdc34 = true;
     whichMenu_800bdc38 = WhichMenu.UNLOAD;
-
-    submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-    submapCutForSave_800cb450 = submapCut_80052c30;
-    collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
-
-    if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-      submapScene_80052c34 = 53;
-    }
-
-    if(gameState_800babc8.isOnWorldMap_4e4) {
-      submapCut_80052c30 = 0;
-    } else {
-      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
-    }
   }
 }

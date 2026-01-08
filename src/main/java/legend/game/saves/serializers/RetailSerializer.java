@@ -54,7 +54,7 @@ public final class RetailSerializer {
   public static GameState52c deserializeRetailGameState(final FileData data) {
     final GameState52c state = new GameState52c();
 
-    state._04 = data.readInt(0x0);
+//    state._04 = data.readInt(0x0);
 
     for(int i = 0; i < 0x20; i++) {
       state.scriptData_08[i] = data.readInt(0x8 + i * 0x4);
@@ -72,8 +72,8 @@ public final class RetailSerializer {
     state.submapCut_a8 = data.readInt(0xa8);
 
     state._b0 = data.readInt(0xb0);
-    state._b4 = data.readInt(0xb4);
-    state._b8 = data.readInt(0xb8);
+    state.battleCount_b4 = data.readInt(0xb4);
+    state.turnCount_b8 = data.readInt(0xb8);
 
     for(int i = 0; i < 0x20; i++) {
       state.scriptFlags2_bc.setRaw(i, data.readInt(0xbc + i * 0x4));

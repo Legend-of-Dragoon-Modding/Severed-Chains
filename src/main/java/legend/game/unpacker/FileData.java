@@ -149,6 +149,22 @@ public class FileData {
     return read;
   }
 
+  public void writeBool(final int offset, final boolean val) {
+    this.writeByte(offset, val ? 1 : 0);
+  }
+
+  public void writeBool(final IntRef offset, final boolean val) {
+    this.writeByte(offset, val ? 1 : 0);
+  }
+
+  public boolean readBool(final int offset) {
+    return this.readByte(offset) != 0;
+  }
+
+  public boolean readBool(final IntRef offset) {
+    return this.readByte(offset) != 0;
+  }
+
   public short readShort(final int offset) {
     this.checkBounds(offset, 2);
     return (short)MathHelper.get(this.data, this.offset + offset, 2);

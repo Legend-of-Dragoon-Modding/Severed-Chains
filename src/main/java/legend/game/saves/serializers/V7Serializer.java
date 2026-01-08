@@ -45,7 +45,7 @@ public final class V7Serializer {
 
     final String locationName = getLocationName(locationType, locationIndex);
 
-    gameState._04 = data.readInt(offset);
+    /*gameState._04 = */data.readInt(offset);
 
     for(int i = 0; i < gameState.scriptData_08.length; i++) {
       gameState.scriptData_08[i] = data.readInt(offset);
@@ -65,8 +65,8 @@ public final class V7Serializer {
     gameState.submapCut_a8 = data.readInt(offset);
 
     gameState._b0 = data.readInt(offset);
-    gameState._b4 = data.readInt(offset);
-    gameState._b8 = data.readInt(offset);
+    gameState.battleCount_b4 = data.readInt(offset);
+    gameState.turnCount_b8 = data.readInt(offset);
 
     for(int i = 0; i < gameState.scriptFlags2_bc.count(); i++) {
       gameState.scriptFlags2_bc.setRaw(i, data.readInt(offset));

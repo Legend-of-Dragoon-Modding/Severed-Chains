@@ -7,6 +7,7 @@ import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.CharacterData2c;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
@@ -46,12 +47,12 @@ public class NewGame extends EngineState<NewGame> {
   }
 
   @Override
-  public FileData writeSaveData() {
+  public FileData writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final FileData data) {
+  public void readSaveData(final GameState52c gameState, final FileData data) {
 
   }
 

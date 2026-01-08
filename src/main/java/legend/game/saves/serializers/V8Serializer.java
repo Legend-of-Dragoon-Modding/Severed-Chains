@@ -47,8 +47,6 @@ public final class V8Serializer {
 
     final String locationName = data.readAscii(offset);
 
-    gameState._04 = data.readInt(offset);
-
     for(int i = 0; i < gameState.scriptData_08.length; i++) {
       gameState.scriptData_08[i] = data.readInt(offset);
     }
@@ -63,12 +61,10 @@ public final class V8Serializer {
     gameState.chapterIndex_98 = data.readInt(offset);
     gameState.stardust_9c = data.readInt(offset);
     gameState.timestamp_a0 = data.readInt(offset);
-    gameState.submapScene_a4 = data.readInt(offset);
-    gameState.submapCut_a8 = data.readInt(offset);
 
     gameState._b0 = data.readInt(offset);
-    gameState._b4 = data.readInt(offset);
-    gameState._b8 = data.readInt(offset);
+    gameState.battleCount_b4 = data.readInt(offset);
+    gameState.turnCount_b8 = data.readInt(offset);
 
     for(int i = 0; i < gameState.scriptFlags2_bc.count(); i++) {
       gameState.scriptFlags2_bc.setRaw(i, data.readInt(offset));
@@ -155,14 +151,7 @@ public final class V8Serializer {
       }
     }
 
-    gameState.pathIndex_4d8 = data.readUShort(offset);
-    gameState.dotIndex_4da = data.readUShort(offset);
-    gameState.dotOffset_4dc = data.readUByte(offset);
-    gameState.facing_4dd = data.readByte(offset);
-    gameState.directionalPathIndex_4de = data.readUShort(offset);
     gameState.characterInitialized_4e6 = data.readInt(offset);
-    gameState.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
-    gameState.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
 
     final RegistryId engineStateId = data.readRegistryId(offset);
     final int engineStateDataLength = data.readInt(offset);
@@ -172,6 +161,8 @@ public final class V8Serializer {
     }
 
     final FileData engineStateData = data.slice(offset.get(), engineStateDataLength);
+    offset.add(engineStateDataLength);
+
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
@@ -195,8 +186,6 @@ public final class V8Serializer {
 
     data.writeAscii(offset, engineState.getLocation());
 
-    data.writeInt(offset, gameState._04);
-
     for(final int scriptData : gameState.scriptData_08) {
       data.writeInt(offset, scriptData);
     }
@@ -211,12 +200,10 @@ public final class V8Serializer {
     data.writeInt(offset, gameState.chapterIndex_98);
     data.writeInt(offset, gameState.stardust_9c);
     data.writeInt(offset, gameState.timestamp_a0);
-    data.writeInt(offset, gameState.submapScene_a4);
-    data.writeInt(offset, gameState.submapCut_a8);
 
     data.writeInt(offset, gameState._b0);
-    data.writeInt(offset, gameState._b4);
-    data.writeInt(offset, gameState._b8);
+    data.writeInt(offset, gameState.battleCount_b4);
+    data.writeInt(offset, gameState.turnCount_b8);
 
     for(int i = 0; i < gameState.scriptFlags2_bc.count(); i++) {
       data.writeInt(offset, gameState.scriptFlags2_bc.getRaw(i));
@@ -294,22 +281,15 @@ public final class V8Serializer {
       }
     }
 
-    data.writeShort(offset, gameState.pathIndex_4d8);
-    data.writeShort(offset, gameState.dotIndex_4da);
-    data.writeByte(offset, (int)gameState.dotOffset_4dc);
-    data.writeByte(offset, gameState.facing_4dd);
-    data.writeShort(offset, gameState.directionalPathIndex_4de);
     data.writeInt(offset, gameState.characterInitialized_4e6);
-    data.writeByte(offset, gameState.isOnWorldMap_4e4 ? 1 : 0);
-    data.writeByte(offset, gameState.indicatorsDisabled_4e3 ? 1 : 0);
 
     data.writeRegistryId(offset, engineState.type.getRegistryId());
 
-    final FileData engineStateData = engineState.writeSaveData();
+    final FileData engineStateData = engineState.writeSaveData(gameState);
 
     if(engineStateData != null) {
       data.writeInt(offset, engineStateData.size());
-      data.write(offset, engineStateData, 0, engineStateData.size());
+      data.write(0, engineStateData, offset, engineStateData.size());
     } else {
       data.writeInt(offset, 0);
     }

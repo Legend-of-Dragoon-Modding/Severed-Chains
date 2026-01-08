@@ -112,12 +112,14 @@ public final class Campaign {
       final String filename = child.getFileName().toString();
       final String name = filename.substring(0, filename.lastIndexOf('.'));
 
-      try {
-        saves.add(new CompletableFuture<SavedGame>().completeAsync(() -> this.loadGame(name)));
-      } catch(final InvalidSaveException e) {
-        LOGGER.warn("Failed to load save " + filename, e);
-        saves.add(CompletableFuture.completedFuture(new InvalidSavedGame(name)));
-      }
+      saves.add(new CompletableFuture<SavedGame>().completeAsync(() -> {
+        try {
+          return this.loadGame(name);
+        } catch(final InvalidSaveException e) {
+          LOGGER.warn("Failed to load save " + filename, e);
+          return new InvalidSavedGame(name);
+        }
+      }));
     }
 
     return saves;

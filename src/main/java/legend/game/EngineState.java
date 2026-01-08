@@ -2,6 +2,7 @@ package legend.game;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.platform.input.InputAction;
+import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.types.CContainer;
@@ -10,6 +11,7 @@ import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Math;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.function.Function;
 
@@ -40,8 +42,12 @@ public abstract class EngineState<T extends EngineState<T>> {
     return this.type == type;
   }
 
-  public abstract FileData writeSaveData();
-  public abstract void readSaveData(final FileData data);
+  public boolean is(final RegistryId type) {
+    return this.type.getRegistryId().equals(type);
+  }
+
+  public abstract FileData writeSaveData(final GameState52c gameState);
+  public abstract void readSaveData(final GameState52c gameState, final FileData data);
 
   public void init() {
     sssqResetStuff();
@@ -141,7 +147,7 @@ public abstract class EngineState<T extends EngineState<T>> {
     return this.analogueMagnitude;
   }
 
-  public void loadGameFromMenu(final GameState52c gameState) {
+  public void loadSaveFromMenu(final SavedGame save) {
     throw new RuntimeException("Not implemented");
   }
 

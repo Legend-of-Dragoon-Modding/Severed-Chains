@@ -92,8 +92,8 @@ public class GameVarParam extends Param {
       case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] != null ? battleState_8006e398.aliveMonsterBents_ebc[0].index : -1;
       case 53 -> battleState_8006e398.getAliveMonsterCount();
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0;
-      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
-      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
+      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4;
+      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8;
       case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
@@ -231,8 +231,8 @@ public class GameVarParam extends Param {
       case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = SCRIPTS.getState(val, MonsterBattleEntity.class);
 //      case 53 -> battleState_8006e398.aliveMonsterCount_800c6758 = val;
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
-      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
-      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
+      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4 = val;
+      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = val;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = SCRIPTS.getState(val, BattleEntity27c.class);

@@ -19,7 +19,7 @@ import static legend.core.GameEngine.SAVES;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
@@ -49,7 +49,7 @@ public final class Main {
         final String name = SAVES.generateSaveName(saves, "Crash Recovery");
 
         gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
-        gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
+        gameState_800babc8.submapCut_a8 = submapCut_80052c30;
         currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
         gameState_800babc8.isOnWorldMap_4e4 = currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get());
 

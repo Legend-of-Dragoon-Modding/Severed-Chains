@@ -11,6 +11,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
@@ -19,6 +20,7 @@ import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.Menus;
+import legend.game.SItem;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
@@ -32,6 +34,7 @@ import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
 import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
+import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -63,6 +66,7 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodEngineStateTypes;
@@ -82,6 +86,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -116,6 +121,8 @@ import static legend.game.Graphics.GsSetFlatLight;
 import static legend.game.Graphics.PopMatrix;
 import static legend.game.Graphics.PushMatrix;
 import static legend.game.Graphics.RotTransPers4;
+import static legend.game.Graphics.centreScreenX_1f8003dc;
+import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.orderingTableBits_1f8003c0;
@@ -143,7 +150,6 @@ import static legend.game.Scus94491BpeSegment.srand;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -164,6 +170,7 @@ import static legend.game.Text.calculateAppropriateTextboxBounds;
 import static legend.game.Text.clearTextbox;
 import static legend.game.Text.clearTextboxText;
 import static legend.game.Text.renderBorder_80052b68;
+import static legend.game.Text.renderText;
 import static legend.game.Text.scriptDeallocateAllTextboxes;
 import static legend.game.Text.textboxFits;
 import static legend.game.Text.textboxMode_80052b88;
@@ -391,6 +398,8 @@ public class SMap extends EngineState<SMap> {
   private int inputRepeat;
   private int inputHeld;
 
+  private EngineStateType<?> engineStateToTransitionTo;
+
   public SMap() {
     super(LodEngineStateTypes.SUBMAP.get());
   }
@@ -406,14 +415,49 @@ public class SMap extends EngineState<SMap> {
     sssqResetStuff();
   }
 
+  private static final int SMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
+
   @Override
-  public FileData writeSaveData() {
-    return null;
+  public FileData writeSaveData(final GameState52c gameState) {
+    gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
+    gameState_800babc8.submapCut_a8 = submapCut_80052c30;
+
+    final FileData data = new ExpandableFileData(9);
+    final IntRef offset = new IntRef();
+    data.writeShort(offset, SMAP_SAVE_VERSION_1);
+    data.writeInt(offset, gameState_800babc8.submapScene_a4);
+    data.writeInt(offset, gameState_800babc8.submapCut_a8);
+    data.writeBool(offset, gameState_800babc8.indicatorsDisabled_4e3);
+    return data;
   }
 
   @Override
-  public void readSaveData(final FileData data) {
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+    // no data - legacy saves
+    if(data.size() == 0) {
+      return;
+    }
 
+    if(data.size() < 2) {
+      LOGGER.warn("Failed to load SMAP data for save");
+      return;
+    }
+
+    final IntRef offset = new IntRef();
+    final int version = data.readUShort(offset);
+
+    if(version != SMAP_SAVE_VERSION_1) {
+      LOGGER.warn("Unknown SMAP save data version");
+      return;
+    }
+
+    gameState.submapScene_a4 = data.readInt(offset);
+    gameState.submapCut_a8 = data.readInt(offset);
+    gameState.indicatorsDisabled_4e3 = data.readBool(offset);
+
+    submapScene_80052c34 = gameState_800babc8.submapScene_a4;
+    submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+    collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
   }
 
   @Override
@@ -422,7 +466,9 @@ public class SMap extends EngineState<SMap> {
   }
 
   @Override
-  public void loadGameFromMenu(final GameState52c gameState) {
+  public void loadSaveFromMenu(final SavedGame save) {
+    this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
+
     this.encounterAccumulator_800c6ae8 = 0;
 
     // Copied over from LAB_8001e160
@@ -3645,8 +3691,8 @@ public class SMap extends EngineState<SMap> {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      // final Vector2f transformed = new Vector2f();
-      // final Vector3f middle = new Vector3f();
+       final Vector2f transformed = new Vector2f();
+       final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();
@@ -3698,10 +3744,10 @@ public class SMap extends EngineState<SMap> {
 
         this.submap.applyCollisionDebugColour(i, model);
 
-//        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
-//        this.transformVertex(transformed, middle);
-//        final LodString text = new LodString(Integer.toString(i));
-//        renderText(text, transformed.x + centreScreenX_1f8003dc - textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, TextColour.LIME, 0);
+        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
+        this.transformVertex(transformed, middle);
+        final String text = Integer.toString(i);
+        renderText(text, transformed.x + centreScreenX_1f8003dc - DEFAULT_FONT.textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, SItem.UI_WHITE_SMALL);
       }
 
       if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
@@ -3812,7 +3858,8 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newCut >= 0 && newCut < 2) {
-      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_WORLD_MAP_18;
+      this.engineStateToTransitionTo = LodEngineStateTypes.WORLD_MAP.get();
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
       return;
     }
 
@@ -3820,7 +3867,6 @@ public class SMap extends EngineState<SMap> {
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
-      submapCutForSave_800cb450 = newCut;
       EVENTS.postEvent(new SubmapWarpEvent(submapCut_80052c30, gameState_800babc8));
       return;
     }
@@ -3832,7 +3878,6 @@ public class SMap extends EngineState<SMap> {
       cacheCharacterSlots();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      submapCutForSave_800cb450 = submapCut_80052c30;
       return;
     }
 
@@ -3850,7 +3895,7 @@ public class SMap extends EngineState<SMap> {
     if(newScene == 0x3fd) {
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
-      submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      submapCut_80052c30 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
       this.mapTransitionData_800cab24.clear();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
@@ -3864,7 +3909,6 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newScene == 0x3ff) {
-      submapCutForSave_800cb450 = submapCut_80052c30;
       this.menuTransition = Menus::initInventoryMenu;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
@@ -4061,7 +4105,11 @@ public class SMap extends EngineState<SMap> {
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
 
         if(loadingNewGameState_800bdc34) {
-          this.mapTransition(submapCut_80052c30, submapScene_80052c34);
+          if(this.is(this.engineStateToTransitionTo)) {
+            this.mapTransition(submapCut_80052c30, submapScene_80052c34);
+          } else {
+            this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
+          }
         }
       }
 
@@ -4103,7 +4151,7 @@ public class SMap extends EngineState<SMap> {
         this.transitioning_800f7e4c = false;
       }
 
-      case TRANSITION_TO_WORLD_MAP_18 -> {
+      case TRANSITION_TO_ENGINE_STATE_18 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         if(this.isScriptLoaded(0)) {
@@ -4126,7 +4174,8 @@ public class SMap extends EngineState<SMap> {
         }
 
         //LAB_800e62cc
-        engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.WORLD_MAP.get();
+        engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+        this.engineStateToTransitionTo = null;
         pregameLoadingStage_800bb10c = 0;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
@@ -4432,7 +4481,6 @@ public class SMap extends EngineState<SMap> {
     this.mapTransition(script.params_20[0].get() + 0x800, script.params_20[1].get());
     submapCut_80052c30 = script.params_20[2].get();
     submapScene_80052c34 = script.params_20[3].get();
-    submapCutForSave_800cb450 = submapCut_80052c30;
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -5270,7 +5318,7 @@ public class SMap extends EngineState<SMap> {
     this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
     this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
-    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_WORLD_MAP_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
+    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_ENGINE_STATE_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
       return;
     }
 

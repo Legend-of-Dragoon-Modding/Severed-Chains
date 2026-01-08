@@ -23,8 +23,6 @@ public class GameState52c {
 
   public Campaign campaign;
 
-  /** Maybe flags? Maybe individual bytes? */
-  public int _04;
   /**
    * <ul>
    *   <li>18 - stardust turned in</li>
@@ -39,14 +37,15 @@ public class GameState52c {
   public int chapterIndex_98;
   public int stardust_9c;
   public int timestamp_a0;
-  /** Not 100% sure on this */
   public int submapScene_a4;
   public int submapCut_a8;
 
   /** Used by the script engine */
   public int _b0;
-  public int _b4;
-  public int _b8;
+  /** The total number of battles */
+  public int battleCount_b4;
+  /** The total number of player turns taken */
+  public int turnCount_b8;
   /**
    * <ul>
    *   <li>13 flag 0x4_0000 - has psych bomb X</li>

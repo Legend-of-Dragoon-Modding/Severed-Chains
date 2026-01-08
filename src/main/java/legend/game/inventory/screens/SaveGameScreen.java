@@ -23,8 +23,6 @@ import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Text.renderText;
@@ -144,9 +142,6 @@ public class SaveGameScreen extends MenuScreen {
         return;
       }
 
-      gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
-      gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
-
       try {
         SAVES.newSave(name, currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
         this.unload.run();
@@ -159,9 +154,6 @@ public class SaveGameScreen extends MenuScreen {
 
   private void onOverwriteResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
-      gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
-      gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
-
       try {
         SAVES.overwriteSave(save.fileName, save.saveName, currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
         this.unload.run();

@@ -22,6 +22,7 @@ import legend.game.EngineStateType;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.saves.SavedGame;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
@@ -37,10 +38,13 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -60,6 +64,7 @@ import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Audio.getLoadedAudioFiles;
@@ -103,7 +108,6 @@ import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.initModel;
 import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.SItem.UI_WHITE_SHADOWED;
-import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -179,6 +183,8 @@ import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_OUT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
 public class WMap extends EngineState<WMap> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(WMap.class);
+
   private enum WorldMapState {
     UNINITIALIZED_0(0),
     UNUSED_1(1),
@@ -290,6 +296,7 @@ public class WMap extends EngineState<WMap> {
   private final Vector3f shipWakeCrossVector_800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
 
   private EngineStateType<?> engineStateToTransitionTo;
+  private FileData engineStateData;
   public WmapState wmapState_800bb10c = WmapState.INIT;
 
   /**
@@ -410,14 +417,48 @@ public class WMap extends EngineState<WMap> {
     lastSavableEngineState = this.type;
   }
 
+  private static final int WMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
+
   @Override
-  public FileData writeSaveData() {
-    return null;
+  public FileData writeSaveData(final GameState52c gameState) {
+    final FileData data = new ExpandableFileData(9);
+    final IntRef offset = new IntRef();
+    data.writeShort(offset, WMAP_SAVE_VERSION_1);
+    data.writeShort(offset, gameState.pathIndex_4d8);
+    data.writeShort(offset, gameState.dotIndex_4da);
+    data.writeByte(offset, (int)gameState.dotOffset_4dc);
+    data.writeByte(offset, gameState.facing_4dd);
+    data.writeShort(offset, gameState.directionalPathIndex_4de);
+    data.writeByte(offset, gameState.isOnWorldMap_4e4 ? 1 : 0);
+    return data;
   }
 
   @Override
-  public void readSaveData(final FileData data) {
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+    // no data - legacy saves
+    if(data.size() == 0) {
+      return;
+    }
 
+    if(data.size() < 2) {
+      LOGGER.warn("Failed to load WMAP data for save");
+      return;
+    }
+
+    final IntRef offset = new IntRef();
+    final int version = data.readUShort(offset);
+
+    if(version != WMAP_SAVE_VERSION_1) {
+      LOGGER.warn("Unknown WMAP save data version");
+      return;
+    }
+
+    gameState.pathIndex_4d8 = data.readUShort(offset);
+    gameState.dotIndex_4da = data.readUShort(offset);
+    gameState.dotOffset_4dc = data.readUByte(offset);
+    gameState.facing_4dd = data.readByte(offset);
+    gameState.directionalPathIndex_4de = data.readUShort(offset);
+    gameState.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
   }
 
   @Override
@@ -436,9 +477,10 @@ public class WMap extends EngineState<WMap> {
   }
 
   @Override
-  public void loadGameFromMenu(final GameState52c gameState) {
-    this.engineStateToTransitionTo = LodEngineStateTypes.SUBMAP.get();
-    this.wmapState_800bb10c = gameState.isOnWorldMap_4e4 ? WmapState.INIT : WmapState.TRANSITION_TO_ENGINE_STATE;
+  public void loadSaveFromMenu(final SavedGame save) {
+    this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
+    this.engineStateData = save.engineStateData;
+    this.wmapState_800bb10c = this.is(this.engineStateToTransitionTo) ? WmapState.INIT : WmapState.TRANSITION_TO_ENGINE_STATE;
     this.encounterAccumulator_800c6ae8 = 0;
   }
 
@@ -726,6 +768,8 @@ public class WMap extends EngineState<WMap> {
 
     this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+    engineStateData = this.engineStateData;
+    this.engineStateData = null;
     vsyncMode_8007a3b8 = 2;
   }
 

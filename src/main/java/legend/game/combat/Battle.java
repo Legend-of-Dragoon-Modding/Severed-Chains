@@ -128,6 +128,7 @@ import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
@@ -631,12 +632,12 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Override
-  public FileData writeSaveData() {
+  public FileData writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final FileData data) {
+  public void readSaveData(final GameState52c gameState, final FileData data) {
 
   }
 
@@ -1480,7 +1481,7 @@ public class Battle extends EngineState<Battle> {
 
     this.FUN_800c8624();
 
-    gameState_800babc8._b4++;
+    gameState_800babc8.battleCount_b4++;
     goldGainedFromCombat_800bc920 = 0;
 
     spGained_800bc950[0] = 0;

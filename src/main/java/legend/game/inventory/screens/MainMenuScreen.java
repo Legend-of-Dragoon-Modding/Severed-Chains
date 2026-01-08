@@ -361,8 +361,8 @@ public class MainMenuScreen extends MenuScreen {
 
     menuStack.pushScreen(new LoadGameScreen(gameState_800babc8.campaign.loadAllSaves(), save -> {
       _800bd7ac = true;
-      SAVES.loadGameState(save.gameState, save.config, false);
-      currentEngineState_8004dd04.loadGameFromMenu(gameState_800babc8);
+      SAVES.loadGameState(save, false);
+      currentEngineState_8004dd04.loadSaveFromMenu(save);
     }, () -> {
       startFadeEffect(2, 5);
       menuStack.popScreen();

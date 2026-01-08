@@ -4,9 +4,12 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.events.engine.EngineStateChangeEvent;
+import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
@@ -18,6 +21,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
@@ -31,6 +35,7 @@ public final class EngineStates {
 
   /** When the overlay finishes loading, switch to this */
   public static EngineStateType<?> engineStateOnceLoaded_8004dd24;
+  public static FileData engineStateData;
   /** The previous state before the file finished loading */
   public static EngineStateType<?> previousEngineState_8004dd28;
   /** The last savable state we were in, used for generating crash recovery saves */
@@ -48,8 +53,9 @@ public final class EngineStates {
       pregameLoadingStage_800bb10c = 0;
       previousEngineState_8004dd28 = currentEngineState_8004dd04 != null ? currentEngineState_8004dd04.type : null;
       vsyncMode_8007a3b8 = 2;
-      loadGameStateOverlay(engineStateOnceLoaded_8004dd24);
+      loadGameStateOverlay(engineStateOnceLoaded_8004dd24, engineStateData);
       engineStateOnceLoaded_8004dd24 = null;
+      engineStateData = null;
       menuStack.reset();
 
       EVENTS.postEvent(new EngineStateChangeEvent(previousEngineState_8004dd28, currentEngineState_8004dd04));
@@ -59,7 +65,7 @@ public final class EngineStates {
   }
 
   @Method(0x80012a84L)
-  public static void loadGameStateOverlay(final EngineStateType<?> engineState) {
+  public static void loadGameStateOverlay(final EngineStateType<?> engineState, @Nullable final FileData saveData) {
     LOGGER.info("Transitioning to engine state %s", engineState);
 
     SCRIPTS.setFramesPerTick(1);
@@ -77,6 +83,11 @@ public final class EngineStates {
 
     currentEngineState_8004dd04 = engineState.constructor_00.get();
     currentEngineState_8004dd04.init();
+
+    if(saveData != null) {
+      currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
+    }
+
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
     renderMode = currentEngineState_8004dd04.getRenderMode();
     RENDERER.setRenderMode(currentEngineState_8004dd04.getRenderMode());

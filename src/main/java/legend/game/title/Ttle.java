@@ -46,6 +46,7 @@ import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdWithId;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Translucency;
@@ -197,12 +198,12 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   @Override
-  public FileData writeSaveData() {
+  public FileData writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final FileData data) {
+  public void readSaveData(final GameState52c gameState, final FileData data) {
 
   }
 
@@ -221,7 +222,7 @@ public class Ttle extends EngineState<Ttle> {
     setMainVolume(0x7f, 0x7f);
     AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
     FUN_8001aa90();
-    loadMusicPackage(98);
+    loadMusicPackage(1);
   }
 
   @Override

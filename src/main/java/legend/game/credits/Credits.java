@@ -12,6 +12,7 @@ import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.tim.Tim;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -203,12 +204,12 @@ public class Credits extends EngineState<Credits> {
   }
 
   @Override
-  public FileData writeSaveData() {
+  public FileData writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final FileData data) {
+  public void readSaveData(final GameState52c gameState, final FileData data) {
 
   }
 
