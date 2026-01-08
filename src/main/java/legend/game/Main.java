@@ -5,6 +5,7 @@ import legend.core.Version;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +53,7 @@ public final class Main {
         currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
 
         try {
-          SAVES.newSave(name, currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
+          SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
           generatedCrashSave = true;
         } catch(final SaveFailedException ex) {
           LOGGER.error("Failed to generate crash recovery save :(", ex);

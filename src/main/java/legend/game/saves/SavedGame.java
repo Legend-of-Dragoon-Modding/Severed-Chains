@@ -8,14 +8,16 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 public abstract class SavedGame {
   public final String fileName;
   public final String saveName;
+  public final RegistryId campaignType;
   public final RegistryId engineState;
   public final FileData engineStateData;
   public final GameState52c gameState;
   public final ConfigCollection config;
 
-  public SavedGame(final String fileName, final String saveName, final RegistryId engineState, final FileData engineStateData, final GameState52c gameState, final ConfigCollection config) {
+  public SavedGame(final String fileName, final String saveName, final RegistryId campaignType, final RegistryId engineState, final FileData engineStateData, final GameState52c gameState, final ConfigCollection config) {
     this.fileName = fileName;
     this.saveName = saveName;
+    this.campaignType = campaignType;
     this.engineState = engineState;
     this.engineStateData = engineStateData;
     this.gameState = gameState;

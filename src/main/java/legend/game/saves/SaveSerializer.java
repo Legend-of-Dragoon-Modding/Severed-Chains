@@ -7,5 +7,5 @@ import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
 public interface SaveSerializer {
-  void serializer(final String name, final FileData data, final IntRef offset, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats);
+  void serialize(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats);
 }

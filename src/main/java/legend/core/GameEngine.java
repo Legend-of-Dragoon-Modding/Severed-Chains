@@ -327,6 +327,7 @@ public final class GameEngine {
 
     // Initialize registries needed on the menu and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+    REGISTRY_ACCESS.initialize(REGISTRIES.campaignTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.engineStateTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
 

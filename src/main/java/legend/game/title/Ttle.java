@@ -25,7 +25,6 @@ import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
 import legend.game.EngineState;
-import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
@@ -101,6 +100,8 @@ import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.rsin;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -497,8 +498,7 @@ public class Ttle extends EngineState<Ttle> {
       if(loadingNewGameState_800bdc34) {
         removeInputHandlers();
         this.deallocate();
-
-        Fmv.playCurrentFmv(2, CoreEngineStateTypes.NEW_GAME.get());
+        campaignType.get().transitionToNewCampaign(gameState_800babc8);
         return true;
       }
 
@@ -636,6 +636,7 @@ public class Ttle extends EngineState<Ttle> {
     this.fadeOutToMenuAsync(() -> Async.run(SAVES::loadAllCampaigns), CampaignSelectionScreen::new, screen -> {
       if(loadingNewGameState_800bdc34) {
         engineStateOnceLoaded_8004dd24 = REGISTRIES.engineStateTypes.getEntry(screen.getSelectedSave().engineState).get();
+        campaignType.get().transitionToLoadedGame(screen.getSelectedSave().gameState);
         vsyncMode_8007a3b8 = 2;
 
         //LAB_800c80c4

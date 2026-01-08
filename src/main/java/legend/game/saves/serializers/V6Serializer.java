@@ -15,6 +15,7 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -179,7 +180,8 @@ public final class V6Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
     final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
-    return new RetailSavedGame(filename, name, locationName, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
+    return new RetailSavedGame(filename, name, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
   }
 }

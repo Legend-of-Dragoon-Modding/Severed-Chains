@@ -3,6 +3,7 @@ package legend.game.saves.serializers;
 import legend.core.GameEngine;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -251,7 +252,8 @@ public final class V4Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
     final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
-    return new RetailSavedGame(filename, name, locationName, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
+    return new RetailSavedGame(filename, name, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
   }
 }

@@ -7,6 +7,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.SItem.levelStuff_80111cfc;
@@ -28,6 +29,7 @@ public final class V1Serializer {
   }
 
   public static SavedGame fromV1(final String name, final FileData data) {
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
     final GameState52c gameState = deserializeRetailGameState(data.slice(0x30));
     final CharacterData2c charData = gameState.charData_32c[gameState.charIds_88[0]];
     final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
@@ -36,6 +38,6 @@ public final class V1Serializer {
     final int locationType = data.readUByte(0x2d);
     final int locationIndex = data.readUByte(0x2c);
     final String locationName = getLocationName(locationType, locationIndex);
-    return new RetailSavedGame(name, name, locationName, engineState, new FileData(new byte[0]), gameState, new ConfigCollection(), maxHp, maxMp);
+    return new RetailSavedGame(name, name, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, new ConfigCollection(), maxHp, maxMp);
   }
 }

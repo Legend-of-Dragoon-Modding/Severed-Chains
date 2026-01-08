@@ -253,10 +253,11 @@ public final class V2Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
     final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
     final CharacterData2c charData = gameState.charData_32c[gameState.charIds_88[0]];
     final int maxHp = levelStuff_80111cfc[gameState.charIds_88[0]][charData.level_12].hp_00;
     final int maxMp = magicStuff_80111d20[gameState.charIds_88[0]][charData.dlevel_13].mp_00;
-    return new RetailSavedGame(name, name, locationName, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
+    return new RetailSavedGame(name, name, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
   }
 }

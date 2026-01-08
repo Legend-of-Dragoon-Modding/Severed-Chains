@@ -7,6 +7,7 @@ import legend.game.additions.CharacterAdditionStats;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.ItemStack;
+import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -41,6 +42,7 @@ public final class V8Serializer {
 
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
+    final RegistryId campaignTypeId = data.readRegistryId(offset);
 
     final int maxHp = data.readInt(offset);
     final int maxMp = data.readInt(offset);
@@ -166,11 +168,12 @@ public final class V8Serializer {
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
-    return new RetailSavedGame(filename, name, locationName, engineStateId, engineStateData, gameState, config, maxHp, maxMp);
+    return new RetailSavedGame(filename, name, locationName, campaignTypeId, engineStateId, engineStateData, gameState, config, maxHp, maxMp);
   }
 
-  public static void toV8(final String name, final FileData data, final IntRef offset, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) {
+  public static void toV8(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) {
     data.writeAscii(offset, name);
+    data.writeRegistryId(offset, campaignType.getRegistryId());
 
     int mainCharId = 0;
     for(int i = 0; i < gameState.charIds_88.length; i++) {

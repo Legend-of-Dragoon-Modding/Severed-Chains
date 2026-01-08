@@ -11,8 +11,8 @@ public class RetailSavedGame extends SavedGame {
   public final int maxHp;
   public final int maxMp;
 
-  public RetailSavedGame(final String fileName, final String saveName, final String locationName, final RegistryId engineState, final FileData engineStateData, final GameState52c gameState, final ConfigCollection config, final int maxHp, final int maxMp) {
-    super(fileName, saveName, engineState, engineStateData, gameState, config);
+  public RetailSavedGame(final String fileName, final String saveName, final String locationName, final RegistryId campaignType, final RegistryId engineState, final FileData engineStateData, final GameState52c gameState, final ConfigCollection config, final int maxHp, final int maxMp) {
+    super(fileName, saveName, campaignType, engineState, engineStateData, gameState, config);
     this.locationName = locationName;
     this.maxHp = maxHp;
     this.maxMp = maxMp;

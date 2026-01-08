@@ -40,6 +40,7 @@ public final class RetailSerializer {
   }
 
   public static SavedGame fromRetail(final String name, final FileData data) {
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
     final GameState52c gameState = deserializeRetailGameState(data.slice(0x1fc));
     final CharacterData2c charData = gameState.charData_32c[gameState.charIds_88[0]];
     final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
@@ -48,7 +49,7 @@ public final class RetailSerializer {
     final int locationType = data.readUByte(0x1a9);
     final int locationIndex = data.readUByte(0x1a8);
     final String locationName = getLocationName(locationType, locationIndex);
-    return new MemcardSavedGame(name, name, locationType, locationIndex, locationName, engineState, new FileData(new byte[0]), gameState, new ConfigCollection(), maxHp, maxMp);
+    return new MemcardSavedGame(name, name, locationType, locationIndex, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, new ConfigCollection(), maxHp, maxMp);
   }
 
   public static GameState52c deserializeRetailGameState(final FileData data) {

@@ -6,12 +6,14 @@ import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
+import legend.game.saves.CampaignType;
 import legend.game.submap.SobjPos14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
 import org.joml.Vector2f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +89,7 @@ public final class Scus94491BpeSegment_800b {
   public static final int[] characterIndices_800bdbb8 = new int[9];
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
+  public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
 
   public static boolean characterStatsLoaded_800be5d0;
