@@ -469,6 +469,14 @@ public class FileData {
     return read;
   }
 
+  public boolean isZero16(final int offset) {
+    this.checkBounds(offset, 16);
+    final long a =  MathHelper.get(this.data, this.offset + offset, 8);
+    final long b =  MathHelper.get(this.data, this.offset + offset + 8, 8);
+
+    return (a | b) == 0;
+  }
+
   protected void checkBounds(final int offset, final int size) {
     if(offset < 0) {
       throw new IndexOutOfBoundsException("Negative offset " + offset);
