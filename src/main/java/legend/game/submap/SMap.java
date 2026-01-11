@@ -216,8 +216,13 @@ public class SMap extends EngineState<SMap> {
   private SubmapMediaState mediaLoadingStage_800c68e4;
   private final SubmapCaches80 caches_800c68e8 = new SubmapCaches80();
 
-  /** Index 31 tracks the current tick since indicator last enabled. Have not yet seen other elements set to anything but -1 */
-  public final int[] indicatorTickCountArray_800c6970 = new int[32];
+  /**
+   * <ul>
+   *   <li>0-2 - backup of current party char IDs when party is cleared out after killing VoCG virage</li>
+   *   <li>31 - tracks the current tick since indicator last enabled</li>
+   * </ul>
+   */
+  public final int[] randomStuff_800c6970 = new int[32];
 
   private TriangleIndicator140 triangleIndicator_800c69fc;
 
@@ -3207,7 +3212,7 @@ public class SMap extends EngineState<SMap> {
 
         //LAB_800e1ecc
         for(int i = 0; i < 32; i++) {
-          this.indicatorTickCountArray_800c6970[i] = -1;
+          this.randomStuff_800c6970[i] = -1;
         }
 
         transitioningFromCombatToSubmap_800bd7b8 = false;
@@ -3400,7 +3405,7 @@ public class SMap extends EngineState<SMap> {
       }
     } else if(this.indicatorDisabledForCutscene_800f64ac) {
       this.indicatorDisabledForCutscene_800f64ac = false;
-      this.indicatorTickCountArray_800c6970[31] = 0;
+      this.randomStuff_800c6970[31] = 0;
     }
   }
 

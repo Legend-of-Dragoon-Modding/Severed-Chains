@@ -188,6 +188,7 @@ diff,SECT/DRGN22.BIN/717/3,scripts/DRGN22/717/3.diff,"Twin Castle, daytime main 
 diff,SECT/DRGN22.BIN/717/5,scripts/DRGN22/717/5.diff,"Twin Castle, daytime main hall, Rose, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/717/6,scripts/DRGN22/717/6.diff,"Twin Castle, daytime main hall, Albert and knight, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/717/9,scripts/DRGN22/717/9.diff,"Twin Castle, daytime main hall, knight, GH#2027"
+diff,SECT/DRGN22.BIN/774/1,scripts/DRGN22/774/1.diff,"After VoCG virage, adjustments for removing/restoring active party members"
 diff,SECT/DRGN22.BIN/795/1,scripts/DRGN22/795/1.diff,"Giganto Home Haschel solo cutscene, switch camera offset axis GH#1918"
 diff,SECT/DRGN22.BIN/798/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772"
 diff,SECT/DRGN22.BIN/801/1,scripts/DRGN22/801/1.diff,"Giganto Home throne room, Haschel leaves, fix unlock party GH#1772"

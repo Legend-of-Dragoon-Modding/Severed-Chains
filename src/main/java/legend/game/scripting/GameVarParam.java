@@ -109,7 +109,7 @@ public class GameVarParam extends Param {
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34;
 //      case 71 -> SMap._800cb44c;
       case 72 -> (int)((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0];
+      case 73 -> ((SMap)currentEngineState_8004dd04).randomStuff_800c6970[0];
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
@@ -248,7 +248,7 @@ public class GameVarParam extends Param {
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34 = val;
 //      case 71 -> SMap._800cb44c;
       case 72 -> ((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8 = val;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0] = val;
+      case 73 -> ((SMap)currentEngineState_8004dd04).randomStuff_800c6970[0] = val;
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 

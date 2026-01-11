@@ -42,7 +42,7 @@ public class GameVarArrayParam extends Param {
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex].index : -1;
       case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex] != null ? ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex].index : 0;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex];
+      case 73 -> ((SMap)currentEngineState_8004dd04).randomStuff_800c6970[this.arrIndex];
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(this.arrIndex);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.getRaw(this.arrIndex);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c.pack(this.arrIndex);
@@ -88,7 +88,7 @@ public class GameVarArrayParam extends Param {
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex] = SCRIPTS.getState(val, SubmapObject210.class);
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex] = val;
+      case 73 -> ((SMap)currentEngineState_8004dd04).randomStuff_800c6970[this.arrIndex] = val;
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(this.arrIndex, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.setRaw(this.arrIndex, val);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c.unpack(this.arrIndex, val);
