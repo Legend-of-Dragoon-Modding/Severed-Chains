@@ -1414,10 +1414,14 @@ public final class SItem {
 
       additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(charData, additionStats);
 
-      EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
-
       if(additionStats.unlocked && !wasUnlocked) {
-        newlyUnlocked = addition;
+        final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
+
+        if(!event.isCanceled()) {
+          newlyUnlocked = addition;
+        } else {
+          additionStats.unlocked = false;
+        }
       }
     }
 
