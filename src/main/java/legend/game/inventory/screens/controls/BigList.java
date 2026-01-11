@@ -6,6 +6,7 @@ import legend.game.inventory.screens.InputPropagation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
@@ -51,8 +52,13 @@ public class BigList<T> extends Control {
 
   public void addEntry(final T entry) {
     this.entries.add(entry);
-    this.labels.add(this.addLabel());
+    final Label label = this.addLabel();
+    this.labels.add(label);
     this.updateEntries();
+
+    if(entry instanceof final CompletionStage<?> future) {
+      future.thenAcceptAsync(e -> label.setText(this.entryToString.apply(entry)));
+    }
 
     if(this.entries.size() == 1) {
       this.highlight(0);
@@ -90,7 +96,7 @@ public class BigList<T> extends Control {
     label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     label.setX(16);
     label.setHeight(ENTRY_HEIGHT);
-    label.acceptsInput();
+    label.acceptInput();
     label.hide();
 
     label.onMouseMove((x, y) -> {

@@ -8,17 +8,20 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.RetailSavedGame;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.lodmod.LodMod.getLocationName;
 
 public final class V5Serializer {
   private V5Serializer() { }
@@ -34,7 +37,7 @@ public final class V5Serializer {
   }
 
   public static SavedGame fromV5(final String filename, final FileData data) {
-    final GameState52c state = new GameState52c();
+    final GameState52c gameState = new GameState52c();
 
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
@@ -45,10 +48,12 @@ public final class V5Serializer {
     final int locationType = data.readUByte(offset);
     final int locationIndex = data.readUShort(offset);
 
-    state._04 = data.readInt(offset);
+    final String locationName = getLocationName(locationType, locationIndex);
 
-    for(int i = 0; i < state.scriptData_08.length; i++) {
-      state.scriptData_08[i] = data.readInt(offset);
+    /*gameState._04 = */data.readInt(offset);
+
+    for(int i = 0; i < gameState.scriptData_08.length; i++) {
+      gameState.scriptData_08[i] = data.readInt(offset);
     }
 
     final int charSlotCount = data.readByte(offset);
@@ -57,35 +62,35 @@ public final class V5Serializer {
       final int charId = data.readShort(offset);
 
       if(charId != -1) {
-        state.charIds_88.add(charId);
+        gameState.charIds_88.add(charId);
       }
     }
 
-    state.gold_94 = data.readInt(offset);
-    state.chapterIndex_98 = data.readInt(offset);
-    state.stardust_9c = data.readInt(offset);
-    state.timestamp_a0 = data.readInt(offset);
-    state.submapScene_a4 = data.readInt(offset);
-    state.submapCut_a8 = data.readInt(offset);
+    gameState.gold_94 = data.readInt(offset);
+    gameState.chapterIndex_98 = data.readInt(offset);
+    gameState.stardust_9c = data.readInt(offset);
+    gameState.timestamp_a0 = data.readInt(offset);
+    gameState.submapScene_a4 = data.readInt(offset);
+    gameState.submapCut_a8 = data.readInt(offset);
 
-    state._b0 = data.readInt(offset);
-    state._b4 = data.readInt(offset);
-    state._b8 = data.readInt(offset);
+    gameState._b0 = data.readInt(offset);
+    gameState.battleCount_b4 = data.readInt(offset);
+    gameState.turnCount_b8 = data.readInt(offset);
 
-    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
-      state.scriptFlags2_bc.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.scriptFlags2_bc.count(); i++) {
+      gameState.scriptFlags2_bc.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
-      state.scriptFlags1_13c.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.scriptFlags1_13c.count(); i++) {
+      gameState.scriptFlags1_13c.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
-      state.wmapFlags_15c.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.wmapFlags_15c.count(); i++) {
+      gameState.wmapFlags_15c.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
-      state.visitedLocations_17c.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {
+      gameState.visitedLocations_17c.setRaw(i, data.readInt(offset));
     }
 
     for(int i = 0; i < 2; i++) {
@@ -93,24 +98,24 @@ public final class V5Serializer {
 
       for(int bit = 0; bit < 32; bit++) {
         if((packed & (1 << bit)) != 0) {
-          state.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(LodMod.id(LodMod.GOODS_IDS[i * 32 + bit])));
+          gameState.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(LodMod.id(LodMod.GOODS_IDS[i * 32 + bit])));
         }
       }
     }
 
-    for(int i = 0; i < state._1a4.length; i++) {
-      state._1a4[i] = data.readInt(offset);
+    for(int i = 0; i < gameState._1a4.length; i++) {
+      gameState._1a4[i] = data.readInt(offset);
     }
 
-    for(int i = 0; i < state.chestFlags_1c4.length; i++) {
-      state.chestFlags_1c4[i] = data.readInt(offset);
+    for(int i = 0; i < gameState.chestFlags_1c4.length; i++) {
+      gameState.chestFlags_1c4[i] = data.readInt(offset);
     }
 
     final int equipmentCount = data.readUShort(offset);
     final int itemCount = data.readUShort(offset);
 
     for(int i = 0; i < equipmentCount; i++) {
-      state.equipmentRegistryIds_1e8.add(data.readRegistryId(offset));
+      gameState.equipmentRegistryIds_1e8.add(data.readRegistryId(offset));
     }
 
     for(int i = 0; i < itemCount; i++) {
@@ -119,13 +124,13 @@ public final class V5Serializer {
       final int durability = data.readInt(offset);
       // Unused for now but may be used as the length header for extra item data in the future
       final int extraDataHeader = data.readInt(offset);
-      state.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability));
+      gameState.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability));
     }
 
     final int charDataCount = data.readUShort(offset); // Not yet used
 
-    for(int charIndex = 0; charIndex < state.charData_32c.length; charIndex++) {
-      final CharacterData2c charData = state.charData_32c[charIndex];
+    for(int charIndex = 0; charIndex < gameState.charData_32c.length; charIndex++) {
+      final CharacterData2c charData = gameState.charData_32c[charIndex];
       charData.xp_00 = data.readInt(offset);
       charData.partyFlags_04 = data.readInt(offset);
       charData.hp_08 = data.readInt(offset);
@@ -172,18 +177,20 @@ public final class V5Serializer {
       }
     }
 
-    state.pathIndex_4d8 = data.readUShort(offset);
-    state.dotIndex_4da = data.readUShort(offset);
-    state.dotOffset_4dc = data.readUByte(offset);
-    state.facing_4dd = data.readByte(offset);
-    state.directionalPathIndex_4de = data.readUShort(offset);
-    state.characterInitialized_4e6 = data.readInt(offset);
-    state.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
-    state.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
+    gameState.pathIndex_4d8 = data.readUShort(offset);
+    gameState.dotIndex_4da = data.readUShort(offset);
+    gameState.dotOffset_4dc = data.readUByte(offset);
+    gameState.facing_4dd = data.readByte(offset);
+    gameState.directionalPathIndex_4de = data.readUShort(offset);
+    gameState.characterInitialized_4e6 = data.readInt(offset);
+    gameState.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
+    gameState.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
 
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
-    return new SavedGame(filename, name, locationType, locationIndex, state, config, maxHp, maxMp);
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
+    final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    return new RetailSavedGame(filename, name, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
   }
 }

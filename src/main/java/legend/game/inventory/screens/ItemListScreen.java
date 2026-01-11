@@ -137,7 +137,7 @@ public class ItemListScreen extends MenuScreen {
 
   }
 
-  private <T extends InventoryEntry> void showDiscardMenu(final ItemList<T> list, final List<T> inv) {
+  private <T extends InventoryEntry<?>> void showDiscardMenu(final ItemList<T> list, final List<T> inv) {
     if(((list.getSelectedItem().flags_02 & 0x2000) != 0)) {
       playMenuSound(40);
     } else {
@@ -155,7 +155,7 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private <T extends InventoryEntry> void discard(final MessageBoxResult result, final ItemList<T> list, final List<T> inv) {
+  private <T extends InventoryEntry<?>> void discard(final MessageBoxResult result, final ItemList<T> list, final List<T> inv) {
     if(result == MessageBoxResult.YES) {
       list.remove(list.getSelectedItem());
       final List<MenuEntryStruct04<T>> items = list.getItems();

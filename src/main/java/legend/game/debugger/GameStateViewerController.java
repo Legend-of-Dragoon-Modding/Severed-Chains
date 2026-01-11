@@ -204,8 +204,6 @@ public class GameStateViewerController {
   @FXML
   public Label dataIV7;
   @FXML
-  public Label dataI;
-  @FXML
   public Label partyI;
   @FXML
   public Label partyII;
@@ -270,7 +268,6 @@ public class GameStateViewerController {
           if(gameState_800babc8 == null) {
             return;
           }
-          GameStateViewerController.this.dataI.setText(String.format("%#x", gameState_800babc8._04));
           GameStateViewerController.this.scriptData0.setText(String.format("%#x", gameState_800babc8.scriptData_08[0]));
           GameStateViewerController.this.scriptData1.setText(String.format("%#x", gameState_800babc8.scriptData_08[1]));
           GameStateViewerController.this.scriptData2.setText(String.format("%#x", gameState_800babc8.scriptData_08[2]));
@@ -313,8 +310,8 @@ public class GameStateViewerController {
           GameStateViewerController.this.submapScene.setText(String.format("%#x", gameState_800babc8.submapScene_a4));
           GameStateViewerController.this.submapCut.setText(String.format("%#x", gameState_800babc8.submapCut_a8));
           GameStateViewerController.this.scriptEngineValueI.setText(String.format("%#x", gameState_800babc8._b0));
-          GameStateViewerController.this.scriptEngineValueII.setText(String.format("%#x", gameState_800babc8._b4));
-          GameStateViewerController.this.scriptEngineValueIII.setText(String.format("%#x", gameState_800babc8._b8));
+          GameStateViewerController.this.scriptEngineValueII.setText(String.format("%#x", gameState_800babc8.battleCount_b4));
+          GameStateViewerController.this.scriptEngineValueIII.setText(String.format("%#x", gameState_800babc8.turnCount_b8));
           GameStateViewerController.this.scriptFlagsetI0.setText(String.format("%#x", gameState_800babc8.scriptFlags2_bc.getRaw(0)));
           GameStateViewerController.this.scriptFlagsetI1.setText(String.format("%#x", gameState_800babc8.scriptFlags2_bc.getRaw(1)));
           GameStateViewerController.this.scriptFlagsetI2.setText(String.format("%#x", gameState_800babc8.scriptFlags2_bc.getRaw(2)));

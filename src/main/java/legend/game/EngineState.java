@@ -2,31 +2,60 @@ package legend.game;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.platform.input.InputAction;
+import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
+import legend.game.unpacker.FileData;
 import org.joml.Math;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.Audio.sssqResetStuff;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 
-public abstract class EngineState {
+public abstract class EngineState<T extends EngineState<T>> {
+  public final EngineStateType<T> type;
   private final Function<RunningScript, FlowControl>[] functions = new Function[1024];
 
   private float analogueAngle;
   private float analogueMagnitude;
+
+  protected EngineState(final EngineStateType<T> type) {
+    this.type = type;
+  }
+
+  public boolean is(final EngineStateType<?> type) {
+    return this.type == type;
+  }
+
+  public boolean is(final RegistryId type) {
+    return this.type.getRegistryId().equals(type);
+  }
+
+  public abstract FileData writeSaveData(final GameState52c gameState);
+  public abstract void readSaveData(final GameState52c gameState, final FileData data);
+
+  public void init() {
+    sssqResetStuff();
+    submapId_800bd808 = -1;
+  }
+
+  public void destroy() {
+
+  }
 
   /** Runs before scripts are ticked */
   public void tick() {
@@ -59,6 +88,14 @@ public abstract class EngineState {
   /** The amount we've multiplied this engine state's frame rate by (e.g. world map was 20FPS, we multiplied it by 3 to bring it to 60FPS) */
   public int tickMultiplier() {
     return 2;
+  }
+
+  public void menuClosed() {
+
+  }
+
+  public boolean advancesTime() {
+    return true;
   }
 
   public void restoreMusicAfterMenu() {
@@ -109,7 +146,7 @@ public abstract class EngineState {
     return this.analogueMagnitude;
   }
 
-  public void loadGameFromMenu(final GameState52c gameState) {
+  public void loadSaveFromMenu(final SavedGame save) {
     throw new RuntimeException("Not implemented");
   }
 
@@ -120,20 +157,20 @@ public abstract class EngineState {
     return false;
   }
 
-  public void updateDiscordRichPresence(final Activity activity) {
-    activity.setDetails(this.getChapter() + " - " + this.getLocation());
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    activity.setDetails(this.getChapter(gameState) + " - " + this.getLocation(gameState));
     activity.setState(null);
   }
 
-  public String getChapter() {
-    if(gameState_800babc8 != null && gameState_800babc8.chapterIndex_98 > -1 && gameState_800babc8.chapterIndex_98 < chapterNames_80114248.length) {
-      return chapterNames_80114248[gameState_800babc8.chapterIndex_98];
+  public String getChapter(final GameState52c gameState) {
+    if(gameState != null && gameState.chapterIndex_98 > -1 && gameState.chapterIndex_98 < chapterNames_80114248.length) {
+      return chapterNames_80114248[gameState.chapterIndex_98];
     }
 
     return "Unknown Chapter";
   }
 
-  public String getLocation() {
+  public String getLocation(final GameState52c gameState) {
     if(continentIndex_800bf0b0 > -1 && continentIndex_800bf0b0 < worldMapNames_8011c1ec.length) {
       return worldMapNames_8011c1ec[continentIndex_800bf0b0];
     }

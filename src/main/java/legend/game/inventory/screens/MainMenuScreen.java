@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
-import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
@@ -27,31 +26,25 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
+import static legend.game.Menus.downArrow_800bdb98;
 import static legend.game.Menus.renderablePtr_800bdba4;
 import static legend.game.Menus.renderablePtr_800bdba8;
-import static legend.game.Menus.downArrow_800bdb98;
 import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.canSave_8011dc88;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacter;
-import static legend.game.SItem.submapNames_8011c108;
-import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
-import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -75,9 +68,6 @@ public class MainMenuScreen extends MenuScreen {
 
     loadingNewGameState_800bdc34 = false;
     loadCharacterStats();
-
-    gameState_800babc8.isOnWorldMap_4e4 = engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08;
-    canSave_8011dc88 = currentEngineState_8004dd04.canSave();
 
     this.addControl(new Background());
     this.addControl(Glyph.glyph(71)).setPos( 16,  16); // Chapter box
@@ -109,7 +99,7 @@ public class MainMenuScreen extends MenuScreen {
     this.saveButton = this.addButton("Save", this::showSaveScreen);
 
     this.loadButton.setDisabled(gameState_800babc8.campaign.loadAllSaves().isEmpty());
-    this.saveButton.setDisabled(!canSave_8011dc88);
+    this.saveButton.setDisabled(!currentEngineState_8004dd04.canSave());
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
@@ -248,6 +238,10 @@ public class MainMenuScreen extends MenuScreen {
           this.charCards[i].setCharId(gameState_800babc8.charIds_88.getInt(i));
         }
 
+        for(int i = gameState_800babc8.charIds_88.size(); i < 3; i++) {
+          this.charCards[i].setCharId(-1);
+        }
+
         this.loadingStage++;
       }
 
@@ -292,13 +286,6 @@ public class MainMenuScreen extends MenuScreen {
     this.renderNumber(170, 184, getTimestampPart(gameState_800babc8.timestamp_a0, 2), 2, 0x1);
     renderText(chapterNames_80114248[gameState_800babc8.chapterIndex_98], 94, 24, UI_TEXT_CENTERED);
 
-    final String name;
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      name = submapNames_8011c108[submapId_800bd808];
-    } else {
-      name = worldMapNames_8011c1ec[continentIndex_800bf0b0];
-    }
-
     // The retail lines between the buttons are too short, so we just draw more line where the texture ends
     final Matrix4f transforms = new Matrix4f();
     for(int i = 0; i < 6; i++) {
@@ -310,7 +297,7 @@ public class MainMenuScreen extends MenuScreen {
       ;
     }
 
-    renderText(name, 90, 38, UI_TEXT_CENTERED);
+    renderText(currentEngineState_8004dd04.getLocation(gameState_800babc8), 90, 38, UI_TEXT_CENTERED);
   }
 
   private void menuEscape() {
@@ -366,8 +353,7 @@ public class MainMenuScreen extends MenuScreen {
       menuStack.popScreen();
       this.loadingStage = 0;
 
-      canSave_8011dc88 = currentEngineState_8004dd04.canSave();
-      this.saveButton.setDisabled(!canSave_8011dc88);
+      this.saveButton.setDisabled(!currentEngineState_8004dd04.canSave());
     }));
   }
 
@@ -376,8 +362,8 @@ public class MainMenuScreen extends MenuScreen {
 
     menuStack.pushScreen(new LoadGameScreen(gameState_800babc8.campaign.loadAllSaves(), save -> {
       _800bd7ac = true;
-      SAVES.loadGameState(save.state, save.config, false);
-      currentEngineState_8004dd04.loadGameFromMenu(gameState_800babc8);
+      SAVES.loadGameState(save, false);
+      currentEngineState_8004dd04.loadSaveFromMenu(save);
     }, () -> {
       startFadeEffect(2, 5);
       menuStack.popScreen();
@@ -387,7 +373,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showSaveScreen() {
-    if(canSave_8011dc88) {
+    if(currentEngineState_8004dd04.canSave()) {
       menuStack.pushScreen(new SaveGameScreen(() -> {
         menuStack.popScreen();
         this.fadeOutArrows();

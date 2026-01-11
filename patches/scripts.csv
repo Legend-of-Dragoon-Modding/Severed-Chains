@@ -14,6 +14,7 @@ diff,SECT/DRGN1.BIN/330,scripts/DRGN1/330.diff,"Jiango, Remove code that freezes
 diff,SECT/DRGN1.BIN/336,scripts/DRGN1/336.diff,"Grand Jewel, Remove hardcoded character count"
 diff,SECT/DRGN1.BIN/388,scripts/DRGN1/388.diff,"Zieg, Remove dart check, fix finisher crash when below 3 characters"
 diff,SECT/DRGN1.BIN/389,scripts/DRGN1/389.diff,"Melbu, Fix for hardcoded character count"
+diff,SECT/DRGN1.BIN/390,scripts/DRGN1/390.diff,"Monster, battle menu while being impersonated"
 diff,SECT/DRGN1.BIN/397,scripts/DRGN1/397.diff,"Unknown Script, Fix for hardcoded character count"
 diff,SECT/DRGN0.BIN/4172/1,scripts/DRGN0/4172/1.diff,"Death Dimension overlay widescreen (GH#2461)"
 diff,SECT/DRGN0.BIN/4308/1,scripts/DRGN0/4308/1.diff,"Dummy burn out item registry + mashing config"

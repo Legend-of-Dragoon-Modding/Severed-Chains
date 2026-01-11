@@ -681,7 +681,7 @@ public class BattleStateEf4 {
         state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
 
         if(!state.hasFlag(FLAG_MONSTER)) {
-          gameState_800babc8._b8++;
+          gameState_800babc8.turnCount_b8++;
         }
 
         //LAB_800c7f9c

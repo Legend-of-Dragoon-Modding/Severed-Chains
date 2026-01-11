@@ -9,7 +9,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
-public class Equipment extends RegistryEntry implements InventoryEntry, ScriptReadable {
+public class Equipment extends RegistryEntry implements InventoryEntry<Equipment>, ScriptReadable {
   public final int price;
 
   /**
@@ -132,7 +132,12 @@ public class Equipment extends RegistryEntry implements InventoryEntry, ScriptRe
   }
 
   @Override
-  public int getPrice() {
+  public int getBuyPrice() {
+    return this.price * 2;
+  }
+
+  @Override
+  public int getSellPrice() {
     return this.price;
   }
 

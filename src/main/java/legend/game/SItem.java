@@ -43,6 +43,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.GameState52c;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntries;
@@ -78,20 +79,16 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Audio.copyPlayingSounds;
-import static legend.game.Audio.loadedAudioFiles_800bcf78;
-import static legend.game.Audio.musicPackageLoadedCallback;
 import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playMusicPackage;
 import static legend.game.Audio.playingSoundsBackup_800bca78;
 import static legend.game.Audio.queuedSounds_800bd110;
-import static legend.game.Audio.sssqResetStuff;
 import static legend.game.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.renderablePtr_800bdba4;
@@ -143,7 +140,7 @@ public final class SItem {
   public static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
   public static final FontOptions UI_WHITE_SHADOWED_RIGHT = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.RIGHT);
 
-  public static int shopId_8007a3b4;
+  public static RegistryId shopId_8007a3b4;
 
   public static final RegistryDelegate<Good>[] characterDragoonIndices_800c6e68 = new RegistryDelegate[10];
   static {
@@ -330,8 +327,6 @@ public final class SItem {
   };
 
   public static int characterCount_8011d7c4;
-
-  public static boolean canSave_8011dc88;
 
   @ScriptDescription("Gets the maximum number of items a player can carry")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
@@ -813,7 +808,7 @@ public final class SItem {
   }
 
   @Method(0x800239e0L)
-  public static <T extends InventoryEntry> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
+  public static <T extends InventoryEntry<?>> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
     out.clear();
 
     //LAB_800239ec
@@ -837,7 +832,7 @@ public final class SItem {
   }
 
   @Method(0x80023a2cL)
-  public static <T extends InventoryEntry> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
+  public static <T extends InventoryEntry<?>> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count, final List<String> retailSorting) {
     display.sort(menuItemIconComparator(retailSorting, InventoryEntry::getRegistryId));
     setInventoryFromDisplay(display, items, count);
   }
@@ -848,7 +843,7 @@ public final class SItem {
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static <T extends InventoryEntry> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
+  public static <T extends InventoryEntry<?>> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
     Comparator<MenuEntryStruct04<T>> comparator = Comparator.comparingInt(item -> item.item_00.getIcon().resolve().icon);
@@ -899,9 +894,14 @@ public final class SItem {
 
   @Method(0x8002a6fcL)
   public static void clearCharacterStats() {
+    clearCharacterStats(stats_800be5f8);
+  }
+
+  @Method(0x8002a6fcL)
+  public static void clearCharacterStats(final ActiveStatsa0[] activeStats) {
     //LAB_8002a730
     for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      final ActiveStatsa0 stats = activeStats[charIndex];
 
       stats.xp_00 = 0;
       stats.hp_04 = 0;
@@ -947,7 +947,7 @@ public final class SItem {
       stats.dragoonDefence_74 = 0;
       stats.dragoonMagicDefence_75 = 0;
 
-      clearEquipmentStats(charIndex);
+      clearEquipmentStats(activeStats, charIndex);
 
 //      stats.addition_00_9c = 0;
       stats.additionSpMultiplier_9e = 0;
@@ -958,8 +958,8 @@ public final class SItem {
   }
 
   @Method(0x8002a86cL)
-  public static void clearEquipmentStats(final int charIndex) {
-    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+  public static void clearEquipmentStats(final ActiveStatsa0[] activeStats, final int charIndex) {
+    final ActiveStatsa0 stats = activeStats[charIndex];
 
     stats.specialEffectFlag_76 = 0;
 //    stats.equipmentType_77 = 0;
@@ -1064,14 +1064,7 @@ public final class SItem {
   public static void stopMenuMusic() {
     //LAB_8001e044
     //LAB_8001e0f8
-    if(loadingNewGameState_800bdc34) {
-      if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
-        sssqResetStuff();
-        unloadSoundFile(8);
-        loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-        loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
-      }
-    } else {
+    if(!loadingNewGameState_800bdc34) {
       //LAB_8001e160
       stopMusicSequence();
       unloadSoundFile(8);
@@ -1988,6 +1981,7 @@ public final class SItem {
   public static void renderCharacterStats(final int charIndex, @Nullable final Equipment equipment, final boolean allocate) {
     if(charIndex != -1) {
       final ActiveStatsa0 statsTmp;
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
       if(equipment != null) {
         final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c[charIndex].equipment_14);
@@ -1997,7 +1991,7 @@ public final class SItem {
         loadCharacterStats();
 
         //LAB_80108694
-        statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
+        statsTmp = new ActiveStatsa0(stats);
 
         //LAB_801086e8
         gameState_800babc8.charData_32c[charIndex].equipment_14.clear();
@@ -2007,11 +2001,10 @@ public final class SItem {
       } else {
         //LAB_80108720
         //LAB_80108740
-        statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
+        statsTmp = new ActiveStatsa0(stats);
       }
 
       //LAB_80108770
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
       renderThreeDigitNumberComparison( 58, 116, stats.bodyAttack_6a, statsTmp.bodyAttack_6a);
       renderThreeDigitNumberComparison( 90, 116, stats.equipmentAttack_88, statsTmp.equipmentAttack_88);
       renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a + stats.equipmentAttack_88, statsTmp.bodyAttack_6a + statsTmp.equipmentAttack_88);
@@ -2324,12 +2317,18 @@ public final class SItem {
   @Method(0x80110030L)
   public static void loadCharacterStats() {
     clearCharacterStats();
+    loadCharacterStats(gameState_800babc8, stats_800be5f8);
+  }
+
+  @Method(0x80110030L)
+  public static void loadCharacterStats(final GameState52c gameState, final ActiveStatsa0[] activeStats) {
+    clearCharacterStats(activeStats);
 
     //LAB_80110174
     for(int charId = 0; charId < 9; charId++) {
-      final ActiveStatsa0 stats = stats_800be5f8[charId];
+      final ActiveStatsa0 stats = activeStats[charId];
 
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+      final CharacterData2c charData = gameState.charData_32c[charId];
 
       final CharacterStatsEvent statsEvent = EVENTS.postEvent(new CharacterStatsEvent(charId));
 
@@ -2379,14 +2378,14 @@ public final class SItem {
       }
 
       //LAB_8011042c
-      applyEquipmentStats(charId);
+      applyEquipmentStats(activeStats, charId);
 
       final int v0 = dragoonGoodsBits_800fbd08[charId];
-      if(hasDragoon(gameState_800babc8.goods_19c, charId)) {
+      if(hasDragoon(gameState.goods_19c, charId)) {
         stats.flags_0c |= 0x2000;
 
-        if((gameState_800babc8.characterInitialized_4e6 & 0x1 << v0) == 0) {
-          gameState_800babc8.characterInitialized_4e6 |= 0x1 << v0;
+        if((gameState.characterInitialized_4e6 & 0x1 << v0) == 0) {
+          gameState.characterInitialized_4e6 |= 0x1 << v0;
 
           stats.mp_06 = statsEvent.maxMp;
           stats.maxMp_6e = statsEvent.maxMp;
@@ -2399,15 +2398,15 @@ public final class SItem {
       }
 
       //LAB_801104f8
-      if(charId == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+      if(charId == 0 && gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         stats.flags_0c |= 0x6000;
 
-        stats.dlevel_0f = gameState_800babc8.charData_32c[0].dlevel_13;
+        stats.dlevel_0f = gameState.charData_32c[0].dlevel_13;
 
         final int a1 = dragoonGoodsBits_800fbd08[0];
 
-        if((gameState_800babc8.characterInitialized_4e6 & 0x1 << a1) == 0) {
-          gameState_800babc8.characterInitialized_4e6 |= 0x1 << a1;
+        if((gameState.characterInitialized_4e6 & 0x1 << a1) == 0) {
+          gameState.characterInitialized_4e6 |= 0x1 << a1;
           stats.mp_06 = statsEvent.maxMp;
           stats.maxMp_6e = statsEvent.maxMp;
         } else {
@@ -2443,10 +2442,10 @@ public final class SItem {
   }
 
   @Method(0x8011085cL)
-  public static void applyEquipmentStats(final int charId) {
-    clearEquipmentStats(charId);
+  public static void applyEquipmentStats(final ActiveStatsa0[] activeStats, final int charId) {
+    clearEquipmentStats(activeStats, charId);
 
-    final ActiveStatsa0 characterStats = stats_800be5f8[charId];
+    final ActiveStatsa0 characterStats = activeStats[charId];
 
     //LAB_801108b0
     for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {

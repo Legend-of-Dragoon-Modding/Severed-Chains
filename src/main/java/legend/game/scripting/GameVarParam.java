@@ -1,7 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.EngineStateEnum;
-import legend.game.EngineStates;
 import legend.game.FullScreenEffects;
 import legend.game.Graphics;
 import legend.game.SItem;
@@ -40,7 +38,7 @@ public class GameVarParam extends Param {
   @Override
   public int get() {
     return switch(this.index) {
-      case 0 -> EngineStates.engineState_8004dd20.ordinal();
+//      case 0 -> EngineStates.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier();
       case 3 -> currentEngineState_8004dd04.getInputsHeld();
@@ -94,8 +92,8 @@ public class GameVarParam extends Param {
       case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] != null ? battleState_8006e398.aliveMonsterBents_ebc[0].index : -1;
       case 53 -> battleState_8006e398.getAliveMonsterCount();
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0;
-      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
-      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
+      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4;
+      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8;
       case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
@@ -150,7 +148,7 @@ public class GameVarParam extends Param {
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04;
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368 ? 1 : 0;
-      case 125 -> SItem.shopId_8007a3b4;
+      case 125 -> LodMod.getShopIndex(SItem.shopId_8007a3b4);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0];
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.get();
@@ -173,7 +171,7 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
+//      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94 = val;
@@ -212,7 +210,7 @@ public class GameVarParam extends Param {
         // size and simply add the drop to the list if var[41] is set.
       }
       case 41 -> {
-        final InventoryEntry invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[val])).get() : new ItemStack(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[val - 192])).get());
+        final InventoryEntry<?> invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[val])).get() : new ItemStack(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[val - 192])).get());
 
         if(invEntry instanceof final Equipment equipment) {
           equipmentOverflow.add(equipment);
@@ -233,8 +231,8 @@ public class GameVarParam extends Param {
       case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = SCRIPTS.getState(val, MonsterBattleEntity.class);
 //      case 53 -> battleState_8006e398.aliveMonsterCount_800c6758 = val;
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
-      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
-      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
+      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4 = val;
+      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = val;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = SCRIPTS.getState(val, BattleEntity27c.class);
@@ -289,7 +287,7 @@ public class GameVarParam extends Param {
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04 = val;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04 = val;
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368 = val != 0;
-      case 125 -> SItem.shopId_8007a3b4 = val;
+      case 125 -> SItem.shopId_8007a3b4 = LodMod.id(LodMod.SHOP_IDS[val]);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0] = val;
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.set(val);

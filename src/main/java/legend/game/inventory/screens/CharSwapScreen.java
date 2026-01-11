@@ -290,7 +290,7 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage2NavigateDown() {
-    if(this.primaryCharIndex < 2 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(this.primaryCharIndex + 1)].partyFlags_04 & CANT_REMOVE) == 0)) {
+    if((this.primaryCharIndex < 2 && CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || this.primaryCharIndex < gameState_800babc8.charIds_88.size() - 1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(this.primaryCharIndex + 1)].partyFlags_04 & CANT_REMOVE) == 0)) {
       playMenuSound(1);
       this.primaryCharIndex++;
     } else if(this.allowWrapY) {

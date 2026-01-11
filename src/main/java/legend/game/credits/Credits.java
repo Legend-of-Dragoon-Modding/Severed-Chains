@@ -11,11 +11,12 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
 import legend.game.tim.Tim;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
@@ -39,7 +40,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class Credits extends EngineState {
+public class Credits extends EngineState<Credits> {
   public enum CreditsType {
     MAJOR_HEADER_0,
     MINOR_HEADER_1,
@@ -197,6 +198,25 @@ public class Credits extends EngineState {
   private final MV transforms = new MV();
   private Obj gradient;
   private Obj credits;
+
+  public Credits() {
+    super(LodEngineStateTypes.CREDITS.get());
+  }
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+
+  }
+
+  @Override
+  public boolean advancesTime() {
+    return false;
+  }
 
   @Override
   @Method(0x800eaa88L)
@@ -695,13 +715,13 @@ public class Credits extends EngineState {
 
     stopXaAudio();
 
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.SUBMAP.get();
 
     //LAB_800eaf14
   }
 
   @Override
-  public void updateDiscordRichPresence(final Activity activity) {
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
     activity.setDetails("Watching the Credits");
     activity.setState(null);
   }

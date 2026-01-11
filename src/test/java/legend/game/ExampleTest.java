@@ -14,9 +14,12 @@ import legend.game.saves.SavedGame;
 import legend.game.scripting.ScriptState;
 import legend.game.submap.SMap;
 import legend.game.title.Ttle;
+import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodItems;
 import legend.lodmod.LodMod;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.ExecutionException;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
@@ -27,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExampleTest {
   @Test
-  void test() {
+  void test() throws ExecutionException, InterruptedException {
     // Bootstrap engine
     final Thread engine = Bootstrapper.loadEngine();
 
@@ -42,8 +45,8 @@ public class ExampleTest {
     Input.sendKeyPress(InputKey.RETURN);
 
     // Inject most recent save
-    final SavedGame save = SAVES.loadAllCampaigns().getFirst().loadAllSaves().getFirst();
-    Harness.injectGameState(save.state, save.config, true);
+    final SavedGame save = SAVES.loadAllCampaigns().getFirst().loadAllSaves().getFirst().get();
+    Harness.injectGameState(save.gameState, save.config, true);
 
     // Init some configs
     CONFIG.setConfig(CoreMod.AUTO_TEXT_CONFIG.get(), true);
@@ -56,7 +59,7 @@ public class ExampleTest {
     Harness.setMersenneTwisterSeed(0L);
 
 
-    Harness.transitionToEngineState(EngineStateEnum.SUBMAP_05);
+    Harness.transitionToEngineState(LodEngineStateTypes.SUBMAP.get());
     Wait.waitForEngineState(SMap.class);
 
     itemOverflow.add(new ItemStack(LodItems.PELLET.get()));

@@ -66,6 +66,6 @@ public class CombatantStruct1a8 {
     return false;
   }
 
-  public record ItemDrop(int chance, InventoryEntry item) {
+  public record ItemDrop(int chance, InventoryEntry<?> item) {
   }
 }

@@ -19,7 +19,7 @@ import legend.core.opengl.McqBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.DrgnFiles;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
@@ -128,6 +128,7 @@ import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
@@ -139,6 +140,7 @@ import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -157,6 +159,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -188,7 +191,7 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnDirSync;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.DrgnFiles.loadFile;
-import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.postBattleEngineState_800bc91c;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -255,7 +258,6 @@ import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -267,6 +269,7 @@ import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
 import static legend.game.combat.SBtld._8011517c;
+import static legend.game.combat.SBtld.clearCombatVars;
 import static legend.game.combat.SBtld.loadAdditions;
 import static legend.game.combat.SEffe.addGenericAttachment;
 import static legend.game.combat.SEffe.allocateEffectManager;
@@ -317,7 +320,7 @@ import static legend.lodmod.LodMod.WATER_ELEMENT;
 import static legend.lodmod.LodMod.WIND_ELEMENT;
 import static legend.lodmod.LodMod.disableRetailBattleActions;
 
-public class Battle extends EngineState {
+public class Battle extends EngineState<Battle> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
@@ -624,6 +627,32 @@ public class Battle extends EngineState {
   public static final int[] melbuStageIndices_800fb064 = {93, 94, 95, 25, 52, -1, -1, -1};
   public static final int[] modelVramSlotIndices_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
 
+  public Battle() {
+    super(LodEngineStateTypes.BATTLE.get());
+  }
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+
+  }
+
+  @Override
+  public void init() {
+    super.init();
+    clearCombatVars();
+  }
+
+  @Override
+  public void destroy() {
+    super.destroy();
+    sssqResetStuff();
+  }
+
   private int inputPressed;
   private int inputRepeat;
   private int inputHeld;
@@ -778,7 +807,7 @@ public class Battle extends EngineState {
     functions[158] = this::FUN_800cc784;
     functions[159] = this::scriptLoadAttackAnimations;
     functions[160] = this::scriptSetUpAndHandleCombatMenu;
-    functions[161] = Scus94491BpeSegment::scriptRewindAndPause2;
+    functions[161] = this::scriptOverrideBattleMenuActions;
     functions[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     functions[163] = Scus94491BpeSegment::scriptRewindAndPause2;
     functions[164] = this::scriptRenderDamage;
@@ -1452,7 +1481,7 @@ public class Battle extends EngineState {
 
     this.FUN_800c8624();
 
-    gameState_800babc8._b4++;
+    gameState_800babc8.battleCount_b4++;
     goldGainedFromCombat_800bc920 = 0;
 
     spGained_800bc950[0] = 0;
@@ -1835,8 +1864,6 @@ public class Battle extends EngineState {
 
   @Method(0x800c8068L)
   public void performPostBattleAction() {
-    EVENTS.postEvent(new BattleEndedEvent(this));
-
     final int postBattleAction = postBattleAction_800bc974;
 
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
@@ -1874,6 +1901,7 @@ public class Battle extends EngineState {
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
+        EVENTS.postEvent(new BattleEndedEvent(this));
         startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
       }
 
@@ -1946,10 +1974,7 @@ public class Battle extends EngineState {
       this.deallocateStageDarkeningStorage();
       this.FUN_800c8748();
 
-      EngineStateEnum postCombatMainCallbackIndex = previousEngineState_8004dd28;
-      if(postCombatMainCallbackIndex == EngineStateEnum.FMV_09) {
-        postCombatMainCallbackIndex = EngineStateEnum.SUBMAP_05;
-      }
+      EngineStateType<?> postBattleEngineState = previousEngineState_8004dd28;
 
       //LAB_800c84b4
       switch(postBattleAction_800bc974) {
@@ -1960,15 +1985,15 @@ public class Battle extends EngineState {
             gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
           } else {
             //LAB_800c8534
-            postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
+            postBattleEngineState = LodEngineStateTypes.GAME_OVER.get();
           }
         }
 
-        case 4 -> Fmv.playCurrentFmv(16, EngineStateEnum.FINAL_FMV_11);
+        case 4 -> Fmv.playCurrentFmv(16, LodEngineStateTypes.FINAL_FMV.get());
       }
 
       //LAB_800c8558
-      postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
+      postBattleEngineState_800bc91c = postBattleEngineState;
 
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
@@ -2378,7 +2403,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c952cL)
-  public static void loadCombatantModelAndAnimation(final Model124 model, final CombatantStruct1a8 combatant) {
+  public static void loadCombatantModelAndAnimation(final Battle battle, final Model124 model, final CombatantStruct1a8 combatant) {
     final CContainer tmd;
     if(combatant._1a4 >= 0) {
       tmd = new CContainer(model.name, battleState_8006e398.getGlobalAsset(combatant._1a4).data_00);
@@ -2413,7 +2438,7 @@ public class Battle extends EngineState {
 
     TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
 
-    EVENTS.postEvent(new CombatantModelLoadedEvent((Battle)currentEngineState_8004dd04, combatant, model));
+    EVENTS.postEvent(new CombatantModelLoadedEvent(battle, combatant, model));
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
@@ -3520,9 +3545,9 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Sets up battle menu, handles its input, and renders it")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected (defend, transform, d-magic, attack, item, run, special, ?, d-attack)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
   @Method(0x800cca34L)
-  public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
+  public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<PlayerBattleEntity> script) {
     if(this.hud.listMenu_800c6b60 != null) {
       return FlowControl.PAUSE_AND_REWIND;
     }
@@ -3546,6 +3571,27 @@ public class Battle extends EngineState {
     script.params_20[0].set(selectedAction.getRegistryId());
 
     //LAB_800ccb28
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Overrides battle menu actions")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "actionCount", description = "The number of elements in the battle action registry ID array")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG_ARRAY, name = "actions", description = "An array of battle action registry IDs")
+  @Method(0x800cca34L)
+  public FlowControl scriptOverrideBattleMenuActions(final RunningScript<PlayerBattleEntity> script) {
+    final List<BattleAction> battleActions = new ArrayList<>();
+    final int battleActionCount = script.params_20[0].get();
+
+    for(int i = 0; i < battleActionCount; i++) {
+      final RegistryId id = script.params_20[1].array(i).getRegistryId();
+
+      if(REGISTRIES.battleActions.hasEntry(id)) {
+        battleActions.add(REGISTRIES.battleActions.getEntry(id).get());
+      }
+    }
+
+    this.hud.initializeMenuIcons(script.scriptState_04, battleActions, Set.of());
+    script.scriptState_04.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
     return FlowControl.CONTINUE;
   }
 
@@ -3598,7 +3644,7 @@ public class Battle extends EngineState {
       this.loadCombatantTmdAndAnims(combatant);
       //LAB_800ccc94
     } else if((combatant.flags_19e & 0x20) == 0) {
-      loadCombatantModelAndAnimation(bent.model_148, combatant);
+      loadCombatantModelAndAnimation(this, bent.model_148, combatant);
       bent.loadingAnimIndex_26e = 0;
       bent.currentAnimIndex_270 = -1;
       state.clearFlag(FLAG_1);
@@ -4092,7 +4138,7 @@ public class Battle extends EngineState {
 
     //LAB_800cdaf4
     bent.loadingAnimIndex_26e = 0;
-    loadCombatantModelAndAnimation(bent.model_148, bent.combatant_144);
+    loadCombatantModelAndAnimation(this, bent.model_148, bent.combatant_144);
 
     //LAB_800cdb08
     return FlowControl.CONTINUE;
@@ -8793,8 +8839,8 @@ public class Battle extends EngineState {
   }
 
   @Override
-  public void updateDiscordRichPresence(final Activity activity) {
-    super.updateDiscordRichPresence(activity);
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    super.updateDiscordRichPresence(gameState, activity);
     activity.setState("In Combat");
   }
 

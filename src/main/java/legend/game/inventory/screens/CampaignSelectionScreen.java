@@ -1,12 +1,10 @@
 package legend.game.inventory.screens;
 
-import legend.core.Async;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Label;
-import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
@@ -21,7 +19,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.MODS;
@@ -42,9 +40,12 @@ public class CampaignSelectionScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(MenuScreen.class);
 
   private final BigList<Campaign> campaignList;
+  private Control saveCard;
 
   private Campaign selectedCampaign;
-  private Future<List<SavedGame>> saveFuture;
+  private List<CompletableFuture<SavedGame>> savedGames;
+
+  private SavedGame selectedSave;
 
   public CampaignSelectionScreen(final List<Campaign> campaigns) {
     deallocateRenderables(0xff);
@@ -57,13 +58,18 @@ public class CampaignSelectionScreen extends MenuScreen {
     title.setPos(0, 10);
     title.setWidth(this.getWidth());
 
-    final SaveCard saveCard = this.addControl(new SaveCard());
-    saveCard.setPos(16, 160);
-
     this.campaignList = this.addControl(new BigList<>(c -> c.name));
     this.campaignList.setPos(16, 16);
     this.campaignList.setSize(360, 144);
-    this.campaignList.onHighlight(campaign -> saveCard.setSaveData(campaign.latestSave));
+    this.campaignList.onHighlight(campaign -> {
+      if(this.saveCard != null) {
+        this.removeControl(this.saveCard);
+      }
+
+      this.saveCard = this.addControl(campaign.latestSave.createSaveCard());
+      this.saveCard.alwaysReceiveInput();
+      this.saveCard.setPos(16, 160);
+    });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);
 
@@ -74,6 +80,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.mods"), INPUT_ACTION_MENU_MODS, this::menuMods);
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+  }
+
+  public SavedGame getSelectedSave() {
+    return this.selectedSave;
   }
 
   private boolean selectLock;
@@ -114,18 +124,23 @@ public class CampaignSelectionScreen extends MenuScreen {
     startFadeEffect(1, 5);
 
     this.selectedCampaign = campaign;
-    this.saveFuture = Async.run(campaign::loadAllSaves);
+    this.savedGames = campaign.loadAllSaves();
   }
 
   private void showLoadGameScreen() {
     startFadeEffect(2, 5);
 
-    menuStack.pushScreen(new LoadGameScreen(this.saveFuture.resultNow(), SAVES::loadGameState, () -> {
+    menuStack.pushScreen(new LoadGameScreen(this.savedGames, this::onSavedGameSelected, () -> {
       startFadeEffect(2, 5);
       menuStack.popScreen();
       bootMods(MODS.getAllModIds());
       this.selectLock = false;
     }, this.selectedCampaign));
+  }
+
+  private void onSavedGameSelected(final SavedGame save) {
+    this.selectedSave = save;
+    SAVES.loadGameState(save);
   }
 
   @Override
@@ -135,10 +150,10 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    if(this.saveFuture != null && this.saveFuture.isDone() && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
+    if(this.savedGames != null && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.showLoadGameScreen();
       this.selectedCampaign = null;
-      this.saveFuture = null;
+      this.savedGames = null;
     }
   }
 

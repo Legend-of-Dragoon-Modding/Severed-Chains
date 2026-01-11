@@ -136,7 +136,7 @@ public class GoodsScreen extends MenuScreen {
     return InputPropagation.PROPAGATE;
   }
 
-  private static class GoodsEntry implements InventoryEntry {
+  private static class GoodsEntry implements InventoryEntry<GoodsEntry> {
     public final Good good;
 
     private GoodsEntry(final Good good) {
@@ -164,7 +164,12 @@ public class GoodsScreen extends MenuScreen {
     }
 
     @Override
-    public int getPrice() {
+    public int getBuyPrice() {
+      return 0;
+    }
+
+    @Override
+    public int getSellPrice() {
       return 0;
     }
 

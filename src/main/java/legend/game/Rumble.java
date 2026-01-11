@@ -6,13 +6,13 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
+import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 
 public final class Rumble {
@@ -68,18 +68,18 @@ public final class Rumble {
       case 0 -> stopRumble(pad);
       case 1 -> PLATFORM.rumble(0.25f, 0);
       case 2 -> {
-        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+        if(currentEngineState_8004dd04.is(LodEngineStateTypes.SUBMAP.get())) {
           PLATFORM.rumble(0.3f, 0);
-        } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+        } else if(currentEngineState_8004dd04.is(LodEngineStateTypes.BATTLE.get())) {
           PLATFORM.rumble(0.75f - rumbleDampener_800bee80, 0);
         } else {
           PLATFORM.rumble(0.75f, 0);
         }
       }
       case 3 -> {
-        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+        if(currentEngineState_8004dd04.is(LodEngineStateTypes.SUBMAP.get())) {
           PLATFORM.rumble(0.4f, 0);
-        } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+        } else if(currentEngineState_8004dd04.is(LodEngineStateTypes.BATTLE.get())) {
           PLATFORM.rumble(1.0f - rumbleDampener_800bee80, 0);
         } else {
           PLATFORM.rumble(1.0f, 0);

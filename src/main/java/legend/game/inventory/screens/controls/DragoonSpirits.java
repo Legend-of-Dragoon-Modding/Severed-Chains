@@ -39,7 +39,7 @@ public class DragoonSpirits extends Control {
     for(int spiritIndex = 0; spiritIndex < dragoonSpiritGoodsBits_800fbabc.length; spiritIndex++) {
       final RegistryDelegate<Good> bit = dragoonSpiritGoodsBits_800fbabc[spiritIndex];
       if(goods.has(bit)) {
-        final Renderable58 renderable = bit.get().renderIcon(spiritIndex * 12, 0, Renderable58.FLAG_NO_ANIMATION);
+        final Renderable58 renderable = bit.get().renderManualIcon(spiritIndex * 12, 0, Renderable58.FLAG_NO_ANIMATION);
 
         if(renderable != null) {
           renderable.z_3c = 33;

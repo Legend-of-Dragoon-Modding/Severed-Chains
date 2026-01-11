@@ -19,7 +19,6 @@ import legend.core.platform.SdlPlatformManager;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputBindings;
 import legend.core.spu.Spu;
-import legend.game.EngineStateEnum;
 import legend.game.Main;
 import legend.game.Scus94491BpeSegment;
 import legend.game.fmv.Fmv;
@@ -27,6 +26,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
@@ -40,6 +40,7 @@ import legend.game.saves.serializers.V4Serializer;
 import legend.game.saves.serializers.V5Serializer;
 import legend.game.saves.serializers.V6Serializer;
 import legend.game.saves.serializers.V7Serializer;
+import legend.game.saves.serializers.V8Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.tmd.TmdObjLoader;
@@ -106,7 +107,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V7Serializer.MAGIC_V7, V7Serializer::toV7);
+  public static final SaveManager SAVES = new SaveManager(V8Serializer.MAGIC_V8, V8Serializer::toV8);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
@@ -211,6 +212,7 @@ public final class GameEngine {
         SAVES.registerDeserializer(V5Serializer::fromV5Matcher, V5Serializer::fromV5);
         SAVES.registerDeserializer(V6Serializer::fromV6Matcher, V6Serializer::fromV6);
         SAVES.registerDeserializer(V7Serializer::fromV7Matcher, V7Serializer::fromV7);
+        SAVES.registerDeserializer(V8Serializer::fromV8Matcher, V8Serializer::fromV8);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);
@@ -323,8 +325,10 @@ public final class GameEngine {
     // Load mod registries
     EVENTS.postEvent(new AddRegistryEvent(REGISTRIES));
 
-    // Initialize config and input registries
+    // Initialize registries needed on the menu and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+    REGISTRY_ACCESS.initialize(REGISTRIES.campaignTypes);
+    REGISTRY_ACCESS.initialize(REGISTRIES.engineStateTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
 
     // We need to boot the goods registry for save cards on the title screen
@@ -454,7 +458,7 @@ public final class GameEngine {
       battleUiParts.init();
       startSound();
       bindRendererEvents();
-      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
+      Fmv.playCurrentFmv(0, CoreEngineStateTypes.TITLE.get());
     }
   }
 

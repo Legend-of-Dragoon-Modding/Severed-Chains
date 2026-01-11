@@ -13,6 +13,7 @@ import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.inventory.IconSetConfigEntry;
@@ -201,6 +202,11 @@ public class CoreMod {
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
+  }
+
+  @EventListener
+  public static void registerEngineStates(final RegisterEngineStateTypesEvent event) {
+    CoreEngineStateTypes.register(event);
   }
 
   @EventListener

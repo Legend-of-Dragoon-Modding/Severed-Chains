@@ -6,7 +6,8 @@ import legend.core.GameEngine;
 import legend.core.IoHelper;
 import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputBindings;
-import legend.game.EngineStateEnum;
+import legend.game.EngineState;
+import legend.game.EngineStateType;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.types.ActiveStatsa0;
@@ -14,6 +15,8 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,17 +50,15 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.bootRegistries;
-import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineStateData;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
-import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
@@ -113,9 +117,9 @@ public final class SaveManager {
 
   private static final Pattern SAVE_NUMBER_PATTERN = Pattern.compile("^(.+?)\\s(\\d+)$");
 
-  public String generateSaveName(final List<SavedGame> existingSaves, final GameState52c state) {
+  public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final GameState52c state) {
     final String location;
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
+    if(currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get())) {
       location = worldMapNames_8011c1ec[continentIndex_800bf0b0];
     } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
       location = chapterNames_80114248[state.chapterIndex_98];
@@ -126,11 +130,17 @@ public final class SaveManager {
     return this.generateSaveName(existingSaves, location);
   }
 
-  public String generateSaveName(final List<SavedGame> existingSaves, final String name) {
+  public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final String name) {
     int highestSaveNumber = 0;
 
-    for(final SavedGame save : existingSaves) {
-      final Matcher matcher = SAVE_NUMBER_PATTERN.matcher(save.saveName);
+    for(final Future<SavedGame> save : existingSaves) {
+      final Matcher matcher;
+      try {
+        matcher = SAVE_NUMBER_PATTERN.matcher(save.get().saveName);
+      } catch(final InterruptedException | ExecutionException e) {
+        LOGGER.warn("Failed to load save", e);
+        continue;
+      }
 
       if(matcher.matches() && matcher.group(1).equals(name)) {
         final int saveNumber = Integer.parseInt(matcher.group(2));
@@ -232,37 +242,33 @@ public final class SaveManager {
         this.splitMemcard(campaign, new FileData(Files.readAllBytes(memcard)), saves);
       }
 
-      saves.sort(Comparator.comparingInt(save -> save.state.timestamp_a0));
+      saves.sort(Comparator.comparingInt(save -> save.gameState.timestamp_a0));
       final Object2IntMap<String> indices = new Object2IntOpenHashMap<>();
 
+      final CampaignType campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.get();
       final Instant now = Instant.now();
 
       for(int i = 0; i < saves.size(); i++) {
-        final SavedGame save = saves.get(i);
-        save.state.syncIds();
+        final MemcardSavedGame save = (MemcardSavedGame)saves.get(i);
+        save.gameState.syncIds();
 
-        final EngineStateEnum oldState = engineState_8004dd20;
+        final EngineStateType<?> engineState;
         final WhichMenu oldMenu = whichMenu_800bdc38;
 
-        final String[] locationNames;
         if(save.locationType == 1) {
-          locationNames = worldMapNames_8011c1ec;
           continentIndex_800bf0b0 = save.locationIndex;
-          engineState_8004dd20 = EngineStateEnum.WORLD_MAP_08;
+          engineState = LodEngineStateTypes.WORLD_MAP.get();
         } else if(save.locationType == 3) {
-          locationNames = chapterNames_80114248;
           whichMenu_800bdc38 = WhichMenu.RENDER_SAVE_GAME_MENU_19;
-          engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
+          engineState = LodEngineStateTypes.SUBMAP.get();
         } else {
-          locationNames = submapNames_8011c108;
           submapId_800bd808 = save.locationIndex;
-          engineState_8004dd20 = EngineStateEnum.SUBMAP_05;
+          engineState = LodEngineStateTypes.SUBMAP.get();
         }
 
-        final String location = locationNames[save.locationIndex];
-        indices.mergeInt(location, 1, Integer::sum);
+        indices.mergeInt(save.locationName, 1, Integer::sum);
 
-        gameState_800babc8 = save.state;
+        gameState_800babc8 = save.gameState;
 
         try {
           loadCharacterStats();
@@ -273,10 +279,9 @@ public final class SaveManager {
 
         gameState_800babc8.syncIds();
 
-        final Path file = this.newSave(location + ' ' + indices.getInt(location), gameState_800babc8, stats_800be5f8);
+        final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), campaignType, engineState.constructor_00.get(), gameState_800babc8, stats_800be5f8);
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
 
-        engineState_8004dd20 = oldState;
         whichMenu_800bdc38 = oldMenu;
       }
 
@@ -344,18 +349,18 @@ public final class SaveManager {
     return campaigns;
   }
 
-  public Path overwriteSave(final String fileName, final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+  public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) throws SaveFailedException {
     try {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
 
       final FileData data = new ExpandableFileData(0x1);
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerMagic);
-      this.serializer.serializer(saveName, data, offset, state, activeStats);
+      this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState, activeStats);
 
-      final Path file = state.campaign.path.resolve(fileName + ".dsav");
+      final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
-      Files.createDirectories(state.campaign.path);
+      Files.createDirectories(gameState.campaign.path);
       Files.write(file, data.slice(0, offset.get()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
       return file;
     } catch(final IOException e) {
@@ -363,8 +368,8 @@ public final class SaveManager {
     }
   }
 
-  public Path newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
-    return this.overwriteSave(IoHelper.slugName(saveName), saveName, state, activeStats);
+  public Path newSave(final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+    return this.overwriteSave(IoHelper.slugName(saveName), saveName, campaignType, engineState, gameState, activeStats);
   }
 
   public SavedGame loadData(final Campaign campaign, final String filename, final FileData data) throws InvalidSaveException {
@@ -374,7 +379,7 @@ public final class SaveManager {
 
       if(slice != null) {
         final SavedGame savedGame = entry.getValue().deserialize(filename, slice);
-        savedGame.state.campaign = campaign;
+        savedGame.gameState.campaign = campaign;
         return savedGame;
       }
     }
@@ -383,19 +388,36 @@ public final class SaveManager {
   }
 
   public void loadGameState(final SavedGame save) {
-    this.loadGameState(save.state, save.config, true);
-    submapCutForSave_800cb450 = submapCut_80052c30;
+    this.loadGameState(save, true);
   }
 
+  /**
+   * @param fullBoot If true, boots registries
+   */
+  public void loadGameState(final SavedGame save, final boolean fullBoot) {
+    this.loadGameState(save.gameState, save.config, fullBoot);
+
+    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.is(save.engineState)) {
+      currentEngineState_8004dd04.readSaveData(save.gameState, save.engineStateData);
+    } else {
+      engineStateData = save.engineStateData;
+    }
+
+    campaignType = REGISTRIES.campaignTypes.getEntry(save.campaignType);
+    campaignType.get().setUpLoadedGame(gameState_800babc8);
+  }
+
+  /**
+   * @param fullBoot If true, boots registries
+   */
   public void loadGameState(final GameState52c state, final ConfigCollection config, final boolean fullBoot) {
     menuStack.reset();
 
+    CONFIG.clearConfig(ConfigStorageLocation.SAVE);
+    CONFIG.copyConfigFrom(config);
+
     if(fullBoot) {
-      CONFIG.clearConfig(ConfigStorageLocation.SAVE);
-      CONFIG.copyConfigFrom(config);
-
       GameEngine.bootRegistries();
-
       InputBindings.initBindings();
       InputBindings.loadBindings(CONFIG);
     }
@@ -415,19 +437,5 @@ public final class SaveManager {
 
     loadingNewGameState_800bdc34 = true;
     whichMenu_800bdc38 = WhichMenu.UNLOAD;
-
-    submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-    submapCutForSave_800cb450 = submapCut_80052c30;
-    collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
-
-    if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-      submapScene_80052c34 = 53;
-    }
-
-    if(gameState_800babc8.isOnWorldMap_4e4) {
-      submapCut_80052c30 = 0;
-    } else {
-      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
-    }
   }
 }

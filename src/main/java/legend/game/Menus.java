@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.displayWidth_1f8003e0;
 import static legend.game.Graphics.renderMode;
@@ -99,8 +100,8 @@ public final class Menus {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
-
         startFadeEffect(2, 10);
+        currentEngineState_8004dd04.menuClosed();
 
         textZ_800bdf00 = 13;
       }

@@ -5,20 +5,24 @@ import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.MemcardSavedGame;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.lodmod.LodMod.getLocationName;
 
 public final class RetailSerializer {
   private RetailSerializer() { }
@@ -36,17 +40,22 @@ public final class RetailSerializer {
   }
 
   public static SavedGame fromRetail(final String name, final FileData data) {
-    final GameState52c state = deserializeRetailGameState(data.slice(0x1fc));
-    final CharacterData2c charData = state.charData_32c[state.charIds_88.getInt(0)];
-    final int maxHp = levelStuff_80111cfc[state.charIds_88.getInt(0)][charData.level_12].hp_00;
-    final int maxMp = magicStuff_80111d20[state.charIds_88.getInt(0)][charData.dlevel_13].mp_00;
-    return new SavedGame(name, name, data.readUByte(0x1a9), data.readUByte(0x1a8), state, new ConfigCollection(), maxHp, maxMp);
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
+    final GameState52c gameState = deserializeRetailGameState(data.slice(0x1fc));
+    final CharacterData2c charData = gameState.charData_32c[gameState.charIds_88.getInt(0)];
+    final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    final int maxHp = levelStuff_80111cfc[gameState.charIds_88.getInt(0)][charData.level_12].hp_00;
+    final int maxMp = magicStuff_80111d20[gameState.charIds_88.getInt(0)][charData.dlevel_13].mp_00;
+    final int locationType = data.readUByte(0x1a9);
+    final int locationIndex = data.readUByte(0x1a8);
+    final String locationName = getLocationName(locationType, locationIndex);
+    return new MemcardSavedGame(name, name, locationType, locationIndex, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, new ConfigCollection(), maxHp, maxMp);
   }
 
   public static GameState52c deserializeRetailGameState(final FileData data) {
     final GameState52c state = new GameState52c();
 
-    state._04 = data.readInt(0x0);
+//    state._04 = data.readInt(0x0);
 
     for(int i = 0; i < 0x20; i++) {
       state.scriptData_08[i] = data.readInt(0x8 + i * 0x4);
@@ -68,8 +77,8 @@ public final class RetailSerializer {
     state.submapCut_a8 = data.readInt(0xa8);
 
     state._b0 = data.readInt(0xb0);
-    state._b4 = data.readInt(0xb4);
-    state._b8 = data.readInt(0xb8);
+    state.battleCount_b4 = data.readInt(0xb4);
+    state.turnCount_b8 = data.readInt(0xb8);
 
     for(int i = 0; i < 0x20; i++) {
       state.scriptFlags2_bc.setRaw(i, data.readInt(0xbc + i * 0x4));

@@ -109,6 +109,11 @@ public class FileData {
     this.write(srcOffset + src.offset, src.data, destOffset, size);
   }
 
+  public void write(final IntRef srcOffset, final FileData src, final int destOffset, final int size) {
+    this.write(srcOffset.get() + src.offset, src.data, destOffset, size);
+    srcOffset.add(size);
+  }
+
   public void write(final int srcOffset, final FileData src, final IntRef destOffset, final int size) {
     this.write(srcOffset + src.offset, src.data, destOffset, size);
   }
@@ -142,6 +147,22 @@ public class FileData {
     final int read = this.readUByte(offset.get());
     offset.add(1);
     return read;
+  }
+
+  public void writeBool(final int offset, final boolean val) {
+    this.writeByte(offset, val ? 1 : 0);
+  }
+
+  public void writeBool(final IntRef offset, final boolean val) {
+    this.writeByte(offset, val ? 1 : 0);
+  }
+
+  public boolean readBool(final int offset) {
+    return this.readByte(offset) != 0;
+  }
+
+  public boolean readBool(final IntRef offset) {
+    return this.readByte(offset) != 0;
   }
 
   public short readShort(final int offset) {
@@ -277,6 +298,27 @@ public class FileData {
   public long readUInt(final IntRef offset) {
     final long read = this.readUInt(offset.get());
     offset.add(4);
+    return read;
+  }
+
+  public void writeLong(final int offset, final long val) {
+    this.checkBounds(offset, 8);
+    MathHelper.set(this.data, this.offset + offset, 8, val);
+  }
+
+  public void writeLong(final IntRef offset, final long val) {
+    this.writeLong(offset.get(), val);
+    offset.add(8);
+  }
+
+  public long readLong(final int offset) {
+    this.checkBounds(offset, 8);
+    return MathHelper.get(this.data, this.offset + offset, 8);
+  }
+
+  public long readLong(final IntRef offset) {
+    final long read = this.readLong(offset.get());
+    offset.add(8);
     return read;
   }
 

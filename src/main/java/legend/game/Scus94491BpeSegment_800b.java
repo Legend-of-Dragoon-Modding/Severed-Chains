@@ -6,12 +6,14 @@ import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
+import legend.game.saves.CampaignType;
 import legend.game.submap.SobjPos14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
 import org.joml.Vector2f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +31,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static int pregameLoadingStage_800bb10c;
 
-  public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
   public static int goldGainedFromCombat_800bc920;
 
   public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
@@ -85,11 +86,10 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static EngineStateEnum previousEngineState_800bdb88 = EngineStateEnum.PRELOAD_00;
-
   public static final int[] characterIndices_800bdbb8 = new int[9];
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
+  public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
 
   public static boolean characterStatsLoaded_800be5d0;

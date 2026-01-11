@@ -69,8 +69,12 @@ public class GameVarArrayParam extends Param {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex] = val;
       case 17 -> {
         if(this.arrIndex < Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.size()) {
-          Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.set(this.arrIndex, val);
-        } else {
+          if(val != -1) {
+            Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.set(this.arrIndex, val);
+          } else {
+            Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.removeInt(this.arrIndex);
+          }
+        } else if(val != -1) {
           Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.add(val);
         }
       }
