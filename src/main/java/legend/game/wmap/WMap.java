@@ -21,6 +21,7 @@ import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.worldmap.WorldmapGenerateEncounterEvent;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
@@ -55,6 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DISCORD;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
@@ -3668,13 +3670,8 @@ public class WMap extends EngineState {
     if(this.encounterAccumulator_800c6ae8 >= 5120) {
       this.encounterAccumulator_800c6ae8 = 0;
 
-      final int stageId;
-      if(directionalPathSegment.battleStage_04 == -1) {
-        stageId = 1;
-      } else {
-        //LAB_800e386c
-        stageId = directionalPathSegment.battleStage_04;
-      }
+      //LAB_800e386c
+      final var battleStageId = directionalPathSegment.battleStage_04 == -1 ? 1 : directionalPathSegment.battleStage_04;
 
       //LAB_800e3894
       final int encounterIndex = directionalPathSegment.encounterIndex_05;
@@ -3699,7 +3696,8 @@ public class WMap extends EngineState {
         }
       }
 
-      startLegacyEncounter(encounterId, stageId);
+      final var generateEncounterEvent = EVENTS.postEvent(new WorldmapGenerateEncounterEvent(encounterId, battleStageId, directionalPathSegment));
+      startLegacyEncounter(generateEncounterEvent.encounterId, generateEncounterEvent.battleStageId);
 
       //LAB_800e3a38
       gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
