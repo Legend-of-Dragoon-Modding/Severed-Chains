@@ -19,8 +19,10 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
+import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
@@ -38,6 +40,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEncounters;
 import legend.lodmod.LodMod;
 import org.joml.Math;
 import org.joml.Matrix4f;
@@ -55,9 +58,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DISCORD;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Audio.getLoadedAudioFiles;
@@ -117,7 +122,7 @@ import static legend.game.Text.renderText;
 import static legend.game.Text.setTextAndTextboxesToUninitialized;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.Text.textboxes_800be358;
-import static legend.game.combat.SBtld.startLegacyEncounter;
+import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -3668,12 +3673,12 @@ public class WMap extends EngineState {
     if(this.encounterAccumulator_800c6ae8 >= 5120) {
       this.encounterAccumulator_800c6ae8 = 0;
 
-      final int stageId;
+      final int battleStageId;
       if(directionalPathSegment.battleStage_04 == -1) {
-        stageId = 1;
+        battleStageId = 1;
       } else {
         //LAB_800e386c
-        stageId = directionalPathSegment.battleStage_04;
+        battleStageId = directionalPathSegment.battleStage_04;
       }
 
       //LAB_800e3894
@@ -3699,7 +3704,9 @@ public class WMap extends EngineState {
         }
       }
 
-      startLegacyEncounter(encounterId, stageId);
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get();
+      final WorldMapEncounterEvent event = EVENTS.postEvent(new WorldMapEncounterEvent(this, gameState_800babc8, encounter, battleStageId, directionalPathSegment));
+      startEncounter(event.encounter, event.battleStageId);
 
       //LAB_800e3a38
       gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
