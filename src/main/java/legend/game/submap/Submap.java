@@ -2,6 +2,7 @@ package legend.game.submap;
 
 import legend.core.QueuedModel;
 import legend.core.gte.MV;
+import legend.game.combat.encounters.Encounter;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.GsRVIEW2;
@@ -11,9 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Submap {
+  public final SMap smap;
+
   public ScriptFile script;
   public final List<SubmapObject> objects = new ArrayList<>();
   public final List<UvAdjustmentMetrics14> uvAdjustments = new ArrayList<>();
+
+  protected Submap(final SMap smap) {
+    this.smap = smap;
+  }
 
   public abstract void loadEnv(final Runnable onLoaded);
   public abstract void loadAssets(final Runnable onLoaded);
@@ -37,7 +44,7 @@ public abstract class Submap {
 
   public abstract int getEncounterRate();
   public abstract void prepareEncounter(final boolean useBattleStage);
-  public abstract void prepareEncounter(final int encounterId, final boolean useBattleStage);
+  public abstract void prepareEncounter(final Encounter encounter, final boolean useBattleStage);
 
   public boolean hasEncounters() {
     return this.getEncounterRate() != 0;

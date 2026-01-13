@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import legend.core.Config;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
+import legend.game.combat.encounters.Encounter;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
@@ -20,10 +21,13 @@ import legend.game.types.GsRVIEW2;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
 import legend.game.wmap.WmapState;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.GsSetRefView2L;
 import static legend.game.Graphics.GsSetSmapRefView2L;
@@ -220,7 +224,8 @@ public class DebuggerController {
   @FXML
   private void startEncounter(final ActionEvent event) {
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
-      smap.submap.prepareEncounter(this.encounterId.getValue(), false);
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[this.encounterId.getValue()]).get();
+      smap.submap.prepareEncounter(encounter, false);
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       final int encounterId = this.encounterId.getValue();
