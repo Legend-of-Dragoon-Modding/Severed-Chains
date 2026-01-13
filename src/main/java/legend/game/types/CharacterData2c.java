@@ -12,17 +12,22 @@ import java.util.Map;
 
 public class CharacterData2c {
   public static final int IN_PARTY = 0x1;
+  /** can be put in main party (without this flag a char can only appear in secondary and can't be put into main) */
   public static final int CAN_BE_IN_PARTY = 0x2;
+  /** Used by char_utils.txt. Characters who are temporarily removed from the party can be assigned this flag to be restored later. */
+  public static final int TEMPORARILY_REMOVED_FROM_PARTY = 0x4;
+  /** don't select, can't be taken out of main party */
   public static final int CANT_REMOVE = 0x20;
   public static final int HAS_ULTIMATE_ADDITION = 0x40;
 
   public int xp_00;
   /**
    * <ul>
-   *   <li>0x1 - in party</li>
-   *   <li>0x2 - can be put in main party (without this flag a char can only appear in secondary and can't be put into main)</li>
-   *   <li>0x20 - can't remove (don't select, can't be taken out of main party)</li>
-   *   <li>0x40 - ultimate addition unlocked</li>
+   *   <li>0x1 - {@link #IN_PARTY}</li>
+   *   <li>0x2 - {@link #CAN_BE_IN_PARTY}</li>
+   *   <li>0x4 - {@link #TEMPORARILY_REMOVED_FROM_PARTY}</li>
+   *   <li>0x20 - {@link #CANT_REMOVE}</li>
+   *   <li>0x40 - {@link #HAS_ULTIMATE_ADDITION}</li>
    * </ul>
    */
   public int partyFlags_04;

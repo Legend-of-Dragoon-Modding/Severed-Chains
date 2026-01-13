@@ -37,7 +37,7 @@ public class ScriptState<T extends ScriptedObject> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static final int STORAGE_COUNT = 33;
+  public static final int STORAGE_COUNT = 63;
   public static final int REGISTRY_ID_COUNT = 100;
 
   public static final int FLAG_1_0000 = 0x1_0000;

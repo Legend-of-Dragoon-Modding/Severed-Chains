@@ -1,12 +1,22 @@
-Entire party leaves, force Dart to slot 0
-Unlock party fix
 --- original
 +++ modified
-@@ -2513,6 +2513,7 @@
+@@ -2512,17 +2512,9 @@
+ data 0xffffff78
  LABEL_271:
  data 0x170
++#include ../../../../patches/scripts/char_utils.txt
  LABEL_272:
-+mov 0, var[17][0]
- mov 0xffffffff, var[17][1]
- mov 0xffffffff, var[17][2]
- andor 0x40, 0x0, var[115 + 1]
+-mov 0xffffffff, var[17][1]
+-mov 0xffffffff, var[17][2]
+-andor 0x40, 0x0, var[115 + 1]
+-andor 0x40, 0x0, var[115 + 2]
+-andor 0x40, 0x0, var[115 + 3]
+-andor 0x40, 0x0, var[115 + 4]
+-andor 0x40, 0x0, var[115 + 5]
+-andor 0x40, 0x0, var[115 + 6]
+-andor 0x40, 0x0, var[115 + 7]
+-andor 0x40, 0x0, var[115 + 8]
++gosub inl[:TEMPORARILY_REMOVE_ALL_CHARS_BUT_DART]
+ return
+ LABEL_273:
+ data 0x2
