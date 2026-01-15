@@ -260,13 +260,13 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   protected int getSpellRingColour() {
     return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x201996 : 0x808080;
-      case 1, 5 -> 0x297231;
-      case 2, 8 -> 0x6c8283;
-      case 3 -> 0x5e263a;
-      case 4 -> 0x6c306c;
-      case 6 -> 0x78462c;
-      case 7 -> 0x286499;
+      case 0 -> (this.status_0e & 0x4000) == 0 ? LodMod.FIRE_ELEMENT_RING.get().colour : LodMod.DIVINE_ELEMENT_RING.get().colour;
+      case 1, 5 -> LodMod.WIND_ELEMENT_RING.get().colour;
+      case 2, 8 -> LodMod.LIGHT_ELEMENT_RING.get().colour;
+      case 3 -> LodMod.DARK_ELEMENT_RING.get().colour;
+      case 4 -> LodMod.THUNDER_ELEMENT_RING.get().colour;
+      case 6 -> LodMod.WATER_ELEMENT_RING.get().colour;
+      case 7 -> LodMod.EARTH_ELEMENT_RING.get().colour;
       default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
     };
   }
