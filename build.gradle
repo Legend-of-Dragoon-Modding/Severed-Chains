@@ -23,7 +23,7 @@ java {
 
 compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.4.0-SNAPSHOT"
+project.ext.lwjglVersion = "3.4.0"
 project.ext.jomlVersion = "1.10.8"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
@@ -54,7 +54,7 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 repositories {
   mavenCentral()
   mavenLocal()
-  maven { url = "https://central.sonatype.com/repository/maven-snapshots/" }
+//  maven { url = "https://central.sonatype.com/repository/maven-snapshots/" }
   maven { url = "https://jitpack.io" }
 }
 
