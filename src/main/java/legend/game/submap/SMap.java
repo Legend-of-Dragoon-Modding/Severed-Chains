@@ -3794,7 +3794,7 @@ public class SMap extends EngineState {
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
       submapCutForSave_800cb450 = newCut;
-      EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, submapCut_80052c30, gameState_800babc8));
+      EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, newCut));
       return;
     }
 
