@@ -4,7 +4,7 @@
  data 0xffffff78
  LABEL_271:
  data 0x170
-+#include ../../../../patches/scripts/char_utils.txt
++#include char_utils.txt
  LABEL_272:
 -mov 0xffffffff, var[17][1]
 -mov 0xffffffff, var[17][2]

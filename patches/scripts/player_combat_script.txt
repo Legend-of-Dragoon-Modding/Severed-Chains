@@ -1,3 +1,5 @@
+#include lookup_tables.txt
+
 entrypoint :ENTRYPOINT_0_MAIN
 entrypoint :ENTRYPOINT_1_NOOP
 entrypoint :ENTRYPOINT_2_TAKE_DAMAGE
@@ -30,10 +32,6 @@ entrypoint :ENTRYPOINT_28_NOOP
 entrypoint :ENTRYPOINT_29_NOOP
 entrypoint :ENTRYPOINT_30_NOOP
 entrypoint :ENTRYPOINT_31_NOOP
-
-
-
-#include lookup_tables.txt
 
 
 

@@ -4,7 +4,7 @@
  data 0xfa
  data 0xffffff9c
  data 0xfffffce0
-+#include ../../../../patches/scripts/char_utils.txt
++#include char_utils.txt
  LABEL_289:
 -mov var[17][1], stor[24]
 -mov var[17][2], stor[25]

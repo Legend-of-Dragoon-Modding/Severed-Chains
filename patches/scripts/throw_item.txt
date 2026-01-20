@@ -1,3 +1,7 @@
+#include player_combat_script.txt
+#include lookup_tables.txt
+#include throw_item_effects.txt
+
 entrypoint :DO_NOTHING
 entrypoint :USE_ATTACK_ITEM
 entrypoint :USE_HEALING_POTION
@@ -332,8 +336,3 @@ gosub inl[:ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT] ; addr
 mov 0x10, stor[23] ; source, dest
 wait stor[23] ; frames
 return
-
-
-
-#include throw_item_effects.txt
-#include player_combat_script.txt

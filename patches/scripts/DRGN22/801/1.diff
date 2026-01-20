@@ -4,7 +4,7 @@
  call 101, stor[24], 0xfffffefc, 0x2c, 0x1f4
  call 103, stor[24], 0x0, 0x0, 0x0
  jmp inl[:LABEL_56]
-+#include ../../../../patches/scripts/char_utils.txt
++#include char_utils.txt
  LABEL_148:
 -mov var[17][1], stor[24]
 -mov var[17][2], stor[25]
@@ -31,8 +31,9 @@
 -andor 0x40, 0x0, var[115 + 7]
 -andor 0x40, 0x0, var[115 + 8]
 +mov 4, stor[34]
-+gosub inl[:TEMPORARILY_REMOVE_CHAR_FROM_PARTY]
 +gosub inl[:REMOVE_CHAR_FROM_ACTIVE_PARTY_AND_REPLACE_WITH_NEXT]
++mov 4, stor[34]
++gosub inl[:TEMPORARILY_REMOVE_CHAR_FROM_PARTY]
  return
  LABEL_153:
 -andor 0x40, 0x23, var[115 + 0]
