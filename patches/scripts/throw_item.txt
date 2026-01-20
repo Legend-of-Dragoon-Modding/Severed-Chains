@@ -1,7 +1,3 @@
-#include player_combat_script.txt
-#include lookup_tables.txt
-#include throw_item_effects.txt
-
 entrypoint :DO_NOTHING
 entrypoint :USE_ATTACK_ITEM
 entrypoint :USE_HEALING_POTION
@@ -16,6 +12,10 @@ entrypoint :USE_TOTAL_VANISHING
 ;TODO temporary; pcs forks into entrypoint 11 if char using attack item has status affliction
 entrypoint :ENTRYPOINT_11_RENDER_TICK_STATUS
 entrypoint :USE_CAUSE_STATUS
+
+#include player_combat_script.txt
+#include lookup_tables.txt
+#include throw_item_effects.txt
 
 
 
