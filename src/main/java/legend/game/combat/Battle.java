@@ -2382,7 +2382,7 @@ public class Battle extends EngineState<Battle> {
 
     // I don't think this is actually used?
     if(files.get(34).hasVirtualSize()) {
-      combatant.scriptPtr_10 = new ScriptFile("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34).getBytes());
+      combatant.scriptPtr_10 = SCRIPTS.loadScript("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34).getBytes());
     }
 
     //LAB_800c94a0
@@ -6179,7 +6179,7 @@ public class Battle extends EngineState<Battle> {
       // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
       Loader.loadFile(deff.resolve("1"), file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
-        this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
+        this.loadedDeff_800c6938.script_14 = SCRIPTS.loadScript(deff.toString(), file.getBytes());
       });
     });
   }
@@ -7031,7 +7031,7 @@ public class Battle extends EngineState<Battle> {
       deffManager_800c693c.scripts_2c = new ScriptFile[files.size()];
 
       for(int i = 0; i < files.size(); i++) {
-        deffManager_800c693c.scripts_2c[i] = new ScriptFile("DRGN0.4114.1." + i, files.get(i).getBytes());
+        deffManager_800c693c.scripts_2c[i] = SCRIPTS.loadScript("DRGN0.4114.1." + i, files.get(i).getBytes());
       }
     });
   }
@@ -8761,7 +8761,7 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x80109050L)
   private void loadStageDataAndControllerScripts() {
-    this.playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Loader.loadFile("player_combat_script").getBytes());
+    this.playerBattleScript_800c66fc = SCRIPTS.loadScript("player_combat_script", Loader.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", this::combatControllerScriptLoaded);
   }
@@ -8769,7 +8769,7 @@ public class Battle extends EngineState<Battle> {
   @Method(0x80109170L)
   private void combatControllerScriptLoaded(final FileData file) {
     this.scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", null);
-    this.scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
+    this.scriptState_800c674c.loadScriptFile(SCRIPTS.loadScript("DRGN1.401", file.getBytes()));
 
     final int openingCamera;
     if((simpleRand() & 0x8000) == 0) {
@@ -8808,7 +8808,7 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x8010989cL)
   public void loadCombatantScript(final byte[] file, final int index) {
-    this.getCombatant(index).scriptPtr_10 = new ScriptFile("Combatant " + index, file);
+    this.getCombatant(index).scriptPtr_10 = SCRIPTS.loadScript("Combatant " + index, file);
   }
 
   @Method(0x801098f4L)

@@ -16,6 +16,7 @@ import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -282,54 +283,60 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   public void loadScriptFile(@Nullable final ScriptFile script, final int entrypointIndex) {
-    if(script != null) {
-      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, entrypointIndex);
+    synchronized(this) {
+      if(script != null) {
+        LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, entrypointIndex);
 
-      this.callStack.clear();
-      this.pushFrame(new ScriptStackFrame(script, script.getEntry(entrypointIndex)));
-      this.clearFlag(FLAG_FILE_NOT_SET);
-    } else {
-      LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
+        this.callStack.clear();
+        this.pushFrame(new ScriptStackFrame(script, script.getEntry(entrypointIndex)));
+        this.clearFlag(FLAG_FILE_NOT_SET);
+      } else {
+        LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
 
-      this.callStack.clear();
-      this.setFlag(FLAG_FILE_NOT_SET);
+        this.callStack.clear();
+        this.setFlag(FLAG_FILE_NOT_SET);
+      }
     }
   }
 
   public void deallocate() {
-    LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", this.index);
+    synchronized(this) {
+      LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", this.index);
 
-    EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
+      EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
 
-    if(!this.hasAnyFlag(FLAG_DESTRUCTOR_NOT_SET | FLAG_CHILD_SCRIPT)) {
-      try {
-        this.destructor_0c.accept(this, this.innerStruct_00);
-      } catch(final NullPointerException e) {
-        LOGGER.error("Script %d destructor was null", this.index);
-        throw e;
+      if(!this.hasAnyFlag(FLAG_DESTRUCTOR_NOT_SET | FLAG_CHILD_SCRIPT)) {
+        try {
+          this.destructor_0c.accept(this, this.innerStruct_00);
+        } catch(final NullPointerException e) {
+          LOGGER.error("Script %d destructor was null", this.index);
+          throw e;
+        }
       }
-    }
 
-    //LAB_80015c70
-    this.manager.deallocate(this.index);
+      //LAB_80015c70
+      this.manager.deallocate(this.index);
+    }
   }
 
   public void deallocateChildren() {
-    LOGGER.info(SCRIPT_MARKER, "Deallocating script %d children", this.index);
+    synchronized(this) {
+      LOGGER.info(SCRIPT_MARKER, "Deallocating script %d children", this.index);
 
-    int childIndex = this.getStor(6);
+      int childIndex = this.getStor(6);
 
-    //LAB_80015cdc
-    while(childIndex >= 0) {
-      final ScriptState<?> childState = this.manager.getState(childIndex);
-      final int childChildIndex = childState.getStor(6);
-      childState.deallocate();
-      childIndex = childChildIndex;
+      //LAB_80015cdc
+      while(childIndex >= 0) {
+        final ScriptState<?> childState = this.manager.getState(childIndex);
+        final int childChildIndex = childState.getStor(6);
+        childState.deallocate();
+        childIndex = childChildIndex;
+      }
+
+      //LAB_80015d04
+      this.setStor(6, -1);
+      this.clearFlag(FLAG_PARENT_SCRIPT);
     }
-
-    //LAB_80015d04
-    this.setStor(6, -1);
-    this.clearFlag(FLAG_PARENT_SCRIPT);
   }
 
   public void deallocateWithChildren() {
@@ -338,69 +345,73 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   public ScriptState<?> fork() {
-    final ScriptState<?> childScript = this.manager.allocateScriptState("Forked " + this.name, null);
+    synchronized(this) {
+      final ScriptState<?> childScript = this.manager.allocateScriptState("Forked " + this.name, null);
 
-    if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
-      final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-      LOGGER.info(SCRIPT_MARKER, "Forking script %d to %d %s.%s(%s:%d)", this.index, childScript.index, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+      if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
+        final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+        LOGGER.info(SCRIPT_MARKER, "Forking script %d to %d %s.%s(%s:%d)", this.index, childScript.index, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+      }
+
+      //LAB_80015ddc
+      childScript.setStor(7, this.getStor(7) | FLAG_CHILD_SCRIPT); // Child
+      this.setFlag(FLAG_PARENT_SCRIPT); // Parent
+
+      //LAB_80015e0c
+      System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, STORAGE_COUNT - 8);
+      System.arraycopy(this.storagef_44, 8, childScript.storagef_44, 8, STORAGE_COUNT - 8);
+      System.arraycopy(this.isFloat, 0, childScript.isFloat, 0, STORAGE_COUNT);
+      System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, REGISTRY_ID_COUNT);
+
+      childScript.setStor(5, this.index);
+      childScript.setStor(6, this.getStor(6));
+      this.setStor(6, childScript.index);
+
+      childScript.callStack.clear();
+      for(int i = this.callStack.size() - 1; i >= 0; i--) {
+        childScript.pushFrame(this.callStack.get(i).copy());
+      }
+
+      //LAB_80015e4c
+      return childScript;
     }
-
-    //LAB_80015ddc
-    childScript.setStor(7, this.getStor(7) | FLAG_CHILD_SCRIPT); // Child
-    this.setFlag(FLAG_PARENT_SCRIPT); // Parent
-
-    //LAB_80015e0c
-    System.arraycopy(this.storage_44, 8, childScript.storage_44, 8, STORAGE_COUNT - 8);
-    System.arraycopy(this.storagef_44, 8, childScript.storagef_44, 8, STORAGE_COUNT - 8);
-    System.arraycopy(this.isFloat, 0, childScript.isFloat, 0, STORAGE_COUNT);
-    System.arraycopy(this.registryIds, 0, childScript.registryIds, 0, REGISTRY_ID_COUNT);
-
-    childScript.setStor(5, this.index);
-    childScript.setStor(6, this.getStor(6));
-    this.setStor(6, childScript.index);
-
-    childScript.callStack.clear();
-    for(int i = this.callStack.size() - 1; i >= 0; i--) {
-      childScript.pushFrame(this.callStack.get(i).copy());
-    }
-
-    //LAB_80015e4c
-    return childScript;
   }
 
   /** Deallocates child and assumes its identity? */
   public int consumeChild() {
-    final int childIndex = this.getStor(6);
-    if(childIndex < 0) {
-      throw new RuntimeException("Null command");
+    synchronized(this) {
+      final int childIndex = this.getStor(6);
+      if(childIndex < 0) {
+        throw new RuntimeException("Null command");
+      }
+
+      LOGGER.info("Consuming script %d child %d", this.index, childIndex);
+
+      final ScriptState<?> child = this.manager.getState(childIndex);
+      if(child.hasFlag(FLAG_PARENT_SCRIPT)) { // Is parent
+        this.setFlag(FLAG_PARENT_SCRIPT);
+        this.setStor(6, child.getStor(6));
+        this.manager.getState(child.getStor(6)).setStor(5, this.index);
+      } else {
+        //LAB_80015ef0
+        this.setStor(6, -1);
+        this.clearFlag(FLAG_PARENT_SCRIPT);
+      }
+
+      //LAB_80015f08
+      //LAB_80015f14
+      System.arraycopy(child.storage_44, 8, this.storage_44, 8, STORAGE_COUNT - 8);
+      System.arraycopy(child.storagef_44, 8, this.storagef_44, 8, STORAGE_COUNT - 8);
+      System.arraycopy(child.isFloat, 0, this.isFloat, 0, STORAGE_COUNT);
+      System.arraycopy(child.registryIds, 0, this.registryIds, 0, REGISTRY_ID_COUNT);
+
+      this.callStack.clear();
+      this.callStack.addAll(child.callStack);
+      child.deallocate();
+
+      //LAB_80015f54
+      return this.frame().offset;
     }
-
-    LOGGER.info("Consuming script %d child %d", this.index, childIndex);
-
-    final ScriptState<?> child = this.manager.getState(childIndex);
-    if(child.hasFlag(FLAG_PARENT_SCRIPT)) { // Is parent
-      this.setFlag(FLAG_PARENT_SCRIPT);
-      this.setStor(6, child.getStor(6));
-      this.manager.getState(child.getStor(6)).setStor(5, this.index);
-    } else {
-      //LAB_80015ef0
-      this.setStor(6, -1);
-      this.clearFlag(FLAG_PARENT_SCRIPT);
-    }
-
-    //LAB_80015f08
-    //LAB_80015f14
-    System.arraycopy(child.storage_44, 8, this.storage_44, 8, STORAGE_COUNT - 8);
-    System.arraycopy(child.storagef_44, 8, this.storagef_44, 8, STORAGE_COUNT - 8);
-    System.arraycopy(child.isFloat, 0, this.isFloat, 0, STORAGE_COUNT);
-    System.arraycopy(child.registryIds, 0, this.registryIds, 0, REGISTRY_ID_COUNT);
-
-    this.callStack.clear();
-    this.callStack.addAll(child.callStack);
-    child.deallocate();
-
-    //LAB_80015f54
-    return this.frame().offset;
   }
 
   public ScriptStackFrame frame() {
@@ -412,14 +423,18 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   public ScriptStackFrame replaceFrame(final ScriptStackFrame frame) {
-    this.callStack.pop();
-    this.callStack.push(frame);
-    return frame;
+    synchronized(this) {
+      this.callStack.pop();
+      return this.pushFrame(frame);
+    }
   }
 
   public ScriptStackFrame pushFrame(final ScriptStackFrame frame) {
-    this.callStack.push(frame);
-    return frame;
+    synchronized(this) {
+      this.callStack.push(frame);
+      this.context.commandOffset_0c = frame.offset;
+      return frame;
+    }
   }
 
   public ScriptStackFrame pushFrame() {
@@ -435,77 +450,79 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   void executeFrame() {
-    this.ticks++;
+    synchronized(this) {
+      this.ticks++;
 
-    if(!this.hasAnyFlag(FLAG_FILE_NOT_SET | FLAG_CHILD_SCRIPT) && !this.paused) {
-      this.context.commandOffset_0c = this.frame().offset;
-      this.context.opOffset_08 = this.context.commandOffset_0c;
-
-      if(scriptLog[this.index]) {
-        LOGGER.info(SCRIPT_MARKER, "Exec script index %d", this.index);
-      }
-
-      FlowControl ret;
-      //LAB_80016018
-      do {
-        final int opCommand = this.context.getOp();
-        this.context.opIndex_10 = OpType.byOpcode(opCommand & 0xff);
-        this.context.paramCount_14 = opCommand >>> 8 & 0xff;
-        this.context.opParam_18 = opCommand >>> 16;
+      if(!this.hasAnyFlag(FLAG_FILE_NOT_SET | FLAG_CHILD_SCRIPT) && !this.paused) {
+        this.context.commandOffset_0c = this.frame().offset;
+        this.context.opOffset_08 = this.context.commandOffset_0c;
 
         if(scriptLog[this.index]) {
-          LOGGER.info(SCRIPT_MARKER, "0x%x (%d)", this.context.commandOffset_0c, this.context.commandOffset_0c);
-          LOGGER.info(SCRIPT_MARKER, "param[p] = %x", opCommand >>> 16);
+          LOGGER.info(SCRIPT_MARKER, "Exec script index %d", this.index);
         }
 
-        if(this.context.paramCount_14 > 10) {
-          throw new RuntimeException("Too many parameters!");
-        }
-
-        this.context.commandOffset_0c++;
-
-        for(int paramIndex = 0; paramIndex < this.context.paramCount_14; paramIndex++) {
-          this.context.params_20[paramIndex] = this.parseParam();
+        FlowControl ret;
+        //LAB_80016018
+        do {
+          final int opCommand = this.context.getOp();
+          this.context.opIndex_10 = OpType.byOpcode(opCommand & 0xff);
+          this.context.paramCount_14 = opCommand >>> 8 & 0xff;
+          this.context.opParam_18 = opCommand >>> 16;
 
           if(scriptLog[this.index]) {
-            LOGGER.info(SCRIPT_MARKER, "params[%d] = %s", paramIndex, this.context.params_20[paramIndex]);
+            LOGGER.info(SCRIPT_MARKER, "0x%x (%d)", this.context.commandOffset_0c, this.context.commandOffset_0c);
+            LOGGER.info(SCRIPT_MARKER, "param[p] = %x", opCommand >>> 16);
           }
-        }
 
-        EVENTS.postEvent(new ScriptTickEvent(this.index));
-
-        if(scriptLog[this.index]) {
-          if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
-            LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
-          } else {
-            LOGGER.info(SCRIPT_MARKER, "Running callback %s", this.context.opIndex_10);
+          if(this.context.paramCount_14 > 10) {
+            throw new RuntimeException("Too many parameters!");
           }
-        }
 
-        //LAB_80016598
-        ret = this.runOp(this.context.opIndex_10, this.context);
+          this.context.commandOffset_0c++;
 
-        if(scriptLog[this.index]) {
-          if(ret == FlowControl.PAUSE) {
-            LOGGER.info(SCRIPT_MARKER, "Pausing");
-          } else if(ret == FlowControl.PAUSE_AND_REWIND) {
-            LOGGER.info(SCRIPT_MARKER, "Rewinding and pausing");
+          for(int paramIndex = 0; paramIndex < this.context.paramCount_14; paramIndex++) {
+            this.context.params_20[paramIndex] = this.parseParam();
+
+            if(scriptLog[this.index]) {
+              LOGGER.info(SCRIPT_MARKER, "params[%d] = %s", paramIndex, this.context.params_20[paramIndex]);
+            }
           }
-        }
 
-        // Returning 0 continues execution
-        // Returning 1 pauses execution until the next frame
-        // Returning anything else pauses execution and repeats the same instruction next frame
-        if(ret == FlowControl.CONTINUE || ret == FlowControl.PAUSE) {
-          //LAB_800165e8
-          this.context.opOffset_08 = this.context.commandOffset_0c;
-        }
+          EVENTS.postEvent(new ScriptTickEvent(this.index));
 
-        Arrays.fill(this.context.params_20, null);
-      } while(ret == FlowControl.CONTINUE && !this.paused);
+          if(scriptLog[this.index]) {
+            if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
+              LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
+            } else {
+              LOGGER.info(SCRIPT_MARKER, "Running callback %s", this.context.opIndex_10);
+            }
+          }
 
-      //LAB_800165f4
-      this.frame().offset = this.context.opOffset_08;
+          //LAB_80016598
+          ret = this.runOp(this.context.opIndex_10, this.context);
+
+          if(scriptLog[this.index]) {
+            if(ret == FlowControl.PAUSE) {
+              LOGGER.info(SCRIPT_MARKER, "Pausing");
+            } else if(ret == FlowControl.PAUSE_AND_REWIND) {
+              LOGGER.info(SCRIPT_MARKER, "Rewinding and pausing");
+            }
+          }
+
+          // Returning 0 continues execution
+          // Returning 1 pauses execution until the next frame
+          // Returning anything else pauses execution and repeats the same instruction next frame
+          if(ret == FlowControl.CONTINUE || ret == FlowControl.PAUSE) {
+            //LAB_800165e8
+            this.context.opOffset_08 = this.context.commandOffset_0c;
+          }
+
+          Arrays.fill(this.context.params_20, null);
+        } while(ret == FlowControl.CONTINUE && !this.paused);
+
+        //LAB_800165f4
+        this.frame().offset = this.context.opOffset_08;
+      }
     }
   }
 
@@ -1376,7 +1393,13 @@ public class ScriptState<T extends ScriptedObject> {
 
     LOGGER.error("Call stack:");
     for(int i = 0; i < this.callStack.size(); i++) {
-      LOGGER.error("  %d: %s %#x", i, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+      final ScriptStackFrame frame = this.callStack.get(i);
+
+      LOGGER.error("  %d: %s %#x", i, frame.file.name, frame.offset * 4);
+
+      for(int includeIndex = 1; includeIndex < frame.file.includeFiles.length; includeIndex++) {
+        LOGGER.error("    #include %d: %s @ %#x-%#x", includeIndex - 1, frame.file.includeFiles[includeIndex], frame.file.includeOffsets[includeIndex] * 4, frame.file.includeOffsets[includeIndex] * 4 + frame.file.getInclude(includeIndex).data.length);
+      }
     }
 
     LOGGER.error("Disassembly:");
@@ -1387,13 +1410,15 @@ public class ScriptState<T extends ScriptedObject> {
     }
   }
 
-  private void dumpDisassembly() {
-    final Script tokens = this.manager.disassemble(this.name, this.frame().file.data);
+  private void dumpDisassembly() throws IOException {
+    final Script tokens = this.manager.disassemble(this.name, this.frame().file.getIncludeAdjustedFile(this.context.opOffset_08).data);
     final String decompiled = new Translator().translate(tokens, this.manager.meta(), false, false, true);
+
+    final int adjustedOffset = this.frame().file.getIncludeAdjustedOffset(this.context.opOffset_08);
 
     final String[] split = decompiled.split("\n");
     for(int i = 0; i < split.length; i++) {
-      if(split[i].startsWith(Integer.toHexString(this.context.opOffset_08 * 4))) {
+      if(split[i].startsWith(Integer.toHexString(adjustedOffset * 4))) {
         for(int n = Math.max(0, i - 5); n < i; n++) {
           LOGGER.error("  %s", split[n]);
         }

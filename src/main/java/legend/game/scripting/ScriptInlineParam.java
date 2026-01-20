@@ -11,13 +11,14 @@ public class ScriptInlineParam extends Param {
 
   @Override
   public void jump(final RunningScript<?> script) {
-    script.scriptState_04.replaceFrame(this.state.frame().copy()).offset = this.offset;
-    script.commandOffset_0c = this.offset;
+    this.jump(script.scriptState_04);
   }
 
   @Override
   public void jump(final ScriptState<?> state) {
-    state.replaceFrame(this.state.frame().copy()).offset = this.offset;
+    final ScriptStackFrame newFrame = this.state.frame().copy();
+    newFrame.offset = this.offset;
+    state.replaceFrame(newFrame);
   }
 
   @Override

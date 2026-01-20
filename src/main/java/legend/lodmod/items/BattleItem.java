@@ -20,6 +20,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.nio.file.Path;
 
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.deffManager_800c693c;
 
@@ -101,9 +102,8 @@ public abstract class BattleItem extends Item {
 
   protected void injectScript(final ScriptState<? extends BattleEntity27c> user, final Path path, final int entrypoint, final Runnable onLoad) {
     Loader.loadFile(path, data -> {
-      final ScriptFile file = new ScriptFile("throw_item", data.getBytes());
+      final ScriptFile file = SCRIPTS.loadScript("throw_item", data.getBytes());
       user.pushFrame(new ScriptStackFrame(file, file.getEntry(entrypoint)));
-      user.context.commandOffset_0c = user.frame().offset;
       onLoad.run();
     });
   }

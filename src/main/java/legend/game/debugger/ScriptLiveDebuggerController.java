@@ -20,6 +20,8 @@ import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Param;
 import org.legendofdragoon.scripting.tokens.Script;
 
+import java.io.IOException;
+
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
 
@@ -53,7 +55,7 @@ public class ScriptLiveDebuggerController {
     this.clear();
   }
 
-  public void setState(final int index) {
+  public void setState(final int index) throws IOException {
     this.index = index;
     this.decompile();
   }
@@ -66,7 +68,7 @@ public class ScriptLiveDebuggerController {
     }
   }
 
-  private void decompile() {
+  private void decompile() throws IOException {
     final ScriptState<?> state = SCRIPTS.getState(this.index);
 
     if(state != null) {
@@ -129,7 +131,13 @@ public class ScriptLiveDebuggerController {
   @EventListener
   public void onScriptAllocated(final ScriptAllocatedEvent event) {
     if(event.scriptIndex == this.index) {
-      Platform.runLater(this::decompile);
+      Platform.runLater(() -> {
+        try {
+          this.decompile();
+        } catch(final IOException e) {
+          throw new RuntimeException(e);
+        }
+      });
     }
   }
 
@@ -179,21 +187,21 @@ public class ScriptLiveDebuggerController {
     SCRIPTS.getState(this.index).resume();
   }
 
-  public void txtCodeKeyPressed(final KeyEvent event) {
+  public void txtCodeKeyPressed(final KeyEvent event) throws IOException {
     if(event.getCode() == KeyCode.ENTER && !this.txtRun.getText().isBlank()) {
       this.runCode();
     }
   }
 
-  public void runCode(final ActionEvent event) {
+  public void runCode(final ActionEvent event) throws IOException {
     this.runCode();
   }
 
-  private void runCode() {
+  private void runCode() throws IOException {
     this.runningDebugCode = true;
 
     final byte[] compiled = SCRIPTS.compile("Live debugger", this.txtRun.getText() + "\nreturn");
-    final ScriptFile script = new ScriptFile("Injected code", compiled);
+    final ScriptFile script = SCRIPTS.loadScript("Injected code", compiled);
 
     final ScriptState<?> state = SCRIPTS.getState(this.index);
     state.pushFrame(new ScriptStackFrame(script, 0));

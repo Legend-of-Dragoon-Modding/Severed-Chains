@@ -11,6 +11,7 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.lodmod.LodAdditions.ALBERT_FLOWER_STORM;
 import static legend.lodmod.LodAdditions.ALBERT_GUST_OF_WIND_DANCE;
 import static legend.lodmod.LodAdditions.ALBERT_HARPOON;
@@ -181,6 +182,6 @@ public final class Scus94491BpeSegment_8004 {
     {},
   };
 
-  public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new byte[] {0x4, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0});
+  public static final ScriptFile doNothingScript_8004f650 = SCRIPTS.loadScript("Do nothing", new byte[] {0x4, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0});
   public static BattleReportOverlayList10 battleReportOverlayLists_8004f658;
 }

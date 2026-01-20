@@ -23,7 +23,6 @@ import legend.game.modding.events.submap.SubmapEncounterEvent;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
-import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdWithId;
@@ -61,6 +60,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.loadSubmapSounds;
 import static legend.game.Audio.musicLoaded_800bd782;
@@ -488,7 +488,7 @@ public class RetailSubmap extends Submap {
 
     final int objCount = scripts.size() - 2;
 
-    this.script = new ScriptFile("Submap controller", scripts.get(0).getBytes());
+    this.script = SCRIPTS.loadScript("Submap controller", scripts.get(0).getBytes());
 
     for(int objIndex = 0; objIndex < objCount; objIndex++) {
       final byte[] scriptData = scripts.get(objIndex + 1).getBytes();
@@ -500,7 +500,7 @@ public class RetailSubmap extends Submap {
       this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
 
       final SubmapObject obj = new SubmapObject();
-      obj.script = new ScriptFile("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
+      obj.script = SCRIPTS.loadScript("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
 
       if(submapModel.hasVirtualSize() && submapModel.real()) {
         obj.model = new CContainer("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));

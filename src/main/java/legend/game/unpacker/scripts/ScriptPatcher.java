@@ -236,13 +236,13 @@ public class ScriptPatcher {
     }
   }
 
-  private List<String> decompile(final String name, final byte[] data, final IntList branches, final Int2IntMap tableLengths) {
+  private List<String> decompile(final String name, final byte[] data, final IntList branches, final Int2IntMap tableLengths) throws IOException {
     final Script script = SCRIPTS.disassemble(name, data, branches, tableLengths);
     final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta(), true, true, false);
     return decompiledOutput.lines().toList();
   }
 
-  private byte[] recompile(final String name, final String patched) {
+  private byte[] recompile(final String name, final String patched) throws IOException {
     return SCRIPTS.compile(name, patched);
   }
 

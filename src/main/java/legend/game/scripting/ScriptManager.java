@@ -1,8 +1,10 @@
 package legend.game.scripting;
 
 import com.opencsv.exceptions.CsvException;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.scripting.Compiler;
 import org.legendofdragoon.scripting.Disassembler;
+import org.legendofdragoon.scripting.IncludeFailedException;
 import org.legendofdragoon.scripting.Tokenizer;
 import org.legendofdragoon.scripting.meta.Meta;
 import org.legendofdragoon.scripting.meta.MetaManager;
@@ -18,9 +21,11 @@ import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -238,6 +243,43 @@ public class ScriptManager {
     return this.paused;
   }
 
+  public ScriptFile loadScript(final String name, final byte[] data) {
+    return new ScriptFile(this, name, data);
+  }
+
+  private final Map<String, ScriptFile> scriptIncludeCache = new HashMap<>();
+
+  public ScriptFile loadScriptInclude(final String includeRelativeFile) throws IOException {
+    if(this.scriptIncludeCache.containsKey(includeRelativeFile)) {
+      return this.scriptIncludeCache.get(includeRelativeFile);
+    }
+
+    final Path originalIncludeFile = Path.of(includeRelativeFile);
+    Path includeFile = originalIncludeFile;
+    Path resolvedIncludeFile = null;
+
+    if(!includeFile.isAbsolute()) {
+      for(final Path includePath : this.includePaths) {
+        final Path resolved = includePath.resolve(includeFile).normalize();
+        if(Files.exists(resolved)) {
+          resolvedIncludeFile = resolved;
+          break;
+        }
+      }
+
+      includeFile = resolvedIncludeFile;
+    }
+
+    if(includeFile == null || !Files.exists(includeFile)) {
+      throw new IncludeFailedException("Could not resolve include " + originalIncludeFile + " in include paths " + this.includePaths);
+    }
+
+    includeFile = includeFile.toAbsolutePath();
+    final ScriptFile scriptFile = this.loadScript("Include " + includeFile, this.compile(includeFile.toString(), Files.readString(includeFile)));
+    this.scriptIncludeCache.put(includeRelativeFile, scriptFile);
+    return scriptFile;
+  }
+
   public void clear() {
     Arrays.fill(this.scriptStatePtrArr_800bc1c0, null);
   }
@@ -427,18 +469,18 @@ public class ScriptManager {
     return this.meta;
   }
 
-  public byte[] compile(final String name, final String source) {
+  public byte[] compile(final String name, final String source) throws IOException {
     this.meta();
     final Script tokenized = this.tokenizer.tokenize(name, this.includePaths, source);
     return intsToBytes(this.compiler.compile(tokenized));
   }
 
-  public Script disassemble(final String name, final byte[] data) {
+  public Script disassemble(final String name, final byte[] data) throws IOException {
     return this.disassemble(name, data, new IntArrayList(), new Int2IntOpenHashMap());
   }
 
-  public Script disassemble(final String name, final byte[] data, final List<Integer> extraBranches, final Map<Integer, Integer> tableLengths) {
+  public Script disassemble(final String name, final byte[] data, final IntList extraBranches, final Int2IntMap tableLengths) throws IOException {
     this.meta();
-    return this.disassembler.disassemble(name, data, extraBranches, tableLengths);
+    return this.disassembler.disassemble(name, this.tokenizer, this.includePaths, data, extraBranches, tableLengths);
   }
 }
