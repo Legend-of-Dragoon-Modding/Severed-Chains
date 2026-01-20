@@ -296,8 +296,14 @@ public final class SaveManager {
   private void splitMemcard(final Campaign campaign, final FileData memcard, final List<SavedGame> saves) throws InvalidSaveException {
     for(int i = 1; i <= 15; i++) {
       final int offset = i * 0x80;
-      if(memcard.readByte(offset) == 0x51 && "BASCUS-94491drgn".equals(memcard.readFixedLengthAscii(offset + 0xa, 0x10))) {
-        saves.add(this.loadData(campaign, "", memcard.slice(i * 0x2000, 0x720)));
+      if(memcard.readByte(offset) == 0x51) {
+        final String regionCode = memcard.readFixedLengthAscii(offset + 0xa, 0x10);
+
+        for(final String expectedRegionCode : REGIONS) {
+          if(expectedRegionCode.equals(regionCode)) {
+            saves.add(this.loadData(campaign, "", memcard.slice(i * 0x2000, 0x720)));
+          }
+        }
       }
     }
   }

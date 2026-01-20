@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.modloader.registries.RegistryId;
-import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Script;
 
@@ -1390,12 +1389,8 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   private void dumpDisassembly() {
-    final Disassembler disassembler = new Disassembler(SCRIPTS.meta());
-    final Script tokens = disassembler.disassemble(this.frame().file.data);
-
-    final Translator translator = new Translator();
-    translator.lineNumbers = true;
-    final String decompiled = translator.translate(tokens, SCRIPTS.meta());
+    final Script tokens = SCRIPTS.disassemble(this.name, this.frame().file.data);
+    final String decompiled = new Translator().translate(tokens, SCRIPTS.meta(), false, false, true);
 
     final String[] split = decompiled.split("\n");
     for(int i = 0; i < split.length; i++) {

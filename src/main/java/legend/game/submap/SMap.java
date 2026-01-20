@@ -22,6 +22,7 @@ import legend.game.EngineStateType;
 import legend.game.Menus;
 import legend.game.SItem;
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.combat.encounters.Encounter;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -69,7 +70,9 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -3123,7 +3126,7 @@ public class SMap extends EngineState<SMap> {
 
         this.firstMovement = true;
 
-        final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this.submap.script, this.submap.objects));
+        final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this, gameState_800babc8, this.submap, this.submap.script, this.submap.objects));
         this.submap.script = loadedEvent.submapScript;
 
         //LAB_800e1914
@@ -3564,7 +3567,7 @@ public class SMap extends EngineState<SMap> {
     final var encounterAccumulatorLimit = 0x1400;
     final var encounterAccumulatorStepModifier = 2.0f;
     final var encounterAccumulatorStep = this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / encounterAccumulatorStepModifier;
-    final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
+    final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this, gameState_800babc8, this.submap, this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
     this.encounterAccumulator_800c6ae8 += submapEncounterAccumulatorEvent.encounterAccumulatedStep;
 
     return !(this.encounterAccumulator_800c6ae8 <= submapEncounterAccumulatorEvent.encounterAccumulatorLimit);
@@ -3875,7 +3878,7 @@ public class SMap extends EngineState<SMap> {
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
-      EVENTS.postEvent(new SubmapWarpEvent(submapCut_80052c30, gameState_800babc8));
+      EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, newCut));
       return;
     }
 
@@ -3989,7 +3992,7 @@ public class SMap extends EngineState<SMap> {
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
-        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
+        this.submap = new RetailSubmap(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
         this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
@@ -4296,7 +4299,8 @@ public class SMap extends EngineState<SMap> {
     final int scene = script.params_20[1].get();
 
     if(script.params_20[0].get() == -1 && scene < 0x200) {
-      this.submap.prepareEncounter(scene, true);
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[scene]).get();
+      this.submap.prepareEncounter(encounter, true);
     }
 
     this.mapTransition(script.params_20[0].get(), scene);

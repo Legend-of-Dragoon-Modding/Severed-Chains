@@ -1760,7 +1760,7 @@ public class Battle extends EngineState<Battle> {
     this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
     this.hud.FUN_800f417c();
 
-    EVENTS.postEvent(new BattleStartedEvent(this));
+    EVENTS.postEvent(new BattleStartedEvent(this, encounter));
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1802,7 +1802,7 @@ public class Battle extends EngineState<Battle> {
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.forcedTurnBent_800c66bc));
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, encounter, this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
@@ -1811,7 +1811,7 @@ public class Battle extends EngineState<Battle> {
             this.currentTurnBent_800c66c8.setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.currentTurnBent_800c66c8));
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, encounter, this.currentTurnBent_800c66c8));
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -1901,7 +1901,7 @@ public class Battle extends EngineState<Battle> {
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        EVENTS.postEvent(new BattleEndedEvent(this));
+        EVENTS.postEvent(new BattleEndedEvent(this, encounter));
         startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
       }
 

@@ -16,19 +16,15 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
-import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Param;
 import org.legendofdragoon.scripting.tokens.Script;
-
-import java.nio.file.Path;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
 
 public class ScriptLiveDebuggerController {
-  private final Disassembler disassembler;
-  private final Translator translator;
+  private final Translator translator = new Translator();
   private Script tokens;
   private int index;
   private boolean stepping;
@@ -51,12 +47,6 @@ public class ScriptLiveDebuggerController {
   private TextField txtRun;
   @FXML
   private Button btnRun;
-
-  public ScriptLiveDebuggerController() {
-    this.disassembler = new Disassembler(SCRIPTS.meta());
-    this.translator = new Translator();
-    this.translator.lineNumbers = true;
-  }
 
   public void initialize() {
     EVENTS.register(this);
@@ -92,7 +82,7 @@ public class ScriptLiveDebuggerController {
         this.btnStep.setDisable(true);
       }
 
-      this.tokens = this.disassembler.disassemble(state.frame().file.data);
+      this.tokens = SCRIPTS.disassemble(state.name, state.frame().file.data);
     }
   }
 
@@ -112,10 +102,10 @@ public class ScriptLiveDebuggerController {
       }
     }
 
-    final Script script = new Script(end - start);
+    final Script script = new Script("Live debugger", end - start);
     System.arraycopy(this.tokens.entries, start, script.entries, 0, script.entries.length);
 
-    final String[] lines = this.translator.translate(script, SCRIPTS.meta()).split("\n");
+    final String[] lines = this.translator.translate(script, SCRIPTS.meta(), false, false, true).split("\n");
     final StringBuilder out = new StringBuilder();
 
     for(int i = 0; i < lines.length; i++) {
@@ -202,7 +192,7 @@ public class ScriptLiveDebuggerController {
   private void runCode() {
     this.runningDebugCode = true;
 
-    final byte[] compiled = SCRIPTS.compile(Path.of("./patches/dummy"), this.txtRun.getText() + "\nreturn");
+    final byte[] compiled = SCRIPTS.compile("Live debugger", this.txtRun.getText() + "\nreturn");
     final ScriptFile script = new ScriptFile("Injected code", compiled);
 
     final ScriptState<?> state = SCRIPTS.getState(this.index);

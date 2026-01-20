@@ -292,6 +292,9 @@ public class Ttle extends EngineState<Ttle> {
       this.hasCampaigns = SAVES.hasCampaigns();
       this.foundMemcards = SAVES.findMemcards();
       this.uncategorizedSaves = SAVES.findUncategorizedSaves();
+    }).exceptionally(t -> {
+      LOGGER.error("Failed to load saves", t);
+      return null;
     });
 
     startFadeEffect(2, 15);

@@ -23,7 +23,7 @@ house tour, she stands in a different position. This patch adds movement animati
 +gosub inl[:WS_ROTATE]
 +call 97, 0
  return
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
  LABEL_23:
  call 106, 0x0
  call 101, stor[0], 0xfffffffe, 0xffffffcd, 0x12a
