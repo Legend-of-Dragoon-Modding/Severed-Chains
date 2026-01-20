@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Set;
 
 import static legend.game.Audio.startSound;
@@ -102,7 +103,7 @@ public final class GameEngine {
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
   public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
 
-  public static final ScriptManager SCRIPTS = new ScriptManager(Path.of("./patches"));
+  public static final ScriptManager SCRIPTS = new ScriptManager(List.of(Path.of("./patches/libs"), Path.of("./patches/scripts")), Path.of("./patches"));
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
