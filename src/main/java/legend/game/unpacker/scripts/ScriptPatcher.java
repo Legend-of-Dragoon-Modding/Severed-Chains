@@ -2,6 +2,10 @@ package legend.game.unpacker.scripts;
 
 import com.github.difflib.patch.PatchFailedException;
 import com.opencsv.exceptions.CsvException;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -183,8 +187,8 @@ public class ScriptPatcher {
     final List<String> patchLines = Files.readAllLines(patchFile);
 
     final Path configPath = this.resolvePatchConfigPath(patchFile);
-    final List<Integer> branchList = new ArrayList<>();
-    final Map<Integer, Integer> tableLengths = new HashMap<>();
+    final IntList branchList = new IntArrayList();
+    final Int2IntMap tableLengths = new Int2IntOpenHashMap();
 
     this.getPatchConfigs(configPath, branchList, tableLengths);
 
@@ -232,7 +236,7 @@ public class ScriptPatcher {
     }
   }
 
-  private List<String> decompile(final String name, final byte[] data, final List<Integer> branches, final Map<Integer, Integer> tableLengths) {
+  private List<String> decompile(final String name, final byte[] data, final IntList branches, final Int2IntMap tableLengths) {
     final Script script = SCRIPTS.disassemble(name, data, branches, tableLengths);
     final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta(), true, true, false);
     return decompiledOutput.lines().toList();
@@ -250,7 +254,7 @@ public class ScriptPatcher {
     return diffPath.resolveSibling(this.resolvePatchConfigName(diffPath.getFileName().toString()));
   }
 
-  private void getPatchConfigs(final Path configPath, final List<Integer> branchList, final Map<Integer, Integer> tableLengthList) {
+  private void getPatchConfigs(final Path configPath, final IntList branchList, final Int2IntMap tableLengthList) {
     List<String[]> patchConfig = new ArrayList<>();
 
     if(Files.exists(configPath)) {
