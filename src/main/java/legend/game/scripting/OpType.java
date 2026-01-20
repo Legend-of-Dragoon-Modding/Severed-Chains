@@ -76,7 +76,7 @@ public enum OpType {
       }
     }
 
-    return null;
+    throw new RuntimeException("Invalid opcode %#x".formatted(opcode));
   }
 
   public final int opcode;
@@ -85,15 +85,5 @@ public enum OpType {
   OpType(final int opcode, final String name) {
     this.opcode = opcode;
     this.name = name;
-  }
-
-  public boolean hasHeaderParam() {
-    return
-      this == WAIT_CMP ||
-      this == WAIT_CMP_0 ||
-      this == CALL ||
-      this == JMP_CMP ||
-      this == JMP_CMP_0 ||
-      this == NOOP_96;
   }
 }
