@@ -11,8 +11,8 @@ public class SoundFile {
   public FileData ptr_0c;
   public PlayableSound0c playableSound_10;
 
-  /** Only used if there are multiple soundbanks */
-  public int spuRamOffset_14;
+//  /** Only used if there are multiple soundbanks */
+//  public int spuRamOffset_14;
   /** (ubyte) */
   public int numberOfExtraSoundbanks_18;
 
