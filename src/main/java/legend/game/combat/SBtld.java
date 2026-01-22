@@ -8,10 +8,10 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment_800b;
-import legend.game.combat.encounters.Encounter;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionHits80;
 import legend.game.additions.AdditionSound;
+import legend.game.combat.encounters.Encounter;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.WhichMenu;
@@ -26,7 +26,7 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -433,7 +433,7 @@ public final class SBtld {
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
     battleStartDelayTicks_8004f6ec = 0;
-    playSound(0, 16, (short)0, (short)0); // play battle transition sound
+    playMenuSound(16); // play battle transition sound
     vsyncMode_8007a3b8 = 1;
     _800bd740 = 2;
     dissolveDarkening_800bd700.active_00 = false;

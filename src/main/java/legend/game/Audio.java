@@ -127,6 +127,23 @@ public final class Audio {
    */
   public static final AtomicInteger loadedAudioFiles_800bcf78 = new AtomicInteger();
 
+  /**
+   * <ul>
+   *   <li>0 - generic sounds (e.g. menu)</li>
+   *   <li>1 - char 0</li>
+   *   <li>2 - char 1</li>
+   *   <li>3 - char 2</li>
+   *   <li>4 - monster 0</li>
+   *   <li>5 - monster 1</li>
+   *   <li>6 - monster 2</li>
+   *   <li>7 - monster 3</li>
+   *   <li>8 - submap sounds</li>
+   *   <li>9 - battle cutscene</li>
+   *   <li>10 - attack sounds (player and monster)</li>
+   *   <li>11 - submap music</li>
+   *   <li>12 - world map</li>
+   * </ul>
+   */
   public static final SoundFile[] soundFiles_800bcf80 = new SoundFile[13];
   static {
     Arrays.setAll(soundFiles_800bcf80, i -> new SoundFile());
@@ -1260,13 +1277,13 @@ public final class Audio {
   }
 
   @Method(0x8001eea8L)
-  public static void loadLocationMenuSoundEffects(final int index) {
+  public static void loadWorldMapLocationMenuSoundEffects(final int index) {
     loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
+    loadDrgnDir(0, 5740 + index, files -> worldMapLocationMenuSoundEffectsLoaded(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
   }
 
   @Method(0x8001eefcL)
-  public static void FUN_8001eefc(final List<FileData> files, final String soundName) {
+  public static void worldMapLocationMenuSoundEffectsLoaded(final List<FileData> files, final String soundName) {
     final SoundFile sound = soundFiles_800bcf80[12];
     sound.name = soundName;
     sound.used_00 = true;

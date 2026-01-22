@@ -176,6 +176,7 @@ import static legend.game.Audio.loadDeffSounds;
 import static legend.game.Audio.loadEncounterSoundsAndMusic;
 import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.monsterSoundFileIndices_800500e8;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playSound;
 import static legend.game.Audio.queuedSounds_800bd110;
 import static legend.game.Audio.sequenceData_800c4ac8;
@@ -8545,7 +8546,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menuType", description = "0 = items, 1 = spells, 2 = ?")
   @Method(0x800f97d8L)
   public FlowControl scriptInitSpellAndItemMenu(final RunningScript<?> script) {
-    playSound(0, 4, (short)0, (short)0);
+    playMenuSound(4);
     this.hud.initListMenu(SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }

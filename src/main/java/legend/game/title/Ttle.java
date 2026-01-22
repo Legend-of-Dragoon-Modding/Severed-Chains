@@ -76,7 +76,7 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
-import static legend.game.Audio.playSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
@@ -762,7 +762,7 @@ public class Ttle extends EngineState {
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(this.selectedMenuOption != i) {
-                playSound(0, 1, (short)0, (short)0);
+                playMenuSound(1);
                 this.selectedMenuOption = i;
               }
 
@@ -851,7 +851,7 @@ public class Ttle extends EngineState {
             final int menuY = (int)(top + (134.0f + i * 16.0f) * scaleY);
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
-              playSound(0, 2, (short)0, (short)0);
+              playMenuSound(2);
               this.selectedMenuOption = i;
 
               this.menuState_800c672c = 3;
@@ -905,11 +905,11 @@ public class Ttle extends EngineState {
     if(this.menuLoadingStage == 3) {
       if(this.menuState_800c672c < 3) {
         if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
 
           this.menuState_800c672c = 3;
         } else if(action == INPUT_ACTION_MENU_UP.get()) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
 
           this.selectedMenuOption--;
           if(this.selectedMenuOption < 0) {
@@ -922,7 +922,7 @@ public class Ttle extends EngineState {
 
           this.menuState_800c672c = 2;
         } else if(action == INPUT_ACTION_MENU_DOWN.get()) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
 
           this.selectedMenuOption++;
           if(this.selectedMenuOption >= MENU_OPTIONS) {
