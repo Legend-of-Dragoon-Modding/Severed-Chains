@@ -316,7 +316,8 @@ public class Sequencer {
     //LAB_800467f0
     voice.volumeLeft.set(l);
     voice.volumeRight.set(r);
-    voice.startAddress = sequenceData.playableSound_020.soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04;
+    voice.data = sequenceData.playableSound_020.data;
+    voice.startAddress = instrumentLayer_800c6678.soundOffset_04;
     voice.adsr.lo = instrumentLayer_800c6678.adsrLo_06;
     voice.adsr.hi = instrumentLayer_800c6678.adsrHi_08;
     setKeyOn(sequenceData, voiceIndex);
