@@ -78,11 +78,6 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
-import static legend.game.Audio.FUN_8001aa90;
-import static legend.game.Audio.loadMusicPackage;
-import static legend.game.Audio.playSound;
-import static legend.game.Audio.setMainVolume;
-import static legend.game.Audio.soundEnv_800c6630;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
@@ -110,6 +105,11 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_CONVERT_MEMCARD;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_UPDATE;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.FUN_8001aa90;
+import static legend.game.sound.Audio.loadMusicPackage;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.setMainVolume;
+import static legend.game.sound.Audio.soundEnv_800c6630;
 
 public class Ttle extends EngineState<Ttle> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Ttle.class);
@@ -759,7 +759,7 @@ public class Ttle extends EngineState<Ttle> {
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(this.selectedMenuOption != i) {
-                playSound(0, 1, (short)0, (short)0);
+                playMenuSound(1);
                 this.selectedMenuOption = i;
               }
 
@@ -846,7 +846,7 @@ public class Ttle extends EngineState<Ttle> {
             final int menuY = (int)(top + (134.0f + i * 16.0f) * scaleY);
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
-              playSound(0, 2, (short)0, (short)0);
+              playMenuSound(2);
               this.selectedMenuOption = i;
 
               this.menuState_800c672c = 3;
@@ -900,11 +900,11 @@ public class Ttle extends EngineState<Ttle> {
     if(this.menuLoadingStage == 3) {
       if(this.menuState_800c672c < 3) {
         if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
 
           this.menuState_800c672c = 3;
         } else if(action == INPUT_ACTION_MENU_UP.get()) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
 
           this.selectedMenuOption--;
           if(this.selectedMenuOption < 0) {
@@ -917,7 +917,7 @@ public class Ttle extends EngineState<Ttle> {
 
           this.menuState_800c672c = 2;
         } else if(action == INPUT_ACTION_MENU_DOWN.get()) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
 
           this.selectedMenuOption++;
           if(this.selectedMenuOption >= MENU_OPTIONS) {

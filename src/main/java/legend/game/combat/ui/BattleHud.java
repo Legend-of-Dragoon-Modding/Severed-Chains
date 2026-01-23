@@ -59,8 +59,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Audio.playMenuSound;
-import static legend.game.Audio.playSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
 import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
@@ -1666,7 +1665,7 @@ public class BattleHud {
         // Input for cycling right on menu bar
         //LAB_800f65b8
         if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_RIGHT.get())) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.actions.size() - 1) {
             //LAB_800f6640
@@ -1695,7 +1694,7 @@ public class BattleHud {
         // Input for cycling left on menu bar
         //LAB_800f6664
         if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_LEFT.get())) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
 
           if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
             //LAB_800f66f0
@@ -1748,7 +1747,7 @@ public class BattleHud {
         } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           //LAB_800f68a4
           //LAB_800f68bc
-          playSound(0, 3, (short)0, (short)0);
+          playMenuSound(3);
         }
 
         //LAB_800f68c4
@@ -1827,7 +1826,7 @@ public class BattleHud {
       return null;
     }
 
-    playSound(0, 2, (short)0, (short)0);
+    playMenuSound(2);
 
     if(flow == BattleActionFlowControl.PAUSE_SCRIPT) {
       return null;

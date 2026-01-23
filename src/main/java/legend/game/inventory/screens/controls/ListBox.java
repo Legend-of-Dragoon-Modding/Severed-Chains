@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderCharacterPortrait;
 import static legend.game.Text.renderText;

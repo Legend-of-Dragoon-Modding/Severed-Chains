@@ -3,7 +3,7 @@ package legend.game.sound;
 import legend.game.unpacker.FileData;
 
 public class SoundFile {
-  public String name;
+  public final String name;
   public boolean used_00;
   /** short */
   public int id_02;
@@ -11,10 +11,14 @@ public class SoundFile {
   public FileData ptr_0c;
   public PlayableSound0c playableSound_10;
 
-  /** Only used if there are multiple soundbanks */
-  public int spuRamOffset_14;
+//  /** Only used if there are multiple soundbanks */
+//  public int spuRamOffset_14;
   /** (ubyte) */
   public int numberOfExtraSoundbanks_18;
+
+  SoundFile(final String name) {
+    this.name = name;
+  }
 
   @Override
   public String toString() {

@@ -25,6 +25,9 @@ import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
 import legend.game.saves.SavedGame;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SoundFileIndices;
+import legend.game.sound.Sshd;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
@@ -71,13 +74,6 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
-import static legend.game.Audio.getLoadedAudioFiles;
-import static legend.game.Audio.loadLocationMenuSoundEffects;
-import static legend.game.Audio.loadWmapMusic;
-import static legend.game.Audio.playSound;
-import static legend.game.Audio.soundFiles_800bcf80;
-import static legend.game.Audio.stopSound;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
@@ -137,6 +133,16 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.sound.Audio.addSoundFile;
+import static legend.game.sound.Audio.getLoadedAudioFiles;
+import static legend.game.sound.Audio.loadSshdAndSoundbank;
+import static legend.game.sound.Audio.loadWmapMusic;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.playSound;
+import static legend.game.sound.Audio.setSoundSequenceVolume;
+import static legend.game.sound.Audio.stopSound;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.wmap.MapState100.ForcedMovementMode;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
@@ -411,6 +417,8 @@ public class WMap extends EngineState<WMap> {
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
+  public final SoundFile soundFile = addSoundFile("WMAP SFX");
+
   public WMap() {
     super(LodEngineStateTypes.WORLD_MAP.get());
   }
@@ -530,6 +538,24 @@ public class WMap extends EngineState<WMap> {
         }
       }
     }
+  }
+
+  @Method(0x8001eea8L)
+  private void loadWorldMapLocationMenuSoundEffects(final int index) {
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
+    loadDrgnDir(0, 5740 + index, this::worldMapLocationMenuSoundEffectsLoaded);
+  }
+
+  @Method(0x8001eefcL)
+  private void worldMapLocationMenuSoundEffectsLoaded(final List<FileData> files) {
+    final SoundFile sound = this.soundFile;
+    sound.used_00 = true;
+    sound.indices_08 = SoundFileIndices.load(files.get(2));
+    sound.id_02 = files.get(0).readShort(0);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)));
+    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
+
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
   }
 
   private final MV modelLw = new MV();
@@ -859,10 +885,10 @@ public class WMap extends EngineState<WMap> {
     this.modelAndAnimData_800c66a8.zoomOverlay = new ZoomOverlay();
 
     if(this.mapState_800c6798.continent_00.continentNum < Continent.ILLISA_BAY_3.continentNum) { // South Serdio, North Serdio, Tiberoa
-      loadLocationMenuSoundEffects(1);
+      this.loadWorldMapLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
+      this.loadWorldMapLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
     }
     //LAB_800cd020
   }
@@ -1324,7 +1350,7 @@ public class WMap extends EngineState<WMap> {
                 if(cameraAndLights.mapRotationState_110 == MapRotationState.MAIN_LOOP_0) {
                   if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-                      playSound(0, 4, (short)0, (short)0);
+                      playMenuSound(4);
                       cameraAndLights.finalCameraY_9e = -9000;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_OUT_1;
                       cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
@@ -1339,7 +1365,7 @@ public class WMap extends EngineState<WMap> {
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.CONTINENT_1) {
                       //LAB_800d3814
                       setTextAndTextboxesToUninitialized(7, 0);
-                      playSound(0, 4, (short)0, (short)0);
+                      playMenuSound(4);
                       cameraAndLights.finalCameraY_9e = -300;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
                       this.initCameraZoomPositionAndRotationSteps(1);
@@ -1347,7 +1373,7 @@ public class WMap extends EngineState<WMap> {
                       this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL_0;
                       //LAB_800d3898
                     } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-                      playSound(0, 0x28, (short)0, (short)0);
+                      playMenuSound(40);
                     }
                   }
                 }
@@ -2251,7 +2277,7 @@ public class WMap extends EngineState<WMap> {
     switch(this.modelAndAnimData_800c66a8.zoomState_1f8) {
       case CONTINENT_1:
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
-          playSound(0, 4, (short)0, (short)0);
+          playMenuSound(4);
           this.shouldSetDestLabelMetrics = true;
 
           this.modelAndAnimData_800c66a8.mapPosition_1e8.set(cameraAndLights.coord2_20.coord.transfer);
@@ -2268,8 +2294,6 @@ public class WMap extends EngineState<WMap> {
 
       case TRANSITION_MODEL_OUT_2:
         this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
-
-
         this.mcqBrightness_800ef1a4 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 > 1.0f) {
@@ -2296,7 +2320,7 @@ public class WMap extends EngineState<WMap> {
 
       case WORLD_3:
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
-          playSound(0, 40, (short)0, (short)0);
+          playMenuSound(40);
         }
 
         //LAB_800d9858
@@ -2308,7 +2332,7 @@ public class WMap extends EngineState<WMap> {
 
         //LAB_800d98a8
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_IN.get())) {
-          playSound(0, 4, (short)0, (short)0);
+          playMenuSound(4);
           this.initMapModelZoom(-1);
 
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.TRANSITION_MODEL_IN_4;
@@ -2480,7 +2504,7 @@ public class WMap extends EngineState<WMap> {
     //LAB_800da544
     switch(modelAndAnimData.coolonWarpState_220) {
       case NONE_0:
-        playSound(0, 4, (short)0, (short)0);
+        playMenuSound(4);
 
         modelAndAnimData.mapPos_200.set(cameraAndLights.coord2_20.coord.transfer);
         modelAndAnimData.playerPos_208.set(modelAndAnimData.currPlayerPos_94);
@@ -2508,7 +2532,7 @@ public class WMap extends EngineState<WMap> {
 
         //LAB_800da940
         if(((int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x3) == 0) {
-          playSound(12, 1, (short)0, (short)0);
+          playSound(this.soundFile, 1, (short)0, (short)0);
         }
 
         //LAB_800da978
@@ -2616,7 +2640,7 @@ public class WMap extends EngineState<WMap> {
           this.shouldSetCoolonWarpDestLabelMetrics = false;
           this.coolonWarpDestLabelName = null;
 
-          playSound(0, 3, (short)0, (short)0);
+          playMenuSound(3);
 
           //LAB_800daef8
           for(int i = 0; i < 8; i++) {
@@ -2644,7 +2668,7 @@ public class WMap extends EngineState<WMap> {
 
         //LAB_800db00c
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
           clearTextbox(6);
           initTextbox(textboxes_800be358[6], true, 240, 64, 9, 4);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_PROMPT_4;
@@ -2683,26 +2707,26 @@ public class WMap extends EngineState<WMap> {
         this.renderCoolonMapSymbols(false, true);
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-          playSound(0, 3, (short)0, (short)0);
+          playMenuSound(3);
           setTextAndTextboxesToUninitialized(6, 1);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
         }
 
         //LAB_800db39c
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_UP.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_DOWN.get())) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
           modelAndAnimData.coolonPromptIndex_223 ^= 1;
         }
 
         //LAB_800db3f8
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           if(modelAndAnimData.coolonPromptIndex_223 == 0) {
-            playSound(0, 3, (short)0, (short)0);
+            playMenuSound(3);
             setTextAndTextboxesToUninitialized(6, 1);
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
           } else {
             //LAB_800db474
-            playSound(0, 2, (short)0, (short)0);
+            playMenuSound(2);
             setTextAndTextboxesToUninitialized(6, 1);
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.FLY_ANIM_6;
           }
@@ -2737,7 +2761,7 @@ public class WMap extends EngineState<WMap> {
         break;
 
       case INIT_DEST_7:
-        stopSound(soundFiles_800bcf80[12], 1, 1);
+        stopSound(this.soundFile, 1, 1);
 
         if(modelAndAnimData.coolonDestIndex_222 == 8) {
           gameState_800babc8.visitedLocations_17c.set(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10, true);
@@ -2775,7 +2799,7 @@ public class WMap extends EngineState<WMap> {
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(0.375f, 0.375f, 0.375f);
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.PAN_MAP_11;
 
-        stopSound(soundFiles_800bcf80[12], 1, 1);
+        stopSound(this.soundFile, 1, 1);
 
         // Fall through
 
@@ -2877,7 +2901,7 @@ public class WMap extends EngineState<WMap> {
 
     if(enableInput) {
       if(PLATFORM.isActionRepeat(INPUT_ACTION_MENU_RIGHT.get()) || PLATFORM.isActionRepeat(INPUT_ACTION_MENU_DOWN.get())) {
-        playSound(0, 1, (short)0, (short)0);
+        playMenuSound(1);
 
         if(modelAndAnimData.coolonDestIndex_222 > 0) {
           modelAndAnimData.coolonDestIndex_222--;
@@ -2888,7 +2912,7 @@ public class WMap extends EngineState<WMap> {
 
       //LAB_800dc384
       if(PLATFORM.isActionRepeat(INPUT_ACTION_MENU_LEFT.get()) || PLATFORM.isActionRepeat(INPUT_ACTION_MENU_UP.get())) {
-        playSound(0, 1, (short)0, (short)0);
+        playMenuSound(1);
 
         modelAndAnimData.coolonDestIndex_222++;
         if(modelAndAnimData.coolonDestIndex_222 > 8) {
@@ -3383,7 +3407,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e1210
       if(modelIndex == 1) {
         if(tickCount_800bb0fc % (4 * this.tickMultiplier()) == 0) {
-          playSound(0xc, 0, (short)0, (short)0);
+          playSound(this.soundFile, 0, (short)0, (short)0);
         }
       }
     } else {
@@ -4139,7 +4163,7 @@ public class WMap extends EngineState<WMap> {
 
         this.mapTransitionState_800c68a4 = MapTransitionState.BUILD_PROMPT_2;
 
-        playSound(0, 4, (short)0, (short)0);
+        playMenuSound(4);
 
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
@@ -4147,7 +4171,7 @@ public class WMap extends EngineState<WMap> {
           final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
-            playSound(0xc, soundIndex, (short)0, (short)0);
+            playSound(this.soundFile, soundIndex, (short)0, (short)0);
           }
 
           //LAB_800e5698
@@ -4234,7 +4258,7 @@ public class WMap extends EngineState<WMap> {
           this.wmapLocationPromptPopup.decrMenuSelectorOptionIndex();
 
           //LAB_800e5950
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
         }
 
         //LAB_800e5970
@@ -4242,7 +4266,7 @@ public class WMap extends EngineState<WMap> {
           this.wmapLocationPromptPopup.incrMenuSelectorOptionIndex();
 
           //LAB_800e59c0
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
         }
 
         //LAB_800e5b38
@@ -4280,7 +4304,7 @@ public class WMap extends EngineState<WMap> {
         );
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_SERVICES.get()) && this.mapState_800c6798.submapCutTo_c8 != 999) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
         }
 
         //LAB_800e60d0
@@ -4316,7 +4340,7 @@ public class WMap extends EngineState<WMap> {
             setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = MapTransitionState.INIT_MOVEMENT_6;
 
-            playSound(0, 3, (short)0, (short)0);
+            playMenuSound(3);
 
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
@@ -4324,7 +4348,7 @@ public class WMap extends EngineState<WMap> {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -4338,7 +4362,7 @@ public class WMap extends EngineState<WMap> {
             setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = MapTransitionState.ANIMATE_PROMPT_OUT_5;
 
-            playSound(0, 2, (short)0, (short)0);
+            playMenuSound(2);
 
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
@@ -4346,7 +4370,7 @@ public class WMap extends EngineState<WMap> {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
               //LAB_800e6504
             }
@@ -4356,7 +4380,7 @@ public class WMap extends EngineState<WMap> {
         } else {
           //LAB_800e6524
           if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-            playSound(0, 3, (short)0, (short)0);
+            playMenuSound(3);
 
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
@@ -4364,7 +4388,7 @@ public class WMap extends EngineState<WMap> {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
               //LAB_800e65fc
             }
@@ -4512,7 +4536,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e6afc
     } else {
       if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_DESTINATIONS.get()) && this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
-        playSound(0, 2, (short)0, (short)0);
+        playMenuSound(2);
         this.startLocationLabelsActive_800c68a8 = true;
 
         //LAB_800e6aac

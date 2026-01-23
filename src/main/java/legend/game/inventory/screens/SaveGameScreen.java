@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.SAVES;
-import static legend.game.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -29,6 +28,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class SaveGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SaveGameScreen.class);

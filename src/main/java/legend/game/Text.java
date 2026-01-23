@@ -40,7 +40,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
 import static legend.game.Graphics.centreScreenY_1f8003de;
@@ -213,7 +213,7 @@ public final class Text {
       textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
       textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
       textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
-      playSound(0, 4, (short)0, (short)0);
+      playMenuSound(4);
     }
 
     //LAB_800257bc
@@ -540,7 +540,7 @@ public final class Text {
               textboxText.charY_36 = 0;
               textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
               textboxText.stateAfterTransition_78 = TextboxTextState._17;
-              playSound(0, 4, (short)0, (short)0);
+              playMenuSound(4);
             }
 
             case 4 -> {
@@ -768,7 +768,7 @@ public final class Text {
           textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
           textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
           textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
-          playSound(0, 4, (short)0, (short)0);
+          playMenuSound(4);
         }
       }
 
@@ -852,7 +852,7 @@ public final class Text {
       case _18 -> {
         //LAB_80026d94
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68;
@@ -863,7 +863,7 @@ public final class Text {
             if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
               if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                 //LAB_80026f38
-                playSound(0, 1, (short)0, (short)0);
+                playMenuSound(1);
 
                 int extraLines = 3;
                 if(textboxText.selectionLine_60 > 0) {
@@ -948,13 +948,13 @@ public final class Text {
             //LAB_80026e6c
             if(textboxText.selectionLine_60 < textboxText.lines_1e) {
               //LAB_80026ed0
-              playSound(0, 1, (short)0, (short)0);
+              playMenuSound(1);
 
               //LAB_80026ee8
               if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
                 if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                   //LAB_80026f38
-                  playSound(0, 1, (short)0, (short)0);
+                  playMenuSound(1);
 
                   int extraLines = 3;
                   if(textboxText.selectionLine_60 > 0) {
@@ -1144,7 +1144,7 @@ public final class Text {
       case SELECTION_22 -> {
         //LAB_80027354
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68 - textboxText.minSelectionLine_72;
@@ -1158,7 +1158,7 @@ public final class Text {
               textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
             } else {
               //LAB_80027404
-              playSound(0, 1, (short)0, (short)0);
+              playMenuSound(1);
               textboxText.state_00 = TextboxTextState._19;
             }
           }
@@ -1173,7 +1173,7 @@ public final class Text {
             } else {
               //LAB_80027480
               //LAB_80027490
-              playSound(0, 1, (short)0, (short)0);
+              playMenuSound(1);
               textboxText.state_00 = TextboxTextState._19;
             }
           }

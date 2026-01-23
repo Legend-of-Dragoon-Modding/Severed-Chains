@@ -51,11 +51,6 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.Audio._800bf0cf;
-import static legend.game.Audio.initSound;
-import static legend.game.Audio.loadMenuSounds;
-import static legend.game.Audio.startQueuedSounds;
-import static legend.game.Audio.stopSound;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.EngineStates.FUN_80020ed8;
@@ -94,7 +89,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -103,6 +97,11 @@ import static legend.game.Text.initTextboxes;
 import static legend.game.Text.renderTextboxes;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.SBtld.tickAndRenderTransitionIntoBattle;
+import static legend.game.sound.Audio._800bf0cf;
+import static legend.game.sound.Audio.initSound;
+import static legend.game.sound.Audio.loadMenuSounds;
+import static legend.game.sound.Audio.startQueuedSounds;
+import static legend.game.sound.Audio.stopSound;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Scus94491BpeSegment {
@@ -429,11 +428,6 @@ public final class Scus94491BpeSegment {
     GPU.uploadData15(new Rect4i(x, y, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
   }
 
-  @Method(0x80018998L)
-  public static void nextLoadingStage() {
-    pregameLoadingStage_800bb10c++;
-  }
-
   @ScriptDescription("Not implemented in retail")
   @Method(0x8001c5fcL)
   public static FlowControl FUN_8001c5fc(final RunningScript<?> script) {
@@ -632,7 +626,6 @@ public final class Scus94491BpeSegment {
     setProjectionPlaneDistance(640);
     initSound();
 
-    pregameLoadingStage_800bb10c = 0;
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc = 0;
 

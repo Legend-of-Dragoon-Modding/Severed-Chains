@@ -18,6 +18,7 @@ import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.SoundFile;
 import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
@@ -248,6 +249,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public final Rect4i scissor = new Rect4i();
   public boolean useScissor;
 
+  public SoundFile soundFile;
+
   public BattleEntity27c(final BattleEntityType type, final Battle battle, final String name) {
     super(battle, BattleObject.BOBJ);
     this.type = type;
@@ -259,6 +262,11 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract String getName();
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + '[' + this.getName() + ']';
+  }
 
   public void scissor(final int x, final int y, final int w, final int h) {
     this.scissor.set(x, y, w, h);

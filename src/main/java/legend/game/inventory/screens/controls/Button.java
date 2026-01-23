@@ -13,7 +13,7 @@ import legend.game.inventory.screens.TextColour;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;

@@ -16,11 +16,11 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Audio.sssqResetStuff;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;

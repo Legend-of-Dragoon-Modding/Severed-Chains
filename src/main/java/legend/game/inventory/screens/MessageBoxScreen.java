@@ -9,7 +9,7 @@ import legend.game.types.MessageBoxResult;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;

@@ -11,11 +11,11 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.types.Renderable58;
 
-import static legend.game.Audio.playMenuSound;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.Text.renderText;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class SeveredSaveCard extends BlankSaveCard {
   private final CharacterPortrait[] portraits = new CharacterPortrait[3];

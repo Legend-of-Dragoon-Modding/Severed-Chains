@@ -22,7 +22,6 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
 
@@ -50,7 +49,6 @@ public final class EngineStates {
     //LAB_800129c0
     //LAB_800129c4
     if(engineStateOnceLoaded_8004dd24 != null) {
-      pregameLoadingStage_800bb10c = 0;
       previousEngineState_8004dd28 = currentEngineState_8004dd04 != null ? currentEngineState_8004dd04.type : null;
       vsyncMode_8007a3b8 = 2;
       loadGameStateOverlay(engineStateOnceLoaded_8004dd24, engineStateData);
