@@ -39,7 +39,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.centreScreenX_1f8003dc;

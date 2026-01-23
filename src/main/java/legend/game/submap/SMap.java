@@ -40,6 +40,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.scripting.ScriptedObject;
+import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdObjTable1c;
@@ -94,10 +95,6 @@ import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
-import static legend.game.Audio.getLoadedAudioFiles;
-import static legend.game.Audio.musicLoaded_800bd782;
-import static legend.game.Audio.stopMusicSequence;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDir;
 import static legend.game.DrgnFiles.loadFile;
@@ -150,7 +147,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
@@ -171,6 +167,11 @@ import static legend.game.Text.textboxText_800bdf38;
 import static legend.game.Text.textboxes_800be358;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.sound.Audio.addSoundFile;
+import static legend.game.sound.Audio.getLoadedAudioFiles;
+import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.stopMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
@@ -390,6 +391,8 @@ public class SMap extends EngineState {
   private int inputRepeat;
   private int inputHeld;
 
+  public final SoundFile submapSounds = addSoundFile("Submap SFX");
+
   @Override
   public void restoreMusicAfterMenu() {
     this.submap.startMusic();
@@ -414,11 +417,7 @@ public class SMap extends EngineState {
       return true;
     }
 
-    if(saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get())) {
-      return true;
-    }
-
-    return false;
+    return saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get());
   }
 
   @Override
@@ -3864,13 +3863,6 @@ public class SMap extends EngineState {
 
     //LAB_800e5a30
     //LAB_800e5a34
-    if(pregameLoadingStage_800bb10c == 0) {
-      pregameLoadingStage_800bb10c = 1;
-      this.currentSubmapScene_800caaf8 = submapScene_80052c34;
-      submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
-      this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
-    }
-
     //LAB_800e5ac4
     switch(this.smapLoadingStage_800cb430) {
       case INIT_0 -> {
@@ -3881,6 +3873,7 @@ public class SMap extends EngineState {
         resizeDisplay(384, 240);
 
         //LAB_800e5b2c
+        this.currentSubmapScene_800caaf8 = submapScene_80052c34;
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.encounterAccumulator_800c6ae8 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.LOAD_NEWROOT_1;
@@ -4100,7 +4093,6 @@ public class SMap extends EngineState {
 
         //LAB_800e62cc
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
-        pregameLoadingStage_800bb10c = 0;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
@@ -4110,7 +4102,6 @@ public class SMap extends EngineState {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
-        pregameLoadingStage_800bb10c = 0;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
@@ -4136,7 +4127,6 @@ public class SMap extends EngineState {
         //LAB_800e6458
         resetSubmapToNewGame();
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        pregameLoadingStage_800bb10c = 0;
 
         //LAB_800e6484
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
@@ -4167,7 +4157,6 @@ public class SMap extends EngineState {
         //LAB_800e63b0
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
-        pregameLoadingStage_800bb10c = 0;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }

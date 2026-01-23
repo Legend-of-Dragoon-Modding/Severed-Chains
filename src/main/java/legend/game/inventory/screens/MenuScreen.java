@@ -26,7 +26,7 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();

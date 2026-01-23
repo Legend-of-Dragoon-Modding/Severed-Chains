@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static legend.core.GameEngine.SAVES;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.UI_TEXT_CENTERED;

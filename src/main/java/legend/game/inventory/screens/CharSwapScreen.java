@@ -11,7 +11,7 @@ import legend.game.types.Renderable58;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;

@@ -25,7 +25,7 @@ import java.util.function.Function;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;

@@ -3,7 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.FUN_801034cc;

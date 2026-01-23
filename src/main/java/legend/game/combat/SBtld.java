@@ -14,28 +14,22 @@ import legend.game.additions.AdditionSound;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
-import legend.game.inventory.WhichMenu;
 import legend.game.types.BattleReportOverlay0e;
 import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Translucency;
-import legend.game.unpacker.Loader;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playMenuSound;
-import static legend.game.Audio.stopMusicSequence;
-import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.clearBlue_800babc0;
 import static legend.game.Graphics.clearGreen_800bb104;
 import static legend.game.Graphics.clearRed_8007a3a8;
 import static legend.game.Graphics.displayHeight_1f8003e4;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
-import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.rand;
@@ -45,11 +39,10 @@ import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class SBtld {
@@ -75,32 +68,6 @@ public final class SBtld {
     encounterId_800bb0f8 = -1;
     battleStage_800bb0f4 = stageId;
     Scus94491BpeSegment_800b.encounter = encounter;
-  }
-
-  @Method(0x80018508L)
-  public static void renderPostCombatScreen() {
-    // There used to be code to preload SMAP while the post-combat screen is still up. I removed it because it only takes a few milliseconds to load in SC.
-
-    //LAB_8001852c
-    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      pregameLoadingStage_800bb10c++;
-    }
-
-    //LAB_80018644
-  }
-
-  @Method(0x800189b0L)
-  public static void transitionBackFromBattle() {
-    if(Loader.getLoadingFileCount() == 0) {
-      //LAB_800189e4
-      //LAB_800189e8
-      stopMusicSequence();
-      pregameLoadingStage_800bb10c = 0;
-      vsyncMode_8007a3b8 = 2;
-      engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
-    }
-
-    //LAB_80018a4c
   }
 
   @Method(0x80018e84L)

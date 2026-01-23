@@ -23,11 +23,6 @@ import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Audio.FUN_8001aa90;
-import static legend.game.Audio.loadMusicPackage;
-import static legend.game.Audio.setMainVolume;
-import static legend.game.Audio.soundEnv_800c6630;
-import static legend.game.Audio.sssqResetStuff;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.Graphics.renderMode;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
@@ -35,12 +30,16 @@ import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.previousEngineState_800bdb88;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
 import static legend.game.combat.SBtld.clearCombatVars;
+import static legend.game.sound.Audio.FUN_8001aa90;
+import static legend.game.sound.Audio.loadMusicPackage;
+import static legend.game.sound.Audio.setMainVolume;
+import static legend.game.sound.Audio.soundEnv_800c6630;
+import static legend.game.sound.Audio.sssqResetStuff;
 
 public final class EngineStates {
   private EngineStates() { }
@@ -108,7 +107,6 @@ public final class EngineStates {
     //LAB_800129c0
     //LAB_800129c4
     if(engineStateOnceLoaded_8004dd24 != null) {
-      pregameLoadingStage_800bb10c = 0;
       previousEngineState_8004dd28 = engineState_8004dd20;
       engineState_8004dd20 = engineStateOnceLoaded_8004dd24;
       engineStateOnceLoaded_8004dd24 = null;

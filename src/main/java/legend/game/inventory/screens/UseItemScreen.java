@@ -17,7 +17,7 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;

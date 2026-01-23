@@ -17,7 +17,7 @@ import legend.game.unpacker.Loader;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;

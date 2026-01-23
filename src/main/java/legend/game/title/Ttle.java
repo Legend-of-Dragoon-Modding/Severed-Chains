@@ -76,7 +76,7 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;

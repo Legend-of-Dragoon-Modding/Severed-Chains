@@ -23,6 +23,9 @@ import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SoundFileIndices;
+import legend.game.sound.Sshd;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
@@ -65,14 +68,6 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
-import static legend.game.Audio.getLoadedAudioFiles;
-import static legend.game.Audio.loadWorldMapLocationMenuSoundEffects;
-import static legend.game.Audio.loadWmapMusic;
-import static legend.game.Audio.playMenuSound;
-import static legend.game.Audio.playSound;
-import static legend.game.Audio.soundFiles_800bcf80;
-import static legend.game.Audio.stopSound;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
@@ -131,6 +126,16 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.sound.Audio.addSoundFile;
+import static legend.game.sound.Audio.getLoadedAudioFiles;
+import static legend.game.sound.Audio.loadSshdAndSoundbank;
+import static legend.game.sound.Audio.loadWmapMusic;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.playSound;
+import static legend.game.sound.Audio.setSoundSequenceVolume;
+import static legend.game.sound.Audio.stopSound;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.wmap.MapState100.ForcedMovementMode;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
@@ -403,6 +408,8 @@ public class WMap extends EngineState {
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
+  public final SoundFile soundFile = addSoundFile("WMAP SFX");
+
   @Override
   public int tickMultiplier() {
     return 3;
@@ -468,6 +475,24 @@ public class WMap extends EngineState {
         }
       }
     }
+  }
+
+  @Method(0x8001eea8L)
+  private void loadWorldMapLocationMenuSoundEffects(final int index) {
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
+    loadDrgnDir(0, 5740 + index, this::worldMapLocationMenuSoundEffectsLoaded);
+  }
+
+  @Method(0x8001eefcL)
+  private void worldMapLocationMenuSoundEffectsLoaded(final List<FileData> files) {
+    final SoundFile sound = this.soundFile;
+    sound.used_00 = true;
+    sound.indices_08 = SoundFileIndices.load(files.get(2));
+    sound.id_02 = files.get(0).readShort(0);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)));
+    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
+
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
   }
 
   private final MV modelLw = new MV();
@@ -820,10 +845,10 @@ public class WMap extends EngineState {
     this.modelAndAnimData_800c66a8.zoomOverlay = new ZoomOverlay();
 
     if(this.mapState_800c6798.continent_00.continentNum < Continent.ILLISA_BAY_3.continentNum) { // South Serdio, North Serdio, Tiberoa
-      loadWorldMapLocationMenuSoundEffects(1);
+      this.loadWorldMapLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadWorldMapLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
+      this.loadWorldMapLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
     }
     //LAB_800cd020
   }
@@ -2467,7 +2492,7 @@ public class WMap extends EngineState {
 
         //LAB_800da940
         if(((int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x3) == 0) {
-          playSound(12, 1, (short)0, (short)0);
+          playSound(this.soundFile, 1, (short)0, (short)0);
         }
 
         //LAB_800da978
@@ -2696,7 +2721,7 @@ public class WMap extends EngineState {
         break;
 
       case INIT_DEST_7:
-        stopSound(soundFiles_800bcf80[12], 1, 1);
+        stopSound(this.soundFile, 1, 1);
 
         if(modelAndAnimData.coolonDestIndex_222 == 8) {
           gameState_800babc8.visitedLocations_17c.set(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10, true);
@@ -2734,7 +2759,7 @@ public class WMap extends EngineState {
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(0.375f, 0.375f, 0.375f);
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.PAN_MAP_11;
 
-        stopSound(soundFiles_800bcf80[12], 1, 1);
+        stopSound(this.soundFile, 1, 1);
 
         // Fall through
 
@@ -3346,7 +3371,7 @@ public class WMap extends EngineState {
       //LAB_800e1210
       if(modelIndex == 1) {
         if(tickCount_800bb0fc % (4 * this.tickMultiplier()) == 0) {
-          playSound(12, 0, (short)0, (short)0);
+          playSound(this.soundFile, 0, (short)0, (short)0);
         }
       }
     } else {
@@ -4107,7 +4132,7 @@ public class WMap extends EngineState {
           final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
-            playSound(12, soundIndex, (short)0, (short)0);
+            playSound(this.soundFile, soundIndex, (short)0, (short)0);
           }
 
           //LAB_800e5698
@@ -4284,7 +4309,7 @@ public class WMap extends EngineState {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -4306,7 +4331,7 @@ public class WMap extends EngineState {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
               //LAB_800e6504
             }
@@ -4324,7 +4349,7 @@ public class WMap extends EngineState {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
               //LAB_800e65fc
             }

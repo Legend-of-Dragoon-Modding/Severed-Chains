@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;

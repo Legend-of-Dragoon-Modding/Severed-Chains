@@ -37,7 +37,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.sssqResetStuff;
+import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.clearBlue_800babc0;

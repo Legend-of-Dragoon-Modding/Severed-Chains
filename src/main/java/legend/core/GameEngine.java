@@ -63,7 +63,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
-import static legend.game.Audio.startSound;
+import static legend.game.sound.Audio.startSound;
 import static legend.game.SItem.UI_WHITE;
 import static legend.game.SItem.albertXpTable_801138c0;
 import static legend.game.SItem.dartXpTable_801135e4;

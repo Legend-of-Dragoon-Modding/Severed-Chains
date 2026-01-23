@@ -77,17 +77,17 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Audio.copyPlayingSounds;
-import static legend.game.Audio.loadedAudioFiles_800bcf78;
-import static legend.game.Audio.musicPackageLoadedCallback;
-import static legend.game.Audio.playMenuSound;
-import static legend.game.Audio.playMusicPackage;
-import static legend.game.Audio.playingSoundsBackup_800bca78;
-import static legend.game.Audio.queuedSounds_800bd110;
-import static legend.game.Audio.sssqResetStuff;
-import static legend.game.Audio.stopAndResetSoundsAndSequences;
-import static legend.game.Audio.stopMusicSequence;
-import static legend.game.Audio.unloadSoundFile;
+import static legend.game.sound.Audio.copyPlayingSounds;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.musicPackageLoadedCallback;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMusicPackage;
+import static legend.game.sound.Audio.playingSoundsBackup_800bca78;
+import static legend.game.sound.Audio.queuedSounds_800bd110;
+import static legend.game.sound.Audio.sssqResetStuff;
+import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.sound.Audio.stopMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
@@ -1067,7 +1067,7 @@ public final class SItem {
       if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
         sssqResetStuff();
         unloadSoundFile(8);
-        loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
+        loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
         loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850, true));
       }
     } else {

@@ -25,7 +25,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
