@@ -18,7 +18,7 @@ import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.FUN_801034cc;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.addHp;
 import static legend.game.SItem.addMp;
 import static legend.game.SItem.allocateUiElement;
@@ -97,7 +97,7 @@ public class EquipmentScreen extends MenuScreen {
 
         if(this.itemHighlight == null) {
           this.itemHighlight = allocateUiElement(0x79, 0x79, this.FUN_800fc824(1), 0);
-          FUN_80104b60(this.itemHighlight);
+          initHighlight(this.itemHighlight);
         }
 
         this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);

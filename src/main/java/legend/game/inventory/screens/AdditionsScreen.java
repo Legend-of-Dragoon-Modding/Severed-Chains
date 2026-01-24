@@ -20,7 +20,7 @@ import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.SItem.FUN_801034cc;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_SELECTED;
 import static legend.game.SItem.additionGlyphs_801141e4;
@@ -82,7 +82,7 @@ public class AdditionsScreen extends MenuScreen {
 
         if(!this.additions.isEmpty()) {
           this.additionHighlight = allocateUiElement(117, 117, 39, this.getAdditionSlotY(this.selectedSlot) - 4);
-          FUN_80104b60(this.additionHighlight);
+          initHighlight(this.additionHighlight);
         }
 
         allocateUiElement(69, 69, 0, 0); // Background left

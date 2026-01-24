@@ -443,12 +443,15 @@ public final class SBtld {
 
   @Method(0x80109250L)
   public static void loadAdditions() {
+    battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38.clear();
+
     //LAB_801092a0
     for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88.get(charSlot);
+      final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
       final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
 
       if(charData.selectedAddition_19 == null) {
+        battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38.add(null);
         continue;
       }
 
@@ -463,7 +466,7 @@ public final class SBtld {
 
       //LAB_80109310
       //LAB_80109320
-      battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38[charSlot] = additionHits_8010e658[activeDragoonAdditionIndex];
+      battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38.add(additionHits_8010e658[activeDragoonAdditionIndex]);
 
       //LAB_80109340
     }

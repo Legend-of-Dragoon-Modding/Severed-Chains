@@ -181,6 +181,8 @@
          </GridPane.margin>
          <children>
             <Button fx:id="setParty" onAction="#setParty" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+            <Button fx:id="addParty" onAction="#addParty" prefHeight="25.0" prefWidth="999999.0" text="Add" />
+            <Button fx:id="removeParty" onAction="#removeParty" prefHeight="25.0" prefWidth="999999.0" text="Rem" />
          </children>
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">

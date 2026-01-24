@@ -25,7 +25,7 @@ import static legend.game.Menus.downArrow_800bdb98;
 import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.glyph_801142d4;
@@ -97,7 +97,7 @@ public class UseItemScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(useItemGlyphs_801141fc, 0, 0);
         this.itemHighlight = allocateUiElement(0x77, 0x77, 42, this.getItemSlotY(this.selectedSlot));
-        FUN_80104b60(this.itemHighlight);
+        initHighlight(this.itemHighlight);
         this.itemCount = this.getUsableItemsInMenu();
         if(this.slotScroll > this.itemCount - 5) {
           this.slotScroll = Math.max(0, this.itemCount - 5);
@@ -399,11 +399,11 @@ public class UseItemScreen extends MenuScreen {
     if(this.itemTargetAll) {
       for(int i = 0; i < 7; i++) {
         this._8011d718[i] = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(i) - 3, 110);
-        FUN_80104b60(this._8011d718[i]);
+        initHighlight(this._8011d718[i]);
       }
     } else {
       this.charHighlight = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(this.charSlot) - 3, 110);
-      FUN_80104b60(this.charHighlight);
+      initHighlight(this.charHighlight);
     }
 
     playMenuSound(2);

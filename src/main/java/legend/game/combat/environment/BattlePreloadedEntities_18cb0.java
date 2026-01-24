@@ -9,6 +9,9 @@ import legend.game.additions.CharacterAdditionStats;
 import legend.game.types.CharacterData2c;
 import legend.game.types.McqHeader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -17,7 +20,7 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_DRAGOON;
 /** 0x18cb0 bytes */
 public class BattlePreloadedEntities_18cb0 {
 //  public EncounterData38 encounterData_00;
-  public final AdditionHits80[] dragoonAdditionHits_38 = new AdditionHits80[3];
+  public final List<AdditionHits80> dragoonAdditionHits_38 = new ArrayList<>();
   /** This reference is only valid while it's loading */
 //  public MrgFile stageMrg_638;
 //  public MrgFile stageTmdMrg_63c;
@@ -28,8 +31,8 @@ public class BattlePreloadedEntities_18cb0 {
   public final MV skyboxTransforms = new MV();
 
   public AdditionHitProperties10 getHit(final int charSlot, final int hitNum) {
-    if(battleState_8006e398.playerBents_e40[charSlot].hasFlag(FLAG_DRAGOON)) { // Is dragoon
-      return this.dragoonAdditionHits_38[charSlot].hits_00[hitNum];
+    if(battleState_8006e398.playerBents_e40.get(charSlot).hasFlag(FLAG_DRAGOON)) { // Is dragoon
+      return this.dragoonAdditionHits_38.get(charSlot).hits_00[hitNum];
     }
 
     //LAB_800c74fc
@@ -39,8 +42,8 @@ public class BattlePreloadedEntities_18cb0 {
   }
 
   public int getHitCount(final int charSlot) {
-    if(battleState_8006e398.playerBents_e40[charSlot].hasFlag(FLAG_DRAGOON)) { // Is dragoon
-      return this.dragoonAdditionHits_38[charSlot].hits_00.length;
+    if(battleState_8006e398.playerBents_e40.get(charSlot).hasFlag(FLAG_DRAGOON)) { // Is dragoon
+      return this.dragoonAdditionHits_38.get(charSlot).hits_00.length;
     }
 
     //LAB_800c74fc

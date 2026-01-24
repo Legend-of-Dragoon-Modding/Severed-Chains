@@ -598,14 +598,12 @@ public final class Audio {
 
         //LAB_8001e324
         if(battleState_8006e398 != null) {
-          for(int charSlot = 0; charSlot < battleState_8006e398.playerBents_e40.length; charSlot++) {
-            if(battleState_8006e398.playerBents_e40[charSlot] != null) {
-              final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
+          for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
+            final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
 
-              if(bent.soundFile != null) {
-                sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
-                bent.soundFile = null;
-              }
+            if(bent.soundFile != null) {
+              sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
+              bent.soundFile = null;
             }
 
             //LAB_8001e374

@@ -1,5 +1,9 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
@@ -37,7 +41,7 @@ public final class Scus94491BpeSegment_800b {
   public static final List<ItemStack> itemOverflow = new ArrayList<>();
   public static final List<Equipment> equipmentOverflow = new ArrayList<>();
   public static boolean battleLoaded_800bc94c;
-  public static final int[] spGained_800bc950 = new int[3];
+  public static final Int2IntMap spGained_800bc950 = new Int2IntOpenHashMap();
   public static int totalXpFromCombat_800bc95c;
   /**
    * <ul>
@@ -56,7 +60,7 @@ public final class Scus94491BpeSegment_800b {
   public static int battleFlags_800bc960;
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
-  public static int[] livingCharIds_800bc968 = new int[3];
+  public static final IntList livingCharIds_800bc968 = new IntArrayList();
   /**
    * <ol>
    *   <li value="1">Combat victory</li>
@@ -65,8 +69,6 @@ public final class Scus94491BpeSegment_800b {
    * </ol>
    */
   public static int postBattleAction_800bc974;
-
-  public static int livingCharCount_800bc97c;
 
   public static boolean _800bd7ac;
   public static int _800bd7b0;

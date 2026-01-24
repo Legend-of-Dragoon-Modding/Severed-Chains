@@ -247,7 +247,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
-import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
@@ -369,7 +368,7 @@ public class Battle extends EngineState<Battle> {
    *   <li>{@link #waitForFilesToLoad}</li>
    *   <li>{@link #loadHudAndAttackAnimations}</li>
    *   <li>{@link #waitForFilesToLoad}</li>
-   *   <li>{@link #FUN_800c79f0}</li>
+   *   <li>{@link #battleStart}</li>
    *   <li>{@link #waitForFilesToLoad}</li>
    *   <li>{@link #loadSEffe}</li>
    *   <li>{@link #waitForFilesToLoad}</li>
@@ -400,7 +399,7 @@ public class Battle extends EngineState<Battle> {
     this::waitForFilesToLoad,
     this::loadHudAndAttackAnimations,
     this::waitForFilesToLoad,
-    this::FUN_800c79f0,
+    this::battleStart,
     this::waitForFilesToLoad,
     this::loadSEffe,
     this::waitForFilesToLoad,
@@ -481,10 +480,7 @@ public class Battle extends EngineState<Battle> {
   public static BattleStageDarkening1800 stageDarkening_800c6958;
   public static int stageDarkeningClutWidth_800c695c;
 
-  public final DragoonSpells09[] dragoonSpells_800c6960 = new DragoonSpells09[3];
-  {
-    Arrays.setAll(this.dragoonSpells_800c6960, i -> new DragoonSpells09());
-  }
+  public final List<DragoonSpells09> dragoonSpells_800c6960 = new ArrayList<>();
 
   public final String[] currentEnemyNames_800c69d0 = new String[9];
 
@@ -519,7 +515,7 @@ public class Battle extends EngineState<Battle> {
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {FIRE_ELEMENT, WIND_ELEMENT, LIGHT_ELEMENT, DARK_ELEMENT, THUNDER_ELEMENT, WIND_ELEMENT, WATER_ELEMENT, EARTH_ELEMENT, LIGHT_ELEMENT};
 
   /** Different sets of bents for different target types (chars, monsters, all) */
-  public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
+  public List<? extends ScriptState<? extends BattleEntity27c>>[] targetBents_800c71f0;
 
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
   public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
@@ -1167,7 +1163,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "present", description = "True if present, false otherwise")
   private FlowControl scriptHasStatMod(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c.get(script.params_20[1].get()).innerStruct_00;
     final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
 
     script.params_20[3].set(bent.stats.getStat(statType).hasMod(id) ? 1 : 0);
@@ -1182,7 +1178,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "statModParams", description = "The implementation-specific configuration for the stat mod type")
   private FlowControl scriptAddStatMod(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c.get(script.params_20[1].get()).innerStruct_00;
     final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
     final StatModType statModType = REGISTRIES.statModTypes.getEntry(script.params_20[3].getRegistryId()).get();
     final Param params = script.params_20[4];
@@ -1199,7 +1195,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "statType", description = "The stat type to mod")
   private FlowControl scriptRemoveStatMod(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c.get(script.params_20[1].get()).innerStruct_00;
     final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
 
     bent.stats.getStat(statType).removeMod(id);
@@ -1213,7 +1209,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "statModType", description = "The stat mod type")
   private FlowControl scriptGetStatModType(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c.get(script.params_20[1].get()).innerStruct_00;
     final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
 
     script.params_20[3].set(bent.stats.getStat(statType).getMod(id).getType().getRegistryId());
@@ -1227,7 +1223,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "statModParams", description = "The implementation-specific configuration for the stat mod type")
   private FlowControl scriptUpdateStatModParams(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c.get(script.params_20[1].get()).innerStruct_00;
     final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
     final Param params = script.params_20[3];
 
@@ -1249,7 +1245,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT_ARRAY, name = "statModParams", description = "The implementation-specific configuration for the stat mod type")
   private FlowControl scriptGetStatModParams(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final BattleEntity27c bent = battleState_8006e398.allBents_e0c[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.allBents_e0c.get(script.params_20[1].get()).innerStruct_00;
     final StatType statType = REGISTRIES.statTypes.getEntry(script.params_20[2].getRegistryId()).get();
     final Param params = script.params_20[3];
 
@@ -1942,10 +1938,6 @@ public class Battle extends EngineState<Battle> {
     gameState_800babc8.battleCount_b4++;
     goldGainedFromCombat_800bc920 = 0;
 
-    spGained_800bc950[0] = 0;
-    spGained_800bc950[1] = 0;
-    spGained_800bc950[2] = 0;
-
     totalXpFromCombat_800bc95c = 0;
     battleFlags_800bc960 = 0;
     postBattleAction_800bc974 = 0;
@@ -2045,13 +2037,7 @@ public class Battle extends EngineState<Battle> {
     battleState_8006e398.clear();
 
     loadAdditions();
-
-    //LAB_800c7830
-    for(int i = 0; i < 12; i++) {
-      battleState_8006e398.allBents_e0c[i] = null;
-    }
-
-    this.initBattleMenu();
+    this.initVars();
     this.allocateDeffManager();
 
     this.loadingStage++;
@@ -2115,24 +2101,36 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_800fbe4c
     //LAB_800fbe70
+    int scriptSlot = 6;
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
+      while(SCRIPTS.getState(scriptSlot) != null) {
+        scriptSlot++;
+      }
+
       final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
-      final PlayerBattleEntity bent = new PlayerBattleEntity(this, getCharacterName(charId), charSlot + 6, this.playerBattleScript_800c66fc);
-      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, bent.getName() + " (bent " + (charSlot + 6) + ')', bent);
+      final String name = getCharacterName(charId);
+
+      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, scriptSlot, this.playerBattleScript_800c66fc);
+      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
       bent.element = characterElements_800c706c[charId].get();
       bent.combatant_144 = this.getCombatant((short)combatantIndices[charSlot]);
       bent.charId_272 = charId;
       bent.combatantIndex_26c = combatantIndices[charSlot];
-      bent.model_148.coord2_14.coord.transfer.x = charCount > 2 && charSlot == 0 ? 0x900 : 0xa00;
+
+      final int offset = ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1);
+      final float theta = MathHelper.PI / 8.0f * offset;
+      final float sin = MathHelper.sin(theta);
+      final float cos = MathHelper.cosFromSin(sin, theta);
+
+      bent.model_148.coord2_14.coord.transfer.x = 0x800 - 0x300 * cos;
+      bent.model_148.coord2_14.coord.transfer.z = 0xd00 * (float)java.lang.Math.pow(Math.abs(sin), 1.3) * Math.signum(sin) + (charCount % 2 - 1) * 0x400;
       bent.model_148.coord2_14.coord.transfer.y = 0.0f;
-      // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
-      bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount % 2 - 1) * 0x400;
       bent.model_148.coord2_14.transforms.rotate.zero();
       battleState_8006e398.addPlayer(state);
 
-      loadDir("characters/%s/sounds/combat".formatted(bent.getName().toLowerCase()), files -> {
+      loadDir("characters/%s/sounds/combat".formatted(name.toLowerCase()), files -> {
         this.charSoundEffectsLoaded(files, bent);
 
         if(remaining.decrementAndGet() == 0) {
@@ -2161,7 +2159,7 @@ public class Battle extends EngineState<Battle> {
     LOGGER.info(BATTLE, "Combatants:");
 
     for(int i = 0; i < battleState_8006e398.getAllBentCount(); i++) {
-      final ScriptState<? extends BattleEntity27c> bent = battleState_8006e398.allBents_e0c[i];
+      final ScriptState<? extends BattleEntity27c> bent = battleState_8006e398.allBents_e0c.get(i);
       LOGGER.info(BATTLE, " - %s (%s)", bent.innerStruct_00.getName(), bent.name);
     }
 
@@ -2191,7 +2189,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      battleState_8006e398.playerBents_e40[i].innerStruct_00.combatant_144.flags_19e |= 0x2a;
+      battleState_8006e398.playerBents_e40.get(i).innerStruct_00.combatant_144.flags_19e |= 0x2a;
     }
 
     //LAB_800fc104
@@ -2206,7 +2204,7 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800fc210L)
   public void loadCharTmdAndAnims(final List<FileData> files, final int charSlot) {
     //LAB_800fc260
-    final BattleEntity27c data = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
+    final BattleEntity27c data = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
 
     //LAB_800fc298
     this.combatantTmdAndAnimLoadedCallback(files, data.combatant_144, false);
@@ -2247,7 +2245,7 @@ public class Battle extends EngineState<Battle> {
   /** Pulled from S_ITEM */
   @Method(0x800fc548L)
   public void loadCharacterTim(final FileData file, final int charSlot) {
-    final BattleEntity27c bent = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
+    final BattleEntity27c bent = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
     this.loadCombatantTim(bent.combatant_144, file);
   }
 
@@ -2279,9 +2277,10 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x800c79f0L)
-  public void FUN_800c79f0() {
-    this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
-    this.hud.FUN_800f417c();
+  public void battleStart() {
+    this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c.getFirst();
+    this.hud.clear();
+    this.hud.initCharacterDisplay();
 
     EVENTS.postEvent(new BattleStartedEvent(this, encounter));
 
@@ -2374,7 +2373,7 @@ public class Battle extends EngineState<Battle> {
   public boolean FUN_800c7da8() {
     //LAB_800c7dd8
     for(int i = 0; i < battleState_8006e398.getAllBentCount(); i++) {
-      if(battleState_8006e398.allBents_e0c[i].hasAnyFlag(FLAG_400 | FLAG_CURRENT_TURN)) {
+      if(battleState_8006e398.allBents_e0c.get(i).hasAnyFlag(FLAG_400 | FLAG_CURRENT_TURN)) {
         return false;
       }
 
@@ -2399,18 +2398,18 @@ public class Battle extends EngineState<Battle> {
 
       //LAB_800c80c8
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
-      livingCharCount_800bc97c = aliveCharBents;
 
       //LAB_800c8104
+      livingCharIds_800bc968.clear();
       for(int i = 0; i < aliveCharBents; i++) {
-        livingCharIds_800bc968[i] = battleState_8006e398.alivePlayerBents_eac[i].innerStruct_00.charId_272;
+        livingCharIds_800bc968.add(battleState_8006e398.alivePlayerBents_eac.get(i).innerStruct_00.charId_272);
       }
 
       //LAB_800c8144
       if(postBattleAction == 1) {
         //LAB_800c8180
         for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-          battleState_8006e398.playerBents_e40[i].setFlag(FLAG_CURRENT_TURN);
+          battleState_8006e398.playerBents_e40.get(i).setFlag(FLAG_CURRENT_TURN);
         }
       }
     }
@@ -2577,7 +2576,10 @@ public class Battle extends EngineState<Battle> {
   public void FUN_800c8624() {
     battlePreloadedEntities_1f8003f4 = new BattlePreloadedEntities_18cb0();
     battleState_8006e398 = new BattleStateEf4();
-    this.targetBents_800c71f0 = new ScriptState[][] {battleState_8006e398.playerBents_e40, battleState_8006e398.aliveMonsterBents_ebc, battleState_8006e398.aliveBents_e78};
+    this.targetBents_800c71f0 = new List[3];
+    this.targetBents_800c71f0[0] = battleState_8006e398.playerBents_e40;
+    this.targetBents_800c71f0[1] = battleState_8006e398.aliveMonsterBents_ebc;
+    this.targetBents_800c71f0[2] = battleState_8006e398.aliveBents_e78;
   }
 
   @Method(0x800c8748L)
@@ -2897,7 +2899,7 @@ public class Battle extends EngineState<Battle> {
           } else {
             // Player TMDs
             //LAB_800c9334
-            int charId = gameState_800babc8.charIds_88.get(combatant.charSlot_19c);
+            int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
@@ -3005,7 +3007,7 @@ public class Battle extends EngineState<Battle> {
       } else {
         //LAB_800c97a4
         final int isDragoon = combatant.charIndex_1a2 & 0x1;
-        final int charId = gameState_800babc8.charIds_88.get(combatant.charSlot_19c);
+        final int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
@@ -3300,7 +3302,7 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800ca55cL)
   public void loadCombatantTextures(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
-      int fileIndex = gameState_800babc8.charIds_88.get(combatant.charSlot_19c);
+      int fileIndex = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
         if(fileIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
@@ -8284,10 +8286,8 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x800ee610L)
-  public void initBattleMenu() {
+  public void initVars() {
     this.countCombatUiFilesLoaded_800c6cf4 = 0;
-
-    this.hud.clear();
 
     this.monsterCount_800c6b9c = 0;
 
@@ -8306,9 +8306,7 @@ public class Battle extends EngineState<Battle> {
     this.dragoonSpaceElement_800c6b64 = null;
 
     //LAB_800ee894
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      spGained_800bc950[charSlot] = 0;
-    }
+    spGained_800bc950.clear();
 
     sortItems();
   }
@@ -8351,7 +8349,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_800eebb4
     //LAB_800eebd8
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
-      final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
+      final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
       final CharacterData2c charData = gameState_800babc8.charData_32c[bent.charId_272];
 
       //LAB_800eec10
@@ -8389,25 +8387,14 @@ public class Battle extends EngineState<Battle> {
     characterStatsLoaded_800be5d0 = true;
 
     //LAB_800ef31c
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      this.dragoonSpells_800c6960[charSlot].charId_00 = -1;
-
-      //LAB_800ef328
-      for(int spellSlot = 0; spellSlot < 8; spellSlot++) {
-        this.dragoonSpells_800c6960[charSlot].spellIndex_01[spellSlot] = -1;
-      }
-    }
-
     //LAB_800ef36c
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
-      final PlayerBattleEntity player = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
-      final int[] spellIndices = new int[8];
-      getUnlockedDragoonSpells(spellIndices, player.charId_272);
-      this.dragoonSpells_800c6960[charSlot].charId_00 = player.charId_272;
+      final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
+      final DragoonSpells09 spells = new DragoonSpells09(player.charId_272);
+      this.dragoonSpells_800c6960.add(spells);
 
-      //LAB_800ef3d8
-      System.arraycopy(spellIndices, 0, this.dragoonSpells_800c6960[charSlot].spellIndex_01, 0, 8);
+      getUnlockedDragoonSpells(spells.spellIndices_01, player.charId_272);
 
       //LAB_800ef400
       final VitalsStat playerHp = player.stats.getStat(HP_STAT.get());
@@ -8425,7 +8412,7 @@ public class Battle extends EngineState<Battle> {
       playerMp.setMaxRaw(stats.maxMp_6e);
       player.status_0e = stats.flags_0c;
       player.specialEffectFlag_14 = stats.specialEffectFlag_76;
-      //      player.equipmentType_16 = stats.equipmentType_77;
+//      player.equipmentType_16 = stats.equipmentType_77;
       player.equipment_02_18 = stats.equipment_02_78;
       player.equipmentEquipableFlags_1a = stats.equipmentEquipableFlags_79;
       player.equipmentAttackElements_1c.set(stats.equipmentAttackElements_7a);
@@ -8587,11 +8574,11 @@ public class Battle extends EngineState<Battle> {
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
         if(attacker instanceof PlayerBattleEntity) {
           for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-            targets.add(battleState_8006e398.playerBents_e40[i].innerStruct_00);
+            targets.add(battleState_8006e398.playerBents_e40.get(i).innerStruct_00);
           }
         } else {
           for(int i = 0; i < battleState_8006e398.getAliveMonsterCount(); i++) {
-            targets.add(battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00);
+            targets.add(battleState_8006e398.aliveMonsterBents_ebc.get(i).innerStruct_00);
           }
         }
       } else { // Attack single
@@ -8728,7 +8715,7 @@ public class Battle extends EngineState<Battle> {
     final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
-    spGained_800bc950[player.charSlot_276] += script.params_20[1].get();
+    spGained_800bc950.mergeInt(player.charId_272, script.params_20[1].get(), Integer::sum);
 
     //LAB_800f4500
     script.params_20[2].set(sp.getCurrent());
@@ -9169,12 +9156,12 @@ public class Battle extends EngineState<Battle> {
     final int targetType = script.params_20[0].get();
     final int targetBent = script.params_20[1].get();
 
-    final ScriptState<? extends BattleEntity27c>[] bents = battleState_8006e398.getBentsForTargetType(targetType);
+    final List<? extends ScriptState<? extends BattleEntity27c>> bents = battleState_8006e398.getBentsForTargetType(targetType);
 
     //LAB_800f9abc
     //LAB_800f9adc
-    for(int i = 0; i < bents.length; i++) {
-      if(bents[i] != null && targetBent == bents[i].index) {
+    for(int i = 0; i < bents.size(); i++) {
+      if(bents.get(i) != null && targetBent == bents.get(i).index) {
         if(targetType == 0) {
           this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = i;
         } else if(targetType == 1) {

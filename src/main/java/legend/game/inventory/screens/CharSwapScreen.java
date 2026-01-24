@@ -17,7 +17,7 @@ import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.charSwapGlyphs_80114160;
 import static legend.game.SItem.glyph_801142d4;
@@ -143,7 +143,7 @@ public class CharSwapScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(charSwapGlyphs_80114160, 0, 0);
         this.primaryCharHighlight = allocateUiElement(0x7f, 0x7f, 16, this.getSlotY(this.primaryCharIndex));
-        FUN_80104b60(this.primaryCharHighlight);
+        initHighlight(this.primaryCharHighlight);
         this.renderCharacterSwapScreen(0xff);
         this.loadingStage++;
       }
@@ -310,7 +310,7 @@ public class CharSwapScreen extends MenuScreen {
     if(this.primaryCharIndex >= gameState_800babc8.charIds_88.size() || CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(this.primaryCharIndex)].partyFlags_04 & CANT_REMOVE) == 0) {
       playMenuSound(2);
       this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
-      FUN_80104b60(this.secondaryCharHighlight);
+      initHighlight(this.secondaryCharHighlight);
       this.loadingStage = 3;
     } else {
       playMenuSound(40);

@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 
@@ -40,6 +42,11 @@ public class StatusScreen extends MenuScreen {
   private final Runnable unload;
 
   public StatusScreen(final Runnable unload) {
+    this.unload = unload;
+  }
+
+  public StatusScreen(final int charSlot, final Runnable unload) {
+    this.charSlot = charSlot;
     this.unload = unload;
   }
 
@@ -96,7 +103,7 @@ public class StatusScreen extends MenuScreen {
     }
   }
 
-  private void renderStatusMenu(final int charSlot, final long a1) {
+  private void renderStatusMenu(final int charSlot, final int a1) {
     renderCharacterStats(characterIndices_800bdbb8[charSlot], null, a1 == 0xff);
     renderCharacterSlot(16, 21, characterIndices_800bdbb8[charSlot], a1 == 0xff, false);
     renderCharacterEquipment(characterIndices_800bdbb8[charSlot], a1 == 0xff);
@@ -113,23 +120,21 @@ public class StatusScreen extends MenuScreen {
     }
 
     if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
-      final int[] spellIndices = new int[8];
+      final IntList spellIndices = new IntArrayList();
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
-      for(int i = 0; i < 4; i++) {
+      for(int i = 0; i < spellIndices.size(); i++) {
         if(allocate && i < unlockedSpellCount) {
           renderCharacter(200, 127 + i * 14, i + 1);
         }
 
         //LAB_80109370
-        final int spellIndex = spellIndices[i];
-        if(spellIndex != -1) {
-          renderText(I18n.translate(spellStats_800fa0b8[spellIndex]), 210, 125 + i * 14, UI_TEXT);
+        final int spellIndex = spellIndices.getInt(i);
+        renderText(I18n.translate(spellStats_800fa0b8[spellIndex]), 210, 125 + i * 14, UI_TEXT);
 
-          if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
-          }
+        if(allocate) {
+          renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
         }
       }
     }

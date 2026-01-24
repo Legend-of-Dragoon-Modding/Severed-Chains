@@ -1,5 +1,6 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
@@ -482,42 +483,37 @@ public final class SItem {
   }
 
   @Method(0x80022928L)
-  public static int getUnlockedDragoonSpells(final int[] spellIndicesOut, final int charIndex) {
+  public static void getUnlockedDragoonSpells(final IntList spellIndices, final int charIndex) {
     //LAB_80022940
-    for(int spellIndex = 0; spellIndex < 8; spellIndex++) {
-      spellIndicesOut[spellIndex] = -1;
-    }
+    spellIndices.clear();
 
     if(charIndex == -1) {
       //LAB_80022a08
-      return 0;
+      return;
     }
 
     // Hardcoded Divine Dragoon spells
     if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      spellIndicesOut[0] = 9;
-      spellIndicesOut[1] = 4;
-      return 2;
+      spellIndices.add(9);
+      spellIndices.add(4);
+      return;
     }
 
     //LAB_80022994
     //LAB_80022998
     //LAB_800229d0
-    int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
       final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
       final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
-        spellIndicesOut[spellCount] = spellIndex;
-        spellCount++;
+        spellIndices.add(spellIndex);
       }
 
       //LAB_800229e8
     }
 
     //LAB_80022a00
-    return spellCount;
   }
 
   @Method(0x80022a10L)
@@ -1436,11 +1432,11 @@ public final class SItem {
   }
 
   @Method(0x80104b60L)
-  public static void FUN_80104b60(final Renderable58 a0) {
-    a0.deallocationGroup_28 = 0x1;
-    a0.widthScale = 0;
-    a0.heightScale_38 = 0;
-    a0.z_3c = 35;
+  public static void initHighlight(final Renderable58 glyph) {
+    glyph.deallocationGroup_28 = 0x1;
+    glyph.widthScale = 0;
+    glyph.heightScale_38 = 0;
+    glyph.z_3c = 35;
   }
 
   @Method(0x80104b7cL)

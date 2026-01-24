@@ -103,11 +103,7 @@ public class GameStateEditorController {
     this.getScriptData.getSelectionModel().select(0);
     this.getScriptData();
 
-    for(int i = 0; i < 3; i++) {
-      this.getParty.getItems().add(i);
-    }
-    this.getParty.getSelectionModel().select(0);
-    this.getParty();
+    this.initParty();
 
     this.textGold.setText(String.valueOf(gameState_800babc8.gold_94));
     this.textChapter.setText(String.valueOf(gameState_800babc8.chapterIndex_98));
@@ -233,8 +229,24 @@ public class GameStateEditorController {
     gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textScriptData.getText(), gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()]);
   }
 
+  private void initParty() {
+    this.getParty.getItems().clear();
+
+    for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+      this.getParty.getItems().add(i);
+    }
+
+    this.getParty.getSelectionModel().select(0);
+    this.getParty();
+  }
+
   @FXML
   public void getParty() {
+    if(this.getParty.getSelectionModel().getSelectedIndex() == -1) {
+      this.textParty.setText("");
+      return;
+    }
+
     this.textParty.setText(String.valueOf(gameState_800babc8.charIds_88.getInt(this.getParty.getSelectionModel().getSelectedIndex())));
   }
 
@@ -242,12 +254,22 @@ public class GameStateEditorController {
   public void setParty() {
     final int charSlot = this.getParty.getSelectionModel().getSelectedIndex();
     final int charId = Integer.parseInt(this.textParty.getText());
+    gameState_800babc8.charIds_88.set(charSlot, charId);
+  }
 
-    if(charSlot < gameState_800babc8.charIds_88.size()) {
-      gameState_800babc8.charIds_88.set(charSlot, charId);
-    } else {
-      gameState_800babc8.charIds_88.add(charId);
-    }
+  @FXML
+  public void addParty() {
+    gameState_800babc8.charIds_88.add(0);
+    this.initParty();
+    this.getParty.getSelectionModel().select(this.getParty.getItems().size() - 1);
+    this.getParty();
+  }
+
+  @FXML
+  public void removeParty() {
+    final int charSlot = this.getParty.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.charIds_88.removeInt(charSlot);
+    this.initParty();
   }
 
   @FXML

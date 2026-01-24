@@ -40,7 +40,7 @@ import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.UI_TEXT_DISABLED;
@@ -168,7 +168,7 @@ public class ShopScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(glyphs_80114510, 0, 0);
         this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
-        FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe0);
+        initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe0);
 
         for(int charSlot = 0; charSlot < characterCount_8011d7c4; charSlot++) {
           this.charRenderables[charSlot] = this.allocateCharRenderable(this.FUN_8010a818(charSlot), 174, characterIndices_800bdbb8[charSlot]);
@@ -629,7 +629,7 @@ public class ShopScreen extends MenuScreen {
         }
 
         this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.invIndex_8011e0e0));
-        FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
+        initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
 
         if(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item instanceof final Equipment equipment) {
           this.equipCharIndex = this.FUN_8010a864(equipment);
@@ -653,7 +653,7 @@ public class ShopScreen extends MenuScreen {
                 this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
                 this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
-                FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
+                initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
                 this.FUN_8010a864(gameState_800babc8.equipment_1e8.getFirst());
               } else {
                 menuStack.pushScreen(new MessageBoxScreen("You have no equipment\nto sell", 0, result1 -> {}));
@@ -670,7 +670,7 @@ public class ShopScreen extends MenuScreen {
                 this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
                 this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
-                FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
+                initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
               } else {
                 menuStack.pushScreen(new MessageBoxScreen("You have no items\nto sell", 0, result1 -> {
                 }));
@@ -785,7 +785,7 @@ public class ShopScreen extends MenuScreen {
       }));
     } else {
       this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
-      FUN_80104b60(this.charHighlight);
+      initHighlight(this.charHighlight);
       this.menuState = MenuState.BUY_SELECT_CHAR_5;
     }
   }

@@ -31,7 +31,7 @@ import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
@@ -99,7 +99,7 @@ public class DabasScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(dabasMenuGlyphs_80114228, 0, 0);
         this.renderable1 = allocateUiElement(0x9f, 0x9f, 60, this.getDabasMenuY(0));
-        FUN_80104b60(this.renderable1);
+        initHighlight(this.renderable1);
         this.renderDabasMenu(0);
 
         this.newDigEnabled = false;

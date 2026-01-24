@@ -564,7 +564,7 @@ public class LodMod {
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40.get(i);
 
       // not dead or petrified
       if(player.hasFlag(BattleEntity27c.FLAG_DEAD) || (player.innerStruct_00.status_0e & 0x1) != 0) {
@@ -573,7 +573,7 @@ public class LodMod {
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40.get(i);
       final int sp = player.innerStruct_00.stats.getStat(SP_STAT.get()).getCurrent();
       final int dlevel = player.innerStruct_00.dlevel_06;
 
@@ -584,13 +584,13 @@ public class LodMod {
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      if(battleState_8006e398.playerBents_e40[i].innerStruct_00.isDragoon()) {
+      if(battleState_8006e398.playerBents_e40.get(i).innerStruct_00.isDragoon()) {
         return false;
       }
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      if(!battleState_8006e398.playerBents_e40[i].innerStruct_00.canBecomeDragoon()) {
+      if(!battleState_8006e398.playerBents_e40.get(i).innerStruct_00.canBecomeDragoon()) {
         return false;
       }
     }

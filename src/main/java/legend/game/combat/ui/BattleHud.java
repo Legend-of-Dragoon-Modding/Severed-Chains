@@ -2,6 +2,8 @@ package legend.game.combat.ui;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -202,21 +204,22 @@ public class BattleHud {
   private final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
   private int countCameraPositionIndicesIndices_800c6ba0;
   private int currentCameraPositionIndicesIndicesIndex_800c6ba1;
-  private final BattleDisplayStats144[] displayStats_800c6c2c = new BattleDisplayStats144[3];
+  private final List<BattleDisplayStats144> displayStats_800c6c2c = new ArrayList<>();
   private final int[] cameraPositionIndicesIndices_800c6c30 = new int[4];
-  private final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
+  private final List<BattleHudCharacterDisplay3c> activePartyBattleHudCharacterDisplays_800c6c40 = new ArrayList<>();
 
   public final Battle battle;
 
   private UiBox battleUiBackground;
   private UiBox battleUiName;
-  private final Obj[] names = new Obj[3];
-  private final Obj[] portraits = new Obj[3];
-  private final Obj[][] stats = new Obj[3][3];
+  private Obj nameAndPortraitObj;
+  private final IntList nameObjIndices = new IntArrayList();
+  private final IntList portraitObjIndices = new IntArrayList();
+  private final List<IntList> statObjIndices = new ArrayList<>();
   private final MV uiTransforms = new MV();
   private final Vector3f colourTemp = new Vector3f();
 
-  private final Obj[] floatingTextType1Digits = new Obj[10];
+  private Obj floatingTextType1Digits;
   private final Obj[] type1FloatingDigits = new Obj[10];
   private final Obj[] type3FloatingDigits = new Obj[10];
   private Obj miss;
@@ -238,8 +241,6 @@ public class BattleHud {
   public BattleHud(final Battle battle) {
     this.battle = battle;
     Arrays.setAll(this.floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
-    Arrays.setAll(this.displayStats_800c6c2c, i -> new BattleDisplayStats144());
-    Arrays.setAll(this.activePartyBattleHudCharacterDisplays_800c6c40, i -> new BattleHudCharacterDisplay3c());
   }
 
   public boolean isFloatingNumberOnScreen() {
@@ -253,7 +254,7 @@ public class BattleHud {
   }
 
   public void clearFullSpFlags(final int charSlot) {
-    this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot].flags_06 &= 0xfff3;
+    this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).flags_06 &= ~0xc;
   }
 
   public void clearFloatingNumber(final int index) {
@@ -267,7 +268,7 @@ public class BattleHud {
     if(combatantIdx != -1) {
       //LAB_800ecb50
       //LAB_800ecb54
-      final BattleEntity27c target = battleState_8006e398.getBentsForTargetType(targetType)[combatantIdx].innerStruct_00;
+      final BattleEntity27c target = battleState_8006e398.getBentsForTargetType(targetType).get(combatantIdx).innerStruct_00;
       final int colour;
       final VitalsStat targetHp = target.stats.getStat(LodMod.HP_STAT.get());
       if(targetHp.getCurrent() > targetHp.getMax() / 4) {
@@ -280,12 +281,12 @@ public class BattleHud {
       this.drawTargetArrow(colour, target);
     } else {
       //LAB_800ecba4
-      final ScriptState<? extends BattleEntity27c>[] bents = battleState_8006e398.getBentsForTargetType(targetType);
+      final List<? extends ScriptState<? extends BattleEntity27c>> bents = battleState_8006e398.getBentsForTargetType(targetType);
 
       //LAB_800ecc04
       //LAB_800ecc1c
       for(int i = 0; i < battleState_8006e398.getBentCountForTargetType(targetType); i++) {
-        final ScriptState<? extends BattleEntity27c> targetBent = bents[i];
+        final ScriptState<? extends BattleEntity27c> targetBent = bents.get(i);
         final BattleEntity27c target = targetBent.innerStruct_00;
 
         final int colour;
@@ -352,8 +353,10 @@ public class BattleHud {
     this.battleHudYOffsetIndex_800c6c38 = 1;
 
     //LAB_800ef7d4
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
+    this.activePartyBattleHudCharacterDisplays_800c6c40.clear();
+    for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
+      final BattleHudCharacterDisplay3c charDisplay = new BattleHudCharacterDisplay3c();
+      this.activePartyBattleHudCharacterDisplays_800c6c40.add(charDisplay);
       charDisplay.charIndex_00 = -1;
       charDisplay.flags_06 = 0;
       charDisplay.x_08 = 0;
@@ -361,8 +364,10 @@ public class BattleHud {
     }
 
     //LAB_800ef818
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
+    this.displayStats_800c6c2c.clear();
+    for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
+      final BattleDisplayStats144 displayStats = new BattleDisplayStats144();
+      this.displayStats_800c6c2c.add(displayStats);
 
       //LAB_800ef820
       for(int i = 0; i < displayStats.digits_04.length; i++) {
@@ -398,9 +403,9 @@ public class BattleHud {
 
   @Method(0x800ef8d8L)
   public void initCharacterDisplay(final int charSlot) {
-    final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
+    final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
     charDisplay.charIndex_00 = charSlot;
-    charDisplay.charId_02 = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00.charId_272;
+    charDisplay.charId_02 = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00.charId_272;
     charDisplay.flags_06 |= 0x2;
     charDisplay.x_08 = charSlot * 94 + 63;
     charDisplay.y_0a = 38;
@@ -410,7 +415,7 @@ public class BattleHud {
       charDisplay._14[i] = 0;
     }
 
-    final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
+    final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
     displayStats.x_00 = charDisplay.x_08;
     displayStats.y_02 = charDisplay.y_0a;
   }
@@ -426,7 +431,7 @@ public class BattleHud {
       int processedBents = 0;
 
       for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
-        this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78[bentIndex]));
+        this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78.get(bentIndex)));
       }
 
       while(!this.turns.isEmpty() && processedBents < 6) {
@@ -458,7 +463,7 @@ public class BattleHud {
       simpleRandSeed_8004dd44 = oldSeed;
 
       for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
-        final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[bentIndex];
+        final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78.get(bentIndex);
 
         if(state.hasAnyFlag(FLAG_400 | FLAG_CURRENT_TURN)) {
           this.sortedBents.addFirst(state.innerStruct_00.getName());
@@ -488,7 +493,7 @@ public class BattleHud {
 
       //LAB_800efa34
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        if(this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot].charIndex_00 == -1 && characterStatsLoaded_800be5d0) {
+        if(this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).charIndex_00 == -1 && characterStatsLoaded_800be5d0) {
           this.initCharacterDisplay(charSlot);
         }
         //LAB_800efa64
@@ -498,10 +503,10 @@ public class BattleHud {
       //LAB_800efa94
       //LAB_800efaac
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
+        final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
 
         if(charDisplay.charIndex_00 != -1 && (charDisplay.flags_06 & 0x1) != 0 && (charDisplay.flags_06 & 0x2) != 0) {
-          final PlayerBattleEntity player = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
+          final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
 
           final VitalsStat playerHp = player.stats.getStat(LodMod.HP_STAT.get());
           final VitalsStat playerMp = player.stats.getStat(LodMod.MP_STAT.get());
@@ -551,8 +556,8 @@ public class BattleHud {
       //LAB_800efcac
       //LAB_800efcdc
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
-        final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
+        final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
+        final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
         final int y = battleHudYOffsets_800fb198[this.battleHudYOffsetIndex_800c6c38];
         charDisplay.y_0a = y;
         displayStats.y_02 = y;
@@ -599,7 +604,7 @@ public class BattleHud {
 
       //LAB_800f0ad4
       // Background
-      if(this.activePartyBattleHudCharacterDisplays_800c6c40[0].charIndex_00 != -1 && (this.activePartyBattleHudCharacterDisplays_800c6c40[0].flags_06 & 0x1) != 0) {
+      if(this.activePartyBattleHudCharacterDisplays_800c6c40.getFirst().charIndex_00 != -1 && (this.activePartyBattleHudCharacterDisplays_800c6c40.getFirst().flags_06 & 0x1) != 0) {
         if(this.battleUiBackground == null) {
           this.battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198[this.battleHudYOffsetIndex_800c6c38] - 26, 288, 40);
         }
@@ -607,14 +612,63 @@ public class BattleHud {
         this.battleUiBackground.render(CONFIG.getConfig(UI_COLOUR.get()));
       }
 
+      if(this.nameAndPortraitObj == null) {
+        this.nameObjIndices.clear();
+        this.portraitObjIndices.clear();
+        this.statObjIndices.clear();
+
+        final QuadBuilder builder = new QuadBuilder("Names/Portraits");
+
+        for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
+          final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
+          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
+
+          this.nameObjIndices.add(builder.currentQuadIndex() * 4);
+
+          this.buildUiTextureElement(
+            builder,
+            namePortraitMetrics.nameU_00, namePortraitMetrics.nameV_01,
+            namePortraitMetrics.nameW_02, namePortraitMetrics.nameH_03,
+            0x2c
+          );
+
+          this.portraitObjIndices.add(builder.currentQuadIndex() * 4);
+
+          this.buildUiTextureElement(
+            builder,
+            namePortraitMetrics.portraitU_04, namePortraitMetrics.portraitV_05,
+            namePortraitMetrics.portraitW_06, namePortraitMetrics.portraitH_07,
+            namePortraitMetrics.portraitClutOffset_08
+          );
+
+          final IntList statObjIndices = new IntArrayList();
+          this.statObjIndices.add(statObjIndices);
+
+          for(int i = 0; i < 3; i++) {
+            final BattleHudStatLabelMetrics0c labelMetrics = battleHudStatLabelMetrics_800c6ecc[i];
+
+            statObjIndices.add(builder.currentQuadIndex() * 4);
+
+            this.buildUiTextureElement(
+              builder,
+              labelMetrics.u_04, labelMetrics.v_06,
+              labelMetrics.w_08, labelMetrics.h_0a,
+              0x2c
+            );
+          }
+        }
+
+        this.nameAndPortraitObj = builder.build();
+      }
+
       //LAB_800f0000
       //LAB_800f0074
       for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
-        final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
-        final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
+        final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
+        final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
 
         if(charDisplay.charIndex_00 != -1 && (charDisplay.flags_06 & 0x1) != 0 && (charDisplay.flags_06 & 0x2) != 0) {
-          final ScriptState<PlayerBattleEntity> state = battleState_8006e398.playerBents_e40[charSlot];
+          final ScriptState<PlayerBattleEntity> state = battleState_8006e398.playerBents_e40.get(charSlot);
           final PlayerBattleEntity player = state.innerStruct_00;
           final int brightnessIndex0;
           final int brightnessIndex1;
@@ -646,7 +700,8 @@ public class BattleHud {
 
               // Numbers
               this.uiTransforms.transfer.set(displayStats.x_00 + digit.x_02, displayStats.y_02 + digit.y_04, 124.0f);
-              final QueuedModelStandard digitModel = RENDERER.queueOrthoModel(this.floatingTextType1Digits[digit.digitValue_00], this.uiTransforms, QueuedModelStandard.class);
+              final QueuedModelStandard digitModel = RENDERER.queueOrthoModel(this.floatingTextType1Digits, this.uiTransforms, QueuedModelStandard.class)
+                .vertices(digit.digitValue_00 * 4, 4);
 
               if(charDisplay._14[2] < 6) {
                 digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f, this.colourTemp);
@@ -663,30 +718,14 @@ public class BattleHud {
           final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
 
           // Names
-          if(this.names[charSlot] == null) {
-            this.names[charSlot] = this.buildUiTextureElement(
-              "Name " + charSlot,
-              namePortraitMetrics.nameU_00, namePortraitMetrics.nameV_01,
-              namePortraitMetrics.nameW_02, namePortraitMetrics.nameH_03,
-              0x2c
-            );
-          }
-
           this.uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
-          final QueuedModelStandard nameModel = RENDERER.queueOrthoModel(this.names[charSlot], this.uiTransforms, QueuedModelStandard.class);
+          final QueuedModelStandard nameModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
+            .vertices(this.nameObjIndices.getInt(charSlot), 4);
 
           // Portraits
-          if(this.portraits[charSlot] == null) {
-            this.portraits[charSlot] = this.buildUiTextureElement(
-              "Portrait " + charSlot,
-              namePortraitMetrics.portraitU_04, namePortraitMetrics.portraitV_05,
-              namePortraitMetrics.portraitW_06, namePortraitMetrics.portraitH_07,
-              namePortraitMetrics.portraitClutOffset_08
-            );
-          }
-
           this.uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
-          final QueuedModelStandard portraitModel = RENDERER.queueOrthoModel(this.portraits[charSlot], this.uiTransforms, QueuedModelStandard.class);
+          final QueuedModelStandard portraitModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
+            .vertices(this.portraitObjIndices.getInt(charSlot), 4);
 
           if(charDisplay._14[2] < 6) {
             nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
@@ -755,28 +794,19 @@ public class BattleHud {
           final boolean canTransform = (player.status_0e & 0x2000) != 0;
 
           //LAB_800f05f4
-          int eraseSpHeight = 0;
           for(int i = 0; i < 3; i++) {
-            if(i == 2 && !canTransform) {
-              eraseSpHeight = -10;
-            }
-
             //LAB_800f060c
             final BattleHudStatLabelMetrics0c labelMetrics = battleHudStatLabelMetrics_800c6ecc[i];
 
             // HP: /  MP: /  SP:
             //LAB_800f0610
-            if(this.stats[charSlot][i] == null) {
-              this.stats[charSlot][i] = this.buildUiTextureElement(
-                "Stats " + charSlot + ' ' + i,
-                labelMetrics.u_04, labelMetrics.v_06,
-                labelMetrics.w_08, labelMetrics.h_0a + eraseSpHeight,
-                0x2c
-              );
-            }
-
             this.uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
-            final QueuedModelStandard statsModel = RENDERER.queueOrthoModel(this.stats[charSlot][i], this.uiTransforms, QueuedModelStandard.class);
+            final QueuedModelStandard statsModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
+              .vertices(this.statObjIndices.get(charSlot).getInt(i), 4);
+
+            if(i == 2 && !canTransform) {
+              statsModel.scissor((int)this.uiTransforms.transfer.x, (int)this.uiTransforms.transfer.y, 320, 24);
+            }
 
             if(charDisplay._14[2] < 6) {
               statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
@@ -872,7 +902,7 @@ public class BattleHud {
           //LAB_800f0bb0
           if(menu.targetType_50 == 1) {
             //LAB_800f0ca4
-            final MonsterBattleEntity monsterBent = battleState_8006e398.aliveMonsterBents_ebc[targetCombatant].innerStruct_00;
+            final MonsterBattleEntity monsterBent = battleState_8006e398.aliveMonsterBents_ebc.get(targetCombatant).innerStruct_00;
 
             //LAB_800f0cf0
             int enemySlot;
@@ -886,12 +916,12 @@ public class BattleHud {
             str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
             targetBent = monsterBent;
           } else if(menu.targetType_50 == 0) {
-            targetBent = battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00;
+            targetBent = battleState_8006e398.playerBents_e40.get(targetCombatant).innerStruct_00;
             str = playerNames_800fb378[targetBent.charId_272];
           } else {
             //LAB_800f0d58
             //LAB_800f0d5c
-            targetBent = battleState_8006e398.allBents_e0c[targetCombatant].innerStruct_00;
+            targetBent = battleState_8006e398.allBents_e0c.get(targetCombatant).innerStruct_00;
             if(targetBent instanceof final MonsterBattleEntity monsterBent) {
               //LAB_800f0e24
               str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[targetCombatant]);
@@ -948,21 +978,25 @@ public class BattleHud {
    */
   @Method(0x800f1550L)
   public void renderNumber(final int charSlot, final int numberIndex, int value, final int colour) {
-    if(this.floatingTextType1Digits[0] == null) {
+    if(this.floatingTextType1Digits == null) {
+      final QuadBuilder builder = new QuadBuilder("Floating text type 1 digits");
+
       for(int i = 0; i < 10; i++) {
-        this.floatingTextType1Digits[i] = this.buildUiTextureElement(
-          "Floating text type 1 digit " + i,
+        this.buildUiTextureElement(
+          builder,
           floatingTextType1DigitUs_800c7028[i], 32,
           8, 8,
           0x80
         );
       }
+
+      this.floatingTextType1Digits = builder.build();
     }
 
     final int digitCount = MathHelper.digitCount(value);
 
     //LAB_800f16e4
-    final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
+    final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
 
     final int[] digits = new int[digitCount];
 
@@ -1029,8 +1063,8 @@ public class BattleHud {
     if(!visible) {
       //LAB_800f1a10
       //LAB_800f1a28
-      for(int i = 0; i < 3; i++) {
-        final BattleHudCharacterDisplay3c v1 = this.activePartyBattleHudCharacterDisplays_800c6c40[i];
+      for(int i = 0; i < this.activePartyBattleHudCharacterDisplays_800c6c40.size(); i++) {
+        final BattleHudCharacterDisplay3c v1 = this.activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
         if(v1.charIndex_00 != -1) {
           v1._14[2] = 0;
@@ -1045,8 +1079,8 @@ public class BattleHud {
 
     //LAB_800f1a64
     //LAB_800f1a70
-    for(int i = 0; i < 3; i++) {
-      final BattleHudCharacterDisplay3c v1 = this.activePartyBattleHudCharacterDisplays_800c6c40[i];
+    for(int i = 0; i < this.activePartyBattleHudCharacterDisplays_800c6c40.size(); i++) {
+      final BattleHudCharacterDisplay3c v1 = this.activePartyBattleHudCharacterDisplays_800c6c40.get(i);
       if(v1.charIndex_00 != -1) {
         v1._14[2] = 0;
         v1.flags_06 |= 0x3;
@@ -1405,12 +1439,12 @@ public class BattleHud {
   }
 
   @Method(0x800f417cL)
-  public void FUN_800f417c() {
+  public void initCharacterDisplay() {
     //LAB_800f41ac
-    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      final BattleHudCharacterDisplay3c s1 = this.activePartyBattleHudCharacterDisplays_800c6c40[i];
+    for(int i = 0; i < this.activePartyBattleHudCharacterDisplays_800c6c40.size(); i++) {
+      final BattleHudCharacterDisplay3c characterDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
-      if(s1.charIndex_00 == -1 && characterStatsLoaded_800be5d0) {
+      if(characterDisplay.charIndex_00 == -1 && characterStatsLoaded_800be5d0) {
         this.initCharacterDisplay(i);
       }
 
@@ -1422,12 +1456,12 @@ public class BattleHud {
     short x = 63;
 
     //LAB_800f4220
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
-      final BattleHudCharacterDisplay3c v1 = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
+    for(int charSlot = 0; charSlot < this.displayStats_800c6c2c.size(); charSlot++) {
+      final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
+      final BattleHudCharacterDisplay3c characterDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
 
-      if(v1.charIndex_00 != -1) {
-        v1.x_08 = x;
+      if(characterDisplay.charIndex_00 != -1) {
+        characterDisplay.x_08 = x;
         displayStats.x_00 = x;
       }
 
@@ -2017,9 +2051,9 @@ public class BattleHud {
     //LAB_800f78ac
     //LAB_800f78d4
     int targetIndex;
-    ScriptState<BattleEntity27c> target = null;
+    ScriptState<? extends BattleEntity27c> target = null;
     for(targetIndex = 0; targetIndex < count; targetIndex++) {
-      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34.targetedSlot_800c697c];
+      target = this.battle.targetBents_800c71f0[targetType].get(this.battleMenu_800c6c34.targetedSlot_800c697c);
 
       if(target != null && !target.hasFlag(FLAG_CANT_TARGET)) {
         break;
@@ -2041,7 +2075,7 @@ public class BattleHud {
 
     //LAB_800f7960
     if(targetIndex == count) {
-      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34.targetedSlot_800c697c];
+      target = this.battle.targetBents_800c71f0[targetType].get(this.battleMenu_800c6c34.targetedSlot_800c697c);
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
     }
 
@@ -2191,14 +2225,12 @@ public class BattleHud {
   }
 
   @Method(0x800f8dfcL)
-  private Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut) {
-    final QuadBuilder builder = new QuadBuilder(name)
+  private void buildUiTextureElement(final QuadBuilder builder, final int u, final int v, final int w, final int h, final int clut) {
+    builder.add()
       .size(w, h)
       .uv(u, v);
 
     this.setGpuPacketClutAndTpageAndQueue(builder, clut, null);
-
-    return builder.build();
   }
 
   @Method(0x800f9ee8L)
@@ -2266,32 +2298,16 @@ public class BattleHud {
       this.battleUiName = null;
     }
 
-    for(int i = 0; i < this.names.length; i++) {
-      if(this.names[i] != null) {
-        this.names[i].delete();
-        this.names[i] = null;
-      }
-
-      if(this.portraits[i] != null) {
-        this.portraits[i].delete();
-        this.portraits[i] = null;
-      }
-
-      for(int j = 0; j < this.stats[i].length; j++) {
-        if(this.stats[i][j] != null) {
-          this.stats[i][j].delete();
-          this.stats[i][j] = null;
-        }
-      }
+    if(this.nameAndPortraitObj != null) {
+      this.nameAndPortraitObj.delete();
+      this.nameAndPortraitObj = null;
     }
   }
 
   private void deleteFloatingTextDigits() {
-    for(int i = 0; i < this.floatingTextType1Digits.length; i++) {
-      if(this.floatingTextType1Digits[i] != null) {
-        this.floatingTextType1Digits[i].delete();
-        this.floatingTextType1Digits[i] = null;
-      }
+    if(this.floatingTextType1Digits != null) {
+      this.floatingTextType1Digits.delete();
+      this.floatingTextType1Digits = null;
     }
 
     for(int i = 0; i < 10; i++) {

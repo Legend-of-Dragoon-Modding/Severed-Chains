@@ -2725,13 +2725,17 @@ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_301] ; operand, left, right, addr
 ; SUBROUTINE
 LABEL_299:
 mov 0x0, stor[8] ; source, dest
-LABEL_300:
+
+ADDITION_HIDE_ENEMIES_LOOP:
+jmp_cmp >=, stor[8], var[53], inl[:ADDITION_HIDE_ENEMIES_LOOP_EXIT] ; operand, left, right, addr
 mov var[52][stor[8]], stor[9] ; source, dest
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[23] ; effectIndex
 mov stor[9], stor[stor[stor[0], 23], 23] ; source, dest
 gosub inl[:LABEL_304] ; addr
 incr stor[8] ; operand
-jmp_cmp <, stor[8], var[53], inl[:LABEL_300] ; operand, left, right, addr
+jmp inl[:ADDITION_HIDE_ENEMIES_LOOP]
+ADDITION_HIDE_ENEMIES_LOOP_EXIT:
+
 gosub inl[:LABEL_308] ; addr
 LABEL_301:
 return
@@ -2834,16 +2838,27 @@ mov inl[:LABEL_315], stor[8] ; source, dest
 return
 
 ; SUBROUTINE
+; @return bool stor[8] True if (windigo || melbu stage index 1) && var[45][50] != 0. Maybe something to do with succ abilities?
+;TODO this is most likely broken due to encounter ID refactor
 LABEL_312:
 mov 0x0, stor[8] ; source, dest
-jmp_cmp ==, 0x1a6, var[43], inl[:LABEL_313] ; operand, left, right, addr
-jmp_cmp !=, 0x1bb, var[43], inl[:LABEL_314] ; operand, left, right, addr
-jmp_cmp !=, 0x1, var[39], inl[:LABEL_314] ; operand, left, right, addr
+
+; Windigo
+jmp_cmp ==, 422, var[43], inl[:LABEL_313] ; operand, left, right, addr
+
+; Melbu
+jmp_cmp !=, 443, var[43], inl[:LABEL_314] ; operand, left, right, addr
+; Battle phase
+jmp_cmp !=, 1, var[39], inl[:LABEL_314] ; operand, left, right, addr
+
 LABEL_313:
 jmp_cmp ==, 0x0, var[45][50], inl[:LABEL_314] ; operand, left, right, addr
+
 incr stor[8] ; operand
+
 LABEL_314:
 return
+
 LABEL_315:
 data 0x0
 LABEL_316:
