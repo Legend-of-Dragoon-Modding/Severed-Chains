@@ -49,7 +49,7 @@ public class Gpu {
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
-  private Texture vramTexture15;
+  public Texture vramTexture15;
   private Texture vramTexture24;
   private boolean vramDirty;
 
@@ -93,12 +93,7 @@ public class Gpu {
 
     this.transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
 
-    this.vramTexture15 = Texture.create(builder -> {
-      builder.size(1024, 512);
-      builder.internalFormat(GL_R32UI);
-      builder.dataFormat(GL_RED_INTEGER);
-      builder.dataType(GL_UNSIGNED_INT);
-    });
+    this.initVram();
 
     this.vramTexture24 = Texture.create(builder -> {
       builder.size(1024, 512);
@@ -110,13 +105,26 @@ public class Gpu {
     this.displaySize(320, 240);
   }
 
-  public void startFrame() {
+  public void initVram() {
+    this.vramTexture15 = Texture.create(builder -> {
+      builder.size(1024, 512);
+      builder.internalFormat(GL_R32UI);
+      builder.dataFormat(GL_RED_INTEGER);
+      builder.dataType(GL_UNSIGNED_INT);
+    });
+  }
+
+  public void updateVramTexture() {
     synchronized(this.vramLock) {
       if(this.vramDirty) {
         this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
         this.vramDirty = false;
       }
     }
+  }
+
+  public void startFrame() {
+    this.updateVramTexture();
 
     if(this.zMax != orderingTableSize_1f8003c8) {
       this.updateOrderingTableSize(orderingTableSize_1f8003c8);

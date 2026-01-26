@@ -1351,7 +1351,13 @@ public class ScriptState<T extends ScriptedObject> {
 
   public void dump() {
     LOGGER.error("%s crashed!", this);
-    LOGGER.error("File %s %s @ %#x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
+
+    if(this.frame() != null) {
+      LOGGER.error("File %s %s @ %#x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
+    } else {
+      LOGGER.error("No file loaded");
+    }
+
     LOGGER.error("Parameters:");
     LOGGER.error("  Op param: %#x", this.context.opParam_18);
     for(int i = 0; i < this.context.paramCount_14; i++) {

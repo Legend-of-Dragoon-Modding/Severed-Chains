@@ -2804,7 +2804,12 @@ public class Battle extends EngineState<Battle> {
         } else {
           //LAB_800c8f90
           combatant.flags_19e = 0x5;
-          combatant.vramSlot_1a0 = charSlot + 1;
+
+          if(charSlot < 3) {
+            combatant.vramSlot_1a0 = charSlot + 1;
+          } else {
+            combatant.vramSlot_1a0 = -1;
+          }
         }
 
         //LAB_800c8f94
@@ -3336,14 +3341,16 @@ public class Battle extends EngineState<Battle> {
     }
 
     //LAB_800ca7d0
-    this.loadCombatantTim2(vramSlot, timFile);
+    this.loadCombatantTim2(combatant, vramSlot, timFile);
   }
 
   @Method(0x800ca7ecL)
-  public void loadCombatantTim2(final int vramSlot, final FileData timFile) {
+  public void loadCombatantTim2(@Nullable final CombatantStruct1a8 combatant, final int vramSlot, final FileData timFile) {
     final Tim tim = new Tim(timFile);
 
-    if(vramSlot != 0) {
+    if(vramSlot == -1) {
+      combatant.tim = tim;
+    } else if(vramSlot != 0) {
       //LAB_800ca83c
       final Rect4i combatantTimRect = combatantTimRects_800fa6e0[vramSlot];
       GPU.uploadData15(combatantTimRect, tim.getImageData());
