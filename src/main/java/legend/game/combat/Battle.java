@@ -1553,20 +1553,25 @@ public class Battle extends EngineState {
     }
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      final MonsterBattleEntity bent = battleState_8006e398.monsterBents_e50[monsterSlot].innerStruct_00;
-      final SoundFile file = bent.soundFile;
-      file.id_02 = -1;
-      file.used_00 = false;
-      removeSoundFile(file);
+      if(battleState_8006e398.monsterBents_e50[monsterSlot] != null) {
+        final MonsterBattleEntity bent = battleState_8006e398.monsterBents_e50[monsterSlot].innerStruct_00;
+        final SoundFile file = bent.soundFile;
 
-      if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
-        loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> {
-          this.monsterSoundLoaded(files, bent);
+        if(file != null) {
+          file.id_02 = -1;
+          file.used_00 = false;
+          removeSoundFile(file);
+        }
 
-          if(count.decrementAndGet() == 0) {
-            loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
-          }
-        });
+        if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
+          loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> {
+            this.monsterSoundLoaded(files, bent);
+
+            if(count.decrementAndGet() == 0) {
+              loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
+            }
+          });
+        }
       }
     }
   }
@@ -1875,20 +1880,25 @@ public class Battle extends EngineState {
     }
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      final MonsterBattleEntity bent = battleState_8006e398.monsterBents_e50[monsterSlot].innerStruct_00;
-      final SoundFile file = bent.soundFile;
-      file.id_02 = -1;
-      file.used_00 = false;
-      removeSoundFile(file);
+      if(battleState_8006e398.monsterBents_e50[monsterSlot] != null) {
+        final MonsterBattleEntity bent = battleState_8006e398.monsterBents_e50[monsterSlot].innerStruct_00;
+        final SoundFile file = bent.soundFile;
 
-      if(Loader.exists(path + '/' + monsterSlot)) {
-        loadDir(path + '/' + monsterSlot, files -> {
-          this.monsterSoundLoaded(files, bent);
+        if(file != null) {
+          file.id_02 = -1;
+          file.used_00 = false;
+          removeSoundFile(file);
+        }
 
-          if(count.decrementAndGet() == 0) {
-            loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
-          }
-        });
+        if(Loader.exists(path + '/' + monsterSlot)) {
+          loadDir(path + '/' + monsterSlot, files -> {
+            this.monsterSoundLoaded(files, bent);
+
+            if(count.decrementAndGet() == 0) {
+              loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
+            }
+          });
+        }
       }
     }
 
