@@ -8,7 +8,7 @@ import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 
 public class ChangeAdditionBattleAction extends SeveredBattleAction {
   public ChangeAdditionBattleAction() {
-    super(0);
+    super(0, 3);
   }
 
   @Override

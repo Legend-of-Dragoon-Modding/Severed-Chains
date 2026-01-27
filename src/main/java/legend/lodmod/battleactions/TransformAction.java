@@ -70,9 +70,8 @@ public class TransformAction extends RetailBattleAction {
         translationKey = this.getTranslationKey() + '.' + menu.player_04.detransformationMode.ordinal();
 
         final int iconIndex = 1;
-        final int iconStride = battle.hud.battleIconsTexture.width / 16;
-        final float iconU = iconIndex % iconStride * ICON_SIZE / (float)battle.hud.battleIconsTexture.width;
-        final float iconV = iconIndex / iconStride * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
+        final float iconU = 0;
+        final float iconV = iconIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
 
         menu.transforms.scaling(16.0f, 16.0f, 1.0f);
         menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 10.0f);
