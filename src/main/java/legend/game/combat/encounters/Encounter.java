@@ -4,12 +4,15 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
 import legend.core.memory.Method;
+import legend.game.combat.Battle;
+import legend.game.modding.coremod.CorePostBattleActions;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.List;
 
 import static legend.game.Audio.loadEncounterSounds;
+import static legend.game.Audio.playVictoryMusic;
 
 public class Encounter extends RegistryEntry {
   public final List<Monster> monsters;
@@ -61,8 +64,13 @@ public class Encounter extends RegistryEntry {
   }
 
   @Method(0x8001d1c4L)
-  public void loadSounds(final int phase) {
+  public void loadSounds(final Battle battle, final int phase) {
     loadEncounterSounds(this);
+  }
+
+  public void onEncounterEnded(final Battle battle) {
+    battle.postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
+    playVictoryMusic();
   }
 
   public int get(final int index) {

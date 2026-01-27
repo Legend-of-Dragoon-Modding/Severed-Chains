@@ -1,5 +1,7 @@
 package legend.game.combat.encounters;
 
+import legend.game.combat.Battle;
+
 import static legend.game.Audio.loadBattlePhaseSounds;
 
 public class PhasedEncounter extends Encounter {
@@ -11,7 +13,7 @@ public class PhasedEncounter extends Encounter {
   }
 
   @Override
-  public void loadSounds(final int phase) {
-    loadBattlePhaseSounds("doel", phase);
+  public void loadSounds(final Battle battle, final int phase) {
+    loadBattlePhaseSounds(this.phaseDirectoryName, phase);
   }
 }

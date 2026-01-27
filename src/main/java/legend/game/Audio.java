@@ -489,7 +489,7 @@ public final class Audio {
   }
 
   @Method(0x8001af00L)
-  public static void startEncounterSounds() {
+  public static void playVictoryMusic() {
     AUDIO_THREAD.loadBackgroundMusic(victoryMusic);
     AUDIO_THREAD.startSequence();
   }
@@ -739,7 +739,7 @@ public final class Audio {
    * </ol>
    */
   @Method(0x8001d068L)
-  public static void loadDeffSounds(final ScriptState<BattleEntity27c> bentState, final int type) {
+  public static void loadDeffSounds(final Battle battle, final ScriptState<BattleEntity27c> bentState, final int type) {
     final BattleEntity27c bent = bentState.innerStruct_00;
 
     unloadSoundFile(3);
@@ -758,7 +758,7 @@ public final class Audio {
       }
     } else if(type == 1) {
       //LAB_8001d164
-      loadMonsterSoundsWithPhases();
+      encounter.loadSounds(battle, battleState_8006e398.battlePhase_eec);
     } else if(type == 2) {
       //LAB_8001d174
       loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x40);
@@ -768,16 +768,6 @@ public final class Audio {
     }
 
     //LAB_8001d1b0
-  }
-
-  @Method(0x8001d1c4L)
-  public static void loadMonsterSounds() {
-    encounter.loadSounds(0);
-  }
-
-  @Method(0x8001d2d8L)
-  public static void loadMonsterSoundsWithPhases() {
-    encounter.loadSounds(battleState_8006e398.battlePhase_eec);
   }
 
   public static void loadBattlePhaseSounds(final String boss, final int phase) {
@@ -987,7 +977,7 @@ public final class Audio {
       }
     }
 
-    loadMonsterSounds();
+    encounter.loadSounds(battle, 0);
   }
 
   private static int parseMelbuVictory(final int musicIndex) {
