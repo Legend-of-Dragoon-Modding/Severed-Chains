@@ -25,7 +25,7 @@ public class GoodsInventory implements Iterable<Good> {
   private final Set<Good> goods = new HashSet<>();
 
   public Good give(final Good good) {
-    if(this.has(good)) {
+    if(!this.has(good)) {
       final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
 
       if(!event.isCanceled()) {
@@ -47,7 +47,7 @@ public class GoodsInventory implements Iterable<Good> {
   }
 
   public void take(final Good good) {
-    if(!this.has(good)) {
+    if(this.has(good)) {
       final TakeGoodsEvent event = EVENTS.postEvent(new TakeGoodsEvent(this, good));
 
       if(!event.isCanceled()) {
