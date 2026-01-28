@@ -137,6 +137,7 @@ import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -172,7 +173,6 @@ import static legend.game.Audio.characterSoundFileIndices_800500f8;
 import static legend.game.Audio.getLoadedAudioFiles;
 import static legend.game.Audio.loadDeffSounds;
 import static legend.game.Audio.loadEncounterSoundsAndMusic;
-import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.monsterSoundFileIndices_800500e8;
 import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playSound;
@@ -398,7 +398,9 @@ public class Battle extends EngineState {
    * <ol>
    *   <li value="1">Combat victory</li>
    *   <li value="2">Game over</li>
+   *   <li value="3">Boss kill</li>
    *   <li value="4">FMV</li>
+   *   <li value="5">Merchant</li>
    * </ol>
    */
   public PostBattleActionInstance<?, ?> postBattleAction_800bc974;
@@ -453,7 +455,7 @@ public class Battle extends EngineState {
   public int _800c67d0;
 
   /** script using attack item? */
-  public ScriptState<? extends BattleEntity27c> scriptState_800c6914;
+  public ScriptState<? extends BattleEntity27c> cameraFocusedBent_800c6914;
   /** bent index, used in pcs and possibly elsewhere */
   public int _800c6918;
 
@@ -785,7 +787,7 @@ public class Battle extends EngineState {
     functions[169] = this::scriptGetBentStat;
     functions[170] = this::scriptSetPostBattleAction;
     functions[171] = this::scriptSetBattleHudVisibility;
-    functions[172] = this::FUN_800ccef8;
+    functions[172] = this::scriptSetPostBattleActionBossKill;
     functions[173] = this::scriptSetBentDeadAndDropLoot;
     functions[174] = this::scriptGetHitProperty;
     functions[175] = this::scriptSetBentDead;
@@ -1807,12 +1809,11 @@ public class Battle extends EngineState {
 
             //LAB_800c7d74
           } else { // Monsters dead
-            this.endBattle();
+            this.allMonstersDead();
           }
         }
       } else { // Game over
-        loadMusicPackage(19);
-        this.postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
+        this.allCharactersDead();
       }
     }
 
@@ -1825,12 +1826,15 @@ public class Battle extends EngineState {
     //LAB_800c7d98
   }
 
-  public void endBattle() {
-    LOGGER.info(BATTLE, "Battle ending");
+  public void allCharactersDead() {
+    LOGGER.info(BATTLE, "All characters dead");
+    encounter.onBattleLost(this);
+  }
 
+  public void allMonstersDead() {
+    LOGGER.info(BATTLE, "All monsters dead");
     FUN_80020308();
-
-    encounter.onEncounterEnded(this);
+    encounter.onBattleWon(this);
   }
 
   @Method(0x800c7da8L)
@@ -1852,7 +1856,6 @@ public class Battle extends EngineState {
   public void fadeOutBattle() {
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
       this.postBattleAction_800bc974.onCameraFadeoutStart(this);
-      this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
 
       //LAB_800c80c8
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
@@ -3703,16 +3706,15 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets post-battle action to 3")
+  @ScriptDescription("Sets post-battle action to boss kill")
   @Method(0x800ccef8L)
-  public FlowControl FUN_800ccef8(final RunningScript<?> script) {
-//    postBattleAction_800bc974 = 3;
-//    return FlowControl.PAUSE_AND_REWIND;
-    throw new IllegalStateException("Unknown post-battle action: 3");
+  public FlowControl scriptSetPostBattleActionBossKill(final RunningScript<?> script) {
+    this.postBattleAction_800bc974 = LodPostBattleActions.BOSS_KILL.get().inst(script);
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   @ScriptDescription("Sets the post-battle action")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "action", description = "The post-battle action registry ID or legacy int (1 = victory, 2 = game over, 4 = FMV)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "action", description = "The post-battle action registry ID or legacy int (1 = victory, 2 = game over, 3 = boss kill, 4 = FMV, 5 = merchant)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "params", description = "Parameters to pass to the post-battle action (varies by action)")
   @Method(0x800ccf0cL)
   public FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
@@ -3723,7 +3725,9 @@ public class Battle extends EngineState {
       postBattleAction = switch(script.params_20[0].get()) {
         case 1 -> CorePostBattleActions.VICTORY.get();
         case 2 -> CorePostBattleActions.GAME_OVER.get();
+        case 3 -> LodPostBattleActions.BOSS_KILL.get();
         case 4 -> CorePostBattleActions.PLAY_FMV.get();
+        case 5 -> LodPostBattleActions.MERCHANT.get();
         default -> throw new IllegalStateException("Unknown post-battle action: " + script.params_20[0].get());
       };
     }

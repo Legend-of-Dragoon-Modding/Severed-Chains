@@ -10,7 +10,7 @@ public class MelbuEncounter extends PhasedEncounter {
   }
 
   @Override
-  public void onEncounterEnded(final Battle battle) {
+  public void onBattleWon(final Battle battle) {
     battle.postBattleAction_800bc974 = CorePostBattleActions.PLAY_FMV.get().inst(16);
   }
 }

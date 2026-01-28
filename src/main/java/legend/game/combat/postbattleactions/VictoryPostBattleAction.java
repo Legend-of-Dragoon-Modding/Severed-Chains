@@ -24,6 +24,7 @@ public class VictoryPostBattleAction extends PostBattleAction<VictoryPostBattleA
   @Override
   protected void onCameraFadeoutStart(final Battle battle, final VictoryPostBattleActionInstance inst) {
     battle.cameraScriptMainTableJumpIndex_800c6748 = 195;
+    battle.cameraFocusedBent_800c6914 = battle.currentTurnBent_800c66c8;
 
     //LAB_800c8180
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {

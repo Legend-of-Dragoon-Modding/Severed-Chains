@@ -12,6 +12,7 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 import java.util.List;
 
 import static legend.game.Audio.loadEncounterSounds;
+import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.playVictoryMusic;
 
 public class Encounter extends RegistryEntry {
@@ -68,9 +69,14 @@ public class Encounter extends RegistryEntry {
     loadEncounterSounds(this);
   }
 
-  public void onEncounterEnded(final Battle battle) {
+  public void onBattleWon(final Battle battle) {
     battle.postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
     playVictoryMusic();
+  }
+
+  public void onBattleLost(final Battle battle) {
+    loadMusicPackage(19);
+    battle.postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
   }
 
   public int get(final int index) {

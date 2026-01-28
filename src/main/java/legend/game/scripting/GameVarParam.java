@@ -21,6 +21,7 @@ import legend.game.modding.coremod.CorePostBattleActions;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 import legend.lodmod.LodMod;
+import legend.lodmod.LodPostBattleActions;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
@@ -113,8 +114,16 @@ public class GameVarParam extends Param {
           yield 2;
         }
 
+        if(action == LodPostBattleActions.BOSS_KILL.get()) {
+          yield 3;
+        }
+
         if(action == CorePostBattleActions.PLAY_FMV.get()) {
           yield 4;
+        }
+
+        if(action == LodPostBattleActions.MERCHANT.get()) {
+          yield 5;
         }
 
         yield 0;
@@ -137,7 +146,7 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 != null ? ((Battle)currentEngineState_8004dd04).scriptState_800c6914.index : -1;
+      case 80 -> ((Battle)currentEngineState_8004dd04).cameraFocusedBent_800c6914 != null ? ((Battle)currentEngineState_8004dd04).cameraFocusedBent_800c6914.index : -1;
       case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918;
       case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8;
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc;
@@ -261,6 +270,9 @@ public class GameVarParam extends Param {
         case 0 -> null;
         case 1 -> CorePostBattleActions.VICTORY.get().inst();
         case 2 -> CorePostBattleActions.GAME_OVER.get().inst();
+        case 3 -> LodPostBattleActions.BOSS_KILL.get().inst();
+        case 4 -> CorePostBattleActions.PLAY_FMV.get().inst(16);
+        case 5 -> LodPostBattleActions.MERCHANT.get().inst();
         default -> throw new IllegalStateException("Unexpected value: " + val);
       };
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
@@ -281,7 +293,7 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 = SCRIPTS.getState(val, BattleEntity27c.class);
+      case 80 -> ((Battle)currentEngineState_8004dd04).cameraFocusedBent_800c6914 = SCRIPTS.getState(val, BattleEntity27c.class);
       case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918 = val;
       case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8 = val;
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc = val;

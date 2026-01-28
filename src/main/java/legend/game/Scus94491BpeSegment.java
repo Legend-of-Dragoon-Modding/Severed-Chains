@@ -191,7 +191,7 @@ public final class Scus94491BpeSegment {
   public static void bindRendererEvents() {
     RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
       if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.W && currentEngineState_8004dd04 instanceof final Battle battle) {
-        battle.endBattle();
+        battle.allMonstersDead();
       }
 
       if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.Q) {
