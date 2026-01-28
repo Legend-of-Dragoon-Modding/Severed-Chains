@@ -14,6 +14,7 @@ import java.util.List;
 import static legend.game.Audio.loadEncounterSounds;
 import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.playVictoryMusic;
+import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 
 public class Encounter extends RegistryEntry {
   public final List<Monster> monsters;
@@ -70,13 +71,13 @@ public class Encounter extends RegistryEntry {
   }
 
   public void onBattleWon(final Battle battle) {
-    battle.postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
+    postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
     playVictoryMusic();
   }
 
   public void onBattleLost(final Battle battle) {
     loadMusicPackage(19);
-    battle.postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
+    postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
   }
 
   public int get(final int index) {

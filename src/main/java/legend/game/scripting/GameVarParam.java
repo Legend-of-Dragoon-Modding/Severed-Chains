@@ -100,11 +100,11 @@ public class GameVarParam extends Param {
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
       case 57 -> {
-        if(((Battle)currentEngineState_8004dd04).postBattleAction_800bc974 == null) {
+        if(Scus94491BpeSegment_800b.postBattleAction_800bc974 == null) {
           yield 0;
         }
 
-        final PostBattleAction<?, ?> action = ((Battle)currentEngineState_8004dd04).postBattleAction_800bc974.action;
+        final PostBattleAction<?, ?> action = Scus94491BpeSegment_800b.postBattleAction_800bc974.action;
 
         if(action == CorePostBattleActions.VICTORY.get()) {
           yield 1;
@@ -266,7 +266,7 @@ public class GameVarParam extends Param {
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
-      case 57 -> ((Battle)currentEngineState_8004dd04).postBattleAction_800bc974 = switch(val) {
+      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = switch(val) {
         case 0 -> null;
         case 1 -> CorePostBattleActions.VICTORY.get().inst();
         case 2 -> CorePostBattleActions.GAME_OVER.get().inst();

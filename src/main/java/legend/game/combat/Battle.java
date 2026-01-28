@@ -76,7 +76,6 @@ import legend.game.combat.environment.BttlLightStruct84Sub38;
 import legend.game.combat.environment.StageAmbiance4c;
 import legend.game.combat.particles.ParticleManager;
 import legend.game.combat.postbattleactions.PostBattleAction;
-import legend.game.combat.postbattleactions.PostBattleActionInstance;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
 import legend.game.combat.types.BattleObject;
@@ -249,6 +248,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
+import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
@@ -394,16 +394,6 @@ public class Battle extends EngineState {
     SBtld::transitionBackFromBattle,
   };
 
-  /**
-   * <ol>
-   *   <li value="1">Combat victory</li>
-   *   <li value="2">Game over</li>
-   *   <li value="3">Boss kill</li>
-   *   <li value="4">FMV</li>
-   *   <li value="5">Merchant</li>
-   * </ol>
-   */
-  public PostBattleActionInstance<?, ?> postBattleAction_800bc974;
   private int currentPostCombatActionFrame_800c6690;
 
   private final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
@@ -1459,7 +1449,7 @@ public class Battle extends EngineState {
 
     totalXpFromCombat_800bc95c = 0;
     battleFlags_800bc960 = 0;
-    this.postBattleAction_800bc974 = null;
+    postBattleAction_800bc974 = null;
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
     equipmentOverflow.clear();
@@ -1777,7 +1767,7 @@ public class Battle extends EngineState {
   public void battleTick() {
     this.hud.draw();
 
-    if(this.postBattleAction_800bc974 != null) {
+    if(postBattleAction_800bc974 != null) {
       pregameLoadingStage_800bb10c++;
       return;
     }
@@ -1818,7 +1808,7 @@ public class Battle extends EngineState {
     }
 
     //LAB_800c7d78
-    if(this.postBattleAction_800bc974 != null) {
+    if(postBattleAction_800bc974 != null) {
       //LAB_800c7d88
       pregameLoadingStage_800bb10c++;
     }
@@ -1855,7 +1845,7 @@ public class Battle extends EngineState {
   @Method(0x800c8068L)
   public void fadeOutBattle() {
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
-      this.postBattleAction_800bc974.onCameraFadeoutStart(this);
+      postBattleAction_800bc974.onCameraFadeoutStart(this);
 
       //LAB_800c80c8
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
@@ -1871,18 +1861,18 @@ public class Battle extends EngineState {
     //LAB_800c81c0
     this.currentPostCombatActionFrame_800c6690++;
 
-    if(this.currentPostCombatActionFrame_800c6690 >= this.postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+    if(this.currentPostCombatActionFrame_800c6690 >= postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
       EVENTS.postEvent(new BattleEndedEvent(this, encounter));
 
       //LAB_800c8214
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        startFadeEffect(1, this.postBattleAction_800bc974.getFadeDuration(this));
+        startFadeEffect(1, postBattleAction_800bc974.getFadeDuration(this));
       }
 
       //LAB_800c8274
-      this.postBattleAction_800bc974.onCameraFadeoutFinish(this);
+      postBattleAction_800bc974.onCameraFadeoutFinish(this);
 
       //LAB_800c8290
       this.currentPostCombatActionFrame_800c6690 = 0;
@@ -1967,7 +1957,7 @@ public class Battle extends EngineState {
       battleLoaded_800bc94c = false;
 
       //LAB_800c84b4
-      this.postBattleAction_800bc974.performAction(this);
+      postBattleAction_800bc974.performAction(this);
 
       //LAB_800c85f0
       pregameLoadingStage_800bb10c++;
@@ -3710,7 +3700,7 @@ public class Battle extends EngineState {
   @ScriptDescription("Sets post-battle action to boss kill")
   @Method(0x800ccef8L)
   public FlowControl scriptSetPostBattleActionBossKill(final RunningScript<?> script) {
-    this.postBattleAction_800bc974 = LodPostBattleActions.BOSS_KILL.get().inst(script);
+    postBattleAction_800bc974 = LodPostBattleActions.BOSS_KILL.get().inst(script);
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -3733,7 +3723,7 @@ public class Battle extends EngineState {
       };
     }
 
-    this.postBattleAction_800bc974 = postBattleAction.inst(script);
+    postBattleAction_800bc974 = postBattleAction.inst(script);
     return FlowControl.PAUSE_AND_REWIND;
   }
 
