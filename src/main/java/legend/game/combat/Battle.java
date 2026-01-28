@@ -19,7 +19,6 @@ import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
@@ -76,6 +75,8 @@ import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
 import legend.game.combat.environment.StageAmbiance4c;
 import legend.game.combat.particles.ParticleManager;
+import legend.game.combat.postbattleactions.PostBattleAction;
+import legend.game.combat.postbattleactions.PostBattleActionInstance;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
 import legend.game.combat.types.BattleObject;
@@ -91,13 +92,12 @@ import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
-import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.CorePostBattleActions;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
@@ -105,7 +105,6 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
-import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -220,7 +219,6 @@ import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.giveItem;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.SItem.menuStack;
 import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -238,7 +236,6 @@ import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -247,7 +244,6 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
-import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -302,7 +298,6 @@ import static legend.game.sound.Audio.queuedSounds_800bd110;
 import static legend.game.sound.Audio.removeSoundFile;
 import static legend.game.sound.Audio.sequenceData_800c4ac8;
 import static legend.game.sound.Audio.setSoundSequenceVolume;
-import static legend.game.sound.Audio.sssqFadeOut;
 import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.game.sound.Audio.sssqUnloadPlayableSound;
 import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
@@ -372,7 +367,7 @@ public class Battle extends EngineState {
    *   <li>{@link #calculateInitialTurnValues}</li>
    *   <li>{@link #battleTick}</li>
    *   <li>{@link #waitForFilesToLoad}</li>
-   *   <li>{@link #performPostBattleAction}</li>
+   *   <li>{@link #fadeOutBattle}</li>
    *   <li>{@link #deallocateCombat}</li>
    *   <li>{@link #waitForFilesToLoad}</li>
    *   <li>{@link #renderPostCombatScreen}</li>
@@ -403,7 +398,7 @@ public class Battle extends EngineState {
     this::calculateInitialTurnValues,
     this::battleTick,
     this::waitForFilesToLoad,
-    this::performPostBattleAction,
+    this::fadeOutBattle,
     this::deallocateCombat,
     this::waitForFilesToLoad,
     this::renderPostCombatScreen,
@@ -412,6 +407,14 @@ public class Battle extends EngineState {
 
   private int loadingStage;
 
+  /**
+   * <ol>
+   *   <li value="1">Combat victory</li>
+   *   <li value="2">Game over</li>
+   *   <li value="4">FMV</li>
+   * </ol>
+   */
+  public PostBattleActionInstance<?, ?> postBattleAction_800bc974;
   private int currentPostCombatActionFrame_800c6690;
 
   private final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
@@ -518,11 +521,6 @@ public class Battle extends EngineState {
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
 
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
-  public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
-
-  public static final int[] postBattleCamera_800fa6c4 = {-1, 195, 211, -1, 211, -1};
-
-  public static final int[] postCombatActionFrames_800fa6d0 = {0, 30, 45, 30, 45, 30};
 
   public int mcqColour_800fa6dc = 0x80;
   public static final Rect4i[] combatantTimRects_800fa6e0 = {
@@ -1425,7 +1423,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x8001af00L)
-  private void startEncounterSounds() {
+  public void playVictoryMusic() {
     AUDIO_THREAD.loadBackgroundMusic(victoryMusic);
     AUDIO_THREAD.startSequence();
   }
@@ -1928,7 +1926,7 @@ public class Battle extends EngineState {
 
     totalXpFromCombat_800bc95c = 0;
     battleFlags_800bc960 = 0;
-    postBattleAction_800bc974 = 0;
+    this.postBattleAction_800bc974 = null;
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
     equipmentOverflow.clear();
@@ -2311,7 +2309,7 @@ public class Battle extends EngineState {
   public void battleTick() {
     this.hud.draw();
 
-    if(postBattleAction_800bc974 != 0) {
+    if(this.postBattleAction_800bc974 != null) {
       this.loadingStage++;
       return;
     }
@@ -2348,12 +2346,12 @@ public class Battle extends EngineState {
         }
       } else { // Game over
         loadMusicPackage(19);
-        postBattleAction_800bc974 = 2;
+        this.postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
       }
     }
 
     //LAB_800c7d78
-    if(postBattleAction_800bc974 != 0) {
+    if(this.postBattleAction_800bc974 != null) {
       //LAB_800c7d88
       this.loadingStage++;
     }
@@ -2366,13 +2364,7 @@ public class Battle extends EngineState {
 
     FUN_80020308();
 
-    if(encounterId_800bb0f8 != 443) { // Standard victory
-      postBattleAction_800bc974 = 1;
-      this.startEncounterSounds();
-    } else { // Melbu Victory
-      //LAB_800c7d30
-      postBattleAction_800bc974 = 4;
-    }
+    encounter.onEncounterEnded(this);
   }
 
   @Method(0x800c7da8L)
@@ -2391,16 +2383,10 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c8068L)
-  public void performPostBattleAction() {
-    final int postBattleAction = postBattleAction_800bc974;
-
+  public void fadeOutBattle() {
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
-      final int postBattleCamera = postBattleCamera_800fa6c4[postBattleAction];
-
-      if(postBattleCamera >= 0) {
-        this.cameraScriptMainTableJumpIndex_800c6748 = postBattleCamera;
-        this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
-      }
+      this.postBattleAction_800bc974.onCameraFadeoutStart(this);
+      this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
 
       //LAB_800c80c8
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
@@ -2410,33 +2396,23 @@ public class Battle extends EngineState {
       for(int i = 0; i < aliveCharBents; i++) {
         livingCharIds_800bc968[i] = battleState_8006e398.alivePlayerBents_eac[i].innerStruct_00.charId_272;
       }
-
-      //LAB_800c8144
-      if(postBattleAction == 1) {
-        //LAB_800c8180
-        for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-          battleState_8006e398.playerBents_e40[i].setFlag(FLAG_CURRENT_TURN);
-        }
-      }
     }
 
     //LAB_800c81bc
     //LAB_800c81c0
     this.currentPostCombatActionFrame_800c6690++;
 
-    if(this.currentPostCombatActionFrame_800c6690 >= postCombatActionTotalFrames_800fa6b8[postBattleAction] || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+    if(this.currentPostCombatActionFrame_800c6690 >= this.postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
       //LAB_800c8214
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
         EVENTS.postEvent(new BattleEndedEvent(this, encounter));
-        startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
+        startFadeEffect(1, this.postBattleAction_800bc974.getFadeDuration(this));
       }
 
       //LAB_800c8274
-      if(postBattleAction == 2) {
-        sssqFadeOut((short)(postCombatActionFrames_800fa6d0[2] - 2));
-      }
+      this.postBattleAction_800bc974.onCameraFadeoutFinish(this);
 
       //LAB_800c8290
       this.currentPostCombatActionFrame_800c6690 = 0;
@@ -2502,30 +2478,9 @@ public class Battle extends EngineState {
       this.deallocateStageDarkeningStorage();
       this.FUN_800c8748();
 
-      EngineStateEnum postCombatMainCallbackIndex = previousEngineState_8004dd28;
-      if(postCombatMainCallbackIndex == EngineStateEnum.FMV_09) {
-        postCombatMainCallbackIndex = EngineStateEnum.SUBMAP_05;
-      }
-
-      //LAB_800c84b4
-      switch(postBattleAction_800bc974) {
-        case 2 -> {
-          if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
-            //LAB_800c8514
-            final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(0x3bb, true)).set;
-            gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
-          } else {
-            //LAB_800c8534
-            postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
-          }
-        }
-
-        case 4 -> Fmv.playCurrentFmv(16, EngineStateEnum.FINAL_FMV_11);
-      }
+      postCombatMainCallbackIndex_800bc91c = previousEngineState_8004dd28;
 
       //LAB_800c8558
-      postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
-
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
         submapScene_80052c34 = postCombatSubmapScene;
@@ -2541,13 +2496,8 @@ public class Battle extends EngineState {
       setDepthResolution(14);
       battleLoaded_800bc94c = false;
 
-      switch(postBattleAction_800bc974) {
-        case 1, 3 -> {
-          whichMenu_800bdc38 = WhichMenu.RENDER_NEW_MENU;
-          menuStack.pushScreen(new PostBattleScreen());
-        }
-        case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
-      }
+      //LAB_800c84b4
+      this.postBattleAction_800bc974.performAction(this);
 
       //LAB_800c85f0
       this.loadingStage++;
@@ -4315,15 +4265,29 @@ public class Battle extends EngineState {
   @ScriptDescription("Sets post-battle action to 3")
   @Method(0x800ccef8L)
   public FlowControl FUN_800ccef8(final RunningScript<?> script) {
-    postBattleAction_800bc974 = 3;
-    return FlowControl.PAUSE_AND_REWIND;
+//    postBattleAction_800bc974 = 3;
+//    return FlowControl.PAUSE_AND_REWIND;
+    throw new IllegalStateException("Unknown post-battle action: 3");
   }
 
   @ScriptDescription("Sets the post-battle action")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "action", description = "The post-battle action")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "action", description = "The post-battle action registry ID or legacy int (1 = victory, 2 = game over, 4 = FMV)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "params", description = "Parameters to pass to the post-battle action (varies by action)")
   @Method(0x800ccf0cL)
   public FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
-    postBattleAction_800bc974 = script.params_20[0].get();
+    final PostBattleAction<?, ?> postBattleAction;
+    if(script.params_20[0].isRegistryId()) {
+      postBattleAction = REGISTRIES.postBattleActions.getEntry(script.params_20[0].getRegistryId()).get();
+    } else {
+      postBattleAction = switch(script.params_20[0].get()) {
+        case 1 -> CorePostBattleActions.VICTORY.get();
+        case 2 -> CorePostBattleActions.GAME_OVER.get();
+        case 4 -> CorePostBattleActions.PLAY_FMV.get();
+        default -> throw new IllegalStateException("Unknown post-battle action: " + script.params_20[0].get());
+      };
+    }
+
+    this.postBattleAction_800bc974 = postBattleAction.inst(script);
     return FlowControl.PAUSE_AND_REWIND;
   }
 

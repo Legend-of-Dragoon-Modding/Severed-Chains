@@ -24,6 +24,9 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.encounters.EncounterRegistry;
 import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.postbattleactions.PostBattleAction;
+import legend.game.combat.postbattleactions.PostBattleActionRegistry;
+import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleActionRegistry;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
@@ -70,6 +73,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
   public final Registry<Addition> additions = this.addRegistry(new AdditionRegistry(), AdditionRegistryEvent::new);
   public final Registry<BattleAction> battleActions = this.addRegistry(new BattleActionRegistry(), RegisterBattleActionsEvent::new);
+  public final Registry<PostBattleAction> postBattleActions = this.addRegistry(new PostBattleActionRegistry(), RegisterPostBattleActionsEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

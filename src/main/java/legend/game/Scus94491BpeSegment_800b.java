@@ -56,14 +56,6 @@ public final class Scus94491BpeSegment_800b {
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
   public static int[] livingCharIds_800bc968 = new int[3];
-  /**
-   * <ol>
-   *   <li value="1">Combat victory</li>
-   *   <li value="2">Game over</li>
-   *   <li value="4">FMV</li>
-   * </ol>
-   */
-  public static int postBattleAction_800bc974;
 
   public static int livingCharCount_800bc97c;
 
