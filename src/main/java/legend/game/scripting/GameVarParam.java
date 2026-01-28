@@ -10,10 +10,12 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.TransformationMode;
+import legend.game.combat.postbattleactions.PostBattleAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemStack;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.CorePostBattleActions;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 import legend.lodmod.LodMod;
@@ -94,7 +96,27 @@ public class GameVarParam extends Param {
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8;
-      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974;
+      case 57 -> {
+        if(((Battle)currentEngineState_8004dd04).postBattleAction_800bc974 == null) {
+          yield 0;
+        }
+
+        final PostBattleAction<?, ?> action = ((Battle)currentEngineState_8004dd04).postBattleAction_800bc974.action;
+
+        if(action == CorePostBattleActions.VICTORY.get()) {
+          yield 1;
+        }
+
+        if(action == CorePostBattleActions.GAME_OVER.get()) {
+          yield 2;
+        }
+
+        if(action == CorePostBattleActions.PLAY_FMV.get()) {
+          yield 4;
+        }
+
+        yield 0;
+      }
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -233,7 +255,12 @@ public class GameVarParam extends Param {
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8 = val;
-      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = val;
+      case 57 -> ((Battle)currentEngineState_8004dd04).postBattleAction_800bc974 = switch(val) {
+        case 0 -> null;
+        case 1 -> CorePostBattleActions.VICTORY.get().inst();
+        case 2 -> CorePostBattleActions.GAME_OVER.get().inst();
+        default -> throw new IllegalStateException("Unexpected value: " + val);
+      };
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = SCRIPTS.getState(val, BattleEntity27c.class);
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920 = val;

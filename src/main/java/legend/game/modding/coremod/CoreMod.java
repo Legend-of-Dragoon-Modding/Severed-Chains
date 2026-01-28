@@ -16,6 +16,7 @@ import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
+import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.inventory.IconSetConfigEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortModeConfigEntry;
@@ -298,6 +299,11 @@ public class CoreMod {
       .add(INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME.get(), new KeyInputActivation(InputKey.F2))
       .add(INPUT_ACTION_DEBUG_RELOAD_SHADERS.get(), new KeyInputActivation(InputKey.F5))
     ;
+  }
+
+  @EventListener
+  public static void registerPostBattleActions(final RegisterPostBattleActionsEvent event) {
+    CorePostBattleActions.register(event);
   }
 
   @EventListener

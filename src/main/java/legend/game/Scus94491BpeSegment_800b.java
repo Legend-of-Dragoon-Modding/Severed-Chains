@@ -61,14 +61,6 @@ public final class Scus94491BpeSegment_800b {
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
   public static final IntList livingCharIds_800bc968 = new IntArrayList();
-  /**
-   * <ol>
-   *   <li value="1">Combat victory</li>
-   *   <li value="2">Game over</li>
-   *   <li value="4">FMV</li>
-   * </ol>
-   */
-  public static int postBattleAction_800bc974;
 
   public static boolean _800bd7ac;
   public static int _800bd7b0;

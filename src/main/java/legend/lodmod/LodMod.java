@@ -80,6 +80,7 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -478,8 +479,11 @@ public class LodMod {
       sort += 100;
       event.actions.put(LodBattleActions.ITEMS.get(), sort);
       sort += 100;
-      event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
-      sort += 100;
+
+      if(CHARACTER_ADDITIONS[player.charId_272].length != 0) {
+        event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
+        sort += 100;
+      }
     }
 
     if(player.isDragoon()) {
