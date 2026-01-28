@@ -1872,11 +1872,12 @@ public class Battle extends EngineState {
     this.currentPostCombatActionFrame_800c6690++;
 
     if(this.currentPostCombatActionFrame_800c6690 >= this.postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+      EVENTS.postEvent(new BattleEndedEvent(this, encounter));
+
       //LAB_800c8214
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        EVENTS.postEvent(new BattleEndedEvent(this, encounter));
         startFadeEffect(1, this.postBattleAction_800bc974.getFadeDuration(this));
       }
 
