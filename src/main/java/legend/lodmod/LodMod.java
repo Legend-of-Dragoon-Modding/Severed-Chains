@@ -426,7 +426,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void registerPosBattleActions(final RegisterPostBattleActionsEvent event) {
+  public static void registerPostBattleActions(final RegisterPostBattleActionsEvent event) {
     LodPostBattleActions.register(event);
   }
 

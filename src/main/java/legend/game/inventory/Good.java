@@ -5,7 +5,7 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import javax.annotation.Nullable;
 
-public class Good extends RegistryEntry {
+public class Good extends RegistryEntry implements InventoryEntry<Good> {
   public final int sortingIndex;
   @Nullable
   public final ItemIcon icon;
@@ -22,6 +22,41 @@ public class Good extends RegistryEntry {
   @Nullable
   public ItemIcon getIcon() {
     return this.icon;
+  }
+
+  @Override
+  public String getNameTranslationKey() {
+    return this.getTranslationKey();
+  }
+
+  @Override
+  public String getDescriptionTranslationKey() {
+    return this.getTranslationKey("description");
+  }
+
+  @Override
+  public int getBuyPrice() {
+    return 0;
+  }
+
+  @Override
+  public int getSellPrice() {
+    return 0;
+  }
+
+  @Override
+  public int getSize() {
+    return 1;
+  }
+
+  @Override
+  public int getMaxSize() {
+    return 1;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return false;
   }
 
   public Renderable58 renderIcon(final int x, final int y, final int flags) {

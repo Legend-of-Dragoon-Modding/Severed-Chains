@@ -26,6 +26,7 @@ import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
+import legend.game.inventory.screens.controls.Highlight;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
@@ -74,6 +75,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
@@ -92,6 +94,7 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.renderablePtr_800bdba4;
@@ -284,16 +287,6 @@ public final class SItem {
     "Albert", "Meru", "Kongol", "Miranda",
   };
 
-  public static final MenuGlyph06[] glyphs_80114510 = {
-    new MenuGlyph06(69, 0, 0),
-    new MenuGlyph06(70, 192, 0),
-    new MenuGlyph06(96, 40, 56),
-    new MenuGlyph06(97, 146, 16),
-    new MenuGlyph06(91, 16, 123),
-    new MenuGlyph06(91, 194, 123),
-    new MenuGlyph06(98, 16, 172),
-    new MenuGlyph06(99, 192, 172),
-  };
   public static final MenuGlyph06[] glyphs_80114548 = {
     new MenuGlyph06(69, 0, 0),
     new MenuGlyph06(70, 192, 0),
@@ -1203,6 +1196,11 @@ public final class SItem {
   @Method(0x80103818L)
   public static Renderable58 allocateUiElement(final int startGlyph, final int endGlyph, final int x, final int y) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
+    return allocateUiElement(renderable, startGlyph, endGlyph, x, y);
+  }
+
+  public static Renderable58 allocateManualUiElement(final int startGlyph, final int endGlyph, final int x, final int y) {
+    final Renderable58 renderable = allocateManualRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     return allocateUiElement(renderable, startGlyph, endGlyph, x, y);
   }
 
@@ -2248,12 +2246,13 @@ public final class SItem {
         if(messageBox.type_15 == 2) {
           //LAB_8010ef10
           if(messageBox.highlightRenderable_04 == null) {
-            renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 12 + y + 5);
-            messageBox.highlightRenderable_04 = renderable;
-            renderable.heightScale_38 = 0;
-            renderable.widthScale = 0;
-            messageBox.highlightRenderable_04.z_3c = 31;
+            messageBox.highlightRenderable_04 = new Highlight();
+            messageBox.highlightRenderable_04.setSize(Math.max(DEFAULT_FONT.textWidth(messageBox.yes), DEFAULT_FONT.textWidth(messageBox.no)) + 12, DEFAULT_FONT.textHeight(messageBox.yes));
+            messageBox.highlightRenderable_04.setPos(messageBox.x_1c + 60 - messageBox.highlightRenderable_04.getWidth() / 2, messageBox.menuIndex_18 * messageBox.highlightRenderable_04.getHeight() + y + 5);
+            messageBox.highlightRenderable_04.setZ(31);
           }
+
+          messageBox.highlightRenderable_04.render(messageBox.highlightRenderable_04.getX(), messageBox.highlightRenderable_04.getY() + 2);
 
           //LAB_8010ef64
           textZ_800bdf00 = 30;
@@ -2270,7 +2269,8 @@ public final class SItem {
         messageBox.state_0c = 5;
 
         if(messageBox.highlightRenderable_04 != null) {
-          unloadRenderable(messageBox.highlightRenderable_04);
+          messageBox.highlightRenderable_04.delete();
+          messageBox.highlightRenderable_04 = null;
         }
 
         //LAB_8010f084

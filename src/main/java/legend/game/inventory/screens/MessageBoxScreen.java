@@ -65,14 +65,14 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.menuIndex_18 = 0;
 
         if(this.messageBox.highlightRenderable_04 != null) {
-          this.messageBox.highlightRenderable_04.y_44 = selectionY - 2;
+          this.messageBox.highlightRenderable_04.setY(selectionY - 2);
         }
       } else if(this.messageBox.menuIndex_18 != 1 && MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
         playMenuSound(1);
         this.messageBox.menuIndex_18 = 1;
 
         if(this.messageBox.highlightRenderable_04 != null) {
-          this.messageBox.highlightRenderable_04.y_44 = selectionY + 12;
+          this.messageBox.highlightRenderable_04.setY(selectionY + 12);
         }
       }
     }
@@ -103,7 +103,7 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.menuIndex_18 = 0;
 
         if(this.messageBox.highlightRenderable_04 != null) {
-          this.messageBox.highlightRenderable_04.y_44 = selectionY - 2;
+          this.messageBox.highlightRenderable_04.setY(selectionY - 2);
         }
 
         this.result = MessageBoxResult.YES;
@@ -113,7 +113,7 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.menuIndex_18 = 1;
 
         if(this.messageBox.highlightRenderable_04 != null) {
-          this.messageBox.highlightRenderable_04.y_44 = selectionY + 12;
+          this.messageBox.highlightRenderable_04.setY(selectionY + 12);
         }
 
         this.result = MessageBoxResult.NO;
@@ -135,7 +135,7 @@ public class MessageBoxScreen extends MenuScreen {
 
     final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
     if(this.messageBox.highlightRenderable_04 != null) {
-      this.messageBox.highlightRenderable_04.y_44 = this.messageBox.menuIndex_18 == 0 ? selectionY - 2 : selectionY + 12;
+      this.messageBox.highlightRenderable_04.setY(this.messageBox.menuIndex_18 == 0 ? selectionY - 2 : selectionY + 12);
     }
   }
 
@@ -150,7 +150,7 @@ public class MessageBoxScreen extends MenuScreen {
 
     final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
     if(this.messageBox.highlightRenderable_04 != null) {
-      this.messageBox.highlightRenderable_04.y_44 = this.messageBox.menuIndex_18 == 0 ? selectionY - 2 : selectionY + 12;
+      this.messageBox.highlightRenderable_04.setY(this.messageBox.menuIndex_18 == 0 ? selectionY - 2 : selectionY + 12);
     }
   }
 

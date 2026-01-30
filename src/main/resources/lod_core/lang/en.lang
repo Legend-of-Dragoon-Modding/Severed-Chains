@@ -66,6 +66,27 @@ lod_core.ui.too_many_items.items=Items
 lod_core.ui.too_many_items.equipment=Equipment
 lod_core.ui.too_many_items.sort=Sort
 
+lod_core.ui.shop.category_buy=Buy
+lod_core.ui.shop.category_sell=Sell
+lod_core.ui.shop.category_carried=Carried
+lod_core.ui.shop.category_leave=Leave
+lod_core.ui.shop.items=Items
+lod_core.ui.shop.equipment=Equipment
+lod_core.ui.shop.goods=Goods
+lod_core.ui.shop.gold=Gold
+lod_core.ui.shop.not_enough_gold=Not enough gold
+lod_core.ui.shop.carrying=Carrying: %d
+lod_core.ui.shop.buy=Buy %s?
+lod_core.ui.shop.equip=Equip %s?
+lod_core.ui.shop.sell=Sell %s?
+lod_core.ui.shop.inventory_full=Inventory full
+lod_core.ui.shop.cannot_equip=Cannot equip
+lod_core.ui.shop.failed_to_equip=Failed to equip\n%s
+lod_core.ui.shop.already_have_good=You already have\n%s
+lod_core.ui.shop.shop_empty=This shop has nothing\nto buy
+lod_core.ui.shop.what_do_you_want_to_sell=What do you want\nto sell?
+lod_core.ui.shop.you_have_nothing_to_sell=You have nothing\nto sell
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing

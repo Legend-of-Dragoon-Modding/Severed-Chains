@@ -360,7 +360,7 @@ public abstract class MenuScreen extends ControlHost {
     return false;
   }
 
-  protected void deferAction(final Runnable action) {
+  public void deferAction(final Runnable action) {
     synchronized(this.deferredActions) {
       this.deferredActions.add(action);
     }
