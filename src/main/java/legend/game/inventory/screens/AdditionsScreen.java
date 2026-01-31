@@ -150,9 +150,9 @@ public class AdditionsScreen extends MenuScreen {
           final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
           final int level = additionStats.level + 1;
           renderThreeDigitNumber(197, y, level);
-          renderThreeDigitNumber(230, y, addition.getHitCount(charData, additionStats));
-          renderThreeDigitNumber(263, y, addition.getSp(charData, additionStats));
-          renderThreeDigitNumber(297, y, addition.getDamage(charData, additionStats));
+          renderThreeDigitNumber(230, y, addition.getHitCount(gameState_800babc8, charData, additionStats));
+          renderThreeDigitNumber(263, y, addition.getSp(gameState_800babc8, charData, additionStats));
+          renderThreeDigitNumber(297, y, addition.getDamage(gameState_800babc8, charData, additionStats));
           renderThreeDigitNumber(322, y, additionStats.xp);
 
           if(level < 5) {

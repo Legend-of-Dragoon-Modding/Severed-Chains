@@ -5,6 +5,8 @@ import legend.game.additions.CharacterAdditionStats;
 import legend.game.types.CharacterData2c;
 import org.legendofdragoon.modloader.events.Event;
 
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+
 public class AdditionHitMultiplierEvent extends Event {
   public final CharacterData2c charData;
   public final CharacterAdditionStats additionStats;
@@ -18,7 +20,7 @@ public class AdditionHitMultiplierEvent extends Event {
     this.additionStats = additionStats;
     this.addition = addition;
 
-    this.additionSpMulti = addition.getSpMultiplier(charData, additionStats);
-    this.additionDmgMulti = addition.getDamageMultiplier(charData, additionStats);
+    this.additionSpMulti = addition.getSpMultiplier(gameState_800babc8, charData, additionStats);
+    this.additionDmgMulti = addition.getDamageMultiplier(gameState_800babc8, charData, additionStats);
   }
 }
