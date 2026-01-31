@@ -406,18 +406,18 @@ public final class SaveManager {
       InputBindings.loadBindings(CONFIG);
     }
 
-    final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(state));
+    state.syncIds();
 
-    gameState_800babc8 = event.gameState;
-    gameState_800babc8.syncIds();
-
-    for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+    for(final CharacterData2c character : state.charData_32c) {
       for(final var entry : character.additionStats.entrySet()) {
-        if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(character, entry.getValue())) {
+        if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(state, character, entry.getValue())) {
           entry.getValue().unlocked = true;
         }
       }
     }
+
+    final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(state));
+    gameState_800babc8 = event.gameState;
 
     loadingNewGameState_800bdc34 = true;
     whichMenu_800bdc38 = WhichMenu.UNLOAD;

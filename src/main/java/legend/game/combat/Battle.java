@@ -2407,7 +2407,7 @@ public class Battle extends EngineState {
           // Additions
           if(charId != 2 && charId != 8) {
             final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
-            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
 
