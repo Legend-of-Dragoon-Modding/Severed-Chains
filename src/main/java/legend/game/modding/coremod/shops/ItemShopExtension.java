@@ -19,15 +19,20 @@ import static legend.game.Text.renderText;
 
 public class ItemShopExtension extends ShopExtension<ItemStack> {
   @Override
-  public String getName(final ItemStack entry) {
+  public String getName(final ShopScreen.ShopEntry<ItemStack> entry) {
     return I18n.translate("lod_core.ui.shop.items");
   }
 
   @Override
-  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ItemStack entry) {
+  public boolean accepts(final ShopScreen.ShopEntry<?> entry) {
+    return entry.item instanceof ItemStack;
+  }
+
+  @Override
+  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<ItemStack> entry) {
     int count = 0;
     for(int i = 0; i < gameState.items_2e9.getSize(); i++) {
-      if(gameState.items_2e9.get(i).isSameItem(entry.getItem())) {
+      if(gameState.items_2e9.get(i).isSameItem(entry.item.getItem())) {
         count += gameState.items_2e9.get(i).getSize();
       }
     }

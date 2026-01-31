@@ -18,14 +18,19 @@ import static legend.game.Text.renderText;
 
 public class GoodShopExtension extends ShopExtension<Good> {
   @Override
-  public String getName(final Good entry) {
+  public boolean accepts(final ShopScreen.ShopEntry<?> entry) {
+    return entry.item instanceof Good;
+  }
+
+  @Override
+  public String getName(final ShopScreen.ShopEntry<Good> entry) {
     return I18n.translate("lod_core.ui.shop.goods");
   }
 
   @Override
-  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final Good entry) {
-    if(gameState.goods_19c.has(entry)) {
-      renderText(I18n.translate("lod_core.ui.shop.already_have_good", I18n.translate(entry.getNameTranslationKey())), 195, 125, UI_TEXT);
+  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Good> entry) {
+    if(gameState.goods_19c.has(entry.item)) {
+      renderText(I18n.translate("lod_core.ui.shop.already_have_good", I18n.translate(entry.item.getNameTranslationKey())), 195, 125, UI_TEXT);
     }
   }
 

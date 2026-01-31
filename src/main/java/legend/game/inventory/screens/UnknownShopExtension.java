@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import legend.game.inventory.InventoryEntry;
 import legend.game.types.GameState52c;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
@@ -9,12 +8,17 @@ import static legend.game.SItem.allocateOneFrameGlyph;
 
 public class UnknownShopExtension extends ShopExtension {
   @Override
-  public String getName(final InventoryEntry entry) {
+  public boolean accepts(final ShopScreen.ShopEntry entry) {
+    return false;
+  }
+
+  @Override
+  public String getName(final ShopScreen.ShopEntry entry) {
     return "Unknown";
   }
 
   @Override
-  public void drawShopHeader(final ShopScreen screen, final Shop shop, final GameState52c gameState, final InventoryEntry entry, final int x, final int y) {
+  public void drawShopHeader(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry entry, final int x, final int y) {
     final Renderable58 renderable = allocateOneFrameGlyph(94, x, y);
     renderable.metricsCount = 16; // truncate slash from renderable
   }

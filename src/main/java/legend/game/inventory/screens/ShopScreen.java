@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
@@ -10,6 +12,8 @@ import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.shops.EquipmentShopExtension;
+import legend.game.modding.coremod.shops.ItemShopExtension;
 import legend.game.modding.events.inventory.ShopContentsEvent;
 import legend.game.modding.events.inventory.ShopSellEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
@@ -20,9 +24,8 @@ import legend.game.types.Shop;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
@@ -73,10 +76,12 @@ public class ShopScreen extends MenuScreen {
   };
 
   private final Shop shop;
-  private final Map<Class, ShopExtension> extensions = new HashMap<>();
-  private final ShopExtension unknownExtension = new UnknownShopExtension();
+  private final Object2IntMap<ShopExtension> extensions = new Object2IntOpenHashMap<>();
+  private final UnknownShopExtension unknownExtension = new UnknownShopExtension();
+  private final ItemShopExtension itemExtension = new ItemShopExtension();
+  private final EquipmentShopExtension equipmentExtension = new EquipmentShopExtension();
   private ShopExtension activeExtension;
-  private InventoryEntry selectedEntry;
+  private ShopEntry<? extends InventoryEntry> selectedEntry;
 
   private MenuState menuState = MenuState.INIT_0;
   private MenuState confirmDest;
@@ -124,7 +129,7 @@ public class ShopScreen extends MenuScreen {
 
         final GatherShopExtensionsEvent shopExtensionsEvent = EVENTS.postEvent(new GatherShopExtensionsEvent(this, this.shop));
         this.extensions.putAll(shopExtensionsEvent.extensions);
-        this.extensions.values().forEach(extension -> extension.attach(this, this.shop, gameState_800babc8));
+        this.extensions.keySet().forEach(extension -> extension.attach(this, this.shop, gameState_800babc8));
 
         this.menuState = MenuState.LOAD_ITEMS_1;
       }
@@ -265,14 +270,25 @@ public class ShopScreen extends MenuScreen {
     renderText(I18n.translate("lod_core.ui.shop.category_leave"), 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
   }
 
-  private void setSelectedEntry(@Nullable final InventoryEntry<?> inventoryEntry) {
+  private void setSelectedEntry(@Nullable final ShopEntry<? extends InventoryEntry<?>> shopEntry) {
     if(this.activeExtension != null) {
       this.activeExtension.deactivate(this, this.shop, gameState_800babc8);
     }
 
-    this.activeExtension = this.extensions.getOrDefault(inventoryEntry == null ? null : inventoryEntry.getClass(), this.unknownExtension);
-    this.selectedEntry = inventoryEntry;
-    this.activeExtension.activate(this, this.shop, gameState_800babc8, inventoryEntry);
+    if(shopEntry == null) {
+      this.activeExtension = this.unknownExtension;
+    } else {
+      this.activeExtension = this.extensions.object2IntEntrySet().stream()
+        .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
+        .map(Object2IntMap.Entry::getKey)
+        .filter(extension -> extension.accepts(shopEntry))
+        .findFirst()
+        .orElse(this.unknownExtension)
+      ;
+    }
+
+    this.selectedEntry = shopEntry;
+    this.activeExtension.activate(this, this.shop, gameState_800babc8, shopEntry);
   }
 
   private void drawBuyMenu() {
@@ -297,7 +313,7 @@ public class ShopScreen extends MenuScreen {
 
   private void renderSellList(final int firstItem, final boolean isItemShop, final Renderable58 upArrow, final Renderable58 downArrow) {
     if(isItemShop) {
-      this.extensions.get(ItemStack.class).drawShopHeader(this, this.shop, gameState_800babc8, null, 16, 16);
+      this.itemExtension.drawShopHeader(this, this.shop, gameState_800babc8, null, 16, 16);
 
       for(int i = 0; firstItem + i < gameState_800babc8.items_2e9.getSize() && i < 6; i++) {
         final ItemStack stack = gameState_800babc8.items_2e9.get(firstItem + i);
@@ -314,7 +330,7 @@ public class ShopScreen extends MenuScreen {
 
       downArrow.setVisible(firstItem + 6 <= gameState_800babc8.items_2e9.getSize() - 1);
     } else {
-      this.extensions.get(Equipment.class).drawShopHeader(this, this.shop, gameState_800babc8, null, 16, 16);
+      this.equipmentExtension.drawShopHeader(this, this.shop, gameState_800babc8, null, 16, 16);
 
       for(int i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
@@ -392,7 +408,7 @@ public class ShopScreen extends MenuScreen {
           playMenuSound(1);
           this.invIndex_8011e0e0 = i;
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
-          this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+          this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
 
           return InputPropagation.HANDLED;
         }
@@ -442,7 +458,7 @@ public class ShopScreen extends MenuScreen {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           this.invIndex_8011e0e0 = i;
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
-          this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+          this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
           this.menuBuy4Select();
           return InputPropagation.HANDLED;
         }
@@ -480,7 +496,7 @@ public class ShopScreen extends MenuScreen {
         this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
         this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
 
-        this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+        this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
 
         this.menuState = MenuState.BUY_4;
       }
@@ -619,7 +635,7 @@ public class ShopScreen extends MenuScreen {
     }
 
     this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
   }
 
   private void menuBuy4NavigateDown() {
@@ -638,7 +654,7 @@ public class ShopScreen extends MenuScreen {
     }
 
     this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
   }
 
   private void menuBuy4NavigateTop() {
@@ -646,7 +662,7 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
       this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
 
@@ -655,7 +671,7 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(1);
       this.invIndex_8011e0e0 = Math.min(5, this.inv.size() - 1);
       this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
 
@@ -670,7 +686,7 @@ public class ShopScreen extends MenuScreen {
       this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
 
-    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
   }
 
   private void menuBuy4NavigatePageDown() {
@@ -685,7 +701,7 @@ public class ShopScreen extends MenuScreen {
       this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
 
-    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+    this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
   }
 
   private void menuBuy4NavigateHome() {
@@ -694,7 +710,7 @@ public class ShopScreen extends MenuScreen {
       this.invIndex_8011e0e0 = 0;
       this.invScroll_8011e0e4 = 0;
       this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
 
@@ -705,7 +721,7 @@ public class ShopScreen extends MenuScreen {
       this.invIndex_8011e0e0 = Math.min(5, invCount - 1);
       this.invScroll_8011e0e4 = invCount - 1 - this.invIndex_8011e0e0;
       this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
-      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0).item);
+      this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
 

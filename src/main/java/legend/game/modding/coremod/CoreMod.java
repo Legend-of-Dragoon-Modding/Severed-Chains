@@ -16,13 +16,10 @@ import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
-import legend.game.inventory.Equipment;
-import legend.game.inventory.Good;
 import legend.game.inventory.IconSetConfigEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortModeConfigEntry;
 import legend.game.inventory.ItemRegistryEvent;
-import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.GatherShopExtensionsEvent;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
@@ -309,9 +306,9 @@ public class CoreMod {
 
   @EventListener
   public static void gatherShopExtensions(final GatherShopExtensionsEvent event) {
-    event.addExtension(ItemStack.class, new ItemShopExtension());
-    event.addExtension(Equipment.class, new EquipmentShopExtension());
-    event.addExtension(Good.class, new GoodShopExtension());
+    event.addExtension(new ItemShopExtension(), 1000);
+    event.addExtension(new EquipmentShopExtension(), 1000);
+    event.addExtension(new GoodShopExtension(), 1000);
   }
 
   @EventListener

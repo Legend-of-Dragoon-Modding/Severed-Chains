@@ -87,7 +87,12 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   }
 
   @Override
-  public String getName(final Equipment entry) {
+  public boolean accepts(final ShopScreen.ShopEntry<?> entry) {
+    return entry.item instanceof Equipment;
+  }
+
+  @Override
+  public String getName(final ShopScreen.ShopEntry<Equipment> entry) {
     return I18n.translate("lod_core.ui.shop.equipment");
   }
 
@@ -101,11 +106,11 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   }
 
   @Override
-  public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final Equipment entry) {
+  public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.returnControl = false;
 
     for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
-      this.portraits[i].setVisibility(characterIndices_800bdbb8[i] != -1 && canEquip(entry, characterIndices_800bdbb8[i]));
+      this.portraits[i].setVisibility(characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
     }
 
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
@@ -123,7 +128,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   }
 
   @Override
-  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final Equipment entry) {
+  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     final int charId = characterIndices_800bdbb8[this.selectedCharSlot];
 
     if(charId != -1) {
@@ -131,7 +136,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
       final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState.charData_32c[charId].equipment_14);
 
-      if(equipItem(entry, charId).success) {
+      if(equipItem(entry.item, charId).success) {
         allocateOneFrameGlyph(0x67, 210, 127);
         allocateOneFrameGlyph(0x68, 210, 137);
         allocateOneFrameGlyph(0x69, 210, 147);

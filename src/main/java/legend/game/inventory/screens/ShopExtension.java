@@ -20,7 +20,9 @@ import static legend.game.Text.renderText;
 public abstract class ShopExtension<T extends InventoryEntry<T>> {
   private static final FontOptions FONT_OPTIONS = new FontOptions().set(UI_TEXT).size(0.8f);
 
-  public abstract String getName(final T entry);
+  public abstract String getName(final ShopScreen.ShopEntry<T> entry);
+
+  public abstract boolean accepts(final ShopScreen.ShopEntry<?> entry);
 
   /** Called when this extension is loaded into a shop */
   public void attach(final ShopScreen screen, final Shop shop, final GameState52c gameState) {
@@ -28,7 +30,7 @@ public abstract class ShopExtension<T extends InventoryEntry<T>> {
   }
 
   /** Called when this extension is displayed in a shop */
-  public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final T entry) {
+  public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<T> entry) {
 
   }
 
@@ -38,7 +40,7 @@ public abstract class ShopExtension<T extends InventoryEntry<T>> {
   }
 
   /** Draw the header at the top of the shop */
-  public void drawShopHeader(final ShopScreen screen, final Shop shop, final GameState52c gameState, final T entry, final int x, final int y) {
+  public void drawShopHeader(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<T> entry, final int x, final int y) {
     final Renderable58 renderable = allocateOneFrameGlyph(94, x, y);
     renderable.metricsCount = 16; // truncate slash from renderable
 
@@ -55,12 +57,12 @@ public abstract class ShopExtension<T extends InventoryEntry<T>> {
   }
 
   /** Draw the description for the selected entry */
-  public void drawShopDescription(final ShopScreen screen, final Shop shop, final GameState52c gameState, final T entry, final int x, final int y) {
-    renderString(x, y, I18n.translate(entry.getDescriptionTranslationKey()), false);
+  public void drawShopDescription(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<T> entry, final int x, final int y) {
+    renderString(x, y, I18n.translate(entry.item.getDescriptionTranslationKey()), false);
   }
 
   /** Draw the details for the selected entry */
-  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final T entry) {
+  public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<T> entry) {
 
   }
 
