@@ -80,12 +80,12 @@ public final class LodItems {
   public static final RegistryDelegate<Item> ATTACK_BALL = ITEM_REGISTRAR.register("attack_ball", AttackBallItem::new);
 
   // Buffs/debuffs
-  public static final RegistryDelegate<Item> POWER_DOWN = ITEM_REGISTRAR.register("power_down", () -> new BuffItem(1, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, -50, -50, -50, -50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> POWER_UP = ITEM_REGISTRAR.register("power_up", () -> new BuffItem(6, ItemIcon.UP, 200, Item.TargetType.ALLIES, 50, 50, 50, 50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> SPEED_DOWN = ITEM_REGISTRAR.register("speed_down", () -> new BuffItem(1, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, -50, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> SPEED_UP = ITEM_REGISTRAR.register("speed_up", () -> new BuffItem(6, ItemIcon.UP, 200, Item.TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 100, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> MAGIC_SHIELD = ITEM_REGISTRAR.register("magic_shield", () -> new ShieldItem(7, false, true));
-  public static final RegistryDelegate<Item> MATERIAL_SHIELD = ITEM_REGISTRAR.register("material_shield", () -> new ShieldItem(8, true, false));
+  public static final RegistryDelegate<Item> POWER_DOWN = ITEM_REGISTRAR.register("power_down", () -> new BuffItem(33, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, -50, -50, -50, -50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> POWER_UP = ITEM_REGISTRAR.register("power_up", () -> new BuffItem(38, ItemIcon.UP, 200, Item.TargetType.ALLIES, 50, 50, 50, 50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> SPEED_DOWN = ITEM_REGISTRAR.register("speed_down", () -> new BuffItem(33, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, -50, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> SPEED_UP = ITEM_REGISTRAR.register("speed_up", () -> new BuffItem(38, ItemIcon.UP, 200, Item.TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 100, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> MAGIC_SHIELD = ITEM_REGISTRAR.register("magic_shield", () -> new ShieldItem(39, false, true));
+  public static final RegistryDelegate<Item> MATERIAL_SHIELD = ITEM_REGISTRAR.register("material_shield", () -> new ShieldItem(40, true, false));
 
   // Status items
   public static final RegistryDelegate<Item> CHARM_POTION = ITEM_REGISTRAR.register("charm_potion", CharmPotionItem::new);
