@@ -62,9 +62,9 @@ dependencies {
   api 'org.legendofdragoon:mod-loader:4.2.2'
   api 'org.legendofdragoon:script-recompiler:0.6.0'
 
-  implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
-  implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
-  implementation 'org.fusesource.jansi:jansi:2.4.1'
+  api 'org.apache.logging.log4j:log4j-api:2.24.3'
+  api 'org.apache.logging.log4j:log4j-core:2.24.3'
+  api 'org.fusesource.jansi:jansi:2.4.1'
 
   api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
