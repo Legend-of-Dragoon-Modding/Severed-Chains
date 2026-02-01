@@ -1,3 +1,38 @@
+; start with PCS entrypoints so items/effects forking a player bent's script while this is active will have the expected entrypoints
+entrypoint :ENTRYPOINT_0_MAIN
+entrypoint :ENTRYPOINT_1_NOOP
+entrypoint :ENTRYPOINT_2_TAKE_DAMAGE
+entrypoint :ENTRYPOINT_3_TAKE_DAMAGE_SIMPLE
+entrypoint :ENTRYPOINT_4_HANDLE_DEATH
+entrypoint :ENTRYPOINT_5_NOOP
+entrypoint :ENTRYPOINT_6_NOOP
+entrypoint :ENTRYPOINT_7_NOOP
+entrypoint :ENTRYPOINT_8_NOOP
+entrypoint :ENTRYPOINT_9_NOOP
+entrypoint :ENTRYPOINT_10
+entrypoint :ENTRYPOINT_11_RENDER_TICK_STATUS
+entrypoint :ENTRYPOINT_12_NOOP
+entrypoint :ENTRYPOINT_13_NOOP
+entrypoint :ENTRYPOINT_14_NOOP
+entrypoint :ENTRYPOINT_15_NOOP
+entrypoint :ENTRYPOINT_16
+entrypoint :ENTRYPOINT_17_DETRANSFORM
+entrypoint :ENTRYPOINT_18
+entrypoint :ENTRYPOINT_19
+entrypoint :ENTRYPOINT_20_TAKE_DAMAGE
+entrypoint :ENTRYPOINT_21
+entrypoint :ENTRYPOINT_22_NOOP
+entrypoint :ENTRYPOINT_23_NOOP
+entrypoint :ENTRYPOINT_24_NOOP
+entrypoint :ENTRYPOINT_25_NOOP
+entrypoint :ENTRYPOINT_26_NOOP
+entrypoint :ENTRYPOINT_27_NOOP
+entrypoint :ENTRYPOINT_28_NOOP
+entrypoint :ENTRYPOINT_29_NOOP
+entrypoint :ENTRYPOINT_30_NOOP
+entrypoint :ENTRYPOINT_31_NOOP
+
+; our actual entrypoints
 entrypoint :DO_NOTHING
 entrypoint :USE_ATTACK_ITEM
 entrypoint :USE_HEALING_POTION
@@ -9,7 +44,6 @@ entrypoint :USE_MAGIC_SHIELD
 entrypoint :USE_MATERIAL_SHIELD
 entrypoint :USE_SMOKE_BALL
 entrypoint :USE_TOTAL_VANISHING
-;TODO temporary; pcs forks into entrypoint 11 if char using attack item has status affliction
 entrypoint :ENTRYPOINT_11_RENDER_TICK_STATUS
 entrypoint :USE_CAUSE_STATUS
 
