@@ -78,6 +78,10 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected int handleTargeting() {
+    if(this.player_08.item_d4.canTarget(Item.TargetType.INSTANT)) {
+      return 2;
+    }
+
     //TODO
     return this.hud.handleTargeting(this.player_08.item_d4.canTarget(Item.TargetType.ALLIES) ? 0 : 1, this.player_08.item_d4.canTarget(Item.TargetType.ALL));
   }
