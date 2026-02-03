@@ -1405,7 +1405,7 @@ public final class SItem {
       final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(addition.getRegistryId(), k -> new CharacterAdditionStats());
       final boolean wasUnlocked = additionStats.unlocked;
 
-      additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(charData, additionStats);
+      additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(gameState_800babc8, charData, additionStats);
 
       if(additionStats.unlocked && !wasUnlocked) {
         final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));

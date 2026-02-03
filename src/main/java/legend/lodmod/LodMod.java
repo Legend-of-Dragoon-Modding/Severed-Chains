@@ -35,6 +35,7 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.GatherBattleActionsEvent;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
@@ -459,6 +460,11 @@ public class LodMod {
   @EventListener
   public static void registerBattleActions(final RegisterBattleActionsEvent event) {
     LodBattleActions.register(event);
+  }
+
+  @EventListener
+  public static void registerPosBattleActions(final RegisterPostBattleActionsEvent event) {
+    LodPostBattleActions.register(event);
   }
 
   @EventListener

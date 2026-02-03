@@ -76,7 +76,6 @@ import legend.game.combat.environment.BttlLightStruct84Sub38;
 import legend.game.combat.environment.StageAmbiance4c;
 import legend.game.combat.particles.ParticleManager;
 import legend.game.combat.postbattleactions.PostBattleAction;
-import legend.game.combat.postbattleactions.PostBattleActionInstance;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
 import legend.game.combat.types.BattleObject;
@@ -143,6 +142,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -246,6 +246,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
+import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -289,7 +290,6 @@ import static legend.game.sound.Audio.addSoundFile;
 import static legend.game.sound.Audio.combatMusicFileIndices_800501bc;
 import static legend.game.sound.Audio.combatSoundEffectsTypes_8005019c;
 import static legend.game.sound.Audio.getLoadedAudioFiles;
-import static legend.game.sound.Audio.loadMusicPackage;
 import static legend.game.sound.Audio.loadSshdAndSoundbank;
 import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
 import static legend.game.sound.Audio.musicLoaded_800bd782;
@@ -410,14 +410,6 @@ public class Battle extends EngineState<Battle> {
 
   private int loadingStage;
 
-  /**
-   * <ol>
-   *   <li value="1">Combat victory</li>
-   *   <li value="2">Game over</li>
-   *   <li value="4">FMV</li>
-   * </ol>
-   */
-  public PostBattleActionInstance<?, ?> postBattleAction_800bc974;
   private int currentPostCombatActionFrame_800c6690;
 
   private final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
@@ -469,7 +461,7 @@ public class Battle extends EngineState<Battle> {
   public int _800c67d0;
 
   /** script using attack item? */
-  public ScriptState<? extends BattleEntity27c> scriptState_800c6914;
+  public ScriptState<? extends BattleEntity27c> cameraFocusedBent_800c6914;
   /** bent index, used in pcs and possibly elsewhere */
   public int _800c6918;
 
@@ -826,7 +818,7 @@ public class Battle extends EngineState<Battle> {
     functions[169] = this::scriptGetBentStat;
     functions[170] = this::scriptSetPostBattleAction;
     functions[171] = this::scriptSetBattleHudVisibility;
-    functions[172] = this::FUN_800ccef8;
+    functions[172] = this::scriptSetPostBattleActionBossKill;
     functions[173] = this::scriptSetBentDeadAndDropLoot;
     functions[174] = this::scriptGetHitProperty;
     functions[175] = this::scriptSetBentDead;
@@ -1948,7 +1940,7 @@ public class Battle extends EngineState<Battle> {
 
     totalXpFromCombat_800bc95c = 0;
     battleFlags_800bc960 = 0;
-    this.postBattleAction_800bc974 = null;
+    postBattleAction_800bc974 = null;
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
     equipmentOverflow.clear();
@@ -2314,7 +2306,7 @@ public class Battle extends EngineState<Battle> {
   public void battleTick() {
     this.hud.draw();
 
-    if(this.postBattleAction_800bc974 != null) {
+    if(postBattleAction_800bc974 != null) {
       this.loadingStage++;
       return;
     }
@@ -2346,17 +2338,16 @@ public class Battle extends EngineState<Battle> {
 
             //LAB_800c7d74
           } else { // Monsters dead
-            this.endBattle();
+            this.allMonstersDead();
           }
         }
       } else { // Game over
-        loadMusicPackage(19);
-        this.postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
+        this.allCharactersDead();
       }
     }
 
     //LAB_800c7d78
-    if(this.postBattleAction_800bc974 != null) {
+    if(postBattleAction_800bc974 != null) {
       //LAB_800c7d88
       this.loadingStage++;
     }
@@ -2364,12 +2355,15 @@ public class Battle extends EngineState<Battle> {
     //LAB_800c7d98
   }
 
-  public void endBattle() {
-    LOGGER.info(BATTLE, "Battle ending");
+  public void allCharactersDead() {
+    LOGGER.info(BATTLE, "All characters dead");
+    encounter.onBattleLost(this);
+  }
 
+  public void allMonstersDead() {
+    LOGGER.info(BATTLE, "All monsters dead");
     FUN_80020308();
-
-    encounter.onEncounterEnded(this);
+    encounter.onBattleWon(this);
   }
 
   @Method(0x800c7da8L)
@@ -2390,8 +2384,7 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800c8068L)
   public void fadeOutBattle() {
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
-      this.postBattleAction_800bc974.onCameraFadeoutStart(this);
-      this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
+      postBattleAction_800bc974.onCameraFadeoutStart(this);
 
       //LAB_800c80c8
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
@@ -2407,17 +2400,18 @@ public class Battle extends EngineState<Battle> {
     //LAB_800c81c0
     this.currentPostCombatActionFrame_800c6690++;
 
-    if(this.currentPostCombatActionFrame_800c6690 >= this.postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+    if(this.currentPostCombatActionFrame_800c6690 >= postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+      EVENTS.postEvent(new BattleEndedEvent(this, encounter));
+
       //LAB_800c8214
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        EVENTS.postEvent(new BattleEndedEvent(this, encounter));
-        startFadeEffect(1, this.postBattleAction_800bc974.getFadeDuration(this));
+        startFadeEffect(1, postBattleAction_800bc974.getFadeDuration(this));
       }
 
       //LAB_800c8274
-      this.postBattleAction_800bc974.onCameraFadeoutFinish(this);
+      postBattleAction_800bc974.onCameraFadeoutFinish(this);
 
       //LAB_800c8290
       this.currentPostCombatActionFrame_800c6690 = 0;
@@ -2483,9 +2477,9 @@ public class Battle extends EngineState<Battle> {
       this.deallocateStageDarkeningStorage();
       this.FUN_800c8748();
 
+      //LAB_800c8558
       postBattleEngineState_800bc91c = previousEngineState_8004dd28;
 
-      //LAB_800c8558
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
         submapScene_80052c34 = postCombatSubmapScene;
@@ -2502,7 +2496,7 @@ public class Battle extends EngineState<Battle> {
       battleLoaded_800bc94c = false;
 
       //LAB_800c84b4
-      this.postBattleAction_800bc974.performAction(this);
+      postBattleAction_800bc974.performAction(this);
 
       //LAB_800c85f0
       this.loadingStage++;
@@ -2981,7 +2975,7 @@ public class Battle extends EngineState<Battle> {
           // Additions
           if(charId != 2 && charId != 8) {
             final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
-            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
 
@@ -4273,16 +4267,15 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets post-battle action to 3")
+  @ScriptDescription("Sets post-battle action to boss kill")
   @Method(0x800ccef8L)
-  public FlowControl FUN_800ccef8(final RunningScript<?> script) {
-//    postBattleAction_800bc974 = 3;
-//    return FlowControl.PAUSE_AND_REWIND;
-    throw new IllegalStateException("Unknown post-battle action: 3");
+  public FlowControl scriptSetPostBattleActionBossKill(final RunningScript<?> script) {
+    postBattleAction_800bc974 = LodPostBattleActions.BOSS_KILL.get().inst(script);
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   @ScriptDescription("Sets the post-battle action")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "action", description = "The post-battle action registry ID or legacy int (1 = victory, 2 = game over, 4 = FMV)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "action", description = "The post-battle action registry ID or legacy int (1 = victory, 2 = game over, 3 = boss kill, 4 = FMV, 5 = merchant)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "params", description = "Parameters to pass to the post-battle action (varies by action)")
   @Method(0x800ccf0cL)
   public FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
@@ -4293,12 +4286,14 @@ public class Battle extends EngineState<Battle> {
       postBattleAction = switch(script.params_20[0].get()) {
         case 1 -> CorePostBattleActions.VICTORY.get();
         case 2 -> CorePostBattleActions.GAME_OVER.get();
+        case 3 -> LodPostBattleActions.BOSS_KILL.get();
         case 4 -> CorePostBattleActions.PLAY_FMV.get();
+        case 5 -> LodPostBattleActions.MERCHANT.get();
         default -> throw new IllegalStateException("Unknown post-battle action: " + script.params_20[0].get());
       };
     }
 
-    this.postBattleAction_800bc974 = postBattleAction.inst(script);
+    postBattleAction_800bc974 = postBattleAction.inst(script);
     return FlowControl.PAUSE_AND_REWIND;
   }
 

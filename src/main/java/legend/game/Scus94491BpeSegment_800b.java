@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
+import legend.game.combat.postbattleactions.PostBattleActionInstance;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
@@ -61,6 +62,17 @@ public final class Scus94491BpeSegment_800b {
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
   public static final IntList livingCharIds_800bc968 = new IntArrayList();
+
+  /**
+   * <ol>
+   *   <li value="1">Combat victory</li>
+   *   <li value="2">Game over</li>
+   *   <li value="3">Boss kill</li>
+   *   <li value="4">FMV</li>
+   *   <li value="5">Merchant</li>
+   * </ol>
+   */
+  public static PostBattleActionInstance<?, ?> postBattleAction_800bc974;
 
   public static boolean _800bd7ac;
   public static int _800bd7b0;

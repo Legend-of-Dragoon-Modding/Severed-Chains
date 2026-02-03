@@ -1,5 +1,10 @@
 package legend.game.saves.serializers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.ReflectionAccessFilter;
 import legend.core.GameEngine;
 import legend.core.memory.types.IntRef;
 import legend.game.additions.CharacterAdditionStats;
@@ -15,14 +20,22 @@ import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
+
+import java.nio.charset.StandardCharsets;
 
 import static legend.lodmod.LodMod.getLocationName;
 
 public final class V7Serializer {
   private V7Serializer() { }
 
+  private static final Logger LOGGER = LogManager.getFormatterLogger(V7Serializer.class);
+
   public static final int MAGIC_V7 = 0x37615344; // DSa7
+
+  private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
   public static FileData fromV7Matcher(final FileData data) {
     if(data.readInt(0) == MAGIC_V7) {
@@ -109,9 +122,22 @@ public final class V7Serializer {
       final RegistryId itemId = data.readRegistryId(offset);
       final int size = data.readInt(offset);
       final int durability = data.readInt(offset);
-      // Unused for now but may be used as the length header for extra item data in the future
-      final int extraDataHeader = data.readInt(offset);
-      gameState.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability));
+
+      final int extraDataSize = data.readInt(offset);
+      JsonObject extraData = null;
+
+      if(extraDataSize != 0) {
+        final byte[] serialized = new byte[extraDataSize];
+        data.read(offset, serialized, 0, serialized.length);
+
+        try {
+          extraData = jsonSerializer.fromJson(new String(serialized, StandardCharsets.UTF_8), JsonObject.class);
+        } catch(final JsonSyntaxException e) {
+          LOGGER.error("Failed to load extra data for instance of item " + itemId, e);
+        }
+      }
+
+      gameState.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability, extraData));
     }
 
     for(int i = 0; i < goodsCount; i++) {

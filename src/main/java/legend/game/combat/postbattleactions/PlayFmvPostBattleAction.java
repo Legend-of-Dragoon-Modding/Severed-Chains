@@ -22,6 +22,7 @@ public class PlayFmvPostBattleAction extends PostBattleAction<PlayFmvPostBattleA
   @Override
   protected void onCameraFadeoutStart(final Battle battle, final PlayFmvPostBattleActionInstance inst) {
     battle.cameraScriptMainTableJumpIndex_800c6748 = 211;
+    battle.cameraFocusedBent_800c6914 = battle.currentTurnBent_800c66c8;
   }
 
   @Override

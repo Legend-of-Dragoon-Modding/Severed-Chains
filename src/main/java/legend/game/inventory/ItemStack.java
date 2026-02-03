@@ -1,5 +1,6 @@
 package legend.game.inventory;
 
+import com.google.gson.JsonObject;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.coremod.CoreMod;
@@ -10,6 +11,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
+
 import static legend.core.GameEngine.RENDERER;
 
 public class ItemStack implements InventoryEntry<ItemStack> {
@@ -18,6 +21,9 @@ public class ItemStack implements InventoryEntry<ItemStack> {
   private final Item item;
   private int size;
   private int durability;
+
+  @Nullable
+  private JsonObject extraData;
 
   public ItemStack(final Item item, final int size, final int durability) {
     this.item = item;
@@ -36,6 +42,7 @@ public class ItemStack implements InventoryEntry<ItemStack> {
 
   public ItemStack(final ItemStack other) {
     this(other.item, other.size, other.durability);
+    this.extraData = other.extraData != null ? other.extraData.deepCopy() : null;
   }
 
   @Override
@@ -332,6 +339,15 @@ public class ItemStack implements InventoryEntry<ItemStack> {
 
   public int getAttackDamageMultiplier(final BattleEntity27c user, final BattleEntity27c target) {
     return this.getItem().getAttackDamageMultiplier(this, user, target);
+  }
+
+  @Nullable
+  public JsonObject getExtraData() {
+    return this.extraData;
+  }
+
+  public void setExtraData(@Nullable final JsonObject extraData) {
+    this.extraData = extraData;
   }
 
   @Override

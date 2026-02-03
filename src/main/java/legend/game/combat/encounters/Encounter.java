@@ -11,6 +11,9 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.List;
 
+import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
+import static legend.game.sound.Audio.loadMusicPackage;
+
 public class Encounter extends RegistryEntry {
   public final List<Monster> monsters;
   public final IntSet uniqueIds;
@@ -65,9 +68,14 @@ public class Encounter extends RegistryEntry {
     battle.loadMonsterSounds();
   }
 
-  public void onEncounterEnded(final Battle battle) {
-    battle.postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
+  public void onBattleWon(final Battle battle) {
+    postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
     battle.playVictoryMusic();
+  }
+
+  public void onBattleLost(final Battle battle) {
+    loadMusicPackage(19);
+    postBattleAction_800bc974 = CorePostBattleActions.GAME_OVER.get().inst();
   }
 
   public int get(final int index) {

@@ -134,8 +134,8 @@ public class AdditionListMenu extends ListMenu {
         final Addition addition = this.menuAdditions.get(listIndex);
         final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
         final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
-        final int damage = addition.getDamage(charData, additionStats);
-        final int sp = addition.getSp(charData, additionStats);
+        final int damage = addition.getDamage(gameState_800babc8, charData, additionStats);
+        final int sp = addition.getSp(gameState_800babc8, charData, additionStats);
 
         //Selected item description
         if(this.description == null) {
@@ -146,7 +146,7 @@ public class AdditionListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText("Hits: " + addition.getHitCount(charData, additionStats) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
+        renderText("Hits: " + addition.getHitCount(gameState_800babc8, charData, additionStats) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
     }
   }

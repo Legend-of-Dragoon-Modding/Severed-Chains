@@ -13,7 +13,7 @@ import static legend.core.GameEngine.REGISTRIES;
 public final class CorePostBattleActions {
   private CorePostBattleActions() { }
 
-  private static final Registrar<PostBattleAction, RegisterPostBattleActionsEvent> REGISTRAR = new Registrar<>(REGISTRIES.postBattleActions, CoreMod.MOD_ID);
+  private static final Registrar<PostBattleAction<?, ?>, RegisterPostBattleActionsEvent> REGISTRAR = new Registrar<>(REGISTRIES.postBattleActions, CoreMod.MOD_ID);
 
   public static final RegistryDelegate<VictoryPostBattleAction> VICTORY = REGISTRAR.register("victory", VictoryPostBattleAction::new);
   public static final RegistryDelegate<GameOverPostBattleAction> GAME_OVER = REGISTRAR.register("game_over", GameOverPostBattleAction::new);

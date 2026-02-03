@@ -1,6 +1,7 @@
 package legend.game.additions;
 
 import legend.game.types.CharacterData2c;
+import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
 import java.util.List;
@@ -18,12 +19,12 @@ public class MasterAddition extends SimpleAddition {
   }
 
   @Override
-  public boolean isUnlocked(final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public boolean isUnlocked(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
     return (charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0;
   }
 
   @Override
-  public void loadAnimations(final CharacterData2c charData, final CharacterAdditionStats additionStats, final Consumer<List<FileData>> onLoad) {
+  public void loadAnimations(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats, final Consumer<List<FileData>> onLoad) {
     loadDrgnDir(0, this.additionFile, onLoad);
   }
 }
