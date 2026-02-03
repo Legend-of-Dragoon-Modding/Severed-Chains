@@ -7,7 +7,7 @@ Knight of Sandora
  rel :JMP_a38_1
  rel :JMP_a38_2
  rel :JMP_a38_1
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
  JMP_a38_0:
  call 3, 0x19, stor[8]
  jmp_cmp !=, 0x0, stor[8], inl[:LABEL_23]

@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.modloader.registries.RegistryId;
-import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Script;
 
@@ -23,7 +22,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -323,7 +321,7 @@ public class ScriptState<T extends ScriptedObject> {
 
     //LAB_80015cdc
     while(childIndex >= 0) {
-      final ScriptState<?> childState = SCRIPTS.getState(childIndex);
+      final ScriptState<?> childState = this.manager.getState(childIndex);
       final int childChildIndex = childState.getStor(6);
       childState.deallocate();
       childIndex = childChildIndex;
@@ -379,11 +377,11 @@ public class ScriptState<T extends ScriptedObject> {
 
     LOGGER.info("Consuming script %d child %d", this.index, childIndex);
 
-    final ScriptState<?> child = SCRIPTS.getState(childIndex);
+    final ScriptState<?> child = this.manager.getState(childIndex);
     if(child.hasFlag(FLAG_PARENT_SCRIPT)) { // Is parent
       this.setFlag(FLAG_PARENT_SCRIPT);
       this.setStor(6, child.getStor(6));
-      SCRIPTS.getState(child.getStor(6)).setStor(5, this.index);
+      this.manager.getState(child.getStor(6)).setStor(5, this.index);
     } else {
       //LAB_80015ef0
       this.setStor(6, -1);
@@ -512,139 +510,139 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   private Param parseParam() {
-    final int childCommand = this.context.getOp();
-    final int paramType = childCommand >>> 24;
-    final int cmd2 = childCommand >>> 16 & 0xff;
-    final int cmd1 = childCommand >>> 8 & 0xff;
-    final int cmd0 = childCommand & 0xff;
+    final int op = this.context.getOp();
+    final int type = op >>> 24;
+    final int cmd2 = op >>> 16 & 0xff;
+    final int cmd1 = op >>> 8 & 0xff;
+    final int cmd0 = op & 0xff;
 
     this.context.commandOffset_0c++;
 
-    if(paramType == 0x1) { // Push next value after this param
+    if(type == 0x1) { // Push next value after this param
       final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c);
       this.context.commandOffset_0c++;
       return param;
     }
 
-    if(paramType == 0x2) { // Push storage[cmd0]
+    if(type == 0x2) { // Push storage[cmd0]
       return new ScriptStorageParam(this, cmd0);
     }
 
-    if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
+    if(type == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
       final int otherScriptIndex1 = this.getStor(cmd0);
-      final int otherScriptIndex2 = SCRIPTS.getState(otherScriptIndex1).getStor(cmd1);
-      return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex2), cmd2);
+      final int otherScriptIndex2 = this.manager.getState(otherScriptIndex1).getStor(cmd1);
+      return new ScriptStorageParam(this.manager.getState(otherScriptIndex2), cmd2);
     }
 
-    if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
+    if(type == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
       final int otherScriptIndex = this.getStor(cmd0);
       final int storageIndex = cmd1 + this.getStor(cmd2);
-      return new ScriptStorageParam(SCRIPTS.getState(otherScriptIndex), storageIndex);
+      return new ScriptStorageParam(this.manager.getState(otherScriptIndex), storageIndex);
     }
 
-    if(paramType == 0x5) { // Push gameVar[cmd0]
+    if(type == 0x5) { // Push gameVar[cmd0]
       return new GameVarParam(cmd0);
     }
 
-    if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
+    if(type == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
       return new GameVarParam(cmd0 + this.getStor(cmd1));
     }
 
-    if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
+    if(type == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
       final int arrIndex = this.getStor(cmd1);
       return new GameVarArrayParam(cmd0, arrIndex);
     }
 
-    if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
+    if(type == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
       final int storage1 = this.getStor(cmd1);
       final int storage2 = this.getStor(cmd2);
       return new GameVarArrayParam(cmd0 + storage1, storage2);
     }
 
-    if(paramType == 0x9) { // INLINE_1 Push (commandStart + (cmd0 | cmd1 << 8) * 4)
-      return new ScriptInlineParam(this, this.context.opOffset_08 + (short)childCommand);
+    if(type == 0x9) { // INLINE_1 Push (commandStart + (cmd0 | cmd1 << 8) * 4)
+      return new ScriptInlineParam(this, this.context.opOffset_08 + (short)op);
     }
 
-    if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
+    if(type == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
       final int storage = this.getStor(cmd2);
-      return new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
+      return new ScriptInlineParam(this, this.context.opOffset_08 + ((short)op + storage));
     }
 
-    if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
+    if(type == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
       final int storage = this.getStor(cmd2);
-      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
+      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)op + new ScriptInlineParam(this, this.context.opOffset_08).array((short)op + storage).get());
     }
 
-    if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
+    if(type == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
       final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.getStor(cmd0)).get() + this.getStor(cmd1));
       this.context.commandOffset_0c++;
       return param;
     }
 
-    if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
-      return new ScriptStorageParam(SCRIPTS.getState(this.getStor(cmd0)), cmd1 + cmd2);
+    if(type == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
+      return new ScriptStorageParam(this.manager.getState(this.getStor(cmd0)), cmd1 + cmd2);
     }
 
-    if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
+    if(type == 0xe) { // Push gameVar[cmd0 + cmd1]
       return new GameVarParam(cmd0 + cmd1);
     }
-    if(paramType == 0xf) { // Push gameVar[cmd0][cmd1]
+    if(type == 0xf) { // Push gameVar[cmd0][cmd1]
       return new GameVarArrayParam(cmd0, cmd1);
     }
 
-    if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
+    if(type == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
       return new GameVarArrayParam(cmd0 + this.getStor(cmd1), cmd2);
     }
 
-    if(paramType == 0x11) {
+    if(type == 0x11) {
       return new GameVarArrayParam(cmd0 + cmd1, this.getStor(cmd2)); // Haven't verified this, afaik it's never used
     }
 
-    if(paramType == 0x12) {
+    if(type == 0x12) {
       throw new RuntimeException("Not implemented");
     }
 
-    if(paramType == 0x13) { // INLINE_3
-      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2);
+    if(type == 0x13) { // INLINE_3
+      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)op + cmd2);
     }
 
-    if(paramType == 0x14) { // INLINE_TABLE_3 Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
-      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2).get());
+    if(type == 0x14) { // INLINE_TABLE_3 Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
+      return new ScriptInlineParam(this, this.context.opOffset_08).array((short)op + new ScriptInlineParam(this, this.context.opOffset_08).array((short)op + cmd2).get());
     }
 
-    if(paramType == 0x15) {
+    if(type == 0x15) {
       final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.getStor(cmd0)).get() + cmd1);
       this.context.commandOffset_0c++;
       return param;
     }
 
-    if(paramType == 0x16) {
+    if(type == 0x16) {
       final Param param = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.getStor(cmd1));
       this.context.commandOffset_0c++;
       return param;
     }
 
-    if(paramType == 0x17) { // INLINE_TABLE_4
+    if(type == 0x17) { // INLINE_TABLE_4
       final Param param = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + cmd1);
       this.context.commandOffset_0c++;
       return param;
     }
 
-    if(paramType == 0x20) { // Script state registry ID pointer
+    if(type == 0x20) { // Script state registry ID pointer
       return new ScriptStateRegistryIdParam(this, cmd0);
     }
 
-    if(paramType == 0x21) { // String registry ID
+    if(type == 0x21) { // String registry ID
       final Param param = new ScriptInlineRegistryIdParam(this, this.context.commandOffset_0c, cmd2);
       this.context.commandOffset_0c += (cmd2 + 3) / 4;
       return param;
     }
 
-    if(paramType == 0x22) { // Null
+    if(type == 0x22) { // Null
       return new ScriptStateNullRegistryIdParam();
     }
 
-    if(paramType == 0x23) { // Var registry ID
+    if(type == 0x23) { // Var registry ID
       return new ScriptStateVarRegistryIdParam(this, cmd0);
     }
 
@@ -1294,7 +1292,7 @@ public class ScriptState<T extends ScriptedObject> {
 
   @Method(0x80017160L)
   public FlowControl scriptDeallocateOther() {
-    final ScriptState<?> state = SCRIPTS.getState(this.context.params_20[0].get());
+    final ScriptState<?> state = this.manager.getState(this.context.params_20[0].get());
     state.deallocateWithChildren();
     return state == this.context.scriptState_04 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
@@ -1304,7 +1302,7 @@ public class ScriptState<T extends ScriptedObject> {
   public FlowControl scriptForkAndJump() {
     LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and jumping to %s", this.context.scriptState_04.index, this.context.params_20[0], this.context.params_20[1]);
 
-    final ScriptState<?> stateThatWasForked = SCRIPTS.getState(this.context.params_20[0].get());
+    final ScriptState<?> stateThatWasForked = this.manager.getState(this.context.params_20[0].get());
     stateThatWasForked.fork();
     this.context.params_20[1].jump(stateThatWasForked);
     stateThatWasForked.setStor(32, this.context.params_20[2].get());
@@ -1353,9 +1351,9 @@ public class ScriptState<T extends ScriptedObject> {
 
   public void dump() {
     LOGGER.error("%s crashed!", this);
-    LOGGER.error("File %s %s @ 0x%x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
+    LOGGER.error("File %s %s @ %#x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
     LOGGER.error("Parameters:");
-    LOGGER.error("  Op param: 0x%x", this.context.opParam_18);
+    LOGGER.error("  Op param: %#x", this.context.opParam_18);
     for(int i = 0; i < this.context.paramCount_14; i++) {
       LOGGER.error("  %d: %s", i, this.context.params_20[i]);
     }
@@ -1365,7 +1363,7 @@ public class ScriptState<T extends ScriptedObject> {
       if(this.isStorFloat(i)) {
         LOGGER.error("  %d: %.2f", i, this.getStorFloat(i));
       } else {
-        LOGGER.error("  %d: 0x%x", i, this.getStor(i));
+        LOGGER.error("  %d: %#x", i, this.getStor(i));
       }
     }
 
@@ -1378,24 +1376,20 @@ public class ScriptState<T extends ScriptedObject> {
 
     LOGGER.error("Call stack:");
     for(int i = 0; i < this.callStack.size(); i++) {
-      LOGGER.error("  %d: %s 0x%x", i, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
+      LOGGER.error("  %d: %s %#x", i, this.callStack.get(i).file.name, this.callStack.get(i).offset * 4);
     }
 
     LOGGER.error("Disassembly:");
     try {
       this.dumpDisassembly();
     } catch(final Throwable t) {
-      LOGGER.warn("Failed to disassemble script");
+      LOGGER.warn("Failed to disassemble script", t);
     }
   }
 
   private void dumpDisassembly() {
-    final Disassembler disassembler = new Disassembler(SCRIPTS.meta());
-    final Script tokens = disassembler.disassemble(this.frame().file.data);
-
-    final Translator translator = new Translator();
-    translator.lineNumbers = true;
-    final String decompiled = translator.translate(tokens, SCRIPTS.meta());
+    final Script tokens = this.manager.disassemble(this.name, this.frame().file.data);
+    final String decompiled = new Translator().translate(tokens, this.manager.meta(), false, false, true);
 
     final String[] split = decompiled.split("\n");
     for(int i = 0; i < split.length; i++) {

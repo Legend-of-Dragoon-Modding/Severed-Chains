@@ -1,5 +1,10 @@
 package legend.game.saves.serializers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.ReflectionAccessFilter;
 import legend.core.GameEngine;
 import legend.core.memory.types.IntRef;
 import legend.game.EngineState;
@@ -20,14 +25,22 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
+
+import java.nio.charset.StandardCharsets;
 
 import static legend.core.GameEngine.CONFIG;
 
 public final class V8Serializer {
   private V8Serializer() { }
 
+  private static final Logger LOGGER = LogManager.getFormatterLogger(V7Serializer.class);
+
   public static final int MAGIC_V8 = 0x38615344; // DSa8
+
+  private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
   public static FileData fromV8Matcher(final FileData data) {
     if(data.readInt(0) == MAGIC_V8) {
@@ -104,9 +117,22 @@ public final class V8Serializer {
       final RegistryId itemId = data.readRegistryId(offset);
       final int size = data.readInt(offset);
       final int durability = data.readInt(offset);
-      // Unused for now but may be used as the length header for extra item data in the future
-      final int extraDataHeader = data.readInt(offset);
-      gameState.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability));
+
+      final int extraDataSize = data.readInt(offset);
+      JsonObject extraData = null;
+
+      if(extraDataSize != 0) {
+        final byte[] serialized = new byte[extraDataSize];
+        data.read(offset, serialized, 0, serialized.length);
+
+        try {
+          extraData = jsonSerializer.fromJson(new String(serialized, StandardCharsets.UTF_8), JsonObject.class);
+        } catch(final JsonSyntaxException e) {
+          LOGGER.error("Failed to load extra data for instance of item " + itemId, e);
+        }
+      }
+
+      gameState.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability, extraData));
     }
 
     for(int i = 0; i < goodsCount; i++) {
@@ -244,8 +270,17 @@ public final class V8Serializer {
       data.writeRegistryId(offset, stack.getItem().getRegistryId());
       data.writeInt(offset, stack.getSize());
       data.writeInt(offset, stack.getCurrentDurability());
-      // Unused for now but may be used as the length header for extra item data in the future
-      data.writeInt(offset, 0);
+
+      final JsonObject extraData = stack.getExtraData();
+
+      if(extraData == null) {
+        data.writeInt(offset, 0);
+        continue;
+      }
+
+      final byte[] serialized = jsonSerializer.toJson(extraData).getBytes(StandardCharsets.UTF_8);
+      data.writeInt(offset, serialized.length);
+      data.write(0, serialized, offset, serialized.length);
     }
 
     for(final Good good : gameState.goods_19c) {

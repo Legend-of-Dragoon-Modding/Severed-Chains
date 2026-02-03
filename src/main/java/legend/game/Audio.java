@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.DebugHelper;
-import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
@@ -48,6 +47,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.EVENTS;
@@ -56,7 +56,6 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.game.DrgnFiles.loadDir;
 import static legend.game.DrgnFiles.loadDrgnDir;
-import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.DrgnFiles.loadDrgnFiles;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
@@ -73,8 +72,6 @@ public final class Audio {
 
   public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
   public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
-
-  public static final int[] charSlotSpuOffsets_80050190 = {0x44250, 0x4b780, 0x52cb0};
 
   public static final int[] combatSoundEffectsTypes_8005019c = {
     12, 13, 86, 12, 12, 12, 12, 12,
@@ -129,6 +126,23 @@ public final class Audio {
    */
   public static final AtomicInteger loadedAudioFiles_800bcf78 = new AtomicInteger();
 
+  /**
+   * <ul>
+   *   <li>0 - generic sounds (e.g. menu)</li>
+   *   <li>1 - char 0</li>
+   *   <li>2 - char 1</li>
+   *   <li>3 - char 2</li>
+   *   <li>4 - monster 0</li>
+   *   <li>5 - monster 1</li>
+   *   <li>6 - monster 2</li>
+   *   <li>7 - monster 3</li>
+   *   <li>8 - submap sounds</li>
+   *   <li>9 - battle cutscene</li>
+   *   <li>10 - attack sounds (player and monster)</li>
+   *   <li>11 - submap music</li>
+   *   <li>12 - world map</li>
+   * </ul>
+   */
   public static final SoundFile[] soundFiles_800bcf80 = new SoundFile[13];
   static {
     Arrays.setAll(soundFiles_800bcf80, i -> new SoundFile());
@@ -474,7 +488,7 @@ public final class Audio {
   }
 
   @Method(0x8001af00L)
-  public static void startEncounterSounds() {
+  public static void playVictoryMusic() {
     AUDIO_THREAD.loadBackgroundMusic(victoryMusic);
     AUDIO_THREAD.startSequence();
   }
@@ -656,7 +670,7 @@ public final class Audio {
 
     //LAB_8001cc48
     //LAB_8001cc50
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
     sound.used_00 = true;
   }
 
@@ -710,7 +724,7 @@ public final class Audio {
     sound.name = soundName;
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), charSlotSpuOffsets_80050190[charSlot]);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
     cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     sound.used_00 = true;
@@ -724,7 +738,7 @@ public final class Audio {
    * </ol>
    */
   @Method(0x8001d068L)
-  public static void loadDeffSounds(final ScriptState<BattleEntity27c> bentState, final int type) {
+  public static void loadDeffSounds(final Battle battle, final ScriptState<BattleEntity27c> bentState, final int type) {
     final BattleEntity27c bent = bentState.innerStruct_00;
 
     unloadSoundFile(3);
@@ -743,7 +757,7 @@ public final class Audio {
       }
     } else if(type == 1) {
       //LAB_8001d164
-      loadMonsterSoundsWithPhases();
+      encounter.loadSounds(battle, battleState_8006e398.battlePhase_eec);
     } else if(type == 2) {
       //LAB_8001d174
       loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x40);
@@ -755,19 +769,8 @@ public final class Audio {
     //LAB_8001d1b0
   }
 
-  @Method(0x8001d1c4L)
-  public static void loadMonsterSounds() {
-    encounter.loadSounds(0);
-  }
-
-  @Method(0x8001d2d8L)
-  public static void loadMonsterSoundsWithPhases() {
-    encounter.loadSounds(battleState_8006e398.battlePhase_eec);
-  }
-
   public static void loadBattlePhaseSounds(final String boss, final int phase) {
     loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x10);
-    final AtomicInteger soundbankOffset = new AtomicInteger();
     final AtomicInteger count = new AtomicInteger(0);
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
@@ -784,8 +787,7 @@ public final class Audio {
       if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
         final int finalMonsterSlot = monsterSlot;
         loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> {
-          final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
-          monsterSoundLoaded(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, phase), finalMonsterSlot, offset);
+          monsterSoundLoaded(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, phase), finalMonsterSlot);
 
           if(count.decrementAndGet() == 0) {
             loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
@@ -802,7 +804,6 @@ public final class Audio {
   public static void loadEncounterSounds(final int[] monsterIds) {
     loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x10);
 
-    final AtomicInteger soundbankOffset = new AtomicInteger();
     final AtomicInteger count = new AtomicInteger(0);
 
     for(int monsterSlot = 0; monsterSlot < monsterIds.length; monsterSlot++) {
@@ -819,8 +820,7 @@ public final class Audio {
       if(Loader.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
         final int finalMonsterSlot = monsterSlot;
         loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> {
-          final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
-          monsterSoundLoaded(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot, offset);
+          monsterSoundLoaded(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot);
 
           if(count.decrementAndGet() == 0) {
             loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
@@ -831,7 +831,7 @@ public final class Audio {
   }
 
   @Method(0x8001d51cL)
-  public static void monsterSoundLoaded(final List<FileData> files, final String soundName, final int monsterSlot, final int soundBufferOffset) {
+  public static void monsterSoundLoaded(final List<FileData> files, final String soundName, final int monsterSlot) {
     //LAB_8001d698
     final int file3Size = files.get(3).size();
 
@@ -852,7 +852,7 @@ public final class Audio {
       soundFile.id_02 = files.get(0).readShort(0);
 
       //LAB_8001d80c
-      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(soundFile.name, files.get(2)), 0x5_a1e0 + soundBufferOffset);
+      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(soundFile.name, files.get(2)));
 
       setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
       soundFile.used_00 = true;
@@ -868,10 +868,9 @@ public final class Audio {
     soundFile.used_00 = true;
     soundFile.id_02 = files.get(0).readUShort(0);
     soundFile.indices_08 = SoundFileIndices.load(files.get(2));
-    soundFile.spuRamOffset_14 = files.get(4).size();
     soundFile.numberOfExtraSoundbanks_18 = files.get(1).readUShort(0) - 1;
 
-    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(soundFile.name, files.get(3)), 0x4_de90);
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(soundFile.name, files.get(3)));
     loadExtraBattleCutsceneSoundbanks();
     setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
   }
@@ -977,7 +976,7 @@ public final class Audio {
       }
     }
 
-    loadMonsterSounds();
+    encounter.loadSounds(battle, 0);
   }
 
   private static int parseMelbuVictory(final int musicIndex) {
@@ -1114,7 +1113,7 @@ public final class Audio {
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x1010);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
     unloadSoundbank_800bd778();
   }
 
@@ -1164,7 +1163,7 @@ public final class Audio {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x5_a1e0);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
     FUN_8001ea5c();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
   }
@@ -1199,7 +1198,7 @@ public final class Audio {
       throw new RuntimeException("Size didn't match, need to resize array or something");
     }
 
-    soundFiles_800bcf80[8].playableSound_10 = loadSshdAndSoundbank(soundName, files.get(4), sshd, 0x4_de90);
+    soundFiles_800bcf80[8].playableSound_10 = loadSshdAndSoundbank(soundName, files.get(4), sshd);
     submapSoundsCleanup();
     setSoundSequenceVolume(soundFiles_800bcf80[8].playableSound_10, 0x7f);
     soundFiles_800bcf80[8].used_00 = true;
@@ -1228,31 +1227,52 @@ public final class Audio {
     final SoundFile soundFile = soundFiles_800bcf80[9];
 
     //LAB_8001ed88
-    for(int i = 1; i <= soundFile.numberOfExtraSoundbanks_18; i++) {
-      loadDrgnFileSync(0, 2437 + soundFile.id_02 * 3 + i, Audio::uploadExtraBattleCutsceneSoundbank);
+    if(soundFile.numberOfExtraSoundbanks_18 > 0) {
+      final String[] fileNames = IntStream
+        .range(1, soundFile.numberOfExtraSoundbanks_18 + 1)
+        .map(i -> 2437 + soundFile.id_02 * 3 + i)
+        .mapToObj(Integer::toString)
+        .toArray(String[]::new);
+
+      loadDrgnFiles(0, Audio::uploadExtraBattleCutsceneSoundbank, fileNames);
     }
 
     //LAB_8001edd4
+  }
+
+  /** Merges together all of the soundbanks */
+  @Method(0x8001edfcL)
+  public static void uploadExtraBattleCutsceneSoundbank(final List<FileData> files) {
+    final SoundFile soundFile = soundFiles_800bcf80[9];
+
+    int totalSize = soundFile.playableSound_10.data.size();
+    for(final FileData file : files) {
+      totalSize += file.size();
+    }
+
+    final FileData newData = new FileData(new byte[totalSize]);
+    soundFile.playableSound_10.data.read(0, newData, 0, soundFile.playableSound_10.data.size());
+
+    int offset = soundFile.playableSound_10.data.size();
+    for(final FileData file : files) {
+      file.read(0, newData, offset, file.size());
+      offset += file.size();
+    }
+
+    soundFile.playableSound_10.data = newData;
+
     loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x4);
     musicLoaded_800bd782 = true;
   }
 
-  @Method(0x8001edfcL)
-  public static void uploadExtraBattleCutsceneSoundbank(final FileData file) {
-    final SoundFile soundFile = soundFiles_800bcf80[9];
-
-    SPU.directWrite(0x4_de90 + soundFile.spuRamOffset_14, file.getBytes());
-    soundFile.spuRamOffset_14 += file.size();
-  }
-
   @Method(0x8001eea8L)
-  public static void loadLocationMenuSoundEffects(final int index) {
+  public static void loadWorldMapLocationMenuSoundEffects(final int index) {
     loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
+    loadDrgnDir(0, 5740 + index, files -> worldMapLocationMenuSoundEffectsLoaded(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
   }
 
   @Method(0x8001eefcL)
-  public static void FUN_8001eefc(final List<FileData> files, final String soundName) {
+  public static void worldMapLocationMenuSoundEffectsLoaded(final List<FileData> files, final String soundName) {
     final SoundFile sound = soundFiles_800bcf80[12];
     sound.name = soundName;
     sound.used_00 = true;
@@ -1260,7 +1280,7 @@ public final class Audio {
     sound.indices_08 = SoundFileIndices.load(files.get(2));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)), 0x4_de90);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)));
     FUN_8001efcc();
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -1292,7 +1312,7 @@ public final class Audio {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x6_6930);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x20);
@@ -1319,7 +1339,7 @@ public final class Audio {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.id_02 = files.get(0).readShort(0);
 
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)), 0x6_6930);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
     FUN_8001f390();
 
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
@@ -1549,7 +1569,6 @@ public final class Audio {
       default -> throw new IllegalArgumentException("Unknown battle phase file index " + fileIndex);
     }
 
-    final AtomicInteger soundbankOffset = new AtomicInteger();
     final AtomicInteger count = new AtomicInteger(0);
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
@@ -1566,8 +1585,7 @@ public final class Audio {
       if(Loader.exists(path + '/' + monsterSlot)) {
         final int finalMonsterSlot = monsterSlot;
         loadDir(path + '/' + monsterSlot, files -> {
-          final int offset = soundbankOffset.getAndUpdate(val -> val + MathHelper.roundUp(files.get(3).size(), 0x10));
-          monsterSoundLoaded(files, "Monster slot %d (file %s) (replaced)".formatted(finalMonsterSlot, path), finalMonsterSlot, offset);
+          monsterSoundLoaded(files, "Monster slot %d (file %s) (replaced)".formatted(finalMonsterSlot, path), finalMonsterSlot);
 
           if(count.decrementAndGet() == 0) {
             loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
@@ -1773,11 +1791,7 @@ public final class Audio {
    * @return Index into {@link #playableSounds_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static PlayableSound0c loadSshdAndSoundbank(final String name, final FileData soundbank, final Sshd sshd, final int addressInSoundBuffer) {
-    if(addressInSoundBuffer > 0x8_0000 || (addressInSoundBuffer & 0xf) != 0) {
-      throw new IllegalArgumentException("Invalid sound buffer offset");
-    }
-
+  public static PlayableSound0c loadSshdAndSoundbank(final String name, final FileData soundbank, final Sshd sshd) {
     LOGGER.info(SEQUENCER_MARKER, "Loaded SShd into playableSound %s", name);
 
     //LAB_8004bfc8
@@ -1785,12 +1799,7 @@ public final class Audio {
     sound.name = name;
     sound.used_00 = true;
     sound.sshdPtr_04 = sshd;
-    sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
-
-    if(sshd.soundBankSize_04 != 0) {
-      SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
-    }
-
+    sound.data = soundbank;
     playableSounds_800c43d0.add(sound);
     return sound;
   }

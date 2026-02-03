@@ -2,10 +2,13 @@ package legend.game.unpacker.scripts;
 
 import com.github.difflib.patch.PatchFailedException;
 import com.opencsv.exceptions.CsvException;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Patcher;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Script;
@@ -33,7 +36,6 @@ import static legend.core.IoHelper.loadCsvFile;
 public class ScriptPatcher {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatcher.class);
 
-  private final Disassembler disassembler;
   private final Translator translator = new Translator();
 
   private final ScriptPatchList patches;
@@ -44,7 +46,6 @@ public class ScriptPatcher {
 
   public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir, final Path backupsDir) {
     this.backupsDir = backupsDir;
-    this.disassembler = new Disassembler(SCRIPTS.meta());
     this.patches = this.loadPatchList(filesDir, patchDir.resolve("scripts.csv"));
     this.patchesDir = patchDir;
     this.filesDir = filesDir;
@@ -186,16 +187,20 @@ public class ScriptPatcher {
     final List<String> patchLines = Files.readAllLines(patchFile);
 
     final Path configPath = this.resolvePatchConfigPath(patchFile);
-    final List<Integer> branchList = new ArrayList<>();
-    final Map<Integer, Integer> tableLengths = new HashMap<>();
+    final IntList branchList = new IntArrayList();
+    final Int2IntMap tableLengths = new Int2IntOpenHashMap();
 
     this.getPatchConfigs(configPath, branchList, tableLengths);
 
-    final List<String> decompiledLines = this.decompile(Files.readAllBytes(backupFile), branchList, tableLengths);
+    final List<String> decompiledLines = this.decompile(sourceFile.toString(), Files.readAllBytes(backupFile), branchList, tableLengths);
     final String patched = Patcher.applyPatch(decompiledLines, patchLines);
-    final byte[] recompiledSource = this.recompile(sourceFile, patched);
 
-    Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    try {
+      final byte[] recompiledSource = this.recompile(sourceFile.toString(), patched);
+      Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    } catch(final Exception e) {
+      throw new RuntimeException("Failed to patch " + sourceFile + " with patch " + patchFile, e);
+    }
   }
 
   public void replaceFile(final String source, final String patch) throws IOException {
@@ -204,7 +209,7 @@ public class ScriptPatcher {
 
   public void replaceFile(final Path sourceFile, final Path patchFile) throws IOException {
     final String patchContents = Files.readString(patchFile);
-    final byte[] recompiledSource = this.recompile(patchFile, patchContents);
+    final byte[] recompiledSource = this.recompile(sourceFile.toString(), patchContents);
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 
@@ -231,18 +236,14 @@ public class ScriptPatcher {
     }
   }
 
-  private List<String> decompile(final byte[] data, final List<Integer> branches, final Map<Integer, Integer> tableLengths) {
-    this.disassembler.tableLengths.putAll(tableLengths);
-    this.disassembler.extraBranches.addAll(branches);
-    this.translator.stripComments = true;
-    this.translator.stripNames = true;
-    final Script script = this.disassembler.disassemble(data);
-    final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta());
+  private List<String> decompile(final String name, final byte[] data, final IntList branches, final Int2IntMap tableLengths) {
+    final Script script = SCRIPTS.disassemble(name, data, branches, tableLengths);
+    final String decompiledOutput = this.translator.translate(script, SCRIPTS.meta(), true, true, false);
     return decompiledOutput.lines().toList();
   }
 
-  private byte[] recompile(final Path path, final String patched) {
-    return SCRIPTS.compile(path, patched);
+  private byte[] recompile(final String name, final String patched) {
+    return SCRIPTS.compile(name, patched);
   }
 
   private String resolvePatchConfigName(final String diffName) {
@@ -253,7 +254,7 @@ public class ScriptPatcher {
     return diffPath.resolveSibling(this.resolvePatchConfigName(diffPath.getFileName().toString()));
   }
 
-  private void getPatchConfigs(final Path configPath, final List<Integer> branchList, final Map<Integer, Integer> tableLengthList) {
+  private void getPatchConfigs(final Path configPath, final IntList branchList, final Int2IntMap tableLengthList) {
     List<String[]> patchConfig = new ArrayList<>();
 
     if(Files.exists(configPath)) {

@@ -56,7 +56,7 @@ public final class Loader {
       onCompletion.accept(loadFile(path));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("File %s loaded (remaining queued: %d)", path, remaining);
-    });
+    }).exceptionally(t -> onFileLoadingException(t, path.toString()));
   }
 
   public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
@@ -66,7 +66,7 @@ public final class Loader {
       onCompletion.accept(loadFile(name));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
-    });
+    }).exceptionally(t -> onFileLoadingException(t, name));
   }
 
   public static void loadFiles(final Consumer<List<FileData>> onCompletion, final String... files) {
@@ -83,7 +83,7 @@ public final class Loader {
       onCompletion.accept(fileData);
       final int remaining = LOADING_COUNT.updateAndGet(i -> i - files.length);
       LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
-    });
+    }).exceptionally(t -> onFileLoadingException(t, Arrays.toString(files)));
   }
 
   public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
@@ -93,7 +93,7 @@ public final class Loader {
       onCompletion.accept(loadDirectory(name));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
-    });
+    }).exceptionally(t -> onFileLoadingException(t, name));
   }
 
   public static void loadDirectory(final Path dir, final Consumer<List<FileData>> onCompletion) {
@@ -106,7 +106,12 @@ public final class Loader {
       onCompletion.accept(loadDirectory(dir));
       final int remaining = LOADING_COUNT.decrementAndGet();
       LOGGER.info("Directory %s loaded (remaining queued: %d)", dir, remaining);
-    });
+    }).exceptionally(t -> onFileLoadingException(t, dir.toString()));
+  }
+
+  private static Void onFileLoadingException(final Throwable t, final String path) {
+    LOGGER.error("Failed to load " + path, t);
+    return null;
   }
 
   public static List<FileData> loadDirectory(final String name) {

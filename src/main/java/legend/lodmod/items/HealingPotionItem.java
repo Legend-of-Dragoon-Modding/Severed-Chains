@@ -15,7 +15,7 @@ public class HealingPotionItem extends RecoverHpItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 2;
+    return 34;
   }
 
   @Override

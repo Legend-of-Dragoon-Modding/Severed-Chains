@@ -1,6 +1,8 @@
 package legend.game.modding.events.submap;
 
-import org.legendofdragoon.modloader.events.Event;
+import legend.game.modding.events.engine.EngineStateEvent;
+import legend.game.submap.SMap;
 
-public class SubmapEvent extends Event {
+public interface SubmapEvent extends EngineStateEvent<SMap> {
+
 }

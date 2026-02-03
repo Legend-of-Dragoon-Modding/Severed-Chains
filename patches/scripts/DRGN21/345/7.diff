@@ -19,7 +19,7 @@ Relocated, combined, and modified Sandora soldier scripts
 +ENTRYPOINT_2:
 +gosub_table stor[32], inl[:JUMP]
 +consume
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
 +JUMP:
 +rel :JUMP_0
 +rel :JUMP_1

@@ -109,7 +109,7 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Audio._800bf0cf;
-import static legend.game.Audio.playSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playXaAudio;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.GetClut;
@@ -128,6 +128,7 @@ import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zMin;
 import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.SItem.UI_WHITE_SHADOWED;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.rand;
@@ -143,8 +144,6 @@ import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
-import static legend.game.SItem.UI_WHITE_SHADOWED;
-
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
@@ -1607,7 +1606,7 @@ public final class SEffe {
 
   @Method(0x80108cf4L)
   public static void allocatePerfectDragoonAdditionEffect() {
-    playSound(0, 50, (short)0, (short)0);
+    playMenuSound(50);
 
     final ScriptState<PerfectDragoonAdditionEffect30> state = SCRIPTS.allocateScriptState("PerfectDragoonAdditionEffect30", new PerfectDragoonAdditionEffect30());
     state.loadScriptFile(doNothingScript_8004f650);

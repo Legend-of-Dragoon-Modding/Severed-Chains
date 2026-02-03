@@ -51,7 +51,7 @@ New: Feyrbrand continues to rotate and walk off screen
  gosub inl[:LABEL_1]
  call 230, 0x46, 0x0
  rewind
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
  LABEL_17:
  call 97, 0x2
  mov 0x208, stor[24]

@@ -7,6 +7,6 @@ public class MindPurifierItem extends RecoverStatusItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 5;
+    return 37;
   }
 }

@@ -3,9 +3,9 @@ package legend.game.modding.events.characters;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.types.CharacterData2c;
-import org.legendofdragoon.modloader.events.Event;
+import org.legendofdragoon.modloader.events.CancelableEvent;
 
-public class AdditionUnlockEvent extends Event {
+public class AdditionUnlockEvent extends CancelableEvent {
   public final CharacterData2c charData;
   public final CharacterAdditionStats additionStats;
   public final Addition addition;

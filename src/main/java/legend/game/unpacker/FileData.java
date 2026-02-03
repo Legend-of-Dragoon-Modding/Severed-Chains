@@ -196,6 +196,26 @@ public class FileData {
     return read;
   }
 
+  public char readChar(final int offset) {
+    this.checkBounds(offset, 2);
+    return (char)this.readUShort(offset);
+  }
+
+  public char readChar(final IntRef offset) {
+    this.checkBounds(offset.get(), 2);
+    return (char)this.readUShort(offset);
+  }
+
+  public void writeChar(final int offset, final char val) {
+    this.checkBounds(offset, 2);
+    MathHelper.set(this.data, this.offset + offset, 2, val);
+  }
+
+  public void writeChar(final IntRef offset, final char val) {
+    this.writeShort(offset.get(), val);
+    offset.add(2);
+  }
+
   public int readInt(final int offset) {
     this.checkBounds(offset, 4);
     return (int)MathHelper.get(this.data, this.offset + offset, 4);

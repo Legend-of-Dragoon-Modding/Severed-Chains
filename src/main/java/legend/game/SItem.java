@@ -1405,12 +1405,16 @@ public final class SItem {
       final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(addition.getRegistryId(), k -> new CharacterAdditionStats());
       final boolean wasUnlocked = additionStats.unlocked;
 
-      additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(charData, additionStats);
-
-      EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
+      additionStats.unlocked = additionStats.unlocked || addition.isUnlocked(gameState_800babc8, charData, additionStats);
 
       if(additionStats.unlocked && !wasUnlocked) {
-        newlyUnlocked = addition;
+        final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
+
+        if(!event.isCanceled()) {
+          newlyUnlocked = addition;
+        } else {
+          additionStats.unlocked = false;
+        }
       }
     }
 

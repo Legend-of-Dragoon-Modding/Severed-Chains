@@ -19,7 +19,6 @@ import legend.core.opengl.McqBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.DrgnFiles;
 import legend.game.EngineState;
-import legend.game.EngineStateType;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
@@ -76,6 +75,7 @@ import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
 import legend.game.combat.environment.StageAmbiance4c;
 import legend.game.combat.particles.ParticleManager;
+import legend.game.combat.postbattleactions.PostBattleAction;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
 import legend.game.combat.types.BattleObject;
@@ -91,20 +91,17 @@ import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
-import legend.game.inventory.WhichMenu;
-import legend.game.inventory.screens.PostBattleScreen;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.CorePostBattleActions;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
-import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -141,6 +138,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -176,15 +174,13 @@ import static legend.game.Audio.characterSoundFileIndices_800500f8;
 import static legend.game.Audio.getLoadedAudioFiles;
 import static legend.game.Audio.loadDeffSounds;
 import static legend.game.Audio.loadEncounterSoundsAndMusic;
-import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.monsterSoundFileIndices_800500e8;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playSound;
 import static legend.game.Audio.queuedSounds_800bd110;
 import static legend.game.Audio.sequenceData_800c4ac8;
 import static legend.game.Audio.soundFiles_800bcf80;
-import static legend.game.Audio.sssqFadeOut;
 import static legend.game.Audio.sssqResetStuff;
-import static legend.game.Audio.startEncounterSounds;
 import static legend.game.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.Audio.stopSoundSequence;
 import static legend.game.DrgnFiles.loadDir;
@@ -218,7 +214,6 @@ import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zOffset_1f8003e8;
-import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.Models.adjustModelUvs;
 import static legend.game.Models.initModel;
 import static legend.game.Models.initObjTable2;
@@ -231,7 +226,6 @@ import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.giveItem;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.SItem.menuStack;
 import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -249,7 +243,6 @@ import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -361,7 +354,7 @@ public class Battle extends EngineState<Battle> {
    *   <li>{@link #calculateInitialTurnValues}</li>
    *   <li>{@link #battleTick}</li>
    *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
-   *   <li>{@link #performPostBattleAction}</li>
+   *   <li>{@link #fadeOutBattle}</li>
    *   <li>{@link #deallocateCombat}</li>
    *   <li>{@link DrgnFiles#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
@@ -396,7 +389,7 @@ public class Battle extends EngineState<Battle> {
     this::calculateInitialTurnValues,
     this::battleTick,
     DrgnFiles::waitForFilesToLoad,
-    this::performPostBattleAction,
+    this::fadeOutBattle,
     this::deallocateCombat,
     DrgnFiles::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
@@ -455,7 +448,7 @@ public class Battle extends EngineState<Battle> {
   public int _800c67d0;
 
   /** script using attack item? */
-  public ScriptState<? extends BattleEntity27c> scriptState_800c6914;
+  public ScriptState<? extends BattleEntity27c> cameraFocusedBent_800c6914;
   /** bent index, used in pcs and possibly elsewhere */
   public int _800c6918;
 
@@ -510,11 +503,6 @@ public class Battle extends EngineState<Battle> {
   public ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
 
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
-  public static final int[] postCombatActionTotalFrames_800fa6b8 = {0, 82, 65, 15, 10, 15};
-
-  public static final int[] postBattleCamera_800fa6c4 = {-1, 195, 211, -1, 211, -1};
-
-  public static final int[] postCombatActionFrames_800fa6d0 = {0, 30, 45, 30, 45, 30};
 
   public int mcqColour_800fa6dc = 0x80;
   public static final Rect4i[] combatantTimRects_800fa6e0 = {
@@ -818,7 +806,7 @@ public class Battle extends EngineState<Battle> {
     functions[169] = this::scriptGetBentStat;
     functions[170] = this::scriptSetPostBattleAction;
     functions[171] = this::scriptSetBattleHudVisibility;
-    functions[172] = this::FUN_800ccef8;
+    functions[172] = this::scriptSetPostBattleActionBossKill;
     functions[173] = this::scriptSetBentDeadAndDropLoot;
     functions[174] = this::scriptGetHitProperty;
     functions[175] = this::scriptSetBentDead;
@@ -1490,7 +1478,7 @@ public class Battle extends EngineState<Battle> {
 
     totalXpFromCombat_800bc95c = 0;
     battleFlags_800bc960 = 0;
-    postBattleAction_800bc974 = 0;
+    postBattleAction_800bc974 = null;
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
     equipmentOverflow.clear();
@@ -1785,7 +1773,7 @@ public class Battle extends EngineState<Battle> {
     this.currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
     this.hud.FUN_800f417c();
 
-    EVENTS.postEvent(new BattleStartedEvent(this));
+    EVENTS.postEvent(new BattleStartedEvent(this, encounter));
 
     pregameLoadingStage_800bb10c++;
   }
@@ -1808,7 +1796,7 @@ public class Battle extends EngineState<Battle> {
   public void battleTick() {
     this.hud.draw();
 
-    if(postBattleAction_800bc974 != 0) {
+    if(postBattleAction_800bc974 != null) {
       pregameLoadingStage_800bb10c++;
       return;
     }
@@ -1827,7 +1815,7 @@ public class Battle extends EngineState<Battle> {
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.forcedTurnBent_800c66bc));
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(this, encounter, this.forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
@@ -1836,21 +1824,20 @@ public class Battle extends EngineState<Battle> {
             this.currentTurnBent_800c66c8.setFlag(FLAG_RELOAD_BATTLE_ACTIONS).setFlag(FLAG_CURRENT_TURN);
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
-            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, this.currentTurnBent_800c66c8));
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(this, encounter, this.currentTurnBent_800c66c8));
 
             //LAB_800c7d74
           } else { // Monsters dead
-            this.endBattle();
+            this.allMonstersDead();
           }
         }
       } else { // Game over
-        loadMusicPackage(19);
-        postBattleAction_800bc974 = 2;
+        this.allCharactersDead();
       }
     }
 
     //LAB_800c7d78
-    if(postBattleAction_800bc974 != 0) {
+    if(postBattleAction_800bc974 != null) {
       //LAB_800c7d88
       pregameLoadingStage_800bb10c++;
     }
@@ -1858,18 +1845,15 @@ public class Battle extends EngineState<Battle> {
     //LAB_800c7d98
   }
 
-  public void endBattle() {
-    LOGGER.info(BATTLE, "Battle ending");
+  public void allCharactersDead() {
+    LOGGER.info(BATTLE, "All characters dead");
+    encounter.onBattleLost(this);
+  }
 
+  public void allMonstersDead() {
+    LOGGER.info(BATTLE, "All monsters dead");
     FUN_80020308();
-
-    if(encounterId_800bb0f8 != 443) { // Standard victory
-      postBattleAction_800bc974 = 1;
-      startEncounterSounds();
-    } else { // Melbu Victory
-      //LAB_800c7d30
-      postBattleAction_800bc974 = 4;
-    }
+    encounter.onBattleWon(this);
   }
 
   @Method(0x800c7da8L)
@@ -1888,16 +1872,9 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x800c8068L)
-  public void performPostBattleAction() {
-    final int postBattleAction = postBattleAction_800bc974;
-
+  public void fadeOutBattle() {
     if(this.currentPostCombatActionFrame_800c6690 == 0) {
-      final int postBattleCamera = postBattleCamera_800fa6c4[postBattleAction];
-
-      if(postBattleCamera >= 0) {
-        this.cameraScriptMainTableJumpIndex_800c6748 = postBattleCamera;
-        this.scriptState_800c6914 = this.currentTurnBent_800c66c8;
-      }
+      postBattleAction_800bc974.onCameraFadeoutStart(this);
 
       //LAB_800c80c8
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
@@ -1907,33 +1884,24 @@ public class Battle extends EngineState<Battle> {
       for(int i = 0; i < aliveCharBents; i++) {
         livingCharIds_800bc968[i] = battleState_8006e398.alivePlayerBents_eac[i].innerStruct_00.charId_272;
       }
-
-      //LAB_800c8144
-      if(postBattleAction == 1) {
-        //LAB_800c8180
-        for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-          battleState_8006e398.playerBents_e40[i].setFlag(FLAG_CURRENT_TURN);
-        }
-      }
     }
 
     //LAB_800c81bc
     //LAB_800c81c0
     this.currentPostCombatActionFrame_800c6690++;
 
-    if(this.currentPostCombatActionFrame_800c6690 >= postCombatActionTotalFrames_800fa6b8[postBattleAction] || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+    if(this.currentPostCombatActionFrame_800c6690 >= postBattleAction_800bc974.getTotalDuration(this) || (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) && this.currentPostCombatActionFrame_800c6690 >= 25) {
+      EVENTS.postEvent(new BattleEndedEvent(this, encounter));
+
       //LAB_800c8214
       this.deallocateLightingControllerAndDeffManager();
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        EVENTS.postEvent(new BattleEndedEvent(this));
-        startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleAction]);
+        startFadeEffect(1, postBattleAction_800bc974.getFadeDuration(this));
       }
 
       //LAB_800c8274
-      if(postBattleAction == 2) {
-        sssqFadeOut((short)(postCombatActionFrames_800fa6d0[2] - 2));
-      }
+      postBattleAction_800bc974.onCameraFadeoutFinish(this);
 
       //LAB_800c8290
       this.currentPostCombatActionFrame_800c6690 = 0;
@@ -1999,26 +1967,8 @@ public class Battle extends EngineState<Battle> {
       this.deallocateStageDarkeningStorage();
       this.FUN_800c8748();
 
-      EngineStateType<?> postBattleEngineState = previousEngineState_8004dd28;
-
-      //LAB_800c84b4
-      switch(postBattleAction_800bc974) {
-        case 2 -> {
-          if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
-            //LAB_800c8514
-            final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(0x3bb, true)).set;
-            gameState_800babc8.scriptFlags2_bc.set(29, 27, set); // Died in arena fight
-          } else {
-            //LAB_800c8534
-            postBattleEngineState = LodEngineStateTypes.GAME_OVER.get();
-          }
-        }
-
-        case 4 -> Fmv.playCurrentFmv(16, LodEngineStateTypes.FINAL_FMV.get());
-      }
-
       //LAB_800c8558
-      postBattleEngineState_800bc91c = postBattleEngineState;
+      postBattleEngineState_800bc91c = previousEngineState_8004dd28;
 
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
@@ -2035,13 +1985,8 @@ public class Battle extends EngineState<Battle> {
       setDepthResolution(14);
       battleLoaded_800bc94c = false;
 
-      switch(postBattleAction_800bc974) {
-        case 1, 3 -> {
-          whichMenu_800bdc38 = WhichMenu.RENDER_NEW_MENU;
-          menuStack.pushScreen(new PostBattleScreen());
-        }
-        case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
-      }
+      //LAB_800c84b4
+      postBattleAction_800bc974.performAction(this);
 
       //LAB_800c85f0
       pregameLoadingStage_800bb10c++;
@@ -2491,7 +2436,7 @@ public class Battle extends EngineState<Battle> {
           // Additions
           if(charId != 2 && charId != 8) {
             final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
-            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
 
@@ -3781,18 +3726,33 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets post-battle action to 3")
+  @ScriptDescription("Sets post-battle action to boss kill")
   @Method(0x800ccef8L)
-  public FlowControl FUN_800ccef8(final RunningScript<?> script) {
-    postBattleAction_800bc974 = 3;
+  public FlowControl scriptSetPostBattleActionBossKill(final RunningScript<?> script) {
+    postBattleAction_800bc974 = LodPostBattleActions.BOSS_KILL.get().inst(script);
     return FlowControl.PAUSE_AND_REWIND;
   }
 
   @ScriptDescription("Sets the post-battle action")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "action", description = "The post-battle action")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "action", description = "The post-battle action registry ID or legacy int (1 = victory, 2 = game over, 3 = boss kill, 4 = FMV, 5 = merchant)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "params", description = "Parameters to pass to the post-battle action (varies by action)")
   @Method(0x800ccf0cL)
   public FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
-    postBattleAction_800bc974 = script.params_20[0].get();
+    final PostBattleAction<?, ?> postBattleAction;
+    if(script.params_20[0].isRegistryId()) {
+      postBattleAction = REGISTRIES.postBattleActions.getEntry(script.params_20[0].getRegistryId()).get();
+    } else {
+      postBattleAction = switch(script.params_20[0].get()) {
+        case 1 -> CorePostBattleActions.VICTORY.get();
+        case 2 -> CorePostBattleActions.GAME_OVER.get();
+        case 3 -> LodPostBattleActions.BOSS_KILL.get();
+        case 4 -> CorePostBattleActions.PLAY_FMV.get();
+        case 5 -> LodPostBattleActions.MERCHANT.get();
+        default -> throw new IllegalStateException("Unknown post-battle action: " + script.params_20[0].get());
+      };
+    }
+
+    postBattleAction_800bc974 = postBattleAction.inst(script);
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -6037,7 +5997,7 @@ public class Battle extends EngineState<Battle> {
     this.deffLoadingStage_800fafe8 = 4;
 
     if((struct7cc.flags_20 & 0x4_0000) != 0) {
-      loadDeffSounds(this.loadedDeff_800c6938.bentState_04, 1);
+      loadDeffSounds(this, this.loadedDeff_800c6938.bentState_04, 1);
     }
 
     if((struct7cc.flags_20 & 0x10_0000) != 0) {
@@ -6107,7 +6067,7 @@ public class Battle extends EngineState<Battle> {
     this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
 
     if((deffManager_800c693c.flags_20 & 0x4_0000) != 0) {
-      loadDeffSounds(this.loadedDeff_800c6938.bentState_04, index != 0x2e || scriptEntrypoint != 0 ? 0 : 2);
+      loadDeffSounds(this, this.loadedDeff_800c6938.bentState_04, index != 0x2e || scriptEntrypoint != 0 ? 0 : 2);
     }
 
     for(int i = 0; i < dragoonDeffsWithExtraTims_800fb040.length; i++) {
@@ -8571,7 +8531,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menuType", description = "0 = items, 1 = spells, 2 = ?")
   @Method(0x800f97d8L)
   public FlowControl scriptInitSpellAndItemMenu(final RunningScript<?> script) {
-    playSound(0, 4, (short)0, (short)0);
+    playMenuSound(4);
     this.hud.initListMenu(SCRIPTS.getObject(script.params_20[0].get(), PlayerBattleEntity.class), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }

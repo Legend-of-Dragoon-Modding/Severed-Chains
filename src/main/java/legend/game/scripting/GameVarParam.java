@@ -10,13 +10,16 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.TransformationMode;
+import legend.game.combat.postbattleactions.PostBattleAction;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemStack;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.CorePostBattleActions;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 import legend.lodmod.LodMod;
+import legend.lodmod.LodPostBattleActions;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
@@ -84,7 +87,7 @@ public class GameVarParam extends Param {
       case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
-      case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4;
+      case 47 -> battleStage_800bb0f4;
       case 48 -> battleState_8006e398.aliveBents_e78[0] != null ? battleState_8006e398.aliveBents_e78[0].index : -1;
       case 49 -> battleState_8006e398.getAliveBentCount();
       case 50 -> battleState_8006e398.alivePlayerBents_eac[0] != null ? battleState_8006e398.alivePlayerBents_eac[0].index : -1;
@@ -94,7 +97,35 @@ public class GameVarParam extends Param {
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8;
-      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974;
+      case 57 -> {
+        if(Scus94491BpeSegment_800b.postBattleAction_800bc974 == null) {
+          yield 0;
+        }
+
+        final PostBattleAction<?, ?> action = Scus94491BpeSegment_800b.postBattleAction_800bc974.action;
+
+        if(action == CorePostBattleActions.VICTORY.get()) {
+          yield 1;
+        }
+
+        if(action == CorePostBattleActions.GAME_OVER.get()) {
+          yield 2;
+        }
+
+        if(action == LodPostBattleActions.BOSS_KILL.get()) {
+          yield 3;
+        }
+
+        if(action == CorePostBattleActions.PLAY_FMV.get()) {
+          yield 4;
+        }
+
+        if(action == LodPostBattleActions.MERCHANT.get()) {
+          yield 5;
+        }
+
+        yield 0;
+      }
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -113,7 +144,7 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 != null ? ((Battle)currentEngineState_8004dd04).scriptState_800c6914.index : -1;
+      case 80 -> ((Battle)currentEngineState_8004dd04).cameraFocusedBent_800c6914 != null ? ((Battle)currentEngineState_8004dd04).cameraFocusedBent_800c6914.index : -1;
       case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918;
       case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8;
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc;
@@ -223,7 +254,7 @@ public class GameVarParam extends Param {
       case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
-      case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4 = val;
+      case 47 -> battleStage_800bb0f4 = val;
       case 48 -> battleState_8006e398.aliveBents_e78[0] = SCRIPTS.getState(val, BattleEntity27c.class);
 //      case 49 -> battleState_8006e398.aliveBentCount_800c669c = val;
       case 50 -> battleState_8006e398.alivePlayerBents_eac[0] = SCRIPTS.getState(val, PlayerBattleEntity.class);
@@ -233,7 +264,15 @@ public class GameVarParam extends Param {
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8 = val;
-      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = val;
+      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = switch(val) {
+        case 0 -> null;
+        case 1 -> CorePostBattleActions.VICTORY.get().inst();
+        case 2 -> CorePostBattleActions.GAME_OVER.get().inst();
+        case 3 -> LodPostBattleActions.BOSS_KILL.get().inst();
+        case 4 -> CorePostBattleActions.PLAY_FMV.get().inst(16);
+        case 5 -> LodPostBattleActions.MERCHANT.get().inst();
+        default -> throw new IllegalStateException("Unexpected value: " + val);
+      };
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
       case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = SCRIPTS.getState(val, BattleEntity27c.class);
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920 = val;
@@ -252,7 +291,7 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 = SCRIPTS.getState(val, BattleEntity27c.class);
+      case 80 -> ((Battle)currentEngineState_8004dd04).cameraFocusedBent_800c6914 = SCRIPTS.getState(val, BattleEntity27c.class);
       case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918 = val;
       case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8 = val;
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc = val;

@@ -149,7 +149,9 @@ public class GameState52c {
         continue;
       }
 
-      this.items_2e9.give(new ItemStack(delegate.get(), entry.size, entry.durability), true);
+      final ItemStack stack = new ItemStack(delegate.get(), entry.size, entry.durability);
+      stack.setExtraData(entry.extraData);
+      this.items_2e9.give(stack, true);
     }
   }
 }

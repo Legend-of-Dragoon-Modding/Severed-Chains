@@ -18,9 +18,10 @@ import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
+import legend.game.combat.encounters.Encounter;
+import legend.game.modding.events.submap.SubmapEncounterEvent;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
-import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
@@ -35,6 +36,8 @@ import legend.game.types.NewRootStruct;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -56,6 +59,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Audio.loadMusicPackage;
 import static legend.game.Audio.loadSubmapSounds;
@@ -91,7 +95,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.combat.SBtld.startLegacyEncounter;
+import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
@@ -170,7 +174,8 @@ public class RetailSubmap extends Submap {
   private Texture[] foregroundTextures;
   private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
-  public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
+  public RetailSubmap(final SMap smap, final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
+    super(smap);
     this.cut = cut;
     this.newRoot = newRoot;
 
@@ -367,6 +372,12 @@ public class RetailSubmap extends Submap {
     38, // Prairie path near ocean - softlock
     47, // Cave stepping stones - softlock
     110, // Marshlands boat screen - boat is invisible
+    252, // Valley of Corrupted Gravity - Rocks bug
+    253, // Valley of Corrupted Gravity - Rocks bug
+    254, // Valley of Corrupted Gravity - Rocks bug
+    255, // Valley of Corrupted Gravity - Rocks bug
+    256, // Valley of Corrupted Gravity - Rocks bug
+    256, // Valley of Corrupted Gravity - Rocks bug
     327, // First map after starting chapter 3 - screen is black on load (GH#2204)
     381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
     580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
@@ -440,19 +451,19 @@ public class RetailSubmap extends Submap {
   @Override
   public int getEncounterRate() {
     final var encounterRate = encounterData_800f64c4[this.cut].rate_02;
-    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(encounterRate, this.cut));
+    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(this.smap, gameState_800babc8, this, encounterRate, this.cut));
 
     return encounterRateEvent.encounterRate;
   }
 
   @Override
-  public void prepareEncounter(final int encounterId, final boolean useBattleStage) {
-    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
-    final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
+  public void prepareEncounter(final Encounter encounter, final boolean useBattleStage) {
+    final int sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final int[] scene = sceneEncounterIds_800f74c4[sceneId];
+    final int battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
-    final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
-    startLegacyEncounter(generateEncounterEvent.encounterId, generateEncounterEvent.battleStageId);
+    final SubmapEncounterEvent event = EVENTS.postEvent(new SubmapEncounterEvent(this.smap, gameState_800babc8, this, encounter, battleStageId, this.cut, sceneId, scene));
+    startEncounter(event.encounter, event.battleStageId);
 
     if(Config.combatStage()) {
       battleStage_800bb0f4 = Config.getCombatStage();
@@ -461,10 +472,11 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void prepareEncounter(final boolean useBattleStage) {
-    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
-    final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var encounterId = scene[this.randomEncounterIndex()];
-    this.prepareEncounter(encounterId, useBattleStage);
+    final int sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final int[] scene = sceneEncounterIds_800f74c4[sceneId];
+    final int encounterId = scene[this.randomEncounterIndex()];
+    final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get();
+    this.prepareEncounter(encounter, useBattleStage);
   }
 
   @Override
@@ -583,7 +595,7 @@ public class RetailSubmap extends Submap {
 
   private void loadTextureOverrides() {
     this.sobjTextureOverrides.clear();
-    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);
+    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut)).textures);
   }
 
   private void calculateTextureLocations() {
@@ -755,7 +767,7 @@ public class RetailSubmap extends Submap {
       }
     }
 
-    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
+    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
 
     this.backgroundRect = Rect4i.bound(rects);
     final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];

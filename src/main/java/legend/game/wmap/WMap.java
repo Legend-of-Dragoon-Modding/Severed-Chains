@@ -19,9 +19,11 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
+import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
 import legend.game.saves.SavedGame;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
@@ -41,6 +43,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +64,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DISCORD;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
@@ -68,8 +72,9 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Audio.getLoadedAudioFiles;
-import static legend.game.Audio.loadLocationMenuSoundEffects;
 import static legend.game.Audio.loadWmapMusic;
+import static legend.game.Audio.loadWorldMapLocationMenuSoundEffects;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.playSound;
 import static legend.game.Audio.soundFiles_800bcf80;
 import static legend.game.Audio.stopSound;
@@ -125,7 +130,7 @@ import static legend.game.Text.renderText;
 import static legend.game.Text.setTextAndTextboxesToUninitialized;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.Text.textboxes_800be358;
-import static legend.game.combat.SBtld.startLegacyEncounter;
+import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -855,10 +860,10 @@ public class WMap extends EngineState<WMap> {
     this.modelAndAnimData_800c66a8.zoomOverlay = new ZoomOverlay();
 
     if(this.mapState_800c6798.continent_00.continentNum < Continent.ILLISA_BAY_3.continentNum) { // South Serdio, North Serdio, Tiberoa
-      loadLocationMenuSoundEffects(1);
+      loadWorldMapLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
+      loadWorldMapLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
     }
     //LAB_800cd020
   }
@@ -1320,7 +1325,7 @@ public class WMap extends EngineState<WMap> {
                 if(cameraAndLights.mapRotationState_110 == MapRotationState.MAIN_LOOP_0) {
                   if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-                      playSound(0, 4, (short)0, (short)0);
+                      playMenuSound(4);
                       cameraAndLights.finalCameraY_9e = -9000;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_OUT_1;
                       cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
@@ -1335,7 +1340,7 @@ public class WMap extends EngineState<WMap> {
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.CONTINENT_1) {
                       //LAB_800d3814
                       setTextAndTextboxesToUninitialized(7, 0);
-                      playSound(0, 4, (short)0, (short)0);
+                      playMenuSound(4);
                       cameraAndLights.finalCameraY_9e = -300;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
                       this.initCameraZoomPositionAndRotationSteps(1);
@@ -1343,7 +1348,7 @@ public class WMap extends EngineState<WMap> {
                       this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL_0;
                       //LAB_800d3898
                     } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-                      playSound(0, 0x28, (short)0, (short)0);
+                      playMenuSound(40);
                     }
                   }
                 }
@@ -2247,7 +2252,7 @@ public class WMap extends EngineState<WMap> {
     switch(this.modelAndAnimData_800c66a8.zoomState_1f8) {
       case CONTINENT_1:
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
-          playSound(0, 4, (short)0, (short)0);
+          playMenuSound(4);
           this.shouldSetDestLabelMetrics = true;
 
           this.modelAndAnimData_800c66a8.mapPosition_1e8.set(cameraAndLights.coord2_20.coord.transfer);
@@ -2264,8 +2269,6 @@ public class WMap extends EngineState<WMap> {
 
       case TRANSITION_MODEL_OUT_2:
         this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
-
-
         this.mcqBrightness_800ef1a4 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 > 1.0f) {
@@ -2292,7 +2295,7 @@ public class WMap extends EngineState<WMap> {
 
       case WORLD_3:
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
-          playSound(0, 40, (short)0, (short)0);
+          playMenuSound(40);
         }
 
         //LAB_800d9858
@@ -2304,7 +2307,7 @@ public class WMap extends EngineState<WMap> {
 
         //LAB_800d98a8
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_IN.get())) {
-          playSound(0, 4, (short)0, (short)0);
+          playMenuSound(4);
           this.initMapModelZoom(-1);
 
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.TRANSITION_MODEL_IN_4;
@@ -2476,7 +2479,7 @@ public class WMap extends EngineState<WMap> {
     //LAB_800da544
     switch(modelAndAnimData.coolonWarpState_220) {
       case NONE_0:
-        playSound(0, 4, (short)0, (short)0);
+        playMenuSound(4);
 
         modelAndAnimData.mapPos_200.set(cameraAndLights.coord2_20.coord.transfer);
         modelAndAnimData.playerPos_208.set(modelAndAnimData.currPlayerPos_94);
@@ -2612,7 +2615,7 @@ public class WMap extends EngineState<WMap> {
           this.shouldSetCoolonWarpDestLabelMetrics = false;
           this.coolonWarpDestLabelName = null;
 
-          playSound(0, 3, (short)0, (short)0);
+          playMenuSound(3);
 
           //LAB_800daef8
           for(int i = 0; i < 8; i++) {
@@ -2640,7 +2643,7 @@ public class WMap extends EngineState<WMap> {
 
         //LAB_800db00c
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
           clearTextbox(6);
           initTextbox(textboxes_800be358[6], true, 240, 64, 9, 4);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_PROMPT_4;
@@ -2679,26 +2682,26 @@ public class WMap extends EngineState<WMap> {
         this.renderCoolonMapSymbols(false, true);
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-          playSound(0, 3, (short)0, (short)0);
+          playMenuSound(3);
           setTextAndTextboxesToUninitialized(6, 1);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
         }
 
         //LAB_800db39c
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_UP.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_DOWN.get())) {
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
           modelAndAnimData.coolonPromptIndex_223 ^= 1;
         }
 
         //LAB_800db3f8
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           if(modelAndAnimData.coolonPromptIndex_223 == 0) {
-            playSound(0, 3, (short)0, (short)0);
+            playMenuSound(3);
             setTextAndTextboxesToUninitialized(6, 1);
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
           } else {
             //LAB_800db474
-            playSound(0, 2, (short)0, (short)0);
+            playMenuSound(2);
             setTextAndTextboxesToUninitialized(6, 1);
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.FLY_ANIM_6;
           }
@@ -2873,7 +2876,7 @@ public class WMap extends EngineState<WMap> {
 
     if(enableInput) {
       if(PLATFORM.isActionRepeat(INPUT_ACTION_MENU_RIGHT.get()) || PLATFORM.isActionRepeat(INPUT_ACTION_MENU_DOWN.get())) {
-        playSound(0, 1, (short)0, (short)0);
+        playMenuSound(1);
 
         if(modelAndAnimData.coolonDestIndex_222 > 0) {
           modelAndAnimData.coolonDestIndex_222--;
@@ -2884,7 +2887,7 @@ public class WMap extends EngineState<WMap> {
 
       //LAB_800dc384
       if(PLATFORM.isActionRepeat(INPUT_ACTION_MENU_LEFT.get()) || PLATFORM.isActionRepeat(INPUT_ACTION_MENU_UP.get())) {
-        playSound(0, 1, (short)0, (short)0);
+        playMenuSound(1);
 
         modelAndAnimData.coolonDestIndex_222++;
         if(modelAndAnimData.coolonDestIndex_222 > 8) {
@@ -3383,7 +3386,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e1210
       if(modelIndex == 1) {
         if(tickCount_800bb0fc % (4 * this.tickMultiplier()) == 0) {
-          playSound(0xc, 0, (short)0, (short)0);
+          playSound(12, 0, (short)0, (short)0);
         }
       }
     } else {
@@ -3709,12 +3712,12 @@ public class WMap extends EngineState<WMap> {
     if(this.encounterAccumulator_800c6ae8 >= 5120) {
       this.encounterAccumulator_800c6ae8 = 0;
 
-      final int stageId;
+      final int battleStageId;
       if(directionalPathSegment.battleStage_04 == -1) {
-        stageId = 1;
+        battleStageId = 1;
       } else {
         //LAB_800e386c
-        stageId = directionalPathSegment.battleStage_04;
+        battleStageId = directionalPathSegment.battleStage_04;
       }
 
       //LAB_800e3894
@@ -3740,7 +3743,9 @@ public class WMap extends EngineState<WMap> {
         }
       }
 
-      startLegacyEncounter(encounterId, stageId);
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get();
+      final WorldMapEncounterEvent event = EVENTS.postEvent(new WorldMapEncounterEvent(this, gameState_800babc8, encounter, battleStageId, directionalPathSegment));
+      startEncounter(event.encounter, event.battleStageId);
 
       //LAB_800e3a38
       gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
@@ -4137,7 +4142,7 @@ public class WMap extends EngineState<WMap> {
 
         this.mapTransitionState_800c68a4 = MapTransitionState.BUILD_PROMPT_2;
 
-        playSound(0, 4, (short)0, (short)0);
+        playMenuSound(4);
 
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
@@ -4145,7 +4150,7 @@ public class WMap extends EngineState<WMap> {
           final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
-            playSound(0xc, soundIndex, (short)0, (short)0);
+            playSound(12, soundIndex, (short)0, (short)0);
           }
 
           //LAB_800e5698
@@ -4232,7 +4237,7 @@ public class WMap extends EngineState<WMap> {
           this.wmapLocationPromptPopup.decrMenuSelectorOptionIndex();
 
           //LAB_800e5950
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
         }
 
         //LAB_800e5970
@@ -4240,7 +4245,7 @@ public class WMap extends EngineState<WMap> {
           this.wmapLocationPromptPopup.incrMenuSelectorOptionIndex();
 
           //LAB_800e59c0
-          playSound(0, 1, (short)0, (short)0);
+          playMenuSound(1);
         }
 
         //LAB_800e5b38
@@ -4278,7 +4283,7 @@ public class WMap extends EngineState<WMap> {
         );
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_SERVICES.get()) && this.mapState_800c6798.submapCutTo_c8 != 999) {
-          playSound(0, 2, (short)0, (short)0);
+          playMenuSound(2);
         }
 
         //LAB_800e60d0
@@ -4314,7 +4319,7 @@ public class WMap extends EngineState<WMap> {
             setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = MapTransitionState.INIT_MOVEMENT_6;
 
-            playSound(0, 3, (short)0, (short)0);
+            playMenuSound(3);
 
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
@@ -4336,7 +4341,7 @@ public class WMap extends EngineState<WMap> {
             setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = MapTransitionState.ANIMATE_PROMPT_OUT_5;
 
-            playSound(0, 2, (short)0, (short)0);
+            playMenuSound(2);
 
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
@@ -4354,7 +4359,7 @@ public class WMap extends EngineState<WMap> {
         } else {
           //LAB_800e6524
           if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-            playSound(0, 3, (short)0, (short)0);
+            playMenuSound(3);
 
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
@@ -4510,7 +4515,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e6afc
     } else {
       if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_DESTINATIONS.get()) && this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
-        playSound(0, 2, (short)0, (short)0);
+        playMenuSound(2);
         this.startLocationLabelsActive_800c68a8 = true;
 
         //LAB_800e6aac

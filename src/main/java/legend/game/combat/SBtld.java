@@ -26,7 +26,7 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playSound;
+import static legend.game.Audio.playMenuSound;
 import static legend.game.Audio.stopMusicSequence;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.postBattleEngineState_800bc91c;
@@ -433,7 +433,7 @@ public final class SBtld {
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
     battleStartDelayTicks_8004f6ec = 0;
-    playSound(0, 16, (short)0, (short)0); // play battle transition sound
+    playMenuSound(16); // play battle transition sound
     vsyncMode_8007a3b8 = 1;
     _800bd740 = 2;
     dissolveDarkening_800bd700.active_00 = false;

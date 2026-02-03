@@ -224,4 +224,4 @@ New: Libria animation handled by File 8, now on screen with Lisa
 +data 0xfffffff6
 +SCENE_1_MARK_Z:
 +data 0xe1
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
