@@ -848,8 +848,8 @@ public class RenderEngine {
           entry.render(null, layer);
         }
 
-        // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (only applies to emulated VRAM)
-        if(!entry.texturesUsed && entry.hasTranslucency(layer)) {
+        // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (note: does not apply to 24bpp textures)
+        if(entry.hasTranslucency(layer)) {
           for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
             final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
@@ -892,7 +892,7 @@ public class RenderEngine {
       final QueuedModel<?, ?> entry = pool.get(i);
 
       if(entry.hasTranslucency()) {
-        entry.useShader(modelIndex, entry.texturesUsed ? 0 : 2); // Don't discard if we aren't using the emulated VRAM texture
+        entry.useShader(modelIndex, 2);
         this.state.enableDepthTest(entry.translucentDepthComparator);
 
         this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
