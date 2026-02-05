@@ -93,7 +93,7 @@ public class CombatDebuggerController {
 
 
   public void initialize() {
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < battleState_8006e398.allBents_e0c.size(); i++) {
       this.bents.add(new ListItem(this::getCombatantName, i));
     }
 
@@ -204,10 +204,6 @@ public class CombatDebuggerController {
 
   private String getCombatantName(final int combatantIndex) {
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(combatantIndex);
-
-    if(state == null) {
-      return "unused";
-    }
 
     final BattleEntity27c bent = state.innerStruct_00;
     final CombatantStruct1a8 combatant = bent.combatant_144;
