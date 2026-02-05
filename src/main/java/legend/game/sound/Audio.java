@@ -856,7 +856,12 @@ public final class Audio {
 
   @Method(0x80023870L)
   public static void playMenuSound(final int soundIndex) {
-    playSound(menuSoundFile, soundIndex, (short)0, (short)0);
+    playSound(menuSoundFile, soundIndex, 0, 0);
+  }
+
+  @Method(0x80023870L)
+  public static void playMenuSound(final int soundIndex, final int initialDelay, final int repeatDelay) {
+    playSound(menuSoundFile, soundIndex, initialDelay, repeatDelay);
   }
 
   @Method(0x8002c984L)
