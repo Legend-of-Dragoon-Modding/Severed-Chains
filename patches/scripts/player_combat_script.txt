@@ -924,7 +924,7 @@ return
 
 ; SUBROUTINE
 LOAD_SOUNDS:
-call Audio::scriptLoadMonsterAttackSounds, stor[8] ; monsterIndex
+call Battle::scriptLoadMonsterAttackSounds, stor[8] ; monsterIndex
 LABEL_140:
 yield
 call Audio::scriptGetLoadedSoundFiles, stor[23] ; flags
@@ -3707,7 +3707,7 @@ data 0
 ; SUBROUTINE
 LOAD_D_ATTACK_SOUNDS:
 call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_SOUNDS, inl[:LOAD_D_ATTACK_SOUNDS_FILE]
-call Audio::scriptLoadMonsterAttackSounds, inl[:LOAD_D_ATTACK_SOUNDS_FILE] ; monsterIndex
+call Battle::scriptLoadMonsterAttackSounds, inl[:LOAD_D_ATTACK_SOUNDS_FILE] ; monsterIndex
 LABEL_417:
 yield
 call Audio::scriptGetLoadedSoundFiles, stor[23] ; flags
@@ -4874,7 +4874,7 @@ gosub inl[:LABEL_471] ; addr
 gosub inl[:GET_MY_CHAR_ID] ; addr
 jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_531] ; operand, left, right, addr
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
-call Audio::scriptLoadCharacterAttackSounds, stor[8] ; charId
+call Battle::scriptLoadCharacterAttackSounds, stor[8] ; charId
 
 ACTION_ATTACK_WAIT_FOR_SOUND_TO_LOAD:
 yield
@@ -5011,17 +5011,17 @@ call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
 call Battle::scriptGetBentStat, stor[0], FOOT_MODEL_PART, inl[:ACTION_SPECIAL_FOOT_MODEL_PART_INDEX]
 call Battle::scriptAttachShadowToBentModelPart, stor[0], inl[:ACTION_SPECIAL_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
 call DrgnFiles::scriptWaitForFilesToLoad ; index
-call Audio::scriptLoadCharAttackSounds, var[34][0], 0x0 ; bentIndex, type
+call Battle::scriptLoadCharAttackSounds, var[34][0], 0x0 ; bentIndex, type
 LABEL_540:
 yield
 call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_540] ; operand, left, right, addr
-call Audio::scriptLoadCharAttackSounds, var[34][1], 0x0 ; bentIndex, type
+call Battle::scriptLoadCharAttackSounds, var[34][1], 0x0 ; bentIndex, type
 LABEL_541:
 yield
 call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_541] ; operand, left, right, addr
-call Audio::scriptLoadCharAttackSounds, var[34][2], 0x0 ; bentIndex, type
+call Battle::scriptLoadCharAttackSounds, var[34][2], 0x0 ; bentIndex, type
 LABEL_542:
 yield
 call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
@@ -5122,7 +5122,7 @@ LABEL_548:
 call DrgnFiles::scriptWaitForFilesToLoad ; index
 mov var[45][118], stor[8] ; source, dest
 call Audio::scriptStartSequenceAndChangeVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
-call Audio::scriptLoadCharAttackSounds, stor[0], 0x0 ; bentIndex, type
+call Battle::scriptLoadCharAttackSounds, stor[0], 0x0 ; bentIndex, type
 LABEL_549:
 yield
 call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
@@ -5298,7 +5298,7 @@ call DrgnFiles::scriptWaitForFilesToLoad ; index
 ; set shadow size and load sounds
 mov stor[30], stor[8] ; source, dest
 gosub inl[:SET_CHAR_BENT_SHADOW_SIZE] ; addr
-call Audio::scriptLoadCharAttackSounds, stor[30], 0x1 ; bentIndex, type
+call Battle::scriptLoadCharAttackSounds, stor[30], 0x1 ; bentIndex, type
 
 ; wait for sounds to load
 TRANSFORM_OUT_OF_DRAGOON_WAIT_FOR_SOUNDS:
