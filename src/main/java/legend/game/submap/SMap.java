@@ -3285,6 +3285,8 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800e2220L)
   private void unloadSmap() {
+    LOGGER.info("Unloading submap");
+
     this.collisionGeometry_800cbe08.unloadCollision();
     this.clearLatches();
 
@@ -4246,6 +4248,8 @@ public class SMap extends EngineState<SMap> {
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
+
+        this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
       }
     }
   }

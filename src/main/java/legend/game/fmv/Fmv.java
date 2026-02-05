@@ -25,6 +25,8 @@ import legend.game.i18n.I18n;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 
@@ -53,6 +55,8 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
 public final class Fmv {
   private Fmv() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
 
   private static final String[] diskFmvs_80052d7c = {
     "STR/DEMOH.IKI", "STR/DEMO2.IKI", "STR/OPENH.IKI", "STR/WAR1H.IKI",
@@ -302,6 +306,8 @@ public final class Fmv {
   }
 
   private static void play(final String file, final boolean doubleSpeed) {
+    LOGGER.info("Playing FMV %s", file);
+
     shouldStop = false;
 
     final byte[] data = new byte[2352];
