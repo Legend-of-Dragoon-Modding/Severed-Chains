@@ -15,6 +15,7 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.types.MagicStuff08;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
@@ -23,7 +24,6 @@ import java.util.Arrays;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.renderMode;
@@ -37,11 +37,10 @@ import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
-import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.giveItems;
 import static legend.game.SItem.hasDragoon;
-import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -59,6 +58,7 @@ import static legend.game.combat.SBtld.addLevelUpOverlay;
 import static legend.game.combat.SBtld.drawBattleReportOverlays;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class PostBattleScreen extends MenuScreen {
   private static final String NEW_ADDITION = "New Addition";
@@ -483,18 +483,14 @@ public class PostBattleScreen extends MenuScreen {
       //LAB_8010ceb0
       //LAB_8010cecc
       while(gameState_800babc8.charData_32c[charId].dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charId][gameState_800babc8.charData_32c[charId].dlevel_13 + 1] && gameState_800babc8.charData_32c[charId].dlevel_13 < 5) {
-        loadCharacterStats();
-        final IntList spellIndices = new IntArrayList();
-        getUnlockedDragoonSpells(spellIndices, charId);
-        final int spellCount = spellIndices.size();
-
         gameState_800babc8.charData_32c[charId].dlevel_13++;
         this.dragoonLevelsGained_8011e1d8[charSlot]++;
 
-        loadCharacterStats();
-        getUnlockedDragoonSpells(spellIndices, charId);
-        if(spellCount != spellIndices.size()) {
-          this.spellsUnlocked_8011e1a8[charSlot] = spellIndices.getInt(spellCount + 1);
+        final MagicStuff08 spellStuff = magicStuff_80111d20[charId][gameState_800babc8.charData_32c[charId].dlevel_13];
+        final int spellId = spellStuff.spellIndex_02;
+
+        if(spellId != -1) {
+          this.spellsUnlocked_8011e1a8[charSlot] = spellId;
         }
 
         //LAB_8010cf70
