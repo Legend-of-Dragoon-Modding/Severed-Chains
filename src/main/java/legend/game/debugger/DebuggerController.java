@@ -247,7 +247,7 @@ public class DebuggerController {
       gameState_800babc8.dotIndex_4da = wmap.mapState_800c6798.dotIndex_16;
       gameState_800babc8.dotOffset_4dc = wmap.mapState_800c6798.dotOffset_18;
       gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
-      wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
+      wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
     }
   }
 

@@ -11,10 +11,8 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.List;
 
-import static legend.game.Audio.loadEncounterSounds;
-import static legend.game.Audio.loadMusicPackage;
-import static legend.game.Audio.playVictoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
+import static legend.game.sound.Audio.loadMusicPackage;
 
 public class Encounter extends RegistryEntry {
   public final List<Monster> monsters;
@@ -67,12 +65,12 @@ public class Encounter extends RegistryEntry {
 
   @Method(0x8001d1c4L)
   public void loadSounds(final Battle battle, final int phase) {
-    loadEncounterSounds(this);
+    battle.loadMonsterSounds();
   }
 
   public void onBattleWon(final Battle battle) {
     postBattleAction_800bc974 = CorePostBattleActions.VICTORY.get().inst();
-    playVictoryMusic();
+    battle.playVictoryMusic();
   }
 
   public void onBattleLost(final Battle battle) {

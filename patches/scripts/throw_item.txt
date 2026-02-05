@@ -47,6 +47,10 @@ entrypoint :USE_TOTAL_VANISHING
 entrypoint :ENTRYPOINT_11_RENDER_TICK_STATUS
 entrypoint :USE_CAUSE_STATUS
 
+#include player_combat_script.txt
+#include lookup_tables.txt
+#include throw_item_effects.txt
+
 
 
 DO_NOTHING:
@@ -366,8 +370,3 @@ gosub inl[:ALLOCATE_SHIELD_BUFF_PURIFIER_EFFECT] ; addr
 mov 0x10, stor[23] ; source, dest
 wait stor[23] ; frames
 return
-
-
-
-#include throw_item_effects.txt
-#include player_combat_script.txt

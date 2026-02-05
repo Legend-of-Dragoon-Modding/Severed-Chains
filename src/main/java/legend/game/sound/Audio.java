@@ -1,4 +1,4 @@
-package legend.game;
+package legend.game.sound;
 
 import legend.core.DebugHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
@@ -6,34 +6,16 @@ import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.combat.encounters.Encounter;
-import legend.game.modding.events.battle.BattleMusicEvent;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
-import legend.game.scripting.ScriptState;
-import legend.game.sound.Instrument;
-import legend.game.sound.InstrumentLayer10;
-import legend.game.sound.PatchList;
-import legend.game.sound.PlayableSound0c;
-import legend.game.sound.PlayingNote66;
-import legend.game.sound.QueuedSound28;
-import legend.game.sound.ReverbConfig;
-import legend.game.sound.ReverbConfigAndLocation;
-import legend.game.sound.SequenceData124;
-import legend.game.sound.SoundEnv44;
-import legend.game.sound.SoundFile;
-import legend.game.sound.SoundFileIndices;
-import legend.game.sound.SpuStruct08;
-import legend.game.sound.Sshd;
-import legend.game.sound.Sssq;
-import legend.game.sound.SssqReader;
-import legend.game.sound.Sssqish;
-import legend.game.sound.VolumeRamp;
-import legend.game.sound.WaveformList;
+import legend.game.submap.SMap;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -41,38 +23,28 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
-import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.DrgnFiles.loadDir;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFiles;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Audio {
   private Audio() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Audio.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
-
-  public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
-  public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
 
   public static final int[] combatSoundEffectsTypes_8005019c = {
     12, 13, 86, 12, 12, 12, 12, 12,
@@ -125,28 +97,19 @@ public final class Audio {
    *   <li>0x10000 - different battle character attack sounds?</li>
    * </ul>
    */
-  public static final AtomicInteger loadedAudioFiles_800bcf78 = new AtomicInteger();
+  public static final AtomicInteger loadingAudioFiles_800bcf78 = new AtomicInteger();
 
-  /**
-   * <ul>
-   *   <li>0 - generic sounds (e.g. menu)</li>
-   *   <li>1 - char 0</li>
-   *   <li>2 - char 1</li>
-   *   <li>3 - char 2</li>
-   *   <li>4 - monster 0</li>
-   *   <li>5 - monster 1</li>
-   *   <li>6 - monster 2</li>
-   *   <li>7 - monster 3</li>
-   *   <li>8 - submap sounds</li>
-   *   <li>9 - battle cutscene</li>
-   *   <li>10 - attack sounds (player and monster)</li>
-   *   <li>11 - submap music</li>
-   *   <li>12 - world map</li>
-   * </ul>
-   */
-  public static final SoundFile[] soundFiles_800bcf80 = new SoundFile[13];
-  static {
-    Arrays.setAll(soundFiles_800bcf80, i -> new SoundFile());
+  private static final Set<SoundFile> loadedSoundFiles = new HashSet<>();
+  private static final SoundFile menuSoundFile = addSoundFile("Menu SFX (file 5739)");
+
+  public static SoundFile addSoundFile(final String name) {
+    final SoundFile soundFile = new SoundFile(name);
+    loadedSoundFiles.add(soundFile);
+    return soundFile;
+  }
+
+  public static void removeSoundFile(final SoundFile soundFile) {
+    loadedSoundFiles.remove(soundFile);
   }
 
   public static int _800bd0f0;
@@ -194,20 +157,10 @@ public final class Audio {
     setMaxSounds(8);
     sssqSetReverbType(3);
     sssqSetReverbVolume(0x30, 0x30);
-
-    for(int i = 0; i < 13; i++) {
-      unuseSoundFile(i);
-    }
-
     FUN_8001aa64();
     FUN_8001aa90();
 
     queuedSounds_800bd110.clear();
-
-    for(int i = 0; i < 13; i++) {
-      soundFiles_800bcf80[i].used_00 = false;
-    }
-
     sssqTempoScale_800bd100 = 0x100;
   }
 
@@ -215,46 +168,9 @@ public final class Audio {
    * @param soundIndex 1: up/down, 2: choose menu option, 3: ...
    */
   @Method(0x80019a60L)
-  public static void playSound(final int soundFileIndex, final int soundIndex, final int initialDelay, final int repeatDelay) {
-    final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-
+  public static void playSound(final SoundFile soundFile, final int soundIndex, final int initialDelay, final int repeatDelay) {
     if(!soundFile.used_00 || soundFile.playableSound_10 == null) {
       return;
-    }
-
-    switch(soundFileIndex) {
-      case 0 -> {
-        if((loadedAudioFiles_800bcf78.get() & 0x1) != 0) {
-          return;
-        }
-      }
-
-      case 8 -> {
-        //LAB_80019bd4
-        if((loadedAudioFiles_800bcf78.get() & 0x2) != 0 || engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
-          return;
-        }
-      }
-
-      case 9 -> {
-        //LAB_80019bd4
-        if((loadedAudioFiles_800bcf78.get() & 0x4) != 0 || engineState_8004dd20 != EngineStateEnum.COMBAT_06) {
-          return;
-        }
-      }
-
-      case 0xa -> {
-        if((loadedAudioFiles_800bcf78.get() & 0x20) != 0) {
-          return;
-        }
-      }
-
-      case 0xc -> {
-        //LAB_80019bd4
-        if((loadedAudioFiles_800bcf78.get() & 0x8000) != 0 || engineState_8004dd20 != EngineStateEnum.WORLD_MAP_08) {
-          return;
-        }
-      }
     }
 
     //LAB_80019be0
@@ -262,7 +178,7 @@ public final class Audio {
     //LAB_80019b54
     final QueuedSound28 queuedSound = new QueuedSound28();
     queuedSounds_800bd110.add(queuedSound);
-    playSound(3, soundFile, soundIndex, queuedSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], soundFileIndex == 8 ? soundFile.ptr_0c.readUByte(soundIndex) : 0, (short)-1, (short)-1, (short)-1, repeatDelay, initialDelay, null);
+    playSound(3, soundFile, soundIndex, queuedSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], soundFile.ptr_0c != null ? soundFile.ptr_0c.readUByte(soundIndex) : 0, (short)-1, (short)-1, (short)-1, repeatDelay, initialDelay, null);
 
     //LAB_80019c70
   }
@@ -393,11 +309,6 @@ public final class Audio {
     playingSound.initialDelay_24 = initialDelay;
   }
 
-  @Method(0x8001aa44L)
-  public static void unuseSoundFile(final int index) {
-    soundFiles_800bcf80[index].used_00 = false;
-  }
-
   @Method(0x8001aa64L)
   public static void FUN_8001aa64() {
     _800bd0f0 = 0;
@@ -420,7 +331,8 @@ public final class Audio {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001ab34L)
   public static FlowControl scriptPlaySound(final RunningScript<?> script) {
-    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[4].get() * currentEngineState_8004dd04.tickMultiplier(), script.params_20[5].get() * currentEngineState_8004dd04.tickMultiplier());
+    final SoundFile soundFile = getSoundFileFromIndex(script.params_20[0].get());
+    playSound(soundFile, script.params_20[1].get(), script.params_20[4].get() * currentEngineState_8004dd04.tickMultiplier(), script.params_20[5].get() * currentEngineState_8004dd04.tickMultiplier());
     return FlowControl.CONTINUE;
   }
 
@@ -430,8 +342,20 @@ public final class Audio {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x8001ab98L)
   public static FlowControl scriptStopSound(final RunningScript<?> script) {
-    stopSound(soundFiles_800bcf80[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get());
+    final SoundFile soundFile = getSoundFileFromIndex(script.params_20[0].get());
+    stopSound(soundFile, script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
+  }
+
+  private static SoundFile getSoundFileFromIndex(final int index) {
+    return switch(index) {
+      case 0 -> menuSoundFile;
+      case 4 -> ((Battle)currentEngineState_8004dd04).deffSounds;
+      case 8 -> ((SMap)currentEngineState_8004dd04).submapSounds;
+      case 9 -> ((Battle)currentEngineState_8004dd04).cutsceneSounds;
+      case 10 -> ((Battle)currentEngineState_8004dd04).attackSounds;
+      default -> throw new RuntimeException("Can't get soundFile " + index);
+    };
   }
 
   @Method(0x8001ad18L)
@@ -486,33 +410,6 @@ public final class Audio {
   public static FlowControl scriptStopCurrentMusicSequence(final RunningScript<?> script) {
     stopCurrentMusicSequence();
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8001af00L)
-  public static void playVictoryMusic() {
-    AUDIO_THREAD.loadBackgroundMusic(victoryMusic);
-    AUDIO_THREAD.startSequence();
-  }
-
-  @ScriptDescription("Starts the encounter sounds sequence")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @Method(0x8001af34L)
-  public static FlowControl scriptStartEncounterSounds(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
-  }
-
-  @ScriptDescription("Stops the encounter sounds sequence")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @Method(0x8001afa4L)
-  public static FlowControl scriptStopEncounterSounds(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
-  }
-
-  @ScriptDescription("Stops the encounter sounds sequence")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @Method(0x8001b014L)
-  public static FlowControl scriptStopEncounterSounds2(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
   }
 
   @ScriptDescription("Stops the encounter sounds sequence if 800bd0f0 is 2")
@@ -597,9 +494,7 @@ public final class Audio {
   @Method(0x8001b208L)
   public static FlowControl scriptSetAllSoundSequenceVolumes(final RunningScript<?> script) {
     //LAB_8001b22c
-    for(int i = 0; i < 13; i++) {
-      final SoundFile soundFile = soundFiles_800bcf80[i];
-
+    for(final SoundFile soundFile : loadedSoundFiles) {
       // hasSubfile check added because music loads faster than retail. In Kongol I cutscene when Rose wakes up
       // Dart's dragoon spirit, the current music is unloaded and a new one is loaded. This method got called by
       // the script after the "load new music" method was called, but it was quick enough that it happened after
@@ -657,252 +552,12 @@ public final class Audio {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8001cae0L)
-  public static void charSoundEffectsLoaded(final List<FileData> files, final int charSlot) {
-    final int charId = gameState_800babc8.charIds_88[charSlot];
-
-    //LAB_8001cb34
-    final int index = characterSoundFileIndices_800500f8[charSlot];
-    final SoundFile sound = soundFiles_800bcf80[index];
-
-    sound.name = "Char slot %d sound effects".formatted(charSlot);
-    sound.id_02 = charId;
-    sound.indices_08 = SoundFileIndices.load(files.get(1));
-
-    //LAB_8001cc48
-    //LAB_8001cc50
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
-    sound.used_00 = true;
-  }
-
-  @Method(0x8001cce8L)
-  public static void loadCharAttackSounds(final int bentIndex, final int type) {
-    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
-
-    //LAB_8001cd3c
-    int charSlot;
-    for(charSlot = 0; charSlot < 3; charSlot++) {
-      final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
-
-      if(soundFile.id_02 == bent.charId_272) {
-        break;
-      }
-    }
-
-    //LAB_8001cd78
-    final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
-    sssqUnloadPlayableSound(soundFile.playableSound_10);
-    soundFile.used_00 = false;
-
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x8);
-
-    final int fileIndex;
-    final String soundName;
-    if(type != 0) {
-      //LAB_8001ce44
-      fileIndex = 1298 + bent.charId_272;
-      soundName = "Char slot %d attack sounds".formatted(bent.charId_272);
-    } else if(bent.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      //LAB_8001ce18
-      fileIndex = 1307 + bent.charId_272;
-      soundName = "Char slot %d dragoon attack sounds".formatted(bent.charId_272);
-    } else {
-      fileIndex = 1307;
-      soundName = "Divine dragoon attack sounds";
-    }
-
-    //LAB_8001ce70
-    final int finalCharSlot = charSlot;
-    loadDrgnDir(0, fileIndex, files -> charAttackSoundsLoaded(files, soundName, finalCharSlot));
-  }
-
-  @Method(0x8001ce98L)
-  public static void charAttackSoundsLoaded(final List<FileData> files, final String soundName, final int charSlot) {
-    final SoundFile sound = soundFiles_800bcf80[characterSoundFileIndices_800500f8[charSlot]];
-
-    //LAB_8001cee8
-    //LAB_8001cf2c
-    sound.name = soundName;
-    sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.id_02 = files.get(0).readShort(0);
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
-    cleanUpCharAttackSounds();
-    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-    sound.used_00 = true;
-  }
-
-  /**
-   * <ol start="0">
-   *   <li>Dragoon transformation sounds</li>
-   *   <li>Encounter sound effects</li>
-   *   <li>Maybe item magic?</li>
-   * </ol>
-   */
-  @Method(0x8001d068L)
-  public static void loadDeffSounds(final Battle battle, final ScriptState<BattleEntity27c> bentState, final int type) {
-    final BattleEntity27c bent = bentState.innerStruct_00;
-
-    unloadSoundFile(3);
-    unloadSoundFile(6);
-
-    if(type == 0) {
-      //LAB_8001d0e0
-      loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x40);
-      if(bent.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-        //LAB_8001d134
-        // Regular dragoons
-        loadDrgnDir(0, 1317 + bent.charId_272, files -> FUN_8001e98c(files, "%s dragoon transformation sounds (file %d)".formatted(getCharacterName(bent.charId_272), 1317 + bent.charId_272)));
-      } else {
-        // Divine dragoon
-        loadDrgnDir(0, 1328, files -> FUN_8001e98c(files, "Divine dragoon transformation sounds (file 1328)"));
-      }
-    } else if(type == 1) {
-      //LAB_8001d164
-      encounter.loadSounds(battle, battleState_8006e398.battlePhase_eec);
-    } else if(type == 2) {
-      //LAB_8001d174
-      loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x40);
-
-      //LAB_8001d1a8
-      loadDrgnDir(0, 1327, files -> FUN_8001e98c(files, "Item sounds? (file 1327)"));
-    }
-
-    //LAB_8001d1b0
-  }
-
-  public static void loadBattlePhaseSounds(final String boss, final int phase) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x10);
-    final AtomicInteger count = new AtomicInteger(0);
-
-    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
-        count.incrementAndGet();
-      }
-    }
-
-    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      file.id_02 = -1;
-      file.used_00 = false;
-
-      if(Loader.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
-        final int finalMonsterSlot = monsterSlot;
-        loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> {
-          monsterSoundLoaded(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, phase), finalMonsterSlot);
-
-          if(count.decrementAndGet() == 0) {
-            loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
-          }
-        });
-      }
-    }
-  }
-
-  public static void loadEncounterSounds(final Encounter encounter) {
-    loadEncounterSounds(encounter.uniqueIds.toIntArray());
-  }
-
-  public static void loadEncounterSounds(final int[] monsterIds) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x10);
-
-    final AtomicInteger count = new AtomicInteger(0);
-
-    for(int monsterSlot = 0; monsterSlot < monsterIds.length; monsterSlot++) {
-      if(Loader.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
-        count.incrementAndGet();
-      }
-    }
-
-    for(int monsterSlot = 0; monsterSlot < monsterIds.length; monsterSlot++) {
-      final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      soundFile.id_02 = -1;
-      soundFile.used_00 = false;
-
-      if(Loader.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
-        final int finalMonsterSlot = monsterSlot;
-        loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> {
-          monsterSoundLoaded(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot);
-
-          if(count.decrementAndGet() == 0) {
-            loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
-          }
-        });
-      }
-    }
-  }
-
-  @Method(0x8001d51cL)
-  public static void monsterSoundLoaded(final List<FileData> files, final String soundName, final int monsterSlot) {
-    //LAB_8001d698
-    final int file3Size = files.get(3).size();
-
-    if(file3Size > 48) {
-      //LAB_8001d704
-      //LAB_8001d718
-      int v1 = 51024;
-      for(int n = 3; n >= 0 && file3Size < v1; n--) {
-        v1 = v1 - 17008;
-      }
-
-      //LAB_8001d72c
-      final int soundFileIndex = monsterSoundFileIndices_800500e8[monsterSlot];
-      final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-
-      soundFile.name = soundName;
-      soundFile.indices_08 = SoundFileIndices.load(files.get(1));
-      soundFile.id_02 = files.get(0).readShort(0);
-
-      //LAB_8001d80c
-      soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(soundFile.name, files.get(2)));
-
-      setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
-      soundFile.used_00 = true;
-    }
-
-    //LAB_8001d8ac
-  }
-
-  @Method(0x8001d8d8L)
-  public static void battleCutsceneSoundsLoaded(final List<FileData> files, final String soundName) {
-    final SoundFile soundFile = soundFiles_800bcf80[9];
-    soundFile.name = soundName;
-    soundFile.used_00 = true;
-    soundFile.id_02 = files.get(0).readUShort(0);
-    soundFile.indices_08 = SoundFileIndices.load(files.get(2));
-    soundFile.numberOfExtraSoundbanks_18 = files.get(1).readUShort(0) - 1;
-
-    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), new Sshd(soundFile.name, files.get(3)));
-    loadExtraBattleCutsceneSoundbanks();
-    setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
-  }
-
-  @Method(0x8001d9d0L)
-  public static void loadEncounterMusic(final int musicIndex, final int victoryType) {
-    if(victoryType == -1) {
-      return;
-    }
-
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-
-    final int fileId;
-    final Consumer<List<FileData>> callback;
-    if(victoryType == 732) {
-      callback = files -> musicPackageLoadedCallback(files, victoryType, true);
-      fileId = victoryType;
-    } else {
-      callback = files -> FUN_8001fb44(files, musicIndex, victoryType);
-      fileId = musicIndex;
-    }
-
-    loadDrgnDir(0, fileId, callback);
-  }
-
   @Method(0x8001dabcL)
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
 
     playMusicPackage(new BackgroundMusic(files, fileIndex), startSequence);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x80);
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x80);
   }
 
   public static void playMusicPackage(final BackgroundMusic music,  final boolean startSequence) {
@@ -917,77 +572,6 @@ public final class Audio {
     _800bd0f0 = 2;
   }
 
-  @Method(0x8001de84L)
-  public static void loadEncounterSoundsAndMusic(final Battle battle) {
-    unloadSoundFile(1);
-    unloadSoundFile(3);
-    unloadSoundFile(4);
-    unloadSoundFile(5);
-    unloadSoundFile(6);
-
-    if(encounter.musicIndex != 0xff) {
-      stopMusicSequence();
-
-      // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
-      //LAB_8001df8c
-      unloadSoundFile(8);
-
-      final int musicIndex = combatMusicFileIndices_800501bc[encounter.musicIndex & 0x1f];
-      final int victoryType = switch(combatSoundEffectsTypes_8005019c[encounter.musicIndex & 0x1f]) {
-        case 0xc -> 696;
-        case 0xd -> 697;
-        case 0xe -> 698;
-        case 0xf -> 699;
-        case 0x56 -> 700;
-        case 0x58 -> 701;
-        default -> parseMelbuVictory(encounter.musicIndex & 0x1f);
-      };
-
-      final var battleMusicEvent = EVENTS.postEvent(new BattleMusicEvent(battle, victoryType, musicIndex, encounter));
-
-      loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x4000);
-
-      loadEncounterMusic(battleMusicEvent.musicIndex, battleMusicEvent.victoryType);
-    }
-
-    //LAB_8001df9c
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x8);
-
-    final AtomicInteger remaining = new AtomicInteger(3);
-
-    // Player combat sounds for current party composition (example file: 764)
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final int charIndex = gameState_800babc8.charIds_88[charSlot];
-
-      if(charIndex != -1) {
-        final String name = getCharacterName(charIndex).toLowerCase();
-        final int finalCharSlot = charSlot;
-        loadDir("characters/%s/sounds/combat".formatted(name), files -> {
-          charSoundEffectsLoaded(files, finalCharSlot);
-          if(remaining.decrementAndGet() == 0) {
-            //LAB_8001cc38
-            //LAB_8001cc40
-            FUN_8001e8d4();
-          }
-        });
-      } else {
-        if(remaining.decrementAndGet() == 0) {
-          FUN_8001e8d4();
-        }
-      }
-    }
-
-    encounter.loadSounds(battle, 0);
-  }
-
-  private static int parseMelbuVictory(final int musicIndex) {
-    if(musicIndex == 0x13) {
-      return 732;
-    }
-
-    return -1;
-  }
-
   /**
    * <ul>
    *   <li>0 - menu sounds</li>
@@ -996,8 +580,8 @@ public final class Audio {
    *   <li>3 - monsters</li>
    *   <li>4 - submap sounds</li>
    *   <li>5 - battle cutscene sounds</li>
-   *   <li>6 - monster sounds</li>
-   *   <li>7 - player sounds</li>
+   *   <li>6 - monster attack sounds</li>
+   *   <li>7 - player attack sounds</li>
    *   <li>8 - music</li>
    *   <li>9 - world map sounds</li>
    * </ul>
@@ -1005,88 +589,85 @@ public final class Audio {
   @Method(0x8001e29cL)
   public static void unloadSoundFile(final int soundType) {
     switch(soundType) {
-      case 0 -> {
-        if(soundFiles_800bcf80[0].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[0].playableSound_10);
-          soundFiles_800bcf80[0].used_00 = false;
-        }
-      }
+      case 0 -> LOGGER.warn("NOT unloading menu sounds", new Throwable());
 
       case 1 -> {
+        if(gameState_800babc8 == null) {
+          break;
+        }
+
         //LAB_8001e324
-        for(int charSlot = 0; charSlot < 3; charSlot++) {
-          final int index = characterSoundFileIndices_800500f8[charSlot];
+        if(battleState_8006e398 != null) {
+          for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
+            final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
 
-          if(soundFiles_800bcf80[index].used_00) {
-            sssqUnloadPlayableSound(soundFiles_800bcf80[index].playableSound_10);
-            soundFiles_800bcf80[index].used_00 = false;
+            if(bent.soundFile != null) {
+              sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
+              bent.soundFile = null;
+            }
+
+            //LAB_8001e374
           }
-
-          //LAB_8001e374
         }
       }
 
       case 2 -> {
-        if(soundFiles_800bcf80[4].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[4].playableSound_10);
-          soundFiles_800bcf80[4].used_00 = false;
+        if(currentEngineState_8004dd04 instanceof final Battle battle) {
+          sssqUnloadPlayableSound(battle.deffSounds.playableSound_10);
+          battle.deffSounds.used_00 = false;
         }
       }
 
       case 3 -> {
         //LAB_8001e3dc
-        for(int monsterIndex = 0; monsterIndex < 4; monsterIndex++) {
-          final int index = monsterSoundFileIndices_800500e8[monsterIndex];
+        if(battleState_8006e398 != null) {
+          for(int monsterIndex = 0; monsterIndex < battleState_8006e398.monsterBents_e50.length; monsterIndex++) {
+            if(battleState_8006e398.monsterBents_e50[monsterIndex] != null) {
+              final MonsterBattleEntity bent = battleState_8006e398.monsterBents_e50[monsterIndex].innerStruct_00;
 
-          if(soundFiles_800bcf80[index].used_00) {
-            sssqUnloadPlayableSound(soundFiles_800bcf80[index].playableSound_10);
-            soundFiles_800bcf80[index].used_00 = false;
+              if(bent.soundFile != null) {
+                sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
+                bent.soundFile = null;
+              }
+            }
+
+            //LAB_8001e450
           }
-
-          //LAB_8001e450
         }
       }
 
       case 4 -> {
-        if(soundFiles_800bcf80[8].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[8].playableSound_10);
-          soundFiles_800bcf80[8].used_00 = false;
+        if(currentEngineState_8004dd04 instanceof final SMap smap && smap.submapSounds.used_00) {
+          sssqUnloadPlayableSound(smap.submapSounds.playableSound_10);
+          smap.submapSounds.used_00 = false;
         }
       }
 
       case 5 -> {
-        if(soundFiles_800bcf80[9].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[9].playableSound_10);
-          soundFiles_800bcf80[9].used_00 = false;
+        if(currentEngineState_8004dd04 instanceof final Battle battle && battle.cutsceneSounds.used_00) {
+          sssqUnloadPlayableSound(battle.cutsceneSounds.playableSound_10);
+          battle.cutsceneSounds.used_00 = false;
         }
       }
 
       case 6, 7 -> {
-        if(soundFiles_800bcf80[10].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[10].playableSound_10);
-          soundFiles_800bcf80[10].used_00 = false;
+        if(currentEngineState_8004dd04 instanceof final Battle battle && battle.attackSounds.used_00) {
+          sssqUnloadPlayableSound(battle.attackSounds.playableSound_10);
+          battle.attackSounds.used_00 = false;
         }
       }
 
       case 8 -> {
         if(_800bd0f0 != 0) {
           AUDIO_THREAD.unloadMusic();
-
-          //LAB_8001e56c
           _800bd0f0 = 0;
-        }
-
-        //LAB_8001e570
-        if(soundFiles_800bcf80[11].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[11].playableSound_10);
-          soundFiles_800bcf80[11].used_00 = false;
         }
       }
 
       case 9 -> {
-        if(soundFiles_800bcf80[12].used_00) {
-          sssqUnloadPlayableSound(soundFiles_800bcf80[12].playableSound_10);
-          soundFiles_800bcf80[12].used_00 = false;
+        if(currentEngineState_8004dd04 instanceof final WMap wmap && wmap.soundFile.used_00) {
+          sssqUnloadPlayableSound(wmap.soundFile.playableSound_10);
+          wmap.soundFile.used_00 = false;
         }
       }
     }
@@ -1096,7 +677,7 @@ public final class Audio {
 
   @Method(0x8001e5ecL)
   public static void loadMenuSounds() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x1);
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x1);
     loadDrgnFiles(0, Audio::menuSoundsLoaded, "5739/0", "5739/1", "5739/2", "5739/3");
   }
 
@@ -1108,19 +689,11 @@ public final class Audio {
    */
   @Method(0x8001e694L)
   public static void menuSoundsLoaded(final List<FileData> files) {
-    final SoundFile sound = soundFiles_800bcf80[0];
+    final SoundFile sound = menuSoundFile;
     sound.used_00 = true;
-    sound.name = "Menu sounds (file 5739)";
-
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
-    unloadSoundbank_800bd778();
-  }
-
-  @Method(0x8001e780L)
-  public static void unloadSoundbank_800bd778() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x1);
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x1);
   }
 
   @ScriptDescription("Loads the main menu sounds")
@@ -1129,55 +702,10 @@ public final class Audio {
     throw new RuntimeException("Not implemented");
   }
 
-
-  @Method(0x8001e8d4L)
-  public static void FUN_8001e8d4() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
-  }
-
   @ScriptDescription("Unused")
   @Method(0x8001e918L)
   public static FlowControl FUN_8001e918(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Loads attack sounds for a character")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The attack sounds type, 1 for regular, any other value for dragoon")
-  @Method(0x8001e920L)
-  public static FlowControl scriptLoadCharAttackSounds(final RunningScript<?> script) {
-    loadCharAttackSounds(script.params_20[0].get(), script.params_20[1].get());
-    return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8001e950L)
-  public static void cleanUpCharAttackSounds() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
-  }
-
-  @Method(0x8001e98cL)
-  public static void FUN_8001e98c(final List<FileData> files, final String soundName) {
-    final SoundFile sound = soundFiles_800bcf80[4];
-    sound.used_00 = true;
-    sound.name = soundName;
-
-    sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.id_02 = files.get(0).readShort(0);
-
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
-    FUN_8001ea5c();
-    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-  }
-
-  @Method(0x8001ea5cL)
-  public static void FUN_8001ea5c() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x40);
-  }
-
-  @Method(0x8001eadcL)
-  public static void loadSubmapSounds(final int submapIndex) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x2);
-    loadDrgnDir(0, 5750 + submapIndex, files -> submapSoundsLoaded(files, "Submap %d sounds (file %d)".formatted(submapIndex, 5750 + submapIndex)));
   }
 
   @ScriptDescription("Unused")
@@ -1185,170 +713,6 @@ public final class Audio {
   @Method(0x8001eb30L)
   public static FlowControl FUN_8001eb30(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8001eb38L)
-  public static void submapSoundsLoaded(final List<FileData> files, final String soundName) {
-    soundFiles_800bcf80[8].name = soundName;
-    soundFiles_800bcf80[8].indices_08 = SoundFileIndices.load(files.get(2));
-    soundFiles_800bcf80[8].ptr_0c = files.get(1);
-    soundFiles_800bcf80[8].id_02 = files.get(0).readShort(0);
-
-    final Sshd sshd = new Sshd(soundName, files.get(3));
-    if(files.get(4).size() != sshd.soundBankSize_04) {
-      throw new RuntimeException("Size didn't match, need to resize array or something");
-    }
-
-    soundFiles_800bcf80[8].playableSound_10 = loadSshdAndSoundbank(soundName, files.get(4), sshd);
-    submapSoundsCleanup();
-    setSoundSequenceVolume(soundFiles_800bcf80[8].playableSound_10, 0x7f);
-    soundFiles_800bcf80[8].used_00 = true;
-  }
-
-  @Method(0x8001ec18L)
-  public static void submapSoundsCleanup() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x2);
-    musicLoaded_800bd782 = true;
-  }
-
-  @ScriptDescription("Load a battle cutscene's sounds")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cutsceneIndex", description = "The cutscene index")
-  @Method(0x8001ecccL)
-  public static FlowControl scriptLoadBattleCutsceneSounds(final RunningScript<?> script) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x4);
-    sssqResetStuff();
-    final int cutsceneIndex = script.params_20[0].get();
-    final int dirIndex = 2437 + cutsceneIndex * 3;
-    loadDrgnDir(0, dirIndex, fileData -> battleCutsceneSoundsLoaded(fileData, "Cutscene %d sounds (file %d)".formatted(cutsceneIndex, dirIndex)));
-    return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8001ed3cL)
-  public static void loadExtraBattleCutsceneSoundbanks() {
-    final SoundFile soundFile = soundFiles_800bcf80[9];
-
-    //LAB_8001ed88
-    if(soundFile.numberOfExtraSoundbanks_18 > 0) {
-      final String[] fileNames = IntStream
-        .range(1, soundFile.numberOfExtraSoundbanks_18 + 1)
-        .map(i -> 2437 + soundFile.id_02 * 3 + i)
-        .mapToObj(Integer::toString)
-        .toArray(String[]::new);
-
-      loadDrgnFiles(0, Audio::uploadExtraBattleCutsceneSoundbank, fileNames);
-    }
-
-    //LAB_8001edd4
-  }
-
-  /** Merges together all of the soundbanks */
-  @Method(0x8001edfcL)
-  public static void uploadExtraBattleCutsceneSoundbank(final List<FileData> files) {
-    final SoundFile soundFile = soundFiles_800bcf80[9];
-
-    int totalSize = soundFile.playableSound_10.data.size();
-    for(final FileData file : files) {
-      totalSize += file.size();
-    }
-
-    final FileData newData = new FileData(new byte[totalSize]);
-    soundFile.playableSound_10.data.read(0, newData, 0, soundFile.playableSound_10.data.size());
-
-    int offset = soundFile.playableSound_10.data.size();
-    for(final FileData file : files) {
-      file.read(0, newData, offset, file.size());
-      offset += file.size();
-    }
-
-    soundFile.playableSound_10.data = newData;
-
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x4);
-    musicLoaded_800bd782 = true;
-  }
-
-  @Method(0x8001eea8L)
-  public static void loadWorldMapLocationMenuSoundEffects(final int index) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index, files -> worldMapLocationMenuSoundEffectsLoaded(files, "WMAP destination sounds %d (file %d)".formatted(index, 5740 + index)));
-  }
-
-  @Method(0x8001eefcL)
-  public static void worldMapLocationMenuSoundEffectsLoaded(final List<FileData> files, final String soundName) {
-    final SoundFile sound = soundFiles_800bcf80[12];
-    sound.name = soundName;
-    sound.used_00 = true;
-
-    sound.indices_08 = SoundFileIndices.load(files.get(2));
-    sound.id_02 = files.get(0).readShort(0);
-
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)));
-    FUN_8001efcc();
-
-    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-  }
-
-  @Method(0x8001efccL)
-  public static void FUN_8001efcc() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
-  }
-
-  @ScriptDescription("Load a monster's sounds")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "monsterIndex", description = "The monster index")
-  @Method(0x8001f070L)
-  public static FlowControl scriptLoadMonsterAttackSounds(final RunningScript<?> script) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x20);
-    unloadSoundFile(6);
-    final int monsterIndex = script.params_20[0].get();
-    final int dirIndex = 1841 + monsterIndex;
-    loadDrgnDir(0, dirIndex, files -> monsterAttackSoundsLoaded(files, "Monster %d sounds (file %d)".formatted(monsterIndex, dirIndex)));
-    return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8001f0dcL)
-  public static void monsterAttackSoundsLoaded(final List<FileData> files, final String soundName) {
-    final SoundFile sound = soundFiles_800bcf80[10];
-    sound.name = soundName;
-    sound.used_00 = true;
-
-    sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.id_02 = files.get(0).readShort(0);
-
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
-
-    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x20);
-  }
-
-  @ScriptDescription("Loads a character's attack sounds")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
-  @Method(0x8001f250L)
-  public static FlowControl scriptLoadCharacterAttackSounds(final RunningScript<?> script) {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x1_0000);
-    unloadSoundFile(7);
-    final int charId = script.params_20[0].get();
-    final int dirIndex = 1897 + charId;
-    loadDrgnDir(0, dirIndex, files -> characterAttackSoundsLoaded(files, "Addition index %d sounds (file %d)".formatted(charId, dirIndex)));
-    return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8001f2c0L)
-  public static void characterAttackSoundsLoaded(final List<FileData> files, final String soundName) {
-    final SoundFile sound = soundFiles_800bcf80[10];
-    sound.name = soundName;
-    sound.used_00 = true;
-
-    sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.id_02 = files.get(0).readShort(0);
-
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
-    FUN_8001f390();
-
-    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
-  }
-
-  @Method(0x8001f390L)
-  public static void FUN_8001f390() {
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x1_0000);
   }
 
   /**
@@ -1366,7 +730,7 @@ public final class Audio {
   @Method(0x8001f3d0L)
   public static void loadMusicPackage(final int index) {
     unloadSoundFile(8);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
     final int fileIndex = 5815 + index * 5;
     loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, true));
   }
@@ -1377,34 +741,8 @@ public final class Audio {
   @Method(0x8001f450L)
   public static FlowControl scriptLoadMusicPackage(final RunningScript<?> script) {
     unloadSoundFile(8);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
     final int fileIndex = 5815 + script.params_20[0].get() * 5;
-    final boolean playSequence = script.params_20[1].get() == 0;
-    loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, playSequence));
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Loads sounds for the final battle")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "battleProgress", description = "The current stage of the multi-stage final fight (0-3)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If true, the sequence will not be started automatically")
-  @Method(0x8001f560L)
-  public static FlowControl scriptLoadFinalBattleSounds(final RunningScript<?> script) {
-    unloadSoundFile(8);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    final int fileIndex = 732 + script.params_20[0].get() * 5;
-    final boolean playSequence = script.params_20[1].get() == 0;
-    loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, playSequence));
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Loads sounds for a cutscene")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cutsceneIndex", description = "The cutscene index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If true, the sequence will not be started automatically")
-  @Method(0x8001f674L)
-  public static FlowControl scriptLoadCutsceneSounds(final RunningScript<?> script) {
-    unloadSoundFile(8);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    final int fileIndex = 2353 + script.params_20[0].get() * 6;
     final boolean playSequence = script.params_20[1].get() == 0;
     loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, playSequence));
     return FlowControl.CONTINUE;
@@ -1419,33 +757,8 @@ public final class Audio {
     }
 
     unloadSoundFile(8);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
     loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, true));
-  }
-
-  @Method(0x8001fb44L)
-  public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
-    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex);
-    bgm.setVolume(40 / 128.0f);
-
-    loadDrgnDir(0, victoryType, victoryFiles -> loadVictoryMusic(victoryFiles, bgm));
-
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x4000);
-
-    AUDIO_THREAD.loadBackgroundMusic(bgm);
-
-    _800bd0f0 = 2;
-
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x80);
-
-    AUDIO_THREAD.startSequence();
-
-    musicLoaded_800bd782 = true;
-  }
-
-  private static void loadVictoryMusic(final List<FileData> files, final BackgroundMusic battleMusic) {
-    victoryMusic = battleMusic.createVictoryMusic(files);
-    victoryMusic.setVolume(40 / 128.0f);
   }
 
   @ScriptDescription("Load some kind of audio package")
@@ -1458,14 +771,14 @@ public final class Audio {
 
   @Method(0x8001ffb0L)
   public static int getLoadedAudioFiles() {
-    return loadedAudioFiles_800bcf78.get();
+    return loadingAudioFiles_800bcf78.get();
   }
 
   @ScriptDescription("Gets the currently-loaded sound files")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The loaded file flags")
   @Method(0x8001ffc0L)
   public static FlowControl scriptGetLoadedSoundFiles(final RunningScript<?> script) {
-    script.params_20[0].set(loadedAudioFiles_800bcf78.get());
+    script.params_20[0].set(loadingAudioFiles_800bcf78.get());
     return FlowControl.CONTINUE;
   }
 
@@ -1492,14 +805,7 @@ public final class Audio {
   @ScriptDescription("Stops and unloads all music and sound sequences")
   @Method(0x80020060L)
   public static FlowControl scriptStopAndUnloadSequences(final RunningScript<?> script) {
-    stopAndResetSoundsAndSequences();
-    unloadSoundFile(1);
-    unloadSoundFile(3);
-    unloadSoundFile(4);
-    unloadSoundFile(5);
-    unloadSoundFile(6);
-    unloadSoundFile(8);
-    stopMusicSequence();
+    sssqResetStuff();
     return FlowControl.CONTINUE;
   }
 
@@ -1548,59 +854,9 @@ public final class Audio {
     }
   }
 
-  @ScriptDescription("Replaces a monster's attack sounds (e.g. used when Melbu changes forms)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "monsterId", description = "The monster ID")
-  @Method(0x800203f0L)
-  public static FlowControl scriptReplaceMonsterSounds(final RunningScript<?> script) {
-    unloadSoundFile(3);
-    loadedAudioFiles_800bcf78.updateAndGet(val -> val | 0x10);
-
-    final int fileIndex = 1290 + script.params_20[0].get();
-
-    final String path;
-    switch(fileIndex) {
-      case 1290 -> path = "monsters/phases/doel/0";
-      case 1291 -> path = "monsters/phases/doel/1";
-      case 1292 -> path = "monsters/phases/melbu/0";
-      case 1293 -> path = "monsters/phases/melbu/1";
-      case 1294 -> path = "monsters/phases/melbu/4";
-      case 1295 -> path = "monsters/phases/melbu/6";
-      case 1296 -> path = "monsters/phases/zackwell/0";
-      case 1297 -> path = "monsters/phases/zackwell/1";
-      default -> throw new IllegalArgumentException("Unknown battle phase file index " + fileIndex);
-    }
-
-    final AtomicInteger count = new AtomicInteger(0);
-
-    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      if(Loader.exists(path + '/' + monsterSlot)) {
-        count.incrementAndGet();
-      }
-    }
-
-    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-      final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
-      file.id_02 = -1;
-      file.used_00 = false;
-
-      if(Loader.exists(path + '/' + monsterSlot)) {
-        final int finalMonsterSlot = monsterSlot;
-        loadDir(path + '/' + monsterSlot, files -> {
-          monsterSoundLoaded(files, "Monster slot %d (file %s) (replaced)".formatted(finalMonsterSlot, path), finalMonsterSlot);
-
-          if(count.decrementAndGet() == 0) {
-            loadedAudioFiles_800bcf78.updateAndGet(val -> val & ~0x10);
-          }
-        });
-      }
-    }
-
-    return FlowControl.CONTINUE;
-  }
-
   @Method(0x80023870L)
   public static void playMenuSound(final int soundIndex) {
-    playSound(0, soundIndex, (short)0, (short)0);
+    playSound(menuSoundFile, soundIndex, (short)0, (short)0);
   }
 
   @Method(0x8002c984L)
@@ -1806,13 +1062,7 @@ public final class Audio {
   }
 
   @Method(0x8004c114L)
-  public static long sssqUnloadPlayableSound(final PlayableSound0c playableSound) {
-    if(!playableSound.used_00) {
-      //LAB_8004c1f0
-      assert false : "Error";
-      return -0x1L;
-    }
-
+  public static boolean sssqUnloadPlayableSound(final PlayableSound0c playableSound) {
     //LAB_8004c160
     for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
@@ -1821,7 +1071,7 @@ public final class Audio {
         //LAB_8004c1e8
         LOGGER.error("Tried to unload PlayingNote %d playableSound_22 while still in use", voiceIndex);
         LOGGER.error("", new Throwable());
-        return -0x1L;
+        return false;
       }
 
       //LAB_8004c19c
@@ -1830,7 +1080,7 @@ public final class Audio {
     LOGGER.info("Unloading playableSound %s", playableSound.name);
 
     playableSounds_800c43d0.remove(playableSound);
-    return 0;
+    return true;
   }
 
   @Method(0x8004c3f0L)

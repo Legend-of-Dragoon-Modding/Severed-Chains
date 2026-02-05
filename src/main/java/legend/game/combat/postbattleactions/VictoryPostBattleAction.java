@@ -28,7 +28,7 @@ public class VictoryPostBattleAction extends PostBattleAction<VictoryPostBattleA
 
     //LAB_800c8180
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      battleState_8006e398.playerBents_e40[i].setFlag(FLAG_CURRENT_TURN);
+      battleState_8006e398.playerBents_e40.get(i).setFlag(FLAG_CURRENT_TURN);
     }
   }
 

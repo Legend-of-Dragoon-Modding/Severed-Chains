@@ -3,8 +3,8 @@ package legend.game.inventory.screens;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
+import legend.game.inventory.screens.controls.BlankSaveCard;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
@@ -14,9 +14,10 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -30,12 +31,15 @@ public class LoadGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(LoadGameScreen.class);
 
   private final Campaign campaign;
-  private final BigList<SavedGame> saveList;
+  private final BigList<CompletableFuture<SavedGame>> saveList;
+  private Control saveCard;
   private final Consumer<SavedGame> saveSelected;
   private final Runnable closed;
   private boolean closing;
 
-  public LoadGameScreen(final List<SavedGame> saves, final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
+  private boolean updateSave;
+
+  public LoadGameScreen(final List<CompletableFuture<SavedGame>> saves, final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
     this.saveSelected = saveSelected;
     this.closed = closed;
     this.campaign = campaign;
@@ -48,22 +52,57 @@ public class LoadGameScreen extends MenuScreen {
     this.addControl(Glyph.glyph(78)).setPos(26, 155);
     this.addControl(Glyph.glyph(79)).setPos(192, 155);
 
-    final SaveCard saveCard = this.addControl(new SaveCard());
-    saveCard.setPos(16, 160);
+    this.saveList = this.addControl(new BigList<>(savedGame -> {
+      if(!savedGame.isDone()) {
+        return "Loading...";
+      }
 
-    this.saveList = this.addControl(new BigList<>(SavedGame::toString));
+      return savedGame.resultNow().saveName;
+    }));
+
     this.saveList.setPos(16, 16);
     this.saveList.setSize(360, 144);
-    this.saveList.onHighlight(saveCard::setSaveData);
-    this.saveList.onSelection(this::onSelection);
+    this.saveList.onHighlight(this::onHighlight);
+    this.saveList.onSelection(save -> {
+      if(save.isDone()) {
+        this.onSelection(save.resultNow());
+      } else {
+        playMenuSound(40);
+      }
+    });
     this.setFocus(this.saveList);
 
-    for(final SavedGame save : saves) {
+    for(final CompletableFuture<SavedGame> save : saves) {
       this.saveList.addEntry(save);
     }
 
     this.addHotkey(I18n.translate("lod_core.ui.load_game.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
     this.addHotkey(I18n.translate("lod_core.ui.load_game.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+  }
+
+  private void onHighlight(final CompletableFuture<SavedGame> save) {
+    synchronized(this.saveList) {
+      if(this.saveCard != null) {
+        this.removeControl(this.saveCard);
+      }
+
+      if(save.isDone()) {
+        this.saveCard = this.addControl(save.resultNow().createSaveCard());
+        this.saveCard.alwaysReceiveInput();
+      } else {
+        this.saveCard = this.addControl(new BlankSaveCard());
+
+        save.thenAcceptAsync(f -> {
+          synchronized(this.saveList) {
+            if(this.saveList.getSelected() == save) {
+              this.updateSave = true;
+            }
+          }
+        });
+      }
+
+      this.saveCard.setPos(16, 160);
+    }
   }
 
   private void onSelection(final SavedGame save) {
@@ -95,6 +134,12 @@ public class LoadGameScreen extends MenuScreen {
   protected void render() {
     renderText("Load Game", 188, 10, UI_TEXT_CENTERED);
 
+    synchronized(this.saveList) {
+      if(this.updateSave) {
+        this.onHighlight(this.saveList.getSelected());
+      }
+    }
+
     if(this.closing && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.closed.run();
     }
@@ -112,11 +157,11 @@ public class LoadGameScreen extends MenuScreen {
       return;
     }
 
-    if(this.saveList.getSelected() != null) {
+    if(this.saveList.getSelected() != null && this.saveList.getSelected().isDone()) {
       menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           try {
-            this.campaign.deleteSave(this.saveList.getSelected().fileName);
+            this.campaign.deleteSave(this.saveList.getSelected().resultNow().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);

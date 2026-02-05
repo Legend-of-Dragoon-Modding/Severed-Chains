@@ -91,7 +91,7 @@ public class ScriptPatcher {
     return crc32s;
   }
 
-  private static final Pattern INCLUDE_FILE = Pattern.compile("^\\s*#include\\s+(.+?)\\s*$");
+  private static final Pattern INCLUDE_FILE = Pattern.compile("^\\s*\\+?#include\\s+(.+?)\\s*$");
 
   private void getCrc32s(final Path basePath, final String path, final Map<String, Integer> crc32s) throws IOException {
     // We've already checked this file

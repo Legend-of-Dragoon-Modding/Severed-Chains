@@ -15,7 +15,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Comparator;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;

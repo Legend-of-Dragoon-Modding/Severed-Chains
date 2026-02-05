@@ -1,6 +1,7 @@
 package legend.game.title;
 
 import de.jcm.discordgamesdk.activity.Activity;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import legend.core.Async;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -24,8 +25,6 @@ import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
-import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
@@ -38,6 +37,7 @@ import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
 import legend.game.inventory.screens.OptionsCategoryScreen;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -45,6 +45,7 @@ import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdWithId;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Translucency;
@@ -61,14 +62,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.getUpdate;
@@ -76,7 +78,6 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
-import static legend.game.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
@@ -94,6 +95,7 @@ import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.rsin;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Text.renderText;
@@ -103,8 +105,13 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_CONVERT_MEMCARD;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_UPDATE;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.FUN_8001aa90;
+import static legend.game.sound.Audio.loadMusicPackage;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.setMainVolume;
+import static legend.game.sound.Audio.soundEnv_800c6630;
 
-public class Ttle extends EngineState {
+public class Ttle extends EngineState<Ttle> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Ttle.class);
 
   private static final int MENU_OPTIONS = 5;
@@ -122,7 +129,6 @@ public class Ttle extends EngineState {
   private float copyrightFadeInAmount;
   private boolean logoFireInitialized;
   private int flameColour;
-  private int menuIdleTime;
 
   private int menuTransitionState_800c6728;
   private int menuState_800c672c;
@@ -183,9 +189,41 @@ public class Ttle extends EngineState {
   private static WindowEvents.ButtonPressed onButtonPressed;
   private static WindowEvents.InputActionPressed onInputActionPressed;
 
+  public Ttle() {
+    super(CoreEngineStateTypes.TITLE.get());
+  }
+
+  @Override
+  public boolean advancesTime() {
+    return false;
+  }
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+
+  }
+
   @Override
   public RenderMode getRenderMode() {
     return RenderMode.LEGACY;
+  }
+
+  @Override
+  public void init() {
+    super.init();
+
+    soundEnv_800c6630.fadingIn_2a = false;
+    soundEnv_800c6630.fadingOut_2b = false;
+
+    setMainVolume(0x7f, 0x7f);
+    AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
+    FUN_8001aa90();
+    loadMusicPackage(1);
   }
 
   @Override
@@ -200,7 +238,6 @@ public class Ttle extends EngineState {
       case 3 -> this.renderMainMenu();
       case 4 -> this.fadeOutForNewGame();
       case 5 -> this.waitForSaveSelection();
-      case 6 -> this.fadeOutMainMenu();
       case 7 -> this.fadeOutForOptions();
       case 8 -> this.fadeOutForQuit();
       case 9 -> this.fadeOutForCategorizeSave();
@@ -215,7 +252,6 @@ public class Ttle extends EngineState {
 //    GameEngine.legacyUi = false;
 
     this.menuLoadingStage = 0;
-    this.menuIdleTime = 0;
     this.menuTransitionState_800c6728 = 0;
     this.menuState_800c672c = 0;
     this.logoFadeInAmount = 0.0f;
@@ -461,12 +497,11 @@ public class Ttle extends EngineState {
 
   @Method(0x800c7e50L)
   private void fadeOutForNewGame() {
-    this.fadeOutToMenu(NewCampaignScreen::new, () -> {
+    this.fadeOutToMenu(NewCampaignScreen::new, screen -> {
       if(loadingNewGameState_800bdc34) {
         removeInputHandlers();
         this.deallocate();
-
-        Fmv.playCurrentFmv(2, EngineStateEnum.TRANSITION_TO_NEW_GAME_03);
+        campaignType.get().transitionToNewCampaign(gameState_800babc8);
         return true;
       }
 
@@ -475,14 +510,14 @@ public class Ttle extends EngineState {
   }
 
   private void fadeOutForOptions() {
-    this.fadeOutToMenu(() -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD), () -> {
+    this.fadeOutToMenu(() -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       return false;
     });
   }
 
   private void fadeOutForLinks() {
-    this.fadeOutToMenu(() -> new LinksScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), () -> false);
+    this.fadeOutToMenu(() -> new LinksScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
   }
 
   private void fadeOutForCategorizeSave() {
@@ -503,7 +538,7 @@ public class Ttle extends EngineState {
         }
       }
       whichMenu_800bdc38 = WhichMenu.UNLOAD;
-    }), () -> false);
+    }), screen -> false);
   }
 
   private void fadeOutForMemcard() {
@@ -530,12 +565,13 @@ public class Ttle extends EngineState {
       }
 
       this.foundMemcards = SAVES.findMemcards();
-    }), () -> false);
+    }), screen -> false);
   }
 
   private Future<?> menuLoadAction;
+  private MenuScreen asyncScreen;
 
-  private <T> void fadeOutToMenuAsync(@Nullable final Supplier<Future<T>> waitAction, final Function<T, MenuScreen> destScreen, final BooleanSupplier transition) {
+  private <T, U extends MenuScreen> void fadeOutToMenuAsync(@Nullable final Supplier<Future<T>> waitAction, final Function<T, U> destScreen, final Function<U, Boolean> transition) {
     if(this.fadeOutTimer_800c6754 == 0) {
       if(waitAction != null) {
         this.menuLoadAction = waitAction.get();
@@ -548,7 +584,7 @@ public class Ttle extends EngineState {
     this.fadeOutTimer_800c6754++;
 
     if(this.fadeOutTimer_800c6754 >= 16 && (this.menuLoadAction == null || this.menuLoadAction.isDone()) && this.menuTransitionState_800c6728 == 2) {
-      initMenu(WhichMenu.RENDER_NEW_MENU, () -> destScreen.apply(this.menuLoadAction != null ? (T)this.menuLoadAction.resultNow() : null));
+      initMenu(WhichMenu.RENDER_NEW_MENU, () -> this.asyncScreen = destScreen.apply(this.menuLoadAction != null ? (T)this.menuLoadAction.resultNow() : null));
       removeInputHandlers();
       this.deallocate();
       this.menuTransitionState_800c6728 = 3;
@@ -557,8 +593,9 @@ public class Ttle extends EngineState {
     //LAB_800c8038
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(this.menuTransitionState_800c6728 == 3) {
-        if(!transition.getAsBoolean()) {
-          engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+        if(!transition.apply((U)this.asyncScreen)) {
+          this.asyncScreen = null;
+          engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
           this.loadingStage = 0;
           vsyncMode_8007a3b8 = 2;
         }
@@ -572,7 +609,7 @@ public class Ttle extends EngineState {
     }
   }
 
-  private void fadeOutToMenu(final Supplier<MenuScreen> destScreen, final BooleanSupplier transition) {
+  private <U extends MenuScreen> void fadeOutToMenu(final Supplier<U> destScreen, final Object2BooleanFunction<U> transition) {
     this.fadeOutToMenuAsync(null, _ -> destScreen.get(), transition);
   }
 
@@ -599,15 +636,10 @@ public class Ttle extends EngineState {
 
   @Method(0x800c7fa0L)
   private void waitForSaveSelection() {
-    this.fadeOutToMenuAsync(() -> Async.run(SAVES::loadAllCampaigns), CampaignSelectionScreen::new, () -> {
+    this.fadeOutToMenuAsync(() -> Async.run(SAVES::loadAllCampaigns), CampaignSelectionScreen::new, screen -> {
       if(loadingNewGameState_800bdc34) {
-        if(gameState_800babc8.isOnWorldMap_4e4) {
-          engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
-        } else {
-          //LAB_800c80a4
-          engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
-        }
-
+        engineStateOnceLoaded_8004dd24 = REGISTRIES.engineStateTypes.getEntry(screen.getSelectedSave().engineState).get();
+        campaignType.get().transitionToLoadedGame(screen.getSelectedSave().gameState);
         vsyncMode_8007a3b8 = 2;
 
         //LAB_800c80c4
@@ -616,32 +648,6 @@ public class Ttle extends EngineState {
 
       return false;
     });
-  }
-
-  @Method(0x800c8148L)
-  private void fadeOutMainMenu() {
-    if(this.fadeOutTimer_800c6754 == 0) {
-      startFadeEffect(1, 15);
-    }
-
-    //LAB_800c8174
-    this.renderMenuBackground();
-    this.renderMenuOptions();
-    this.renderMenuLogo();
-    this.renderMenuLogoFire();
-    this.renderCopyright();
-
-    this.fadeOutTimer_800c6754++;
-    if(this.fadeOutTimer_800c6754 > 15) {
-      removeInputHandlers();
-      this.deallocate();
-
-      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
-
-      this.loadingStage = 0;
-    }
-
-    //LAB_800c8218
   }
 
   @Method(0x800c8298L)
@@ -694,14 +700,6 @@ public class Ttle extends EngineState {
       }
     }
 
-    if(this.menuTransitionState_800c6728 != 1) {
-//      this.menuIdleTime += 2;
-
-      if(this.menuIdleTime > 1680) {
-        this.loadingStage = 6;
-      }
-    }
-
     //LAB_800c8448
     //LAB_800c8474
   }
@@ -709,7 +707,6 @@ public class Ttle extends EngineState {
   private void resetIdleTime() {
     if(this.menuLoadingStage != 3) {
       this.menuLoadingStage = 4;
-      this.menuIdleTime = 0;
     }
   }
 
@@ -794,8 +791,6 @@ public class Ttle extends EngineState {
           }
         }
       }
-
-      this.menuIdleTime = 0;
     });
 
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
@@ -1503,7 +1498,7 @@ public class Ttle extends EngineState {
   }
 
   @Override
-  public void updateDiscordRichPresence(final Activity activity) {
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
     activity.setDetails("Title Screen");
     activity.setState(null);
   }

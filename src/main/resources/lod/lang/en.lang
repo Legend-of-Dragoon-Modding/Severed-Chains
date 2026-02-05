@@ -1,6 +1,9 @@
 # Mod metadata
 lod.name=Legend of Dragoon
 
+# Campaign Types
+lod.campaign_type.retail.name=Legend of Dragoon
+
 # Config
 lod.config.item_stack_size.label=Item Stack Size
 lod.config.extended_dragoon_actions.label=Extended dragoon actions

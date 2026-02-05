@@ -24,6 +24,9 @@ import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SoundFileIndices;
+import legend.game.sound.Sshd;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdWithId;
@@ -61,14 +64,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.loadMusicPackage;
-import static legend.game.Audio.loadSubmapSounds;
-import static legend.game.Audio.musicLoaded_800bd782;
-import static legend.game.Audio.soundFiles_800bcf80;
-import static legend.game.Audio.startCurrentMusicSequence;
-import static legend.game.Audio.stopAndResetSoundsAndSequences;
-import static legend.game.Audio.stopCurrentMusicSequence;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
@@ -97,6 +92,15 @@ import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.loadMusicPackage;
+import static legend.game.sound.Audio.loadSshdAndSoundbank;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.setSoundSequenceVolume;
+import static legend.game.sound.Audio.startCurrentMusicSequence;
+import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.sound.Audio.stopCurrentMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
@@ -281,13 +285,39 @@ public class RetailSubmap extends Submap {
     if(submapId_800bd808 != oldSubmapId) {
       stopAndResetSoundsAndSequences();
       unloadSoundFile(4);
-      loadSubmapSounds(submapId_800bd808);
+      this.loadSubmapSounds(submapId_800bd808);
     }
 
     if(submapId_800bd808 != oldSubmapId || previousSubmapCut_800bda08 != this.cut) {
       musicLoaded_800bd782 = false;
       this.startMusic();
     }
+  }
+
+  @Method(0x8001eadcL)
+  private void loadSubmapSounds(final int submapIndex) {
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x2);
+    loadDrgnDir(0, 5750 + submapIndex, this::submapSoundsLoaded);
+  }
+
+  @Method(0x8001eb38L)
+  private void submapSoundsLoaded(final List<FileData> files) {
+    final SoundFile soundFile = this.smap.submapSounds;
+    soundFile.indices_08 = SoundFileIndices.load(files.get(2));
+    soundFile.ptr_0c = files.get(1);
+    soundFile.id_02 = files.get(0).readShort(0);
+
+    final Sshd sshd = new Sshd(soundFile.name, files.get(3));
+    if(files.get(4).size() != sshd.soundBankSize_04) {
+      throw new RuntimeException("Size didn't match, need to resize array or something");
+    }
+
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), sshd);
+    setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
+    soundFile.used_00 = true;
+
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x2);
+    musicLoaded_800bd782 = true;
   }
 
   @Override
@@ -1423,19 +1453,9 @@ public class RetailSubmap extends Submap {
     //LAB_800eef0c
   }
 
-  @Method(0x8001b3e4L)
-  private int getSoundCharId() {
-    if(soundFiles_800bcf80[11].used_00) {
-      return soundFiles_800bcf80[11].id_02;
-    }
-
-    //LAB_8001b408
-    return AUDIO_THREAD.getSongId();
-  }
-
   @Method(0x8001c60cL)
   private int getSubmapMusicChange() {
-    final int soundCharId = this.getSoundCharId();
+    final int songId = AUDIO_THREAD.getSongId();
 
     final int musicIndex;
     jmp_8001c7a0:
@@ -1482,7 +1502,7 @@ public class RetailSubmap extends Submap {
           for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
             if(music.submapCuts_04[cutIndex] == this.cut) {
               //LAB_8001c7d8
-              return this.FUN_8001c84c(soundCharId, music.musicIndex_02);
+              return this.FUN_8001c84c(songId, music.musicIndex_02);
             }
           }
         }
@@ -1494,7 +1514,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7a0
-    final int v1 = this.FUN_8001c84c(soundCharId, musicIndex);
+    final int v1 = this.FUN_8001c84c(songId, musicIndex);
     if(v1 != -2) {
       return v1;
     }

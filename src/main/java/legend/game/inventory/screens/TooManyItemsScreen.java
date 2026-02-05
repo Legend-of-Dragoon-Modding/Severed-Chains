@@ -18,13 +18,13 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.glyphs_80114548;
@@ -144,7 +144,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.dropIndex = 0;
         final Renderable58 renderable2 = allocateUiElement(124, 124, 42, this.getSlotY(0));
         this.renderable_8011e200 = renderable2;
-        FUN_80104b60(renderable2);
+        initHighlight(renderable2);
         deallocateRenderables(0);
         this.renderItemLists(true, this.droppedItems.get(this.dropScroll + this.dropIndex).item_00, 0x1);
         this.menuState = MenuState.DROPPED_8;
@@ -559,7 +559,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private void selectMenuState8() {
     final Renderable58 renderable3 = allocateUiElement(118, 118, 220, this.getSlotY(0));
     this.renderable_8011e204 = renderable3;
-    FUN_80104b60(renderable3);
+    initHighlight(renderable3);
     playMenuSound(2);
     this.menuState = MenuState.INVENTORY_9;
   }

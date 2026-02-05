@@ -148,7 +148,7 @@ public class CombatDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     if(state == null) {
       return;
@@ -203,7 +203,7 @@ public class CombatDebuggerController {
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[combatantIndex];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(combatantIndex);
 
     if(state == null) {
       return "unused";
@@ -224,7 +224,7 @@ public class CombatDebuggerController {
       return;
     }
 
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[this.bentList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(this.bentList.getSelectionModel().getSelectedIndex());
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());
@@ -236,7 +236,7 @@ public class CombatDebuggerController {
 
   public void updateStats(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     if(state == null) {
       return;
@@ -273,7 +273,7 @@ public class CombatDebuggerController {
 
   public void getStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e) + 1;
 
@@ -282,7 +282,7 @@ public class CombatDebuggerController {
 
   public void setStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e);
     final int selectedStatusIndex = this.statusCondition.getSelectionModel().getSelectedIndex();
@@ -305,13 +305,13 @@ public class CombatDebuggerController {
 
   public void cureStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     final int arrIndex = state.innerStruct_00.combatantIndex_26c;
     Scus94491BpeSegment_8006.battleState_8006e398.status_384[arrIndex].unpack(0);
   }
 
-  private int getStatusIndexFromFlags(int flags) {
+  private int getStatusIndexFromFlags(final int flags) {
     final int statusFlags = flags & 0xff;
     return statusFlags == 0 ? -1 : Integer.numberOfTrailingZeros(statusFlags);
   }

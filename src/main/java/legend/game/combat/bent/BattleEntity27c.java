@@ -1,6 +1,7 @@
 package legend.game.combat.bent;
 
 import legend.core.QueuedModelBattleTmd;
+import legend.core.gpu.Gpu;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -18,6 +19,7 @@ import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.SoundFile;
 import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
@@ -44,6 +46,7 @@ import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.combat.Battle.FUN_800ca194;
+import static legend.game.combat.Battle.combatantTimRects_800fa6e0;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.renderBttlShadow;
@@ -248,6 +251,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public final Rect4i scissor = new Rect4i();
   public boolean useScissor;
 
+  public SoundFile soundFile;
+
   public BattleEntity27c(final BattleEntityType type, final Battle battle, final String name) {
     super(battle, BattleObject.BOBJ);
     this.type = type;
@@ -259,6 +264,11 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract String getName();
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + '[' + this.getName() + ']';
+  }
 
   public void scissor(final int x, final int y, final int w, final int h) {
     this.scissor.set(x, y, w, h);
@@ -599,7 +609,12 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cae98
     if(v1 != 0) {
       if(this.combatant_144.isModelLoaded()) {
-        this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
+        if(this.combatant_144.vramSlot_1a0 >= 0) {
+          this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
+        } else {
+          this.model_148.uvAdjustments_9d = vramSlots_8005027c[1];
+        }
+
         this.loadingAnimIndex_26e = 0;
         loadCombatantModelAndAnimation(this.battle, this.model_148, this.combatant_144);
         this._278 = 1;
@@ -644,7 +659,7 @@ public abstract class BattleEntity27c extends BattleObject {
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
-      this.renderBttlModel(this.model_148);
+      this.renderBttlModel(this.model_148, bent.combatant_144);
     }
 
     //LAB_800cb048
@@ -668,7 +683,27 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800ec974L)
-  private void renderBttlModel(final Model124 model) {
+  private void renderBttlModel(final Model124 model, final CombatantStruct1a8 combatant) {
+    if(combatant.vramSlot_1a0 == -1 && combatant.texture == null) {
+      // This isn't the dumbest thing I've ever done, but it's up there
+      combatant.texture = new Gpu();
+
+      final Rect4i combatantTimRect = combatantTimRects_800fa6e0[1];
+      combatant.texture.uploadData15(combatantTimRect, combatant.tim.getImageData());
+
+      if(combatant.tim.hasClut()) {
+        final Rect4i clutRect = combatant.tim.getClutRect();
+        clutRect.x = combatantTimRect.x;
+        clutRect.y = combatantTimRect.y + 240;
+
+        //LAB_800ca884
+        combatant.texture.uploadData15(clutRect, combatant.tim.getClutData());
+      }
+
+      combatant.texture.initVram();
+      combatant.texture.updateVramTexture();
+    }
+
     tmdGp0Tpage_1f8003ec = model.tpage_108;
     zOffset_1f8003e8 = model.zOffset_a0;
 
@@ -697,6 +732,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
         if(this.useScissor) {
           queue.scissor(this.scissor);
+        }
+
+        if(combatant.texture != null) {
+          queue.texture(combatant.texture.vramTexture15, 1);
         }
       }
     }

@@ -7,33 +7,26 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.ReflectionAccessFilter;
 import legend.core.GameEngine;
 import legend.core.memory.types.IntRef;
-import legend.game.EngineStateEnum;
 import legend.game.additions.CharacterAdditionStats;
-import legend.game.inventory.Equipment;
-import legend.game.inventory.Good;
-import legend.game.inventory.ItemStack;
-import legend.game.inventory.WhichMenu;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.RetailSavedGame;
 import legend.game.saves.SavedGame;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.charset.StandardCharsets;
 
-import static legend.core.GameEngine.CONFIG;
-import static legend.game.EngineStates.engineState_8004dd20;
-import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.lodmod.LodMod.getLocationName;
 
 public final class V7Serializer {
   private V7Serializer() { }
@@ -53,7 +46,7 @@ public final class V7Serializer {
   }
 
   public static SavedGame fromV7(final String filename, final FileData data) {
-    final GameState52c state = new GameState52c();
+    final GameState52c gameState = new GameState52c();
 
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
@@ -64,51 +57,57 @@ public final class V7Serializer {
     final int locationType = data.readUByte(offset);
     final int locationIndex = data.readUShort(offset);
 
-    state._04 = data.readInt(offset);
+    final String locationName = getLocationName(locationType, locationIndex);
 
-    for(int i = 0; i < state.scriptData_08.length; i++) {
-      state.scriptData_08[i] = data.readInt(offset);
+    /*gameState._04 = */data.readInt(offset);
+
+    for(int i = 0; i < gameState.scriptData_08.length; i++) {
+      gameState.scriptData_08[i] = data.readInt(offset);
     }
 
-    final int charSlotCount = data.readByte(offset); // Not yet used
+    final int charSlotCount = data.readByte(offset);
 
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      state.charIds_88[i] = data.readShort(offset);
+    for(int i = 0; i < charSlotCount; i++) {
+      final int charId = data.readShort(offset);
+
+      if(charId != -1) {
+        gameState.charIds_88.add(charId);
+      }
     }
 
-    state.gold_94 = data.readInt(offset);
-    state.chapterIndex_98 = data.readInt(offset);
-    state.stardust_9c = data.readInt(offset);
-    state.timestamp_a0 = data.readInt(offset);
-    state.submapScene_a4 = data.readInt(offset);
-    state.submapCut_a8 = data.readInt(offset);
+    gameState.gold_94 = data.readInt(offset);
+    gameState.chapterIndex_98 = data.readInt(offset);
+    gameState.stardust_9c = data.readInt(offset);
+    gameState.timestamp_a0 = data.readInt(offset);
+    gameState.submapScene_a4 = data.readInt(offset);
+    gameState.submapCut_a8 = data.readInt(offset);
 
-    state._b0 = data.readInt(offset);
-    state._b4 = data.readInt(offset);
-    state._b8 = data.readInt(offset);
+    gameState._b0 = data.readInt(offset);
+    gameState.battleCount_b4 = data.readInt(offset);
+    gameState.turnCount_b8 = data.readInt(offset);
 
-    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
-      state.scriptFlags2_bc.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.scriptFlags2_bc.count(); i++) {
+      gameState.scriptFlags2_bc.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
-      state.scriptFlags1_13c.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.scriptFlags1_13c.count(); i++) {
+      gameState.scriptFlags1_13c.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
-      state.wmapFlags_15c.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.wmapFlags_15c.count(); i++) {
+      gameState.wmapFlags_15c.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
-      state.visitedLocations_17c.setRaw(i, data.readInt(offset));
+    for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {
+      gameState.visitedLocations_17c.setRaw(i, data.readInt(offset));
     }
 
-    for(int i = 0; i < state._1a4.length; i++) {
-      state._1a4[i] = data.readInt(offset);
+    for(int i = 0; i < gameState._1a4.length; i++) {
+      gameState._1a4[i] = data.readInt(offset);
     }
 
-    for(int i = 0; i < state.chestFlags_1c4.length; i++) {
-      state.chestFlags_1c4[i] = data.readInt(offset);
+    for(int i = 0; i < gameState.chestFlags_1c4.length; i++) {
+      gameState.chestFlags_1c4[i] = data.readInt(offset);
     }
 
     final int equipmentCount = data.readUShort(offset);
@@ -116,7 +115,7 @@ public final class V7Serializer {
     final int goodsCount = data.readUShort(offset);
 
     for(int i = 0; i < equipmentCount; i++) {
-      state.equipmentRegistryIds_1e8.add(data.readRegistryId(offset));
+      gameState.equipmentRegistryIds_1e8.add(data.readRegistryId(offset));
     }
 
     for(int i = 0; i < itemCount; i++) {
@@ -138,17 +137,17 @@ public final class V7Serializer {
         }
       }
 
-      state.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability, extraData));
+      gameState.itemRegistryIds_2e9.add(new InventoryEntry(itemId, size, durability, extraData));
     }
 
     for(int i = 0; i < goodsCount; i++) {
-      state.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(data.readRegistryId(offset)));
+      gameState.goods_19c.give(GameEngine.REGISTRIES.goods.getEntry(data.readRegistryId(offset)));
     }
 
     final int charDataCount = data.readUShort(offset); // Not yet used
 
-    for(int charIndex = 0; charIndex < state.charData_32c.length; charIndex++) {
-      final CharacterData2c charData = state.charData_32c[charIndex];
+    for(int charIndex = 0; charIndex < gameState.charData_32c.length; charIndex++) {
+      final CharacterData2c charData = gameState.charData_32c[charIndex];
       charData.xp_00 = data.readInt(offset);
       charData.partyFlags_04 = data.readInt(offset);
       charData.hp_08 = data.readInt(offset);
@@ -185,170 +184,20 @@ public final class V7Serializer {
       }
     }
 
-    state.pathIndex_4d8 = data.readUShort(offset);
-    state.dotIndex_4da = data.readUShort(offset);
-    state.dotOffset_4dc = data.readUByte(offset);
-    state.facing_4dd = data.readByte(offset);
-    state.directionalPathIndex_4de = data.readUShort(offset);
-    state.characterInitialized_4e6 = data.readInt(offset);
-    state.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
-    state.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
+    gameState.pathIndex_4d8 = data.readUShort(offset);
+    gameState.dotIndex_4da = data.readUShort(offset);
+    gameState.dotOffset_4dc = data.readUByte(offset);
+    gameState.facing_4dd = data.readByte(offset);
+    gameState.directionalPathIndex_4de = data.readUShort(offset);
+    gameState.characterInitialized_4e6 = data.readInt(offset);
+    gameState.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
+    gameState.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
 
     final ConfigCollection config = new ConfigCollection();
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
-    return new SavedGame(filename, name, locationType, locationIndex, state, config, maxHp, maxMp);
-  }
-
-  public static void toV7(final String name, final FileData data, final IntRef offset, final GameState52c state, final ActiveStatsa0[] activeStats) {
-    final int locationType;
-    final int locationIndex;
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      locationType = 1;
-      locationIndex = continentIndex_800bf0b0;
-      //LAB_80103c98
-    } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
-      locationType = 3;
-      locationIndex = state.chapterIndex_98;
-    } else {
-      locationType = 0;
-      locationIndex = submapId_800bd808;
-    }
-
-    data.writeAscii(offset, name);
-
-    int mainCharId = 0;
-    for(int i = 0; i < state.charIds_88.length; i++) {
-      if(state.charIds_88[i] != -1) {
-        mainCharId = state.charIds_88[i];
-        break;
-      }
-    }
-
-    final ActiveStatsa0 slot0Stats = activeStats[mainCharId];
-    data.writeInt(offset, slot0Stats.maxHp_66);
-    data.writeInt(offset, slot0Stats.maxMp_6e);
-
-    data.writeByte(offset, locationType);
-    data.writeShort(offset, locationIndex);
-
-    data.writeInt(offset, state._04);
-
-    for(final int scriptData : state.scriptData_08) {
-      data.writeInt(offset, scriptData);
-    }
-
-    data.writeByte(offset, state.charIds_88.length);
-
-    for(final int charIndex : state.charIds_88) {
-      data.writeShort(offset, charIndex);
-    }
-
-    data.writeInt(offset, state.gold_94);
-    data.writeInt(offset, state.chapterIndex_98);
-    data.writeInt(offset, state.stardust_9c);
-    data.writeInt(offset, state.timestamp_a0);
-    data.writeInt(offset, state.submapScene_a4);
-    data.writeInt(offset, state.submapCut_a8);
-
-    data.writeInt(offset, state._b0);
-    data.writeInt(offset, state._b4);
-    data.writeInt(offset, state._b8);
-
-    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
-      data.writeInt(offset, state.scriptFlags2_bc.getRaw(i));
-    }
-
-    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
-      data.writeInt(offset, state.scriptFlags1_13c.getRaw(i));
-    }
-
-    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
-      data.writeInt(offset, state.wmapFlags_15c.getRaw(i));
-    }
-
-    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
-      data.writeInt(offset, state.visitedLocations_17c.getRaw(i));
-    }
-
-    for(final int _1a4 : state._1a4) {
-      data.writeInt(offset, _1a4);
-    }
-
-    for(final int chestFlag : state.chestFlags_1c4) {
-      data.writeInt(offset, chestFlag);
-    }
-
-    data.writeShort(offset, state.equipment_1e8.size());
-    data.writeShort(offset, state.items_2e9.getSize());
-    data.writeShort(offset, state.goods_19c.size());
-
-    for(final Equipment equipment : state.equipment_1e8) {
-      data.writeRegistryId(offset, equipment.getRegistryId());
-    }
-
-    for(final ItemStack stack : state.items_2e9) {
-      data.writeRegistryId(offset, stack.getItem().getRegistryId());
-      data.writeInt(offset, stack.getSize());
-      data.writeInt(offset, stack.getCurrentDurability());
-
-      final JsonObject extraData = stack.getExtraData();
-
-      if(extraData == null) {
-        data.writeInt(offset, 0);
-        continue;
-      }
-
-      final byte[] serialized = jsonSerializer.toJson(extraData).getBytes(StandardCharsets.UTF_8);
-      data.writeInt(offset, serialized.length);
-      data.write(0, serialized, offset, serialized.length);
-    }
-
-    for(final Good good : state.goods_19c) {
-      data.writeRegistryId(offset, good.getRegistryId());
-    }
-
-    data.writeShort(offset, state.charData_32c.length);
-
-    for(final CharacterData2c charData : state.charData_32c) {
-      data.writeInt(offset, charData.xp_00);
-      data.writeInt(offset, charData.partyFlags_04);
-      data.writeInt(offset, charData.hp_08);
-      data.writeInt(offset, charData.mp_0a);
-      data.writeInt(offset, charData.sp_0c);
-      data.writeInt(offset, charData.dlevelXp_0e);
-      data.writeInt(offset, charData.status_10);
-      data.writeShort(offset, charData.level_12);
-      data.writeShort(offset, charData.dlevel_13);
-
-      data.writeByte(offset, charData.equipment_14.size());
-
-      for(final var entry : charData.equipment_14.entrySet()) {
-        final EquipmentSlot slot = entry.getKey();
-        final Equipment equipment = entry.getValue();
-        data.writeAscii(offset, slot.name());
-        data.writeRegistryId(offset, equipment.getRegistryId());
-      }
-
-      data.writeRegistryId(offset, charData.selectedAddition_19);
-      data.writeShort(offset, charData.additionStats.size());
-
-      for(final var entry : charData.additionStats.entrySet()) {
-        data.writeRegistryId(offset, entry.getKey());
-        data.writeShort(offset, entry.getValue().level);
-        data.writeInt(offset, entry.getValue().xp);
-      }
-    }
-
-    data.writeShort(offset, state.pathIndex_4d8);
-    data.writeShort(offset, state.dotIndex_4da);
-    data.writeByte(offset, (int)state.dotOffset_4dc);
-    data.writeByte(offset, state.facing_4dd);
-    data.writeShort(offset, state.directionalPathIndex_4de);
-    data.writeInt(offset, state.characterInitialized_4e6);
-    data.writeByte(offset, state.isOnWorldMap_4e4 ? 1 : 0);
-    data.writeByte(offset, state.indicatorsDisabled_4e3 ? 1 : 0);
-
-    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data, offset);
+    final RegistryId campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.getId();
+    final RegistryId engineState = gameState.isOnWorldMap_4e4 ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    return new RetailSavedGame(filename, name, locationName, campaignType, engineState, new FileData(new byte[0]), gameState, config, maxHp, maxMp);
   }
 }

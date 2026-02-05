@@ -5,19 +5,21 @@ import legend.core.Version;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
-import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
@@ -43,16 +45,15 @@ public final class Main {
       boolean generatedCrashSave = false;
 
       if(gameState_800babc8 != null && CONFIG.getConfig(CoreMod.CREATE_CRASH_SAVE_CONFIG.get())) {
-        final List<SavedGame> saves = gameState_800babc8.campaign.loadAllSaves();
+        final List<CompletableFuture<SavedGame>> saves = gameState_800babc8.campaign.loadAllSaves();
         final String name = SAVES.generateSaveName(saves, "Crash Recovery");
 
         gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
-        gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
-        engineState_8004dd20 = lastSavableEngineState;
-        gameState_800babc8.isOnWorldMap_4e4 = engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08;
+        gameState_800babc8.submapCut_a8 = submapCut_80052c30;
+        currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
 
         try {
-          SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
+          SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
           generatedCrashSave = true;
         } catch(final SaveFailedException ex) {
           LOGGER.error("Failed to generate crash recovery save :(", ex);

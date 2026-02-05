@@ -18,8 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
-import static legend.game.Audio.playMenuSound;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.renderCharacterPortrait;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
@@ -32,6 +31,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
@@ -67,7 +67,7 @@ public class ListBox<T> extends Control {
     this.isDisabled = isDisabled;
 
     this.highlight = this.addControl(Glyph.uiElement(118, 118));
-    FUN_80104b60(this.highlight.getRenderable()); //TODO not sure exactly what this does but without it the middle part of the highlight doesn't stretch
+    initHighlight(this.highlight.getRenderable()); //TODO not sure exactly what this does but without it the middle part of the highlight doesn't stretch
     this.upArrow = this.addControl(Glyph.blueSpinnerUp());
     this.downArrow = this.addControl(Glyph.blueSpinnerDown());
 

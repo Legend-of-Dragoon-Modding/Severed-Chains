@@ -18,11 +18,16 @@ import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
+import legend.game.saves.SavedGame;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SoundFileIndices;
+import legend.game.sound.Sshd;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
@@ -38,10 +43,14 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodEncounters;
+import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -65,19 +74,12 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
-import static legend.game.Audio.getLoadedAudioFiles;
-import static legend.game.Audio.loadWorldMapLocationMenuSoundEffects;
-import static legend.game.Audio.loadWmapMusic;
-import static legend.game.Audio.playMenuSound;
-import static legend.game.Audio.playSound;
-import static legend.game.Audio.soundFiles_800bcf80;
-import static legend.game.Audio.stopSound;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GsGetLs;
@@ -131,6 +133,16 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.sound.Audio.addSoundFile;
+import static legend.game.sound.Audio.getLoadedAudioFiles;
+import static legend.game.sound.Audio.loadSshdAndSoundbank;
+import static legend.game.sound.Audio.loadWmapMusic;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.playSound;
+import static legend.game.sound.Audio.setSoundSequenceVolume;
+import static legend.game.sound.Audio.stopSound;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.wmap.MapState100.ForcedMovementMode;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
@@ -180,7 +192,9 @@ import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_IN;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_OUT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
-public class WMap extends EngineState {
+public class WMap extends EngineState<WMap> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(WMap.class);
+
   private enum WorldMapState {
     UNINITIALIZED_0(0),
     UNUSED_1(1),
@@ -291,7 +305,9 @@ public class WMap extends EngineState {
 
   private final Vector3f shipWakeCrossVector_800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
 
-  public WmapState wmapState_800bb10c = WmapState.INIT_0;
+  private EngineStateType<?> engineStateToTransitionTo;
+  private FileData engineStateData;
+  public WmapState wmapState_800bb10c = WmapState.INIT;
 
   /**
    * <ol start="0">
@@ -302,8 +318,7 @@ public class WMap extends EngineState {
    *   <li>{@link WMap#transitionToScreens}</li>
    *   <li>{@link WMap#renderWmapScreens}</li>
    *   <li>{@link WMap#restoreMapOnExitMainMenu}</li>
-   *   <li>{@link WMap#transitionToSubmap}</li>
-   *   <li>{@link WMap#transitionToCombat}</li>
+   *   <li>{@link WMap#transitionToEngineState}</li>
    *   <li>{@link WMap#transitionToWorldMap}</li>
    *   <li>{@link WMap#unusedDeallocator}</li>
    *   <li>{@link WMap#noOpWmapState11Runnable}</li>
@@ -320,8 +335,7 @@ public class WMap extends EngineState {
     this::transitionToScreens,
     this::renderWmapScreens,
     this::restoreMapOnExitMainMenu,
-    this::transitionToSubmap,
-    this::transitionToCombat,
+    this::transitionToEngineState,
     this::transitionToWorldMap,
     this::unusedDeallocator,
     this::noOpWmapState11Runnable,
@@ -403,6 +417,60 @@ public class WMap extends EngineState {
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
+  public final SoundFile soundFile = addSoundFile("WMAP SFX");
+
+  public WMap() {
+    super(LodEngineStateTypes.WORLD_MAP.get());
+  }
+
+  @Override
+  public void init() {
+    super.init();
+    lastSavableEngineState = this.type;
+  }
+
+  private static final int WMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    final FileData data = new ExpandableFileData(10);
+    final IntRef offset = new IntRef();
+    data.writeShort(offset, WMAP_SAVE_VERSION_1);
+    data.writeShort(offset, gameState.pathIndex_4d8);
+    data.writeShort(offset, gameState.dotIndex_4da);
+    data.writeByte(offset, (int)gameState.dotOffset_4dc);
+    data.writeByte(offset, gameState.facing_4dd);
+    data.writeShort(offset, gameState.directionalPathIndex_4de);
+    return data;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+    // no data - legacy saves
+    if(data.size() == 0) {
+      return;
+    }
+
+    if(data.size() < 2) {
+      LOGGER.warn("Failed to load WMAP data for save");
+      return;
+    }
+
+    final IntRef offset = new IntRef();
+    final int version = data.readUShort(offset);
+
+    if(version != WMAP_SAVE_VERSION_1) {
+      LOGGER.warn("Unknown WMAP save data version");
+      return;
+    }
+
+    gameState.pathIndex_4d8 = data.readUShort(offset);
+    gameState.dotIndex_4da = data.readUShort(offset);
+    gameState.dotOffset_4dc = data.readUByte(offset);
+    gameState.facing_4dd = data.readByte(offset);
+    gameState.directionalPathIndex_4de = data.readUShort(offset);
+  }
+
   @Override
   public int tickMultiplier() {
     return 3;
@@ -419,8 +487,10 @@ public class WMap extends EngineState {
   }
 
   @Override
-  public void loadGameFromMenu(final GameState52c gameState) {
-    this.wmapState_800bb10c = gameState.isOnWorldMap_4e4 ? WmapState.INIT_0 : WmapState.TRANSITION_TO_SUBMAP_7;
+  public void loadSaveFromMenu(final SavedGame save) {
+    this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
+    this.engineStateData = save.engineStateData;
+    this.wmapState_800bb10c = this.is(this.engineStateToTransitionTo) ? WmapState.INIT : WmapState.TRANSITION_TO_ENGINE_STATE;
     this.encounterAccumulator_800c6ae8 = 0;
   }
 
@@ -433,7 +503,7 @@ public class WMap extends EngineState {
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     if(action == LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY.get() && !repeat) {
       if(Loader.getLoadingFileCount() == 0) {
-        if(this.wmapState_800bb10c == WmapState.PLAY_3) {
+        if(this.wmapState_800bb10c == WmapState.PLAY) {
           if(this.tickMainMenuOpenTransition_800c6690 == 0) {
             final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
 
@@ -468,6 +538,24 @@ public class WMap extends EngineState {
         }
       }
     }
+  }
+
+  @Method(0x8001eea8L)
+  private void loadWorldMapLocationMenuSoundEffects(final int index) {
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
+    loadDrgnDir(0, 5740 + index, this::worldMapLocationMenuSoundEffectsLoaded);
+  }
+
+  @Method(0x8001eefcL)
+  private void worldMapLocationMenuSoundEffectsLoaded(final List<FileData> files) {
+    final SoundFile sound = this.soundFile;
+    sound.used_00 = true;
+    sound.indices_08 = SoundFileIndices.load(files.get(2));
+    sound.id_02 = files.get(0).readShort(0);
+    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(4), new Sshd(sound.name, files.get(3)));
+    setSoundSequenceVolume(sound.playableSound_10, 0x7f);
+
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
   }
 
   private final MV modelLw = new MV();
@@ -510,7 +598,7 @@ public class WMap extends EngineState {
 
   @Override
   public void overlayTick() {
-    if(this.wmapState_800bb10c == WmapState.PLAY_3) {
+    if(this.wmapState_800bb10c == WmapState.PLAY) {
       if(this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
         if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.PROMPT_LOOP_5) {
           this.coolonPromptPopup.render();
@@ -546,28 +634,18 @@ public class WMap extends EngineState {
   @Method(0x800cc758L)
   private void renderWmapScreens() {
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(loadingNewGameState_800bdc34) { // This is part of a cut load game menu
-        final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
+      //LAB_800cc804
+      resizeDisplay(320, 240);
+      loadWmapMusic(gameState_800babc8.chapterIndex_98);
+      this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS;
 
-        //LAB_800cc7d0
-        modelAndAnimData.imageData_2c = null;
-        modelAndAnimData.imageData_30 = null;
-
-        this.wmapState_800bb10c = gameState_800babc8.isOnWorldMap_4e4 ? WmapState.TRANSITION_TO_WORLD_MAP_9 : WmapState.TRANSITION_TO_SUBMAP_7;
-      } else {
-        //LAB_800cc804
-        resizeDisplay(320, 240);
-        loadWmapMusic(gameState_800babc8.chapterIndex_98);
-        this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS_12;
-
-        this.unloadWmapPlayerModels();
-        this.loadPlayerAvatarTextureAndModelFiles();
-        this.playerState_800c669c = PlayerState.LOAD_MODEL_2;
-      }
+      this.unloadWmapPlayerModels();
+      this.loadPlayerAvatarTextureAndModelFiles();
+      this.playerState_800c669c = PlayerState.LOAD_MODEL_2;
 
       //LAB_800cc828
     } else if(whichMenu_800bdc38 == WhichMenu.QUIT) {
-      this.wmapState_800bb10c = WmapState.TRANSITION_TO_TITLE_13;
+      this.wmapState_800bb10c = WmapState.TRANSITION_TO_TITLE;
     }
 
     //LAB_800cc82c
@@ -589,7 +667,7 @@ public class WMap extends EngineState {
     //LAB_800cc998
     this.tickMainMenuOpenTransition_800c6690++;
     if(this.tickMainMenuOpenTransition_800c6690 >= 45.0f / vsyncMode_8007a3b8) {
-      this.wmapState_800bb10c = WmapState.TRANSITION_TO_SCREENS_4;
+      this.wmapState_800bb10c = WmapState.TRANSITION_TO_SCREENS;
       initInventoryMenu();
 
       this.modelAndAnimData_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
@@ -619,7 +697,7 @@ public class WMap extends EngineState {
     //LAB_800ccb6c
     this.tickMainMenuOpenTransition_800c6690 = 0;
     setProjectionPlaneDistance(1100);
-    this.wmapState_800bb10c = WmapState.PLAY_3;
+    this.wmapState_800bb10c = WmapState.PLAY;
   }
 
   @Method(0x800ccbd8L)
@@ -633,13 +711,13 @@ public class WMap extends EngineState {
     vsyncMode_8007a3b8 = 1;
     unloadSoundFile(9);
     loadWmapMusic(gameState_800babc8.chapterIndex_98);
-    this.wmapState_800bb10c = WmapState.WAIT_FOR_MUSIC_TO_LOAD_1;
+    this.wmapState_800bb10c = WmapState.WAIT_FOR_MUSIC_TO_LOAD;
   }
 
   @Method(0x800ccc30L)
   private void waitForWmapMusicToLoad() {
     if((getLoadedAudioFiles() & 0x80) == 0) {
-      this.wmapState_800bb10c = WmapState.INIT2_2;
+      this.wmapState_800bb10c = WmapState.INIT2;
     }
 
     //LAB_800ccc54
@@ -656,9 +734,9 @@ public class WMap extends EngineState {
 
     this.initWmapAudioVisuals();
     this.tickMainMenuOpenTransition_800c6690 = 0;
-    this.wmapState_800bb10c = WmapState.LOAD_BACKGROUND_OBJ_14;
+    this.wmapState_800bb10c = WmapState.LOAD_BACKGROUND_OBJ;
 
-    this.updateDiscordRichPresence(DISCORD.activity);
+    this.updateDiscordRichPresence(gameState_800babc8, DISCORD.activity);
     DISCORD.updateActivity();
   }
 
@@ -670,7 +748,7 @@ public class WMap extends EngineState {
         .vramOffset(320, 0)
         .build();
 
-      this.wmapState_800bb10c = WmapState.PLAY_3;
+      this.wmapState_800bb10c = WmapState.PLAY;
     }
   }
 
@@ -694,7 +772,7 @@ public class WMap extends EngineState {
     }
 
     this.startLocationLabelsActive_800c68a8 = false;
-    this.wmapState_800bb10c = WmapState.RENDER_SCREENS_5;
+    this.wmapState_800bb10c = WmapState.RENDER_SCREENS;
   }
 
   @Method(0x800ccd70L)
@@ -705,23 +783,8 @@ public class WMap extends EngineState {
     //LAB_800ccd94
   }
 
-  @Method(0x800ccda4L)
-  private void transitionToSubmap() {
-    gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
-    gameState_800babc8.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
-    gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-    gameState_800babc8.dotOffset_4dc = this.mapState_800c6798.dotOffset_18;
-    gameState_800babc8.facing_4dd = this.mapState_800c6798.facing_1c;
-
-    this.deallocate();
-
-    this.reinitializingWmap_80052c6c = false;
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
-    vsyncMode_8007a3b8 = 2;
-  }
-
   @Method(0x800cce1cL)
-  private void transitionToCombat() {
+  private void transitionToEngineState() {
     gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
     gameState_800babc8.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
     gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
@@ -732,7 +795,9 @@ public class WMap extends EngineState {
     this.deallocate();
 
     this.reinitializingWmap_80052c6c = false;
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
+    engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+    engineStateData = this.engineStateData;
+    this.engineStateData = null;
     vsyncMode_8007a3b8 = 2;
   }
 
@@ -740,18 +805,18 @@ public class WMap extends EngineState {
   private void transitionToWorldMap() {
     this.deallocate();
     this.reinitializingWmap_80052c6c = true;
-    this.wmapState_800bb10c = WmapState.INIT_0;
+    this.wmapState_800bb10c = WmapState.INIT;
   }
 
   @Method(0x800cceccL)
   private void unusedDeallocator() {
     this.deallocate();
-    this.wmapState_800bb10c = WmapState.NOOP_11;
+    this.wmapState_800bb10c = WmapState.NOOP;
   }
 
   @Method(0x800ccef4L)
   private void setWmapStateToExitScreens() {
-    this.wmapState_800bb10c = WmapState.EXIT_SCREENS_6;
+    this.wmapState_800bb10c = WmapState.EXIT_SCREENS;
   }
 
   private void transitionToTitle() {
@@ -760,7 +825,7 @@ public class WMap extends EngineState {
     resetSubmapToNewGame();
 
     this.reinitializingWmap_80052c6c = false;
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+    engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
     vsyncMode_8007a3b8 = 2;
     drgnBinIndex_800bc058 = 1;
   }
@@ -820,10 +885,10 @@ public class WMap extends EngineState {
     this.modelAndAnimData_800c66a8.zoomOverlay = new ZoomOverlay();
 
     if(this.mapState_800c6798.continent_00.continentNum < Continent.ILLISA_BAY_3.continentNum) { // South Serdio, North Serdio, Tiberoa
-      loadWorldMapLocationMenuSoundEffects(1);
+      this.loadWorldMapLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadWorldMapLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
+      this.loadWorldMapLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
     }
     //LAB_800cd020
   }
@@ -2467,7 +2532,7 @@ public class WMap extends EngineState {
 
         //LAB_800da940
         if(((int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x3) == 0) {
-          playSound(12, 1, (short)0, (short)0);
+          playSound(this.soundFile, 1, (short)0, (short)0);
         }
 
         //LAB_800da978
@@ -2696,7 +2761,7 @@ public class WMap extends EngineState {
         break;
 
       case INIT_DEST_7:
-        stopSound(soundFiles_800bcf80[12], 1, 1);
+        stopSound(this.soundFile, 1, 1);
 
         if(modelAndAnimData.coolonDestIndex_222 == 8) {
           gameState_800babc8.visitedLocations_17c.set(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10, true);
@@ -2734,7 +2799,7 @@ public class WMap extends EngineState {
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(0.375f, 0.375f, 0.375f);
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.PAN_MAP_11;
 
-        stopSound(soundFiles_800bcf80[12], 1, 1);
+        stopSound(this.soundFile, 1, 1);
 
         // Fall through
 
@@ -3024,11 +3089,7 @@ public class WMap extends EngineState {
   private void loadPlayerModelAndAnimsForFirstChar() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x10);
 
-    int charId = -1;
-    for(int i = 0; i < gameState_800babc8.charIds_88.length && charId == -1; i++) {
-      charId = gameState_800babc8.charIds_88[i];
-    }
-
+    final int charId = gameState_800babc8.charIds_88.getInt(0);
     final String model = charModelDirs[charId];
     final String texture = charTextureFiles[charId];
     final int offset = charModelFileOffsets[charId];
@@ -3346,7 +3407,7 @@ public class WMap extends EngineState {
       //LAB_800e1210
       if(modelIndex == 1) {
         if(tickCount_800bb0fc % (4 * this.tickMultiplier()) == 0) {
-          playSound(12, 0, (short)0, (short)0);
+          playSound(this.soundFile, 0, (short)0, (short)0);
         }
       }
     } else {
@@ -3713,7 +3774,8 @@ public class WMap extends EngineState {
       gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
       gameState_800babc8.dotOffset_4dc = this.mapState_800c6798.dotOffset_18;
       gameState_800babc8.facing_4dd = this.mapState_800c6798.facing_1c;
-      this.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
+      this.engineStateToTransitionTo = LodEngineStateTypes.BATTLE.get();
+      this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
     }
     //LAB_800e3a94
   }
@@ -3972,18 +4034,20 @@ public class WMap extends EngineState {
           modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE_0;
 
           if(submapCut_80052c30 != 999) {
-            this.wmapState_800bb10c = WmapState.TRANSITION_TO_SUBMAP_7;
+            this.engineStateToTransitionTo = LodEngineStateTypes.SUBMAP.get();
+            this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
           } else {
             //LAB_800e48b8
-            this.wmapState_800bb10c = WmapState.TRANSITION_TO_WORLD_MAP_9;
+            this.wmapState_800bb10c = WmapState.TRANSITION_TO_WORLD_MAP;
           }
 
           //LAB_800e48c4
           if(modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.OPEN_COOLON_MAP_2) {
-            this.wmapState_800bb10c = WmapState.TRANSITION_TO_SUBMAP_7;
+            this.engineStateToTransitionTo = LodEngineStateTypes.SUBMAP.get();
+            this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
             //LAB_800e48f4
           } else if(modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.COOLON_ARRIVAL_3) {
-            this.wmapState_800bb10c = WmapState.TRANSITION_TO_WORLD_MAP_9;
+            this.wmapState_800bb10c = WmapState.TRANSITION_TO_WORLD_MAP;
           }
         }
         //LAB_800e491c
@@ -4107,7 +4171,7 @@ public class WMap extends EngineState {
           final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
-            playSound(12, soundIndex, (short)0, (short)0);
+            playSound(this.soundFile, soundIndex, (short)0, (short)0);
           }
 
           //LAB_800e5698
@@ -4284,7 +4348,7 @@ public class WMap extends EngineState {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -4306,7 +4370,7 @@ public class WMap extends EngineState {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
               //LAB_800e6504
             }
@@ -4324,7 +4388,7 @@ public class WMap extends EngineState {
               final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
-                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(this.soundFile, soundIndex, 1);
               }
               //LAB_800e65fc
             }
@@ -4437,7 +4501,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e6a34
-    if(this.wmapState_800bb10c == WmapState.TRANSITION_TO_BATTLE_8) {
+    if(this.wmapState_800bb10c == WmapState.TRANSITION_TO_ENGINE_STATE) {
       return;
     }
 
@@ -4687,7 +4751,7 @@ public class WMap extends EngineState {
 
     this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.NONE_0;
 
-    boolean transitionFromCombatOrShip = previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && this.mapState_800c6798.submapCutFrom_c4 != 999;
+    boolean transitionFromCombatOrShip = previousEngineState_8004dd28 == LodEngineStateTypes.BATTLE.get() && this.mapState_800c6798.submapCutFrom_c4 != 999;
 
     //LAB_800e7e2c
     if(this.mapState_800c6798.submapSceneFrom_c6 == 31 && this.mapState_800c6798.submapCutFrom_c4 == 279) { // Exiting ship
@@ -4768,7 +4832,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8464
-    if(previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && this.mapState_800c6798.submapCutFrom_c4 == 999) {
+    if(previousEngineState_8004dd28 == LodEngineStateTypes.BATTLE.get() && this.mapState_800c6798.submapCutFrom_c4 == 999) {
       submapCut_80052c30 = 0;
     }
 
@@ -6215,8 +6279,8 @@ public class WMap extends EngineState {
   }
 
   @Override
-  public void updateDiscordRichPresence(final Activity activity) {
-    super.updateDiscordRichPresence(activity);
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    super.updateDiscordRichPresence(gameState, activity);
     activity.setState("Exploring");
   }
 

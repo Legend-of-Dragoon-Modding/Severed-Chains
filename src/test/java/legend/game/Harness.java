@@ -5,6 +5,7 @@ import legend.core.platform.input.InputKey;
 import legend.game.combat.Battle;
 import legend.game.saves.ConfigCollection;
 import legend.game.types.GameState52c;
+import legend.lodmod.LodEngineStateTypes;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
@@ -21,7 +22,7 @@ public final class Harness {
     SAVES.loadGameState(state, config, fullBoot);
   }
 
-  public static void transitionToEngineState(final EngineStateEnum state) {
+  public static void transitionToEngineState(final EngineStateType<?> state) {
     SCRIPTS.stop();
     SCRIPTS.clear();
     engineStateOnceLoaded_8004dd24 = state;
@@ -29,7 +30,7 @@ public final class Harness {
 
   public static void startBattle(final int encounterId, final int stageId) {
     startLegacyEncounter(encounterId, stageId);
-    Harness.transitionToEngineState(EngineStateEnum.COMBAT_06);
+    Harness.transitionToEngineState(LodEngineStateTypes.BATTLE.get());
     Wait.waitForEngineState(Battle.class);
   }
 
