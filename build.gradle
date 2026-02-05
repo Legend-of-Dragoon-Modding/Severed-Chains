@@ -194,9 +194,11 @@ tasks.register('copySupportFiles', Copy) {
           filter(ReplaceTokens, tokens: [false: "true"])
           filter(ReplaceTokens, tokens: [libs: libs])
         }
+        from 'gpu-optional-setup.bat'
         break
     }
 
+    from 'launch.conf.example'
     from 'log4j2.xml'
     from 'gamecontrollerdb.txt'
     from 'README.md'
