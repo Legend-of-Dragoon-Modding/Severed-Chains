@@ -1150,6 +1150,10 @@ public final class Unpacker {
       return new int[] {344, 342};
     }
 
+    if(encounterId == 438) {
+      return new int[] {381, 376, 377};
+    }
+
     return battleAssetIdentifier(encounterId);
   }
 
