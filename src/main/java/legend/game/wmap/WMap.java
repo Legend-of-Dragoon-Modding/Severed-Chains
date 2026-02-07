@@ -19,6 +19,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
+import legend.game.EngineStates;
 import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreEngineStateTypes;
@@ -796,9 +797,14 @@ public class WMap extends EngineState<WMap> {
 
     this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
-    engineStateData = this.engineStateData;
+    EngineStates.engineStateData = this.engineStateData;
     this.engineStateData = null;
     vsyncMode_8007a3b8 = 2;
+  }
+
+  public void transitionToEngineState(final EngineStateType<?> type) {
+    this.engineStateToTransitionTo = type;
+    this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
   }
 
   @Method(0x800cce9cL)
@@ -3769,11 +3775,6 @@ public class WMap extends EngineState<WMap> {
       startEncounter(event.encounter, event.battleStageId);
 
       //LAB_800e3a38
-      gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
-      gameState_800babc8.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
-      gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-      gameState_800babc8.dotOffset_4dc = this.mapState_800c6798.dotOffset_18;
-      gameState_800babc8.facing_4dd = this.mapState_800c6798.facing_1c;
       this.engineStateToTransitionTo = LodEngineStateTypes.BATTLE.get();
       this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
     }
