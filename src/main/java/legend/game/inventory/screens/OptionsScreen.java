@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_ADVANCED;

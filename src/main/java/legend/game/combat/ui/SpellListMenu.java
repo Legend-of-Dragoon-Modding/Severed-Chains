@@ -3,6 +3,7 @@ package legend.game.combat.ui;
 import legend.core.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.types.DragoonSpells09;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
@@ -25,19 +26,11 @@ public class SpellListMenu extends ListMenu {
 
   private UiBox description;
 
-  private final int listCount;
+  private final DragoonSpells09 spells;
 
   public SpellListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
     super(hud, activePlayer, 186, modifyLastPosition(lastPosition), onClose);
-
-    int spellIndex;
-    for(spellIndex = 0; spellIndex < 8; spellIndex++) {
-      if(this.hud.battle.dragoonSpells_800c6960[activePlayer.charSlot_276].spellIndex_01[spellIndex] == -1) {
-        break;
-      }
-    }
-
-    this.listCount = spellIndex;
+    this.spells = this.hud.battle.dragoonSpells_800c6960.get(activePlayer.charSlot_276);
   }
 
   private static ListPosition modifyLastPosition(final ListPosition lastPosition) {
@@ -48,7 +41,7 @@ public class SpellListMenu extends ListMenu {
 
   @Override
   protected int getListCount() {
-    return this.listCount;
+    return this.spells.spellIndices_01.size();
   }
 
   @Override
@@ -63,7 +56,7 @@ public class SpellListMenu extends ListMenu {
       textColour = TextColour.WHITE;
     }
 
-    final int spellId = this.hud.battle.dragoonSpells_800c6960[this.player_08.charSlot_276].spellIndex_01[index];
+    final int spellId = this.spells.spellIndices_01.getInt(index);
 
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
@@ -94,7 +87,7 @@ public class SpellListMenu extends ListMenu {
   }
 
   private void setActiveSpell(final int index) {
-    int spellId = this.hud.battle.dragoonSpells_800c6960[this.player_08.charSlot_276].spellIndex_01[index];
+    int spellId = this.spells.spellIndices_01.getInt(index);
 
     if(this.player_08.charId_272 == 8) { // Miranda
       if(spellId == 65) {
@@ -169,7 +162,7 @@ public class SpellListMenu extends ListMenu {
     if(this.menuState_00 != 0 && (this.flags_02 & 0x1) != 0) {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
-        final int spellId = this.hud.battle.dragoonSpells_800c6960[this.player_08.charSlot_276].spellIndex_01[this.listScroll_1e + this.listIndex_24];
+        final int spellId = this.spells.spellIndices_01.getInt(this.listScroll_1e + this.listIndex_24);
         final SpellStats0c spell = EVENTS.postEvent(new SpellStatsEvent(spellId, spellStats_800fa0b8[spellId])).spell;
 
         //Selected item description

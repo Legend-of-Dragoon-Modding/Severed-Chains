@@ -10,7 +10,6 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.addMp;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
 
@@ -37,7 +36,7 @@ public class RecoverMpItem extends BattleItem {
   @Override
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
-      if((gameState_800babc8.charData_32c[i].partyFlags_04 & 0x3) != 0 && stats_800be5f8[i].maxMp_6e > stats_800be5f8[i].mp_06) {
+      if(stats_800be5f8[i].maxMp_6e > stats_800be5f8[i].mp_06) {
         return true;
       }
     }

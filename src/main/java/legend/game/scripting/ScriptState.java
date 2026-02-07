@@ -35,7 +35,7 @@ public class ScriptState<T extends ScriptedObject> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static final int STORAGE_COUNT = 33;
+  public static final int STORAGE_COUNT = 63;
   public static final int REGISTRY_ID_COUNT = 100;
 
   public static final int FLAG_1_0000 = 0x1_0000;
@@ -1351,7 +1351,13 @@ public class ScriptState<T extends ScriptedObject> {
 
   public void dump() {
     LOGGER.error("%s crashed!", this);
-    LOGGER.error("File %s %s @ %#x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
+
+    if(this.frame() != null) {
+      LOGGER.error("File %s %s @ %#x", this.frame().file.name, this.context.opIndex_10, this.context.opOffset_08 * 4);
+    } else {
+      LOGGER.error("No file loaded");
+    }
+
     LOGGER.error("Parameters:");
     LOGGER.error("  Op param: %#x", this.context.opParam_18);
     for(int i = 0; i < this.context.paramCount_14; i++) {

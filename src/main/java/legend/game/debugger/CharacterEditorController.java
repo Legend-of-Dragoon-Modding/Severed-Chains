@@ -22,6 +22,10 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.characterNames_801142dc;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.types.CharacterData2c.CANT_REMOVE;
+import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
+import static legend.game.types.CharacterData2c.IN_PARTY;
 
 public class CharacterEditorController {
   public Label name;
@@ -83,10 +87,10 @@ public class CharacterEditorController {
 
     this.name.setText(characterNames_801142dc[this.charId]);
 
-    this.inParty.setSelected((this.charData.partyFlags_04 & 0x1) != 0);
-    this.canBeInParty.setSelected((this.charData.partyFlags_04 & 0x2) != 0);
-    this.cantRemove.setSelected((this.charData.partyFlags_04 & 0x20) != 0);
-    this.hasUltimate.setSelected((this.charData.partyFlags_04 & 0x40) != 0);
+    this.inParty.setSelected((this.charData.partyFlags_04 & IN_PARTY) != 0);
+    this.canBeInParty.setSelected((this.charData.partyFlags_04 & CAN_BE_IN_PARTY) != 0);
+    this.cantRemove.setSelected((this.charData.partyFlags_04 & CANT_REMOVE) != 0);
+    this.hasUltimate.setSelected((this.charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0);
 
     this.hp.setText(String.valueOf(this.charData.hp_08));
     this.mp.setText(String.valueOf(this.charData.mp_0a));
@@ -152,10 +156,10 @@ public class CharacterEditorController {
 
   public void onSaveClick() {
     this.charData.partyFlags_04 =
-      (this.inParty.isSelected() ? 0x1 : 0) |
-      (this.canBeInParty.isSelected() ? 0x2 : 0) |
-      (this.cantRemove.isSelected() ? 0x20 : 0) |
-      (this.hasUltimate.isSelected() ? 0x40 : 0)
+      (this.inParty.isSelected() ? IN_PARTY : 0) |
+      (this.canBeInParty.isSelected() ? CAN_BE_IN_PARTY : 0) |
+      (this.cantRemove.isSelected() ? CANT_REMOVE : 0) |
+      (this.hasUltimate.isSelected() ? HAS_ULTIMATE_ADDITION : 0)
     ;
 
     this.charData.hp_08 = Integer.parseInt(this.hp.getText());

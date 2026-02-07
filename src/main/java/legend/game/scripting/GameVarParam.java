@@ -1,7 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.EngineStateEnum;
-import legend.game.EngineStates;
 import legend.game.FullScreenEffects;
 import legend.game.Graphics;
 import legend.game.SItem;
@@ -43,7 +41,7 @@ public class GameVarParam extends Param {
   @Override
   public int get() {
     return switch(this.index) {
-      case 0 -> EngineStates.engineState_8004dd20.ordinal();
+//      case 0 -> EngineStates.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier();
       case 3 -> currentEngineState_8004dd04.getInputsHeld();
@@ -60,7 +58,7 @@ public class GameVarParam extends Param {
       case 14 -> FullScreenEffects.fullScreenEffect_800bb140.red1_18;
       case 15 -> FullScreenEffects.fullScreenEffect_800bb140.green1_10;
       case 16 -> FullScreenEffects.fullScreenEffect_800bb140.blue1_0c;
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0];
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.getInt(0);
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c;
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0;
@@ -74,9 +72,9 @@ public class GameVarParam extends Param {
       case 29 -> Scus94491BpeSegment_800b._800beea4;
       case 30 -> Scus94491BpeSegment_800b._800beeac;
       case 31 -> (int)(currentEngineState_8004dd04.getAnalogueMagnitude() * 0xff);
-      case 32 -> battleState_8006e398.allBents_e0c[0] != null ? battleState_8006e398.allBents_e0c[0].index : -1;
+      case 32 -> battleState_8006e398.allBents_e0c.getFirst() != null ? battleState_8006e398.allBents_e0c.getFirst().index : -1;
       case 33 -> battleState_8006e398.getAllBentCount();
-      case 34 -> battleState_8006e398.playerBents_e40[0] != null ? battleState_8006e398.playerBents_e40[0].index : -1;
+      case 34 -> battleState_8006e398.playerBents_e40.getFirst() != null ? battleState_8006e398.playerBents_e40.getFirst().index : -1;
       case 35 -> battleState_8006e398.getPlayerCount();
       case 36 -> battleState_8006e398.monsterBents_e50[0] != null ? battleState_8006e398.monsterBents_e50[0].index : -1;
       case 37 -> battleState_8006e398.getMonsterCount();
@@ -89,16 +87,16 @@ public class GameVarParam extends Param {
       case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
-      case 47 -> battleStage_800bb0f4;
-      case 48 -> battleState_8006e398.aliveBents_e78[0] != null ? battleState_8006e398.aliveBents_e78[0].index : -1;
+      case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4;
+      case 48 -> battleState_8006e398.aliveBents_e78.getFirst() != null ? battleState_8006e398.aliveBents_e78.getFirst().index : -1;
       case 49 -> battleState_8006e398.getAliveBentCount();
-      case 50 -> battleState_8006e398.alivePlayerBents_eac[0] != null ? battleState_8006e398.alivePlayerBents_eac[0].index : -1;
+      case 50 -> battleState_8006e398.alivePlayerBents_eac.getFirst() != null ? battleState_8006e398.alivePlayerBents_eac.getFirst().index : -1;
       case 51 -> battleState_8006e398.getAlivePlayerCount();
-      case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] != null ? battleState_8006e398.aliveMonsterBents_ebc[0].index : -1;
+      case 52 -> battleState_8006e398.aliveMonsterBents_ebc.getFirst() != null ? battleState_8006e398.aliveMonsterBents_ebc.getFirst().index : -1;
       case 53 -> battleState_8006e398.getAliveMonsterCount();
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0;
-      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
-      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
+      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4;
+      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8;
       case 57 -> {
         if(Scus94491BpeSegment_800b.postBattleAction_800bc974 == null) {
           yield 0;
@@ -142,7 +140,7 @@ public class GameVarParam extends Param {
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34;
 //      case 71 -> SMap._800cb44c;
       case 72 -> (int)((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0];
+      case 73 -> ((SMap)currentEngineState_8004dd04).randomStuff_800c6970[0];
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
@@ -204,7 +202,7 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
+//      case 0 -> EngineStates.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94 = val;
@@ -219,7 +217,7 @@ public class GameVarParam extends Param {
       case 14 -> FullScreenEffects.fullScreenEffect_800bb140.red1_18 = val;
       case 15 -> FullScreenEffects.fullScreenEffect_800bb140.green1_10 = val;
       case 16 -> FullScreenEffects.fullScreenEffect_800bb140.blue1_0c = val;
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0] = val;
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.set(0, val);
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98 = val;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c = val;
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0 = val;
@@ -229,9 +227,9 @@ public class GameVarParam extends Param {
       case 25 -> Graphics.vsyncMode_8007a3b8 = val;
       case 29 -> Scus94491BpeSegment_800b._800beea4 = val;
       case 30 -> Scus94491BpeSegment_800b._800beeac = val;
-      case 32 -> battleState_8006e398.allBents_e0c[0] = SCRIPTS.getState(val, BattleEntity27c.class);
+      case 32 -> battleState_8006e398.allBents_e0c.set(0, SCRIPTS.getState(val, BattleEntity27c.class));
 //      case 33 -> battleState_8006e398.allBentCount_800c66d0 = val;
-      case 34 -> battleState_8006e398.playerBents_e40[0] = SCRIPTS.getState(val, PlayerBattleEntity.class);
+      case 34 -> battleState_8006e398.playerBents_e40.set(0, SCRIPTS.getState(val, PlayerBattleEntity.class));
 //      case 35 -> battleState_8006e398.playerCount_800c677c = val;
       case 36 -> battleState_8006e398.monsterBents_e50[0] = SCRIPTS.getState(val, MonsterBattleEntity.class);
 //      case 37 -> battleState_8006e398.monsterCount_800c6768 = val;
@@ -256,16 +254,16 @@ public class GameVarParam extends Param {
       case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
-      case 47 -> battleStage_800bb0f4 = val;
-      case 48 -> battleState_8006e398.aliveBents_e78[0] = SCRIPTS.getState(val, BattleEntity27c.class);
+      case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4 = val;
+      case 48 -> battleState_8006e398.aliveBents_e78.set(0, SCRIPTS.getState(val, BattleEntity27c.class));
 //      case 49 -> battleState_8006e398.aliveBentCount_800c669c = val;
-      case 50 -> battleState_8006e398.alivePlayerBents_eac[0] = SCRIPTS.getState(val, PlayerBattleEntity.class);
+      case 50 -> battleState_8006e398.alivePlayerBents_eac.set(0, SCRIPTS.getState(val, PlayerBattleEntity.class));
 //      case 51 -> battleState_8006e398.alivePlayerCount_800c6760 = val;
-      case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = SCRIPTS.getState(val, MonsterBattleEntity.class);
+      case 52 -> battleState_8006e398.aliveMonsterBents_ebc.set(0, SCRIPTS.getState(val, MonsterBattleEntity.class));
 //      case 53 -> battleState_8006e398.aliveMonsterCount_800c6758 = val;
       case 54 -> battleState_8006e398.cameraControllerScriptTicksParam_ef0 = val;
-      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
-      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
+      case 55 -> Scus94491BpeSegment_800b.gameState_800babc8.battleCount_b4 = val;
+      case 56 -> Scus94491BpeSegment_800b.gameState_800babc8.turnCount_b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974 = switch(val) {
         case 0 -> null;
         case 1 -> CorePostBattleActions.VICTORY.get().inst();
@@ -289,7 +287,7 @@ public class GameVarParam extends Param {
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34 = val;
 //      case 71 -> SMap._800cb44c;
       case 72 -> ((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8 = val;
-      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0] = val;
+      case 73 -> ((SMap)currentEngineState_8004dd04).randomStuff_800c6970[0] = val;
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 

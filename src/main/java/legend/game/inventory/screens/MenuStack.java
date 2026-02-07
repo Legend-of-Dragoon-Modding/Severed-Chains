@@ -47,13 +47,14 @@ public class MenuStack {
   private double scrollAccumulatorX;
   private double scrollAccumulatorY;
 
-  public void pushScreen(final MenuScreen screen) {
+  public <T extends MenuScreen> T pushScreen(final T screen) {
     if(this.screens.isEmpty()) {
       this.registerInputHandlers();
     }
 
     screen.setStack(this);
     this.screens.push(screen);
+    return screen;
   }
 
   public void popScreen() {

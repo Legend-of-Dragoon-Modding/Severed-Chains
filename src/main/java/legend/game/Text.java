@@ -28,6 +28,7 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TextboxType;
 import legend.game.types.Translucency;
+import legend.lodmod.LodEngineStateTypes;
 import org.joml.Math;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -40,9 +41,8 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
 import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.displayWidth_1f8003e0;
@@ -1516,7 +1516,7 @@ public final class Text {
   @Method(0x80027d74L)
   public static void calculateAppropriateTextboxBounds(final int textboxIndex, final float x, final float y) {
     final int maxX;
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(currentEngineState_8004dd04.is(LodEngineStateTypes.SUBMAP.get())) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -1736,7 +1736,7 @@ public final class Text {
   @Method(0x80028f20L)
   public static boolean textboxFits(final int textboxIndex, final float x, final float y) {
     final int maxX;
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(currentEngineState_8004dd04.is(LodEngineStateTypes.SUBMAP.get())) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -1748,9 +1748,9 @@ public final class Text {
     //LAB_80028fd4
     return
       x - textboxes_800be358[textboxIndex].chars_18 * 4.5f >= 10 &&
-        x + textboxes_800be358[textboxIndex].chars_18 * 4.5f <= maxX &&
-        y - textboxes_800be358[textboxIndex].lines_1a * 6.0f >= 18 &&
-        y + textboxes_800be358[textboxIndex].lines_1a * 6.0f <= 222;
+      x + textboxes_800be358[textboxIndex].chars_18 * 4.5f <= maxX &&
+      y - textboxes_800be358[textboxIndex].lines_1a * 6.0f >= 18 &&
+      y + textboxes_800be358[textboxIndex].lines_1a * 6.0f <= 222;
 
     //LAB_80028ff0
   }

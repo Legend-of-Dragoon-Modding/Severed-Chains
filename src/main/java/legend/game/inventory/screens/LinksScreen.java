@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;

@@ -1,13 +1,13 @@
 package legend.game.combat.postbattleactions;
 
-import legend.game.EngineStateEnum;
 import legend.game.combat.Battle;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.RunningScript;
+import legend.lodmod.LodEngineStateTypes;
 
-import static legend.game.Audio.sssqFadeOut;
+import static legend.game.EngineStates.postBattleEngineState_800bc91c;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
+import static legend.game.sound.Audio.sssqFadeOut;
 
 public class GameOverPostBattleAction extends PostBattleAction<GameOverPostBattleActionInstance, GameOverPostBattleAction> {
   @Override
@@ -34,7 +34,7 @@ public class GameOverPostBattleAction extends PostBattleAction<GameOverPostBattl
   @Override
   protected void performAction(final Battle battle, final GameOverPostBattleActionInstance inst) {
     //LAB_800c8534
-    postCombatMainCallbackIndex_800bc91c = EngineStateEnum.GAME_OVER_07;
+    postBattleEngineState_800bc91c = LodEngineStateTypes.GAME_OVER.get();
     whichMenu_800bdc38 = WhichMenu.NONE_0;
   }
 

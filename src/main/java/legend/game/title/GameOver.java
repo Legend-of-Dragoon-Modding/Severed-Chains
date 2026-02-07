@@ -8,16 +8,18 @@ import legend.core.memory.Method;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.modding.coremod.CoreEngineStateTypes;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEngineStateTypes;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
@@ -29,7 +31,7 @@ import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
-public class GameOver extends EngineState {
+public class GameOver extends EngineState<GameOver> {
   /** NOTE: same address as previous var */
   private McqHeader gameOverMcq_800bdc3c;
 
@@ -37,6 +39,25 @@ public class GameOver extends EngineState {
 
   private Obj background;
   private final MV transforms = new MV();
+
+  public GameOver() {
+    super(LodEngineStateTypes.GAME_OVER.get());
+  }
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+
+  }
+
+  @Override
+  public boolean advancesTime() {
+    return false;
+  }
 
   @Override
   public RenderMode getRenderMode() {
@@ -48,7 +69,7 @@ public class GameOver extends EngineState {
     final McqHeader mcq = new McqHeader(data);
 
     final Rect4i rect = new Rect4i(640, 0, mcq.vramWidth_08, mcq.vramHeight_0a);
-    gameOverMcq_800bdc3c = mcq;
+    this.gameOverMcq_800bdc3c = mcq;
     GPU.uploadData15(rect, mcq.imageData);
     this.loadingStage = 3;
   }
@@ -56,7 +77,7 @@ public class GameOver extends EngineState {
   @Method(0x800c75b4L)
   private void renderGameOver() {
     if(this.background == null) {
-      this.background = new McqBuilder("Game over", gameOverMcq_800bdc3c)
+      this.background = new McqBuilder("Game over", this.gameOverMcq_800bdc3c)
         .vramOffset(640, 0)
         .build();
     }
@@ -118,8 +139,8 @@ public class GameOver extends EngineState {
           this.background = null;
         }
 
-        gameOverMcq_800bdc3c = null;
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+        this.gameOverMcq_800bdc3c = null;
+        engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
         vsyncMode_8007a3b8 = 2;
       }
     }
@@ -128,7 +149,7 @@ public class GameOver extends EngineState {
   }
 
   @Override
-  public void updateDiscordRichPresence(final Activity activity) {
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
     activity.setDetails("Game Over");
     activity.setState(null);
   }

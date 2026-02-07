@@ -19,14 +19,13 @@ import legend.game.types.Shop;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static legend.game.Audio.playMenuSound;
-import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.giveEquipment;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderThreeDigitNumber;
@@ -39,6 +38,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private final CharacterPortrait[] portraits;
@@ -51,7 +51,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private boolean returnControl;
 
   public EquipmentShopExtension() {
-    FUN_80104b60(this.charHighlight.getRenderable());
+    initHighlight(this.charHighlight.getRenderable());
     this.charHighlight.hide();
 
     this.portraits = new CharacterPortrait[characterIndices_800bdbb8.length];

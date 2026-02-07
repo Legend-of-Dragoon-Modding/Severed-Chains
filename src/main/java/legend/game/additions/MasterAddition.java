@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
 
 public class MasterAddition extends SimpleAddition {
   public final int additionFile;
@@ -19,7 +20,7 @@ public class MasterAddition extends SimpleAddition {
 
   @Override
   public boolean isUnlocked(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
-    return (charData.partyFlags_04 & 0x40) != 0;
+    return (charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0;
   }
 
   @Override

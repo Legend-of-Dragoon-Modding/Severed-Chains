@@ -1,10 +1,10 @@
 package legend.game.combat.postbattleactions;
 
-import legend.game.EngineStateEnum;
 import legend.game.combat.Battle;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.RunningScript;
+import legend.lodmod.LodEngineStateTypes;
 
 import static legend.game.Menus.whichMenu_800bdc38;
 
@@ -32,7 +32,7 @@ public class PlayFmvPostBattleAction extends PostBattleAction<PlayFmvPostBattleA
 
   @Override
   protected void performAction(final Battle battle, final PlayFmvPostBattleActionInstance inst) {
-    Fmv.playCurrentFmv(inst.fmv, EngineStateEnum.FINAL_FMV_11);
+    Fmv.playCurrentFmv(inst.fmv, LodEngineStateTypes.FINAL_FMV.get());
     whichMenu_800bdc38 = WhichMenu.NONE_0;
   }
 

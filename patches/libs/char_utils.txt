@@ -1,0 +1,128 @@
+; Checks if the charId is in the active party
+; @param int stor[34] charId
+; @return int stor[35] Active character slot, or -1 if not in party
+CHAR_IS_IN_ACTIVE_PARTY:
+mov 0, stor[35]
+
+CHAR_IS_IN_ACTIVE_PARTY_LOOP:
+jmp_cmp ==, -1, var[17][stor[35]], inl[:CHAR_IS_IN_ACTIVE_PARTY_NOPE]
+jmp_cmp ==, stor[34], var[17][stor[35]], inl[:CHAR_IS_IN_ACTIVE_PARTY_YUP]
+incr stor[35]
+jmp inl[:CHAR_IS_IN_ACTIVE_PARTY_LOOP]
+
+CHAR_IS_IN_ACTIVE_PARTY_NOPE:
+mov -1, stor[35]
+
+CHAR_IS_IN_ACTIVE_PARTY_YUP:
+return
+
+
+
+; Removes a character ID from the active party
+; @param int stor[34] charId
+REMOVE_CHAR_FROM_ACTIVE_PARTY:
+gosub inl[:CHAR_IS_IN_ACTIVE_PARTY]
+jmp_cmp ==, -1, stor[35], inl[:REMOVE_CHAR_FROM_ACTIVE_PARTY_EXIT]
+
+; Char was found, remove them
+mov -1, var[17][stor[35]]
+
+; Repeat in case the char ID is in the active party multiple times
+jmp inl[:REMOVE_CHAR_FROM_ACTIVE_PARTY]
+
+REMOVE_CHAR_FROM_ACTIVE_PARTY_EXIT:
+return
+
+
+
+; Removes a character and adds the next available character to the party to replace them
+; @param int stor[34] charId
+REMOVE_CHAR_FROM_ACTIVE_PARTY_AND_REPLACE_WITH_NEXT:
+gosub inl[:CHAR_IS_IN_ACTIVE_PARTY]
+jmp_cmp ==, -1, stor[35], inl[:REMOVE_CHAR_REPLACE_LOOP_EXIT]
+
+; Char was found, remove them
+mov -1, var[17][stor[35]]
+
+; Copy slot they were in and char ID for later use
+mov stor[35], stor[36]
+mov stor[34], stor[37]
+
+; Find a char to replace them with
+mov 0, stor[34]
+
+REMOVE_CHAR_REPLACE_LOOP:
+jmp_cmp ==, 9, stor[34], inl[:REMOVE_CHAR_REPLACE_LOOP_RETURN_TO_START]
+
+gosub inl[:CHAR_IS_IN_ACTIVE_PARTY]
+jmp_cmp !=, -1, stor[35], inl[:REMOVE_CHAR_REPLACE_LOOP_CHAR_CANT_BE_USED] ; char is already in active party, can't use
+jmp_cmp !&, 0x3, var[115 + stor[34]], inl[:REMOVE_CHAR_REPLACE_LOOP_CHAR_CANT_BE_USED] ; char can't be put into active party, can't use
+
+REMOVE_CHAR_REPLACE_LOOP_FIND_SLOT_TO_INSERT_CHAR:
+jmp_cmp ==, -1, var[17][stor[36]], inl[:REMOVE_CHAR_REPLACE_LOOP_FIND_SLOT_TO_INSERT_CHAR_FOUND_SLOT]
+incr stor[36]
+jmp inl[:REMOVE_CHAR_REPLACE_LOOP_FIND_SLOT_TO_INSERT_CHAR]
+
+REMOVE_CHAR_REPLACE_LOOP_FIND_SLOT_TO_INSERT_CHAR_FOUND_SLOT:
+mov stor[34], var[17][stor[36]]
+; copy original char ID back to input param and repeat process in case char was in active party more than once
+REMOVE_CHAR_REPLACE_LOOP_RETURN_TO_START:
+mov stor[37], stor[34]
+jmp inl[:REMOVE_CHAR_FROM_ACTIVE_PARTY_AND_REPLACE_WITH_NEXT]
+
+REMOVE_CHAR_REPLACE_LOOP_CHAR_CANT_BE_USED:
+incr stor[34]
+jmp inl[:REMOVE_CHAR_REPLACE_LOOP]
+
+REMOVE_CHAR_REPLACE_LOOP_EXIT:
+return
+
+
+
+; Temporarily removes a character from the party. Will be given the temporarily removed flag so they can be restored later.
+; @param int stor[34] charId
+TEMPORARILY_REMOVE_CHAR_FROM_PARTY:
+; If the character isn't already in the party, we don't want to mark them as temporarily removed
+jmp_cmp !&, 0x3, var[115 + stor[34]], inl[:TEMPORARILY_REMOVE_CHAR_FROM_PARTY_EXIT]
+
+andor 0xfffffffc, 0x4, var[115 + stor[34]]
+gosub inl[:REMOVE_CHAR_FROM_ACTIVE_PARTY]
+
+TEMPORARILY_REMOVE_CHAR_FROM_PARTY_EXIT:
+return;
+
+
+
+; Temporarily removes all characters except for Dart. Characters can be restored after.
+TEMPORARILY_REMOVE_ALL_CHARS_BUT_DART:
+mov 1, stor[34]
+
+TEMPORARILY_REMOVE_ALL_CHARS_BUT_DART_LOOP:
+gosub inl[:TEMPORARILY_REMOVE_CHAR_FROM_PARTY]
+incr stor[34]
+jmp_cmp <, stor[34], 9, inl[:TEMPORARILY_REMOVE_ALL_CHARS_BUT_DART_LOOP]
+return;
+
+
+
+; Adds the character back to the party if they were temporarily removed
+; @param int stor[34] charId
+RESTORE_CHAR_IF_TEMPORARILY_REMOVED:
+; If the character isn't already in the party, we don't want to mark them as temporarily removed
+jmp_cmp !&, 0x4, var[115 + stor[34]], inl[:RESTORE_CHAR_IF_TEMPORARILY_REMOVED_EXIT]
+
+andor 0xfffffffb, 0x3, var[115 + stor[34]]
+
+RESTORE_CHAR_IF_TEMPORARILY_REMOVED_EXIT:
+return;
+
+
+
+RESTORE_ALL_TEMPORARILY_REMOVED_CHARS:
+mov 1, stor[34]
+
+RESTORE_ALL_TEMPORARILY_REMOVED_CHARS_LOOP:
+gosub inl[:RESTORE_CHAR_IF_TEMPORARILY_REMOVED]
+incr stor[34]
+jmp_cmp <, stor[34], 9, inl[:RESTORE_ALL_TEMPORARILY_REMOVED_CHARS_LOOP]
+return;

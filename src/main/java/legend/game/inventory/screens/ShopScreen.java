@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.UI_TEXT_DISABLED;
@@ -154,7 +154,7 @@ public class ShopScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(glyphs_80114510, 0, 0);
         this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
-        FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe0);
+        initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe0);
 
         this.renderShopMenu(this.menuIndex_8011e0dc);
         this.setSelectedEntry(null);
@@ -491,7 +491,7 @@ public class ShopScreen extends MenuScreen {
         }
 
         this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.invIndex_8011e0e0));
-        FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
+        initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
 
         this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
         this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
@@ -514,7 +514,7 @@ public class ShopScreen extends MenuScreen {
                 this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
                 this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
-                FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
+                initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
               } else {
                 menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
               }
@@ -530,7 +530,7 @@ public class ShopScreen extends MenuScreen {
                 this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
                 this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
-                FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
+                initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
               } else {
                 menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
               }

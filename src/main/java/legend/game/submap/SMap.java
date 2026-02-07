@@ -11,14 +11,16 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
 import legend.game.Menus;
+import legend.game.SItem;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.combat.encounters.Encounter;
 import legend.game.fmv.Fmv;
@@ -27,11 +29,13 @@ import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
 import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
+import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -40,6 +44,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.scripting.ScriptedObject;
+import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdObjTable1c;
@@ -63,8 +68,11 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.ExpandableFileData;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodEncounters;
+import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,6 +90,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -94,16 +103,12 @@ import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
-import static legend.game.Audio.getLoadedAudioFiles;
-import static legend.game.Audio.musicLoaded_800bd782;
-import static legend.game.Audio.stopMusicSequence;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDir;
 import static legend.game.DrgnFiles.loadFile;
 import static legend.game.EngineStates.FUN_800218f0;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
-import static legend.game.EngineStates.engineState_8004dd20;
+import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GetTPage;
@@ -115,6 +120,8 @@ import static legend.game.Graphics.GsSetFlatLight;
 import static legend.game.Graphics.PopMatrix;
 import static legend.game.Graphics.PushMatrix;
 import static legend.game.Graphics.RotTransPers4;
+import static legend.game.Graphics.centreScreenX_1f8003dc;
+import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.orderingTableBits_1f8003c0;
@@ -142,7 +149,6 @@ import static legend.game.Scus94491BpeSegment.srand;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -150,7 +156,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
@@ -163,6 +168,7 @@ import static legend.game.Text.calculateAppropriateTextboxBounds;
 import static legend.game.Text.clearTextbox;
 import static legend.game.Text.clearTextboxText;
 import static legend.game.Text.renderBorder_80052b68;
+import static legend.game.Text.renderText;
 import static legend.game.Text.scriptDeallocateAllTextboxes;
 import static legend.game.Text.textboxFits;
 import static legend.game.Text.textboxMode_80052b88;
@@ -171,6 +177,12 @@ import static legend.game.Text.textboxText_800bdf38;
 import static legend.game.Text.textboxes_800be358;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.sound.Audio.addSoundFile;
+import static legend.game.sound.Audio.getLoadedAudioFiles;
+import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.sssqResetStuff;
+import static legend.game.sound.Audio.stopMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
@@ -184,12 +196,12 @@ import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class SMap extends EngineState {
+public class SMap extends EngineState<SMap> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
 
   private int fmvIndex_800bf0dc;
 
-  private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
+  private EngineStateType<?> afterFmvLoadingStage_800bf0ec;
 
   private final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
@@ -208,8 +220,13 @@ public class SMap extends EngineState {
   private SubmapMediaState mediaLoadingStage_800c68e4;
   private final SubmapCaches80 caches_800c68e8 = new SubmapCaches80();
 
-  /** Index 31 tracks the current tick since indicator last enabled. Have not yet seen other elements set to anything but -1 */
-  public final int[] indicatorTickCountArray_800c6970 = new int[32];
+  /**
+   * <ul>
+   *   <li>0-2 - backup of current party char IDs when party is cleared out after killing VoCG virage</li>
+   *   <li>31 - tracks the current tick since indicator last enabled</li>
+   * </ul>
+   */
+  public final int[] randomStuff_800c6970 = new int[32];
 
   private TriangleIndicator140 triangleIndicator_800c69fc;
 
@@ -390,13 +407,82 @@ public class SMap extends EngineState {
   private int inputRepeat;
   private int inputHeld;
 
+  public final SoundFile submapSounds = addSoundFile("Submap SFX");
+
+  private EngineStateType<?> engineStateToTransitionTo;
+
+  public SMap() {
+    super(LodEngineStateTypes.SUBMAP.get());
+  }
+
+  @Override
+  public void init() {
+    lastSavableEngineState = this.type;
+    sssqResetStuff();
+  }
+
+  @Override
+  public void destroy() {
+    sssqResetStuff();
+  }
+
+  private static final int SMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
+    gameState_800babc8.submapCut_a8 = submapCut_80052c30;
+
+    final FileData data = new ExpandableFileData(9);
+    final IntRef offset = new IntRef();
+    data.writeShort(offset, SMAP_SAVE_VERSION_1);
+    data.writeInt(offset, gameState_800babc8.submapScene_a4);
+    data.writeInt(offset, gameState_800babc8.submapCut_a8);
+    data.writeBool(offset, gameState_800babc8.indicatorsDisabled_4e3);
+    return data;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+    // no data - legacy saves
+    if(data.size() == 0) {
+      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
+      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+      collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
+      return;
+    }
+
+    if(data.size() < 2) {
+      LOGGER.warn("Failed to load SMAP data for save");
+      return;
+    }
+
+    final IntRef offset = new IntRef();
+    final int version = data.readUShort(offset);
+
+    if(version != SMAP_SAVE_VERSION_1) {
+      LOGGER.warn("Unknown SMAP save data version");
+      return;
+    }
+
+    gameState.submapScene_a4 = data.readInt(offset);
+    gameState.submapCut_a8 = data.readInt(offset);
+    gameState.indicatorsDisabled_4e3 = data.readBool(offset);
+
+    submapScene_80052c34 = gameState_800babc8.submapScene_a4;
+    submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+    collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
+  }
+
   @Override
   public void restoreMusicAfterMenu() {
     this.submap.startMusic();
   }
 
   @Override
-  public void loadGameFromMenu(final GameState52c gameState) {
+  public void loadSaveFromMenu(final SavedGame save) {
+    this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
+
     this.encounterAccumulator_800c6ae8 = 0;
 
     // Copied over from LAB_8001e160
@@ -414,11 +500,7 @@ public class SMap extends EngineState {
       return true;
     }
 
-    if(saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get())) {
-      return true;
-    }
-
-    return false;
+    return saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get());
   }
 
   @Override
@@ -801,13 +883,7 @@ public class SMap extends EngineState {
     textbox.currentY_2c = caches.bottomMiddle_70.y - offsetY;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
-
-    final int width;
-    if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
-      width = 320;
-    } else {
-      width = 360;
-    }
+    final int width = 360;
 
     //LAB_80028a20
     if(textboxText.chars_1c >= 17) {
@@ -3138,7 +3214,7 @@ public class SMap extends EngineState {
 
         //LAB_800e1ecc
         for(int i = 0; i < 32; i++) {
-          this.indicatorTickCountArray_800c6970[i] = -1;
+          this.randomStuff_800c6970[i] = -1;
         }
 
         transitioningFromCombatToSubmap_800bd7b8 = false;
@@ -3209,6 +3285,8 @@ public class SMap extends EngineState {
 
   @Method(0x800e2220L)
   private void unloadSmap() {
+    LOGGER.info("Unloading submap");
+
     this.collisionGeometry_800cbe08.unloadCollision();
     this.clearLatches();
 
@@ -3331,7 +3409,7 @@ public class SMap extends EngineState {
       }
     } else if(this.indicatorDisabledForCutscene_800f64ac) {
       this.indicatorDisabledForCutscene_800f64ac = false;
-      this.indicatorTickCountArray_800c6970[31] = 0;
+      this.randomStuff_800c6970[31] = 0;
     }
   }
 
@@ -3625,8 +3703,8 @@ public class SMap extends EngineState {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      // final Vector2f transformed = new Vector2f();
-      // final Vector3f middle = new Vector3f();
+       final Vector2f transformed = new Vector2f();
+       final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();
@@ -3678,10 +3756,10 @@ public class SMap extends EngineState {
 
         this.submap.applyCollisionDebugColour(i, model);
 
-//        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
-//        this.transformVertex(transformed, middle);
-//        final LodString text = new LodString(Integer.toString(i));
-//        renderText(text, transformed.x + centreScreenX_1f8003dc - textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, TextColour.LIME, 0);
+        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
+        this.transformVertex(transformed, middle);
+        final String text = Integer.toString(i);
+        renderText(text, transformed.x + centreScreenX_1f8003dc - DEFAULT_FONT.textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, SItem.UI_WHITE_SMALL);
       }
 
       if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
@@ -3779,13 +3857,21 @@ public class SMap extends EngineState {
 
     if(newCut > 0x7ff) {
       this.fmvIndex_800bf0dc = newCut - 0x800;
-      this.afterFmvLoadingStage_800bf0ec = EngineStateEnum.values()[newScene];
+      this.afterFmvLoadingStage_800bf0ec = switch(newScene) {
+        case 2 -> CoreEngineStateTypes.TITLE.get();
+        case 5 -> LodEngineStateTypes.SUBMAP.get();
+        case 6 -> LodEngineStateTypes.BATTLE.get();
+        case 7 -> LodEngineStateTypes.GAME_OVER.get();
+        case 8 -> LodEngineStateTypes.WORLD_MAP.get();
+        default -> throw new IllegalArgumentException("Unknown engine state " + newScene);
+      };
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_FMV_21;
       return;
     }
 
     if(newCut >= 0 && newCut < 2) {
-      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_WORLD_MAP_18;
+      this.engineStateToTransitionTo = LodEngineStateTypes.WORLD_MAP.get();
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
       return;
     }
 
@@ -3793,7 +3879,6 @@ public class SMap extends EngineState {
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
-      submapCutForSave_800cb450 = newCut;
       EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, newCut));
       return;
     }
@@ -3805,7 +3890,6 @@ public class SMap extends EngineState {
       cacheCharacterSlots();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      submapCutForSave_800cb450 = submapCut_80052c30;
       return;
     }
 
@@ -3823,7 +3907,7 @@ public class SMap extends EngineState {
     if(newScene == 0x3fd) {
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
-      submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      submapCut_80052c30 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
       this.mapTransitionData_800cab24.clear();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
@@ -3837,7 +3921,6 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3ff) {
-      submapCutForSave_800cb450 = submapCut_80052c30;
       this.menuTransition = Menus::initInventoryMenu;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
@@ -3864,13 +3947,6 @@ public class SMap extends EngineState {
 
     //LAB_800e5a30
     //LAB_800e5a34
-    if(pregameLoadingStage_800bb10c == 0) {
-      pregameLoadingStage_800bb10c = 1;
-      this.currentSubmapScene_800caaf8 = submapScene_80052c34;
-      submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
-      this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
-    }
-
     //LAB_800e5ac4
     switch(this.smapLoadingStage_800cb430) {
       case INIT_0 -> {
@@ -3881,6 +3957,7 @@ public class SMap extends EngineState {
         resizeDisplay(384, 240);
 
         //LAB_800e5b2c
+        this.currentSubmapScene_800caaf8 = submapScene_80052c34;
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.encounterAccumulator_800c6ae8 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.LOAD_NEWROOT_1;
@@ -3955,7 +4032,7 @@ public class SMap extends EngineState {
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_FADE_IN;
 
-        this.updateDiscordRichPresence(DISCORD.activity);
+        this.updateDiscordRichPresence(gameState_800babc8, DISCORD.activity);
         DISCORD.updateActivity();
       }
 
@@ -4034,7 +4111,11 @@ public class SMap extends EngineState {
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
 
         if(loadingNewGameState_800bdc34) {
-          this.mapTransition(submapCut_80052c30, submapScene_80052c34);
+          if(this.is(this.engineStateToTransitionTo)) {
+            this.mapTransition(submapCut_80052c30, submapScene_80052c34);
+          } else {
+            this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
+          }
         }
       }
 
@@ -4076,7 +4157,7 @@ public class SMap extends EngineState {
         this.transitioning_800f7e4c = false;
       }
 
-      case TRANSITION_TO_WORLD_MAP_18 -> {
+      case TRANSITION_TO_ENGINE_STATE_18 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         if(this.isScriptLoaded(0)) {
@@ -4099,8 +4180,8 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e62cc
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
-        pregameLoadingStage_800bb10c = 0;
+        engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+        this.engineStateToTransitionTo = null;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
@@ -4109,8 +4190,7 @@ public class SMap extends EngineState {
       case TRANSITION_TO_COMBAT_19 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
-        pregameLoadingStage_800bb10c = 0;
+        engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.BATTLE.get();
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
@@ -4135,8 +4215,7 @@ public class SMap extends EngineState {
 
         //LAB_800e6458
         resetSubmapToNewGame();
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        pregameLoadingStage_800bb10c = 0;
+        engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
 
         //LAB_800e6484
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
@@ -4167,9 +4246,10 @@ public class SMap extends EngineState {
         //LAB_800e63b0
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
-        pregameLoadingStage_800bb10c = 0;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
+
+        this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
       }
     }
   }
@@ -4406,7 +4486,6 @@ public class SMap extends EngineState {
     this.mapTransition(script.params_20[0].get() + 0x800, script.params_20[1].get());
     submapCut_80052c30 = script.params_20[2].get();
     submapScene_80052c34 = script.params_20[3].get();
-    submapCutForSave_800cb450 = submapCut_80052c30;
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -5244,7 +5323,7 @@ public class SMap extends EngineState {
     this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
     this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
-    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_WORLD_MAP_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
+    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_ENGINE_STATE_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
       return;
     }
 
@@ -5575,18 +5654,22 @@ public class SMap extends EngineState {
   }
 
   @Override
-  public void updateDiscordRichPresence(final Activity activity) {
-    super.updateDiscordRichPresence(activity);
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    super.updateDiscordRichPresence(gameState, activity);
     activity.setState("Exploring");
   }
 
   @Override
-  public String getLocation() {
+  public String getLocation(final GameState52c gameState) {
+    if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
+      return this.getChapter(gameState);
+    }
+
     if(submapId_800bd808 > -1 && submapId_800bd808 < submapNames_8011c108.length) {
       return submapNames_8011c108[submapId_800bd808];
     }
 
-    return super.getLocation();
+    return super.getLocation(gameState);
   }
 
   @Override

@@ -99,9 +99,11 @@ void main() {
       discard;
     }
 
-    // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
-    if(discardTranslucency == 1 && translucent && texColour.a != 0 || discardTranslucency == 2 && (!translucent || texColour.a == 0)) {
-      discard;
+    if(vertBpp != 2) {
+      // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
+      if(discardTranslucency == 1 && translucent && texColour.a != 0 || discardTranslucency == 2 && (!translucent || texColour.a == 0)) {
+        discard;
+      }
     }
 
     outColour = clamp(outColour * texColour, 0.0, 1.0);
