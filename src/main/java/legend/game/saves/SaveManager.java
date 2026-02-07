@@ -56,7 +56,6 @@ import static legend.game.EngineStates.engineStateData;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.SItem.menuStack;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_800b.campaignType;
@@ -237,21 +236,20 @@ public final class SaveManager {
       final Campaign campaign = Campaign.create(this, campaignName);
       Files.createDirectories(campaign.path);
 
-      final List<SavedGame> saves = new ArrayList<>();
+      final List<MemcardSavedGame> saves = new ArrayList<>();
 
       for(final Path memcard : memcards) {
         this.splitMemcard(campaign, new FileData(Files.readAllBytes(memcard)), saves);
       }
 
-      saves.sort(Comparator.comparingInt(save -> save.gameState.timestamp_a0));
+      saves.sort(Comparator.comparingInt(save -> save.timestamp));
       final Object2IntMap<String> indices = new Object2IntOpenHashMap<>();
 
       final CampaignType campaignType = LodMod.RETAIL_CAMPAIGN_TYPE.get();
       final Instant now = Instant.now();
 
       for(int i = 0; i < saves.size(); i++) {
-        final MemcardSavedGame save = (MemcardSavedGame)saves.get(i);
-        save.gameState.syncIds();
+        final MemcardSavedGame save = saves.get(i);
 
         final EngineStateType<?> engineState;
         final WhichMenu oldMenu = whichMenu_800bdc38;
@@ -269,7 +267,7 @@ public final class SaveManager {
 
         indices.mergeInt(save.locationName, 1, Integer::sum);
 
-        gameState_800babc8 = save.gameState;
+        gameState_800babc8 = save.createGameState();
 
         try {
           loadCharacterStats();
@@ -277,8 +275,6 @@ public final class SaveManager {
           LOGGER.error("Failed to convert save %d", i);
           continue;
         }
-
-        gameState_800babc8.syncIds();
 
         final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), campaignType, engineState.constructor_00.get(), gameState_800babc8, stats_800be5f8);
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
@@ -294,7 +290,7 @@ public final class SaveManager {
     }
   }
 
-  private void splitMemcard(final Campaign campaign, final FileData memcard, final List<SavedGame> saves) throws InvalidSaveException {
+  private void splitMemcard(final Campaign campaign, final FileData memcard, final List<MemcardSavedGame> saves) throws InvalidSaveException {
     for(int i = 1; i <= 15; i++) {
       final int offset = i * 0x80;
       if(memcard.readByte(offset) == 0x51) {
@@ -302,7 +298,7 @@ public final class SaveManager {
 
         for(final String expectedRegionCode : REGIONS) {
           if(expectedRegionCode.equals(regionCode)) {
-            saves.add(this.loadData(campaign, "", memcard.slice(i * 0x2000, 0x720)));
+            saves.add((MemcardSavedGame)this.loadData(campaign, "", memcard.slice(i * 0x2000, 0x720)));
           }
         }
       }
@@ -385,9 +381,7 @@ public final class SaveManager {
       final FileData slice = entry.getKey().apply(data);
 
       if(slice != null) {
-        final SavedGame savedGame = entry.getValue().deserialize(filename, slice);
-        savedGame.gameState.campaign = campaign;
-        return savedGame;
+        return entry.getValue().deserialize(campaign, filename, slice);
       }
     }
 
@@ -402,26 +396,8 @@ public final class SaveManager {
    * @param fullBoot If true, boots registries
    */
   public void loadGameState(final SavedGame save, final boolean fullBoot) {
-    this.loadGameState(save.gameState, save.config, fullBoot);
-
-    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.is(save.engineState)) {
-      currentEngineState_8004dd04.readSaveData(save.gameState, save.engineStateData);
-    } else {
-      engineStateData = save.engineStateData;
-    }
-
-    campaignType = REGISTRIES.campaignTypes.getEntry(save.campaignType);
-    campaignType.get().setUpLoadedGame(gameState_800babc8);
-  }
-
-  /**
-   * @param fullBoot If true, boots registries
-   */
-  public void loadGameState(final GameState52c state, final ConfigCollection config, final boolean fullBoot) {
-    menuStack.reset();
-
     CONFIG.clearConfig(ConfigStorageLocation.SAVE);
-    CONFIG.copyConfigFrom(config);
+    CONFIG.copyConfigFrom(save.config);
 
     if(fullBoot) {
       GameEngine.bootRegistries();
@@ -429,8 +405,20 @@ public final class SaveManager {
       InputBindings.loadBindings(CONFIG);
     }
 
-    state.syncIds();
+    final GameState52c gameState = save.createGameState();
+    this.loadGameState(gameState);
 
+    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.is(save.engineState)) {
+      currentEngineState_8004dd04.readSaveData(gameState, save.engineStateData);
+    } else {
+      engineStateData = save.engineStateData;
+    }
+
+    campaignType = REGISTRIES.campaignTypes.getEntry(save.campaignType);
+    campaignType.get().setUpLoadedGame(gameState);
+  }
+
+  public void loadGameState(final GameState52c state) {
     for(final CharacterData2c character : state.charData_32c) {
       for(final var entry : character.additionStats.entrySet()) {
         if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(state, character, entry.getValue())) {
