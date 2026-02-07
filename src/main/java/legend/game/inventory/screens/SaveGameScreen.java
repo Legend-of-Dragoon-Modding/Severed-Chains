@@ -179,7 +179,7 @@ public class SaveGameScreen extends MenuScreen {
         if(result == MessageBoxResult.YES) {
           try {
             final SavedGame savedGame = this.saveList.getSelected().resultNow();
-            savedGame.gameState.campaign.deleteSave(savedGame.fileName);
+            savedGame.campaign.deleteSave(savedGame.fileName);
             this.saves.removeIf(save -> save.resultNow().fileName.equals(savedGame.fileName));
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {

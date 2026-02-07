@@ -3,8 +3,7 @@ package legend.game;
 import legend.core.DebugHelper;
 import legend.core.platform.input.InputKey;
 import legend.game.combat.Battle;
-import legend.game.saves.ConfigCollection;
-import legend.game.types.GameState52c;
+import legend.game.saves.SavedGame;
 import legend.lodmod.LodEngineStateTypes;
 
 import static legend.core.GameEngine.SAVES;
@@ -18,8 +17,8 @@ import static legend.game.combat.SBtld.startLegacyEncounter;
 public final class Harness {
   private Harness() { }
 
-  public static void injectGameState(final GameState52c state, final ConfigCollection config, final boolean fullBoot) {
-    SAVES.loadGameState(state, config, fullBoot);
+  public static void injectGameState(final SavedGame save, final boolean fullBoot) {
+    SAVES.loadGameState(save, fullBoot);
   }
 
   public static void transitionToEngineState(final EngineStateType<?> state) {

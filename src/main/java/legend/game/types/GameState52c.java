@@ -2,19 +2,12 @@ package legend.game.types;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.core.GameEngine;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
-import legend.game.inventory.Item;
-import legend.game.inventory.ItemStack;
 import legend.game.inventory.Inventory;
 import legend.game.saves.Campaign;
-import legend.game.saves.InventoryEntry;
-import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
-import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,12 +60,6 @@ public class GameState52c {
 //  public final ShortRef itemCount_1e6;
   public final List<Equipment> equipment_1e8 = new ArrayList<>();
   public final Inventory items_2e9 = new Inventory();
-
-  /** Only used during loading */
-  public final List<RegistryId> equipmentRegistryIds_1e8 = new ArrayList<>();
-  /** Only used during loading */
-  public final List<InventoryEntry> itemRegistryIds_2e9 = new ArrayList<>();
-
   public final CharacterData2c[] charData_32c = new CharacterData2c[9];
 //  public final int[] _4b8 = new int[8];
 
@@ -86,8 +73,6 @@ public class GameState52c {
   // Config stuff
 //  public boolean vibrationEnabled_4e1;
   public boolean indicatorsDisabled_4e3;
-  /** Legacy, only used in old save deserializers */
-  public boolean isOnWorldMap_4e4;
 
   /** A bitset used to set each char's MP to max the first time each one is loaded */
   public int characterInitialized_4e6;
@@ -98,66 +83,5 @@ public class GameState52c {
 
   public CharacterData2c getCharBySlot(final int slot) {
     return this.charData_32c[this.charIds_88.getInt(slot)];
-  }
-
-  public void syncIds() {
-    this.equipment_1e8.clear();
-    this.items_2e9.clear();
-
-    for(final RegistryId id : this.equipmentRegistryIds_1e8) {
-      final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(id);
-
-      if(!delegate.isValid()) {
-        LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
-        continue;
-      }
-
-      this.equipment_1e8.add(delegate.get());
-    }
-
-    for(final CharacterData2c charData : this.charData_32c) {
-      charData.equipment_14.clear();
-
-      for(final EquipmentSlot slot : EquipmentSlot.values()) {
-        if(charData.equipmentIds_14.containsKey(slot)) {
-          final String idStr = LodMod.EQUIPMENT_IDS[charData.equipmentIds_14.getInt(slot)];
-
-          if(!idStr.isBlank()) {
-            final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(LodMod.id(idStr));
-
-            if(delegate.isValid()) {
-              charData.equipment_14.put(slot, delegate.get());
-            } else {
-              LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
-            }
-          } else {
-            LOGGER.warn("Skipping unknown equipment ID %#x", charData.equipmentIds_14.getInt(slot));
-          }
-        }
-
-        if(charData.equipmentRegistryIds_14.containsKey(slot)) {
-          final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(charData.equipmentRegistryIds_14.get(slot));
-
-          if(delegate.isValid()) {
-            charData.equipment_14.put(slot, delegate.get());
-          } else {
-            LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
-          }
-        }
-      }
-    }
-
-    for(final InventoryEntry entry : this.itemRegistryIds_2e9) {
-      final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(entry.id);
-
-      if(!delegate.isValid()) {
-        LOGGER.warn("Skipping unknown item ID %s", delegate.getId());
-        continue;
-      }
-
-      final ItemStack stack = new ItemStack(delegate.get(), entry.size, entry.durability);
-      stack.setExtraData(entry.extraData);
-      this.items_2e9.give(stack, true);
-    }
   }
 }

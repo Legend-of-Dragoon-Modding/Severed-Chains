@@ -1,7 +1,5 @@
 package legend.game.types;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.inventory.Equipment;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -39,10 +37,6 @@ public class CharacterData2c {
   public int status_10;
   public int level_12;
   public int dlevel_13;
-  /** Only used during loading */
-  public final Object2IntMap<EquipmentSlot> equipmentIds_14 = new Object2IntOpenHashMap<>();
-  /** Only used during loading */
-  public final Map<EquipmentSlot, RegistryId> equipmentRegistryIds_14 = new EnumMap<>(EquipmentSlot.class);
   public final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition_19;
   public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
