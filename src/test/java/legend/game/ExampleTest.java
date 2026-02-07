@@ -46,7 +46,7 @@ public class ExampleTest {
 
     // Inject most recent save
     final SavedGame save = SAVES.loadAllCampaigns().getFirst().loadAllSaves().getFirst().get();
-    Harness.injectGameState(save.gameState, save.config, true);
+    Harness.injectGameState(save, true);
 
     // Init some configs
     CONFIG.setConfig(CoreMod.AUTO_TEXT_CONFIG.get(), true);
