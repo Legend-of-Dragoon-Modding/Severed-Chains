@@ -66,6 +66,8 @@ lod_core.ui.too_many_items.items=Items
 lod_core.ui.too_many_items.equipment=Equipment
 lod_core.ui.too_many_items.sort=Sort
 
+lod_core.ui.additions.no_additions=No additions available
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
