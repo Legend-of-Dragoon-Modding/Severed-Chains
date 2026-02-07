@@ -202,11 +202,6 @@
                         <Insets right="8.0" />
                      </FlowPane.margin>
                   </ComboBox>
-                  <CheckBox fx:id="additionUnlocked" mnemonicParsing="false" text="Unlocked">
-                     <FlowPane.margin>
-                        <Insets right="8.0" />
-                     </FlowPane.margin>
-                  </CheckBox>
                </children>
                <VBox.margin>
                   <Insets bottom="4.0" />
@@ -232,7 +227,16 @@
                         <Insets right="8.0" />
                      </FlowPane.margin>
                   </Label>
-                  <TextField fx:id="additionXp" />
+                  <TextField fx:id="additionXp">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin></TextField>
+                  <Label text="Unlock">
+                     <FlowPane.margin>
+                        <Insets right="8.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <ComboBox fx:id="additionUnlockState" prefWidth="150.0" />
                </children>
             </FlowPane>
          </children>

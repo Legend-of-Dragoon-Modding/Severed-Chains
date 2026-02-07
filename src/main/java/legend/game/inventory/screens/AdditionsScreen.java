@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -45,8 +46,6 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class AdditionsScreen extends MenuScreen {
-  private static final String Addition_cannot_be_used_8011c340 = "Additions cannot be used";
-
   private int loadingStage;
   private double scrollAccumulator;
   private final Runnable unload;
@@ -125,7 +124,7 @@ public class AdditionsScreen extends MenuScreen {
     final int charIndex = characterIndices_800bdbb8[charSlot];
 
     if(additions.isEmpty()) {
-      renderText(Addition_cannot_be_used_8011c340, 106, 150, UI_TEXT);
+      renderText(I18n.translate("lod_core.ui.additions.no_additions"), this.getWidth() / 2.0f, 150, UI_TEXT_CENTERED);
     } else {
       if(allocate) {
         renderGlyphs(additionGlyphs_801141e4, 0, 0);
@@ -174,7 +173,12 @@ public class AdditionsScreen extends MenuScreen {
   private void scroll(final int scroll) {
     playMenuSound(1);
     this.charSlot = scroll;
-    unloadRenderable(this.additionHighlight);
+
+    if(this.additionHighlight != null) {
+      unloadRenderable(this.additionHighlight);
+      this.additionHighlight = null;
+    }
+
     this.loadingStage = 1;
   }
 
