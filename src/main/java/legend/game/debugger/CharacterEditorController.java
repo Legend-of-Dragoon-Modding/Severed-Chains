@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.UnlockState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.types.CharacterData2c;
@@ -52,7 +53,7 @@ public class CharacterEditorController {
   public Label equipmentName;
   public ComboBox<RegistryId> selectedAddition;
   public ComboBox<RegistryId> additionList;
-  public CheckBox additionUnlocked;
+  public ComboBox<UnlockState> additionUnlockState;
   public TextField additionLevel;
   public TextField additionXp;
 
@@ -65,6 +66,10 @@ public class CharacterEditorController {
   public void initialize() {
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       this.equipmentSlots.getItems().add(slot);
+    }
+
+    for(final UnlockState state : UnlockState.values()) {
+      this.additionUnlockState.getItems().add(state);
     }
   }
 
@@ -140,11 +145,11 @@ public class CharacterEditorController {
 
     if(id != null) {
       final CharacterAdditionStats stats = this.additionStats.get(id);
-      this.additionUnlocked.setSelected(stats.unlocked);
+      this.additionUnlockState.getSelectionModel().select(stats.unlockState);
       this.additionLevel.setText(String.valueOf(stats.level));
       this.additionXp.setText(String.valueOf(stats.xp));
     } else {
-      this.additionUnlocked.setSelected(false);
+      this.additionUnlockState.getSelectionModel().clearSelection();
       this.additionLevel.setText("");
       this.additionXp.setText("");
     }
@@ -184,7 +189,7 @@ public class CharacterEditorController {
 
     if(this.additionList.getValue() != null) {
       final CharacterAdditionStats additionStats = this.additionStats.get(this.additionList.getValue());
-      additionStats.unlocked = this.additionUnlocked.isSelected();
+      additionStats.unlockState = this.additionUnlockState.getValue();
       additionStats.level = Integer.parseInt(this.additionLevel.getText());
       additionStats.xp = Integer.parseInt(this.additionXp.getText());
     }

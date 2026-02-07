@@ -8,6 +8,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputBindings;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
+import legend.game.additions.UnlockState;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.types.ActiveStatsa0;
@@ -421,7 +422,7 @@ public final class SaveManager {
     for(final CharacterData2c character : state.charData_32c) {
       for(final var entry : character.additionStats.entrySet()) {
         if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(state, character, entry.getValue())) {
-          entry.getValue().unlocked = true;
+          entry.getValue().unlockState = UnlockState.UNLOCKED;
         }
       }
     }
