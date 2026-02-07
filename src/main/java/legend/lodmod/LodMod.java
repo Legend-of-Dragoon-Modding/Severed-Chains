@@ -19,6 +19,8 @@ import legend.game.characters.FractionalStat;
 import legend.game.characters.FractionalStatMod;
 import legend.game.characters.FractionalStatModConfig;
 import legend.game.characters.FractionalStatModType;
+import legend.game.characters.SpellRing;
+import legend.game.characters.SpellRingRegistryEvent;
 import legend.game.characters.StatModType;
 import legend.game.characters.StatModTypeRegistryEvent;
 import legend.game.characters.StatType;
@@ -58,6 +60,14 @@ import legend.game.modding.coremod.elements.NoElement;
 import legend.game.modding.coremod.elements.ThunderElement;
 import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
+import legend.game.modding.coremod.spellrings.DarkElementRing;
+import legend.game.modding.coremod.spellrings.DivineElementRing;
+import legend.game.modding.coremod.spellrings.EarthElementRing;
+import legend.game.modding.coremod.spellrings.FireElementRing;
+import legend.game.modding.coremod.spellrings.LightElementRing;
+import legend.game.modding.coremod.spellrings.ThunderElementRing;
+import legend.game.modding.coremod.spellrings.WaterElementRing;
+import legend.game.modding.coremod.spellrings.WindElementRing;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
@@ -161,6 +171,16 @@ public class LodMod {
   public static final RegistryDelegate<Element> LIGHT_ELEMENT = ELEMENT_REGISTRAR.register("light", LightElement::new);
   public static final RegistryDelegate<Element> WIND_ELEMENT = ELEMENT_REGISTRAR.register("wind", WindElement::new);
   public static final RegistryDelegate<Element> FIRE_ELEMENT = ELEMENT_REGISTRAR.register("fire", FireElement::new);
+
+  private static final Registrar<SpellRing, SpellRingRegistryEvent> SPELL_RING_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.spellRings, MOD_ID);
+  public static final RegistryDelegate<SpellRing> WATER_ELEMENT_RING = SPELL_RING_REGISTRAR.register("water_ring", WaterElementRing::new);
+  public static final RegistryDelegate<SpellRing> EARTH_ELEMENT_RING = SPELL_RING_REGISTRAR.register("earth_ring", EarthElementRing::new);
+  public static final RegistryDelegate<SpellRing> DARK_ELEMENT_RING = SPELL_RING_REGISTRAR.register("dark_ring", DarkElementRing::new);
+  public static final RegistryDelegate<SpellRing> DIVINE_ELEMENT_RING = SPELL_RING_REGISTRAR.register("divine_ring", DivineElementRing::new);
+  public static final RegistryDelegate<SpellRing> THUNDER_ELEMENT_RING = SPELL_RING_REGISTRAR.register("thunder_ring", ThunderElementRing::new);
+  public static final RegistryDelegate<SpellRing> LIGHT_ELEMENT_RING = SPELL_RING_REGISTRAR.register("light_ring", LightElementRing::new);
+  public static final RegistryDelegate<SpellRing> WIND_ELEMENT_RING = SPELL_RING_REGISTRAR.register("wind_ring", WindElementRing::new);
+  public static final RegistryDelegate<SpellRing> FIRE_ELEMENT_RING = SPELL_RING_REGISTRAR.register("fire_ring", FireElementRing::new);
 
   private static final Registrar<BattleEntityType, BattleEntityTypeRegistryEvent> BENT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.battleEntityTypes, MOD_ID);
   public static final RegistryDelegate<BattleEntityType> PLAYER_TYPE = BENT_TYPE_REGISTRAR.register("player", BattleEntityType::new);
@@ -382,6 +402,11 @@ public class LodMod {
   @EventListener
   public static void registerEquipment(final EquipmentRegistryEvent event) {
     LodEquipment.register(event);
+  }
+
+@EventListener
+  public static void registerSpellRings(final SpellRingRegistryEvent event) {
+    SPELL_RING_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
