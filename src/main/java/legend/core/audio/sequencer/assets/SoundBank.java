@@ -25,24 +25,11 @@ final class SoundBank {
 
   private static IntArrayList findSounds(final FileData haystack) {
     final IntArrayList offsets = new IntArrayList();
+    final int limit = haystack.size() - 16;
 
-    int index = 0;
-    while(index <= haystack.size() - 16) {
-      int matchIndex = 15;
-
-      while(true) {
-        if(haystack.readUByte(index + matchIndex) != 0) {
-          index += 16;
-          break;
-        }
-
-        if(matchIndex <= 0) {
-          offsets.add(index);
-          index += 16;
-          break;
-        }
-
-        matchIndex--;
+    for (int index = 0; index <= limit; index += 16) {
+      if (haystack.isZero16(index)) {
+        offsets.add(index);
       }
     }
 
