@@ -121,6 +121,11 @@ public class GoodsInventory implements Iterable<Good> {
     return out;
   }
 
+  public void set(final GoodsInventory other) {
+    this.goods.clear();
+    this.goods.addAll(other.goods);
+  }
+
   public int size() {
     return this.goods.size();
   }

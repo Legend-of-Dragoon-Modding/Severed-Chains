@@ -639,7 +639,7 @@ public class Ttle extends EngineState<Ttle> {
     this.fadeOutToMenuAsync(() -> Async.run(SAVES::loadAllCampaigns), CampaignSelectionScreen::new, screen -> {
       if(loadingNewGameState_800bdc34) {
         engineStateOnceLoaded_8004dd24 = REGISTRIES.engineStateTypes.getEntry(screen.getSelectedSave().engineState).get();
-        campaignType.get().transitionToLoadedGame(screen.getSelectedSave().gameState);
+        campaignType.get().transitionToLoadedGame(gameState_800babc8);
         vsyncMode_8007a3b8 = 2;
 
         //LAB_800c80c4

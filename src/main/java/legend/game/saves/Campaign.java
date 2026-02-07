@@ -98,7 +98,7 @@ public final class Campaign {
           }
         })
         .filter(Objects::nonNull)
-        .findFirst().orElseGet(() -> new InvalidSavedGame(""));
+        .findFirst().orElseGet(() -> new InvalidSavedGame(this, ""));
     } catch(final Throwable e) {
       LOGGER.info("Failed to load save", e);
       return null;
@@ -117,7 +117,7 @@ public final class Campaign {
           return this.loadGame(name);
         } catch(final InvalidSaveException e) {
           LOGGER.warn("Failed to load save " + filename, e);
-          return new InvalidSavedGame(name);
+          return new InvalidSavedGame(this, name);
         }
       }));
     }
