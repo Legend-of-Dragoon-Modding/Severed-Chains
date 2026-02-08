@@ -251,9 +251,9 @@ public class TooManyItemsScreen extends MenuScreen {
     renderText(I18n.translate(OVERFLOW), 32, 22, UI_TEXT);
 
     if(inv instanceof ItemStack) {
-      this.renderCurrentItemList(allocate, I18n.translate(EQUIPMENT), this.items, mode);
+      this.renderCurrentItemList(allocate, I18n.translate(ITEMS), this.items, mode);
     } else {
-      this.renderCurrentItemList(allocate, I18n.translate(ITEMS), this.equipment, mode);
+      this.renderCurrentItemList(allocate, I18n.translate(EQUIPMENT), this.equipment, mode);
     }
   }
 
