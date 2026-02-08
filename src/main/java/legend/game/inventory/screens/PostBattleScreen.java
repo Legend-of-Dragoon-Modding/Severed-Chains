@@ -15,6 +15,7 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.characters.CharacterLevelUpEvent;
 import legend.game.types.MagicStuff08;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
@@ -22,6 +23,7 @@ import legend.game.types.Translucency;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
@@ -452,6 +454,7 @@ public class PostBattleScreen extends MenuScreen {
           while(gameState_800babc8.charData_32c[charId].xp_00 >= getXpToNextLevel(charId) && gameState_800babc8.charData_32c[charId].level_12 < 60) {
             gameState_800babc8.charData_32c[charId].level_12++;
             this.levelsGained_8011e1c8[charSlot]++;
+            EVENTS.postEvent(new CharacterLevelUpEvent(charId, gameState_800babc8.charData_32c[charId]));
           }
         } else {
           //LAB_8010cc68

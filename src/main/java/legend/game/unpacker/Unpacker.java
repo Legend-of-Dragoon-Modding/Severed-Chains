@@ -1146,6 +1146,10 @@ public final class Unpacker {
       return new int[] {279, -1, 294};
     }
 
+    if(encounterId == 418) {
+      return new int[] {343, 339};
+    }
+
     if(encounterId == 420) {
       return new int[] {344, 342};
     }
