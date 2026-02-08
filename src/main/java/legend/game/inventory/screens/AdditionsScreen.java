@@ -20,7 +20,7 @@ import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.FUN_801034cc;
+import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_SELECTED;
@@ -91,7 +91,7 @@ public class AdditionsScreen extends MenuScreen {
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4); // Left/right arrows
+        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
         this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {

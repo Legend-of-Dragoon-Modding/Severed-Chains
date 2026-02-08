@@ -46,8 +46,8 @@ public final class Menus {
   public static Renderable58 upArrow_800bdb94;
   public static Renderable58 downArrow_800bdb98;
 
-  public static Renderable58 renderablePtr_800bdba4;
-  public static Renderable58 renderablePtr_800bdba8;
+  public static Renderable58 leftArrowRenderable_800bdba4;
+  public static Renderable58 rightArrowRenderable_800bdba8;
 
   /**
    * 0xe - load game
@@ -488,8 +488,8 @@ public final class Menus {
       if(a0 != 0) {
         upArrow_800bdb94 = null;
         downArrow_800bdb98 = null;
-        renderablePtr_800bdba4 = null;
-        renderablePtr_800bdba8 = null;
+        leftArrowRenderable_800bdba4 = null;
+        rightArrowRenderable_800bdba8 = null;
       }
     }
 

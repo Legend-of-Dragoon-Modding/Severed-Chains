@@ -14,6 +14,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.Renderable58;
 import legend.game.types.Shop;
 
 import java.util.EnumMap;
@@ -21,15 +22,19 @@ import java.util.Map;
 
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
+import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
+import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.giveEquipment;
+import static legend.game.SItem.initArrowRenderable;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
+import static legend.game.SItem.setRandomRepeatGlyph;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -41,8 +46,15 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class EquipmentShopExtension extends ShopExtension<Equipment> {
+  private static final int PORTRAIT_COUNT = 7;
+
   private final CharacterPortrait[] portraits;
+
   private int selectedCharSlot;
+  private int charScroll;
+  private Renderable58 leftArrowRenderable;
+  private Renderable58 rightArrowRenderable;
+
   private final Glyph charHighlight = Glyph.uiElement(0x83, 0x83);
 
   private ShopScreen screen;
@@ -109,26 +121,37 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.returnControl = false;
 
-    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
+    for(int i = 0; i < characterCount_8011d7c4; i++) {
       this.portraits[i].setVisibility(characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
     }
 
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
+    this.scrollSelectedIntoView(entry);
   }
 
   @Override
   public void deactivate(final ShopScreen screen, final Shop shop, final GameState52c gameState) {
-    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
-      if(characterIndices_800bdbb8[i] != -1) {
-        this.portraits[i].hide();
-      }
+    for(int i = 0; i < this.portraits.length; i++) {
+      this.portraits[i].hide();
     }
 
     this.charHighlight.hide();
+
+    if(this.leftArrowRenderable != null) {
+      fadeOutArrow(this.leftArrowRenderable);
+      this.leftArrowRenderable = null;
+    }
+
+    if(this.rightArrowRenderable != null) {
+      fadeOutArrow(this.rightArrowRenderable);
+      this.rightArrowRenderable = null;
+    }
   }
 
   @Override
   public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
+    this.drawArrows();
+
     final int charId = characterIndices_800bdbb8[this.selectedCharSlot];
 
     if(charId != -1) {
@@ -166,11 +189,45 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     }
   }
 
+  private void drawArrows() {
+    setRandomRepeatGlyph(this.leftArrowRenderable, 0x2d, 0x34, 0xaa, 0xb1);
+    setRandomRepeatGlyph(this.rightArrowRenderable, 0x25, 0x2c, 0xa2, 0xa9);
+
+    if(this.charScroll > 0) {
+      if(this.leftArrowRenderable == null) {
+        final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 18, 173);
+        renderable.repeatStartGlyph_18 = 0x2d;
+        renderable.repeatEndGlyph_1c = 0x34;
+        this.leftArrowRenderable = renderable;
+        initArrowRenderable(renderable);
+      }
+    } else {
+      if(this.leftArrowRenderable != null) {
+        fadeOutArrow(this.leftArrowRenderable);
+        this.leftArrowRenderable = null;
+      }
+    }
+
+    if(characterCount_8011d7c4 - this.charScroll > PORTRAIT_COUNT) {
+      if(this.rightArrowRenderable == null) {
+        final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 350, 173);
+        renderable.repeatStartGlyph_18 = 0x25;
+        renderable.repeatEndGlyph_1c = 0x2c;
+        this.rightArrowRenderable = renderable;
+        initArrowRenderable(renderable);
+      }
+    } else if(this.rightArrowRenderable != null) {
+      fadeOutArrow(this.rightArrowRenderable);
+      this.rightArrowRenderable = null;
+    }
+  }
+
   @Override
   public boolean selectEntry(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry, final int index) {
     this.screen = screen;
     this.entry = entry;
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
+    this.charScroll = Math.max(0, this.selectedCharSlot - PORTRAIT_COUNT);
     this.returnControl = false;
 
     if(gameState_800babc8.equipment_1e8.size() >= 255) {
@@ -207,12 +264,12 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   @Override
   public InputPropagation inputActionPressed(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry, final int index, final InputAction action, final boolean repeat) {
     if(action == INPUT_ACTION_MENU_LEFT.get()) {
-      this.menuSelectChar5NavigateLeft();
+      this.menuSelectChar5NavigateLeft(entry);
       return InputPropagation.HANDLED;
     }
 
     if(action == INPUT_ACTION_MENU_RIGHT.get()) {
-      this.menuSelectChar5NavigateRight();
+      this.menuSelectChar5NavigateRight(entry);
       return InputPropagation.HANDLED;
     }
 
@@ -229,7 +286,22 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     return InputPropagation.PROPAGATE;
   }
 
-  private void menuSelectChar5NavigateLeft() {
+  private void scrollSelectedIntoView(final ShopScreen.ShopEntry<Equipment> entry) {
+    if(this.selectedCharSlot < this.charScroll) {
+      this.charScroll = this.selectedCharSlot;
+    }
+
+    if(this.selectedCharSlot - this.charScroll >= PORTRAIT_COUNT) {
+      this.charScroll = this.selectedCharSlot - PORTRAIT_COUNT + 1;
+    }
+
+    for(int i = 0; i < characterCount_8011d7c4; i++) {
+      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
+      this.portraits[i].setX(9 + (i - this.charScroll) * 50);
+    }
+  }
+
+  private void menuSelectChar5NavigateLeft(final ShopScreen.ShopEntry<Equipment> entry) {
     playMenuSound(1);
 
     if(this.selectedCharSlot > 0) {
@@ -238,11 +310,12 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       this.selectedCharSlot = characterCount_8011d7c4 - 1;
     }
 
+    this.scrollSelectedIntoView(entry);
     final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
     this.charHighlight.setX(portrait.getX() + 8);
   }
 
-  private void menuSelectChar5NavigateRight() {
+  private void menuSelectChar5NavigateRight(final ShopScreen.ShopEntry<Equipment> entry) {
     playMenuSound(1);
 
     if(this.selectedCharSlot < characterCount_8011d7c4 - 1) {
@@ -251,6 +324,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       this.selectedCharSlot = 0;
     }
 
+    this.scrollSelectedIntoView(entry);
     final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
     this.charHighlight.setX(portrait.getX() + 8);
   }

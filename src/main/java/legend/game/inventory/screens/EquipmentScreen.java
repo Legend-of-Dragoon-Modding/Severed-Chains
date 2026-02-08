@@ -17,7 +17,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.SItem.FUN_801034cc;
+import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.addHp;
 import static legend.game.SItem.addMp;
@@ -109,7 +109,7 @@ public class EquipmentScreen extends MenuScreen {
         break;
 
       case 3:
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
         this.renderEquipmentScreen(this.charSlot, this.selectedSlot, this.slotScroll, 0);
 
         if(this.scrollAccumulator >= 1.0d) {

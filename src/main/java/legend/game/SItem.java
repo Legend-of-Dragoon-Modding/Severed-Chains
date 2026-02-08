@@ -88,8 +88,8 @@ import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.loadMenuTexture;
-import static legend.game.Menus.renderablePtr_800bdba4;
-import static legend.game.Menus.renderablePtr_800bdba8;
+import static legend.game.Menus.leftArrowRenderable_800bdba4;
+import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -1069,7 +1069,7 @@ public final class SItem {
   }
 
   @Method(0x801033ccL)
-  public static void FUN_801033cc(final Renderable58 a0) {
+  public static void initArrowRenderable(final Renderable58 a0) {
     a0.deallocationGroup_28 = 0x1;
     a0.heightScale_38 = 0;
     a0.widthScale = 0;
@@ -1082,7 +1082,7 @@ public final class SItem {
 
     final Renderable58 newRenderable = allocateUiElement(108, 111, renderable.x_40, renderable.y_44);
     newRenderable.flags_00 |= Renderable58.FLAG_DELETE_AFTER_ANIMATION;
-    FUN_801033cc(newRenderable);
+    initArrowRenderable(newRenderable);
   }
 
   @Method(0x80103444L)
@@ -1104,39 +1104,39 @@ public final class SItem {
   }
 
   @Method(0x801034ccL)
-  public static void FUN_801034cc(final int charSlot, final int charCount) {
-    setRandomRepeatGlyph(renderablePtr_800bdba4, 0x2d, 0x34, 0xaa, 0xb1);
-    setRandomRepeatGlyph(renderablePtr_800bdba8, 0x25, 0x2c, 0xa2, 0xa9);
+  public static void addLeftRightArrows(final int charSlot, final int charCount) {
+    setRandomRepeatGlyph(leftArrowRenderable_800bdba4, 0x2d, 0x34, 0xaa, 0xb1);
+    setRandomRepeatGlyph(rightArrowRenderable_800bdba8, 0x25, 0x2c, 0xa2, 0xa9);
 
     if(charSlot != 0) {
-      if(renderablePtr_800bdba4 == null) {
+      if(leftArrowRenderable_800bdba4 == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 18, 16);
         renderable.repeatStartGlyph_18 = 0x2d;
         renderable.repeatEndGlyph_1c = 0x34;
-        renderablePtr_800bdba4 = renderable;
-        FUN_801033cc(renderable);
+        leftArrowRenderable_800bdba4 = renderable;
+        initArrowRenderable(renderable);
       }
     } else {
       //LAB_80103578
-      if(renderablePtr_800bdba4 != null) {
-        fadeOutArrow(renderablePtr_800bdba4);
-        renderablePtr_800bdba4 = null;
+      if(leftArrowRenderable_800bdba4 != null) {
+        fadeOutArrow(leftArrowRenderable_800bdba4);
+        leftArrowRenderable_800bdba4 = null;
       }
     }
 
     //LAB_80103598
     if(charSlot < charCount - 1) {
-      if(renderablePtr_800bdba8 == null) {
+      if(rightArrowRenderable_800bdba8 == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 350, 16);
         renderable.repeatStartGlyph_18 = 0x25;
         renderable.repeatEndGlyph_1c = 0x2c;
-        renderablePtr_800bdba8 = renderable;
-        FUN_801033cc(renderable);
+        rightArrowRenderable_800bdba8 = renderable;
+        initArrowRenderable(renderable);
       }
       //LAB_801035e8
-    } else if(renderablePtr_800bdba8 != null) {
-      fadeOutArrow(renderablePtr_800bdba8);
-      renderablePtr_800bdba8 = null;
+    } else if(rightArrowRenderable_800bdba8 != null) {
+      fadeOutArrow(rightArrowRenderable_800bdba8);
+      rightArrowRenderable_800bdba8 = null;
     }
 
     //LAB_80103604

@@ -30,8 +30,8 @@ import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.downArrow_800bdb98;
-import static legend.game.Menus.renderablePtr_800bdba4;
-import static legend.game.Menus.renderablePtr_800bdba8;
+import static legend.game.Menus.leftArrowRenderable_800bdba4;
+import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.UI_TEXT_CENTERED;
@@ -477,15 +477,15 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void fadeOutArrows() {
-    if(renderablePtr_800bdba4 != null) {
-      fadeOutArrow(renderablePtr_800bdba4);
-      renderablePtr_800bdba4 = null;
+    if(leftArrowRenderable_800bdba4 != null) {
+      fadeOutArrow(leftArrowRenderable_800bdba4);
+      leftArrowRenderable_800bdba4 = null;
     }
 
     //LAB_800fca40
-    if(renderablePtr_800bdba8 != null) {
-      fadeOutArrow(renderablePtr_800bdba8);
-      renderablePtr_800bdba8 = null;
+    if(rightArrowRenderable_800bdba8 != null) {
+      fadeOutArrow(rightArrowRenderable_800bdba8);
+      rightArrowRenderable_800bdba8 = null;
     }
 
     //LAB_800fca60
