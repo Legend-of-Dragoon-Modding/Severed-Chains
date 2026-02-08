@@ -351,7 +351,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result -> {
       if(result == MessageBoxResult.YES) {
-        if(canEquip(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot])) {
+        if(this.selectedCharSlot != -1 && canEquip(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot])) {
           menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result1 -> {
             if(result1 == MessageBoxResult.YES) {
               final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot]);
