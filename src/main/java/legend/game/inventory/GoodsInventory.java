@@ -25,12 +25,10 @@ public class GoodsInventory implements Iterable<Good> {
   private final Set<Good> goods = new HashSet<>();
 
   public Good give(final Good good) {
-    if(!this.has(good)) {
-      final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
+    final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
 
-      if(!event.isCanceled()) {
-        this.goods.addAll(event.givenGoods);
-      }
+    if(!event.isCanceled() && !this.has(good)) {
+      this.goods.addAll(event.givenGoods);
     }
 
     return good;
