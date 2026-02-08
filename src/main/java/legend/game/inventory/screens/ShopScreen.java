@@ -615,9 +615,10 @@ public class ShopScreen extends MenuScreen {
     playMenuSound(2);
 
     final ShopEntry<? extends InventoryEntry<?>> inv = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
-    this.activeExtension.selectEntry(this, this.shop, gameState_800babc8, inv, this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
 
-    this.menuState = MenuState.EXTENSION_5;
+    if(this.activeExtension.selectEntry(this, this.shop, gameState_800babc8, inv, this.invScroll_8011e0e4 + this.invIndex_8011e0e0)) {
+      this.menuState = MenuState.EXTENSION_5;
+    }
   }
 
   private void menuBuy4NavigateUp() {
