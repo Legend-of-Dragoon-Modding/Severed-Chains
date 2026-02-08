@@ -8,7 +8,7 @@ import legend.game.i18n.I18n;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.SItem.FUN_801034cc;
+import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -67,7 +67,7 @@ public class StatusScreen extends MenuScreen {
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
         this.renderStatusMenu(this.charSlot, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -88,7 +88,7 @@ public class StatusScreen extends MenuScreen {
       }
 
       case 3 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
         this.renderStatusMenu(this.charSlot, 0);
         this.unload.run();
       }

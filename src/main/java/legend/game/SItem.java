@@ -28,6 +28,7 @@ import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
+import legend.game.inventory.screens.controls.Highlight;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
@@ -77,16 +78,18 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.loadMenuTexture;
-import static legend.game.Menus.renderablePtr_800bdba4;
-import static legend.game.Menus.renderablePtr_800bdba8;
+import static legend.game.Menus.leftArrowRenderable_800bdba4;
+import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -284,16 +287,6 @@ public final class SItem {
     "Albert", "Meru", "Kongol", "Miranda",
   };
 
-  public static final MenuGlyph06[] glyphs_80114510 = {
-    new MenuGlyph06(69, 0, 0),
-    new MenuGlyph06(70, 192, 0),
-    new MenuGlyph06(96, 40, 56),
-    new MenuGlyph06(97, 146, 16),
-    new MenuGlyph06(91, 16, 123),
-    new MenuGlyph06(91, 194, 123),
-    new MenuGlyph06(98, 16, 172),
-    new MenuGlyph06(99, 192, 172),
-  };
   public static final MenuGlyph06[] glyphs_80114548 = {
     new MenuGlyph06(69, 0, 0),
     new MenuGlyph06(70, 192, 0),
@@ -1076,7 +1069,7 @@ public final class SItem {
   }
 
   @Method(0x801033ccL)
-  public static void FUN_801033cc(final Renderable58 a0) {
+  public static void initArrowRenderable(final Renderable58 a0) {
     a0.deallocationGroup_28 = 0x1;
     a0.heightScale_38 = 0;
     a0.widthScale = 0;
@@ -1089,7 +1082,7 @@ public final class SItem {
 
     final Renderable58 newRenderable = allocateUiElement(108, 111, renderable.x_40, renderable.y_44);
     newRenderable.flags_00 |= Renderable58.FLAG_DELETE_AFTER_ANIMATION;
-    FUN_801033cc(newRenderable);
+    initArrowRenderable(newRenderable);
   }
 
   @Method(0x80103444L)
@@ -1111,39 +1104,39 @@ public final class SItem {
   }
 
   @Method(0x801034ccL)
-  public static void FUN_801034cc(final int charSlot, final int charCount) {
-    setRandomRepeatGlyph(renderablePtr_800bdba4, 0x2d, 0x34, 0xaa, 0xb1);
-    setRandomRepeatGlyph(renderablePtr_800bdba8, 0x25, 0x2c, 0xa2, 0xa9);
+  public static void addLeftRightArrows(final int charSlot, final int charCount) {
+    setRandomRepeatGlyph(leftArrowRenderable_800bdba4, 0x2d, 0x34, 0xaa, 0xb1);
+    setRandomRepeatGlyph(rightArrowRenderable_800bdba8, 0x25, 0x2c, 0xa2, 0xa9);
 
     if(charSlot != 0) {
-      if(renderablePtr_800bdba4 == null) {
+      if(leftArrowRenderable_800bdba4 == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 18, 16);
         renderable.repeatStartGlyph_18 = 0x2d;
         renderable.repeatEndGlyph_1c = 0x34;
-        renderablePtr_800bdba4 = renderable;
-        FUN_801033cc(renderable);
+        leftArrowRenderable_800bdba4 = renderable;
+        initArrowRenderable(renderable);
       }
     } else {
       //LAB_80103578
-      if(renderablePtr_800bdba4 != null) {
-        fadeOutArrow(renderablePtr_800bdba4);
-        renderablePtr_800bdba4 = null;
+      if(leftArrowRenderable_800bdba4 != null) {
+        fadeOutArrow(leftArrowRenderable_800bdba4);
+        leftArrowRenderable_800bdba4 = null;
       }
     }
 
     //LAB_80103598
     if(charSlot < charCount - 1) {
-      if(renderablePtr_800bdba8 == null) {
+      if(rightArrowRenderable_800bdba8 == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 350, 16);
         renderable.repeatStartGlyph_18 = 0x25;
         renderable.repeatEndGlyph_1c = 0x2c;
-        renderablePtr_800bdba8 = renderable;
-        FUN_801033cc(renderable);
+        rightArrowRenderable_800bdba8 = renderable;
+        initArrowRenderable(renderable);
       }
       //LAB_801035e8
-    } else if(renderablePtr_800bdba8 != null) {
-      fadeOutArrow(renderablePtr_800bdba8);
-      renderablePtr_800bdba8 = null;
+    } else if(rightArrowRenderable_800bdba8 != null) {
+      fadeOutArrow(rightArrowRenderable_800bdba8);
+      rightArrowRenderable_800bdba8 = null;
     }
 
     //LAB_80103604
@@ -1194,6 +1187,11 @@ public final class SItem {
   @Method(0x80103818L)
   public static Renderable58 allocateUiElement(final int startGlyph, final int endGlyph, final int x, final int y) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
+    return allocateUiElement(renderable, startGlyph, endGlyph, x, y);
+  }
+
+  public static Renderable58 allocateManualUiElement(final int startGlyph, final int endGlyph, final int x, final int y) {
+    final Renderable58 renderable = allocateManualRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     return allocateUiElement(renderable, startGlyph, endGlyph, x, y);
   }
 
@@ -2238,12 +2236,13 @@ public final class SItem {
         if(messageBox.type_15 == 2) {
           //LAB_8010ef10
           if(messageBox.highlightRenderable_04 == null) {
-            renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 12 + y + 5);
-            messageBox.highlightRenderable_04 = renderable;
-            renderable.heightScale_38 = 0;
-            renderable.widthScale = 0;
-            messageBox.highlightRenderable_04.z_3c = 31;
+            messageBox.highlightRenderable_04 = new Highlight();
+            messageBox.highlightRenderable_04.setSize(Math.max(DEFAULT_FONT.textWidth(messageBox.yes), DEFAULT_FONT.textWidth(messageBox.no)) + 12, DEFAULT_FONT.textHeight(messageBox.yes));
+            messageBox.highlightRenderable_04.setPos(messageBox.x_1c + 60 - messageBox.highlightRenderable_04.getWidth() / 2, messageBox.menuIndex_18 * messageBox.highlightRenderable_04.getHeight() + y + 5);
+            messageBox.highlightRenderable_04.setZ(31);
           }
+
+          messageBox.highlightRenderable_04.render(messageBox.highlightRenderable_04.getX(), messageBox.highlightRenderable_04.getY() + 2);
 
           //LAB_8010ef64
           textZ_800bdf00 = 30;
@@ -2260,7 +2259,8 @@ public final class SItem {
         messageBox.state_0c = 5;
 
         if(messageBox.highlightRenderable_04 != null) {
-          unloadRenderable(messageBox.highlightRenderable_04);
+          messageBox.highlightRenderable_04.delete();
+          messageBox.highlightRenderable_04 = null;
         }
 
         //LAB_8010f084
