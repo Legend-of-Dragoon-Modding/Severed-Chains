@@ -152,7 +152,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.drawArrows();
 
-    final int charId = characterIndices_800bdbb8[this.selectedCharSlot];
+    final int charId = this.selectedCharSlot != -1 ? characterIndices_800bdbb8[this.selectedCharSlot] : -1;
 
     if(charId != -1) {
       final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charId]);
@@ -186,6 +186,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       gameState.charData_32c[charId].equipment_14.putAll(oldEquipment);
 
       loadCharacterStats();
+    } else {
+      renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
     }
   }
 
@@ -240,9 +242,14 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       return false;
     }
 
-    final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
-    this.charHighlight.setPos(portrait.getX() + 8, portrait.getY());
-    this.charHighlight.show();
+    if(this.selectedCharSlot != -1) {
+      final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+      this.charHighlight.setPos(portrait.getX() + 8, portrait.getY());
+      this.charHighlight.show();
+    } else {
+      this.menuSelectChar5Select();
+    }
+
     return true;
   }
 
@@ -287,12 +294,16 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   }
 
   private void scrollSelectedIntoView(final ShopScreen.ShopEntry<Equipment> entry) {
-    if(this.selectedCharSlot < this.charScroll) {
-      this.charScroll = this.selectedCharSlot;
-    }
+    if(this.selectedCharSlot != -1) {
+      if(this.selectedCharSlot < this.charScroll) {
+        this.charScroll = this.selectedCharSlot;
+      }
 
-    if(this.selectedCharSlot - this.charScroll >= PORTRAIT_COUNT) {
-      this.charScroll = this.selectedCharSlot - PORTRAIT_COUNT + 1;
+      if(this.selectedCharSlot - this.charScroll >= PORTRAIT_COUNT) {
+        this.charScroll = this.selectedCharSlot - PORTRAIT_COUNT + 1;
+      }
+    } else {
+      this.charScroll = 0;
     }
 
     for(int i = 0; i < characterCount_8011d7c4; i++) {
@@ -368,6 +379,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
           this.giveUnequipped(this.screen, this.entry);
           this.returnControl = true;
         }
+      } else if(this.selectedCharSlot == -1) {
+        this.menuSelectChar5Escape();
       }
     }));
   }
