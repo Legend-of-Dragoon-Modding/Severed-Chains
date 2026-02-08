@@ -21,6 +21,7 @@ import org.joml.Math;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -59,13 +60,13 @@ public final class Menus {
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
   public static UiFile uiFile_800bdc3c;
 
-  public static Renderable58 renderablePtr_800bdc5c;
+  public static final List<Renderable58> managedRenderables_800bdc5c = new LinkedList<>();
 
   public static void initMenu(final WhichMenu destMenu, @Nullable final Supplier<MenuScreen> destScreen) {
     startMenuMusic();
     SCRIPTS.stop();
 
-    renderablePtr_800bdc5c = null;
+    managedRenderables_800bdc5c.clear();
     resizeDisplay(384, 240);
     renderMode = EngineState.RenderMode.LEGACY;
     textZ_800bdf00 = 33;
@@ -136,20 +137,10 @@ public final class Menus {
   }
 
   @Method(0x80023b54L)
-  public static Renderable58 allocateRenderable(final UiType a0, @Nullable Renderable58 a1) {
-    a1 = allocateManualRenderable(a0, a1);
-
-    if(renderablePtr_800bdc5c != null) {
-      a1.parent_54 = renderablePtr_800bdc5c;
-      renderablePtr_800bdc5c.child_50 = a1;
-    } else {
-      //LAB_80023c08
-      a1.parent_54 = null;
-    }
-
-    //LAB_80023c0c
-    renderablePtr_800bdc5c = a1;
-    return a1;
+  public static Renderable58 allocateRenderable(final UiType uiType, @Nullable Renderable58 renderable) {
+    renderable = allocateManualRenderable(uiType, renderable);
+    managedRenderables_800bdc5c.addFirst(renderable);
+    return renderable;
   }
 
   public static Renderable58 allocateManualRenderable() {
@@ -179,26 +170,22 @@ public final class Menus {
     renderable.z_3c = 36;
     renderable.x_40 = 0;
     renderable.y_44 = 0;
-    renderable.child_50 = null;
 
     return renderable;
   }
 
   @Method(0x80023c28L)
   public static void uploadRenderables() {
-    uploadRenderable(renderablePtr_800bdc5c, 0, 0);
+    managedRenderables_800bdc5c.forEach(renderable -> uploadRenderable(renderable, 0, 0));
   }
 
   private static final List<Renderable58> renderables = new ArrayList<>();
   private static final Comparator<Renderable58> renderableDepthComparator = Comparator.comparingDouble((Renderable58 r) -> r.z_3c).reversed();
 
-  public static void uploadRenderable(Renderable58 renderable, final int x, final int y) {
-    while(renderable != null) {
-      renderable.baseX = x;
-      renderable.baseY = y;
-      renderables.add(renderable);
-      renderable = renderable.parent_54;
-    }
+  public static void uploadRenderable(final Renderable58 renderable, final int x, final int y) {
+    renderable.baseX = x;
+    renderable.baseY = y;
+    renderables.add(renderable);
   }
 
   public static void renderUi() {
@@ -437,67 +424,31 @@ public final class Menus {
   }
 
   @Method(0x800242e8L)
-  public static void unloadRenderable(final Renderable58 a0) {
-    final Renderable58 v0 = a0.child_50;
-    final Renderable58 v1 = a0.parent_54;
-
-    if(v0 == null) {
-      if(v1 == null) {
-        renderablePtr_800bdc5c = null;
-      } else {
-        //LAB_80024320
-        renderablePtr_800bdc5c = v1;
-        v1.child_50 = null;
-      }
-      //LAB_80024334
-    } else if(v1 == null) {
-      v0.parent_54 = null;
-    } else {
-      //LAB_80024350
-      v0.parent_54 = v1;
-      v1.child_50 = a0.child_50;
-    }
+  public static void unloadRenderable(final Renderable58 renderable) {
+    managedRenderables_800bdc5c.remove(renderable);
   }
 
   @Method(0x8002437cL)
-  public static void deallocateRenderables(final int a0) {
+  public static void deallocateRenderables(final int deallocationGroup) {
     // Clear out UI render queue
     renderables.clear();
 
-    Renderable58 s0 = renderablePtr_800bdc5c;
+    //LAB_800243b4
+    managedRenderables_800bdc5c.removeIf(renderable -> renderable.deallocationGroup_28 <= deallocationGroup);
 
-    if(s0 != null) {
-      //LAB_800243b4
-      while(s0.parent_54 != null) {
-        final Renderable58 a0_0 = s0;
-        s0 = s0.parent_54;
-
-        if(a0_0.deallocationGroup_28 <= a0) {
-          unloadRenderable(a0_0);
-        }
-
-        //LAB_800243d0
-      }
-
-      //LAB_800243e0
-      if(s0.deallocationGroup_28 <= a0) {
-        unloadRenderable(s0);
-      }
-
-      //LAB_800243fc
-      if(a0 != 0) {
-        upArrow_800bdb94 = null;
-        downArrow_800bdb98 = null;
-        leftArrowRenderable_800bdba4 = null;
-        rightArrowRenderable_800bdba8 = null;
-      }
+    //LAB_800243fc
+    if(deallocationGroup != 0) {
+      upArrow_800bdb94 = null;
+      downArrow_800bdb98 = null;
+      leftArrowRenderable_800bdba4 = null;
+      rightArrowRenderable_800bdba8 = null;
     }
 
     //LAB_80024460
   }
 
   @Method(0x800e6d60L)
-  public static void FUN_800e6d60() {
-    renderablePtr_800bdc5c = null;
+  public static void clearRenderables() {
+    managedRenderables_800bdc5c.clear();
   }
 }

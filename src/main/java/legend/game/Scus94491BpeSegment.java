@@ -71,7 +71,7 @@ import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zShift_1f8003c4;
-import static legend.game.Menus.FUN_800e6d60;
+import static legend.game.Menus.clearRenderables;
 import static legend.game.Menus.loadAndRenderMenus;
 import static legend.game.Menus.renderUi;
 import static legend.game.Models.loadModelAndAnimation;
@@ -632,7 +632,7 @@ public final class Scus94491BpeSegment {
     loadSystemFont();
     SCRIPTS.clear();
     loadShadow();
-    FUN_800e6d60();
+    clearRenderables();
     initFmvs();
   }
 

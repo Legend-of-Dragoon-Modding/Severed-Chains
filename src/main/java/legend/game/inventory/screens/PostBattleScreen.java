@@ -31,8 +31,8 @@ import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.renderMode;
 import static legend.game.Graphics.resizeDisplay;
 import static legend.game.Menus.allocateRenderable;
+import static legend.game.Menus.clearRenderables;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.Menus.renderablePtr_800bdc5c;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
@@ -92,7 +92,7 @@ public class PostBattleScreen extends MenuScreen {
   protected void render() {
     switch(this.inventoryMenuState_800bdc28) {
       case INIT_0:
-        renderablePtr_800bdc5c = null;
+        clearRenderables();
         resizeDisplay(320, 240);
         textZ_800bdf00 = 33;
         this.initResultBackgrounds();

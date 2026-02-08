@@ -36,8 +36,9 @@ public class Renderable58 {
   public int x_40;
   public int y_44;
 
-  public Renderable58 child_50;
-  public Renderable58 parent_54;
+  // No longer used, converted to a LinkedList
+//  public Renderable58 prev_50;
+//  public Renderable58 next_54;
 
   public int widthCut;
   public int heightCut;

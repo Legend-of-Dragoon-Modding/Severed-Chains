@@ -94,8 +94,8 @@ public class ShopScreen extends MenuScreen {
   private int invScroll_8011e0e4;
   private Renderable58 renderable_8011e0f0;
   private Renderable58 renderable_8011e0f4;
-  private Renderable58 selectedMenuOptionRenderablePtr_800bdbe0;
-  private Renderable58 selectedMenuOptionRenderablePtr_800bdbe4;
+  private Renderable58 selectedMenuOptionRenderable_800bdbe0;
+  private Renderable58 selectedInventoryRowRenderable_800bdbe4;
 
   private final List<ShopEntry<? extends InventoryEntry<?>>> inv = new ArrayList<>();
 
@@ -153,8 +153,8 @@ public class ShopScreen extends MenuScreen {
       case INIT_2 -> {
         deallocateRenderables(0xff);
         renderGlyphs(glyphs_80114510, 0, 0);
-        this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
-        initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe0);
+        this.selectedMenuOptionRenderable_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
+        initHighlight(this.selectedMenuOptionRenderable_800bdbe0);
 
         this.renderShopMenu(this.menuIndex_8011e0dc);
         this.setSelectedEntry(null);
@@ -221,7 +221,7 @@ public class ShopScreen extends MenuScreen {
             playMenuSound(1);
             this.invScroll_8011e0e4--;
 
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+            this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
           }
         }
 
@@ -232,7 +232,7 @@ public class ShopScreen extends MenuScreen {
             playMenuSound(1);
             this.invScroll_8011e0e4++;
 
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+            this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
           }
         }
 
@@ -398,7 +398,7 @@ public class ShopScreen extends MenuScreen {
 
           this.invScroll_8011e0e4 = 0;
           this.invIndex_8011e0e0 = 0;
-          this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(i);
+          this.selectedMenuOptionRenderable_800bdbe0.y_44 = this.getShopMenuYOffset(i);
           return InputPropagation.HANDLED;
         }
       }
@@ -407,7 +407,7 @@ public class ShopScreen extends MenuScreen {
         if(this.invIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           playMenuSound(1);
           this.invIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
+          this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
           this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
 
           return InputPropagation.HANDLED;
@@ -423,7 +423,7 @@ public class ShopScreen extends MenuScreen {
         if(this.invIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           playMenuSound(1);
           this.invIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
+          this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
 
           return InputPropagation.HANDLED;
         }
@@ -447,7 +447,7 @@ public class ShopScreen extends MenuScreen {
 
           this.invScroll_8011e0e4 = 0;
           this.invIndex_8011e0e0 = 0;
-          this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(i);
+          this.selectedMenuOptionRenderable_800bdbe0.y_44 = this.getShopMenuYOffset(i);
 
           this.handleSelectedMenu(i);
           return InputPropagation.HANDLED;
@@ -457,7 +457,7 @@ public class ShopScreen extends MenuScreen {
       for(int i = 0; i < Math.min(6, this.inv.size() - this.invScroll_8011e0e4); i++) {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           this.invIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
+          this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
           this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
           this.menuBuy4Select();
           return InputPropagation.HANDLED;
@@ -472,7 +472,7 @@ public class ShopScreen extends MenuScreen {
       for(int i = 0; i < Math.min(count, 6); i++) {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           this.invIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
+          this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
           this.menuSell10Select();
           return InputPropagation.HANDLED;
         }
@@ -490,8 +490,8 @@ public class ShopScreen extends MenuScreen {
           return;
         }
 
-        this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.invIndex_8011e0e0));
-        initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
+        this.selectedInventoryRowRenderable_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.invIndex_8011e0e0));
+        initHighlight(this.selectedInventoryRowRenderable_800bdbe4);
 
         this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
         this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
@@ -511,10 +511,10 @@ public class ShopScreen extends MenuScreen {
 
               if(!gameState_800babc8.equipment_1e8.isEmpty()) {
                 this.menuState = MenuState.SELL_10;
-                this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
+                this.selectedInventoryRowRenderable_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
                 this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
-                initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
+                initHighlight(this.selectedInventoryRowRenderable_800bdbe4);
               } else {
                 menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
               }
@@ -529,8 +529,8 @@ public class ShopScreen extends MenuScreen {
                 this.menuState = MenuState.SELL_10;
                 this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
-                this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
-                initHighlight(this.selectedMenuOptionRenderablePtr_800bdbe4);
+                this.selectedInventoryRowRenderable_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
+                initHighlight(this.selectedInventoryRowRenderable_800bdbe4);
               } else {
                 menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
               }
@@ -589,7 +589,7 @@ public class ShopScreen extends MenuScreen {
 
     this.invScroll_8011e0e4 = 0;
     this.invIndex_8011e0e0 = 0;
-    this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
+    this.selectedMenuOptionRenderable_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
   }
 
   private void menuMainShopRender3NavigateDown() {
@@ -603,7 +603,7 @@ public class ShopScreen extends MenuScreen {
 
     this.invScroll_8011e0e4 = 0;
     this.invIndex_8011e0e0 = 0;
-    this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
+    this.selectedMenuOptionRenderable_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
   }
 
   private void menuBuy4Escape() {
@@ -635,7 +635,7 @@ public class ShopScreen extends MenuScreen {
       this.invScroll_8011e0e4 = invCount > 6 ? invCount - 6 : 0;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+    this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
   }
 
@@ -654,7 +654,7 @@ public class ShopScreen extends MenuScreen {
       this.invScroll_8011e0e4 = 0;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+    this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
   }
 
@@ -662,7 +662,7 @@ public class ShopScreen extends MenuScreen {
     if(this.invIndex_8011e0e0 != 0) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
       this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
@@ -671,7 +671,7 @@ public class ShopScreen extends MenuScreen {
     if(this.invIndex_8011e0e0 != Math.min(5, this.inv.size() - 1)) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = Math.min(5, this.inv.size() - 1);
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
       this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
@@ -680,11 +680,11 @@ public class ShopScreen extends MenuScreen {
     if(this.invScroll_8011e0e4 - 6 >= 0) {
       playMenuSound(1);
       this.invScroll_8011e0e4 -= 6;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     } else if(this.invScroll_8011e0e4 != 0) {
       playMenuSound(1);
       this.invScroll_8011e0e4 = 0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
 
     this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
@@ -695,11 +695,11 @@ public class ShopScreen extends MenuScreen {
     if((this.invScroll_8011e0e4 + this.invIndex_8011e0e0) + 6 < invCount - 7) {
       playMenuSound(1);
       this.invScroll_8011e0e4 += 6;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     } else if(invCount > 6 && this.invScroll_8011e0e4 != invCount - 6) {
       playMenuSound(1);
       this.invScroll_8011e0e4 = invCount - 6;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
 
     this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
@@ -710,7 +710,7 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
       this.invScroll_8011e0e4 = 0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
       this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
@@ -721,14 +721,14 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(1);
       this.invIndex_8011e0e0 = Math.min(5, invCount - 1);
       this.invScroll_8011e0e4 = invCount - 1 - this.invIndex_8011e0e0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
       this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
     }
   }
 
   private void menuSell10Escape() {
     playMenuSound(3);
-    unloadRenderable(this.selectedMenuOptionRenderablePtr_800bdbe4);
+    unloadRenderable(this.selectedInventoryRowRenderable_800bdbe4);
     this.menuState = MenuState.INIT_2;
   }
 
@@ -765,7 +765,7 @@ public class ShopScreen extends MenuScreen {
 
             if(count == 0) {
               menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
-              unloadRenderable(this.selectedMenuOptionRenderablePtr_800bdbe4);
+              unloadRenderable(this.selectedInventoryRowRenderable_800bdbe4);
               this.menuState = MenuState.INIT_2;
               return;
             }
@@ -776,7 +776,7 @@ public class ShopScreen extends MenuScreen {
 
             if(this.invIndex_8011e0e0 != 0 && this.invIndex_8011e0e0 > count - 1) {
               this.invIndex_8011e0e0--;
-              this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+              this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
             }
           }
         }
@@ -804,7 +804,7 @@ public class ShopScreen extends MenuScreen {
       this.invScroll_8011e0e4 = itemCount > 6 ? itemCount - 6 : 0;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+    this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
   }
 
   private void menuSell10NavigateDown() {
@@ -828,14 +828,14 @@ public class ShopScreen extends MenuScreen {
       this.invScroll_8011e0e4 = 0;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+    this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
   }
 
   private void menuSell10NavigateTop() {
     if(this.invIndex_8011e0e0 != 0) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
   }
 
@@ -850,7 +850,7 @@ public class ShopScreen extends MenuScreen {
     if(this.invIndex_8011e0e0 != Math.min(5, itemCount - 1)) {
       playMenuSound(1);
       this.invIndex_8011e0e0 = Math.min(5, itemCount - 1);
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
   }
 
@@ -858,11 +858,11 @@ public class ShopScreen extends MenuScreen {
     if(this.invScroll_8011e0e4 - 6 >= 0) {
       playMenuSound(1);
       this.invScroll_8011e0e4 -= 6;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     } else if(this.invScroll_8011e0e4 != 0) {
       playMenuSound(1);
       this.invScroll_8011e0e4 = 0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
   }
 
@@ -877,11 +877,11 @@ public class ShopScreen extends MenuScreen {
     if((this.invScroll_8011e0e4 + this.invIndex_8011e0e0) + 6 < itemCount - 7) {
       playMenuSound(1);
       this.invScroll_8011e0e4 += 6;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     } else if(itemCount > 6 && this.invScroll_8011e0e4 != itemCount - 6) {
       playMenuSound(1);
       this.invScroll_8011e0e4 = itemCount - 6;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
   }
 
@@ -890,7 +890,7 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(1);
       this.invIndex_8011e0e0 = 0;
       this.invScroll_8011e0e4 = 0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
   }
 
@@ -906,7 +906,7 @@ public class ShopScreen extends MenuScreen {
       playMenuSound(1);
       this.invIndex_8011e0e0 = Math.min(5, itemCount - 1);
       this.invScroll_8011e0e4 = itemCount - 1 - this.invIndex_8011e0e0;
-      this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
+      this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(this.invIndex_8011e0e0);
     }
   }
 
