@@ -69,7 +69,7 @@ public class CharacterCard extends Control {
       this.renderNumber(x + 156, y + 17, stats.sp_08, 3);
       renderHp(x + this.getWidth(), y + 28, stats.hp_04, stats.maxHp_66);
       renderFraction(x + this.getWidth(), y + 39, stats.mp_06, stats.maxMp_6e);
-      renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c[this.charId].xp_00, getXpToNextLevel(this.charId));
+      renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c.get(this.charId).xp_00, getXpToNextLevel(this.charId));
 
       this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.charId));
     }

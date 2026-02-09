@@ -33,7 +33,18 @@ public class CharacterData2c {
   public int mp_0a;
   public int sp_0c;
   public int dlevelXp_0e;
-  /** i.e. poison */
+  /**
+   * <ul>
+   *   <li>0x1 - Petrified</li>
+   *   <li>0x2 - Bewitched</li>
+   *   <li>0x4 - Confused</li>
+   *   <li>0x8 - Fearful</li>
+   *   <li>0x10 - Stunned</li>
+   *   <li>0x20 - Weapon blocked</li>
+   *   <li>0x40 - Dispirited</li>
+   *   <li>0x80 - Poison</li>
+   * </ul>
+   */
   public int status_10;
   public int level_12;
   public int dlevel_13;

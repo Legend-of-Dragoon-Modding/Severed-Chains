@@ -338,9 +338,9 @@ public final class Scus94491BpeSegment {
     if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
       if(!divineEvent.bypassOverride) {
-        final CharacterData2c charData = gameState_800babc8.charData_32c[0];
-        charData.dlevelXp_0e = 0x7fff;
-        charData.dlevel_13 = 5;
+        final CharacterData2c dart = gameState_800babc8.charData_32c.get(0);
+        dart.dlevelXp_0e = 0x7fff;
+        dart.dlevel_13 = 5;
       }
     }
 
@@ -386,8 +386,9 @@ public final class Scus94491BpeSegment {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
       if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-        gameState_800babc8.charData_32c[0].dlevel_13 = 5;
-        gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
+        final CharacterData2c dart = gameState_800babc8.charData_32c.get(0);
+        dart.dlevel_13 = 5;
+        dart.dlevelXp_0e = 0x7fff;
       }
     }
 

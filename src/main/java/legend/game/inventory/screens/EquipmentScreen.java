@@ -149,7 +149,7 @@ public class EquipmentScreen extends MenuScreen {
     for(int equipmentSlot = 0; equipmentSlot < gameState_800babc8.equipment_1e8.size(); equipmentSlot++) {
       final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentSlot);
       if(canEquip(equipment, charIndex)) {
-        if(equipment != gameState_800babc8.charData_32c[charIndex].equipment_14.get(equipment.slot)) {
+        if(equipment != gameState_800babc8.charData_32c.get(charIndex).equipment_14.get(equipment.slot)) {
           final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
           menuEntry.itemSlot_01 = equipmentSlot;
           this.menuItems.add(menuEntry);

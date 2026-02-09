@@ -7,6 +7,7 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
+import legend.game.types.CharacterData2c;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class RecoverStatusItem extends BattleItem {
     if(location == UsageLocation.MENU) {
       int allStatus = 0;
       for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
-        allStatus |= gameState_800babc8.charData_32c[characterIndices_800bdbb8.getInt(i)].status_10;
+        allStatus |= gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)).status_10;
       }
 
       return (this.status & allStatus) != 0;
@@ -57,14 +58,15 @@ public class RecoverStatusItem extends BattleItem {
   @Override
   @Method(0x80022d88L)
   public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
-    final int status = gameState_800babc8.charData_32c[charId].status_10;
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+    final int status = character.status_10;
 
     if((this.status & status) == 0) {
       response.failure();
       return;
     }
 
-    gameState_800babc8.charData_32c[charId].status_10 &= ~status;
+    character.status_10 &= ~status;
 
     final List<String> cured = new ArrayList<>();
 

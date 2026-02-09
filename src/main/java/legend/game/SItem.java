@@ -87,8 +87,8 @@ import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
-import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.leftArrowRenderable_800bdba4;
+import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
@@ -541,7 +541,7 @@ public final class SItem {
    */
   @Method(0x80022b50L)
   public static int addHp(final int charIndex, final int amount) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     if(charData.hp_08 == stats.maxHp_66) {
@@ -578,7 +578,7 @@ public final class SItem {
    */
   @Method(0x80022c08L)
   public static int addMp(final int charIndex, final int amount) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     if(stats.maxMp_6e == 0 || charData.mp_0a == stats.maxMp_6e) {
@@ -611,7 +611,7 @@ public final class SItem {
 
   @Method(0x80022cd0L)
   public static int addSp(final int charIndex, final int amount) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     final int maxSp = stats.dlevel_0f * 100;
@@ -623,14 +623,14 @@ public final class SItem {
     final int responseType = amount == -1 || spToAdd < amount ? -1 : amount;
 
     charData.sp_0c += spToAdd;
-    gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += amount == -1 ? spToAdd : amount;
+    charData.dlevelXp_0e += amount == -1 ? spToAdd : amount;
 
-    if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > 32000) {
-      gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = 32000;
+    if(charData.dlevelXp_0e > 32000) {
+      charData.dlevelXp_0e = 32000;
     }
 
-    if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1] && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
-      gameState_800babc8.charData_32c[charIndex].dlevel_13++;
+    if(charData.dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][charData.dlevel_13 + 1] && charData.dlevel_13 < 5) {
+      charData.dlevel_13++;
     }
 
     loadCharacterStats();
@@ -986,7 +986,7 @@ public final class SItem {
     }
 
     //LAB_800fc6ac
-    final int level = gameState_800babc8.charData_32c[charIndex].level_12;
+    final int level = gameState_800babc8.charData_32c.get(charIndex).level_12;
 
     if(level >= 60) {
       return 0; // Max level
@@ -1222,7 +1222,7 @@ public final class SItem {
     }
 
     //LAB_80103ac0
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
     final Equipment previousEquipment = charData.equipment_14.get(equipment.slot);
     charData.equipment_14.put(equipment.slot, equipment);
 
@@ -1238,7 +1238,7 @@ public final class SItem {
 
     //LAB_80103b48
     for(int slot = 0; slot < 9; slot++) {
-      if((gameState_800babc8.charData_32c[slot].partyFlags_04 & IN_PARTY) != 0) {
+      if((gameState_800babc8.charData_32c.get(slot).partyFlags_04 & IN_PARTY) != 0) {
         characterIndices_800bdbb8.add(slot);
 
         if(!gameState_800babc8.charIds_88.contains(slot)) {
@@ -1347,7 +1347,7 @@ public final class SItem {
         for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             final int charId = gameState_800babc8.charIds_88.getInt(i);
-            final CharacterData2c character = gameState_800babc8.charData_32c[charId];
+            final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
 
             if(character.equipment_14.get(equipmentSlot) != null) {
               final Equipment equipment = character.equipment_14.get(equipmentSlot);
@@ -1372,7 +1372,7 @@ public final class SItem {
 
     checkForNewlyUnlockedAddition(charId);
 
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
 
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
       final Addition addition = additionDelegate.get();
@@ -1389,7 +1389,7 @@ public final class SItem {
       return null;
     }
 
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
     Addition newlyUnlocked = null;
 
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
@@ -1862,7 +1862,7 @@ public final class SItem {
   @Method(0x80107e70L)
   public static boolean renderCharacterStatusEffect(final int x, final int y, final int charIndex) {
     //LAB_80107e90
-    final int status = gameState_800babc8.charData_32c[charIndex].status_10;
+    final int status = gameState_800babc8.charData_32c.get(charIndex).status_10;
 
     if(tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier() % 32 < 16) {
       return false;
@@ -1945,7 +1945,7 @@ public final class SItem {
         renderThreeDigitNumber(x + 106, y + 39, stats.mp_06);
         renderCharacter(x + 124, y + 39, 11);
         renderThreeDigitNumber(x + 148, y + 39, stats.maxMp_6e);
-        renderSixDigitNumber(x + 88, y + 50, gameState_800babc8.charData_32c[charId].xp_00);
+        renderSixDigitNumber(x + 88, y + 50, gameState_800babc8.charData_32c.get(charId).xp_00);
         renderCharacter(x + 124, y + 50, 11);
         renderXp(x + 130, y + 50, getXpToNextLevel(charId));
 
@@ -1972,7 +1972,7 @@ public final class SItem {
       final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
       if(equipment != null) {
-        final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c[charIndex].equipment_14);
+        final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c.get(charIndex).equipment_14);
 
         //LAB_80108638
         equipItem(equipment, charIndex);
@@ -1982,8 +1982,8 @@ public final class SItem {
         statsTmp = new ActiveStatsa0(stats);
 
         //LAB_801086e8
-        gameState_800babc8.charData_32c[charIndex].equipment_14.clear();
-        gameState_800babc8.charData_32c[charIndex].equipment_14.putAll(oldEquipment);
+        gameState_800babc8.charData_32c.get(charIndex).equipment_14.clear();
+        gameState_800babc8.charData_32c.get(charIndex).equipment_14.putAll(oldEquipment);
 
         loadCharacterStats();
       } else {
@@ -2056,7 +2056,7 @@ public final class SItem {
       return;
     }
 
-    final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
     if(allocate) {
       allocateUiElement(0x59, 0x59, 194, 16);
@@ -2318,7 +2318,7 @@ public final class SItem {
     for(int charId = 0; charId < 9; charId++) {
       final ActiveStatsa0 stats = activeStats[charId];
 
-      final CharacterData2c charData = gameState.charData_32c[charId];
+      final CharacterData2c charData = gameState.charData_32c.get(charId);
 
       final CharacterStatsEvent statsEvent = EVENTS.postEvent(new CharacterStatsEvent(charId));
 
@@ -2391,7 +2391,7 @@ public final class SItem {
       if(charId == 0 && gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         stats.flags_0c |= 0x6000;
 
-        stats.dlevel_0f = gameState.charData_32c[0].dlevel_13;
+        stats.dlevel_0f = gameState.charData_32c.get(0).dlevel_13;
 
         final int a1 = dragoonGoodsBits_800fbd08[0];
 

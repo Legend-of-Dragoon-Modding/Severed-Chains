@@ -39,7 +39,7 @@ public class AdditionListMenu extends ListMenu {
   }
 
   private static ListPosition modifyLastPosition(final PlayerBattleEntity player, final ListPosition lastPosition) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c[player.charId_272];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(player.charId_272);
 
     int index = 0;
     for(int i = 0; i < CHARACTER_ADDITIONS[player.charId_272].length; i++) {
@@ -67,7 +67,7 @@ public class AdditionListMenu extends ListMenu {
 
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
     final CharacterAdditionStats additionStats = charData.additionStats.get(CHARACTER_ADDITIONS[this.player_08.charId_272][index].getId());
 
     this.fontOptions.trim(trim);
@@ -96,7 +96,7 @@ public class AdditionListMenu extends ListMenu {
   @Override
   protected void onUse(final int index) {
     final ActiveStatsa0 stats = stats_800be5f8[this.player_08.charId_272];
-    final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
     this.player_08.combatant_144.mrg_04 = null;
     charData.selectedAddition_19 = CHARACTER_ADDITIONS[this.player_08.charId_272][index].getId();
     loadCharacterStats();
@@ -132,7 +132,7 @@ public class AdditionListMenu extends ListMenu {
       if((this.flags_02 & 0x40) != 0) {
         final int listIndex = this.listScroll_1e + this.listIndex_24;
         final Addition addition = this.menuAdditions.get(listIndex);
-        final CharacterData2c charData = gameState_800babc8.charData_32c[this.player_08.charId_272];
+        final CharacterData2c charData = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
         final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
         final int damage = addition.getDamage(gameState_800babc8, charData, additionStats);
         final int sp = addition.getSp(gameState_800babc8, charData, additionStats);

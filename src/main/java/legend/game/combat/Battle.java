@@ -2974,7 +2974,7 @@ public class Battle extends EngineState<Battle> {
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
-            final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+            final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
             REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
@@ -4384,7 +4384,7 @@ public class Battle extends EngineState<Battle> {
       final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
       final int charIndex = bent.charId_272;
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
       if(charIndex == 2 || charIndex == 8 || charData.selectedAddition_19 == null) {
         //LAB_800cd200
@@ -5183,7 +5183,7 @@ public class Battle extends EngineState<Battle> {
     } else {
       //LAB_800d3dc0
       final AdditionNameTextEffect1c additionStruct = new AdditionNameTextEffect1c();
-      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19).get();
+      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19).get();
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
@@ -8330,7 +8330,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_800eebd8
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
       final PlayerBattleEntity bent = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
-      final CharacterData2c charData = gameState_800babc8.charData_32c[bent.charId_272];
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(bent.charId_272);
 
       //LAB_800eec10
       charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent());

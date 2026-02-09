@@ -109,7 +109,8 @@ public class SeveredSavedGame extends SavedGame {
 
     for(int charId = 0; charId < this.charStats.size(); charId++) {
       final CharStats stats = this.charStats.get(charId);
-      final CharacterData2c charData = gameState.charData_32c[charId];
+      final CharacterData2c charData = new CharacterData2c();
+      gameState.charData_32c.add(charData);
 
       charData.xp_00 = stats.xp;
       charData.partyFlags_04 = stats.flags;

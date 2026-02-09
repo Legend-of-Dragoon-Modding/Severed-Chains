@@ -11,6 +11,7 @@ import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.controls.CharacterPortrait;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
@@ -155,8 +156,9 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     if(charId != -1) {
       final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charId]);
+      final CharacterData2c character = gameState.charData_32c.get(charId);
 
-      final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState.charData_32c[charId].equipment_14);
+      final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(character.equipment_14);
 
       if(equipItem(entry.item, charId).success) {
         allocateOneFrameGlyph(0x67, 210, 127);
@@ -181,8 +183,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
         renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
       }
 
-      gameState.charData_32c[charId].equipment_14.clear();
-      gameState.charData_32c[charId].equipment_14.putAll(oldEquipment);
+      character.equipment_14.clear();
+      character.equipment_14.putAll(oldEquipment);
 
       loadCharacterStats();
     } else {

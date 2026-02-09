@@ -68,12 +68,12 @@ public class CharSwapScreen extends MenuScreen {
         /* When unlock party is disabled, rearrange party to fit retail expectations. */
         if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get())) {
           // Remove any chars from the main party that can't be in the party
-          gameState_800babc8.charIds_88.removeIf(charId -> (gameState_800babc8.charData_32c[charId].partyFlags_04 & CAN_BE_IN_PARTY) == 0);
+          gameState_800babc8.charIds_88.removeIf(charId -> (gameState_800babc8.charData_32c.get(charId).partyFlags_04 & CAN_BE_IN_PARTY) == 0);
 
           // Add any chars who are required in the party but aren't currently in it
           secondaryCharIds_800bdbf8.intStream()
             .filter(charId -> !gameState_800babc8.charIds_88.contains(charId))
-            .filter(charId -> (gameState_800babc8.charData_32c[charId].partyFlags_04 & CANT_REMOVE) != 0)
+            .filter(charId -> (gameState_800babc8.charData_32c.get(charId).partyFlags_04 & CANT_REMOVE) != 0)
             .forEach(gameState_800babc8.charIds_88::add);
 
           cacheCharacterSlots();
@@ -93,8 +93,8 @@ public class CharSwapScreen extends MenuScreen {
             }
 
             // Sort required before others
-            final boolean required1 = (gameState_800babc8.charData_32c[id1].partyFlags_04 & CANT_REMOVE) != 0;
-            final boolean required2 = (gameState_800babc8.charData_32c[id2].partyFlags_04 & CANT_REMOVE) != 0;
+            final boolean required1 = (gameState_800babc8.charData_32c.get(id1).partyFlags_04 & CANT_REMOVE) != 0;
+            final boolean required2 = (gameState_800babc8.charData_32c.get(id2).partyFlags_04 & CANT_REMOVE) != 0;
 
             if(required1 && !required2) {
               return -1;
@@ -117,7 +117,7 @@ public class CharSwapScreen extends MenuScreen {
         }
 
         for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-          if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) == 0) {
+          if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) == 0) {
             this.primaryCharSlot = i;
             break;
           }
@@ -153,7 +153,7 @@ public class CharSwapScreen extends MenuScreen {
     }
 
     for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-      renderCharacterSlot(16, 16 + i * 72, gameState_800babc8.charIds_88.getInt(i), allocate, !CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) != 0);
+      renderCharacterSlot(16, 16 + i * 72, gameState_800babc8.charIds_88.getInt(i), allocate, !CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) != 0);
     }
   }
 
@@ -172,7 +172,7 @@ public class CharSwapScreen extends MenuScreen {
       allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
       allocateUiElement(0x9c, 0x9c, x, y);
 
-      if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
+      if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
         allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
       }
 
@@ -200,7 +200,7 @@ public class CharSwapScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-        if((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) == 0) && this.primaryCharSlot != i && MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
+        if((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) == 0) && this.primaryCharSlot != i && MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
           playMenuSound(1);
           this.primaryCharSlot = i;
           this.primaryCharHighlight.y_44 = this.getSlotY(i);
@@ -253,12 +253,12 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage2NavigateUp() {
-    if(this.primaryCharSlot > 0 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(this.primaryCharSlot - 1)].partyFlags_04 & CANT_REMOVE) == 0)) {
+    if(this.primaryCharSlot > 0 && (CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(this.primaryCharSlot - 1)).partyFlags_04 & CANT_REMOVE) == 0)) {
       playMenuSound(1);
       this.primaryCharSlot--;
     } else if(this.allowWrapY) {
       for(int i = gameState_800babc8.charIds_88.size() - 1; i > this.primaryCharSlot; i--) {
-        if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) == 0) {
+        if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) == 0) {
           playMenuSound(1);
           this.primaryCharSlot = i;
           break;
@@ -270,12 +270,12 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage2NavigateDown() {
-    if((this.primaryCharSlot < 2 && CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || this.primaryCharSlot < gameState_800babc8.charIds_88.size() - 1 && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(this.primaryCharSlot + 1)].partyFlags_04 & CANT_REMOVE) == 0)) {
+    if((this.primaryCharSlot < 2 && CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || this.primaryCharSlot < gameState_800babc8.charIds_88.size() - 1 && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(this.primaryCharSlot + 1)).partyFlags_04 & CANT_REMOVE) == 0)) {
       playMenuSound(1);
       this.primaryCharSlot++;
     } else if(this.allowWrapY) {
       for(int i = 0; i < this.primaryCharSlot; i++) {
-        if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) == 0) {
+        if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) == 0) {
           playMenuSound(1);
           this.primaryCharSlot = i;
           break;
@@ -287,7 +287,7 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage2Select() {
-    if(this.primaryCharSlot >= gameState_800babc8.charIds_88.size() || CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(this.primaryCharSlot)].partyFlags_04 & CANT_REMOVE) == 0) {
+    if(this.primaryCharSlot >= gameState_800babc8.charIds_88.size() || CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(this.primaryCharSlot)).partyFlags_04 & CANT_REMOVE) == 0) {
       playMenuSound(2);
       this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharSlot), this.getSecondaryCharY(this.secondaryCharSlot));
       initHighlight(this.secondaryCharHighlight);
@@ -372,7 +372,7 @@ public class CharSwapScreen extends MenuScreen {
         charCount > 1 && !(primaryCharId == -1 && secondaryCharId == -1)
       ) ||
       // Retail
-      secondaryCharId != -1 && (gameState_800babc8.charData_32c[secondaryCharId].partyFlags_04 & CAN_BE_IN_PARTY) != 0
+      secondaryCharId != -1 && (gameState_800babc8.charData_32c.get(secondaryCharId).partyFlags_04 & CAN_BE_IN_PARTY) != 0
     ) {
       playMenuSound(2);
 

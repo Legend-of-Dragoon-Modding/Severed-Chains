@@ -282,10 +282,10 @@ public final class V8Serializer {
       data.writeRegistryId(offset, good.getRegistryId());
     }
 
-    data.writeShort(offset, gameState.charData_32c.length);
+    data.writeShort(offset, gameState.charData_32c.size());
 
-    for(int i = 0; i < gameState.charData_32c.length; i++) {
-      final CharacterData2c charData = gameState.charData_32c[i];
+    for(int i = 0; i < gameState.charData_32c.size(); i++) {
+      final CharacterData2c charData = gameState.charData_32c.get(i);
       final ActiveStatsa0 stats = activeStats[i];
       data.writeInt(offset, stats.maxHp_66);
       data.writeInt(offset, stats.maxMp_6e);

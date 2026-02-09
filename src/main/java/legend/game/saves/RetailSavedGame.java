@@ -121,7 +121,7 @@ public class RetailSavedGame extends SavedGame {
 
     for(int charId = 0; charId < this.charStats.length; charId++) {
       final RetailSavedGame.CharStats stats = this.charStats[charId];
-      final CharacterData2c charData = gameState.charData_32c[charId];
+      final CharacterData2c charData = gameState.charData_32c.get(charId);
 
       charData.xp_00 = stats.xp;
       charData.partyFlags_04 = stats.flags;

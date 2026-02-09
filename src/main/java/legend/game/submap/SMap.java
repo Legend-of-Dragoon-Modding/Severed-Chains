@@ -1053,7 +1053,7 @@ public class SMap extends EngineState<SMap> {
 
     if(charId >= 0) {
       final ActiveStatsa0 stats = stats_800be5f8[charId];
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
       charData.hp_08 = stats.maxHp_66;
       charData.mp_0a = stats.maxMp_6e;
     } else {
@@ -1061,7 +1061,7 @@ public class SMap extends EngineState<SMap> {
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
         final ActiveStatsa0 stats = stats_800be5f8[charSlot];
-        final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
+        final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
         charData.hp_08 = stats.maxHp_66;
         charData.mp_0a = stats.maxMp_6e;
       }
@@ -1080,7 +1080,7 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptClearStatusEffects(final RunningScript<?> script) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
-      gameState_800babc8.charData_32c[i].status_10 = 0;
+      gameState_800babc8.charData_32c.get(i).status_10 = 0;
     }
 
     return FlowControl.CONTINUE;
@@ -1093,8 +1093,8 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptCloneCharacterData(final RunningScript<?> script) {
     final int id0 = script.params_20[0].get();
     final int id1 = script.params_20[1].get();
-    final CharacterData2c char0 = gameState_800babc8.charData_32c[id0];
-    final CharacterData2c char1 = gameState_800babc8.charData_32c[id1];
+    final CharacterData2c char0 = gameState_800babc8.charData_32c.get(id0);
+    final CharacterData2c char1 = gameState_800babc8.charData_32c.get(id1);
 
     //LAB_800d9c78
     char1.set(char0);
@@ -1122,7 +1122,7 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800d9ce4L)
   private FlowControl scriptSetCharAddition(final RunningScript<?> script) {
     final int charId = script.params_20[0].get();
-    gameState_800babc8.charData_32c[charId].selectedAddition_19 = script.params_20[1].getRegistryId();
+    gameState_800babc8.charData_32c.get(charId).selectedAddition_19 = script.params_20[1].getRegistryId();
     return FlowControl.CONTINUE;
   }
 
@@ -1131,7 +1131,7 @@ public class SMap extends EngineState<SMap> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "additionId", description = "The addition ID")
   @Method(0x800d9d20L)
   private FlowControl scriptGetCharAddition(final RunningScript<?> script) {
-    script.params_20[1].set(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19);
+    script.params_20[1].set(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19);
     return FlowControl.CONTINUE;
   }
 
@@ -1141,12 +1141,14 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
-      if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
-        gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
+      final CharacterData2c dart = gameState_800babc8.charData_32c.get(0);
+
+      if(dart.dlevelXp_0e < 63901) {
+        dart.dlevelXp_0e = 63901;
       }
 
       //LAB_800d9d90
-      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+      dart.dlevel_13 = 5;
     }
 
     this.restoreVitalsAndSp(0);
@@ -1155,7 +1157,7 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800d9dc0L)
   private void restoreVitalsAndSp(final int charIndex) {
-    gameState_800babc8.charData_32c[charIndex].sp_0c = 500;
+    gameState_800babc8.charData_32c.get(charIndex).sp_0c = 500;
     this.restoreCharDataVitals(-1);
   }
 

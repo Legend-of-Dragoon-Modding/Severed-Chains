@@ -42,7 +42,7 @@ public class CharacterStatsEvent extends Event {
   public CharacterStatsEvent(final int characterId) {
     this.characterId = characterId;
 
-    final CharacterData2c charData = gameState_800babc8.charData_32c[characterId];
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(characterId);
     this.xp = charData.xp_00;
     this.hp = charData.hp_08;
     this.mp = charData.mp_0a;

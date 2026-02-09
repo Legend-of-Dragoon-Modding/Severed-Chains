@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GameState52c {
@@ -60,7 +59,7 @@ public class GameState52c {
 //  public final ShortRef itemCount_1e6;
   public final List<Equipment> equipment_1e8 = new ArrayList<>();
   public final Inventory items_2e9 = new Inventory();
-  public final CharacterData2c[] charData_32c = new CharacterData2c[9];
+  public final List<CharacterData2c> charData_32c = new ArrayList<>();
 //  public final int[] _4b8 = new int[8];
 
   // World map stuff
@@ -77,11 +76,7 @@ public class GameState52c {
   /** A bitset used to set each char's MP to max the first time each one is loaded */
   public int characterInitialized_4e6;
 
-  public GameState52c() {
-    Arrays.setAll(this.charData_32c, i -> new CharacterData2c());
-  }
-
   public CharacterData2c getCharBySlot(final int slot) {
-    return this.charData_32c[this.charIds_88.getInt(slot)];
+    return this.charData_32c.get(this.charIds_88.getInt(slot));
   }
 }

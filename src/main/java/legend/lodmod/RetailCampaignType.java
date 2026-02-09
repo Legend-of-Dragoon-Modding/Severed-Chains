@@ -45,7 +45,9 @@ public class RetailCampaignType extends CampaignType {
 
     //LAB_800c723c
     for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final CharacterData2c charData = gameState.charData_32c[charIndex];
+      final CharacterData2c charData = new CharacterData2c();
+      gameState.charData_32c.add(charData);
+
       final int level = characterStartingLevels[charIndex];
       charData.xp_00 = xpTables[charIndex][level];
       charData.hp_08 = levelStuff_80111cfc[charIndex][level].hp_00;
@@ -66,69 +68,69 @@ public class RetailCampaignType extends CampaignType {
       }
     }
 
-    gameState.charData_32c[0].partyFlags_04 = 0x3;
+    gameState.charData_32c.get(0).partyFlags_04 = 0x3;
 
     gameState.items_2e9.give(LodItems.BURN_OUT.get());
     gameState.items_2e9.give(LodItems.HEALING_POTION.get());
     gameState.items_2e9.give(LodItems.HEALING_POTION.get());
 
-    final Map<EquipmentSlot, Equipment> dart = gameState.charData_32c[0].equipment_14;
+    final Map<EquipmentSlot, Equipment> dart = gameState.charData_32c.get(0).equipment_14;
     dart.put(EquipmentSlot.WEAPON, LodEquipment.BROAD_SWORD.get());
     dart.put(EquipmentSlot.HELMET, LodEquipment.BANDANA.get());
     dart.put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_ARMOR.get());
     dart.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_BOOTS.get());
     dart.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> lavitz = gameState.charData_32c[1].equipment_14;
+    final Map<EquipmentSlot, Equipment> lavitz = gameState.charData_32c.get(1).equipment_14;
     lavitz.put(EquipmentSlot.WEAPON, LodEquipment.SPEAR.get());
     lavitz.put(EquipmentSlot.HELMET, LodEquipment.SALLET.get());
     lavitz.put(EquipmentSlot.ARMOUR, LodEquipment.SCALE_ARMOR.get());
     lavitz.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_BOOTS.get());
     lavitz.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> shana = gameState.charData_32c[2].equipment_14;
+    final Map<EquipmentSlot, Equipment> shana = gameState.charData_32c.get(2).equipment_14;
     shana.put(EquipmentSlot.WEAPON, LodEquipment.SHORT_BOW.get());
     shana.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
     shana.put(EquipmentSlot.ARMOUR, LodEquipment.CLOTHES.get());
     shana.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
     shana.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> rose = gameState.charData_32c[3].equipment_14;
+    final Map<EquipmentSlot, Equipment> rose = gameState.charData_32c.get(3).equipment_14;
     rose.put(EquipmentSlot.WEAPON, LodEquipment.RAPIER.get());
     rose.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
     rose.put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_JACKET.get());
     rose.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
     rose.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> haschel = gameState.charData_32c[4].equipment_14;
+    final Map<EquipmentSlot, Equipment> haschel = gameState.charData_32c.get(4).equipment_14;
     haschel.put(EquipmentSlot.WEAPON, LodEquipment.IRON_KNUCKLE.get());
     haschel.put(EquipmentSlot.HELMET, LodEquipment.ARMET.get());
     haschel.put(EquipmentSlot.ARMOUR, LodEquipment.DISCIPLE_VEST.get());
     haschel.put(EquipmentSlot.BOOTS, LodEquipment.IRON_KNEEPIECE.get());
     haschel.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> albert = gameState.charData_32c[5].equipment_14;
+    final Map<EquipmentSlot, Equipment> albert = gameState.charData_32c.get(5).equipment_14;
     albert.put(EquipmentSlot.WEAPON, LodEquipment.SPEAR.get());
     albert.put(EquipmentSlot.HELMET, LodEquipment.SALLET.get());
     albert.put(EquipmentSlot.ARMOUR, LodEquipment.SCALE_ARMOR.get());
     albert.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_BOOTS.get());
     albert.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> meru = gameState.charData_32c[6].equipment_14;
+    final Map<EquipmentSlot, Equipment> meru = gameState.charData_32c.get(6).equipment_14;
     meru.put(EquipmentSlot.WEAPON, LodEquipment.MACE.get());
     meru.put(EquipmentSlot.HELMET, LodEquipment.TIARA.get());
     meru.put(EquipmentSlot.ARMOUR, LodEquipment.SILVER_VEST.get());
     meru.put(EquipmentSlot.BOOTS, LodEquipment.SOFT_BOOTS.get());
     meru.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> kongol = gameState.charData_32c[7].equipment_14;
+    final Map<EquipmentSlot, Equipment> kongol = gameState.charData_32c.get(7).equipment_14;
     kongol.put(EquipmentSlot.WEAPON, LodEquipment.AXE.get());
     kongol.put(EquipmentSlot.HELMET, LodEquipment.ARMET.get());
     kongol.put(EquipmentSlot.ARMOUR, LodEquipment.LION_FUR.get());
     kongol.put(EquipmentSlot.BOOTS, LodEquipment.IRON_KNEEPIECE.get());
     kongol.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 
-    final Map<EquipmentSlot, Equipment> miranda = gameState.charData_32c[8].equipment_14;
+    final Map<EquipmentSlot, Equipment> miranda = gameState.charData_32c.get(8).equipment_14;
     miranda.put(EquipmentSlot.WEAPON, LodEquipment.SHORT_BOW.get());
     miranda.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
     miranda.put(EquipmentSlot.ARMOUR, LodEquipment.CLOTHES.get());

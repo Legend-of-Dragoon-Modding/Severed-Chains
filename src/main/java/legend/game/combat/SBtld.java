@@ -448,7 +448,7 @@ public final class SBtld {
     //LAB_801092a0
     for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
       final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
 
       if(charData.selectedAddition_19 == null) {
         battlePreloadedEntities_1f8003f4.dragoonAdditionHits_38.add(null);
