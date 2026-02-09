@@ -5,13 +5,11 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.UI_TEXT;
+import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.getUnlockedSpellCount;
@@ -30,6 +28,7 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class StatusScreen extends MenuScreen {
   protected int loadingStage;
@@ -67,7 +66,7 @@ public class StatusScreen extends MenuScreen {
       }
 
       case 2 -> {
-        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterIndices_800bdbb8.size());
         this.renderStatusMenu(this.charSlot, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -81,14 +80,14 @@ public class StatusScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.charSlot < characterCount_8011d7c4 - 1) {
+          if(this.charSlot < characterIndices_800bdbb8.size() - 1) {
             this.scroll(this.charSlot + 1);
           }
         }
       }
 
       case 3 -> {
-        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterIndices_800bdbb8.size());
         this.renderStatusMenu(this.charSlot, 0);
         this.unload.run();
       }
@@ -96,7 +95,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void scroll(final int slot) {
-    if(characterCount_8011d7c4 > 1) {
+    if(characterIndices_800bdbb8.size() > 1) {
       playMenuSound(1);
       this.charSlot = slot;
       this.loadingStage = 1;
@@ -104,10 +103,10 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void renderStatusMenu(final int charSlot, final int a1) {
-    renderCharacterStats(characterIndices_800bdbb8[charSlot], null, a1 == 0xff);
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8[charSlot], a1 == 0xff, false);
-    renderCharacterEquipment(characterIndices_800bdbb8[charSlot], a1 == 0xff);
-    this.renderCharacterSpells(characterIndices_800bdbb8[charSlot], a1 == 0xff);
+    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), null, a1 == 0xff);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff, false);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff);
+    this.renderCharacterSpells(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff);
   }
 
   private void renderCharacterSpells(final int charIndex, final boolean allocate) {
@@ -148,15 +147,15 @@ public class StatusScreen extends MenuScreen {
   private void menuNavigateLeft() {
     if(this.charSlot > 0) {
       this.scroll(this.charSlot - 1);
-    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
-      this.scroll(characterCount_8011d7c4 - 1);
+    } else if(characterIndices_800bdbb8.size() > 1 && this.allowWrapX) {
+      this.scroll(characterIndices_800bdbb8.size() - 1);
     }
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4 - 1) {
+    if(this.charSlot < characterIndices_800bdbb8.size() - 1) {
       this.scroll(this.charSlot + 1);
-    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+    } else if(characterIndices_800bdbb8.size() > 1 && this.allowWrapX) {
       this.scroll(0);
     }
   }

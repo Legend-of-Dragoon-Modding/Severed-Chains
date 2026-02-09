@@ -342,8 +342,8 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showStatusScreenForSelectedCharacter() {
-    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
-      if(characterIndices_800bdbb8[i] == this.charCards[this.charIndex].getCharId()) {
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      if(characterIndices_800bdbb8.getInt(i) == this.charCards[this.charIndex].getCharId()) {
         playMenuSound(2);
         this.showStatusScreen(i);
         return;

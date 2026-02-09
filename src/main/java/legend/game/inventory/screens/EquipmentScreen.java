@@ -14,19 +14,17 @@ import legend.game.types.Renderable58;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.SItem.addLeftRightArrows;
-import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.addHp;
+import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.addMp;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.canEquip;
-import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.equipmentGlyphs_80114180;
 import static legend.game.SItem.giveEquipment;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuEquipmentSlotComparator;
@@ -54,6 +52,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class EquipmentScreen extends MenuScreen {
   private int loadingStage;
@@ -101,7 +100,7 @@ public class EquipmentScreen extends MenuScreen {
         }
 
         this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
-        this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8[this.charSlot]);
+        this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8.getInt(this.charSlot));
         this.slotScroll = Math.clamp(this.slotScroll, 0, Math.max(0, this.equipmentCount - 4));
 
         this.renderEquipmentScreen(this.charSlot, this.selectedSlot, this.slotScroll, 0xff);
@@ -109,7 +108,7 @@ public class EquipmentScreen extends MenuScreen {
         break;
 
       case 3:
-        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterIndices_800bdbb8.size());
         this.renderEquipmentScreen(this.charSlot, this.selectedSlot, this.slotScroll, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -164,9 +163,9 @@ public class EquipmentScreen extends MenuScreen {
   private void renderEquipmentScreen(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
     final boolean allocate = a3 == 0xff;
 
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8[charSlot], allocate, false);
-    renderCharacterStats(characterIndices_800bdbb8[charSlot], slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00, allocate);
-    renderCharacterEquipment(characterIndices_800bdbb8[charSlot], allocate);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8.getInt(charSlot), allocate, false);
+    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00, allocate);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate);
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
@@ -240,7 +239,7 @@ public class EquipmentScreen extends MenuScreen {
         final int itemIndex = this.selectedSlot + this.slotScroll;
         if(itemIndex < this.menuItems.size()) {
           final Equipment equipment = this.menuItems.get(itemIndex).item_00;
-          final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8[this.charSlot]);
+          final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8.getInt(this.charSlot));
           takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
 
           if(previousEquipment.previousEquipment != null) {
@@ -249,8 +248,8 @@ public class EquipmentScreen extends MenuScreen {
 
           playMenuSound(2);
           loadCharacterStats();
-          addHp(characterIndices_800bdbb8[this.charSlot], 0);
-          addMp(characterIndices_800bdbb8[this.charSlot], 0);
+          addHp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
+          addMp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
           this.loadingStage = 2;
         }
 
@@ -368,19 +367,19 @@ public class EquipmentScreen extends MenuScreen {
       playMenuSound(1);
       this.charSlot--;
       this.loadingStage = 1;
-    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+    } else if(characterIndices_800bdbb8.size() > 1 && this.allowWrapX) {
       playMenuSound(1);
-      this.charSlot = characterCount_8011d7c4 - 1;
+      this.charSlot = characterIndices_800bdbb8.size() - 1;
       this.loadingStage = 1;
     }
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4 - 1) {
+    if(this.charSlot < characterIndices_800bdbb8.size() - 1) {
       playMenuSound(1);
       this.charSlot++;
       this.loadingStage = 1;
-    } else if(characterCount_8011d7c4 > 1 && this.allowWrapX) {
+    } else if(characterIndices_800bdbb8.size() > 1 && this.allowWrapX) {
       playMenuSound(1);
       this.charSlot = 0;
       this.loadingStage = 1;
@@ -392,7 +391,7 @@ public class EquipmentScreen extends MenuScreen {
 
     if(itemIndex < this.menuItems.size()) {
       final Equipment equipment = this.menuItems.get(itemIndex).item_00;
-      final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8[this.charSlot]);
+      final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8.getInt(this.charSlot));
       takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
 
       if(previousEquipment.previousEquipment != null) {
@@ -401,8 +400,8 @@ public class EquipmentScreen extends MenuScreen {
 
       playMenuSound(2);
       loadCharacterStats();
-      addHp(characterIndices_800bdbb8[this.charSlot], 0);
-      addMp(characterIndices_800bdbb8[this.charSlot], 0);
+      addHp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
+      addMp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
       this.loadingStage = 2;
     } else {
       playMenuSound(40);

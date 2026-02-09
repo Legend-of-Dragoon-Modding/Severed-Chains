@@ -321,8 +321,6 @@ public final class SItem {
     "Endiness",
   };
 
-  public static int characterCount_8011d7c4;
-
   @ScriptDescription("Gets the maximum number of items a player can carry")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
   public static FlowControl scriptGetMaxItemCount(final RunningScript<?> script) {
@@ -1235,21 +1233,16 @@ public final class SItem {
 
   @Method(0x80103b10L)
   public static void cacheCharacterSlots() {
-    characterCount_8011d7c4 = 0;
+    secondaryCharIds_800bdbf8.clear();
+    characterIndices_800bdbb8.clear();
 
     //LAB_80103b48
-    int usedCharacterSlots = 0;
     for(int slot = 0; slot < 9; slot++) {
-      secondaryCharIds_800bdbf8[slot] = -1;
-      characterIndices_800bdbb8[slot] = -1;
-
       if((gameState_800babc8.charData_32c[slot].partyFlags_04 & IN_PARTY) != 0) {
-        characterIndices_800bdbb8[characterCount_8011d7c4] = slot;
-        characterCount_8011d7c4++;
+        characterIndices_800bdbb8.add(slot);
 
         if(!gameState_800babc8.charIds_88.contains(slot)) {
-          secondaryCharIds_800bdbf8[usedCharacterSlots] = slot;
-          usedCharacterSlots++;
+          secondaryCharIds_800bdbf8.add(slot);
         }
       }
 

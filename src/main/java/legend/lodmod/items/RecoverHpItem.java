@@ -35,7 +35,7 @@ public class RecoverHpItem extends BattleItem {
 
   @Override
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
-    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
       if(stats_800be5f8[i].maxHp_66 > stats_800be5f8[i].hp_04) {
         return true;
       }

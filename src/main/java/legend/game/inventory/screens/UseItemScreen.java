@@ -17,19 +17,17 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.downArrow_800bdb98;
-import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.initHighlight;
+import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuItemIconComparator;
 import static legend.game.SItem.menuStack;
@@ -56,6 +54,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class UseItemScreen extends MenuScreen {
   private int loadingStage;
@@ -150,8 +149,8 @@ public class UseItemScreen extends MenuScreen {
     final boolean allocate = a3 == 0xff;
 
     //LAB_80102e48
-    for(int i = 0; i < characterCount_8011d7c4; i++) {
-      this.renderUseItemCharacterPortrait(this.getCharacterPortraitX(i) - 5, 120, characterIndices_800bdbb8[i], allocate);
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      this.renderUseItemCharacterPortrait(this.getCharacterPortraitX(i) - 5, 120, characterIndices_800bdbb8.getInt(i), allocate);
     }
 
     //LAB_80102e88
@@ -173,29 +172,27 @@ public class UseItemScreen extends MenuScreen {
 
   @Method(0x80108464L)
   private void renderUseItemCharacterPortrait(final int x, final int y, final int charIndex, final boolean allocate) {
-    if(charIndex != -1) {
-      renderCharacterStatusEffect(x - 4, y - 6, charIndex);
+    renderCharacterStatusEffect(x - 4, y - 6, charIndex);
 
-      if(allocate) {
-        allocateUiElement(112, 112, x, y).z_3c = 33;
+    if(allocate) {
+      allocateUiElement(112, 112, x, y).z_3c = 33;
 
-        if(charIndex < 9) {
-          final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-          initGlyph(renderable, glyph_801142d4);
-          renderable.glyph_04 = charIndex;
-          renderable.tpage_2c++;
-          renderable.z_3c = 33;
-          renderable.x_40 = x + 2;
-          renderable.y_44 = y + 8;
-        }
-
-        //LAB_80108544
-        final ActiveStatsa0 stats = stats_800be5f8[charIndex];
-        renderFourDigitHp(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
-        renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66);
-        renderFourDigitNumber(x + 25, y + 79, stats.mp_06);
-        renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e);
+      if(charIndex < 9) {
+        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
+        initGlyph(renderable, glyph_801142d4);
+        renderable.glyph_04 = charIndex;
+        renderable.tpage_2c++;
+        renderable.z_3c = 33;
+        renderable.x_40 = x + 2;
+        renderable.y_44 = y + 8;
       }
+
+      //LAB_80108544
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      renderFourDigitHp(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
+      renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66);
+      renderFourDigitNumber(x + 25, y + 79, stats.mp_06);
+      renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e);
     }
   }
 
@@ -238,7 +235,7 @@ public class UseItemScreen extends MenuScreen {
         }
       }
     } else if(this.loadingStage == 3 && !this.itemTargetAll) {
-      for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
+      for(int slot = 0; slot < characterIndices_800bdbb8.size(); slot++) {
         if(this.charSlot != slot && MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           playMenuSound(1);
           this.charSlot = slot;
@@ -271,7 +268,7 @@ public class UseItemScreen extends MenuScreen {
         }
       }
     } else if(this.loadingStage == 3) {
-      for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
+      for(int slot = 0; slot < characterIndices_800bdbb8.size(); slot++) {
         if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           this.menuStage3Select();
           return InputPropagation.HANDLED;
@@ -430,7 +427,7 @@ public class UseItemScreen extends MenuScreen {
       if(this.charSlot > 0) {
         this.charSlot--;
       } else {
-        this.charSlot = characterCount_8011d7c4 - 1;
+        this.charSlot = characterIndices_800bdbb8.size() - 1;
       }
 
       this.charHighlight.x_40 = this.getCharacterPortraitX(this.charSlot) - 3;
@@ -441,7 +438,7 @@ public class UseItemScreen extends MenuScreen {
     if(!this.itemTargetAll) {
       playMenuSound(1);
 
-      if(this.charSlot < characterCount_8011d7c4 - 1) {
+      if(this.charSlot < characterIndices_800bdbb8.size() - 1) {
         this.charSlot++;
       } else {
         this.charSlot = 0;
@@ -453,12 +450,12 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage3Select() {
     if(!this.itemTargetAll) {
-      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
+      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8.getInt(this.charSlot));
     } else {
       boolean success = false;
 
-      for(int i = 0; i < characterCount_8011d7c4; i++) {
-        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
+      for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useInMenu(this.useItemResponse, characterIndices_800bdbb8.getInt(i));
 
         if(this.useItemResponse.success) {
           success = true;

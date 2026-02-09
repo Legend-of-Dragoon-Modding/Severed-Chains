@@ -24,7 +24,6 @@ import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.canEquip;
-import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.giveEquipment;
@@ -66,12 +65,12 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     initHighlight(this.charHighlight.getRenderable());
     this.charHighlight.hide();
 
-    this.portraits = new CharacterPortrait[characterIndices_800bdbb8.length];
+    this.portraits = new CharacterPortrait[characterIndices_800bdbb8.size()];
 
     for(int i = 0; i < this.portraits.length; i++) {
       this.portraits[i] = new CharacterPortrait();
       this.portraits[i].setPos(9 + i * 50, 174);
-      this.portraits[i].setCharId(characterIndices_800bdbb8[i]);
+      this.portraits[i].setCharId(characterIndices_800bdbb8.getInt(i));
       this.portraits[i].hide();
 
       final int finalI = i;
@@ -121,8 +120,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.returnControl = false;
 
-    for(int i = 0; i < characterCount_8011d7c4; i++) {
-      this.portraits[i].setVisibility(characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      this.portraits[i].setVisibility(canEquip(entry.item, characterIndices_800bdbb8.getInt(i)));
     }
 
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
@@ -152,7 +151,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.drawArrows();
 
-    final int charId = this.selectedCharSlot != -1 ? characterIndices_800bdbb8[this.selectedCharSlot] : -1;
+    final int charId = this.selectedCharSlot != -1 ? characterIndices_800bdbb8.getInt(this.selectedCharSlot) : -1;
 
     if(charId != -1) {
       final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charId]);
@@ -210,7 +209,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       }
     }
 
-    if(characterCount_8011d7c4 - this.charScroll > PORTRAIT_COUNT) {
+    if(characterIndices_800bdbb8.size() - this.charScroll > PORTRAIT_COUNT) {
       if(this.rightArrowRenderable == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 350, 173);
         renderable.repeatStartGlyph_18 = 0x25;
@@ -306,8 +305,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       this.charScroll = 0;
     }
 
-    for(int i = 0; i < characterCount_8011d7c4; i++) {
-      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && canEquip(entry.item, characterIndices_800bdbb8.getInt(i)));
       this.portraits[i].setX(9 + (i - this.charScroll) * 50);
     }
   }
@@ -318,7 +317,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     if(this.selectedCharSlot > 0) {
       this.selectedCharSlot--;
     } else {
-      this.selectedCharSlot = characterCount_8011d7c4 - 1;
+      this.selectedCharSlot = characterIndices_800bdbb8.size() - 1;
     }
 
     this.scrollSelectedIntoView(entry);
@@ -329,7 +328,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private void menuSelectChar5NavigateRight(final ShopScreen.ShopEntry<Equipment> entry) {
     playMenuSound(1);
 
-    if(this.selectedCharSlot < characterCount_8011d7c4 - 1) {
+    if(this.selectedCharSlot < characterIndices_800bdbb8.size() - 1) {
       this.selectedCharSlot++;
     } else {
       this.selectedCharSlot = 0;
@@ -351,21 +350,21 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result -> {
       if(result == MessageBoxResult.YES) {
-        if(this.selectedCharSlot != -1 && canEquip(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot])) {
+        if(this.selectedCharSlot != -1 && canEquip(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot))) {
           menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result1 -> {
             if(result1 == MessageBoxResult.YES) {
-              final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot]);
+              final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
               if(equipResult.previousEquipment != null) {
                 if(equipResult.success) {
                   if(giveEquipment(equipResult.previousEquipment)) {
                     gameState_800babc8.gold_94 -= this.entry.price;
                   } else {
-                    equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.selectedCharSlot]);
+                    equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
                     this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), 0, onResult -> {})));
                   }
                 } else {
-                  equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.selectedCharSlot]);
+                  equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
                   this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), 0, onResult -> {})));
                 }
               }

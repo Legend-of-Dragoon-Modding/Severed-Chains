@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -45,8 +44,8 @@ public class RecoverStatusItem extends BattleItem {
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     if(location == UsageLocation.MENU) {
       int allStatus = 0;
-      for(int i = 0; i < characterCount_8011d7c4; i++) {
-        allStatus |= gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].status_10;
+      for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+        allStatus |= gameState_800babc8.charData_32c[characterIndices_800bdbb8.getInt(i)].status_10;
       }
 
       return (this.status & allStatus) != 0;

@@ -143,8 +143,8 @@ public class PostBattleScreen extends MenuScreen {
 
           //LAB_8010d9d4
           //LAB_8010d9f8
-          for(int secondaryCharSlot = 0; secondaryCharSlot < secondaryCharIds_800bdbf8.length; secondaryCharSlot++) {
-            final int secondaryCharIndex = secondaryCharIds_800bdbf8[secondaryCharSlot];
+          for(int secondaryCharSlot = 0; secondaryCharSlot < secondaryCharIds_800bdbf8.size(); secondaryCharSlot++) {
+            final int secondaryCharIndex = secondaryCharIds_800bdbf8.getInt(secondaryCharSlot);
 
             if(secondaryCharIndex != -1) {
               this.pendingXp_8011e180[secondaryCharIndex] = (int)(MathHelper.safeDiv(totalXpFromCombat_800bc95c, xpDivisor) * secondaryCharXpMultiplier);
@@ -287,7 +287,7 @@ public class PostBattleScreen extends MenuScreen {
         break;
 
       case SECONDARY_LEVEL_UPS_9:
-        this.drawChar(24, 152, secondaryCharIds_800bdbf8[this.levelUpCharSlot_8011e170 - 3]);
+        this.drawChar(24, 152, secondaryCharIds_800bdbf8.getInt(this.levelUpCharSlot_8011e170 - 3));
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(2);
@@ -421,7 +421,7 @@ public class PostBattleScreen extends MenuScreen {
   private boolean givePendingXp() {
     final IntList charIds = new IntArrayList();
     charIds.addAll(gameState_800babc8.charIds_88);
-    charIds.addAll(IntList.of(secondaryCharIds_800bdbf8));
+    charIds.addAll(secondaryCharIds_800bdbf8);
     int pendingXpCleared = 0;
 
     for(int charSlot = 0; charSlot < charIds.size(); charSlot++) {

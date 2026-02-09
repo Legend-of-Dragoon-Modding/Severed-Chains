@@ -92,8 +92,8 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static final int[] characterIndices_800bdbb8 = new int[9];
-  public static final int[] secondaryCharIds_800bdbf8 = new int[9];
+  public static final IntList characterIndices_800bdbb8 = new IntArrayList();
+  public static final IntList secondaryCharIds_800bdbf8 = new IntArrayList();
 
   public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
