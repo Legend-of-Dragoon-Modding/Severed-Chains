@@ -1,0 +1,17 @@
+# Severed Chains Launch Configuration
+# ====================================
+# This file controls launch-time settings.
+# Copy this to 'launch.conf' and edit as needed.
+#
+# GPU_PREFERENCE - Which graphics card to use
+#   0 = Auto (let the system decide)
+#   1 = Discrete GPU (NVIDIA/AMD dedicated graphics)
+#   2 = Integrated GPU (Intel/AMD integrated graphics)
+#
+# Linux: This sets DRI_PRIME automatically.
+# Windows: You may also need to set the preference in:
+#   - NVIDIA Control Panel > Manage 3D Settings > Program Settings
+#   - AMD Radeon Settings > Graphics > Add the game
+#   - Windows Settings > Display > Graphics (Windows 10/11)
+#
+GPU_PREFERENCE=2
