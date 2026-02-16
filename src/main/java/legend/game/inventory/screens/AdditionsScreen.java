@@ -143,7 +143,7 @@ public class AdditionsScreen extends MenuScreen {
         final Addition addition = this.additions.get(i);
         final int y = this.getAdditionSlotY(i);
 
-        renderText(I18n.translate(addition), 33, y - 2, !addition.getRegistryId().equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);
+        renderText(addition.getName(), 33, y - 2, !addition.getRegistryId().equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);
 
         if(allocate) {
           final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());

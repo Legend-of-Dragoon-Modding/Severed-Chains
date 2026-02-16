@@ -159,14 +159,15 @@ public class BattleStateEf4 {
   public int _2bc;
   public int _2c0;
   public int _2c4;
-  public int _2c8;
+  public int additionLoadingStage_2c8;
   public int additionHitIndex_2cc;
-  public int _2d0;
-  public int _2d4;
+  public int additionTicks_2d0;
+  /** Copied from {@link #additionTotalSuccessFrames_2e0} */
+  public int additionRemainingSuccessFrames_2d4;
   public int additionTotalFrames_2d8;
   public int additionOverlayHitFrameOffset_2dc;
   public int additionTotalSuccessFrames_2e0;
-  public int _2e4;
+  public int additionHitCount_2e4;
   /** Indexed by char slot */
   public final int[] _2e8 = new int[3];
   public int _2f4;

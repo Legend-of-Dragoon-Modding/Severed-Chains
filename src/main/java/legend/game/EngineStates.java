@@ -49,12 +49,12 @@ public final class EngineStates {
     //LAB_800129c0
     //LAB_800129c4
     if(engineStateOnceLoaded_8004dd24 != null) {
+      menuStack.reset();
       previousEngineState_8004dd28 = currentEngineState_8004dd04 != null ? currentEngineState_8004dd04.type : null;
       vsyncMode_8007a3b8 = 2;
       loadGameStateOverlay(engineStateOnceLoaded_8004dd24, engineStateData);
       engineStateOnceLoaded_8004dd24 = null;
       engineStateData = null;
-      menuStack.reset();
 
       EVENTS.postEvent(new EngineStateChangeEvent(previousEngineState_8004dd28, currentEngineState_8004dd04));
       currentEngineState_8004dd04.updateDiscordRichPresence(gameState_800babc8, DISCORD.activity);

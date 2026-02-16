@@ -87,13 +87,13 @@ public class Button extends Control {
   }
 
   @Override
-  protected void hoverIn() {
+  public void hoverIn() {
     super.hoverIn();
     this.hover.show();
   }
 
   @Override
-  protected void hoverOut() {
+  public void hoverOut() {
     super.hoverOut();
     this.hover.hide();
   }

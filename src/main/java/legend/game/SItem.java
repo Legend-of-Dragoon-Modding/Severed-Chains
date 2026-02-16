@@ -72,9 +72,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -87,8 +89,8 @@ import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
-import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.leftArrowRenderable_800bdba4;
+import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
@@ -1380,6 +1382,7 @@ public final class SItem {
     checkForNewlyUnlockedAddition(charId);
 
     final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+    final Set<RegistryId> seen = new HashSet<>();
 
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
       final Addition addition = additionDelegate.get();
@@ -1387,6 +1390,14 @@ public final class SItem {
 
       if(additionStats.unlockState.isUsable()) {
         additions.add(addition);
+      }
+
+      seen.add(additionDelegate.getId());
+    }
+
+    for(final var entry : charData.additionStats.entrySet()) {
+      if(!seen.contains(entry.getKey()) && entry.getValue().unlockState.isUsable()) {
+        additions.add(REGISTRIES.additions.getEntry(entry.getKey()).get());
       }
     }
   }

@@ -50,7 +50,10 @@ public final class Main {
 
         gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
         gameState_800babc8.submapCut_a8 = submapCut_80052c30;
-        currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
+
+        if(lastSavableEngineState != null) {
+          currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
+        }
 
         try {
           SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);

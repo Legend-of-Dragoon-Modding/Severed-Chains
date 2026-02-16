@@ -86,6 +86,7 @@ dependencies {
 
   implementation 'org.asynchttpclient:async-http-client:3.0.1' // update check
   implementation 'org.json:json:20250107'
+  api "com.google.code.gson:gson:2.13.2"
 
   implementation 'com.opencsv:opencsv:5.9'
   implementation 'io.github.java-diff-utils:java-diff-utils:4.15'

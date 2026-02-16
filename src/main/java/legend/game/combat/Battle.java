@@ -5187,7 +5187,7 @@ public class Battle extends EngineState<Battle> {
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
-      final String additionName = I18n.translate(addition);
+      final String additionName = addition.getName();
 
       //LAB_800d3e5c
       //LAB_800d3e7c

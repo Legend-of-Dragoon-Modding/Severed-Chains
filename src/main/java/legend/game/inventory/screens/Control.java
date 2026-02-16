@@ -268,7 +268,7 @@ public abstract class Control extends ControlHost {
     return this.hovered;
   }
 
-  protected void hoverIn() {
+  public void hoverIn() {
     if(this.parent instanceof final Control control) {
       control.hoverIn();
     }
@@ -280,7 +280,7 @@ public abstract class Control extends ControlHost {
     }
   }
 
-  protected void hoverOut() {
+  public void hoverOut() {
     this.hovered = false;
 
     if(this.hoverOutHandler != null) {

@@ -102,19 +102,21 @@ public class SeveredSaveCard extends BlankSaveCard {
       //LAB_80108ba0
       renderText(this.savedGame.locationName, x + 258, y + 47, UI_TEXT_CENTERED);
 
-      final int charId = this.charIds.getInt(this.selectedCharacter);
-      final SeveredSavedGame.CharStats stats = this.savedGame.charStats.get(charId);
-      this.renderNumber(224, y + 6, stats.level, 2);
-      this.renderNumber(269, y + 6, stats.dlevel, 2);
-      renderFourDigitHp(302, y + 6, stats.hp, stats.maxHp, Renderable58.FLAG_DELETE_AFTER_RENDER);
-      this.renderNumber(332, y + 6, stats.maxHp, 4);
-      this.renderNumber(245, y + 17, this.savedGame.gold, 8);
-      this.renderNumber(306, y + 17, getTimestampPart(this.savedGame.timestamp, 0), 3);
-      this.renderCharacter(324, y + 17, 10);
-      this.renderNumber(330, y + 17, getTimestampPart(this.savedGame.timestamp, 1), 2, 0x1);
-      this.renderCharacter(342, y + 17, 10);
-      this.renderNumber(348, y + 17, getTimestampPart(this.savedGame.timestamp, 2), 2, 0x1);
-      this.renderNumber(344, y + 34, this.savedGame.stardust, 2);
+      if(this.selectedCharacter < this.charIds.size()) {
+        final int charId = this.charIds.getInt(this.selectedCharacter);
+        final SeveredSavedGame.CharStats stats = this.savedGame.charStats.get(charId);
+        this.renderNumber(224, y + 6, stats.level, 2);
+        this.renderNumber(269, y + 6, stats.dlevel, 2);
+        renderFourDigitHp(302, y + 6, stats.hp, stats.maxHp, Renderable58.FLAG_DELETE_AFTER_RENDER);
+        this.renderNumber(332, y + 6, stats.maxHp, 4);
+        this.renderNumber(245, y + 17, this.savedGame.gold, 8);
+        this.renderNumber(306, y + 17, getTimestampPart(this.savedGame.timestamp, 0), 3);
+        this.renderCharacter(324, y + 17, 10);
+        this.renderNumber(330, y + 17, getTimestampPart(this.savedGame.timestamp, 1), 2, 0x1);
+        this.renderCharacter(342, y + 17, 10);
+        this.renderNumber(348, y + 17, getTimestampPart(this.savedGame.timestamp, 2), 2, 0x1);
+        this.renderNumber(344, y + 34, this.savedGame.stardust, 2);
+      }
     }
   }
 }

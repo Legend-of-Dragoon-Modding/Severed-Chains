@@ -1047,6 +1047,7 @@ LABEL_155:
 jmp_cmp ==, 0x0, var[45][99], inl[:LABEL_157] ; operand, left, right, addr
 mov stor[14], stor[9] ; source, dest
 decr stor[9] ; operand
+; fail animation
 call Battle::scriptGetHitProperty, stor[0], stor[9], 0xe, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_157] ; operand, left, right, addr
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], stor[8] ; bentIndex, animIndex
@@ -1103,27 +1104,28 @@ incr var[45][82] ; operand
 return
 
 ; SUBROUTINE
+; Wait for hit frame offset
 JMP_3128_1:
-incr var[45][84] ; operand
+incr var[45][84] ; increment addition ticks
 jmp_cmp !=, var[45][87], var[45][84], inl[:LABEL_163] ; operand, left, right, addr
-incr var[45][82] ; operand
+incr var[45][82] ; increment loading stage
 LABEL_163:
 return
 
 ; SUBROUTINE
 JMP_3128_2:
-incr var[45][84] ; operand
-decr var[45][85] ; operand
+incr var[45][84] ; increment addition ticks
+decr var[45][85] ; decrement remaining success frames
 jmp_cmp !=, 0x0, var[45][85], inl[:LABEL_164] ; operand, left, right, addr
-incr var[45][82] ; operand
+incr var[45][82] ; increment loading stage
 gosub inl[:LABEL_237] ; addr
 LABEL_164:
 return
 
 ; SUBROUTINE
 JMP_3128_3:
-incr var[45][84] ; operand
-incr var[45][82] ; operand
+incr var[45][84] ; increment addition ticks
+incr var[45][82] ; increment loading stage
 gosub inl[:LABEL_226] ; addr
 gosub inl[:LABEL_166] ; addr
 gosub inl[:LABEL_175] ; addr
@@ -1200,6 +1202,7 @@ LABEL_175:
 jmp_cmp &, 0x10, var[45][105], inl[:LABEL_179] ; operand, left, right, addr
 gosub inl[:CAN_BECOME_DRAGOON] ; addr
 jmp_cmp ==, 0x0, stor[10], inl[:LABEL_179] ; operand, left, right, addr
+; sp
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0x5, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 call Battle::scriptGetBentStat, stor[0], ADDITION_SP_MULTIPLIER, stor[9] ; bentIndex, statIndex, value
 call Battle::scriptGetBentStat, stor[0], SP_MULTIPLIER, stor[10] ; bentIndex, statIndex, value
@@ -1402,10 +1405,12 @@ add var[45][88], stor[10] ; amount, operand
 jmp_cmp !=, var[45][84], stor[10], inl[:LABEL_210] ; operand, left, right, addr
 mov 0x3, stor[9] ; source, dest
 jmp_cmp ==, stor[14], var[45][89], inl[:LABEL_209] ; operand, left, right, addr
+; frames to hit position
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xc, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 mov stor[8], stor[9] ; source, dest
 sub var[45][122], stor[8] ; amount, operand
 mov stor[9], var[45][122] ; source, dest
+; hit distance from target
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xb, stor[9] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp !&, 0x80, stor[9], inl[:LABEL_207] ; operand, left, right, addr
 or 0xffffff00, stor[9] ; right, left
@@ -1438,10 +1443,12 @@ jmp_cmp !=, var[45][84], stor[10], inl[:LABEL_215] ; operand, left, right, addr
 mov 0x3, stor[9] ; source, dest
 mov 0x3, stor[11] ; source, dest
 jmp_cmp ==, stor[14], var[45][89], inl[:LABEL_214] ; operand, left, right, addr
+; frames to hit position
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xc, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 mov stor[8], stor[9] ; source, dest
 sub var[45][122], stor[8] ; amount, operand
 mov stor[9], var[45][122] ; source, dest
+; hit distance from target
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xb, stor[9] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp !&, 0x80, stor[9], inl[:LABEL_212] ; operand, left, right, addr
 or 0xffffff00, stor[9] ; right, left
@@ -1474,6 +1481,7 @@ mov 0x56, stor[11] ; source, dest
 mov 0x1, stor[10] ; source, dest
 mov 0x3, stor[12] ; source, dest
 LABEL_220:
+; total frames, overlay hit frame offset, total success frames
 call Battle::scriptGetHitProperty, stor[0], stor[14], stor[10], var[45][stor[11]] ; bentIndex, hitNum, hitPropertyIndex, value
 incr stor[10] ; operand
 incr stor[11] ; operand
@@ -1548,11 +1556,13 @@ decr stor[8] ; operand
 jmp_cmp ==, stor[14], stor[8], inl[:LABEL_232] ; operand, left, right, addr
 call Battle::scriptGetBentStat, stor[28], MONSTER_DAMAGE_REDUCTION, stor[8] ; bentIndex, statIndex, value
 jmp_cmp &, 0x10, stor[8], inl[:LABEL_231] ; operand, left, right, addr
+; camera movement Z
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0x9, stor[10] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp !=, var[45][84], stor[10], inl[:LABEL_231] ; operand, left, right, addr
 gosub inl[:LABEL_235] ; addr
 mov var[45][112], stor[11] ; source, dest
 add stor[11], stor[8] ; amount, operand
+; camera movement X
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0x8, stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp ==, 0x0, stor[11], inl[:LABEL_230] ; operand, left, right, addr
 mul 0x64, stor[11] ; amount, operand
@@ -1561,6 +1571,7 @@ LABEL_230:
 mul 0x100, stor[8] ; amount, operand
 mul 0x100, stor[9] ; amount, operand
 mul 0x100, stor[10] ; amount, operand
+; camera movement ticks
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xa, stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
 call Battle::scriptCameraMoveRefpoint, 0x0, stor[8], stor[9], stor[10], 0x0, stor[11], 0x0, stor[0] ; mode, x, y, z, ?, ticks, stepType, scriptIndex
 LABEL_231:
@@ -1569,6 +1580,7 @@ LABEL_232:
 jmp_cmp !=, 0x3, var[45][82], inl[:LABEL_231] ; operand, left, right, addr
 call SEffe::scriptAllocateScreenDistortionEffect, stor[21], 0x0, 0x2 ; effectIndex, angleStep, type
 call SEffe::scriptAddLifespanAttachment, stor[21], 0x6 ; effectIndex, ticks
+; is final hit
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0x7, stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp ==, 0x0, stor[11], inl[:LABEL_233] ; operand, left, right, addr
 gosub inl[:LABEL_236] ; addr
@@ -1580,6 +1592,7 @@ shl 0x8, stor[9] ; right, left
 shl 0x8, stor[10] ; right, left
 call Battle::scriptCameraAccelerateViewpoint, 0x5, stor[8], stor[9], stor[10], 0x6, 0x1, 0x1, 0x0, 0x0 ; mode, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex
 LABEL_233:
+; camera movement X
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0x8, stor[11] ; bentIndex, hitNum, hitPropertyIndex, value
 jmp_cmp ==, 0x0, stor[11], inl[:LABEL_234] ; operand, left, right, addr
 gosub inl[:LABEL_235] ; addr
@@ -2541,10 +2554,12 @@ call Battle::scriptSetInterpolationEnabled, stor[0], 0x0 ; bentIndex, set
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x2 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 call Battle::scriptGetBentStat, stor[28], MIDDLE_OFFSET_X, stor[9] ; bentIndex, statIndex, value
+; frames to hit position
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0xc, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 mov stor[8], var[45][122] ; source, dest
 mov 0x0, var[45][123] ; source, dest
 add stor[8], stor[9] ; amount, operand
+; hit distance from target
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0xb, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 add stor[8], stor[9] ; amount, operand
 mul 0x64, stor[9] ; amount, operand
@@ -4873,6 +4888,7 @@ gosub inl[:LABEL_471] ; addr
 
 gosub inl[:GET_MY_CHAR_ID] ; addr
 jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_531] ; operand, left, right, addr
+; audio file
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 call Battle::scriptLoadCharacterAttackSounds, stor[8] ; charId
 

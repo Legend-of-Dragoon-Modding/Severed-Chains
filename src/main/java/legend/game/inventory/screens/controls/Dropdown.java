@@ -86,6 +86,13 @@ public class Dropdown<T> extends Control {
     this.setSize(100, 16);
   }
 
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+    this.background.setZ(z);
+    this.downArrow.setZ(z - 1);
+  }
+
   public void setFont(final Font font) {
     this.font = font;
   }
@@ -109,9 +116,30 @@ public class Dropdown<T> extends Control {
     }
   }
 
+  public void removeOption(final T option) {
+    this.options.remove(option);
+    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
+    this.setSelectedIndex(this.selectedIndex);
+  }
+
+  public void removeOption(final int index) {
+    this.options.remove(index);
+    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
+    this.setSelectedIndex(this.selectedIndex);
+  }
+
+  public void setOptions(final int index, final T option) {
+    this.options.set(index, option);
+  }
+
   public void setSelectedIndex(final int index) {
-    if(index < 0 || index >= this.options.size()) {
+    if(index < 0) {
       this.selectedIndex = -1;
+      return;
+    }
+
+    if(index >= this.options.size()) {
+      this.selectedIndex = this.options.size() - 1;
       return;
     }
 

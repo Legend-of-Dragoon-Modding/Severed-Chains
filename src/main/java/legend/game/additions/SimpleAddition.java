@@ -58,5 +58,14 @@ public abstract class SimpleAddition extends Addition {
       this.damage = damage;
       this.sp = sp;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if(!(obj instanceof final LevelMultipliers other)) {
+        return false;
+      }
+
+      return this.damage == other.damage && this.sp == other.sp;
+    }
   }
 }
