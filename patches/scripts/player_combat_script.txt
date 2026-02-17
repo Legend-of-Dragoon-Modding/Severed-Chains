@@ -1416,16 +1416,9 @@ sub var[45][122], stor[8] ; amount, operand
 mov stor[9], var[45][122] ; source, dest
 ; hit distance from target
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xb, stor[9] ; bentIndex, hitNum, hitPropertyIndex, value
-jmp_cmp !&, 0x80, stor[9], inl[:LABEL_207] ; operand, left, right, addr
-or 0xffffff00, stor[9] ; right, left
-LABEL_207:
 add stor[8], stor[9] ; amount, operand
 add var[45][123], stor[9] ; amount, operand
 mov 0x0, stor[8] ; source, dest
-jmp_cmp <=, 0x0, stor[9], inl[:LABEL_208] ; operand, left, right, addr
-mov stor[9], stor[8] ; source, dest
-mov 0x0, stor[9] ; source, dest
-LABEL_208:
 mov stor[8], var[45][123] ; source, dest
 LABEL_209:
 mul 0x64, stor[9] ; amount, operand
@@ -1454,16 +1447,9 @@ sub var[45][122], stor[8] ; amount, operand
 mov stor[9], var[45][122] ; source, dest
 ; hit distance from target
 call Battle::scriptGetHitProperty, stor[0], stor[14], 0xb, stor[9] ; bentIndex, hitNum, hitPropertyIndex, value
-jmp_cmp !&, 0x80, stor[9], inl[:LABEL_212] ; operand, left, right, addr
-or 0xffffff00, stor[9] ; right, left
-LABEL_212:
 add stor[8], stor[9] ; amount, operand
 add var[45][123], stor[9] ; amount, operand
 mov 0x0, stor[8] ; source, dest
-jmp_cmp <=, 0x0, stor[9], inl[:LABEL_213] ; operand, left, right, addr
-mov stor[9], stor[8] ; source, dest
-mov 0x0, stor[9] ; source, dest
-LABEL_213:
 mov stor[8], var[45][123] ; source, dest
 LABEL_214:
 mul 0x64, stor[9] ; amount, operand
