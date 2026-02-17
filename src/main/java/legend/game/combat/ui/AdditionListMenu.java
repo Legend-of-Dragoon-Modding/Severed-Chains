@@ -3,7 +3,6 @@ package legend.game.combat.ui;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
@@ -66,7 +65,7 @@ public class AdditionListMenu extends ListMenu {
 
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
-    renderText(I18n.translate(this.menuAdditions.get(index)), x, y, this.fontOptions);
+    renderText(this.menuAdditions.get(index).getName(), x, y, this.fontOptions);
     renderText("/", x + 146, y, this.fontOptions);
 
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
