@@ -305,6 +305,8 @@
 "Battle::scriptSetBentRawStat","in","int","bentIndex","The BattleEntity27c script index","none"
 "Battle::scriptSetBentRawStat","in","int","value","The new stat value","none"
 "Battle::scriptSetBentRawStat","in","legend.game.combat.bent.BattleEntityStat","statIndex","The stat index","none"
+"Battle::scriptSetAnimationScale","in","int","bentIndex","The BattleEntity27c script index","none"
+"Battle::scriptSetAnimationScale","in","int","scale","The animation scale (percentile)","none"
 "Text::scriptGetFreeTextboxIndex","out","int","textboxIndex","Textbox index, or -1 if none are free","none"
 "Text::scriptInitTextbox","in","int","textboxIndex","The textbox index","none"
 "Text::scriptInitTextbox","in","int","p1","","none"

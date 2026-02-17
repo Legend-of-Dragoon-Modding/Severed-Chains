@@ -140,7 +140,9 @@ public final class Models {
     animateModel(model, 2);
   }
 
-  public static void animateModel(final Model124 model, final int framesPerKeyframe) {
+  public static void animateModel(final Model124 model, int framesPerKeyframe) {
+    framesPerKeyframe = Math.round(framesPerKeyframe * model.interpolationScale);
+
     //LAB_80020be8
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
@@ -292,6 +294,7 @@ public final class Models {
     model.partCount_98 = tmdAnimFile.modelPartCount_0c;
     model.totalFrames_9a = tmdAnimFile.totalFrames_0e;
     model.animationState_9c = 0;
+    model.interpolationScale = tmdAnimFile.interpolationScale;
 
     applyKeyframe(model);
 

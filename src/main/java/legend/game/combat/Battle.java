@@ -91,7 +91,6 @@ import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
@@ -825,6 +824,8 @@ public class Battle extends EngineState<Battle> {
     functions[176] = this::scriptLevelUpAddition;
     functions[177] = this::scriptGetBentStat2;
     functions[178] = this::scriptSetBentRawStat;
+
+    functions[182] = this::scriptSetAnimationScale;
 
     functions[226] = this::scriptLoadCharAttackSounds;
 
@@ -3520,6 +3521,16 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetInterpolationEnabled(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     bent.model_148.disableInterpolation_a2 = script.params_20[1].get() == 0;
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Sets a battle entity's animation scale")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The animation scale (percentile)")
+  @Method(0x800cb674L)
+  public FlowControl scriptSetAnimationScale(final RunningScript<?> script) {
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    bent.model_148.interpolationScale = script.params_20[1].get() / 100.0f;
     return FlowControl.CONTINUE;
   }
 

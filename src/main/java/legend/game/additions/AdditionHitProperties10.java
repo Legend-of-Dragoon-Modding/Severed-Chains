@@ -4,6 +4,8 @@ package legend.game.additions;
 public class AdditionHitProperties10 {
   private static final AdditionSound NO_SOUND = new AdditionSound(-1, 0);
 
+  public int animationScale;
+
   /** Always 0xc0 except 0xe0 for first hit of ultimate addition. Appears to be unused. */
   public int flags_00;
   /**
@@ -59,6 +61,10 @@ public class AdditionHitProperties10 {
   }
 
   public int get(final int index) {
+    if(index == 100) {
+      return this.animationScale;
+    }
+
     if(index >= 16) {
       final int soundIndex = (index - 16) / 2;
       final AdditionSound sound;

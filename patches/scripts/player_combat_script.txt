@@ -1000,6 +1000,8 @@ call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 LABEL_149:
 yield
 jmp_cmp !=, 0x5, var[45][82], inl[:LABEL_148] ; operand, left, right, addr
+
+call Battle::scriptSetAnimationScale, stor[0], 100
 gosub inl[:CAN_BECOME_DRAGOON] ; addr
 jmp_cmp ==, 0x0, stor[10], inl[:LABEL_151] ; operand, left, right, addr
 mov var[45][108], stor[8] ; source, dest
@@ -1088,6 +1090,9 @@ LABEL_161:
 call Battle::scriptLevelUpAddition, stor[0], 0x0 ; bentIndex, doIt
 return
 
+ADDITION_ANIMATION_SCALE:
+data 0
+
 ; SUBROUTINE
 JMP_3128_0:
 gosub inl[:CACHE_ADDITION_TIMINGS] ; addr
@@ -1096,6 +1101,8 @@ mov 0x10, stor[8] ; source, dest
 add stor[14], stor[8] ; amount, operand
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], stor[8] ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
+call Battle::scriptGetHitProperty, stor[0], stor[14], 100, inl[:ADDITION_ANIMATION_SCALE] ; bentIndex, hitNum, hitPropertyIndex, value
+call Battle::scriptSetAnimationScale, stor[0], inl[:ADDITION_ANIMATION_SCALE]
 gosub inl[:LABEL_221] ; addr
 gosub inl[:LABEL_247] ; addr
 mov 0x0, var[45][84] ; source, dest
@@ -1264,9 +1271,6 @@ jmp inl[:JMP_3128_0] ; addr
 LABEL_184:
 mov 0x1, stor[13] ; source, dest
 LABEL_185:
-jmp_cmp >=, 0x0, stor[13], inl[:LABEL_186] ; operand, left, right, addr
-jmp inl[:LABEL_186] ; addr
-LABEL_186:
 mov 0x5, var[45][82] ; source, dest
 return
 LABEL_187:
