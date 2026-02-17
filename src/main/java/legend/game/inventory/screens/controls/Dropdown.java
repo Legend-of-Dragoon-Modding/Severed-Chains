@@ -14,15 +14,14 @@ import legend.game.inventory.screens.TextColour;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class Dropdown<T> extends Control {
   private final Panel background;
@@ -34,17 +33,17 @@ public class Dropdown<T> extends Control {
   private boolean allowWrapY = true;
 
   private final List<T> options = new ArrayList<>();
-  private final Function<T, String> toString;
+  private final EntryToString<T> toString;
   private int hoverIndex = -1;
   private int selectedIndex = -1;
   private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Dropdown() {
-    this(String::valueOf);
+    this((i, e) -> e.toString());
   }
 
-  public Dropdown(final Function<T, String> toString) {
+  public Dropdown(final EntryToString<T> toString) {
     this.toString = toString;
     this.background = this.addControl(Panel.subtle());
 
@@ -237,7 +236,7 @@ public class Dropdown<T> extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(this.selectedIndex != -1) {
-      final String text = this.toString.apply(this.options.get(this.selectedIndex));
+      final String text = this.toString.toString(this.selectedIndex, this.options.get(this.selectedIndex));
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
@@ -279,7 +278,7 @@ public class Dropdown<T> extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.toString.apply(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
+        renderText(Dropdown.this.toString.toString(i, Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
       }
 
       textZ_800bdf00 = oldZ;
@@ -357,5 +356,10 @@ public class Dropdown<T> extends Control {
     protected boolean propagateRender() {
       return true;
     }
+  }
+
+  @FunctionalInterface
+  public interface EntryToString<T> {
+    String toString(final int index, final T entry);
   }
 }
