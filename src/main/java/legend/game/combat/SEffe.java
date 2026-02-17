@@ -186,7 +186,7 @@ public final class SEffe {
   public static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
 
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
-  public static final byte[] additionHitCompletionState_8011a014 = new byte[8];
+  public static byte[] additionHitCompletionState_8011a014;
 
   private static int daddyHudOffsetX_8011a01c;
   private static int daddyHudOffsetY_8011a020;

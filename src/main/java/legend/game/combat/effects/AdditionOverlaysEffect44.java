@@ -102,6 +102,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final AdditionOverlaysHit20[] hitArray = new AdditionOverlaysHit20[hitCount];
     Arrays.setAll(hitArray, AdditionOverlaysHit20::new);
     this.hitOverlays_40 = hitArray;
+    additionHitCompletionState_8011a014 = new byte[hitCount + 1];
     int overlayDisplayDelay = this.getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xff;
     this.unused_36 = overlayDisplayDelay;
 
