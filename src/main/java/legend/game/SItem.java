@@ -2372,7 +2372,7 @@ public final class SItem {
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
       stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
 
-      if(stats.selectedAddition_35 != null) {
+      if(stats.selectedAddition_35 != null && REGISTRIES.additions.hasEntry(stats.selectedAddition_35)) {
         final Addition addition = REGISTRIES.additions.getEntry(stats.selectedAddition_35).get();
         final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(stats.selectedAddition_35, k -> new CharacterAdditionStats());
 
