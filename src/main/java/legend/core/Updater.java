@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
@@ -98,7 +100,18 @@ public class Updater {
 
     for(int releaseIndex = 0; releaseIndex < releasesJson.length(); releaseIndex++) {
       final JSONObject releaseJson = releasesJson.getJSONObject(releaseIndex);
-      final Release release = new Release(releaseJson.getString("tag_name"), releaseJson.getString("html_url"), ZonedDateTime.parse(releaseJson.getString("updated_at")), releaseJson.getBoolean("prerelease"));
+
+      // get asset download URLs from release
+      final Map<String, String> assetUrls = new HashMap<>();
+      if(releaseJson.has("assets")) {
+        final JSONArray assets = releaseJson.getJSONArray("assets");
+        for(int assetIndex = 0; assetIndex < assets.length(); assetIndex++) {
+          final JSONObject asset = assets.getJSONObject(assetIndex);
+          assetUrls.put(asset.getString("name"), asset.getString("browser_download_url"));
+        }
+      }
+
+      final Release release = new Release(releaseJson.getString("tag_name"), releaseJson.getString("html_url"), ZonedDateTime.parse(releaseJson.getString("updated_at")), releaseJson.getBoolean("prerelease"), assetUrls);
       releases.add(release);
       LOGGER.info("Found release %s", release);
     }
@@ -158,12 +171,40 @@ public class Updater {
     public final String uri;
     public final ZonedDateTime timestamp;
     public final boolean prerelease;
+    public final Map<String, String> assetUrls;
 
-    private Release(final String tag, final String uri, final ZonedDateTime timestamp, final boolean prerelease) {
+    private Release(final String tag, final String uri, final ZonedDateTime timestamp, final boolean prerelease, final Map<String, String> assetUrls) {
       this.tag = tag;
       this.uri = uri;
       this.timestamp = timestamp;
       this.prerelease = prerelease;
+      this.assetUrls = assetUrls;
+    }
+
+    /**
+     * returns the download URL for the archive script also determines OS dynamically or null if not found.
+     */
+    public String getPlatformDownloadUrl() {
+      final String os = System.getProperty("os.name", "").toLowerCase(java.util.Locale.US);
+      final String arch = System.getProperty("os.arch", "").toLowerCase(java.util.Locale.US);
+      final boolean isArm = arch.startsWith("arm") || arch.startsWith("aarch64");
+
+      final String keyword;
+      if(os.contains("win")) {
+        keyword = "Windows";
+      } else if(os.contains("mac")) {
+        keyword = isArm ? "MacOS_M1" : "MacOS_Intel";
+      } else {
+        keyword = isArm ? "Linux_ARM64" : "Linux";
+      }
+
+      for(final var entry : this.assetUrls.entrySet()) {
+        if(entry.getKey().contains(keyword) && !entry.getKey().contains("Steam_Deck")) {
+          return entry.getValue();
+        }
+      }
+
+      return null;
     }
 
     @Override

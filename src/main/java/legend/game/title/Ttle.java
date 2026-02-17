@@ -6,6 +6,7 @@ import legend.core.Async;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
+import legend.core.SelfUpdater;
 import legend.core.Updater;
 import legend.core.Version;
 import legend.core.gpu.Bpp;
@@ -182,6 +183,8 @@ public class Ttle extends EngineState<Ttle> {
   public static final FontOptions VERSION_FONT = new FontOptions().size(0.5f).colour(TextColour.LIGHT_BROWN).noShadow().horizontalAlign(HorizontalAlign.RIGHT);
 
   private Updater.Release update;
+  private volatile SelfUpdater.UpdateProgress updateProgress;
+  private boolean updateInProgress;
 
   private static WindowEvents.Cursor onMouseMove;
   private static WindowEvents.Click onMouseRelease;
@@ -858,7 +861,7 @@ public class Ttle extends EngineState<Ttle> {
 
           if(this.update != null) {
             if(MathHelper.inBox((int)(x / scaleX), (int)(y / scaleY), (int)(left / scaleX + 6), (int)clickY, 105, 14)) {
-              this.downloadUpdate();
+              this.autoUpdate();
             }
 
             clickY += 14.0f;
@@ -879,8 +882,29 @@ public class Ttle extends EngineState<Ttle> {
     onInputActionPressed = RENDERER.events().onInputActionPressed(this::handleMainInput);
   }
 
-  private void downloadUpdate() {
-    PLATFORM.openUrl(this.update.uri);
+  private void autoUpdate() {
+    if(this.updateInProgress) {
+      return;
+    }
+
+    final String downloadUrl = this.update.getPlatformDownloadUrl();
+    if(downloadUrl == null) {
+      LOGGER.info("No platform specific download found opening browser instead");
+      PLATFORM.openUrl(this.update.uri);
+      return;
+    }
+
+    this.updateInProgress = true;
+    this.updateProgress = new SelfUpdater.UpdateProgress(SelfUpdater.UpdateState.LAUNCHING_UPDATER, "Launching updater...");
+    LOGGER.info("Starting auto update from %s", downloadUrl);
+
+    //launch the external updater jar and exit the game
+    SelfUpdater.launchUpdaterAndExit(downloadUrl, progress -> {
+      this.updateProgress = progress;
+      if(progress.state() == SelfUpdater.UpdateState.FAILED) {
+        this.updateInProgress = false;
+      }
+    });
   }
 
   private static void removeInputHandlers() {
@@ -930,7 +954,7 @@ public class Ttle extends EngineState<Ttle> {
 
           this.menuState_800c672c = 2;
         } else if(this.update != null && action == INPUT_ACTION_TITLE_UPDATE.get()) {
-          this.downloadUpdate();
+          this.autoUpdate();
         } else if(!this.foundMemcards.isEmpty() && action == INPUT_ACTION_TITLE_CONVERT_MEMCARD.get()) {
           this.menuState_800c672c = 4;
           this.menuTransitionState_800c6728 = 2;
@@ -1178,6 +1202,12 @@ public class Ttle extends EngineState<Ttle> {
     }
 
     renderText(Version.FULL_VERSION, 364, 4, VERSION_FONT, (model, shadow) -> model.alpha(this.menuUpdateTransparency / 128.0f).translucency(Translucency.HALF_B_PLUS_HALF_F));
+
+    // render auto update status whenever there is progress information
+    final SelfUpdater.UpdateProgress progress = this.updateProgress;
+    if(progress != null) {
+      renderText(progress.message(), 10.0f, 230.0f, UI_WHITE_SMALL);
+    }
 
     //LAB_800c9390
     //LAB_800c939c
