@@ -4,9 +4,21 @@ package legend.game.additions;
 public class AdditionHitProperties10 {
   private static final AdditionSound NO_SOUND = new AdditionSound(-1, 0);
 
+  /** Always 0xc0 except 0xe0 for first hit of ultimate addition. Appears to be unused. */
   public int flags_00;
+  /**
+   * The total number of frames for this hit
+   * <ul>
+   *   <li>Usually {@link #overlayHitFrameOffset_02} + {@link #totalSuccessFrames_03} + 1</li>
+   *   <li>Increasing it past this amount will increase the amount of time after the button press</li>
+   *   <li>Decreasing it below {@link #overlayHitFrameOffset_02} + {@link #totalSuccessFrames_03} + 1 will have no effect, it will still wait that long before continuing</li>
+   *   <li>If the animation is too short, the player will stay on the last frame of the animation until the hit finishes</li>
+   * </ul>
+   */
   public int totalFrames_01;
+  /** The number of frames until the player has to press the addition button. Higher values make the button press later. */
   public int overlayHitFrameOffset_02;
+  /** The number of frames the player has to press the addition button before it's considered a miss */
   public int totalSuccessFrames_03;
   public int damageMultiplier_04;
   public int sp_05;
@@ -15,7 +27,9 @@ public class AdditionHitProperties10 {
   public int cameraMovementX_08;
   public int cameraMovementZ_09;
   public int cameraMovementTicks_0a;
+  /** The amount to push the enemy back on hit */
   public int hitDistanceFromTarget_0b;
+  /** Controls how long it takes for the player to get to the enemy. Lower values move faster, higher values move slower. Retail additions have values for all hits, but it only seems to have an effect on the first hit. */
   public int framesToHitPosition_0c;
   public int _0d; // always 32 (except for a few for Haschel), not used in PCS
   /** If non-zero, this animation will be used if this hit is missed */
