@@ -9224,7 +9224,7 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
-  private final UiBox scriptUi = new UiBox();
+  private UiBox scriptUi;
 
   @ScriptDescription("Renders the battle HUD background")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position (centre)")
@@ -9238,6 +9238,10 @@ public class Battle extends EngineState<Battle> {
     final int r = textboxColours_800c6fec[colourIndex][0];
     final int g = textboxColours_800c6fec[colourIndex][1];
     final int b = textboxColours_800c6fec[colourIndex][2];
+
+    if(this.scriptUi == null) {
+      this.scriptUi = new UiBox();
+    }
 
     this.scriptUi.setPos(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
