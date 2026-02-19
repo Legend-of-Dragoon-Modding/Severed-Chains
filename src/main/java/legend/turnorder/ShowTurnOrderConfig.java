@@ -1,4 +1,4 @@
-package legend.game.modding.coremod.config;
+package legend.turnorder;
 
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.ConfigCategory;

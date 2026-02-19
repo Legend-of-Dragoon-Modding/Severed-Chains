@@ -225,7 +225,6 @@ lod_core.config.icon_set.ENHANCED=Enhanced
 lod_core.config.icon_set.RETAIL=Retail
 lod_core.config.run_by_default.label=Run by default
 lod_core.config.run_by_default.help=When enabled, the character will run by default and walk when the run input is held
-lod_core.config.show_turn_order.label=Show turn order
 lod_core.config.item_group_sort_mode.label=Item group sorting
 lod_core.config.item_group_sort_mode.help=Controls sorting within groups (e.g. potions, spells) of items
 lod_core.config.item_group_sort_mode.ALPHABETICAL=Alphabetical
@@ -258,6 +257,7 @@ lod_core.input_actions.fmv_skip.name=FMV: skip
 lod_core.input_actions.general_toggle_fullscreen.name=General: toggle fullscreen
 lod_core.input_actions.general_speed_up.name=General: speed up
 lod_core.input_actions.general_slow_down.name=General: slow down
+lod_core.input_actions.general_toggle_speed.name=General: toggle speed
 
 lod_core.input_actions.freecam_toggle.name=Freecam: toggle
 lod_core.input_actions.freecam_forward.name=Freecam: forward

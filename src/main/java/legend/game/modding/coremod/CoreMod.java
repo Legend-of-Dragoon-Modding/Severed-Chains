@@ -58,7 +58,6 @@ import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
 import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
 import legend.game.modding.coremod.config.ShowAdvancedOptionsConfigEntry;
-import legend.game.modding.coremod.config.ShowTurnOrderConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
 import legend.game.modding.coremod.shops.EquipmentShopExtension;
@@ -145,7 +144,6 @@ public class CoreMod {
   public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
-  public static final RegistryDelegate<ShowTurnOrderConfig> SHOW_TURN_ORDER = CONFIG_REGISTRAR.register("show_turn_order", ShowTurnOrderConfig::new);
   public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
@@ -177,6 +175,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SLOW_DOWN = INPUT_ACTION_REGISTRAR.register("general_slow_down", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_SPEED = INPUT_ACTION_REGISTRAR.register("general_toggle_speed", InputAction::editable);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_TOGGLE = INPUT_ACTION_REGISTRAR.register("freecam_toggle", InputAction::hidden);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_FORWARD = INPUT_ACTION_REGISTRAR.register("freecam_forward", InputAction::hidden);

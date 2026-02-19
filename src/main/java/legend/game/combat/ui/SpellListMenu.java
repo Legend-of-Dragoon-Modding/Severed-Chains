@@ -167,7 +167,7 @@ public class SpellListMenu extends ListMenu {
 
         //Selected item description
         if(this.description == null) {
-          this.description = new UiBox("Battle UI Spell Description", 44, 156, 232, 14);
+          this.description = new UiBox(44, 156, 232, 14);
         }
 
         this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
@@ -176,16 +176,6 @@ public class SpellListMenu extends ListMenu {
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
         renderText(I18n.translate(spell.getTranslationKey("description")), 160, 157, this.fontOptions);
       }
-    }
-  }
-
-  @Override
-  public void delete() {
-    super.delete();
-
-    if(this.description != null) {
-      this.description.delete();
-      this.description = null;
     }
   }
 }

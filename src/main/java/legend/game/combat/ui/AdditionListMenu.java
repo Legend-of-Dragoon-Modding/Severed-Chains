@@ -132,7 +132,7 @@ public class AdditionListMenu extends ListMenu {
 
         //Selected item description
         if(this.description == null) {
-          this.description = new UiBox("Battle UI Addition Description", 44, 156, 232, 14);
+          this.description = new UiBox(44, 156, 232, 14);
         }
 
         this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
@@ -141,16 +141,6 @@ public class AdditionListMenu extends ListMenu {
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
         renderText("Hits: " + addition.getHitCount(gameState_800babc8, charData, additionStats) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
-    }
-  }
-
-  @Override
-  public void delete() {
-    super.delete();
-
-    if(this.description != null) {
-      this.description.delete();
-      this.description = null;
     }
   }
 }

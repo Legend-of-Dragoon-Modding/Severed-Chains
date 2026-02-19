@@ -9224,7 +9224,7 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
-  private UiBox scriptUi;
+  private final UiBox scriptUi = new UiBox();
 
   @ScriptDescription("Renders the battle HUD background")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position (centre)")
@@ -9239,17 +9239,12 @@ public class Battle extends EngineState<Battle> {
     final int g = textboxColours_800c6fec[colourIndex][1];
     final int b = textboxColours_800c6fec[colourIndex][2];
 
-    // This is kinda dumb since we'll have to upload a new box each frame, but there isn't a great
-    // way to deal with it. Maybe check to see if any of the params have changed before deleting?
-
-    if(this.scriptUi != null) {
-      this.scriptUi.delete();
-    }
-
-    this.scriptUi = new UiBox(
-      "Scripted Battle UI",
+    this.scriptUi.setPos(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
-      (short)script.params_20[1].get() - script.params_20[3].get() / 2,
+      (short)script.params_20[1].get() - script.params_20[3].get() / 2
+    );
+
+    this.scriptUi.setSize(
       (short)script.params_20[2].get(),
       (short)script.params_20[3].get()
     );

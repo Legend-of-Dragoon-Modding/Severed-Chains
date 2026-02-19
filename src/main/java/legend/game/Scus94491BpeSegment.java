@@ -190,14 +190,6 @@ public final class Scus94491BpeSegment {
       if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.W && currentEngineState_8004dd04 instanceof final Battle battle) {
         battle.allMonstersDead();
       }
-
-      if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.Q) {
-        if(Config.getGameSpeedMultiplier() == 1) {
-          Config.setGameSpeedMultiplier(Config.getLoadedGameSpeedMultiplier());
-        } else {
-          Config.setGameSpeedMultiplier(1);
-        }
-      }
     });
 
     RENDERER.events().onInputActionPressed((window, action, repeat) -> {

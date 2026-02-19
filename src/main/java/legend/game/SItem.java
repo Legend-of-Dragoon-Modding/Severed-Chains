@@ -91,6 +91,7 @@ import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.leftArrowRenderable_800bdba4;
 import static legend.game.Menus.loadMenuTexture;
+import static legend.game.Menus.managedRenderables_800bdc5c;
 import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
@@ -1199,7 +1200,14 @@ public final class SItem {
 
   @Method(0x80103910L)
   public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
+    final Renderable58 portrait = renderManualCharacterPortrait(charId, x, y, flags);
+    managedRenderables_800bdc5c.addFirst(portrait);
+    return portrait;
+  }
+
+  @Method(0x80103910L)
+  public static Renderable58 renderManualCharacterPortrait(final int charId, final int x, final int y, final int flags) {
+    final Renderable58 renderable = allocateManualRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
     renderable.glyph_04 = 48 + charId;
     renderable.startGlyph_10 = renderable.glyph_04;
