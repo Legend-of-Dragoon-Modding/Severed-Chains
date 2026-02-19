@@ -176,6 +176,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SLOW_DOWN = INPUT_ACTION_REGISTRAR.register("general_slow_down", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_SPEED = INPUT_ACTION_REGISTRAR.register("general_toggle_speed", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TURBO = INPUT_ACTION_REGISTRAR.register("general_turbo", InputAction::editable);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_TOGGLE = INPUT_ACTION_REGISTRAR.register("freecam_toggle", InputAction::hidden);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_FORWARD = INPUT_ACTION_REGISTRAR.register("freecam_forward", InputAction::hidden);
