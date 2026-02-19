@@ -24,8 +24,6 @@ public class ModsScreen extends VerticalLayoutScreen {
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, String> helpText = new HashMap<>();
 
-  private final FontOptions fontOptions = new FontOptions().size(0.66f).horizontalAlign(HorizontalAlign.RIGHT).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
-
   public ModsScreen(final Set<String> enabledMods, final Runnable unload) {
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);

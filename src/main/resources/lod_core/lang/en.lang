@@ -21,6 +21,7 @@ lod_core.ui.campaign_selection.back=Back
 lod_core.ui.campaign_selection.change_mods_confirm=Changing mods can cause\nproblems, continue?
 lod_core.ui.campaign_selection.delete_campaign_confirm=Are you sure you want to\ndelete this campaign?
 lod_core.ui.campaign_selection.missing_mods_confirm=Missing mods, continue?
+lod_core.ui.campaign_selection.installed_mods_changed=Installed mods have changed,\nwould you like to enable them?
 lod_core.ui.campaign_selection.failed_to_delete_campaign=Failed to delete campaign
 
 lod_core.ui.load_game.delete=Delete
@@ -39,7 +40,6 @@ lod_core.ui.options.advanced=Advanced
 lod_core.ui.options.help=Help
 lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
-lod_core.ui.options.show_advanced=Show Advanced
 lod_core.ui.options.locked=Locked
 lod_core.ui.options.locked_by=Locked by %s
 

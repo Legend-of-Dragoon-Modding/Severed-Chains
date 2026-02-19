@@ -25,7 +25,6 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -35,6 +34,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_MODS;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class CampaignSelectionScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(MenuScreen.class);
@@ -99,12 +99,37 @@ public class CampaignSelectionScreen extends MenuScreen {
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     campaign.loadConfigInto(CONFIG);
 
+    final Set<String> currentMods = MODS.getAllModIds();
+    final Set<String> knownMods;
+    if(CONFIG.hasConfig(CoreMod.KNOWN_MODS_CONFIG.get())) {
+      knownMods = Set.of(CONFIG.getConfig(CoreMod.KNOWN_MODS_CONFIG.get()));
+    } else if(CONFIG.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
+      knownMods = Set.of(CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get()));
+    } else {
+      knownMods = currentMods;
+    }
+
+    if(!currentMods.equals(knownMods)) {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.installed_mods_changed"), 2, result -> {
+        if(result == MessageBoxResult.YES) {
+          this.changeMods(campaign, () -> this.bootModsAndLoadSaves(campaign));
+        } else {
+          this.bootModsAndLoadSaves(campaign);
+        }
+      }));
+    } else {
+      this.bootModsAndLoadSaves(campaign);
+    }
+  }
+
+  private void bootModsAndLoadSaves(final Campaign campaign) {
     final Set<String> missingMods;
     if(CONFIG.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
       missingMods = bootMods(Set.of(CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get())));
     } else {
       // Fallback for old saves from before the config key existed
       missingMods = bootMods(MODS.getAllModIds());
+      campaign.config.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), MODS.getAllModIds().toArray(String[]::new));
     }
 
     if(missingMods.isEmpty()) {
@@ -122,6 +147,9 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   private void loadSaves(final Campaign campaign) {
     startFadeEffect(1, 5);
+
+    campaign.config.setConfig(CoreMod.KNOWN_MODS_CONFIG.get(), MODS.getAllModIds().toArray(String[]::new));
+    ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
 
     this.selectedCampaign = campaign;
     this.savedGames = campaign.loadAllSaves();
@@ -166,7 +194,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     }
 
     playMenuSound(2);
+    this.changeMods(campaign, () -> {});
+  }
 
+  private void changeMods(final Campaign campaign, final Runnable onClose) {
     final Set<String> originalMods = Set.of(campaign.config.getConfig(CoreMod.ENABLED_MODS_CONFIG.get()));
     final Set<String> modIds = new HashSet<>(originalMods);
 
@@ -178,11 +209,13 @@ public class CampaignSelectionScreen extends MenuScreen {
             ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
             startFadeEffect(2, 10);
             this.getStack().popScreen();
+            onClose.run();
           }
         }));
       } else {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
+        onClose.run();
       }
     }));
   }
