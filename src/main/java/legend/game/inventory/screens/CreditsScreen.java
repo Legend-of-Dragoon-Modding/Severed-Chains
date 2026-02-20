@@ -125,7 +125,6 @@ public class CreditsScreen extends MenuScreen {
 
   private void setCredits() {
     float y = 0;
-
     for(int i = 0; i < this.credits.size(); i++) {
       final CreditEntry entry = this.credits.get(i);
       final float textHeight = DEFAULT_FONT.textHeight(entry.text) * entry.properties.font.getSize();
