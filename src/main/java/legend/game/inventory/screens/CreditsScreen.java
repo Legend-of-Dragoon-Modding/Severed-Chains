@@ -134,7 +134,7 @@ public class CreditsScreen extends MenuScreen {
   }
 
   private void renderCredits() {
-    final float renderWidth = RENDERER.getNativeWidth();
+    final float renderWidthCenter = RENDERER.getNativeWidth() * 0.5f;
     final float renderHeight = RENDERER.getNativeHeight();
 
     for(int i = 0; i < this.credits.size(); i++) {
@@ -161,7 +161,7 @@ public class CreditsScreen extends MenuScreen {
           }
         }
 
-        renderText(entry.text, renderWidth * 0.5f, y, this.font);
+        renderText(entry.text, renderWidthCenter, y, this.font);
       }
     }
 
