@@ -4,6 +4,7 @@ import discord.DiscordRichPresence;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.credits.Credits.CreditsType;
+import legend.game.i18n.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,9 +75,9 @@ public class CreditsScreen extends MenuScreen {
 
   private void setFonts() {
     this.fonts.clear();
-    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.YELLOW).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
-    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
-    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.PURPLE).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.YELLOW).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.PURPLE).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
     this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1.0f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
     this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
   }
@@ -114,6 +115,7 @@ public class CreditsScreen extends MenuScreen {
       entry.type = CreditsType.NAME_2;
       entry.text = line;
     }
+    entry.text = I18n.translate(entry.text);
     this.credits.add(entry);
   }
 

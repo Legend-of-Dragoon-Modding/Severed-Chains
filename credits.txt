@@ -1,11 +1,11 @@
-# Main Guy
+# lod_core.ui.links.sc_credits_director
 Monoxide
-## Community Management
+## lod_core.ui.links.sc_credits_community
 Drewniverse
-## Collaborators
+## lod_core.ui.links.sc_credits_collaborator
 Senerio
-## Donators
-Person #1
-### Special Thanks
-Person #2
 @ https://arks.itch.io/xbox-buttons
+## lod_core.ui.links.sc_credits_supporters
+Some Rich Girl
+### lod_core.ui.links.sc_credits_thanks
+My Dog

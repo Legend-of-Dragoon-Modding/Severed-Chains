@@ -38,15 +38,15 @@ public class LinksScreen extends VerticalLayoutScreen {
     this.unload = unload;
 
     this.addControl(new Background());
-    this.addLink(I18n.translate("lod_core.ui.links.discord"), "https://discord.gg/legendofdragoon");
-    this.addLink(I18n.translate("lod_core.ui.links.youtube"), "https://www.youtube.com/@legend-of-dragoon");
-    this.addLink(I18n.translate("lod_core.ui.links.fandom"), "https://legendofdragoon.org");
-    this.addLink(I18n.translate("lod_core.ui.links.wiki"), "https://legendofdragoon.org/wiki/Main_Page");
-    this.addLink(I18n.translate("lod_core.ui.links.project"), "https://legendofdragoon.org/projects/severed-chains");
-    this.addLink(I18n.translate("lod_core.ui.links.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains");
-    this.addLink(I18n.translate("lod_core.ui.links.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues");
-    this.addLink(I18n.translate("lod_core.ui.links.lod_credits"), LOD_CREDITS);
-    this.addLink(I18n.translate("lod_core.ui.links.sc_credits"), SC_CREDITS);
+    this.addLink(I18n.translate("lod_core.ui.links.discord"), "https://discord.gg/legendofdragoon", true);
+    this.addLink(I18n.translate("lod_core.ui.links.youtube"), "https://www.youtube.com/@legend-of-dragoon", true);
+    this.addLink(I18n.translate("lod_core.ui.links.fandom"), "https://legendofdragoon.org", true);
+    this.addLink(I18n.translate("lod_core.ui.links.wiki"), "https://legendofdragoon.org/wiki/Main_Page", true);
+    this.addLink(I18n.translate("lod_core.ui.links.project"), "https://legendofdragoon.org/projects/severed-chains", true);
+    this.addLink(I18n.translate("lod_core.ui.links.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains", true);
+    this.addLink(I18n.translate("lod_core.ui.links.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues", true);
+    this.addLink(I18n.translate("lod_core.ui.links.lod_credits"), LOD_CREDITS, false);
+    this.addLink(I18n.translate("lod_core.ui.links.sc_credits"), SC_CREDITS, false);
 
     final Label help = this.addControl(new Label(I18n.translate("lod_core.ui.links.click_on_any_link_to_open")));
     help.setWidth(this.getWidth());
@@ -58,15 +58,19 @@ public class LinksScreen extends VerticalLayoutScreen {
     this.addHotkey(I18n.translate("lod_core.ui.links.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
-  private void addLink(final String text, final String url) {
+  private void addLink(final String text, final String url, final boolean help) {
     this.linkText.add(text);
     this.links.put(text, url);
 
     final Label label = this.addRow(text, null);
-    final Label tooltip = label.addControl(new Label("?"));
-    tooltip.setScale(0.4f);
-    tooltip.setPos((int)(tooltip.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
-    tooltip.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(url, this.mouseX, this.mouseY)));
+
+    if(help) {
+      final Label tooltip = label.addControl(new Label("?"));
+      tooltip.setScale(0.4f);
+      tooltip.setPos((int)(tooltip.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
+      tooltip.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(url, this.mouseX, this.mouseY)));
+    }
+
     this.linkLabels.put(text, label);
   }
 
