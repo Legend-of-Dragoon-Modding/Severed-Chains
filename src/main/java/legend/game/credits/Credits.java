@@ -46,7 +46,8 @@ public class Credits extends EngineState<Credits> {
     MINOR_HEADER_1,
     NAME_2,
     DIRECTOR_3,
-    UNUSED_4, // May have been for "The End" originally
+    UNUSED_4, // May have been for "The End" originally,
+    LINK_5
   }
 
   public enum CreditState {

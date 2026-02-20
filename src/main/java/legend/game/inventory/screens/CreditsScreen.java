@@ -74,10 +74,11 @@ public class CreditsScreen extends MenuScreen {
 
   private void setFonts() {
     this.fonts.clear();
-    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.YELLOW).size(1.8f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
-    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
-    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.PURPLE).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.YELLOW).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.PURPLE).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
     this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1.0f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
+    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
   }
 
   private void loadCredits() {
@@ -87,26 +88,33 @@ public class CreditsScreen extends MenuScreen {
       for(String line; (line = br.readLine()) != null; ) {
         line = line.trim();
         if(!line.isEmpty()) {
-          final CreditEntry entry = new CreditEntry();
-          if(line.startsWith("### ")) {
-            entry.type = CreditsType.MINOR_HEADER_1;
-            entry.text = line.substring(4);
-          } else if(line.startsWith("## ")) {
-            entry.type = CreditsType.MAJOR_HEADER_0;
-            entry.text = line.substring(3);
-          } else if(line.startsWith("# ")) {
-            entry.type = CreditsType.DIRECTOR_3;
-            entry.text = line.substring(2);
-          } else {
-            entry.type = CreditsType.NAME_2;
-            entry.text = line;
-          }
-          this.credits.add(entry);
+          this.addEntry(line);
         }
       }
     } catch(final IOException ex) {
       LOGGER.error(ex);
     }
+  }
+
+  private void addEntry(final String line) {
+    final CreditEntry entry = new CreditEntry();
+    if(line.startsWith("### ")) {
+      entry.type = CreditsType.MINOR_HEADER_1;
+      entry.text = line.substring(4);
+    } else if(line.startsWith("## ")) {
+      entry.type = CreditsType.MAJOR_HEADER_0;
+      entry.text = line.substring(3);
+    } else if(line.startsWith("# ")) {
+      entry.type = CreditsType.DIRECTOR_3;
+      entry.text = line.substring(2);
+    } else if(line.startsWith("@ ")) {
+      entry.type = CreditsType.LINK_5;
+      entry.text = line.substring(2);
+    } else {
+      entry.type = CreditsType.NAME_2;
+      entry.text = line;
+    }
+    this.credits.add(entry);
   }
 
   private void setCredits() {
@@ -130,9 +138,21 @@ public class CreditsScreen extends MenuScreen {
     for(int i = 0; i < this.credits.size(); i++) {
       final CreditEntry entry = this.credits.get(i);
       final CreditFontProperties p = this.fonts.get(entry.type);
+      final FontOptions font = new FontOptions().set(p.font).size(p.font.getSize());
+      final float y = entry.y - this.scrollValue + renderHeight;
+
+      if(y < 80) {
+        final float fadeColour = Math.min(1, (y + 20) / 80);
+        font.colour(font.getRed() * fadeColour, font.getGreen() * fadeColour, font.getBlue() * fadeColour);
+      }
+
+      if(y > renderHeight - 100) {
+        final float fadeColour = ((renderHeight - y) / 100);
+        font.colour(font.getRed() * fadeColour, font.getGreen() * fadeColour, font.getBlue() * fadeColour);
+      }
 
       if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
-        renderText(entry.text, renderWidth * 0.5f, entry.y - this.scrollValue + renderHeight, p.font);
+        renderText(entry.text, renderWidth * 0.5f, y, font);
       }
     }
 
