@@ -75,9 +75,9 @@ public class CreditsScreen extends MenuScreen {
 
   private void setFonts() {
     this.fonts.clear();
-    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.YELLOW).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
-    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
-    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.PURPLE).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.DARK_GREY).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
     this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1.0f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
     this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
   }
@@ -144,13 +144,19 @@ public class CreditsScreen extends MenuScreen {
       final float y = entry.y - this.scrollValue + renderHeight;
 
       if(y < 80) {
-        final float fadeColour = Math.min(1, (y + 20) / 80);
-        font.colour(font.getRed() * fadeColour, font.getGreen() * fadeColour, font.getBlue() * fadeColour);
+        final float colourRatio = Math.min(1, (y + 20) / 80);
+        font.colour(font.getRed() * colourRatio, font.getGreen() * colourRatio, font.getBlue() * colourRatio);
+        if(font.hasShadow()) {
+          font.shadowColour(font.getShadowRed() * colourRatio, font.getShadowGreen() * colourRatio, font.getShadowBlue() * colourRatio);
+        }
       }
 
       if(y > renderHeight - 100) {
-        final float fadeColour = ((renderHeight - y) / 100);
-        font.colour(font.getRed() * fadeColour, font.getGreen() * fadeColour, font.getBlue() * fadeColour);
+        final float colourRatio = ((renderHeight - y) / 100);
+        font.colour(font.getRed() * colourRatio, font.getGreen() * colourRatio, font.getBlue() * colourRatio);
+        if(font.hasShadow()) {
+          font.shadowColour(font.getShadowRed() * colourRatio, font.getShadowGreen() * colourRatio, font.getShadowBlue() * colourRatio);
+        }
       }
 
       if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
