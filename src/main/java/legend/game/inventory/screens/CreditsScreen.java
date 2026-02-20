@@ -186,7 +186,7 @@ public class CreditsScreen extends MenuScreen {
       case 2 -> {
         this.renderCredits();
         if(this.scrolling) {
-          this.scrollValue =  Math.max(0, this.scrollValue + this.scrollSpeed);
+          this.scrollValue = Math.max(0, this.scrollValue + this.scrollSpeed);
         } else {
           this.pauseTime++;
           if(this.pauseTime > 50) {
