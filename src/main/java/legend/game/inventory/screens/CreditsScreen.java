@@ -1,0 +1,278 @@
+package legend.game.inventory.screens;
+
+import discord.DiscordRichPresence;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputMod;
+import legend.game.credits.Credits.CreditsType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import static legend.core.GameEngine.DEFAULT_FONT;
+import static legend.core.GameEngine.RENDERER;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
+import static legend.game.Text.renderText;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
+
+public class CreditsScreen extends MenuScreen {
+  public static class CreditEntry {
+    public CreditsType type;
+    public String text;
+    public float y;
+  }
+
+  public static class CreditFontProperties {
+    public FontOptions font;
+    public float paddingTop;
+    public float paddingBottom;
+
+    public CreditFontProperties(final FontOptions font, final float paddingTop, final float paddingBottom) {
+      this.font = font;
+      this.paddingTop = paddingTop;
+      this.paddingBottom = paddingBottom;
+    }
+  }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(DiscordRichPresence.class);
+
+  private int loadingStage;
+  private final Runnable unload;
+
+  private final List<CreditEntry> credits;
+  private final HashMap<CreditsType, CreditFontProperties> fonts;
+  private float scrollSpeed = 1f;
+  private float scrollValue;
+  private float pauseTime;
+  private boolean scrolling;
+
+  public CreditsScreen(final Runnable unload) {
+    this.unload = unload;
+    this.fonts = new HashMap<>();
+    this.credits = new ArrayList<>();
+    this.scrolling = true;
+
+    this.loadCredits();
+    this.setFonts();
+    this.setCredits();
+  }
+
+  private void setFonts() {
+    this.fonts.clear();
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.YELLOW).size(1.8f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.PURPLE).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 15f, 8f));
+    this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1.0f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
+  }
+
+  private void loadCredits() {
+    this.credits.clear();
+    final Path path = Path.of("credits.txt");
+    try(final BufferedReader br = new BufferedReader(new FileReader(String.valueOf(path)))) {
+      for(String line; (line = br.readLine()) != null; ) {
+        line = line.trim();
+        if(!line.isEmpty()) {
+          final CreditEntry entry = new CreditEntry();
+          if(line.startsWith("### ")) {
+            entry.type = CreditsType.MINOR_HEADER_1;
+            entry.text = line.substring(4);
+          } else if(line.startsWith("## ")) {
+            entry.type = CreditsType.MAJOR_HEADER_0;
+            entry.text = line.substring(3);
+          } else if(line.startsWith("# ")) {
+            entry.type = CreditsType.DIRECTOR_3;
+            entry.text = line.substring(2);
+          } else {
+            entry.type = CreditsType.NAME_2;
+            entry.text = line;
+          }
+          this.credits.add(entry);
+        }
+      }
+    } catch(final IOException ex) {
+      LOGGER.error(ex);
+    }
+  }
+
+  private void setCredits() {
+    float y = 0;
+
+    for(int i = 0; i < this.credits.size(); i++) {
+      final CreditEntry entry = this.credits.get(i);
+      final CreditFontProperties p = this.fonts.get(entry.type);
+      final float textHeight = DEFAULT_FONT.textHeight(entry.text) * p.font.getSize();
+
+      entry.y = y + p.paddingTop;
+
+      y += textHeight + p.paddingBottom + p.paddingTop;
+    }
+  }
+
+  private void renderCredits() {
+    final float renderWidth = RENDERER.getNativeWidth();
+    final float renderHeight = RENDERER.getNativeHeight();
+
+    for(int i = 0; i < this.credits.size(); i++) {
+      final CreditEntry entry = this.credits.get(i);
+      final CreditFontProperties p = this.fonts.get(entry.type);
+
+      if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
+        renderText(entry.text, renderWidth * 0.5f, entry.y - this.scrollValue + renderHeight, p.font);
+      }
+    }
+
+    if(this.scrolling && this.scrollValue > this.credits.getLast().y + 50 + renderHeight) {
+      this.loadingStage = 100;
+    }
+  }
+
+  @Override
+  protected void render() {
+    switch(this.loadingStage) {
+      case 0 -> {
+        startFadeEffect(2, 10);
+        deallocateRenderables(0xff);
+        this.loadingStage++;
+      }
+
+      case 1 -> {
+        deallocateRenderables(0);
+        this.loadingStage++;
+      }
+
+      case 2 -> {
+        this.renderCredits();
+        if(this.scrolling) {
+          this.scrollValue =  Math.max(0, this.scrollValue + this.scrollSpeed);
+        } else {
+          this.pauseTime++;
+          if(this.pauseTime > 50) {
+            this.pauseTime = 0;
+            this.scrolling = true;
+          }
+        }
+      }
+
+      // Fade out
+      case 100 -> {
+        this.renderCredits();
+        this.unload.run();
+      }
+    }
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  private void menuEscape() {
+    playMenuSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuNavigateUp(final int amount) {
+    if(amount < 1) {
+      this.scrolling = true;
+      this.scrollValue = 0;
+    } else {
+      this.scrolling = false;
+      this.scrollValue -= amount;
+    }
+  }
+
+  private void menuNavigateDown(final int amount) {
+    if(amount >= 9999999) {
+      this.scrolling = true;
+      this.scrollValue = this.credits.getLast().y + 50;
+    } else {
+      this.scrolling = false;
+      this.scrollValue += amount;
+    }
+    this.scrollValue = Math.max(0, this.scrollValue);
+  }
+
+  @Override
+  public InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
+    if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.loadingStage != 2) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+      this.menuEscape();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_PAGE_UP.get()) {
+      this.menuNavigateUp(50);
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_PAGE_DOWN.get()) {
+      this.menuNavigateDown(50);
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.scrollSpeed = -2f;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_UP.get()) {
+      this.scrollSpeed = 2f;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_HOME.get()) {
+      this.loadCredits();
+      this.setFonts();
+      this.setCredits();
+      this.menuNavigateUp(0);
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_END.get()) {
+      this.menuNavigateDown(9999999);
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  public InputPropagation inputActionReleased(final InputAction action) {
+    if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_DOWN.get() || action == INPUT_ACTION_MENU_UP.get()) {
+      this.scrollSpeed = 1f;
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+}

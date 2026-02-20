@@ -4,14 +4,18 @@ import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
+import legend.lodmod.LodEngineStateTypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.SItem.menuStack;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -21,15 +25,16 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
 public class LinksScreen extends VerticalLayoutScreen {
   private final Runnable unload;
+  private int loadingStage;
 
   private final List<String> linkText = new ArrayList<>();
   private final Map<String, String> links = new HashMap<>();
   private final Map<String, Label> linkLabels = new HashMap<>();
 
-  public LinksScreen(final Runnable unload) {
-    deallocateRenderables(0xff);
-    startFadeEffect(2, 10);
+  private static final String LOD_CREDITS = "[LOD_CREDITS]";
+  private static final String SC_CREDITS = "[SC_CREDITS]";
 
+  public LinksScreen(final Runnable unload) {
     this.unload = unload;
 
     this.addControl(new Background());
@@ -40,6 +45,8 @@ public class LinksScreen extends VerticalLayoutScreen {
     this.addLink(I18n.translate("lod_core.ui.links.project"), "https://legendofdragoon.org/projects/severed-chains");
     this.addLink(I18n.translate("lod_core.ui.links.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains");
     this.addLink(I18n.translate("lod_core.ui.links.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues");
+    this.addLink(I18n.translate("lod_core.ui.links.lod_credits"), LOD_CREDITS);
+    this.addLink(I18n.translate("lod_core.ui.links.sc_credits"), SC_CREDITS);
 
     final Label help = this.addControl(new Label(I18n.translate("lod_core.ui.links.click_on_any_link_to_open")));
     help.setWidth(this.getWidth());
@@ -65,7 +72,7 @@ public class LinksScreen extends VerticalLayoutScreen {
 
   private void openLink() {
     playMenuSound(2);
-    PLATFORM.openUrl(this.links.get(this.getHighlightedRow().getText()));
+    this.execute(this.links.get(this.getHighlightedRow().getText()));
   }
 
   private void viewLink() {
@@ -81,15 +88,45 @@ public class LinksScreen extends VerticalLayoutScreen {
   }
 
   @Override
+  protected void render() {
+    switch(this.loadingStage) {
+      case 0 -> {
+        deallocateRenderables(0xff);
+        startFadeEffect(2, 10);
+
+        this.loadingStage++;
+      }
+      case 1 -> {
+        super.render();
+      }
+    }
+  }
+
+  @Override
   protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
     final int linkIndex = Math.floorDiv(y - 32, 13);
 
     if(linkIndex >= 0 && linkIndex < this.linkText.size()) {
       playMenuSound(2);
-      PLATFORM.openUrl(this.links.get(this.linkText.get(linkIndex)));
+      this.execute(this.links.get(this.linkText.get(linkIndex)));
       return InputPropagation.HANDLED;
     }
 
     return super.mouseClick(x, y, button, mods);
+  }
+
+  private void execute(final String url) {
+    if (url.equals(LOD_CREDITS)) {
+      engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.CREDITS.get();
+    } else if (url.equals(SC_CREDITS)) {
+      this.showScreen(CreditsScreen::new);
+    } else {
+      PLATFORM.openUrl(url);
+    }
+  }
+
+  private void showScreen(final Function<Runnable, MenuScreen> screen) {
+    menuStack.pushScreen(screen.apply(menuStack::popScreen));
+    this.loadingStage = 0;
   }
 }
