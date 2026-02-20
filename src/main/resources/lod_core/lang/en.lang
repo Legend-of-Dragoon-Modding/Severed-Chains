@@ -61,7 +61,7 @@ lod_core.ui.links.lod_credits=The Legend of Dragoon Credits
 lod_core.ui.links.sc_credits=Severed Chains Credits
 lod_core.ui.links.sc_credits_director=Main Guy
 lod_core.ui.links.sc_credits_collaborator=Collaborators
-lod_core.ui.links.sc_credits_supporters=Supporters
+lod_core.ui.links.sc_credits_supporter=Supporters
 lod_core.ui.links.sc_credits_community=Community Management
 lod_core.ui.links.sc_credits_thanks=Special Thanks
 
