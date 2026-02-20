@@ -149,7 +149,7 @@ public class CreditsScreen extends MenuScreen {
             this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
           }
         } else if(y > renderHeight - 100) {
-          final float colourRatio = ((renderHeight - y) / 100);
+          final float colourRatio = (renderHeight - y) / 100;
           this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
           if(this.font.hasShadow()) {
             this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
@@ -222,6 +222,7 @@ public class CreditsScreen extends MenuScreen {
       this.scrolling = false;
       this.scrollValue -= amount;
     }
+    this.scrollValue = Math.max(0, this.scrollValue);
   }
 
   private void menuNavigateDown(final int amount) {
