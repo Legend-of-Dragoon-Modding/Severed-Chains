@@ -136,9 +136,7 @@ public class CreditsScreen extends MenuScreen {
     final float renderWidthCenter = RENDERER.getNativeWidth() * 0.5f;
     final float renderHeight = RENDERER.getNativeHeight();
 
-    for(int i = 0; i < this.credits.size(); i++) {
-      final CreditEntry entry = this.credits.get(i);
-
+    for(final CreditEntry entry : this.credits) {
       if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
         final float y = entry.y - this.scrollValue + renderHeight;
 
