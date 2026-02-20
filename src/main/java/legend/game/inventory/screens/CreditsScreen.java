@@ -34,6 +34,7 @@ import static legend.game.sound.Audio.playMenuSound;
 public class CreditsScreen extends MenuScreen {
   public static class CreditEntry {
     public CreditsType type;
+    public CreditFontProperties properties;
     public String text;
     public float y;
   }
@@ -70,8 +71,8 @@ public class CreditsScreen extends MenuScreen {
     this.font = new FontOptions();
     this.scrolling = true;
 
-    this.loadCredits();
     this.setFonts();
+    this.loadCredits();
     this.setCredits();
   }
 
@@ -118,6 +119,7 @@ public class CreditsScreen extends MenuScreen {
       entry.text = line;
     }
     entry.text = I18n.translate(entry.text);
+    entry.properties = this.fonts.get(entry.type);
     this.credits.add(entry);
   }
 
@@ -126,12 +128,9 @@ public class CreditsScreen extends MenuScreen {
 
     for(int i = 0; i < this.credits.size(); i++) {
       final CreditEntry entry = this.credits.get(i);
-      final CreditFontProperties p = this.fonts.get(entry.type);
-      final float textHeight = DEFAULT_FONT.textHeight(entry.text) * p.font.getSize();
-
-      entry.y = y + p.paddingTop;
-
-      y += textHeight + p.paddingBottom + p.paddingTop;
+      final float textHeight = DEFAULT_FONT.textHeight(entry.text) * entry.properties.font.getSize();
+      entry.y = y + entry.properties.paddingTop;
+      y += textHeight + entry.properties.paddingBottom + entry.properties.paddingTop;
     }
   }
 
@@ -143,10 +142,9 @@ public class CreditsScreen extends MenuScreen {
       final CreditEntry entry = this.credits.get(i);
 
       if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
-        final CreditFontProperties p = this.fonts.get(entry.type);
         final float y = entry.y - this.scrollValue + renderHeight;
 
-        this.font.set(p.font).size(p.font.getSize());
+        this.font.set(entry.properties.font).size(entry.properties.font.getSize());
 
         if(y < 80) {
           final float colourRatio = Math.min(1, (y + 20) / 80);
@@ -279,8 +277,8 @@ public class CreditsScreen extends MenuScreen {
     }
 
     if(action == INPUT_ACTION_MENU_HOME.get()) {
-      this.loadCredits();
       this.setFonts();
+      this.loadCredits();
       this.setCredits();
       this.menuNavigateUp(0);
       return InputPropagation.HANDLED;
