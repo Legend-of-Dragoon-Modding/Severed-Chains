@@ -213,14 +213,14 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-        if((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) == 0) && this.primaryCharIndex != i && MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
+        if((CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) || (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88.getInt(i)].partyFlags_04 & CANT_REMOVE) == 0) && this.primaryCharIndex != i && MathHelper.inBox((int)x, (int)y, 8, this.getSlotY(i), 174, 65)) {
           playMenuSound(1);
           this.primaryCharIndex = i;
           this.primaryCharHighlight.y_44 = this.getSlotY(i);
@@ -229,7 +229,7 @@ public class CharSwapScreen extends MenuScreen {
       }
     } else if(this.loadingStage == 3) {
       for(int i = 0; i < 6; i++) {
-        if(this.secondaryCharIndex != i && MathHelper.inBox(x, y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
+        if(this.secondaryCharIndex != i && MathHelper.inBox((int)x, (int)y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
           playMenuSound(1);
           this.secondaryCharIndex = i;
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
@@ -243,21 +243,21 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-        if(MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
+        if(MathHelper.inBox((int)x, (int)y, 8, this.getSlotY(i), 174, 65)) {
           this.menuStage2Select();
           return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3) {
       for(int i = 0; i < 6; i++) {
-        if(MathHelper.inBox(x, y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
+        if(MathHelper.inBox((int)x, (int)y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
           this.menuStage3Select();
           return InputPropagation.HANDLED;
         }

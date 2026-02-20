@@ -323,7 +323,7 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -333,7 +333,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 3; i++) {
-      if(this.menuIndex != i && MathHelper.inBox(x, y, 52, this.getDabasMenuY(i), 85, 14)) {
+      if(this.menuIndex != i && MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(i), 85, 14)) {
         playMenuSound(1);
         this.menuIndex = i;
         this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
@@ -345,7 +345,7 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -355,7 +355,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     if(button == PLATFORM.getMouseButton(0)) {
-      if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(0), 85, 14)) {
+      if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(0), 85, 14)) {
         if(this.hasItems || this.gold != 0) {
           playMenuSound(2);
 
@@ -369,7 +369,7 @@ public class DabasScreen extends MenuScreen {
         }
 
         return InputPropagation.HANDLED;
-      } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(1), 85, 14)) {
+      } else if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(1), 85, 14)) {
         if(this.hasItems) {
           playMenuSound(2);
 
@@ -383,7 +383,7 @@ public class DabasScreen extends MenuScreen {
         }
 
         return InputPropagation.HANDLED;
-      } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
+      } else if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(2), 85, 14)) {
         if(this.newDigEnabled) {
           playMenuSound(2);
 

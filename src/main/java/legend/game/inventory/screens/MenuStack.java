@@ -169,43 +169,35 @@ public class MenuStack {
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
-    if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
-      this.input(screen -> screen.mouseMove((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight())));
-      return;
-    }
-
-    final float aspect = 4.0f / 3.0f;
-
-    float w = window.getWidth();
-    float h = w / aspect;
-
-    if(h > window.getHeight()) {
-      h = window.getHeight();
-      w = h * aspect;
-    }
-
-    final float left = (window.getWidth() - w) / 2;
-    final float top = (window.getHeight() - h) / 2;
-
-    final float scaleX = w / RENDERER.getNativeWidth();
-    final float scaleY = h / RENDERER.getNativeHeight();
-
-    this.input(screen -> screen.mouseMove((int)((x - left) / scaleX), (int)((y - top) / scaleY)));
+    final Point2D clickPos = this.getClickPos(window, x, y);
+    this.input(screen -> screen.mouseMove(clickPos.x, clickPos.y));
   }
 
   private void mousePress(final Window window, final double x, final double y, final int button, final Set<InputMod> mods) {
     this.mousePressCoords.put(button, new Point2D(x, y));
+
+    final Point2D clickPos = this.getClickPos(window, x, y);
+    this.input(screen -> screen.mousePress(clickPos.x, clickPos.y, button, mods));
   }
 
   private void mouseRelease(final Window window, final double x, final double y, final int button, final Set<InputMod> mods) {
+    final Point2D clickPos = this.getClickPos(window, x, y);
+    this.input(screen -> screen.mouseRelease(clickPos.x, clickPos.y, button, mods));
+
     final Point2D point = this.mousePressCoords.remove(button);
 
     if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
-      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
-        this.input(screen -> screen.mouseClick((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight()), button, mods));
-        return;
-      }
+      this.input(screen -> screen.mouseClick(clickPos.x, clickPos.y, button, mods));
+    }
+  }
 
+  private Point2D getClickPos(final Window window, final double x, final double y) {
+    final double clickX;
+    final double clickY;
+    if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+      clickX = x / window.getWidth() * RENDERER.getNativeWidth();
+      clickY = y / window.getHeight() * RENDERER.getNativeHeight();
+    } else {
       final float aspect = 4.0f / 3.0f;
 
       float w = window.getWidth();
@@ -222,8 +214,11 @@ public class MenuStack {
       final float scaleX = w / GPU.getDisplayTextureWidth();
       final float scaleY = h / GPU.getDisplayTextureHeight();
 
-      this.input(screen -> screen.mouseClick((int)((x - left) / scaleX), (int)((y - top) / scaleY), button, mods));
+      clickX = (x - left) / scaleX;
+      clickY = (y - top) / scaleY;
     }
+
+    return new Point2D(clickX, clickY);
   }
 
   private void mouseScroll(final Window window, final double deltaX, final double deltaY) {

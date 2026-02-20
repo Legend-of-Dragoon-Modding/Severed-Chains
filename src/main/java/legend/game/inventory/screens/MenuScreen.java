@@ -148,7 +148,7 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -161,12 +161,46 @@ public abstract class MenuScreen extends ControlHost {
       }
     }
 
-    this.updateHover(x, y);
+    this.updateHover((int)x, (int)y);
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mousePress(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(super.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseRelease(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(super.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
       return InputPropagation.HANDLED;
     }
@@ -179,8 +213,8 @@ public abstract class MenuScreen extends ControlHost {
       }
     }
 
-    this.updateHover(x, y);
-    this.updateFocus(x, y);
+    this.updateHover((int)x, (int)y);
+    this.updateFocus((int)x, (int)y);
 
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;

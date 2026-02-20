@@ -223,14 +223,14 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
       for(int slot = 0; slot < Math.min(5, this.itemCount - this.slotScroll); slot++) {
-        if(this.selectedSlot != slot && MathHelper.inBox(x, y, 33, this.getItemSlotY(slot), 136, 17)) {
+        if(this.selectedSlot != slot && MathHelper.inBox((int)x, (int)y, 33, this.getItemSlotY(slot), 136, 17)) {
           playMenuSound(1);
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
@@ -239,7 +239,7 @@ public class UseItemScreen extends MenuScreen {
       }
     } else if(this.loadingStage == 3 && !this.itemTargetAll) {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
-        if(this.charSlot != slot && MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
+        if(this.charSlot != slot && MathHelper.inBox((int)x, (int)y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           playMenuSound(1);
           this.charSlot = slot;
           this.charHighlight.x_40 = this.getCharacterPortraitX(this.charSlot) - 3;
@@ -252,7 +252,7 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -263,7 +263,7 @@ public class UseItemScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       for(int slot = 0; slot < Math.min(5, this.itemCount - this.slotScroll); slot++) {
-        if(MathHelper.inBox(x, y, 33, this.getItemSlotY(slot), 136, 17)) {
+        if(MathHelper.inBox((int)x, (int)y, 33, this.getItemSlotY(slot), 136, 17)) {
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
           this.menuStage2Select();
@@ -272,7 +272,7 @@ public class UseItemScreen extends MenuScreen {
       }
     } else if(this.loadingStage == 3) {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
-        if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
+        if(MathHelper.inBox((int)x, (int)y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           this.menuStage3Select();
           return InputPropagation.HANDLED;
         }
