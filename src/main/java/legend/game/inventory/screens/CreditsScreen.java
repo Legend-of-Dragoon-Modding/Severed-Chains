@@ -57,6 +57,7 @@ public class CreditsScreen extends MenuScreen {
 
   private final List<CreditEntry> credits;
   private final HashMap<CreditsType, CreditFontProperties> fonts;
+  private final FontOptions font;
   private float scrollSpeed = 1f;
   private float scrollValue;
   private float pauseTime;
@@ -66,6 +67,7 @@ public class CreditsScreen extends MenuScreen {
     this.unload = unload;
     this.fonts = new HashMap<>();
     this.credits = new ArrayList<>();
+    this.font = new FontOptions();
     this.scrolling = true;
 
     this.loadCredits();
@@ -140,27 +142,28 @@ public class CreditsScreen extends MenuScreen {
     for(int i = 0; i < this.credits.size(); i++) {
       final CreditEntry entry = this.credits.get(i);
       final CreditFontProperties p = this.fonts.get(entry.type);
-      final FontOptions font = new FontOptions().set(p.font).size(p.font.getSize());
       final float y = entry.y - this.scrollValue + renderHeight;
+
+      this.font.set(p.font).size(p.font.getSize());
 
       if(y < 80) {
         final float colourRatio = Math.min(1, (y + 20) / 80);
-        font.colour(font.getRed() * colourRatio, font.getGreen() * colourRatio, font.getBlue() * colourRatio);
-        if(font.hasShadow()) {
-          font.shadowColour(font.getShadowRed() * colourRatio, font.getShadowGreen() * colourRatio, font.getShadowBlue() * colourRatio);
+        this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
+        if(this.font.hasShadow()) {
+          this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
         }
       }
 
       if(y > renderHeight - 100) {
         final float colourRatio = ((renderHeight - y) / 100);
-        font.colour(font.getRed() * colourRatio, font.getGreen() * colourRatio, font.getBlue() * colourRatio);
-        if(font.hasShadow()) {
-          font.shadowColour(font.getShadowRed() * colourRatio, font.getShadowGreen() * colourRatio, font.getShadowBlue() * colourRatio);
+        this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
+        if(this.font.hasShadow()) {
+          this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
         }
       }
 
       if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
-        renderText(entry.text, renderWidth * 0.5f, y, font);
+        renderText(entry.text, renderWidth * 0.5f, y, this.font);
       }
     }
 
