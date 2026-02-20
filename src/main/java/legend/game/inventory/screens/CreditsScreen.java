@@ -125,8 +125,7 @@ public class CreditsScreen extends MenuScreen {
 
   private void setCredits() {
     float y = 0;
-    for(int i = 0; i < this.credits.size(); i++) {
-      final CreditEntry entry = this.credits.get(i);
+    for(final CreditEntry entry : this.credits) {
       final float textHeight = DEFAULT_FONT.textHeight(entry.text) * entry.properties.font.getSize();
       entry.y = y + entry.properties.paddingTop;
       y += textHeight + entry.properties.paddingBottom + entry.properties.paddingTop;
@@ -151,9 +150,7 @@ public class CreditsScreen extends MenuScreen {
           if(this.font.hasShadow()) {
             this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
           }
-        }
-
-        if(y > renderHeight - 100) {
+        } else if(y > renderHeight - 100) {
           final float colourRatio = ((renderHeight - y) / 100);
           this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
           if(this.font.hasShadow()) {
