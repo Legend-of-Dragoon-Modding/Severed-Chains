@@ -141,28 +141,29 @@ public class CreditsScreen extends MenuScreen {
 
     for(int i = 0; i < this.credits.size(); i++) {
       final CreditEntry entry = this.credits.get(i);
-      final CreditFontProperties p = this.fonts.get(entry.type);
-      final float y = entry.y - this.scrollValue + renderHeight;
-
-      this.font.set(p.font).size(p.font.getSize());
-
-      if(y < 80) {
-        final float colourRatio = Math.min(1, (y + 20) / 80);
-        this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
-        if(this.font.hasShadow()) {
-          this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
-        }
-      }
-
-      if(y > renderHeight - 100) {
-        final float colourRatio = ((renderHeight - y) / 100);
-        this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
-        if(this.font.hasShadow()) {
-          this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
-        }
-      }
 
       if(entry.y > this.scrollValue - 50 - renderHeight && entry.y < this.scrollValue + 50 + renderHeight) {
+        final CreditFontProperties p = this.fonts.get(entry.type);
+        final float y = entry.y - this.scrollValue + renderHeight;
+
+        this.font.set(p.font).size(p.font.getSize());
+
+        if(y < 80) {
+          final float colourRatio = Math.min(1, (y + 20) / 80);
+          this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
+          if(this.font.hasShadow()) {
+            this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
+          }
+        }
+
+        if(y > renderHeight - 100) {
+          final float colourRatio = ((renderHeight - y) / 100);
+          this.font.colour(this.font.getRed() * colourRatio, this.font.getGreen() * colourRatio, this.font.getBlue() * colourRatio);
+          if(this.font.hasShadow()) {
+            this.font.shadowColour(this.font.getShadowRed() * colourRatio, this.font.getShadowGreen() * colourRatio, this.font.getShadowBlue() * colourRatio);
+          }
+        }
+
         renderText(entry.text, renderWidth * 0.5f, y, this.font);
       }
     }
