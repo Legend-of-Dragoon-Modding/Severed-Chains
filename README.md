@@ -55,6 +55,12 @@ and select it from the controller dropdown in the in-game options menu.
 
 **NOTE**: There are known issues with using DS4windows, and possibly other controller emulators. Severed Chains supports 1800+ controllers out of the box so it's very likely you can just plug in your controller, set it up, and play. If you find a controller that isn't in our controller database, please contact us and we'll work with you to get it added. If you do use DS4windows, make sure your controller isn't hidden and close DS4windows.
 
+### Updating
+
+When a new version is available, an "Update Available" button appears on the title screen. Clicking it downloads and applies the update automatically if a platform-specific release is available, otherwise it opens the release page in your browser for manual download.
+
+The automatic updater preserves your saves, mods, ISOs, extracted files, and config. After the update completes, restart the game. A log of each update is written to `update_log.txt` in the game directory.
+
 ### Copyright Information
 
 Even though it is not an emulator, Legend of Dragoon Java can not be played without the user providing the LoD disk images. Assets are extracted from the ROMs at runtime. This codebase does not include any official Legend of Dragoon code or assets.
