@@ -12,6 +12,9 @@ import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistry;
 import legend.game.characters.ElementRegistryEvent;
+import legend.game.characters.SpellRing;
+import legend.game.characters.SpellRingRegistry;
+import legend.game.characters.SpellRingRegistryEvent;
 import legend.game.characters.StatModType;
 import legend.game.characters.StatModTypeRegistry;
 import legend.game.characters.StatModTypeRegistryEvent;
@@ -70,6 +73,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<StatType<?>> statTypes = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
   public final Registry<StatModType<?, ?, ?>> statModTypes = this.addRegistry(new StatModTypeRegistry(), StatModTypeRegistryEvent::new);
   public final Registry<Element> elements = this.addRegistry(new ElementRegistry(), ElementRegistryEvent::new);
+  public final Registry<SpellRing> spellRings = this.addRegistry(new SpellRingRegistry(), SpellRingRegistryEvent::new);
   public final Registry<BattleEntityType> battleEntityTypes = this.addRegistry(new BattleEntityTypeRegistry(), BattleEntityTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
