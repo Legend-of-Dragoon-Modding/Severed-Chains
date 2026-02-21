@@ -729,11 +729,7 @@ public class ScriptState<T extends ScriptedObject> {
   @Method(0x8001664cL)
   public boolean scriptCompare(final Param operandA, final Param operandB, final int op) {
     // Check A for null
-    if(operandA.isRegistryId() && !operandB.isRegistryId()) {
-      if(operandB.get() != 0) {
-        throw new IllegalArgumentException("Registry IDs can only be compared to Registry IDs or null");
-      }
-
+    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandB.get() == 0) {
       return switch(op) {
         case 2 -> operandA.getRegistryId() == null;
         case 3 -> operandA.getRegistryId() != null;
@@ -742,11 +738,7 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     // Check B for null
-    if(operandB.isRegistryId() && !operandA.isRegistryId()) {
-      if(operandA.get() != 0) {
-        throw new IllegalArgumentException("Registry IDs can only be compared to Registry IDs or null");
-      }
-
+    if(operandB.isRegistryId() && !operandA.isRegistryId() && operandA.get() == 0) {
       return switch(op) {
         case 2 -> operandB.getRegistryId() == null;
         case 3 -> operandB.getRegistryId() != null;
