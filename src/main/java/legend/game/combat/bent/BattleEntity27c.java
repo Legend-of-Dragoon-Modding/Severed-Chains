@@ -70,8 +70,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public static final int FLAG_ANIMATE_ONCE = 0x80;
   /** Unknown */
   public static final int FLAG_100 = 0x100;
-  /** Unknown */
-  public static final int FLAG_200 = 0x200;
+  /** This monster is a piece of a whole monster */
+  public static final int FLAG_MONSTER_SUB_PART = 0x200;
   /** Unknown */
   public static final int FLAG_400 = 0x400;
   /** Don't load script (used by cutscene bents controlled by other scripts) */
@@ -82,8 +82,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public static final int FLAG_NO_LOOT = 0x2000;
   /** Bent cannot be targeted */
   public static final int FLAG_CANT_TARGET = 0x4000;
-  /** Unknown */
-  public static final int FLAG_8000 = 0x8000;
+  /** This monster is the main part of a multi-part monster */
+  public static final int FLAG_MONSTER_MAIN_PART = 0x8000;
 
   private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
 
@@ -644,7 +644,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cafb4L)
   protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
+    if(!state.hasAnyFlag(FLAG_MONSTER_SUB_PART | FLAG_HIDE | FLAG_1)) {
       applyModelRotationAndScale(this.model_148);
 
       if(!state.hasFlag(FLAG_ANIMATE_ONCE) || this.model_148.remainingFrames_9e != 0) {
@@ -658,7 +658,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if(!state.hasAnyFlag(FLAG_200 | FLAG_HIDE | FLAG_1)) {
+    if(!state.hasAnyFlag(FLAG_MONSTER_SUB_PART | FLAG_HIDE | FLAG_1)) {
       this.renderBttlModel(this.model_148, bent.combatant_144);
     }
 

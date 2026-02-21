@@ -106,13 +106,13 @@ public class ScriptState<T extends ScriptedObject> {
    *       <li>0x40 - {@link BattleEntity27c#FLAG_DEAD}</li>
    *       <li>0x80 - {@link BattleEntity27c#FLAG_ANIMATE_ONCE}</li>
    *       <li>0x100 - {@link BattleEntity27c#FLAG_100}</li>
-   *       <li>0x200 - {@link BattleEntity27c#FLAG_200}</li>
+   *       <li>0x200 - {@link BattleEntity27c#FLAG_MONSTER_SUB_PART}</li>
    *       <li>0x400 - {@link BattleEntity27c#FLAG_400}</li>
    *       <li>0x800 - {@link BattleEntity27c#FLAG_NO_SCRIPT}</li>
    *       <li>0x1000 - {@link BattleEntity27c#FLAG_RELOAD_BATTLE_ACTIONS}</li>
    *       <li>0x2000 - {@link BattleEntity27c#FLAG_NO_LOOT}</li>
    *       <li>0x4000 - {@link BattleEntity27c#FLAG_CANT_TARGET}</li>
-   *       <li>0x8000 - {@link BattleEntity27c#FLAG_8000}</li>
+   *       <li>0x8000 - {@link BattleEntity27c#FLAG_MONSTER_MAIN_PART}</li>
    *       <li>0x20_0000 - ? used in scripts</li>
    *     </ul>
    *   </li>
@@ -729,7 +729,11 @@ public class ScriptState<T extends ScriptedObject> {
   @Method(0x8001664cL)
   public boolean scriptCompare(final Param operandA, final Param operandB, final int op) {
     // Check A for null
-    if(operandA.isRegistryId() && !operandB.isRegistryId() && operandB.get() == 0) {
+    if(operandA.isRegistryId() && !operandB.isRegistryId()) {
+      if(operandB.get() != 0) {
+        throw new IllegalArgumentException("Registry IDs can only be compared to Registry IDs or null");
+      }
+
       return switch(op) {
         case 2 -> operandA.getRegistryId() == null;
         case 3 -> operandA.getRegistryId() != null;
@@ -738,7 +742,11 @@ public class ScriptState<T extends ScriptedObject> {
     }
 
     // Check B for null
-    if(operandB.isRegistryId() && !operandA.isRegistryId() && operandA.get() == 0) {
+    if(operandB.isRegistryId() && !operandA.isRegistryId()) {
+      if(operandA.get() != 0) {
+        throw new IllegalArgumentException("Registry IDs can only be compared to Registry IDs or null");
+      }
+
       return switch(op) {
         case 2 -> operandB.getRegistryId() == null;
         case 3 -> operandB.getRegistryId() != null;

@@ -173,7 +173,7 @@ public class GameVarArrayParam extends Param {
       case 47 -> Scus94491BpeSegment_8006.battleState_8006e398._23c;
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398._240;
       case 49 -> Scus94491BpeSegment_8006.battleState_8006e398._244;
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398._248;
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.succCloneEffectId_248;
       case 51 -> Scus94491BpeSegment_8006.battleState_8006e398._24c;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398._250;
       case 53 -> Scus94491BpeSegment_8006.battleState_8006e398._254;
@@ -436,7 +436,7 @@ public class GameVarArrayParam extends Param {
       case 47 -> Scus94491BpeSegment_8006.battleState_8006e398._23c = val;
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398._240 = val;
       case 49 -> Scus94491BpeSegment_8006.battleState_8006e398._244 = val;
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398._248 = val;
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.succCloneEffectId_248 = val;
       case 51 -> Scus94491BpeSegment_8006.battleState_8006e398._24c = val;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398._250 = val;
       case 53 -> Scus94491BpeSegment_8006.battleState_8006e398._254 = val;

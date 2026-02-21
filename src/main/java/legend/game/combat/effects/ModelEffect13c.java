@@ -49,7 +49,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
    * used renderCtmd
    */
   @Method(0x800dd89cL)
-  private void FUN_800dd89c(final Model124 model, final int newAttribute) {
+  private void renderModel(final Model124 model, final int newAttribute) {
     zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
@@ -163,7 +163,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
       }
 
       //LAB_800ea598
-      FUN_800dd89c(model, manager.params_10.flags_00);
+      renderModel(model, manager.params_10.flags_00);
 
       model.tpage_108 = oldTpage;
 
