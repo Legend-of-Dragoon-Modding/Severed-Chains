@@ -1179,7 +1179,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "result", description = "0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button")
   @Method(0x801077bcL)
   public static FlowControl scriptGetHitCompletionState(final RunningScript<?> script) {
-    script.params_20[2].set(additionHitCompletionState_8011a014[script.params_20[1].get()]);
+    script.params_20[2].set(additionHitCompletionState_8011a014 != null ? additionHitCompletionState_8011a014[script.params_20[1].get()] : 0);
     return FlowControl.CONTINUE;
   }
 
