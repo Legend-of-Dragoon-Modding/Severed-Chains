@@ -20,6 +20,7 @@ import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 import legend.lodmod.LodMod;
 import legend.lodmod.LodPostBattleActions;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
@@ -27,8 +28,10 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
+import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.combat.SBtld.startLegacyEncounter;
 
 public class GameVarParam extends Param {
@@ -344,6 +347,30 @@ public class GameVarParam extends Param {
     }
 
     return this;
+  }
+
+  @Override
+  public RegistryId getRegistryId() {
+    if(this.index == 43) {
+      return encounter.getRegistryId();
+    }
+
+    return super.getRegistryId();
+  }
+
+  @Override
+  public Param set(final RegistryId id) {
+    if(this.index == 43) {
+      startEncounter(REGISTRIES.encounters.getEntry(id).get(), battleStage_800bb0f4);
+      return this;
+    }
+
+    return super.set(id);
+  }
+
+  @Override
+  public boolean isRegistryId() {
+    return this.index == 43;
   }
 
   @Override

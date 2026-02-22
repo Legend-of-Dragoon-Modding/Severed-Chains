@@ -4,6 +4,7 @@ import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.types.battlestate.AdditionExtra04;
 import legend.game.combat.types.battlestate.Status04;
 import legend.game.combat.types.battlestate.StatusConditions20;
@@ -93,7 +94,8 @@ public class BattleStateEf4 {
   public int _23c;
   public int _240;
   public int _244;
-  public int _248;
+  /** Used by Windigo and Melbu when they succ a character. Script ID of {@link ModelEffect13c}. */
+  public int succCloneEffectId_248;
   public int _24c;
   public int _250;
   public int _254;
