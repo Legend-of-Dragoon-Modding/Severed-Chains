@@ -2,12 +2,21 @@ package legend.game.inventory;
 
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.characters.FractionalStatModConfig;
+import legend.game.characters.UnaryStatModConfig;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.scripting.ScriptReadable;
 import legend.game.scripting.ScriptState;
+import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
+
+import static legend.lodmod.LodMod.FRACTIONAL_STAT_MOD_TYPE;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.UNARY_STAT_MOD_TYPE;
 
 public class Equipment extends RegistryEntry implements InventoryEntry<Equipment>, ScriptReadable {
   public final int price;
@@ -170,5 +179,35 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
 
   public EquipmentAttackType attack(final ScriptState<PlayerBattleEntity> player) {
     return EquipmentAttackType.NORMAL;
+  }
+
+  /** Called when this equipment is equipped to a character (including on game load) */
+  public void onEquip(final CharacterData2c character) {
+    if(this.hpMultiplier != 0) {
+      character.stats.getStat(HP_STAT.get()).addMod(this.getRegistryId(), FRACTIONAL_STAT_MOD_TYPE.get().make(new FractionalStatModConfig().percent(this.hpMultiplier).permanent()));
+    }
+
+    if(this.mpMultiplier != 0) {
+      character.stats.getStat(MP_STAT.get()).addMod(this.getRegistryId(), FRACTIONAL_STAT_MOD_TYPE.get().make(new FractionalStatModConfig().percent(this.mpMultiplier).permanent()));
+    }
+
+    if(this.speed_0f != 0) {
+      character.stats.getStat(SPEED_STAT.get()).addMod(this.getRegistryId(), UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().flat(this.speed_0f).permanent()));
+    }
+  }
+
+  /** Called when this equipment is removed from a character */
+  public void onUnequip(final CharacterData2c character) {
+    if(this.hpMultiplier != 0) {
+      character.stats.getStat(HP_STAT.get()).removeMod(this.getRegistryId());
+    }
+
+    if(this.mpMultiplier != 0) {
+      character.stats.getStat(MP_STAT.get()).removeMod(this.getRegistryId());
+    }
+
+    if(this.speed_0f != 0) {
+      character.stats.getStat(SPEED_STAT.get()).removeMod(this.getRegistryId());
+    }
   }
 }

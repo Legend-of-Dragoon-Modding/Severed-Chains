@@ -6,6 +6,7 @@ import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -404,6 +405,14 @@ public class FileData {
     this.writeAscii(offset, id != null ? id.toString() : "");
   }
 
+  public void writeRegistryId(final int offset, @Nullable final RegistryEntry entry) {
+    this.writeRegistryId(offset, entry != null ? entry.getRegistryId() : null);
+  }
+
+  public void writeRegistryId(final IntRef offset, @Nullable final RegistryEntry entry) {
+    this.writeRegistryId(offset, entry != null ? entry.getRegistryId() : null);
+  }
+
   public RegistryId readRegistryId(final int offset) {
     // Replace the old core mod ID with the new one. Dunno how long we'll keep this. Maybe forever.
     return new RegistryId(this.readAscii(offset).replace("lod-core", "lod_core"));
@@ -417,6 +426,22 @@ public class FileData {
     }
 
     return new RegistryId(id);
+  }
+
+  public void writeEnum(final int offset, final Enum<?> val) {
+    this.writeAscii(offset, val.name(), 2);
+  }
+
+  public void writeEnum(final IntRef offset, final Enum<?> val) {
+    this.writeAscii(offset, val.name(), 2);
+  }
+
+  public <T extends Enum<T>> T readEnum(final int offset, final Class<T> cls) {
+    return Enum.valueOf(cls, this.readAscii(offset, 2));
+  }
+
+  public <T extends Enum<T>> T readEnum(final IntRef offset, final Class<T> cls) {
+    return Enum.valueOf(cls, this.readAscii(offset, 2));
   }
 
   public Rect4i readRect(final int offset, final Rect4i rect) {

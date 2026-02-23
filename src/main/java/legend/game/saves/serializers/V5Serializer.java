@@ -127,7 +127,7 @@ public final class V5Serializer {
     final int charDataCount = data.readUShort(offset); // Not yet used
 
     for(int charIndex = 0; charIndex < savedGame.charStats.length; charIndex++) {
-      final RetailSavedGame.CharStats charData = savedGame.charStats[charIndex];
+      final RetailSavedGame.SavedCharacter charData = savedGame.charStats[charIndex];
       charData.xp = data.readInt(offset);
       charData.flags = data.readInt(offset);
       charData.hp = data.readInt(offset);

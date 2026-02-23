@@ -7,6 +7,7 @@ import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.types.CharacterData2c;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -20,12 +21,10 @@ import static legend.game.SItem.addHp;
 import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.addMp;
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.canEquip;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.equipmentGlyphs_80114180;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuEquipmentSlotComparator;
 import static legend.game.SItem.renderCharacterEquipment;
@@ -147,9 +146,10 @@ public class EquipmentScreen extends MenuScreen {
     this.menuItems.clear();
 
     for(int equipmentSlot = 0; equipmentSlot < gameState_800babc8.equipment_1e8.size(); equipmentSlot++) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
       final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentSlot);
-      if(canEquip(equipment, charIndex)) {
-        if(equipment != gameState_800babc8.charData_32c.get(charIndex).equipment_14.get(equipment.slot)) {
+      if(character.canEquip(gameState_800babc8, equipment.slot, equipment)) {
+        if(equipment != gameState_800babc8.charData_32c.get(charIndex).getEquipment(equipment.slot)) {
           final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
           menuEntry.itemSlot_01 = equipmentSlot;
           this.menuItems.add(menuEntry);
@@ -247,7 +247,6 @@ public class EquipmentScreen extends MenuScreen {
           }
 
           playMenuSound(2);
-          loadCharacterStats();
           addHp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
           addMp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
           this.loadingStage = 2;
@@ -399,7 +398,6 @@ public class EquipmentScreen extends MenuScreen {
       }
 
       playMenuSound(2);
-      loadCharacterStats();
       addHp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
       addMp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
       this.loadingStage = 2;

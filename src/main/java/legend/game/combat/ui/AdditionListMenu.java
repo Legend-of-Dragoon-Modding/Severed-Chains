@@ -18,7 +18,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.loadAdditions;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -99,7 +98,6 @@ public class AdditionListMenu extends ListMenu {
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
     this.player_08.combatant_144.mrg_04 = null;
     charData.selectedAddition_19 = CHARACTER_ADDITIONS[this.player_08.charId_272][index].getId();
-    loadCharacterStats();
     this.player_08.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
     this.player_08.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
     loadAdditions();

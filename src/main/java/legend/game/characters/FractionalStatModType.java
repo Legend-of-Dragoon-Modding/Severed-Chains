@@ -1,6 +1,8 @@
 package legend.game.characters;
 
+import legend.core.memory.types.IntRef;
 import legend.game.scripting.Param;
+import legend.game.unpacker.FileData;
 
 public class FractionalStatModType extends StatModType<FractionalStat, FractionalStatMod, FractionalStatModConfig> {
   @Override
@@ -11,6 +13,21 @@ public class FractionalStatModType extends StatModType<FractionalStat, Fractiona
   @Override
   public FractionalStatModConfig makeConfig() {
     return new FractionalStatModConfig();
+  }
+
+  @Override
+  public void serialize(final FractionalStatMod mod, final FileData data, final IntRef offset) {
+    data.writeInt(offset, mod.amount);
+    data.writeBool(offset, mod.percentile);
+    data.writeInt(offset, mod.turns);
+  }
+
+  @Override
+  public FractionalStatMod deserialize(final FileData data, final IntRef offset) {
+    final int amount = data.readInt(offset);
+    final boolean percentile = data.readBool(offset);
+    final int turns = data.readInt(offset);
+    return new FractionalStatMod(amount, percentile, turns);
   }
 
   @Override

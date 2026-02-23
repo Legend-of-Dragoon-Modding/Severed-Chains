@@ -11,6 +11,8 @@ import legend.core.opengl.QuadBuilder;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.additions.UnlockState;
+import legend.game.characters.UnaryStat;
+import legend.game.characters.VitalsStat;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
@@ -71,10 +73,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -116,6 +116,7 @@ import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.types.CharacterData2c.IN_PARTY;
+import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
 import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.DARK_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
@@ -124,6 +125,14 @@ import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.VIOLET_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public final class SItem {
   private SItem() { }
@@ -494,12 +503,11 @@ public final class SItem {
     //LAB_80022994
     //LAB_80022998
     //LAB_800229d0
-    for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
+    for(int dlevel = 1; dlevel <= gameState_800babc8.charData_32c.get(charIndex).dlevel_13; dlevel++) {
       final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
-      final int spellIndex = spellStuff.spellIndex_02;
 
-      if(spellIndex != -1) {
-        spellIndices.add(spellIndex);
+      if(spellStuff.spellIndex_02 != -1) {
+        spellIndices.add(spellStuff.spellIndex_02);
       }
 
       //LAB_800229e8
@@ -541,33 +549,31 @@ public final class SItem {
    */
   @Method(0x80022b50L)
   public static int addHp(final int charIndex, final int amount) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+    final VitalsStat hp = character.stats.getStat(HP_STAT.get());
 
-    if(charData.hp_08 == stats.maxHp_66) {
+    if(hp.isFull()) {
       return -2;
     }
 
     //LAB_80022bb4
     final int ret;
     if(amount == -1) {
-      charData.hp_08 = stats.maxHp_66;
+      hp.restore();
       ret = -1;
     } else {
       //LAB_80022bc8
-      charData.hp_08 += amount;
+      hp.restore(amount);
 
-      if(charData.hp_08 < stats.maxHp_66) {
+      if(!hp.isFull()) {
         ret = amount;
       } else {
-        charData.hp_08 = stats.maxHp_66;
+        hp.restore();
         ret = -1;
       }
     }
 
     //LAB_80022bec
-    loadCharacterStats();
-
     //LAB_80022bf8
     return ret;
   }
@@ -578,62 +584,58 @@ public final class SItem {
    */
   @Method(0x80022c08L)
   public static int addMp(final int charIndex, final int amount) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+    final VitalsStat mp = character.stats.getStat(MP_STAT.get());
 
-    if(stats.maxMp_6e == 0 || charData.mp_0a == stats.maxMp_6e) {
+    if(mp.getMaxRaw() == 0 || mp.isFull()) {
       return -2;
     }
 
     //LAB_80022c78
     final int ret;
     if(amount == -1) {
-      charData.mp_0a = stats.maxMp_6e;
+      mp.restore();
       ret = -1;
     } else {
       //LAB_80022c8c
-      charData.mp_0a += amount;
+      mp.restore(amount);
 
-      if(charData.mp_0a < stats.maxMp_6e) {
+      if(!mp.isFull()) {
         ret = amount;
       } else {
-        charData.mp_0a = stats.maxMp_6e;
+        mp.restore();
         ret = -1;
       }
     }
 
     //LAB_80022cb4
-    loadCharacterStats();
-
     //LAB_80022cc0
     return ret;
   }
 
   @Method(0x80022cd0L)
   public static int addSp(final int charIndex, final int amount) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+    final VitalsStat sp = character.stats.getStat(SP_STAT.get());
 
-    final int maxSp = stats.dlevel_0f * 100;
-    if(stats.sp_08 == maxSp) {
+    if(sp.isFull()) {
       return -2;
     }
 
-    final int spToAdd = amount == -1 ? maxSp - stats.sp_08 : Math.min(amount, maxSp - stats.sp_08);
+    final int spToAdd = amount == -1 ? sp.getMax() - sp.getCurrent() : Math.min(amount, sp.getMax() - sp.getCurrent());
     final int responseType = amount == -1 || spToAdd < amount ? -1 : amount;
 
-    charData.sp_0c += spToAdd;
-    charData.dlevelXp_0e += amount == -1 ? spToAdd : amount;
+    sp.restore(spToAdd);
+    character.dlevelXp_0e += amount == -1 ? spToAdd : amount;
 
-    if(charData.dlevelXp_0e > 32000) {
-      charData.dlevelXp_0e = 32000;
+    if(character.dlevelXp_0e > 32000) {
+      character.dlevelXp_0e = 32000;
     }
 
-    if(charData.dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][charData.dlevel_13 + 1] && charData.dlevel_13 < 5) {
-      charData.dlevel_13++;
+    if(character.dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][character.dlevel_13 + 1] && character.dlevel_13 < 5) {
+      character.dlevel_13++;
     }
 
-    loadCharacterStats();
     return responseType;
   }
 
@@ -891,18 +893,7 @@ public final class SItem {
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final ActiveStatsa0 stats = activeStats[charIndex];
 
-      stats.xp_00 = 0;
-      stats.hp_04 = 0;
-      stats.mp_06 = 0;
-      stats.sp_08 = 0;
-      stats.dxp_0a = 0;
       stats.flags_0c = 0;
-      stats.level_0e = 0;
-      stats.dlevel_0f = 0;
-      stats.equipment_30.clear();
-
-      final RegistryDelegate<Addition>[] additions = CHARACTER_ADDITIONS[charIndex];
-      stats.selectedAddition_35 = additions.length != 0 ? additions[0].getId() : null;
 
       stats.equipmentPhysicalImmunity_46 = false;
       stats.equipmentMagicalImmunity_48 = false;
@@ -920,14 +911,12 @@ public final class SItem {
       stats.equipmentMagicalResistance_60 = false;
       stats.equipmentHpMulti_62 = 0;
       stats.equipmentMpMulti_64 = 0;
-      stats.maxHp_66 = 0;
 //      stats.addition_68 = 0;
       stats.bodySpeed_69 = 0;
       stats.bodyAttack_6a = 0;
       stats.bodyMagicAttack_6b = 0;
       stats.bodyDefence_6c = 0;
       stats.bodyMagicDefence_6d = 0;
-      stats.maxMp_6e = 0;
       stats.spellId_70 = 0;
       stats._71 = 0;
       stats.dragoonAttack_72 = 0;
@@ -1207,24 +1196,20 @@ public final class SItem {
     return renderable;
   }
 
-  @Method(0x801039a0L)
-  public static boolean canEquip(final Equipment equipment, final int charIndex) {
-    return (characterValidEquipment_80114284[charIndex] & equipment.equipableFlags_03) != 0;
-  }
-
   /**
    * @return Item ID of previously-equipped item, 0xff if invalid, 0x100 if no item was equipped
    */
   @Method(0x80103a5cL)
   public static EquipItemResult equipItem(final Equipment equipment, final int charIndex) {
-    if((!canEquip(equipment, charIndex))) {
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+
+    if(!charData.canEquip(gameState_800babc8, equipment.slot, equipment)) {
       return EquipItemResult.failure();
     }
 
     //LAB_80103ac0
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-    final Equipment previousEquipment = charData.equipment_14.get(equipment.slot);
-    charData.equipment_14.put(equipment.slot, equipment);
+    final Equipment previousEquipment = charData.getEquipment(equipment.slot);
+    charData.equip(equipment.slot, equipment);
 
     //LAB_80103af4
     //LAB_80103af8
@@ -1312,7 +1297,7 @@ public final class SItem {
   @Method(0x801038d4L)
   public static Renderable58 allocateOneFrameGlyph(final int glyph, final int x, final int y) {
     final Renderable58 renderable = allocateUiElement(glyph, glyph, x, y);
-    renderable.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    renderable.flags_00 |= FLAG_DELETE_AFTER_RENDER;
     return renderable;
   }
 
@@ -1348,9 +1333,9 @@ public final class SItem {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             final int charId = gameState_800babc8.charIds_88.getInt(i);
             final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+            final Equipment equipment = character.getEquipment(equipmentSlot);
 
-            if(character.equipment_14.get(equipmentSlot) != null) {
-              final Equipment equipment = character.equipment_14.get(equipmentSlot);
+            if(equipment != null) {
               final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
               menuEntry.flags_02 = 0x3000 | charId;
               equipments.add(menuEntry);
@@ -1480,7 +1465,7 @@ public final class SItem {
       final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       //LAB_80105138
       //LAB_8010513c
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
+      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
       renderable.clut_30 = clut;
@@ -1497,7 +1482,7 @@ public final class SItem {
       final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       //LAB_8010521c
       //LAB_80105220
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
+      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
       renderable.clut_30 = clut;
@@ -1511,7 +1496,7 @@ public final class SItem {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     //LAB_801052d8
     //LAB_801052dc
-    renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
+    renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
     renderable.glyph_04 = s0;
     renderable.tpage_2c = 0x19;
     renderable.clut_30 = clut;
@@ -1523,7 +1508,7 @@ public final class SItem {
 
   public static void renderFraction(final int x, final int y, final int numerator, final int denominator) {
     final int width = renderRightAlignedNumber(x, y, denominator, 0);
-    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= FLAG_DELETE_AFTER_RENDER;
     renderRightAlignedNumber(x - width - 5, y, numerator, 0);
   }
 
@@ -1539,7 +1524,7 @@ public final class SItem {
     }
 
     final int width = renderRightAlignedNumber(x, y, denominator, 0);
-    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= FLAG_DELETE_AFTER_RENDER;
     renderRightAlignedNumber(x - width - 5, y, numerator, clut);
   }
 
@@ -1766,7 +1751,7 @@ public final class SItem {
       final int digit = value / (int)Math.pow(10, i) % 10;
 
       final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
+      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
       struct.glyph_04 = digit;
       struct.tpage_2c = 0x19;
       struct.clut_30 = clut;
@@ -1793,7 +1778,7 @@ public final class SItem {
 
       if(digit != 0 || i == digitCount - 1 || (flags & 0x1) != 0) {
         final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-        struct.flags_00 |= (flags & 0x2) != 0 ? Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER : Renderable58.FLAG_NO_ANIMATION;
+        struct.flags_00 |= (flags & 0x2) != 0 ? Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER : Renderable58.FLAG_NO_ANIMATION;
         struct.glyph_04 = digit;
         struct.tpage_2c = 0x19;
         struct.clut_30 = 0;
@@ -1831,7 +1816,7 @@ public final class SItem {
   public static void renderThreeDigitNumberComparisonWithPercent(final int x, final int y, final int currentVal, final int newVal) {
     final int clut = renderThreeDigitNumberComparison(x, y, currentVal, newVal);
     final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-    v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
+    v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
     v0.glyph_04 = 0xc;
     v0.tpage_2c = 0x19;
     v0.clut_30 = clut;
@@ -1935,17 +1920,21 @@ public final class SItem {
         }
 
         //LAB_80108098
-        final ActiveStatsa0 stats = stats_800be5f8[charId];
-        renderTwoDigitNumber(x + 154, y + 6, stats.level_0e);
-        renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f);
-        renderThreeDigitNumber(x + 148, y + 17, stats.sp_08);
-        renderFourDigitHp(x + 100, y + 28, stats.hp_04, stats.maxHp_66);
+        final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+        final VitalsStat hp = character.stats.getStat(HP_STAT.get());
+        final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+        final VitalsStat sp = character.stats.getStat(SP_STAT.get());
+
+        renderTwoDigitNumber(x + 154, y + 6, character.level_12);
+        renderTwoDigitNumber(x + 112, y + 17, character.dlevel_13);
+        renderThreeDigitNumber(x + 148, y + 17, sp.getCurrent());
+        renderFourDigitHp(x + 100, y + 28, hp.getCurrent(), hp.getMax());
         renderCharacter(x + 124, y + 28, 11);
-        renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66);
-        renderThreeDigitNumber(x + 106, y + 39, stats.mp_06);
+        renderFourDigitNumber(x + 142, y + 28, hp.getMax());
+        renderThreeDigitNumber(x + 106, y + 39, mp.getCurrent());
         renderCharacter(x + 124, y + 39, 11);
-        renderThreeDigitNumber(x + 148, y + 39, stats.maxMp_6e);
-        renderSixDigitNumber(x + 88, y + 50, gameState_800babc8.charData_32c.get(charId).xp_00);
+        renderThreeDigitNumber(x + 148, y + 39, mp.getMax());
+        renderSixDigitNumber(x + 88, y + 50, character.xp_00);
         renderCharacter(x + 124, y + 50, 11);
         renderXp(x + 130, y + 50, getXpToNextLevel(charId));
 
@@ -1970,10 +1959,11 @@ public final class SItem {
     if(charIndex != -1) {
       final ActiveStatsa0 statsTmp;
       final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+      final CharacterData2c backupChar = character.template.make(gameState_800babc8);
+      backupChar.set(character);
 
       if(equipment != null) {
-        final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c.get(charIndex).equipment_14);
-
         //LAB_80108638
         equipItem(equipment, charIndex);
         loadCharacterStats();
@@ -1982,8 +1972,7 @@ public final class SItem {
         statsTmp = new ActiveStatsa0(stats);
 
         //LAB_801086e8
-        gameState_800babc8.charData_32c.get(charIndex).equipment_14.clear();
-        gameState_800babc8.charData_32c.get(charIndex).equipment_14.putAll(oldEquipment);
+        character.set(backupChar);
 
         loadCharacterStats();
       } else {
@@ -1992,8 +1981,14 @@ public final class SItem {
         statsTmp = new ActiveStatsa0(stats);
       }
 
+      final UnaryStat newAttack = character.stats.getStat(ATTACK_STAT.get());
+      final UnaryStat newDefense = character.stats.getStat(DEFENSE_STAT.get());
+      final UnaryStat newMagicAttack = character.stats.getStat(MAGIC_ATTACK_STAT.get());
+      final UnaryStat newMagicDefense = character.stats.getStat(MAGIC_DEFENSE_STAT.get());
+      final UnaryStat newSpeed = character.stats.getStat(SPEED_STAT.get());
+
       //LAB_80108770
-      renderThreeDigitNumberComparison( 58, 116, stats.bodyAttack_6a, statsTmp.bodyAttack_6a);
+      renderThreeDigitNumber( 58, 116, newAttack.getRaw(), 0x2);
       renderThreeDigitNumberComparison( 90, 116, stats.equipmentAttack_88, statsTmp.equipmentAttack_88);
       renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a + stats.equipmentAttack_88, statsTmp.bodyAttack_6a + statsTmp.equipmentAttack_88);
 
@@ -2002,7 +1997,7 @@ public final class SItem {
       }
 
       //LAB_801087fc
-      renderThreeDigitNumberComparison( 58, 128, stats.bodyDefence_6c, statsTmp.bodyDefence_6c);
+      renderThreeDigitNumber( 58, 128, newDefense.getRaw(), 0x2);
       renderThreeDigitNumberComparison( 90, 128, stats.equipmentDefence_8c, statsTmp.equipmentDefence_8c);
       renderThreeDigitNumberComparison(122, 128, stats.bodyDefence_6c + stats.equipmentDefence_8c, statsTmp.bodyDefence_6c + statsTmp.equipmentDefence_8c);
 
@@ -2011,7 +2006,7 @@ public final class SItem {
       }
 
       //LAB_8010886c
-      renderThreeDigitNumberComparison( 58, 140, stats.bodyMagicAttack_6b, statsTmp.bodyMagicAttack_6b);
+      renderThreeDigitNumber( 58, 140, newMagicAttack.getRaw(), 0x2);
       renderThreeDigitNumberComparison( 90, 140, stats.equipmentMagicAttack_8a, statsTmp.equipmentMagicAttack_8a);
       renderThreeDigitNumberComparison(122, 140, stats.bodyMagicAttack_6b + stats.equipmentMagicAttack_8a, statsTmp.bodyMagicAttack_6b + statsTmp.equipmentMagicAttack_8a);
 
@@ -2020,7 +2015,7 @@ public final class SItem {
       }
 
       //LAB_801088dc
-      renderThreeDigitNumberComparison( 58, 152, stats.bodyMagicDefence_6d, statsTmp.bodyMagicDefence_6d);
+      renderThreeDigitNumber( 58, 152, newMagicDefense.getRaw(), 0x2);
       renderThreeDigitNumberComparison( 90, 152, stats.equipmentMagicDefence_8e, statsTmp.equipmentMagicDefence_8e);
       renderThreeDigitNumberComparison(122, 152, stats.bodyMagicDefence_6d + stats.equipmentMagicDefence_8e, statsTmp.bodyMagicDefence_6d + statsTmp.equipmentMagicDefence_8e);
 
@@ -2029,9 +2024,9 @@ public final class SItem {
       }
 
       //LAB_8010894c
-      renderThreeDigitNumberComparison( 58, 164, stats.bodySpeed_69, statsTmp.bodySpeed_69);
+      renderThreeDigitNumber( 58, 164, newSpeed.getRaw(), 0x2);
       renderThreeDigitNumberComparison( 90, 164, stats.equipmentSpeed_86, statsTmp.equipmentSpeed_86);
-      renderThreeDigitNumberComparison(122, 164, stats.bodySpeed_69 + stats.equipmentSpeed_86, statsTmp.bodySpeed_69 + statsTmp.equipmentSpeed_86);
+      renderThreeDigitNumberComparison(122, 164, newSpeed.getRaw() + stats.equipmentSpeed_86, newSpeed.getRaw() + statsTmp.equipmentSpeed_86);
 
       renderThreeDigitNumberComparisonWithPercent( 90, 176, stats.equipmentAttackHit_90, statsTmp.equipmentAttackHit_90);
       renderThreeDigitNumberComparisonWithPercent(122, 176, stats.equipmentAttackHit_90, statsTmp.equipmentAttackHit_90);
@@ -2062,8 +2057,10 @@ public final class SItem {
       allocateUiElement(0x59, 0x59, 194, 16);
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
-        if(charData.equipment_14.get(slot) != null) {
-          charData.equipment_14.get(slot).renderIcon(202, 17 + 14 * slot.ordinal(), 0);
+        final Equipment equipment = charData.getEquipment(slot);
+
+        if(equipment != null) {
+          equipment.renderIcon(202, 17 + 14 * slot.ordinal(), 0);
         }
       }
     }
@@ -2071,8 +2068,10 @@ public final class SItem {
     //LAB_80108f94
     //LAB_80108f98
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
-      if(charData.equipment_14.get(slot) != null) {
-        renderText(I18n.translate(charData.equipment_14.get(slot)), 220, 19 + slot.ordinal() * 14, UI_TEXT);
+      final Equipment equipment = charData.getEquipment(slot);
+
+      if(equipment != null) {
+        renderText(I18n.translate(equipment), 220, 19 + slot.ordinal() * 14, UI_TEXT);
       }
     }
 
@@ -2319,34 +2318,29 @@ public final class SItem {
       final ActiveStatsa0 stats = activeStats[charId];
 
       final CharacterData2c charData = gameState.charData_32c.get(charId);
+      final VitalsStat hp = charData.stats.getStat(HP_STAT.get());
+      final VitalsStat mp = charData.stats.getStat(MP_STAT.get());
+      final VitalsStat sp = charData.stats.getStat(SP_STAT.get());
 
       final CharacterStatsEvent statsEvent = EVENTS.postEvent(new CharacterStatsEvent(charId));
 
-      stats.xp_00 = statsEvent.xp;
-      stats.hp_04 = statsEvent.hp;
-      stats.mp_06 = statsEvent.mp;
-      stats.sp_08 = statsEvent.sp;
-      stats.dxp_0a = statsEvent.dxp;
+      charData.xp_00 = statsEvent.xp;
+      hp.setCurrent(statsEvent.hp);
+      mp.setCurrent(statsEvent.mp);
+      sp.setCurrent(statsEvent.sp);
+      charData.dlevelXp_0e = statsEvent.dxp;
       stats.flags_0c = statsEvent.flags;
-      stats.level_0e = statsEvent.level;
-      stats.dlevel_0f = statsEvent.dlevel;
+      charData.level_12 = statsEvent.level;
+      charData.dlevel_13 = statsEvent.dlevel;
 
       //LAB_801101e4
-      stats.equipment_30.clear();
-      stats.equipment_30.putAll(charData.equipment_14);
-
-      stats.selectedAddition_35 = charData.selectedAddition_19;
-
-      stats.maxHp_66 = statsEvent.maxHp;
-//      stats.addition_68 = statsEvent.addition;
       stats.bodySpeed_69 = statsEvent.bodySpeed;
       stats.bodyAttack_6a = statsEvent.bodyAttack;
       stats.bodyMagicAttack_6b = statsEvent.bodyMagicAttack;
       stats.bodyDefence_6c = statsEvent.bodyDefence;
       stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_80111d20[charId][stats.dlevel_0f];
-      stats.maxMp_6e = statsEvent.maxMp;
+      final MagicStuff08 magicStuff = magicStuff_80111d20[charId][charData.dlevel_13];
       stats.spellId_70 = statsEvent.spellId;
       stats._71 = magicStuff._03;
       stats.dragoonAttack_72 = statsEvent.dragoonAttack;
@@ -2354,11 +2348,9 @@ public final class SItem {
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
       stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
 
-      if(stats.selectedAddition_35 != null) {
-        final Addition addition = REGISTRIES.additions.getEntry(stats.selectedAddition_35).get();
-        final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(stats.selectedAddition_35, k -> new CharacterAdditionStats());
-
-//        stats.addition_00_9c = addition._00;
+      if(charData.selectedAddition_19 != null) {
+        final Addition addition = REGISTRIES.additions.getEntry(charData.selectedAddition_19).get();
+        final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(charData.selectedAddition_19, k -> new CharacterAdditionStats());
 
         final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(charData, additionStats, addition));
         stats.additionSpMultiplier_9e = Math.round(event.additionSpMulti * 100) - 100;
@@ -2368,61 +2360,29 @@ public final class SItem {
       }
 
       //LAB_8011042c
-      applyEquipmentStats(activeStats, charId);
+      applyEquipmentStats(gameState, activeStats, charId);
 
       final int v0 = dragoonGoodsBits_800fbd08[charId];
       if(hasDragoon(gameState.goods_19c, charId)) {
+        mp.setMaxRaw(statsEvent.maxMp);
         stats.flags_0c |= 0x2000;
 
         if((gameState.characterInitialized_4e6 & 0x1 << v0) == 0) {
           gameState.characterInitialized_4e6 |= 0x1 << v0;
-
-          stats.mp_06 = statsEvent.maxMp;
-          stats.maxMp_6e = statsEvent.maxMp;
+          mp.restore();
         }
-      } else {
-        //LAB_801104ec
-        stats.mp_06 = 0;
-        stats.maxMp_6e = 0;
-        stats.dlevel_0f = 0;
       }
 
       //LAB_801104f8
       if(charId == 0 && gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
         stats.flags_0c |= 0x6000;
 
-        stats.dlevel_0f = gameState.charData_32c.get(0).dlevel_13;
-
         final int a1 = dragoonGoodsBits_800fbd08[0];
 
         if((gameState.characterInitialized_4e6 & 0x1 << a1) == 0) {
           gameState.characterInitialized_4e6 |= 0x1 << a1;
-          stats.mp_06 = statsEvent.maxMp;
-          stats.maxMp_6e = statsEvent.maxMp;
-        } else {
-          //LAB_80110590
-          stats.mp_06 = charData.mp_0a;
-          stats.maxMp_6e = magicStuff.mp_00;
+          mp.restore();
         }
-      }
-
-      //LAB_801105b0
-      final int maxHp = (int)(stats.maxHp_66 * (stats.equipmentHpMulti_62 / 100.0 + 1));
-
-      //LAB_801105f0
-      stats.maxHp_66 = maxHp;
-
-      if(stats.hp_04 > maxHp) {
-        stats.hp_04 = maxHp;
-      }
-
-      //LAB_80110608
-      final int maxMp = (int)(stats.maxMp_6e * (stats.equipmentMpMulti_64 / 100.0 + 1));
-
-      stats.maxMp_6e = maxMp;
-
-      if(stats.mp_06 > maxMp) {
-        stats.mp_06 = maxMp;
       }
 
       //LAB_80110654
@@ -2432,14 +2392,15 @@ public final class SItem {
   }
 
   @Method(0x8011085cL)
-  public static void applyEquipmentStats(final ActiveStatsa0[] activeStats, final int charId) {
+  public static void applyEquipmentStats(final GameState52c gameState, final ActiveStatsa0[] activeStats, final int charId) {
     clearEquipmentStats(activeStats, charId);
 
+    final CharacterData2c character = gameState.charData_32c.get(charId);
     final ActiveStatsa0 characterStats = activeStats[charId];
 
     //LAB_801108b0
     for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-      final Equipment equipment = stats_800be5f8[charId].equipment_30.get(equipmentSlot);
+      final Equipment equipment = character.getEquipment(equipmentSlot);
 
       if(equipment != null) {
         final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipment));

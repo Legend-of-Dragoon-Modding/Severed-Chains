@@ -142,7 +142,7 @@ public final class RetailSerializer {
     }
 
     for(int charSlot = 0; charSlot < 9; charSlot++) {
-      final RetailSavedGame.CharStats charData = savedGame.charStats[charSlot];
+      final RetailSavedGame.SavedCharacter charData = savedGame.charStats[charSlot];
       final FileData charSlice = data.slice(0x32c + charSlot * 0x2c, 0x2c);
 
       charData.xp = charSlice.readInt(0x0);
@@ -196,7 +196,7 @@ public final class RetailSerializer {
 
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
 
-    final RetailSavedGame.CharStats charData = savedGame.charStats[savedGame.charIds.getInt(0)];
+    final RetailSavedGame.SavedCharacter charData = savedGame.charStats[savedGame.charIds.getInt(0)];
     savedGame.maxHp = levelStuff_80111cfc[savedGame.charIds.getInt(0)][charData.level].hp_00;
     savedGame.maxMp = magicStuff_80111d20[savedGame.charIds.getInt(0)][charData.dlevel].mp_00;
   }

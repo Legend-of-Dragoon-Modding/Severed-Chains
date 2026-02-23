@@ -24,7 +24,6 @@ import java.util.function.Function;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -40,7 +39,6 @@ import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
@@ -55,6 +53,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
@@ -79,7 +78,6 @@ public class MainMenuScreen extends MenuScreen {
     this.unload = unload;
 
     loadingNewGameState_800bdc34 = false;
-    loadCharacterStats();
 
     this.addControl(new Background());
     this.addControl(Glyph.glyph(71)).setPos( 16,  16); // Chapter box

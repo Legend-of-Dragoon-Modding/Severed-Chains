@@ -1,9 +1,12 @@
 package legend.game.types;
 
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterTemplate;
+import legend.game.characters.StatCollection;
 import legend.game.inventory.Equipment;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,8 @@ public class CharacterData2c {
   public static final int CANT_REMOVE = 0x20;
   public static final int HAS_ULTIMATE_ADDITION = 0x40;
 
+  public final CharacterTemplate template;
+
   public int xp_00;
   /**
    * <ul>
@@ -29,9 +34,9 @@ public class CharacterData2c {
    * </ul>
    */
   public int partyFlags_04;
-  public int hp_08;
-  public int mp_0a;
-  public int sp_0c;
+//  public int hp_08;
+//  public int mp_0a;
+//  public int sp_0c;
   public int dlevelXp_0e;
   /**
    * <ul>
@@ -48,18 +53,22 @@ public class CharacterData2c {
   public int status_10;
   public int level_12;
   public int dlevel_13;
-  public final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
+  public final StatCollection stats;
+  private final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition_19;
   public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
 //  public final int[] additionLevels_1a = new int[8];
 //  public final int[] additionXp_22 = new int[8];
 
+  public CharacterData2c(final CharacterTemplate template, final StatCollection stats) {
+    this.template = template;
+    this.stats = stats;
+  }
+
   public void set(final CharacterData2c other) {
     this.xp_00 = other.xp_00;
     this.partyFlags_04 = other.partyFlags_04;
-    this.hp_08 = other.hp_08;
-    this.mp_0a = other.mp_0a;
-    this.sp_0c = other.sp_0c;
+    this.stats.set(other.stats);
     this.dlevelXp_0e = other.dlevelXp_0e;
     this.status_10 = other.status_10;
     this.level_12 = other.level_12;
@@ -75,5 +84,26 @@ public class CharacterData2c {
 
 //    System.arraycopy(other.additionLevels_1a, 0, this.additionLevels_1a, 0, this.additionLevels_1a.length);
 //    System.arraycopy(other.additionXp_22, 0, this.additionXp_22, 0, this.additionXp_22.length);
+  }
+
+  public boolean canEquip(final GameState52c gameState, final EquipmentSlot slot, final Equipment equipment) {
+    return this.template.canEquip(gameState, this, slot, equipment);
+  }
+
+  public void equip(final EquipmentSlot slot, @Nullable final Equipment equipment) {
+    if(this.equipment_14.containsKey(slot)) {
+      this.equipment_14.get(slot).onUnequip(this);
+    }
+
+    if(equipment != null) {
+      this.equipment_14.put(slot, equipment);
+      equipment.onEquip(this);
+    } else {
+      this.equipment_14.remove(slot);
+    }
+  }
+
+  public Equipment getEquipment(final EquipmentSlot slot) {
+    return this.equipment_14.get(slot);
   }
 }

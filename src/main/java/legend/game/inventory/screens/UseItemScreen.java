@@ -4,11 +4,12 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
+import legend.game.characters.VitalsStat;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
-import legend.game.types.ActiveStatsa0;
+import legend.game.types.CharacterData2c;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -28,7 +29,6 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuItemIconComparator;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacterStatusEffect;
@@ -41,7 +41,6 @@ import static legend.game.SItem.takeItemFromSlot;
 import static legend.game.SItem.useItemGlyphs_801141fc;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -55,6 +54,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
 
 public class UseItemScreen extends MenuScreen {
   private int loadingStage;
@@ -175,6 +176,10 @@ public class UseItemScreen extends MenuScreen {
     renderCharacterStatusEffect(x - 4, y - 6, charIndex);
 
     if(allocate) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+      final VitalsStat hp = character.stats.getStat(HP_STAT.get());
+      final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+
       allocateUiElement(112, 112, x, y).z_3c = 33;
 
       if(charIndex < 9) {
@@ -188,11 +193,10 @@ public class UseItemScreen extends MenuScreen {
       }
 
       //LAB_80108544
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
-      renderFourDigitHp(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
-      renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66);
-      renderFourDigitNumber(x + 25, y + 79, stats.mp_06);
-      renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e);
+      renderFourDigitHp(x + 25, y + 57, hp.getCurrent(), hp.getMax());
+      renderFourDigitNumber(x + 25, y + 68, hp.getMax());
+      renderFourDigitNumber(x + 25, y + 79, mp.getCurrent());
+      renderFourDigitNumber(x + 25, y + 90, mp.getMax());
     }
   }
 
@@ -473,7 +477,6 @@ public class UseItemScreen extends MenuScreen {
     playMenuSound(2);
     takeItemFromSlot(this.menuItems.get(this.selectedSlot + this.slotScroll).itemSlot_01, 1);
     this.itemCount = this.getUsableItemsInMenu();
-    loadCharacterStats();
 
     if(this.slotScroll == 0 && this.selectedSlot > this.itemCount - 1) {
       this.selectedSlot = Math.max(0, --this.selectedSlot);

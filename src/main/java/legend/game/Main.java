@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.GameEngine;
 import legend.core.Version;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +20,6 @@ import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public final class Main {
   public static final Locale ORIGINAL_LOCALE = Locale.getDefault();
@@ -53,9 +51,9 @@ public final class Main {
         currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
 
         try {
-          SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
+          SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8);
           generatedCrashSave = true;
-        } catch(final SaveFailedException ex) {
+        } catch(final Throwable ex) {
           LOGGER.error("Failed to generate crash recovery save :(", ex);
         }
       }

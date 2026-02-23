@@ -217,7 +217,6 @@ import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.loadPlayerModelAndAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.Models.vramSlots_8005027c;
-import static legend.game.SItem.characterDragoonIndices_800c6e68;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.giveItem;
@@ -8333,20 +8332,15 @@ public class Battle extends EngineState<Battle> {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(bent.charId_272);
 
       //LAB_800eec10
-      charData.hp_08 = java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent());
+      charData.stats.getStat(HP_STAT.get()).setCurrent(java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent()));
 
-      if((gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[bent.charId_272]))) {
-        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
-      }
-
-      //LAB_800eec78
-      if(bent.charId_272 == 0 && gameState_800babc8.goods_19c.has(characterDragoonIndices_800c6e68[9])) {
-        charData.mp_0a = bent.stats.getStat(MP_STAT.get()).getCurrent();
+      if(charData.template.hasDragoon(gameState_800babc8, charData)) {
+        charData.stats.getStat(MP_STAT.get()).setCurrent(bent.stats.getStat(MP_STAT.get()).getCurrent());
       }
 
       //LAB_800eecb8
       charData.status_10 = bent.status_0e & 0xc8;
-      charData.sp_0c = bent.stats.getStat(SP_STAT.get()).getCurrent();
+      charData.stats.getStat(SP_STAT.get()).setCurrent(bent.stats.getStat(SP_STAT.get()).getCurrent());
     }
 
     //LAB_800eed78
@@ -8371,25 +8365,16 @@ public class Battle extends EngineState<Battle> {
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
       final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(player.charId_272);
       final DragoonSpells09 spells = new DragoonSpells09(player.charId_272);
       this.dragoonSpells_800c6960.add(spells);
 
       getUnlockedDragoonSpells(spells.spellIndices_01, player.charId_272);
 
       //LAB_800ef400
-      final VitalsStat playerHp = player.stats.getStat(HP_STAT.get());
-      final VitalsStat playerMp = player.stats.getStat(MP_STAT.get());
-      final VitalsStat playerSp = player.stats.getStat(SP_STAT.get());
+      player.stats.set(character.stats);
 
       final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
-      player.level_04 = stats.level_0e;
-      player.dlevel_06 = stats.dlevel_0f;
-      playerHp.setCurrent(stats.hp_04);
-      playerHp.setMaxRaw(stats.maxHp_66);
-      playerSp.setCurrent(stats.sp_08);
-      playerSp.setMaxRaw(stats.dlevel_0f * 100);
-      playerMp.setCurrent(stats.mp_06);
-      playerMp.setMaxRaw(stats.maxMp_6e);
       player.status_0e = stats.flags_0c;
       player.specialEffectFlag_14 = stats.specialEffectFlag_76;
 //      player.equipmentType_16 = stats.equipmentType_77;
@@ -8419,7 +8404,7 @@ public class Battle extends EngineState<Battle> {
       player.equipment_1a_48 = stats.equipment_1a_9a;
       player.equipmentOnHitStatus_4a = stats.equipmentOnHitStatus_9b;
       player.spellId_4e = stats.equipmentOnHitStatus_9b; //TODO retail bug?
-      player.selectedAddition_58 = stats.selectedAddition_35;
+      player.selectedAddition_58 = character.selectedAddition_19;
       player.dragoonAttack_ac = stats.dragoonAttack_72;
       player.dragoonMagic_ae = stats.dragoonMagicAttack_73;
       player.dragoonDefence_b0 = stats.dragoonDefence_74;
@@ -8431,8 +8416,17 @@ public class Battle extends EngineState<Battle> {
 //      player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
+
       player.equipment_11e.clear();
-      player.equipment_11e.putAll(stats.equipment_30);
+
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        final Equipment equipment = character.getEquipment(slot);
+
+        if(equipment != null) {
+          player.equipment_11e.put(slot, equipment);
+        }
+      }
+
       player.spMultiplier_128 = stats.equipmentSpMultiplier_4c;
       player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;

@@ -138,7 +138,7 @@ public final class V2Serializer {
     final int charDataCount = data.readUShort(offset); // Not yet used
 
     for(int charIndex = 0; charIndex < savedGame.charStats.length; charIndex++) {
-      final RetailSavedGame.CharStats charData = savedGame.charStats[charIndex];
+      final RetailSavedGame.SavedCharacter charData = savedGame.charStats[charIndex];
       charData.xp = data.readInt(offset);
       charData.flags = data.readInt(offset);
       charData.hp = data.readInt(offset);
@@ -202,7 +202,7 @@ public final class V2Serializer {
 
     savedGame.locationName = getLocationName(locationType, locationIndex);
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
-    final RetailSavedGame.CharStats charData = savedGame.charStats[savedGame.charIds.getInt(0)];
+    final RetailSavedGame.SavedCharacter charData = savedGame.charStats[savedGame.charIds.getInt(0)];
     savedGame.maxHp = levelStuff_80111cfc[savedGame.charIds.getInt(0)][charData.level].hp_00;
     savedGame.maxMp = magicStuff_80111d20[savedGame.charIds.getInt(0)][charData.dlevel].mp_00;
 

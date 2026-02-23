@@ -38,7 +38,7 @@ public class RetailSaveCard extends BlankSaveCard {
       renderText(this.savedGame.locationName, x + 258, y + 47, UI_TEXT_CENTERED);
 
       final int firstCharId = this.savedGame.charIds.getInt(0);
-      final RetailSavedGame.CharStats character = this.savedGame.charStats[firstCharId];
+      final RetailSavedGame.SavedCharacter character = this.savedGame.charStats[firstCharId];
       this.renderNumber(224, y + 6, character.level, 2); // Level
       this.renderNumber(269, y + 6, character.dlevel, 2); // Dragoon level
       renderFourDigitHp(302, y + 6, character.hp, this.savedGame.maxHp, Renderable58.FLAG_DELETE_AFTER_RENDER); // Current HP

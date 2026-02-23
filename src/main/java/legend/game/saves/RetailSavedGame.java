@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterTemplate;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
@@ -26,6 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.lodmod.Legacy.CHAR_IDS;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class RetailSavedGame extends SavedGame {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSavedGame.class);
@@ -57,7 +62,7 @@ public class RetailSavedGame extends SavedGame {
   public final List<RegistryId> equipmentIds = new ArrayList<>();
   public final List<InventoryEntry> itemIds = new ArrayList<>();
 
-  public final CharStats[] charStats = new CharStats[9];
+  public final SavedCharacter[] charStats = new SavedCharacter[9];
 
   public int pathIndex;
   public int dotIndex;
@@ -73,7 +78,7 @@ public class RetailSavedGame extends SavedGame {
 
   public RetailSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
     super(campaign, version, fileName, saveName, campaignType, config);
-    Arrays.setAll(this.charStats, i -> new CharStats());
+    Arrays.setAll(this.charStats, i -> new SavedCharacter());
   }
 
   @Override
@@ -120,33 +125,35 @@ public class RetailSavedGame extends SavedGame {
     }
 
     for(int charId = 0; charId < this.charStats.length; charId++) {
-      final RetailSavedGame.CharStats stats = this.charStats[charId];
-      final CharacterData2c charData = gameState.charData_32c.get(charId);
+      final SavedCharacter savedCharacter = this.charStats[charId];
+      final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(CHAR_IDS[charId]).get();
+      final CharacterData2c character = template.make(gameState);
+      gameState.charData_32c.add(character);
 
-      charData.xp_00 = stats.xp;
-      charData.partyFlags_04 = stats.flags;
-      charData.hp_08 = stats.hp;
-      charData.mp_0a = stats.mp;
-      charData.sp_0c = stats.sp;
-      charData.dlevelXp_0e = stats.dlevelXp;
-      charData.status_10 = stats.status;
-      charData.level_12 = stats.level;
-      charData.dlevel_13 = stats.dlevel;
+      character.xp_00 = savedCharacter.xp;
+      character.partyFlags_04 = savedCharacter.flags;
+      character.stats.getStat(HP_STAT.get()).setCurrent(savedCharacter.hp);
+      character.stats.getStat(MP_STAT.get()).setCurrent(savedCharacter.mp);
+      character.stats.getStat(SP_STAT.get()).setCurrent(savedCharacter.sp);
+      character.dlevelXp_0e = savedCharacter.dlevelXp;
+      character.status_10 = savedCharacter.status;
+      character.level_12 = savedCharacter.level;
+      character.dlevel_13 = savedCharacter.dlevel;
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
-        if(stats.equipmentIds.containsKey(slot)) {
-          final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(stats.equipmentIds.get(slot));
+        if(savedCharacter.equipmentIds.containsKey(slot)) {
+          final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(savedCharacter.equipmentIds.get(slot));
 
           if(delegate.isValid()) {
-            charData.equipment_14.put(slot, delegate.get());
+            character.equip(slot, delegate.get());
           } else {
             LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
           }
         }
       }
 
-      charData.selectedAddition_19 = stats.selectedAddition;
-      charData.additionStats.putAll(stats.additionStats);
+      character.selectedAddition_19 = savedCharacter.selectedAddition;
+      character.additionStats.putAll(savedCharacter.additionStats);
     }
 
     gameState.pathIndex_4d8 = this.pathIndex;
@@ -167,7 +174,7 @@ public class RetailSavedGame extends SavedGame {
     return true;
   }
 
-  public static final class CharStats {
+  public static final class SavedCharacter {
     public int xp;
     public int flags;
     public int hp;

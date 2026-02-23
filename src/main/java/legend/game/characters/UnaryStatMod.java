@@ -20,6 +20,11 @@ public class UnaryStatMod implements StatMod<UnaryStat> {
   }
 
   @Override
+  public StatMod<UnaryStat> copy() {
+    return new UnaryStatMod(this.amount, this.percentile, this.turns);
+  }
+
+  @Override
   public int apply(final StatCollection stats, final StatType<UnaryStat> type) {
     if(this.percentile) {
       return stats.getStat(type).getRaw() * this.amount / 100;

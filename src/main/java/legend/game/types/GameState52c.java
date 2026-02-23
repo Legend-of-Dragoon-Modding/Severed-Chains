@@ -76,7 +76,12 @@ public class GameState52c {
   /** A bitset used to set each char's MP to max the first time each one is loaded */
   public int characterInitialized_4e6;
 
-  public CharacterData2c getCharBySlot(final int slot) {
+  public CharacterData2c addCharacter(final CharacterData2c character) {
+    this.charData_32c.add(character);
+    return character;
+  }
+
+  public CharacterData2c getCharacterBySlot(final int slot) {
     return this.charData_32c.get(this.charIds_88.getInt(slot));
   }
 }

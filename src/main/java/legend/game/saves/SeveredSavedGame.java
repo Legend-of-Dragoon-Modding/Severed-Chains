@@ -3,14 +3,11 @@ package legend.game.saves;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
-import legend.game.additions.CharacterAdditionStats;
-import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.controls.SeveredSaveCard;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EquipmentSlot;
 import legend.game.types.Flags;
 import legend.game.types.GameState52c;
 import org.apache.logging.log4j.LogManager;
@@ -19,10 +16,7 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 
@@ -30,7 +24,7 @@ public class SeveredSavedGame extends SavedGame {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SeveredSavedGame.class);
 
   public String locationName;
-  public final List<CharStats> charStats = new ArrayList<>();
+  public final List<SavedCharacter> charStats = new ArrayList<>();
 
   public final int[] scriptData = new int[0x20];
   public final IntList charIds = new IntArrayList();
@@ -108,34 +102,9 @@ public class SeveredSavedGame extends SavedGame {
     }
 
     for(int charId = 0; charId < this.charStats.size(); charId++) {
-      final CharStats stats = this.charStats.get(charId);
-      final CharacterData2c charData = new CharacterData2c();
+      final SavedCharacter savedCharacter = this.charStats.get(charId);
+      final CharacterData2c charData = savedCharacter.make(gameState);
       gameState.charData_32c.add(charData);
-
-      charData.xp_00 = stats.xp;
-      charData.partyFlags_04 = stats.flags;
-      charData.hp_08 = stats.hp;
-      charData.mp_0a = stats.mp;
-      charData.sp_0c = stats.sp;
-      charData.dlevelXp_0e = stats.dlevelXp;
-      charData.status_10 = stats.status;
-      charData.level_12 = stats.level;
-      charData.dlevel_13 = stats.dlevel;
-
-      for(final EquipmentSlot slot : EquipmentSlot.values()) {
-        if(stats.equipmentIds.containsKey(slot)) {
-          final RegistryDelegate<Equipment> delegate = GameEngine.REGISTRIES.equipment.getEntry(stats.equipmentIds.get(slot));
-
-          if(delegate.isValid()) {
-            charData.equipment_14.put(slot, delegate.get());
-          } else {
-            LOGGER.warn("Skipping unknown equipment ID %s", delegate.getId());
-          }
-        }
-      }
-
-      charData.selectedAddition_19 = stats.selectedAddition;
-      charData.additionStats.putAll(stats.additionStats);
     }
 
     gameState.pathIndex_4d8 = this.pathIndex;
@@ -152,28 +121,5 @@ public class SeveredSavedGame extends SavedGame {
   @Override
   public boolean isValid() {
     return true;
-  }
-
-  public static final class CharStats {
-    public final int maxHp;
-    public final int maxMp;
-
-    public int xp;
-    public int flags;
-    public int hp;
-    public int mp;
-    public int sp;
-    public int dlevelXp;
-    public int status;
-    public int level;
-    public int dlevel;
-    public final Map<EquipmentSlot, RegistryId> equipmentIds = new EnumMap<>(EquipmentSlot.class);
-    public RegistryId selectedAddition;
-    public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
-
-    public CharStats(final int maxHp, final int maxMp) {
-      this.maxHp = maxHp;
-      this.maxMp = maxMp;
-    }
   }
 }

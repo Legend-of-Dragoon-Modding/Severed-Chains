@@ -8,6 +8,9 @@ import org.legendofdragoon.modloader.events.Event;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharacterStatsEvent extends Event {
   public final int characterId;
@@ -44,9 +47,9 @@ public class CharacterStatsEvent extends Event {
 
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(characterId);
     this.xp = charData.xp_00;
-    this.hp = charData.hp_08;
-    this.mp = charData.mp_0a;
-    this.sp = charData.sp_0c;
+    this.hp = charData.stats.getStat(HP_STAT.get()).getCurrent();
+    this.mp = charData.stats.getStat(MP_STAT.get()).getCurrent();
+    this.sp = charData.stats.getStat(SP_STAT.get()).getCurrent();
     this.dxp = charData.dlevelXp_0e;
     this.flags = charData.status_10;
     this.level = charData.level_12;

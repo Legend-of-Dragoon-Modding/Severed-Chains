@@ -27,6 +27,9 @@ import static legend.game.types.CharacterData2c.CANT_REMOVE;
 import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
 import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
 import static legend.game.types.CharacterData2c.IN_PARTY;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharacterEditorController {
   public Label name;
@@ -97,9 +100,9 @@ public class CharacterEditorController {
     this.cantRemove.setSelected((this.charData.partyFlags_04 & CANT_REMOVE) != 0);
     this.hasUltimate.setSelected((this.charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0);
 
-    this.hp.setText(String.valueOf(this.charData.hp_08));
-    this.mp.setText(String.valueOf(this.charData.mp_0a));
-    this.sp.setText(String.valueOf(this.charData.sp_0c));
+    this.hp.setText(String.valueOf(this.charData.stats.getStat(HP_STAT.get()).getCurrent()));
+    this.mp.setText(String.valueOf(this.charData.stats.getStat(MP_STAT.get()).getCurrent()));
+    this.sp.setText(String.valueOf(this.charData.stats.getStat(SP_STAT.get()).getCurrent()));
 
     this.level.setText(String.valueOf(this.charData.level_12));
     this.xp.setText(String.valueOf(this.charData.xp_00));
@@ -120,7 +123,14 @@ public class CharacterEditorController {
     this.additionList.getSelectionModel().select(0);
 
     this.equipped.clear();
-    this.equipped.putAll(this.charData.equipment_14);
+
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final Equipment equipment = this.charData.getEquipment(slot);
+
+      if(equipment != null) {
+        this.equipped.put(slot, equipment);
+      }
+    }
 
     this.additionStats.clear();
     this.additionStats.putAll(this.charData.additionStats);
@@ -167,9 +177,9 @@ public class CharacterEditorController {
       (this.hasUltimate.isSelected() ? HAS_ULTIMATE_ADDITION : 0)
     ;
 
-    this.charData.hp_08 = Integer.parseInt(this.hp.getText());
-    this.charData.mp_0a = Integer.parseInt(this.mp.getText());
-    this.charData.sp_0c = Integer.parseInt(this.sp.getText());
+    this.charData.stats.getStat(HP_STAT.get()).setCurrent(Integer.parseInt(this.hp.getText()));
+    this.charData.stats.getStat(MP_STAT.get()).setCurrent(Integer.parseInt(this.mp.getText()));
+    this.charData.stats.getStat(SP_STAT.get()).setCurrent(Integer.parseInt(this.sp.getText()));
 
     this.charData.level_12 = Integer.parseInt(this.level.getText());
     this.charData.xp_00 = Integer.parseInt(this.xp.getText());
@@ -194,8 +204,14 @@ public class CharacterEditorController {
       additionStats.xp = Integer.parseInt(this.additionXp.getText());
     }
 
-    this.charData.equipment_14.clear();
-    this.charData.equipment_14.putAll(this.equipped);
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final Equipment current = this.charData.getEquipment(slot);
+      final Equipment equip = this.equipped.get(slot);
+
+      if(current != equip) {
+        this.charData.equip(slot, equip);
+      }
+    }
 
     this.charData.selectedAddition_19 = this.selectedAddition.getValue();
 

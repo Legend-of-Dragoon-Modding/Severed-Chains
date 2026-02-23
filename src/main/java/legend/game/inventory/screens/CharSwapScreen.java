@@ -4,8 +4,9 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
+import legend.game.characters.VitalsStat;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.types.ActiveStatsa0;
+import legend.game.types.CharacterData2c;
 import legend.game.types.Renderable58;
 
 import java.util.Set;
@@ -28,7 +29,6 @@ import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -38,6 +38,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.types.CharacterData2c.CANT_REMOVE;
 import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
 
 public class CharSwapScreen extends MenuScreen {
   private int loadingStage;
@@ -159,6 +161,10 @@ public class CharSwapScreen extends MenuScreen {
 
   private void renderSecondaryChar(final int x, final int y, final int charIndex, final boolean allocate) {
     if(allocate) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+      final VitalsStat hp = character.stats.getStat(HP_STAT.get());
+      final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+
       if(charIndex < 9) {
         final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
         initGlyph(renderable, glyph_801142d4);
@@ -172,15 +178,14 @@ public class CharSwapScreen extends MenuScreen {
       allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
       allocateUiElement(0x9c, 0x9c, x, y);
 
-      if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
+      if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (character.partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
         allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
       }
 
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
-      renderFourDigitNumber(x + 25, y + 57, stats.level_0e);
-      renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f);
-      renderFourDigitHp(x + 25, y + 79, stats.hp_04, stats.maxHp_66);
-      renderFourDigitNumber(x + 25, y + 90, stats.mp_06);
+      renderFourDigitNumber(x + 25, y + 57, character.level_12);
+      renderFourDigitNumber(x + 25, y + 68, character.dlevel_13);
+      renderFourDigitHp(x + 25, y + 79, hp.getCurrent(), hp.getMax());
+      renderFourDigitNumber(x + 25, y + 90, mp.getCurrent());
     }
   }
 

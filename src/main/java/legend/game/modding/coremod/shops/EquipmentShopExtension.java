@@ -12,19 +12,14 @@ import legend.game.inventory.screens.controls.CharacterPortrait;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.canEquip;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.giveEquipment;
@@ -122,7 +117,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     this.returnControl = false;
 
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
-      this.portraits[i].setVisibility(canEquip(entry.item, characterIndices_800bdbb8.getInt(i)));
+      final CharacterData2c character = gameState.charData_32c.get(characterIndices_800bdbb8.getInt(i));
+      this.portraits[i].setVisibility(character.canEquip(gameState, entry.item.slot, entry.item));
     }
 
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
@@ -157,8 +153,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     if(charId != -1) {
       final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charId]);
       final CharacterData2c character = gameState.charData_32c.get(charId);
-
-      final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(character.equipment_14);
+      final CharacterData2c clone = character.template.make(gameState);
+      clone.set(character);
 
       if(equipItem(entry.item, charId).success) {
         allocateOneFrameGlyph(0x67, 210, 127);
@@ -183,8 +179,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
         renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
       }
 
-      character.equipment_14.clear();
-      character.equipment_14.putAll(oldEquipment);
+      character.set(clone);
 
       loadCharacterStats();
     } else {
@@ -308,7 +303,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     }
 
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
-      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && canEquip(entry.item, characterIndices_800bdbb8.getInt(i)));
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i));
+      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && character.canEquip(gameState_800babc8, entry.item.slot, entry.item));
       this.portraits[i].setX(9 + (i - this.charScroll) * 50);
     }
   }
@@ -352,7 +348,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result -> {
       if(result == MessageBoxResult.YES) {
-        if(this.selectedCharSlot != -1 && canEquip(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot))) {
+        final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+        if(this.selectedCharSlot != -1 && character.canEquip(gameState_800babc8, this.entry.item.slot, this.entry.item)) {
           menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result1 -> {
             if(result1 == MessageBoxResult.YES) {
               final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));

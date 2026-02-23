@@ -1,36 +1,31 @@
 package legend.game.types;
 
 import legend.game.characters.ElementSet;
-import legend.game.inventory.Equipment;
-import org.legendofdragoon.modloader.registries.RegistryId;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public class ActiveStatsa0 {
-  public int xp_00;
-  /** ushort */
-  public int hp_04;
-  /** ushort */
-  public int mp_06;
-  /** ushort */
-  public int sp_08;
-  /** ushort */
-  public int dxp_0a;
+//  public int xp_00;
+//  /** ushort */
+//  public int hp_04;
+//  /** ushort */
+//  public int mp_06;
+//  /** ushort */
+//  public int sp_08;
+//  /** ushort */
+//  public int dxp_0a;
   /** Status, dragoon, etc. (ushort) */
   public int flags_0c;
-  /** ubyte */
-  public int level_0e;
-  /** ubyte */
-  public int dlevel_0f;
+//  /** ubyte */
+//  public int level_0e;
+//  /** ubyte */
+//  public int dlevel_0f;
 
-  /** ubyte */
-  public final Map<EquipmentSlot, Equipment> equipment_30 = new EnumMap<>(EquipmentSlot.class);
-  /** Absolute addition index into the table of every addition for every character (byte) */
-  public RegistryId selectedAddition_35;
-  /** ubyte */
+//  /** ubyte */
+//  public final Map<EquipmentSlot, Equipment> equipment_30 = new EnumMap<>(EquipmentSlot.class);
+//  /** Absolute addition index into the table of every addition for every character (byte) */
+//  public RegistryId selectedAddition_35;
+//  /** ubyte */
 //  public final int[] additionLevels_36 = new int[8];
-  /** ubyte */
+//  /** ubyte */
 //  public final int[] additionXp_3e = new int[8];
   /** ushort */
   public boolean equipmentPhysicalImmunity_46;
@@ -62,9 +57,9 @@ public class ActiveStatsa0 {
   public boolean equipmentMagicalResistance_60;
   public short equipmentHpMulti_62;
   public short equipmentMpMulti_64;
-  /** ushort */
-  public int maxHp_66;
-  /** byte */
+//  /** ushort */
+//  public int maxHp_66;
+//  /** byte */
 //  public int addition_68;
   /** ubyte */
   public int bodySpeed_69;
@@ -76,8 +71,8 @@ public class ActiveStatsa0 {
   public int bodyDefence_6c;
   /** ubyte */
   public int bodyMagicDefence_6d;
-  /** ushort */
-  public int maxMp_6e;
+//  /** ushort */
+//  public int maxMp_6e;
   /** byte */
   public int spellId_70;
   /** ubyte */
@@ -157,17 +152,7 @@ public class ActiveStatsa0 {
   }
 
   public ActiveStatsa0(final ActiveStatsa0 other) {
-    this.xp_00 = other.xp_00;
-    this.hp_04 = other.hp_04;
-    this.mp_06 = other.mp_06;
-    this.sp_08 = other.sp_08;
-    this.dxp_0a = other.dxp_0a;
     this.flags_0c = other.flags_0c;
-    this.level_0e = other.level_0e;
-    this.dlevel_0f = other.dlevel_0f;
-    this.equipment_30.clear();
-    this.equipment_30.putAll(other.equipment_30);
-    this.selectedAddition_35 = other.selectedAddition_35;
     this.equipmentPhysicalImmunity_46 = other.equipmentPhysicalImmunity_46;
     this.equipmentMagicalImmunity_48 = other.equipmentMagicalImmunity_48;
     this.equipmentPhysicalResistance_4a = other.equipmentPhysicalResistance_4a;
@@ -184,14 +169,12 @@ public class ActiveStatsa0 {
     this.equipmentMagicalResistance_60 = other.equipmentMagicalResistance_60;
     this.equipmentHpMulti_62 = other.equipmentHpMulti_62;
     this.equipmentMpMulti_64 = other.equipmentMpMulti_64;
-    this.maxHp_66 = other.maxHp_66;
 //    this.addition_68 = other.addition_68;
     this.bodySpeed_69 = other.bodySpeed_69;
     this.bodyAttack_6a = other.bodyAttack_6a;
     this.bodyMagicAttack_6b = other.bodyMagicAttack_6b;
     this.bodyDefence_6c = other.bodyDefence_6c;
     this.bodyMagicDefence_6d = other.bodyMagicDefence_6d;
-    this.maxMp_6e = other.maxMp_6e;
     this.spellId_70 = other.spellId_70;
     this._71 = other._71;
     this.dragoonAttack_72 = other.dragoonAttack_72;
