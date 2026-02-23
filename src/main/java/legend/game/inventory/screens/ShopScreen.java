@@ -107,8 +107,6 @@ public class ShopScreen extends MenuScreen {
   private int sellType;
 
   private double scrollAccumulator;
-  private int mouseX;
-  private int mouseY;
 
   public ShopScreen(final Shop shop) {
     this.shop = shop;
@@ -172,7 +170,7 @@ public class ShopScreen extends MenuScreen {
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
 
-          if(this.invScroll_8011e0e4 > 0 && MathHelper.inBox(this.mouseX, this.mouseY, 138, 16, 220, 104)) {
+          if(this.invScroll_8011e0e4 > 0 && MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, 16, 220, 104)) {
             this.scroll(this.invScroll_8011e0e4 - 1);
           }
         }
@@ -180,7 +178,7 @@ public class ShopScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.invScroll_8011e0e4 < this.inv.size() - 6 && MathHelper.inBox(this.mouseX, this.mouseY, 138, 16, 220, 104)) {
+          if(this.invScroll_8011e0e4 < this.inv.size() - 6 && MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, 16, 220, 104)) {
             this.scroll(this.invScroll_8011e0e4 + 1);
           }
         }
@@ -215,7 +213,7 @@ public class ShopScreen extends MenuScreen {
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
 
-          if(this.invScroll_8011e0e4 > 0 && MathHelper.inBox(this.mouseX, this.mouseY, 138, 16, 220, 104)) {
+          if(this.invScroll_8011e0e4 > 0 && MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, 16, 220, 104)) {
             playMenuSound(1);
             this.invScroll_8011e0e4--;
 
@@ -226,7 +224,7 @@ public class ShopScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.invScroll_8011e0e4 < count - 6 && MathHelper.inBox(this.mouseX, this.mouseY, 138, 16, 220, 104)) {
+          if(this.invScroll_8011e0e4 < count - 6 && MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, 16, 220, 104)) {
             playMenuSound(1);
             this.invScroll_8011e0e4++;
 
@@ -380,17 +378,14 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    this.mouseX = x;
-    this.mouseY = y;
-
     if(this.menuState == MenuState.RENDER_3) {
       for(int i = 0; i < 4; i++) {
-        if(this.menuIndex_8011e0dc != i && MathHelper.inBox(x, y, 41, this.getShopMenuYOffset(i), 59, 16)) {
+        if(this.menuIndex_8011e0dc != i && MathHelper.inBox((int)x, (int)y, 41, this.getShopMenuYOffset(i), 59, 16)) {
           playMenuSound(1);
           this.menuIndex_8011e0dc = i;
 
@@ -402,7 +397,7 @@ public class ShopScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.BUY_4) {
       for(int i = 0; i < Math.min(6, this.inv.size() - this.invScroll_8011e0e4); i++) {
-        if(this.invIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
+        if(this.invIndex_8011e0e0 != i && MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           playMenuSound(1);
           this.invIndex_8011e0e0 = i;
           this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
@@ -413,12 +408,12 @@ public class ShopScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.EXTENSION_5) {
       final ShopEntry<? extends InventoryEntry<?>> inv = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
-      this.activeExtension.mouseMove(this, this.shop, gameState_800babc8, inv, this.invScroll_8011e0e4 + this.invIndex_8011e0e0, x, y);
+      this.activeExtension.mouseMove(this, this.shop, gameState_800babc8, inv, this.invScroll_8011e0e4 + this.invIndex_8011e0e0, (int)x, (int)y);
     } else if(this.menuState == MenuState.SELL_10) {
       final int count = this.sellType != 0 ? gameState_800babc8.items_2e9.getSize() : gameState_800babc8.equipment_1e8.size();
 
       for(int i = 0; i < Math.min(count, 6); i++) {
-        if(this.invIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
+        if(this.invIndex_8011e0e0 != i && MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           playMenuSound(1);
           this.invIndex_8011e0e0 = i;
           this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
@@ -432,14 +427,14 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.menuState == MenuState.RENDER_3) {
       for(int i = 0; i < 4; i++) {
-        if(MathHelper.inBox(x, y, 41, this.getShopMenuYOffset(i), 59, 16)) {
+        if(MathHelper.inBox((int)x, (int)y, 41, this.getShopMenuYOffset(i), 59, 16)) {
           playMenuSound(2);
           this.menuIndex_8011e0dc = i;
 
@@ -453,7 +448,7 @@ public class ShopScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.BUY_4) {
       for(int i = 0; i < Math.min(6, this.inv.size() - this.invScroll_8011e0e4); i++) {
-        if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
+        if(MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           this.invIndex_8011e0e0 = i;
           this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
           this.setSelectedEntry(this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0));
@@ -463,12 +458,12 @@ public class ShopScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.EXTENSION_5) {
       final ShopEntry<? extends InventoryEntry<?>> inv = this.inv.get(this.invScroll_8011e0e4 + this.invIndex_8011e0e0);
-      this.activeExtension.mouseClick(this, this.shop, gameState_800babc8, inv, this.invScroll_8011e0e4 + this.invIndex_8011e0e0, x, y, button, mods);
+      this.activeExtension.mouseClick(this, this.shop, gameState_800babc8, inv, this.invScroll_8011e0e4 + this.invIndex_8011e0e0, (int)x, (int)y, button, mods);
     } else if(this.menuState == MenuState.SELL_10) {
       final int count = this.sellType != 0 ? gameState_800babc8.items_2e9.getSize() : gameState_800babc8.equipment_1e8.size();
 
       for(int i = 0; i < Math.min(count, 6); i++) {
-        if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
+        if(MathHelper.inBox((int)this.mouseX, (int)this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           this.invIndex_8011e0e0 = i;
           this.selectedInventoryRowRenderable_800bdbe4.y_44 = this.menuEntryY(i);
           this.menuSell10Select();

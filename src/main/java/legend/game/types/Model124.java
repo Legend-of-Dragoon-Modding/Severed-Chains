@@ -48,6 +48,8 @@ public class Model124 {
   public int zOffset_a0;
   /** Always 0 except sometimes on submaps (ubyte) */
   public boolean disableInterpolation_a2;
+  /** Scales the number of interpolation frames */
+  public float interpolationScale = 1.0f;
   /** ubyte */
   public int ub_a3;
   /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#clutAnimations_04} */

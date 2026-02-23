@@ -274,17 +274,17 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    this.mouseX = x;
-    this.mouseY = y;
+    this.mouseX = (int)x;
+    this.mouseY = (int)y;
 
     if(this.menuState == MenuState.DROPPED_8) {
       for(int i = 0; i < Math.min(DROPPED_ITEM_LIST_SIZE, this.droppedItems.size()); i++) {
-        if(this.dropIndex != i && MathHelper.inBox(x, y, 9, this.getSlotY(i), 171, 17)) {
+        if(this.dropIndex != i && MathHelper.inBox((int)x, (int)y, 9, this.getSlotY(i), 171, 17)) {
           playMenuSound(1);
           this.dropIndex = i;
           this.renderable_8011e200.y_44 = this.getSlotY(i);
@@ -293,7 +293,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.INVENTORY_9) {
       for(int i = 0; i < Math.min(INVENTORY_ITEM_LIST_SIZE, this.items.size()); i++) {
-        if(this.invIndex != i && MathHelper.inBox(x, y, 188, this.getSlotY(i), 171, 17)) {
+        if(this.invIndex != i && MathHelper.inBox((int)x, (int)y, 188, this.getSlotY(i), 171, 17)) {
           playMenuSound(1);
           this.invIndex = i;
           this.renderable_8011e204.y_44 = this.getSlotY(i);
@@ -306,14 +306,14 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.menuState == MenuState.DROPPED_8) {
       for(int i = 0; i < this.droppedItems.size(); i++) {
-        if(MathHelper.inBox(x, y, 9, this.getSlotY(i), 171, 17)) {
+        if(MathHelper.inBox((int)x, (int)y, 9, this.getSlotY(i), 171, 17)) {
           playMenuSound(2);
           this.dropIndex = i;
           this.renderable_8011e200.y_44 = this.getSlotY(i);
@@ -324,7 +324,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.INVENTORY_9) {
       for(int i = 0; i < Math.min(INVENTORY_ITEM_LIST_SIZE, this.getInventoryCount()); i++) {
-        if(MathHelper.inBox(x, y, 188, this.getSlotY(i), 171, 17)) {
+        if(MathHelper.inBox((int)x, (int)y, 188, this.getSlotY(i), 171, 17)) {
           playMenuSound(2);
           this.invIndex = i;
           this.renderable_8011e204.y_44 = this.getSlotY(i);

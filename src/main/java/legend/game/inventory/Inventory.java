@@ -171,7 +171,7 @@ public class Inventory implements Iterable<ItemStack> {
   /**
    * Removes the item from the inventory
    *
-   * @return A stack containing the item if it couldn't be removed, or EMPTY if it was removed
+   * @return Any portion of the stack that couldn't be removed, or EMPTY if all items were removed
    */
   public ItemStack take(final Item item) {
     return this.take(new ItemStack(item));

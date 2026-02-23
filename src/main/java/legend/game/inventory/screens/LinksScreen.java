@@ -59,7 +59,7 @@ public class LinksScreen extends VerticalLayoutScreen {
     final Label tooltip = label.addControl(new Label("?"));
     tooltip.setScale(0.4f);
     tooltip.setPos((int)(tooltip.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
-    tooltip.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(url, this.mouseX, this.mouseY)));
+    tooltip.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(url, (int)this.mouseX, (int)this.mouseY)));
     this.linkLabels.put(text, label);
   }
 
@@ -81,8 +81,8 @@ public class LinksScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
-    final int linkIndex = Math.floorDiv(y - 32, 13);
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
+    final int linkIndex = Math.floorDiv((int)(y - 32), 13);
 
     if(linkIndex >= 0 && linkIndex < this.linkText.size()) {
       playMenuSound(2);

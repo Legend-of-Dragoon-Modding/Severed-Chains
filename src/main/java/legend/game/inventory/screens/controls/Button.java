@@ -87,13 +87,13 @@ public class Button extends Control {
   }
 
   @Override
-  protected void hoverIn() {
+  public void hoverIn() {
     super.hoverIn();
     this.hover.show();
   }
 
   @Override
-  protected void hoverOut() {
+  public void hoverOut() {
     super.hoverOut();
     this.hover.hide();
   }
@@ -105,7 +105,7 @@ public class Button extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }

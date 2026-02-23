@@ -143,7 +143,7 @@ public class ItemListMenu extends ListMenu {
       if((this.flags_02 & 0x40) != 0) {
         //Selected item description
         if(this.description == null) {
-          this.description = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
+          this.description = new UiBox(44, 156, 232, 14);
         }
 
         this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
@@ -157,16 +157,6 @@ public class ItemListMenu extends ListMenu {
           renderText(I18n.translate(selected.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
         }
       }
-    }
-  }
-
-  @Override
-  public void delete() {
-    super.delete();
-
-    if(this.description != null) {
-      this.description.delete();
-      this.description = null;
     }
   }
 }

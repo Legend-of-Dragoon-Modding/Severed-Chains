@@ -21,7 +21,6 @@ import legend.game.inventory.Good;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
@@ -73,8 +72,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -89,6 +90,7 @@ import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.leftArrowRenderable_800bdba4;
 import static legend.game.Menus.loadMenuTexture;
+import static legend.game.Menus.managedRenderables_800bdc5c;
 import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
@@ -405,8 +407,8 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean given = giveItem(REGISTRIES.items.getEntry(id).get());
-    script.params_20[1].set(given ? 1 : 0);
+    final ItemStack remaining = gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(remaining.isEmpty() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -425,8 +427,8 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean taken = takeItem(REGISTRIES.items.getEntry(id).get());
-    script.params_20[1].set(taken ? 1 : 0);
+    final ItemStack remaining = gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(remaining.isEmpty() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -639,14 +641,6 @@ public final class SItem {
     return responseType;
   }
 
-  public static boolean takeItem(final Item item) {
-    return gameState_800babc8.items_2e9.take(item).isEmpty();
-  }
-
-  public static boolean takeItem(final ItemStack stack) {
-    return gameState_800babc8.items_2e9.take(stack).isEmpty();
-  }
-
   @Method(0x800232dcL)
   public static boolean takeItemFromSlot(final int itemSlot) {
     return takeItemFromSlot(itemSlot, gameState_800babc8.items_2e9.get(itemSlot).getSize());
@@ -689,19 +683,6 @@ public final class SItem {
 
     gameState_800babc8.equipment_1e8.remove(equipmentIndex);
     return true;
-  }
-
-  @Method(0x80023484L)
-  public static boolean giveItem(final Item item) {
-    return gameState_800babc8.items_2e9.give(item).isEmpty();
-  }
-
-  /**
-   * Note: does NOT consume the passed in item stack
-   */
-  @Method(0x80023484L)
-  public static boolean giveItem(final ItemStack item) {
-    return gameState_800babc8.items_2e9.give(new ItemStack(item)).isEmpty();
   }
 
   @Method(0x80023484L)
@@ -1184,7 +1165,14 @@ public final class SItem {
 
   @Method(0x80103910L)
   public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
+    final Renderable58 portrait = renderManualCharacterPortrait(charId, x, y, flags);
+    managedRenderables_800bdc5c.addFirst(portrait);
+    return portrait;
+  }
+
+  @Method(0x80103910L)
+  public static Renderable58 renderManualCharacterPortrait(final int charId, final int x, final int y, final int flags) {
+    final Renderable58 renderable = allocateManualRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
     renderable.glyph_04 = 48 + charId;
     renderable.startGlyph_10 = renderable.glyph_04;
@@ -1358,6 +1346,7 @@ public final class SItem {
     checkForNewlyUnlockedAddition(charId);
 
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+    final Set<RegistryId> seen = new HashSet<>();
 
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
       final Addition addition = additionDelegate.get();
@@ -1365,6 +1354,14 @@ public final class SItem {
 
       if(additionStats.unlockState.isUsable()) {
         additions.add(addition);
+      }
+
+      seen.add(additionDelegate.getId());
+    }
+
+    for(final var entry : charData.additionStats.entrySet()) {
+      if(!seen.contains(entry.getKey()) && entry.getValue().unlockState.isUsable()) {
+        additions.add(REGISTRIES.additions.getEntry(entry.getKey()).get());
       }
     }
   }
@@ -2348,7 +2345,7 @@ public final class SItem {
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
       stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
 
-      if(charData.selectedAddition_19 != null) {
+      if(charData.selectedAddition_19 != null && REGISTRIES.additions.hasEntry(charData.selectedAddition_19)) {
         final Addition addition = REGISTRIES.additions.getEntry(charData.selectedAddition_19).get();
         final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(charData.selectedAddition_19, k -> new CharacterAdditionStats());
 

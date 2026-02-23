@@ -3,6 +3,8 @@ package legend.core.platform.input;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.saves.ConfigCollection;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -18,6 +20,8 @@ import static legend.core.GameEngine.REGISTRIES;
 
 public final class InputBindings {
   private InputBindings() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(InputBindings.class);
 
   private static final Map<Class<? extends InputActivation>, List/*<InputBinding<?>>*/> BINDINGS = new HashMap<>();
 
@@ -68,6 +72,11 @@ public final class InputBindings {
   }
 
   public static void overwriteBindings(final RegistryDelegate<InputAction> action, final List<InputActivation> activations) {
+    if(!action.isValid()) {
+      LOGGER.info("Skipping unknown InputAction %s", action);
+      return;
+    }
+
     overwriteBindings(action.get(), activations);
   }
 

@@ -21,13 +21,14 @@ public abstract class SimpleAddition extends Addition {
 
   @Override
   public int getSp(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+    final float multi = this.getSpMultiplier(state, charData, additionStats);
     int sp = 0;
 
     for(int hit = 0; hit < this.hits.length; hit++) {
-      sp += this.hits[hit].sp_05;
+      sp += (int)(this.hits[hit].sp_05 * multi);
     }
 
-    return (int)(sp * this.getSpMultiplier(state, charData, additionStats));
+    return sp;
   }
 
   @Override
@@ -57,6 +58,15 @@ public abstract class SimpleAddition extends Addition {
     public LevelMultipliers(final float damage, final float sp) {
       this.damage = damage;
       this.sp = sp;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if(!(obj instanceof final LevelMultipliers other)) {
+        return false;
+      }
+
+      return this.damage == other.damage && this.sp == other.sp;
     }
   }
 }

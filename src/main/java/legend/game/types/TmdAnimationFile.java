@@ -17,6 +17,9 @@ public class TmdAnimationFile extends Anim {
   /** Arrays are [keyframe][part] */
   public final Keyframe0c[][] partTransforms_10;
 
+  /** See {@link Model124#interpolationScale} */
+  public float interpolationScale = 1.0f;
+
   public TmdAnimationFile(final FileData data) {
     super(data);
 
@@ -48,7 +51,7 @@ public class TmdAnimationFile extends Anim {
       return;
     }
 
-    final int framesPerKeyframe = 2;
+    final int framesPerKeyframe = Math.round(2 * model.interpolationScale);
 
     //LAB_800dd4fc
     final int totalFrames;
